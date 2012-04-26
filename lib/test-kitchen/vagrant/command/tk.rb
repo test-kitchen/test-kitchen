@@ -24,7 +24,7 @@ module TestKitchen
               projects = if options[:project]
                   [TestKitchen.projects.find{|p| p.name == options[:project]}]
                 else
-                  [TestKitchen.projects]
+                  TestKitchen.projects
                 end
 
               projects.each do |project|

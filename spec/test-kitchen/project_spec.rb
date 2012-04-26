@@ -21,6 +21,23 @@ describe TestKitchen::Project do
       project.language.must_equal 'erlang'
     end
   end
+  describe "#install" do
+    it "defaults to bundle install when you are using ruby" do
+      project = TestKitchen::Project.new('foo')
+      project.language = 'ruby'
+      project.install.must_equal 'bundle install'
+    end
+    it "defaults to empty string when you are not using ruby" do
+      project = TestKitchen::Project.new('foo')
+      project.language = 'erlang'
+      project.install.must_equal ''
+    end
+    it "can be set to an arbitrary command" do
+      project = TestKitchen::Project.new('foo')
+      project.install = 'make install'
+      project.install.must_equal 'make install'
+    end
+  end
   describe "#script" do
     it "defaults to running rspec" do
       TestKitchen::Project.new('foo').script.must_equal 'rspec spec'

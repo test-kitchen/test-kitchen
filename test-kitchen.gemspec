@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.files         = Dir['LICENSE', 'bin/kitchen', 'lib/**/*']
   s.executables   = 'kitchen'
   s.require_paths = ['lib']
+  s.add_dependency('foodcritic', '~> 1.2.0')
   s.add_dependency('hashr', '~> 0.0.20')
   s.add_dependency('mixlib-cli', '~> 1.2.2')
   s.add_dependency('vagrant', '~> 1.0.2')

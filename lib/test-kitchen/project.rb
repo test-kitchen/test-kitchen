@@ -3,7 +3,7 @@ module TestKitchen
   # A configuration that is being tested
   module Configuration
     attr_reader :name
-    attr_writer :language, :runtimes, :script
+    attr_writer :language, :runtimes, :install, :script
     attr_accessor :rvm, :repository, :revision, :memory, :vm
 
     def initialize(name)
@@ -22,6 +22,10 @@ module TestKitchen
         else
           []
         end
+    end
+
+    def install
+      @install ||= language == 'ruby' ? 'bundle install' : ''
     end
 
     def script

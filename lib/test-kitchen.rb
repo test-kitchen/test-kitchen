@@ -71,13 +71,13 @@ module TestKitchen
   end
 
   def self.projects
-    if projects = external_config['projects'].map do |name, values|
+    @projects ||= if external_config['projects']
+      external_config['projects'].map do |name, values|
         Project.from_hash(values.merge('name' => name))
       end
-      projects
     else
       []
     end
   end
-end
 
+end
