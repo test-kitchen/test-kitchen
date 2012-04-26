@@ -22,20 +22,16 @@ module TestKitchen
             if vm.created?
 
               projects = if options[:project]
-                  {options[:project] => vm.config.tk.projects[options[:project]]}
+                  [TestKitchen.projects.find{|p| p.name == options[:project]}]
                 else
-                  vm.config.tk.projects
+                  [TestKitchen.projects]
                 end
 
-              projects.each_pair do |name, opts|
-
-                opts['vm'] = vm
-                runtime_versions = extract_runtime(opts)
-
-                runtime_versions.each do |runtime|
-                  execute_tests(name, opts, runtime)
+              projects.each do |project|
+                project.vm = vm
+                project.runtimes.each do |runtime|
+                  execute_tests(project, runtime)
                 end
-
               end
             end
           end
@@ -43,24 +39,24 @@ module TestKitchen
 
         private
 
-        def execute_tests(project_name, opts, runtime=nil)
+        def execute_tests(project, runtime=nil)
 
-          project_root = "#{TestKitchen.test_root}/#{project_name}"
+          project_root = "#{TestKitchen.test_root}/#{project.name}"
 
           command = "cd #{project_root}"
-          case opts['language']
+          case project.language
           when 'ruby'
             command << " && rvm use #{runtime}" if runtime
           when 'erlang'
 
           end
-          command << " && #{opts['script'] || 'rspec spec'}"
+          command << " && #{project.script}"
 
-          message = "Running tests for [#{project_name}]"
+          message = "Running tests for [#{project.name}]"
           message << " under [#{runtime}]" if runtime
 
-          opts['vm'].ui.info(message, :color => :yellow)
-          opts['vm'].channel.execute(command, :error_check => false) do |type, data|
+          project.vm.ui.info(message, :color => :yellow)
+          project.vm.channel.execute(command, :error_check => false) do |type, data|
 
             next if data =~ /stdin: is not a tty/
 
@@ -68,18 +64,11 @@ module TestKitchen
               # Output the data with the proper color based on the stream.
               color = type == :stdout ? :green : :red
 
-              opts['vm'].ui.info(data, :color => color, :prefix => false, :new_line => false)
+              project.vm.ui.info(data, :color => color, :prefix => false, :new_line => false)
             end
           end
         end
 
-        def extract_runtime(opts)
-          case opts['language']
-          when 'ruby'
-            opts['rvm'] || ['1.9.2']
-          when 'erlang'
-          end
-        end
       end
     end
   end

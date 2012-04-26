@@ -1,4 +1,5 @@
 require 'test-kitchen/cli'
+require 'test-kitchen/project'
 require 'test-kitchen/vagrant'
 require 'test-kitchen/version'
 require 'hashr'
@@ -70,10 +71,12 @@ module TestKitchen
   end
 
   def self.projects
-    if projects = external_config['projects']
+    if projects = external_config['projects'].map do |name, values|
+        Project.from_hash(values.merge('name' => name))
+      end
       projects
     else
-      {}
+      []
     end
   end
 end
