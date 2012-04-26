@@ -44,7 +44,7 @@ projects.each_pair do |name, opts|
 
   end
 
-  # ensure projects declared langauge toolchain is present
+  # ensure projects declared language toolchain is present
   include_recipe "test-kitchen::#{language}"
 
 end
