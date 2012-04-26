@@ -1,0 +1,24 @@
+{
+  "platforms": {
+    "ubuntu": {
+      "10.04": {
+        "box": "opscode-ubuntu-10.04",
+        "box_url": "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-10.04.box"
+      },
+      "11.04": {
+        "box": "opscode-ubuntu-11.04",
+        "box_url": "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-11.04.box"
+      }
+    },
+    "centos": {
+      "5.7": {
+        "box": "opscode-centos-5.7",
+        "box_url": "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-5.7.box"
+      },
+      "6.2": {
+        "box": "opscode-centos-6.2",
+        "box_url": "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.2.box"
+      }
+    }
+  }
+}

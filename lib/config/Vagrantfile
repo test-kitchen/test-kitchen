@@ -1,0 +1,81 @@
+$: << 'lib'
+require 'bundler/setup'
+require 'hashr'
+require 'test-kitchen'
+
+tk_config = TestKitchen.external_config
+
+::Vagrant::Config.run do |vagrant_config|
+
+  # Vagrant::Config callbacks
+  if vagrant_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vagrant]
+    vagrant_config_callbacks.each {|c| c.call(tk_config, vagrant_config) }
+  end
+
+  tk_config['platforms'].each_with_index do |platform_versions, index|
+
+    platform = platform_versions[0]
+    versions = platform_versions[1]
+
+    versions.each do |version, requested_config|
+
+      name = "#{TestKitchen.project_name}-#{platform}-#{version}"
+
+      vagrant_config.vm.define name do |vm_config|
+
+        host_name = name.gsub(/\./, '-')
+
+        vm_config.vm.customize [
+          "modifyvm", :id,
+           "--name", host_name,
+          "--memory", "256",
+          "--cpus", "1",
+          "--usb", "off",
+          "--usbehci", "off",
+          "--audio", "none",
+          "--natdnsproxy1", "on"
+        ]
+
+        vm_config.vm.host_name = host_name
+        vm_config.vm.box = tk_config['platforms'][platform][version]['box']
+        vm_config.vm.box_url = tk_config['platforms'][platform][version]['box_url']
+
+        # Enable SSH agent forwarding for git clones
+        vm_config.ssh.forward_agent = true
+
+        # share Chef::Config[:file_cache_path] between VMs and provisions
+        vm_config.vm.share_folder "cache", TestKitchen.guest_cache_path, TestKitchen.host_cache_path
+
+        # VM callbacks
+        if vm_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vm]
+          vm_config_callbacks.each {|c| c.call(tk_config, vm_config) }
+        end
+
+        # default chef attribute json
+        chef_json = {
+            'test-kitchen' => {
+              'test_root' => TestKitchen.test_root,
+              'projects' => tk_config['projects']
+            },
+          }
+
+        # Chef-Solo attribute data JSON callbacks
+        if chef_json_callbacks = TestKitchen::Vagrant.config_callbacks[:chef_json]
+          chef_json_callbacks.each {|c| c.call(chef_json, tk_config, vm_config) }
+        end
+
+        vm_config.vm.provision :chef_solo do |chef|
+          chef.provisioning_path = TestKitchen.guest_cache_path
+          chef.cookbooks_path = ["#{TestKitchen.source_root}/cookbooks-travis-ci/ci_environment", "#{TestKitchen.source_root}/cookbooks", "cookbooks"]
+          chef.add_recipe "test-kitchen"
+          chef.json = chef_json
+        end
+
+        # test-kitchen config
+        vm_config.tk.projects = tk_config['projects']
+      end
+
+    end
+  end
+
+end

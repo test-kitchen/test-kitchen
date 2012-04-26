@@ -1,0 +1,8 @@
+.bundle
+.cache
+.vagrant
+*.gem
+*.html
+Gemfile.lock
+pkg
+tests/
