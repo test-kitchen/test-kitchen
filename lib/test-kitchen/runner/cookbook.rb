@@ -1,28 +1,40 @@
 require 'vagrant'
+require 'test-kitchen/environment'
 require 'test-kitchen/vagrant'
 
 module TestKitchen
   module Runner
-    class Cookbook < Base
+    class Cookbook
 
-      def initialize(opts={})
-        super(opts)
-        @runner = Runner.targets['vagrant'].new(opts)
+      Runner.targets['cookbook'] = TestKitchen::Runner::Cookbook
+      attr_writer :runner
+
+      def initialize(env, opts={})
+        raise ArgumentError, 'Environment must be provided' unless env
+        @env = env
+        @opts = opts
       end
 
-      [:provision, :status, :destroy, :ssh].each do |cmd|
-        define_method(cmd) do
-          @runner.send(cmd)
-        end
+      def runner
+        @runner ||= Runner.targets['vagrant'].new(@env, @opts)
+      end
+
+      def method_missing(meth, *args)
+        runner.send(meth, *args)
+      end
+
+      def respond_to?(meth, include_private = false)
+        runner.respond_to?(meth, include_private)
       end
 
       def test
-        lint_cookbook(TestKitchen.project_name, TestKitchen.project_root)
-        project = TestKitchen::Project.new(TestKitchen.project_name)
+        project_name = File.basename(@env.root_path)
+        lint_cookbook(project_name, @env.root_path)
+        project = TestKitchen::Project.new(project_name)
         project.install = 'bundle install'
         project.script = 'bundle exec cucumber'
-        TestKitchen.projects << project
-        @runner.test
+        @env.projects << project
+        runner.test
       end
 
       private

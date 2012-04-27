@@ -48,6 +48,7 @@ module TestKitchen
         parse_options(argv)
         @ui = TestKitchen::UI.new(STDOUT, STDERR, STDIN, {})
         @env = TestKitchen::Environment.new(:ui => @ui)
+        TestKitchen::Environment.current = @env
       end
 
       # Class Methods

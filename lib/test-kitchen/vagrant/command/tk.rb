@@ -20,11 +20,10 @@ module TestKitchen
 
           with_target_vms(argv) do |vm|
             if vm.created?
-
               projects = if options[:project]
-                  [TestKitchen.projects.find{|p| p.name == options[:project]}]
+                  [Environment.current.projects.find{|p| p.name == options[:project]}]
                 else
-                  TestKitchen.projects
+                  Environment.current.projects
                 end
 
               projects.each do |project|
@@ -40,8 +39,7 @@ module TestKitchen
         private
 
         def execute_tests(project, runtime=nil)
-
-          project_root = "#{TestKitchen.test_root}/#{project.name}"
+          project_root = "/vagrant/"
 
           command = "cd #{project_root}"
           case project.language

@@ -3,6 +3,7 @@
 .vagrant
 *.gem
 *.html
+*.swp
 Gemfile.lock
 pkg
 tests/

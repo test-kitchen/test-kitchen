@@ -97,5 +97,13 @@ module TestKitchen
       @config = config
     end
 
+    def self.current
+      @@current
+    end
+
+    def self.current=(current)
+      @@current = current
+    end
+
   end
 end
