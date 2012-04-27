@@ -1,6 +1,7 @@
 require 'test-kitchen'
 
 tk_env = TestKitchen::Environment.new
+tk_env.load!
 tk_config = tk_env.config
 project = tk_env.project
 
