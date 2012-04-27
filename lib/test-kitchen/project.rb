@@ -1,3 +1,5 @@
+require 'chef/mixin/params_validate'
+
 module TestKitchen
 
   # A configuration that is being tested
