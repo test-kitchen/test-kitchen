@@ -8,40 +8,10 @@ require 'yajl'
 
 module TestKitchen
 
-  # The project root is the path to the root directory of the
-  # current test-kitchen project
-  def self.project_root
-    @project_root ||= Dir.pwd
-  end
-
-  def self.project_name
-    @project_name ||= Pathname.new(TestKitchen.project_root).basename.to_s
-  end
-
-  def self.setup
-    eval IO.read(File.join(TestKitchen.source_root, 'config', 'Vagrantfile'))
-  end
-
   # The source root is the path to the root directory of
   # the test-kitchen gem.
   def self.source_root
     @source_root ||= Pathname.new(File.expand_path('../', __FILE__))
-  end
-
-  def self.host_cache_path
-    @cache_path ||= begin
-      path = File.join(TestKitchen.project_root, '.cache')
-      FileUtils.mkdir_p(path)
-      path
-    end
-  end
-
-  def self.guest_cache_path
-    "/tmp/cache"
-  end
-
-  def self.test_root
-    "/vagrant/tests"
   end
 
   def self.external_config

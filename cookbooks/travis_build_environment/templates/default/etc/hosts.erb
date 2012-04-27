@@ -1,0 +1,23 @@
+<%
+hostname_to_set = case [node[:platform], node[:platform_version]]
+                  when ["ubuntu", "10.04"] then
+                    "lucid32"
+                  when ["ubuntu", "11.04"] then
+                    "natty32"
+                  end
+%>
+
+127.0.0.1       localhost
+127.0.1.1       <%= hostname_to_set %>
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+# put Varnish in front of rubygems.org
+<% node.travis_build_environment.hosts.each do |host, ip| %>
+<%= ip %> <%= host %>
+<% end %>

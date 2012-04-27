@@ -6,7 +6,8 @@ module TestKitchen
     class Vagrant < Base
 
       def provision
-        vagrant_env.cli(vagrant_cli_argv('up'))
+        super
+        #vagrant_env.cli(vagrant_cli_argv('up'))
       end
 
       def test
@@ -41,7 +42,6 @@ module TestKitchen
       def vagrant_cli_argv(command)
         argv = [command]
         argv << "#{TestKitchen.project_name}-#{platform}" if platform
-        argv << "-p" << project if project
         argv
       end
     end

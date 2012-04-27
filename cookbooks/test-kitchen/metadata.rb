@@ -1,0 +1,5 @@
+maintainer "Opscode, Inc."
+maintainer_email "cookbooks@opscode.com"
+license "Apache 2.0"
+description "Support cookbook for the test-kitchen gem"
+version "1.0.0"

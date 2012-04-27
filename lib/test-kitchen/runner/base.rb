@@ -1,3 +1,5 @@
+require 'librarian/chef/cli'
+
 module TestKitchen
   module Runner
     class Base
@@ -11,7 +13,7 @@ module TestKitchen
       end
 
       def provision
-        raise NotImplementedError
+        assemble_cookbooks!
       end
 
       def test
@@ -35,6 +37,19 @@ module TestKitchen
         Runner.targets[key] = subclass
       end
 
+      def assemble_cookbooks!
+        FileUtils.mkdir_p(TestKitchen.project_tmp)
+        # dump out a meta Cheffile
+        unless File.exists?(File.join(TestKitchen.project_tmp, 'Cheffile'))
+          File.open(File.join(TestKitchen.project_tmp, 'Cheffile'), 'w') do |f|
+            f.write(IO.read(File.join(TestKitchen.source_root, 'config', 'Cheffile')))
+          end
+        end
+
+        # let Librarian do it's thing
+        require 'librarian/chef/cli'
+        Librarian::Chef::Cli.bin!
+      end
     end
 
     def self.targets
