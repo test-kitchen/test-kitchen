@@ -12,6 +12,7 @@ module TestKitchen
     attr_reader :config
     attr_reader :ui
     attr_reader :kitchenfile_name
+    attr_accessor :project
 
     KITCHEN_SUBDIRS = [".", "kitchen", "test/kitchen"]
 
@@ -29,7 +30,6 @@ module TestKitchen
       @tmp_path = root_path.join('.kitchen')
       @cache_path = tmp_path.join('.cache')
       @ui = options[:ui]
-      @projects = []
 
       setup_tmp_path
       load! # we may want to call this explicitly
@@ -58,10 +58,6 @@ module TestKitchen
 
     def platforms
       @platforms ||= {}
-    end
-
-    def projects
-      @projects ||= []
     end
 
     def create_tmp_file(file_name, contents)
@@ -100,7 +96,6 @@ module TestKitchen
     def load!
       if !loaded?
         @loaded = true
-        load_old_json_config
         load_kitchenfiles
       end
 
@@ -130,29 +125,6 @@ module TestKitchen
       end
 
       nil
-    end
-
-    # TODO - remove when kitchen file does everything
-    def load_old_json_config
-      config = Hash.new
-
-      # config files that ship in test-kitchen gem
-      config_files = Dir[File.join(TestKitchen.source_root, 'config', '**', '*.json')]
-      # project/user specific config files
-      config_files << Dir[File.join(root_path, 'config', '**', '*.json')]
-
-      config_files.flatten.each do |file|
-        File.open(file) do |json|
-          config = config.deep_merge(Yajl::Parser.parse(json.read))
-        end
-      end
-      @config = config
-
-      if config['projects']
-        projects += config['projects'].map do |name, values|
-          Project.from_hash(values.merge('name' => name))
-        end
-      end
     end
 
     def load_kitchenfiles

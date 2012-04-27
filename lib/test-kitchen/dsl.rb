@@ -8,7 +8,7 @@ module TestKitchen
 
     module BasicDSL
       def integration_test(name, &block)
-        env.projects << Project.new(name.to_s, &block)
+        env.project = Project::Ruby.new(name.to_s, &block)
       end
 
       def platform(name, &block)
@@ -17,7 +17,7 @@ module TestKitchen
     end
     module CookbookDSL
       def cookbook(name, &block)
-        env.projects << CookbookProject.new(name.to_s, &block)
+        env.project = Project::Cookbook.new(name.to_s, &block)
       end
     end
 
