@@ -1,1 +1,22 @@
-# TODO move platform.json data into here
+
+platform :ubuntu do
+  version '10.04' do
+    box "opscode-ubuntu-10.04"
+    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-10.04.box"
+  end
+  version '11.04' do
+    box "opscode-ubuntu-11.04"
+    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-10.04.box"
+  end
+end
+
+platform :centos do
+  version '5.7' do
+    box "opscode-centos-5.7"
+    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-5.7.box"
+  end
+  version '6.2' do
+    box "opscode-centos-6.2"
+    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.2.box"
+  end
+end
