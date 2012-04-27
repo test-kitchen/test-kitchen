@@ -6,9 +6,9 @@ tk_config = tk_env.config
 ::Vagrant::Config.run do |vagrant_config|
 
   # Vagrant::Config callbacks
-  if vagrant_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vagrant]
-    vagrant_config_callbacks.each {|c| c.call(tk_config, vagrant_config) }
-  end
+  # if vagrant_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vagrant]
+  #   vagrant_config_callbacks.each {|c| c.call(tk_config, vagrant_config) }
+  # end
 
   tk_env.platforms.values.each do |platform|
     platform.versions.values.each do |version|
@@ -41,9 +41,9 @@ tk_config = tk_env.config
         vm_config.vm.share_folder "cache", "/tmp/cache", tk_env.cache_path
 
         # VM callbacks
-        if vm_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vm]
-          vm_config_callbacks.each {|c| c.call(tk_config, vm_config) }
-        end
+        # if vm_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vm]
+        #   vm_config_callbacks.each {|c| c.call(tk_config, vm_config) }
+        # end
 
         # default chef attribute json
         chef_json = {
@@ -53,9 +53,9 @@ tk_config = tk_env.config
           }
 
         # Chef-Solo attribute data JSON callbacks
-        if chef_json_callbacks = TestKitchen::Vagrant.config_callbacks[:chef_json]
-          chef_json_callbacks.each {|c| c.call(chef_json, tk_config, vm_config) }
-        end
+        # if chef_json_callbacks = TestKitchen::Vagrant.config_callbacks[:chef_json]
+        #   chef_json_callbacks.each {|c| c.call(chef_json, tk_config, vm_config) }
+        # end
 
         vm_config.vm.provision :chef_solo do |chef|
           chef.provisioning_path = "/tmp/cache"
