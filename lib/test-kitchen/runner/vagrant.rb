@@ -7,7 +7,7 @@ module TestKitchen
 
       def provision
         super
-        #vagrant_env.cli(vagrant_cli_argv('up'))
+        vagrant_env.cli(vagrant_cli_argv('up'))
       end
 
       def test
@@ -29,11 +29,16 @@ module TestKitchen
       private
 
       def vagrant_env
-        @vagrant_cli ||= begin
-          opts = {}
-          opts[:ui_class] = ::Vagrant::UI::Colored
-          opts[:cwd] = TestKitchen.project_root
-          env = ::Vagrant::Environment.new(opts)
+        @vagrant_env ||= begin
+
+          env.create_tmp_file('Vagrantfile',
+            IO.read(TestKitchen.source_root.join('config', 'Vagrantfile')))
+
+          options = {
+            :ui_class => ::Vagrant::UI::Colored,
+            :cwd => env.tmp_path
+          }
+          env = ::Vagrant::Environment.new(options)
           env.load!
           env
         end
@@ -41,7 +46,7 @@ module TestKitchen
 
       def vagrant_cli_argv(command)
         argv = [command]
-        argv << "#{TestKitchen.project_name}-#{platform}" if platform
+        argv << platform if platform
         argv
       end
     end
