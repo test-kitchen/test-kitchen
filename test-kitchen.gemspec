@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email         = ['schisamo@opscode.com']
   s.license       = 'Apache'
   s.homepage      = 'https://github.com/opscode/test-kitchen'
-  s.files         = Dir['LICENSE', 'bin/kitchen', 'lib/**/*']
+  s.files         = Dir['LICENSE', 'bin/kitchen', 'config/*', 'cookbooks/**/*', 'lib/**/*']
   s.executables   = 'kitchen'
   s.require_paths = ['lib']
   s.add_dependency('foodcritic', '~> 1.2.0')
