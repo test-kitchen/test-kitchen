@@ -2,6 +2,7 @@ require 'test-kitchen'
 
 tk_env = TestKitchen::Environment.new
 tk_config = tk_env.config
+project = tk_env.project
 
 ::Vagrant::Config.run do |vagrant_config|
 
@@ -11,6 +12,7 @@ tk_config = tk_env.config
   # end
 
   tk_env.platforms.values.each do |platform|
+
     platform.versions.values.each do |version|
 
       name = "#{platform.name}-#{version.name}"
@@ -39,6 +41,8 @@ tk_config = tk_env.config
 
         # share Chef::Config[:file_cache_path] between VMs and provisions
         vm_config.vm.share_folder "cache", "/tmp/cache", tk_env.cache_path
+        # mount the local code checkout up in the VM for testing
+        vm_config.vm.share_folder "project", project.guest_source_root, project.root_path
 
         # VM callbacks
         # if vm_config_callbacks = TestKitchen::Vagrant.config_callbacks[:vm]
@@ -48,7 +52,9 @@ tk_config = tk_env.config
         # default chef attribute json
         chef_json = {
             'test-kitchen' => {
-              'test_root' => "/vagrant/tests"
+              'project' => project.to_hash,
+              'source_root' => project.guest_source_root,
+              'test_root' => project.guest_test_root
             },
           }
 

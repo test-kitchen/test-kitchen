@@ -5,14 +5,18 @@ module TestKitchen
     class Base
       include Chef::Mixin::ParamsValidate
 
-      attr_reader :name
-      attr_writer :language, :runtimes, :install, :script, :platforms, :configurations
+      PROJECT_ROOT_INDICATORS = ["Gemfile", "metadata.rb"]
+
+      attr_reader :name, :guest_source_root, :guest_test_root
+      attr_writer :language, :runtimes, :install, :script
       attr_accessor :vm
 
       def initialize(name, &block)
         raise ArgumentError, "Project name must be specified" if name.nil? || name.empty?
         @name = name
         @configurations = []
+        @guest_source_root = '/test-kitchen/source'
+        @guest_test_root = '/test-kitchen/test'
         instance_eval(&block) if block_given?
       end
 
@@ -40,8 +44,8 @@ module TestKitchen
 
       def runtimes(arg=nil)
         set_or_return(:runtimes, arg, :default =>
-          if language == 'ruby' and self.respond_to?(:rvm)
-            rvm ? rvm : ['1.9.2']
+          if language == 'ruby'
+            ['1.9.2']
           else
             []
           end)
@@ -58,6 +62,37 @@ module TestKitchen
 
       def memory(arg=nil)
         set_or_return(:memory, arg, {})
+      end
+
+      def root_path
+        return @root_path if defined?(@root_path)
+
+        root_finder = lambda do |path|
+          found = PROJECT_ROOT_INDICATORS.find do |rootfile|
+            File.exist?(File.join(path.to_s, rootfile))
+          end
+
+          return path if found
+          return nil if path.root? || !File.exist?(path)
+        end
+        @root_path = root_finder.call(Dir.pwd)
+
+        "rsync -aHv --update --progress --checksum #{guest_source_root}/ #{guest_test_root}"
+
+      def install_command(runtime=nil)
+        raise NotImplementedError
+      end
+
+      def test_command(runtime=nil)
+        raise NotImplementedError
+      end
+
+      def to_hash
+        hash = {}
+        self.instance_variables.each do |var|
+          hash[var[1..-1].to_sym] = self.instance_variable_get(var)
+        end
+        hash
       end
     end
   end
