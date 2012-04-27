@@ -1,0 +1,27 @@
+require 'test-kitchen'
+
+site 'http://community.opscode.com/api/v1'
+
+# base test-kitchen cookbooks
+cookbook 'apt', '1.4.2'
+cookbook 'yum', '0.5.2'
+cookbook 'build-essential', '1.0.0'
+cookbook 'git', '0.10.0'
+cookbook 'rvm',
+  :git => 'https://github.com/fnichol/chef-rvm.git', :ref => 'v0.8.6'
+cookbook 'test-kitchen',
+  :path => TestKitchen.source_root.join('cookbooks', 'test-kitchen').to_s
+# TODO - this cookbook needs to go away
+cookbook 'travis_build_environment',
+  :path => TestKitchen.source_root.join('cookbooks', 'travis_build_environment').to_s
+
+# env = TestKitchen::Environment.new
+
+# include user-provided Cheffile
+# cheffile = env.root_path.join('Cheffile')
+# eval IO.read(cheffile.realpath) if cheffile.exist?
+
+# include user-provided cookbooks
+# env.root_path.join('cookbooks').each_child do |cb|
+#   cookbook cb.to_s, :path => env.root_path.join('cookbooks').to_s if cb.directory?
+# end

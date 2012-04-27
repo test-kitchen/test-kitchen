@@ -39,18 +39,23 @@ module TestKitchen
         Runner.targets[key] = subclass
       end
 
-      def assemble_cookbooks!
-        FileUtils.mkdir_p(TestKitchen.project_tmp)
-        # dump out a meta Cheffile
-        unless File.exists?(File.join(TestKitchen.project_tmp, 'Cheffile'))
-          File.open(File.join(TestKitchen.project_tmp, 'Cheffile'), 'w') do |f|
-            f.write(IO.read(File.join(TestKitchen.source_root, 'config', 'Cheffile')))
-          end
-        end
+      protected
 
-        # let Librarian do it's thing
-        require 'librarian/chef/cli'
-        Librarian::Chef::Cli.bin!
+      def assemble_cookbooks!
+        # dump out a meta Cheffile
+        env.create_tmp_file('Cheffile',
+            IO.read(TestKitchen.source_root.join('config', 'Cheffile')))
+
+        env.ui.info("Installing required cookbooks into test-kitchen project tmp directory [#{env.tmp_path}].", :yellow)
+
+        # The following is a programatic version of `librarian-chef install`
+        Librarian::Action::Clean.new(librarian_env).run
+        Librarian::Action::Resolve.new(librarian_env).run
+        Librarian::Action::Install.new(librarian_env).run
+      end
+
+      def librarian_env
+        @librarian_env ||= Librarian::Chef::Environment.new(:project_path => env.tmp_path)
       end
     end
 
