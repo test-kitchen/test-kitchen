@@ -1,4 +1,5 @@
-require File.expand_path('../../spec_helper', __FILE__)
+require_relative '../spec_helper'
+
 require 'test-kitchen'
 
 describe TestKitchen::Project do

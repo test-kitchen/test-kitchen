@@ -18,6 +18,7 @@ module TestKitchen
       @tmp_path = @root_path.join('.kitchen')
       @cache_path = @tmp_path.join('.cache')
       @ui = options[:ui]
+      @projects = []
 
       # pre-create required dirs
       [ @tmp_path, @cache_path ].each do |dir|
@@ -35,13 +36,7 @@ module TestKitchen
     end
 
     def projects
-      @projects ||= if config['projects']
-        config['projects'].map do |name, values|
-          Project.from_hash(values.merge('name' => name))
-        end
-      else
-        []
-      end
+      @projects
     end
 
     def create_tmp_file(file_name, contents)
@@ -74,14 +69,25 @@ module TestKitchen
       if !loaded?
         @loaded = true
 
-        load_config!
+        load_old_json_config
+        load_kitchen_file
       end
 
       self
     end
 
-    # TODO - move from JSON to Kitchenfiles
-    def load_config!
+    def self.current
+      @@current
+    end
+
+    def self.current=(current)
+      @@current = current
+    end
+
+    private
+
+    # TODO - remove when kitchen file does everything
+    def load_old_json_config
       config = Hash.new
 
       # config files that ship in test-kitchen gem
@@ -95,14 +101,20 @@ module TestKitchen
         end
       end
       @config = config
+
+      if config['projects']
+        projects += config['projects'].map do |name, values|
+          Project.from_hash(values.merge('name' => name))
+        end
+      end
     end
 
-    def self.current
-      @@current
-    end
-
-    def self.current=(current)
-      @@current = current
+    def load_kitchen_file
+      kitchen_file = File.join(root_path, 'Kitchenfile')
+      if File.exists?(kitchen_file)
+        dsl_file = DSL::File.new
+        projects << dsl_file.load(kitchen_file)
+      end
     end
 
   end

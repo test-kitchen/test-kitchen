@@ -1,4 +1,5 @@
 require 'test-kitchen/cli'
+require 'test-kitchen/dsl'
 require 'test-kitchen/project'
 require 'test-kitchen/vagrant'
 require 'test-kitchen/version'
