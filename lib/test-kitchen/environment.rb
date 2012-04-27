@@ -11,20 +11,49 @@ module TestKitchen
     attr_reader :cache_path
     attr_reader :config
     attr_reader :ui
+    attr_reader :kitchenfile_name
+
+    KITCHEN_SUBDIRS = [".", "kitchen", "test/kitchen"]
 
     def initialize(options={})
-      # TODO - make this locate the Kitchenfile by default
-      @root_path = Pathname.new(File.expand_path(options[:root_path] || Dir.pwd))
-      @tmp_path = @root_path.join('.kitchen')
-      @cache_path = @tmp_path.join('.cache')
+
+      options[:kitchenfile_name] ||= []
+      options[:kitchenfile_name] = [options[:kitchenfile_name]] if !options[:kitchenfile_name].is_a?(Array)
+      options[:kitchenfile_name] += ["Kitchenfile", "kitchenfile"]
+      @kitchenfile_name = options[:kitchenfile_name]
+
+      root_path ||
+        (raise ArgumentError,
+          "Could not locate a Kitchenfile at [#{KITCHEN_SUBDIRS.map{|sub| File.join(Dir.pwd, sub)}.join(', ')}]")
+
+      @tmp_path = root_path.join('.kitchen')
+      @cache_path = tmp_path.join('.cache')
       @ui = options[:ui]
       @projects = []
 
-      # pre-create required dirs
-      [ @tmp_path, @cache_path ].each do |dir|
-        FileUtils.mkdir_p(dir)
+      setup_tmp_path
+      load! # we may want to call this explicitly
+    end
+
+    # Inspired by Vagrant::Environment.root_path...danke Mitchell!
+    #
+    # The root path is the path where the top-most (loaded last)
+    # Vagrantfile resides. It can be considered the project root for
+    # this environment.
+    #
+    # @return [String]
+    def root_path
+      return @root_path if defined?(@root_path)
+
+      KITCHEN_SUBDIRS.each do |dir|
+        path = Pathname.new(Dir.pwd).join(dir)
+        found = kitchenfile_name.find do |rootfile|
+          path.join(rootfile).exist?
+        end
+        @root_path = path if found
       end
-      load!
+
+      @root_path
     end
 
     def platforms
@@ -53,6 +82,13 @@ module TestKitchen
       end
     end
 
+    def setup_tmp_path
+      # pre-create required dirs
+      [ tmp_path, cache_path ].each do |dir|
+        FileUtils.mkdir_p(dir)
+      end
+    end
+
     #---------------------------------------------------------------
     # Load Methods
     #---------------------------------------------------------------
@@ -68,9 +104,8 @@ module TestKitchen
     def load!
       if !loaded?
         @loaded = true
-
         load_old_json_config
-        load_kitchen_file
+        load_kitchenfiles
       end
 
       self
@@ -85,6 +120,21 @@ module TestKitchen
     end
 
     private
+
+    # Inspired by Vagrant::Environment.find_vagrantfile...danke Mitchell!
+    #
+    # Finds the Kitchenfile in the given directory.
+    #
+    # @param [Pathname] path Path to search in.
+    # @return [Pathname]
+    def find_kitchenfile(search_path)
+      @kitchenfile_name.each do |kitchenfile|
+        current_path = search_path.join(kitchenfile)
+        return current_path if current_path.exist?
+      end
+
+      nil
+    end
 
     # TODO - remove when kitchen file does everything
     def load_old_json_config
@@ -109,11 +159,15 @@ module TestKitchen
       end
     end
 
-    def load_kitchen_file
-      kitchen_file = File.join(root_path, 'Kitchenfile')
-      if File.exists?(kitchen_file)
+    def load_kitchenfiles
+      # load Kitchenfile that ships with gem...seeds defaults
+      kitchenfiles = [File.expand_path("config/Kitchenfile", TestKitchen.source_root)]
+      # Load the user's Kitchenfile
+      kitchenfiles << find_kitchenfile(root_path) if root_path
+
+      kitchenfiles.flatten.each do |kitchenfile|
         dsl_file = DSL::File.new
-        projects << dsl_file.load(kitchen_file)
+        projects << dsl_file.load(kitchenfile)
       end
     end
 
