@@ -5,8 +5,20 @@ require 'test-kitchen/dsl'
 
 module TestKitchen::DSL
 
+  module Helper
+    def dsl_instance(dsl_module)
+      Class.new do
+        include dsl_module
+        def env
+          TestKitchen::Environment.new(:ignore_kitchenfile => true)
+        end
+      end.new
+    end
+  end
+
   describe BasicDSL do
-    let(:dsl) { Object.extend BasicDSL }
+    include Helper
+    let(:dsl) { dsl_instance(BasicDSL) }
     it "allows an integration test to be defined" do
       dsl.integration_test('private_chef').wont_be_nil
     end
@@ -29,7 +41,8 @@ module TestKitchen::DSL
   end
 
   describe CookbookDSL do
-    let(:dsl) { Object.extend CookbookDSL }
+    include Helper
+    let(:dsl) { dsl_instance(CookbookDSL) }
     it "allows an cookbook project to be defined" do
       dsl.cookbook('mysql').wont_be_nil
       dsl.cookbook('mysql').name.must_equal 'mysql'

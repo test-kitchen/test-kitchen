@@ -47,7 +47,7 @@ module TestKitchen
         super()
         parse_options(argv)
         @ui = TestKitchen::UI.new(STDOUT, STDERR, STDIN, {})
-        @env = TestKitchen::Environment.new(:ui => @ui)
+        @env = TestKitchen::Environment.new(:ui => @ui).tap{|e| e.load!}
         TestKitchen::Environment.current = @env
       end
 

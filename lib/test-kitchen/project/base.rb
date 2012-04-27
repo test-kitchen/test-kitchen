@@ -6,7 +6,7 @@ module TestKitchen
       include Chef::Mixin::ParamsValidate
 
       attr_reader :name
-      attr_writer :language, :runtimes, :install, :script
+      attr_writer :language, :runtimes, :install, :script, :platforms, :configurations
       attr_accessor :vm
 
       def initialize(name, &block)
@@ -17,7 +17,7 @@ module TestKitchen
       end
 
       def configuration(name)
-        @configurations << name
+        @configurations << self.class.new(name)
       end
 
       def configurations
@@ -40,7 +40,7 @@ module TestKitchen
 
       def runtimes(arg=nil)
         set_or_return(:runtimes, arg, :default =>
-          if language == 'ruby'
+          if language == 'ruby' and self.respond_to?(:rvm)
             rvm ? rvm : ['1.9.2']
           else
             []

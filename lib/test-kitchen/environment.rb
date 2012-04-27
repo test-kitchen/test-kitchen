@@ -23,16 +23,19 @@ module TestKitchen
       options[:kitchenfile_name] += ["Kitchenfile", "kitchenfile"]
       @kitchenfile_name = options[:kitchenfile_name]
 
-      root_path ||
-        (raise ArgumentError,
-          "Could not locate a Kitchenfile at [#{KITCHEN_SUBDIRS.map{|sub| File.join(Dir.pwd, sub)}.join(', ')}]")
+      if options[:ignore_kitchenfile]
+        @root_path = Pathname.new(Dir.pwd)
+      else
+        root_path ||
+          (raise ArgumentError,
+            "Could not locate a Kitchenfile at [#{KITCHEN_SUBDIRS.map{|sub| File.join(Dir.pwd, sub)}.join(', ')}]")
+      end
 
       @tmp_path = root_path.join('.kitchen')
       @cache_path = tmp_path.join('.cache')
       @ui = options[:ui]
 
       setup_tmp_path
-      load! # we may want to call this explicitly
     end
 
     # Inspired by Vagrant::Environment.root_path...danke Mitchell!
