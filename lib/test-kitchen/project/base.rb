@@ -74,10 +74,15 @@ module TestKitchen
 
           return path if found
           return nil if path.root? || !File.exist?(path)
+          root_finder.call(path.parent)
         end
-        @root_path = root_finder.call(Dir.pwd)
 
+        @root_path = root_finder.call(Dir.pwd)
+      end
+
+      def update_code_command
         "rsync -aHv --update --progress --checksum #{guest_source_root}/ #{guest_test_root}"
+      end
 
       def install_command(runtime=nil)
         raise NotImplementedError

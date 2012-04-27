@@ -20,7 +20,35 @@ module TestKitchen
       end
 
       def test
-        vagrant_env.cli(vagrant_cli_argv('tk'))
+        with_target_vms do |vm|
+          if vm.created?
+
+            configurations = if config = options[:configuration]
+                [env.project.configurations{|p| p.name == config}]
+              elsif config = env.project.configurations
+                env.project.configurations
+              else
+                env.project
+              end
+
+            configurations.each do |configuration|
+              runtimes = configuration.runtimes ||= env.project.runtimes
+              runtimes.each do |runtime|
+                # sync source => test root
+                execute_command(vm, configuration.update_code_command)
+                # update dependencies
+                message = "Updating dependencies for [#{configuration.name}]"
+                message << " under [#{runtime}]" if runtime
+                execute_command(vm, configuration.install_command(runtime), message)
+                # run tests
+                message = "Running tests for [#{configuration.name}]"
+                message << " under [#{runtime}]" if runtime
+                execute_command(vm, configuration.test_command(runtime), message)
+              end
+            end
+          end
+        end
+
       end
 
       def status
@@ -58,6 +86,18 @@ module TestKitchen
         argv << platform if platform
         argv
       end
+
+      def execute_remote_command(vm, command, message=nil)
+          vm.ui.info(message, :color => :yellow) if message
+          vm.channel.execute(command, :error_check => false) do |type, data|
+            next if data =~ /stdin: is not a tty/
+            if [:stderr, :stdout].include?(type)
+              # Output the data with the proper color based on the stream.
+              color = type == :stdout ? :green : :red
+              vm.ui.info(data, :color => color, :prefix => false, :new_line => false)
+            end
+          end
+        end
     end
   end
 end
