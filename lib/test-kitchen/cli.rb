@@ -12,9 +12,9 @@ module TestKitchen
         :default => 'ubuntu-10.04',
         :description => "The platform to use.  If not specified tests will be run against all platforms."
 
-      option :project,
-        :long  => "--project PROJECT",
-        :description => "The project to test.  Defaults to all projects."
+      option :configuration,
+        :long  => "--configuration CONFIG",
+        :description => "The project configuraiton to test.  Defaults to all configurations."
 
       option :runner,
         :short => "-r RUNNER",

@@ -5,13 +5,13 @@ module TestKitchen
     class Base
 
       attr_accessor :platform
-      attr_accessor :project
+      attr_accessor :configuration
       attr_accessor :env
 
       def initialize(env, opts={})
         @env = env
         @platform = opts[:platform]
-        @project = opts[:project]
+        @configuration = opts[:configuration]
       end
 
       def provision
