@@ -105,14 +105,6 @@ module TestKitchen
       self
     end
 
-    def self.current
-      @@current
-    end
-
-    def self.current=(current)
-      @@current = current
-    end
-
     private
 
     # Inspired by Vagrant::Environment.find_vagrantfile...danke Mitchell!
