@@ -1,16 +1,23 @@
-require 'chef'
+
+require 'hashr'
+require 'test-kitchen/project'
+require 'test-kitchen/platform'
 
 module TestKitchen
   module DSL
 
     module BasicDSL
       def integration_test(name, &block)
-        Project.new(name, &block)
+        env.projects << Project.new(name.to_s, &block)
+      end
+
+      def platform(name, &block)
+        env.platforms[name.to_s] = Platform.new(name, &block)
       end
     end
     module CookbookDSL
       def cookbook(name, &block)
-        CookbookProject.new(name, &block)
+        env.projects << CookbookProject.new(name.to_s, &block)
       end
     end
 
@@ -18,7 +25,10 @@ module TestKitchen
       include BasicDSL
       include CookbookDSL
 
-      def load(path)
+      attr_reader :env
+
+      def load(path, env)
+        @env = env
         self.instance_eval(::File.read(path))
       end
     end

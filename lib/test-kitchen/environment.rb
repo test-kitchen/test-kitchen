@@ -57,15 +57,11 @@ module TestKitchen
     end
 
     def platforms
-      if platforms = config['platforms']
-        platforms
-      else
-        {}
-      end
+      @platforms ||= {}
     end
 
     def projects
-      @projects
+      @projects ||= []
     end
 
     def create_tmp_file(file_name, contents)
@@ -167,7 +163,7 @@ module TestKitchen
 
       kitchenfiles.flatten.each do |kitchenfile|
         dsl_file = DSL::File.new
-        projects << dsl_file.load(kitchenfile)
+        dsl_file.load(kitchenfile, self)
       end
     end
 
