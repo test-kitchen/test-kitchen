@@ -8,9 +8,9 @@ module TestKitchen
         banner "kitchen platform list (options)"
 
         def run
-          env.platforms.each_pair do |platform, versions|
-            versions.each_key do |version|
-              ui.info "  #{platform}-#{version}"
+          env.platforms.values.each do |platform|
+            platform.versions.values.each do |version|
+              ui.info "  #{platform.name}-#{version.name}"
             end
           end
         end
