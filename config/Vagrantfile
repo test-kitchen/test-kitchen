@@ -10,14 +10,10 @@ tk_config = tk_env.config
     vagrant_config_callbacks.each {|c| c.call(tk_config, vagrant_config) }
   end
 
-  tk_env.platforms.each_with_index do |platform_versions, index|
+  tk_env.platforms.values.each do |platform|
+    platform.versions.values.each do |version|
 
-    platform = platform_versions[0]
-    versions = platform_versions[1]
-
-    versions.each do |version, requested_config|
-
-      name = "#{platform}-#{version}"
+      name = "#{platform.name}-#{version.name}"
 
       vagrant_config.vm.define name do |vm_config|
 
@@ -35,8 +31,8 @@ tk_config = tk_env.config
         ]
 
         vm_config.vm.host_name = host_name
-        vm_config.vm.box = tk_env.platforms[platform][version]['box']
-        vm_config.vm.box_url = tk_env.platforms[platform][version]['box_url']
+        vm_config.vm.box = version.box
+        vm_config.vm.box_url = version.box_url
 
         # Enable SSH agent forwarding for git clones
         vm_config.ssh.forward_agent = true
