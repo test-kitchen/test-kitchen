@@ -21,5 +21,5 @@ Vagrant.config_keys.register(:tk) { TestKitchen::Vagrant::Config }
 Vagrant.commands.register(:tk) { TestKitchen::Vagrant::Command::Tk }
 
 # override built in `vagrant up`
-Vagrant.commands.register(:up) { TestKitchen::Vagrant::Command::Up }
+#Vagrant.commands.register(:up) { TestKitchen::Vagrant::Command::Up }
 

@@ -6,8 +6,10 @@ module TestKitchen
 
       attr_accessor :platform
       attr_accessor :project
+      attr_accessor :env
 
-      def initialize(opts={})
+      def initialize(env, opts={})
+        @env = env
         @platform = opts[:platform]
         @project = opts[:project]
       end

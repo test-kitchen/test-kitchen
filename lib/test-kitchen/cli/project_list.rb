@@ -8,8 +8,8 @@ module TestKitchen
         banner "kitchen project list (options)"
 
         def run
-          TestKitchen.projects.each do |project|
-            $stdout.puts "  #{project.name}"
+          env.projects.each do |project|
+            ui.info "  #{project.name}"
           end
         end
 

@@ -1,3 +1,5 @@
+require 'test-kitchen/environment'
+require 'test-kitchen/ui'
 require 'mixlib/cli'
 
 module TestKitchen
@@ -6,13 +8,11 @@ module TestKitchen
       include Mixlib::CLI
 
       option :platform,
-        #:short => "-p PLATFORM",
         :long  => "--platform PLATFORM",
         :default => 'ubuntu-10.04',
         :description => "The platform to use.  If not specified tests will be run against all platforms."
 
       option :project,
-        #:short => "-p PLATFORM",
         :long  => "--project PROJECT",
         :description => "The project to test.  Defaults to all projects."
 
@@ -31,6 +31,9 @@ module TestKitchen
         :show_options => true,
         :exit => 0
 
+      attr_accessor :env
+      attr_accessor :ui
+
       def run
         validate_and_parse_options
         quiet_traps
@@ -43,6 +46,8 @@ module TestKitchen
         $stderr.sync = true
         super()
         parse_options(argv)
+        @ui = TestKitchen::UI.new(STDOUT, STDERR, STDIN, {})
+        @env = TestKitchen::Environment.new(:ui => @ui)
       end
 
       # Class Methods
@@ -60,7 +65,7 @@ module TestKitchen
 
       def self.load_commands
         @commands_loaded ||= begin
-          if subcommand_files = Dir[File.join(TestKitchen.source_root, 'test-kitchen', 'cli', '*.rb')]
+          if subcommand_files = Dir[File.join(TestKitchen.source_root, 'lib', 'test-kitchen', 'cli', '*.rb')]
             subcommand_files.each { |subcommand| Kernel.load subcommand.to_s }
           end
           true
