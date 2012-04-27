@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency('foodcritic', '~> 1.2.0')
   s.add_dependency('hashr', '~> 0.0.20')
   s.add_dependency('mixlib-cli', '~> 1.2.2')
+  s.add_dependency('highline', '>= 1.6.9')
   s.add_dependency('vagrant', '~> 1.0.2')
   s.add_dependency('yajl-ruby', '~> 1.1.0')
   s.add_dependency('librarian', '~> 0.0.20')
