@@ -1,6 +1,5 @@
 require 'vagrant'
 require 'test-kitchen/environment'
-require 'test-kitchen/vagrant'
 
 module TestKitchen
   module Runner

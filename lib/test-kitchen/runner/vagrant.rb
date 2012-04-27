@@ -1,9 +1,18 @@
+require 'forwardable'
 require 'vagrant'
-require 'test-kitchen/vagrant'
+require 'vagrant/command/base'
 
 module TestKitchen
   module Runner
     class Vagrant < Base
+      extend ::Forwardable
+
+      def_delegator :@command_base, :with_target_vms
+
+      def initialize(env, opts={})
+        super
+        @command_base = ::Vagrant::Command::Base.new(nil, vagrant_env)
+      end
 
       def provision
         super
