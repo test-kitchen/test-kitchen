@@ -9,38 +9,27 @@ end
 # include_recipe 'travis_build_environment::root'
 # include_recipe 'travis_build_environment::non_privileged_user'
 # include_recipe 'git'
-# include_recipe 'test-kitchen::github'
 
-# projects = node['test-kitchen']['projects']
-# test_root = node['test-kitchen']['test_root']
+project = node['test-kitchen']['project']
+project_root = node['test-kitchen']['project_root']
+source_root = node['test-kitchen']['source_root']
+test_root = node['test-kitchen']['test_root']
 
-# directory test_root do
-#   action :create
-# end
-
-# opts['project_root'] = "#{test_root}/#{name}"
+execute "stage source in test root" do
+  command "rsync -aHv --update --progress --checksum #{source_root}/ #{test_root} "
+end
 
 # # make the project_root available to other recipes
-# node.run_state[:project_config] = opts
+# node.run_state[:project] = project
 
-# language = opts['language']
-
-# # check the code out
-# git name do
-#   destination opts['project_root']
-#   repository opts['repository']
-#   revision opts['revision'] || "master"
-#   user node.travis_build_environment.user
-#   group node.travis_build_environment.group
-#   action :sync
-# end
+# language = project['language']
 
 # # if a project specific recipe exists use it for additional setup
-# if recipe_for_project?(name)
+# if recipe_for_project?(project['name'])
 
-#   include_recipe "test-kitchen::#{name}"
+#   include_recipe "kitchen::#{name}"
 
 # end
 
-# # ensure projects declared langauge toolchain is present
+# # # ensure projects declared langauge toolchain is present
 # include_recipe "test-kitchen::#{language}"

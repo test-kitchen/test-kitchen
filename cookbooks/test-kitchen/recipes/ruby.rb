@@ -1,4 +1,4 @@
-# project_config = node.run_state[:project_config]
+project = node.run_state[:project]
 
 # node[:rvm][:rubies]       = [{ :name => "1.8.7" },
 #                              { :name => "1.9.2" }]
