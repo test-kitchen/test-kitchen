@@ -1,36 +1,55 @@
 project = node.run_state[:project]
 
-# node[:rvm][:rubies]       = [{ :name => "1.8.7" },
-#                              { :name => "1.9.2" }]
-# node[:rvm][:default]      = "1.9.2"
-# node[:rvm][:default_gems] = %w(bundler rake)
+node['rvm']['user_installs'] = [
+  { 'user' => node['test-kitchen']['user'] }
+]
 
-# include_recipe "rvm::multi"
+gemfile_path = File.join(project['test_root'], 'Gemfile')
 
-# rvm_versions = project_config['rvm'] || [ node[:rvm][:default] ]
+# TODO - remove this when test-kitchen is public
+ruby_block "remove test-kitchen entry in Gemfile" do
+  block do
+    require 'chef/util/file_edit'
+    fe = Chef::Util::FileEdit.new(gemfile_path)
+    fe.search_file_delete_line(/gem ['"]test-kitchen['"]/)
+    fe.write_file
+  end
+end
 
-# rvm_versions.each do |rvm_version|
+# ensure we blow away Gemfile.lock
+file "#{gemfile_path}.lock" do
+  action :delete
+end
 
-#   # TODO - make a 'test-kitchen_rvm_shell' LWRP for this
-#   bash "[#{rvm_version}] bundle for [#{project_config['project_root']}]" do
-#     code <<-CODE
-#       if [ -s "${HOME}/.rvm/scripts/rvm" ]; then
-#         source "${HOME}/.rvm/scripts/rvm"
-#       elif [ -s "/home/vagrant/.profile" ]; then
-#         source "/home/vagrant/.profile"
-#       fi
+include_recipe "rvm::user_install"
 
-#       rvm use #{rvm_version}
-#       #{project_config.key?('install') ?
-#         project_config['install'] : "bundle install"}
-#     CODE
-#     cwd project_config['project_root']
-#     user node.travis_build_environment.user
-#     group node.travis_build_environment.group
-#     environment ({
-#       'USER' => node.travis_build_environment.user,
-#       'HOME' => node.travis_build_environment.home
-#     })
-#   end
+project['runtimes'].each do |runtime|
 
-# end
+  rvm_ruby runtime do
+    user node['test-kitchen']['user']
+    action :install
+  end
+
+  # default gems
+  %w{ bundler rake }.each do |gem|
+    rvm_gem gem do
+      ruby_string runtime
+      user node['test-kitchen']['user']
+      action :install
+    end
+  end
+  puts "ROOT => #{project['test_root']}"
+  rvm_shell "[#{runtime}] bundle for [#{project['test_root']}]" do
+    ruby_string runtime
+    user node['test-kitchen']['user']
+    group node['test-kitchen']['group']
+    cwd project['test_root']
+    code project['install']
+  end
+
+end
+
+rvm_default_ruby '1.9.2' do
+  user node['test-kitchen']['user']
+  action :create
+end

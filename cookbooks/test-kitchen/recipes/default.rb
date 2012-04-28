@@ -6,21 +6,20 @@ when 'centos','redhat'
   include_recipe "yum::epel"
 end
 
-# include_recipe 'git'
+include_recipe 'git'
 
 project = node['test-kitchen']['project']
-project_root = node['test-kitchen']['project_root']
-source_root = node['test-kitchen']['source_root']
-test_root = node['test-kitchen']['test_root']
+source_root = project['source_root']
+test_root = project['test_root']
 
-execute "stage source in test root" do
+execute "stage project source to test root" do
   command "rsync -aHv --update --progress --checksum #{source_root}/ #{test_root} "
 end
 
-# # make the project_root available to other recipes
-# node.run_state[:project] = project
+# make the project_root available to other recipes
+node.run_state[:project] = project
 
-# language = project['language']
+language = project['language']
 
 # # if a project specific recipe exists use it for additional setup
 # if recipe_for_project?(project['name'])
@@ -29,5 +28,5 @@ end
 
 # end
 
-# # # ensure projects declared langauge toolchain is present
-# include_recipe "test-kitchen::#{language}"
+# ensure projects declared langauge toolchain is present
+include_recipe "test-kitchen::#{language}"

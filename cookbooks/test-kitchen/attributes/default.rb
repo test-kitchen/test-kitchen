@@ -1,4 +1,8 @@
 
-default['test-kitchen']['test_root'] = "/test-kitchen/test"
-default['test-kitchen']['source_root'] = "/test-kitchen/source"
-default['test-kitchen']['project'] = {}
+default['test-kitchen']['project'] = {
+  'test_root' => "/test-kitchen/test",
+  'source_root' => "/test-kitchen/source"
+}
+
+default['test-kitchen']['user'] = 'vagrant'
+default['test-kitchen']['group'] = 'vagrant'

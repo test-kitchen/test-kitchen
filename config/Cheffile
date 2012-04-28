@@ -8,7 +8,8 @@ cookbook 'yum', '0.5.2'
 cookbook 'build-essential', '1.0.0'
 cookbook 'git', '0.10.0'
 cookbook 'rvm',
-  :git => 'https://github.com/fnichol/chef-rvm.git', :ref => 'v0.8.6'
+  :git => 'https://github.com/fnichol/chef-rvm.git',
+  :ref => 'c27a8942ed311ccce2c63c2e863201b049c70a0d'
 cookbook 'test-kitchen',
   :path => TestKitchen.source_root.join('cookbooks', 'test-kitchen').to_s
 

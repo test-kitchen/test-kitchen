@@ -53,9 +53,10 @@ project = tk_env.project
         # default chef attribute json
         chef_json = {
             'test-kitchen' => {
-              'project' => project.to_hash,
-              'source_root' => project.guest_source_root,
-              'test_root' => project.guest_test_root
+              'project' => project.to_hash.merge(
+                'source_root' => project.guest_source_root,
+                'test_root' => project.guest_test_root
+              ),
             },
           }
 
