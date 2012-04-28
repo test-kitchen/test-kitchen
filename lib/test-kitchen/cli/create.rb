@@ -11,7 +11,7 @@ module TestKitchen
         def run
           options = {
             :platform => config[:platform],
-            :project => config[:project]
+            :configuration => config[:configuration]
           }
           runner = TestKitchen::Runner.targets[config[:runner]].new(env, options)
           runner.provision

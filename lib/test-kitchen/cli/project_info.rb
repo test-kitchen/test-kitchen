@@ -8,14 +8,15 @@ module TestKitchen
         banner "kitchen project info (options)"
 
         def run
-          ui.info("Project: #{env.project.name}", :green, :bold)
+          ui.info("Project: ", :green, :bold)
+          ui.info("  #{env.project.name}\n")
+          ui.info("Configurations: ", :yellow)
           if env.project.configurations.any?
-            ui.info("Configurations: ", :yellow)
             env.project.configurations.each do |config|
-              ui.info "  #{config.name}"
+              ui.info("  #{config.name}")
             end
           else
-            ui.info("")
+            ui.info("  default")
           end
         end
 
