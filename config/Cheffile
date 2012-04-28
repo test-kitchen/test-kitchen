@@ -11,9 +11,6 @@ cookbook 'rvm',
   :git => 'https://github.com/fnichol/chef-rvm.git', :ref => 'v0.8.6'
 cookbook 'test-kitchen',
   :path => TestKitchen.source_root.join('cookbooks', 'test-kitchen').to_s
-# TODO - this cookbook needs to go away
-cookbook 'travis_build_environment',
-  :path => TestKitchen.source_root.join('cookbooks', 'travis_build_environment').to_s
 
 # env = TestKitchen::Environment.new
 

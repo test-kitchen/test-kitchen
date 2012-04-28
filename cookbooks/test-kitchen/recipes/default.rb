@@ -6,8 +6,6 @@ when 'centos','redhat'
   include_recipe "yum::epel"
 end
 
-# include_recipe 'travis_build_environment::root'
-# include_recipe 'travis_build_environment::non_privileged_user'
 # include_recipe 'git'
 
 project = node['test-kitchen']['project']
