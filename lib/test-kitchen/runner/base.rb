@@ -8,10 +8,10 @@ module TestKitchen
       attr_accessor :configuration
       attr_accessor :env
 
-      def initialize(env, opts={})
+      def initialize(env, options={})
         @env = env
-        @platform = opts[:platform]
-        @configuration = opts[:configuration]
+        @platform = options[:platform]
+        @configuration = options[:configuration]
       end
 
       def provision
@@ -46,7 +46,7 @@ module TestKitchen
         env.create_tmp_file('Cheffile',
             IO.read(TestKitchen.source_root.join('config', 'Cheffile')))
 
-        env.ui.info("Installing required cookbooks into test-kitchen project tmp directory [#{env.tmp_path}].", :yellow)
+        env.ui.info("Assembling required cookbooks at [#{env.tmp_path.join('cookbooks')}].", :yellow)
 
         # The following is a programatic version of `librarian-chef install`
         Librarian::Action::Clean.new(librarian_env).run

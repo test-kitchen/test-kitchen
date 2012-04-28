@@ -23,27 +23,28 @@ module TestKitchen
         with_target_vms do |vm|
           if vm.created?
 
-            configurations = if config = options[:configuration]
-                [env.project.configurations{|p| p.name == config}]
-              elsif config = env.project.configurations
+            configurations = if configuration
+                [env.project.configurations.find{|p| p.name == configuration}]
+              elsif env.project.configurations.any?
                 env.project.configurations
               else
-                env.project
+                [env.project]
               end
 
             configurations.each do |configuration|
               runtimes = configuration.runtimes ||= env.project.runtimes
               runtimes.each do |runtime|
                 # sync source => test root
-                execute_command(vm, configuration.update_code_command)
+                message = "Syncronizing latest code from source root => test root."
+                execute_remote_command(vm, configuration.update_code_command, message)
                 # update dependencies
                 message = "Updating dependencies for [#{configuration.name}]"
                 message << " under [#{runtime}]" if runtime
-                execute_command(vm, configuration.install_command(runtime), message)
+                execute_remote_command(vm, configuration.install_command(runtime), message)
                 # run tests
                 message = "Running tests for [#{configuration.name}]"
                 message << " under [#{runtime}]" if runtime
-                execute_command(vm, configuration.test_command(runtime), message)
+                execute_remote_command(vm, configuration.test_command(runtime), message)
               end
             end
           end
