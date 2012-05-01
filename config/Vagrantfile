@@ -37,13 +37,25 @@ project = tk_env.project
 
         vm_config.vm.customize [
           "modifyvm", :id,
-          "--name", host_name,
-          "--memory", "512",
-          "--cpus", "1",
+           "--name", host_name,
+          "--memory", "256",
+          "--cpus", "2",
+          "--nictype1", "virtio",
+          "--nictype2", "virtio",
+	  "--audio", "none",
+          "--natdnsproxy1", "on",
           "--usb", "off",
-          "--usbehci", "off",
-          "--audio", "none",
-          "--natdnsproxy1", "on"
+          "--usbehci", "off"
+        ]
+
+        # Enable the host IO cache on the sata controller. Note that
+        # if this fails then its not a big deal, so we don't raise any
+        # errors. The Host IO cache vastly improves disk IO performance
+        # for VMs.
+        vm_config.vm.customize [
+          "storagectl", :id,
+          "--name", "SATA Controller",
+          "--hostiocache", "on"
         ]
 
         vm_config.vm.host_name = host_name
