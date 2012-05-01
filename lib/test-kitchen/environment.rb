@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+require 'fileutils'
 require 'hashr'
 require 'pathname'
 require 'yajl'
