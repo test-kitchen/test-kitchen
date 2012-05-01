@@ -25,6 +25,7 @@ when 'centos','redhat'
 end
 
 include_recipe 'git'
+include_recipe 'test-kitchen::compat'
 
 project = node['test-kitchen']['project']
 source_root = project['source_root']
@@ -43,5 +44,12 @@ node.run_state[:project] = project
 
 language = project['language'] || 'chef'
 
-# ensure projects declared language toolchain is present
+# if a project specific recipe exists use it for additional setup
+if recipe_for_project?(project['name'])
+
+  include_recipe "kitchen::#{name}"
+
+end
+
+# ensure projects declared langauge toolchain is present
 include_recipe "test-kitchen::#{language}"
