@@ -55,7 +55,7 @@ module TestKitchen
 
       def runtimes(arg=nil)
         set_or_return(:runtimes, arg, :default =>
-          if language == 'ruby'
+          if language == 'ruby' || language == 'chef'
             ['1.9.2']
           else
             []

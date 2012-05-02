@@ -23,7 +23,7 @@ end
 # make the project_root available to other recipes
 node.run_state[:project] = project
 
-language = project['language']
+language = project['language'] || 'chef'
 
 # # if a project specific recipe exists use it for additional setup
 # if recipe_for_project?(project['name'])
