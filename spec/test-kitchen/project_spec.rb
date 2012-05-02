@@ -61,12 +61,6 @@ module TestKitchen
           project.language = 'ruby'
           project.runtimes.must_equal ['1.9.2']
         end
-        it "returns the rvm runtime value if the language is ruby" do
-          project = Ruby.new('foo')
-          project.language = 'ruby'
-          project.rvm = ['1.9.3']
-          project.runtimes.must_equal ['1.9.3']
-        end
       end
     end
   end
