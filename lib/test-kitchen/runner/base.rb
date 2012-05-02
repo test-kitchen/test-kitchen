@@ -18,6 +18,17 @@ module TestKitchen
         assemble_cookbooks!
       end
 
+      def run_list
+        ['test-kitchen::default']
+      end
+
+      def preflight_check
+        if env.project.preflight_command
+          system(env.project.preflight_command)
+          exit $?.exitstatus unless $?.success?
+        end
+      end
+
       def test
         with_platforms do |platform|
            configurations = if configuration

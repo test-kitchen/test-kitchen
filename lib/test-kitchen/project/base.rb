@@ -99,6 +99,10 @@ module TestKitchen
         "rsync -aHv --update --progress --checksum #{guest_source_root}/ #{guest_test_root}"
       end
 
+      def preflight_command
+        nil
+      end
+
       def install_command(runtime=nil)
         raise NotImplementedError
       end

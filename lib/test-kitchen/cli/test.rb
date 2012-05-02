@@ -14,6 +14,7 @@ module TestKitchen
             :configuration => config[:configuration]
           }
           runner = TestKitchen::Runner.targets[env.project.runner].new(env, options)
+          runner.preflight_check
           runner.provision
           runner.test
         end

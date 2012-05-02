@@ -12,6 +12,14 @@ module TestKitchen
         "chef"
       end
 
+      def preflight_command(runtime = nil)
+        return nil unless lint
+        parent_dir = File.join(root_path, '..')
+        cmd = "knife cookbook test -o #{parent_dir} #{name}"
+        cmd << "&& foodcritic -f ~FC007 -f correctness #{root_path}"
+        cmd
+      end
+
       def install_command(runtime=nil)
         "sudo gem update --system; gem install bundler && #{cd} && #{path} bundle install"
       end
