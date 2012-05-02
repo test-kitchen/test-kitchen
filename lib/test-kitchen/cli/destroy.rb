@@ -14,7 +14,7 @@ module TestKitchen
             :configuration => config[:configuration]
           }
 
-          runner = TestKitchen::Runner.targets[config[:runner]].new(env, options)
+          runner = TestKitchen::Runner.targets[env.project.runner].new(env, options)
           runner.destroy
         end
 

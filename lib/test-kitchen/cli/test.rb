@@ -13,7 +13,8 @@ module TestKitchen
             :platform => config[:platform],
             :configuration => config[:configuration]
           }
-          runner = TestKitchen::Runner.targets[config[:runner]].new(env, options)
+          runner = TestKitchen::Runner.targets[env.project.runner].new(env, options)
+          runner.provision
           runner.test
         end
 

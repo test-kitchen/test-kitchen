@@ -9,7 +9,7 @@ module TestKitchen
         banner "kitchen status (options)"
 
         def run
-          runner = TestKitchen::Runner.targets[config[:runner]].new(env)
+          runner = TestKitchen::Runner.targets[env.project.runner].new(env)
           runner.status
         end
 

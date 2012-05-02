@@ -12,7 +12,7 @@ module TestKitchen
           options = {
             :platform => config[:platform],
           }
-          runner = TestKitchen::Runner.targets[config[:runner]].new(env, options)
+          runner = TestKitchen::Runner.targets[env.project.runner].new(env, options)
           runner.ssh
         end
 

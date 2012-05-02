@@ -49,6 +49,10 @@ module TestKitchen
         set_or_return(:run_list_extras, arg, :default => [])
       end
 
+      def runner(arg=nil)
+        set_or_return(:runner, arg, :default => 'lxc')
+      end
+
       def language(arg=nil)
         set_or_return(:language, arg, :default => 'ruby')
       end

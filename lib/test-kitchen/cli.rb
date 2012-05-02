@@ -10,16 +10,16 @@ module TestKitchen
       option :platform,
         :long  => "--platform PLATFORM",
         :default => 'ubuntu-10.04',
-        :description => "The platform to use.  If not specified tests will be run against all platforms."
+        :description => "The platform to use. If not specified tests will be run against all platforms."
 
       option :configuration,
         :long  => "--configuration CONFIG",
-        :description => "The project configuraiton to test.  Defaults to all configurations."
+        :description => "The project configuration to test. Defaults to all configurations."
 
       option :runner,
         :short => "-r RUNNER",
         :long => "--runner RUNNER",
-        :default => "vagrant",
+        :default => "lxc",
         :description => "The underlying virtualization platform to test with."
 
       option :help,
