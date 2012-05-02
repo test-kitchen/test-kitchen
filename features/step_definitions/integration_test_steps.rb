@@ -1,5 +1,5 @@
-Given 'a Chef cookbook' do
-  chef_cookbook
+Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
+  chef_cookbook(:malformed => ! syntax_errors.nil?)
 end
 
 Given 'a Ruby project that uses bundler to manage its dependencies' do
@@ -22,8 +22,8 @@ When /^I view command line help for the ([a-z]+) sub\-command$/ do |subcommand|
   command_help(subcommand)
 end
 
-Then 'an error indicating that there is a problem with the configuration will be shown' do
-  assert kitchenfile_error_shown?
+Then /^an error indicating that there is a problem with the (configuration|cookbook syntax) will be shown$/ do |error|
+  assert error == 'configuration' ? kitchenfile_error_shown? : syntax_error_shown?
 end
 
 Then 'each of the expected kitchen subcommands will be shown' do

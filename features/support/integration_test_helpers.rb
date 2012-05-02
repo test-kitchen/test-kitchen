@@ -3,10 +3,11 @@ module TestKitchen
   module Helpers
 
     # Setup a cookbook project that uses test-kitchen for integration testing
-    def chef_cookbook
+    def chef_cookbook(options = {})
       # TODO: Replace with a simple git clone when cookbook changes have been
       #       pushed.
       clone_and_merge_repositories
+      introduce_syntax_error if options[:malformed]
       add_gem_file
       add_test_setup_recipe
    end
@@ -66,6 +67,10 @@ module TestKitchen
       !! (all_output =~ /Your Kitchenfile could not be loaded. Please check it for errors./)
     end
 
+    def syntax_error_shown?
+      !! (all_output =~ %r{FATAL: Cookbook file recipes/default.rb has a ruby syntax error})
+    end
+
     def tests_run?
       !! (all_output =~ /failures/)
     end
@@ -78,6 +83,12 @@ module TestKitchen
       run_simple('git checkout 3ceb3d31ea20ea1fa0c7657871e9b3dd43c31804')
       run_simple('git clone git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
       run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
+    end
+
+    def introduce_syntax_error
+      append_to_file('recipes/default.rb', %q{
+        end # Bang!
+      })
     end
 
     def add_gem_file
