@@ -24,8 +24,8 @@ project = tk_env.project
 
         vm_config.vm.customize [
           "modifyvm", :id,
-           "--name", host_name,
-          "--memory", "256",
+          "--name", host_name,
+          "--memory", "512",
           "--cpus", "1",
           "--usb", "off",
           "--usbehci", "off",
