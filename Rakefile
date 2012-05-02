@@ -4,6 +4,8 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'cucumber/rake/task'
 
+task :default => [:test, :features]
+
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
 end
