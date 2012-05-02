@@ -12,6 +12,10 @@ project = node['test-kitchen']['project']
 source_root = project['source_root']
 test_root = project['test_root']
 
+package "rsync" do
+  action :install
+end
+
 execute "stage project source to test root" do
   command "rsync -aHv --update --progress --checksum #{source_root}/ #{test_root} "
 end
