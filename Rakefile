@@ -2,7 +2,12 @@
 require 'rubygems'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'cucumber/rake/task'
 
 Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
+end
+
+Cucumber::Rake::Task.new(:features) do |t|
+  t.cucumber_opts = ['-f', 'progress', 'features']
 end
