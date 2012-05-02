@@ -34,6 +34,10 @@ module TestKitchen
       attr_accessor :env
       attr_accessor :ui
 
+      def command_help?
+        ARGV.last == '--help'
+      end
+
       def run
         validate_and_parse_options
         quiet_traps
@@ -47,18 +51,22 @@ module TestKitchen
         super()
         parse_options(argv)
         @ui = TestKitchen::UI.new(STDOUT, STDERR, STDIN, {})
+
+        # TODO: Move this out of the constructor
+        load_environment unless command_help?
+      end
+
+      def load_environment
         @env = TestKitchen::Environment.new(:ui => @ui).tap{|e| e.load!}
       end
 
       # Class Methods
 
       def self.run(argv, options={})
-
         load_commands
         subcommand_class = Kitchen.subcommand_class_from(argv)
         subcommand_class.options = options.merge!(subcommand_class.options)
 
-        #subcommand_class.load_deps
         instance = subcommand_class.new(ARGV)
         instance.run
       end

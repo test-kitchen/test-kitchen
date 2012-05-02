@@ -29,7 +29,12 @@ module TestKitchen
 
       def load(path, env)
         @env = env
-        self.instance_eval(::File.read(path))
+        begin
+          self.instance_eval(::File.read(path))
+        rescue SyntaxError
+          env.ui.info('Your Kitchenfile could not be loaded. Please check it for errors.', :red)
+          raise
+        end
       end
     end
 
