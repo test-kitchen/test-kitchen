@@ -11,45 +11,13 @@ module TestKitchen
 
       def initialize(env, opts={})
         super
+        # TODO: We shouldn't do IO in the constructor
         @command_base = ::Vagrant::Command::Base.new(nil, vagrant_env)
       end
 
       def provision
         super
         vagrant_env.cli(vagrant_cli_argv('up'))
-      end
-
-      def test
-        with_target_vms do |vm|
-          if vm.created?
-
-            configurations = if configuration
-                [env.project.configurations.find{|p| p.name == configuration}]
-              elsif env.project.configurations.any?
-                env.project.configurations
-              else
-                [env.project]
-              end
-
-            configurations.each do |configuration|
-              runtimes = configuration.runtimes ||= env.project.runtimes
-              runtimes.each do |runtime|
-                # sync source => test root
-                message = "Syncronizing latest code from source root => test root."
-                execute_remote_command(vm, configuration.update_code_command, message)
-                # update dependencies
-                message = "Updating dependencies for [#{configuration.name}]"
-                message << " under [#{runtime}]" if runtime
-                execute_remote_command(vm, configuration.install_command(runtime), message)
-                # run tests
-                message = "Running tests for [#{configuration.name}]"
-                message << " under [#{runtime}]" if runtime
-                execute_remote_command(vm, configuration.test_command(runtime), message)
-              end
-            end
-          end
-        end
-
       end
 
       def status
@@ -62,6 +30,24 @@ module TestKitchen
 
       def ssh
         vagrant_env.cli(vagrant_cli_argv('ssh'))
+      end
+
+      def with_platforms
+        with_target_vms do |vm|
+          vm if vm.created?
+        end
+      end
+
+      def execute_remote_command(vm, command, message=nil)
+        vm.ui.info(message, :color => :yellow) if message
+        vm.channel.execute(command, :error_check => false) do |type, data|
+          next if data =~ /stdin: is not a tty/
+          if [:stderr, :stdout].include?(type)
+            # Output the data with the proper color based on the stream.
+            color = type == :stdout ? :green : :red
+            vm.ui.info(data, :color => color, :prefix => false, :new_line => false)
+          end
+        end
       end
 
       private
@@ -88,17 +74,6 @@ module TestKitchen
         argv
       end
 
-      def execute_remote_command(vm, command, message=nil)
-          vm.ui.info(message, :color => :yellow) if message
-          vm.channel.execute(command, :error_check => false) do |type, data|
-            next if data =~ /stdin: is not a tty/
-            if [:stderr, :stdout].include?(type)
-              # Output the data with the proper color based on the stream.
-              color = type == :stdout ? :green : :red
-              vm.ui.info(data, :color => color, :prefix => false, :new_line => false)
-            end
-          end
-        end
     end
   end
 end
