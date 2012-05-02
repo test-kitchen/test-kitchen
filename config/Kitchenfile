@@ -6,7 +6,7 @@ platform :ubuntu do
   end
   version '11.04' do
     box "opscode-ubuntu-11.04"
-    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-10.04.box"
+    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-11.04.box"
   end
 end
 
