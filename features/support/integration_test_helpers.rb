@@ -8,6 +8,8 @@ module TestKitchen
       #       pushed.
       clone_and_merge_repositories
       introduce_syntax_error if options[:malformed]
+      introduce_correctness_problem if options[:lint_problem] == :correctness
+      introduce_style_problem if options[:lint_problem] == :style
       add_gem_file
       add_test_setup_recipe
    end
@@ -67,12 +69,16 @@ module TestKitchen
       !! (all_output =~ /Your Kitchenfile could not be loaded. Please check it for errors./)
     end
 
+    def lint_correctness_error_shown?
+      !! (all_output =~ /Your cookbook had lint failures./)
+    end
+
     def syntax_error_shown?
       !! (all_output =~ %r{FATAL: Cookbook file recipes/default.rb has a ruby syntax error})
     end
 
     def tests_run?
-      !! (all_output =~ /failures/)
+      !! (all_output =~ /passed/)
     end
 
     private
@@ -88,6 +94,27 @@ module TestKitchen
     def introduce_syntax_error
       append_to_file('recipes/default.rb', %q{
         end # Bang!
+      })
+    end
+
+    def introduce_correctness_problem
+      append_to_file('recipes/default.rb', %q{
+        # This resource should trigger a FC006 warning
+        directory "/var/lib/foo" do
+          owner "root"
+          group "root"
+          mode 644
+          action :create
+        end
+      })
+    end
+
+    def introduce_style_problem
+      append_to_file('recipes/default.rb', %q{
+        path = "/var/lib/foo"
+        directory "#{path}" do
+          action :create
+        end
       })
     end
 

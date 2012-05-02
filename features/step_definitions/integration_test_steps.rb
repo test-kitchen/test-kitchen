@@ -2,6 +2,14 @@ Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
   chef_cookbook(:malformed => ! syntax_errors.nil?)
 end
 
+Given 'a Chef cookbook that would fail a lint tool correctness check' do
+  chef_cookbook(:lint_problem => :correctness)
+end
+
+Given 'a Chef cookbook that would be flagged as having only style warnings by the lint tool' do
+  chef_cookbook(:lint_problem => :style)
+end
+
 Given 'a Ruby project that uses bundler to manage its dependencies' do
   ruby_project
 end
@@ -26,6 +34,14 @@ Then /^an error indicating that there is a problem with the (configuration|cookb
   assert error == 'configuration' ? kitchenfile_error_shown? : syntax_error_shown?
 end
 
+Then /^an error indicating that there is a correctness problem with the cookbook will (not )?be shown$/ do |not_shown|
+  if not_shown
+    refute lint_correctness_error_shown?
+  else
+    assert lint_correctness_error_shown?
+  end
+end
+
 Then 'each of the expected kitchen subcommands will be shown' do
   assert_correct_subcommands_shown
 end
@@ -44,8 +60,8 @@ Then 'the available options will be shown with a brief description of each' do
   assert_option_present('-h, --help', 'Show this message')
 end
 
-Then 'the tests will have been run successfully' do
-  assert tests_run?
+Then /^the tests will have been run( successfully)?$/ do |successfully|
+  assert tests_run? if successfully
   # TODO: Assert that the test output shows tests success too
   last_exit_status.must_equal 0
 end

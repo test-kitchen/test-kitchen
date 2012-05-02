@@ -25,7 +25,10 @@ module TestKitchen
       def preflight_check
         if env.project.preflight_command
           system(env.project.preflight_command)
-          exit $?.exitstatus unless $?.success?
+          unless $?.success?
+            env.ui.info('Your cookbook had lint failures.', :red)
+            exit $?.exitstatus
+          end
         end
       end
 
