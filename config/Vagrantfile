@@ -68,7 +68,7 @@ project = tk_env.project
         vm_config.vm.provision :chef_solo do |chef|
           chef.provisioning_path = "/tmp/cache"
           chef.cookbooks_path = tk_env.cookbook_paths
-          chef.add_recipe "test-kitchen"
+          chef.run_list = project.run_list
           chef.json = chef_json
         end
 

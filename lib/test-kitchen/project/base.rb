@@ -38,6 +38,17 @@ module TestKitchen
         end
       end
 
+      def run_list
+        [case runner
+          when 'lxc' then 'test-kitchen::lxc'
+          else 'test-kitchen::default'
+        end]
+      end
+
+      def run_list_extras(arg=nil)
+        set_or_return(:run_list_extras, arg, :default => [])
+      end
+
       def language(arg=nil)
         set_or_return(:language, arg, :default => 'ruby')
       end
