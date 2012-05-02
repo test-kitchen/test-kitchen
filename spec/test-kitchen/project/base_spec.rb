@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
 require 'test-kitchen'
 
@@ -51,15 +51,6 @@ module TestKitchen
           project = Base.new('foo')
           project.language = 'erlang'
           project.runtimes.must_be_empty
-        end
-      end
-    end
-    describe Ruby do
-      describe "#runtimes" do
-        it "defaults to ruby 1.9.2 if the language is ruby" do
-          project = Ruby.new('foo')
-          project.language = 'ruby'
-          project.runtimes.must_equal ['1.9.2']
         end
       end
     end
