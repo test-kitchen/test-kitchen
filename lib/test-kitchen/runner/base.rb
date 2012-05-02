@@ -42,7 +42,7 @@ module TestKitchen
           configurations.each do |configuration|
             runtimes = configuration.runtimes ||= env.project.runtimes
             runtimes.each do |runtime|
-              message = "Syncronizing latest code from source root => test root."
+              message = "Synchronizing latest code from source root => test root."
               execute_remote_command(platform, configuration.update_code_command, message)
 
               message = "Updating dependencies for [#{configuration.name}]"
