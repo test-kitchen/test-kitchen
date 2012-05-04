@@ -14,7 +14,7 @@ module TestKitchen
       def initialize(name, &block)
         raise ArgumentError, "Project name must be specified" if name.nil? || name.empty?
         @name = name
-        @configurations = []
+        @configurations = {}
         @exclusions = []
         @guest_source_root = '/test-kitchen/source'
         @guest_test_root = '/test-kitchen/test'
@@ -23,17 +23,17 @@ module TestKitchen
 
       def each_build(platforms)
         raise ArgumentError if platforms.nil? || ! block_given?
-        platforms.to_a.product(configurations).each do |platform,configuration|
+        platforms.to_a.product(configurations.values).each do |platform,configuration|
           yield [platform, configuration]
         end
       end
 
       def configuration(name, &block)
-        @configurations << self.class.new(name, &block)
+        @configurations[name] = self.class.new(name, &block)
       end
 
       def configurations
-        @configurations.empty? ? [self] : @configurations
+        @configurations.empty? ? {:default => self} : @configurations
       end
 
       def exclude(exclusion)

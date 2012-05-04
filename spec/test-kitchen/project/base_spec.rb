@@ -74,7 +74,7 @@ module TestKitchen
         end
         it "returns a row for each platform if there is a single configuration" do
           project = Base.new('mysql')
-          project.configurations = ['server']
+          project.configurations = {'server' => 'server'}
           actual_matrix = []
           project.each_build(%w{ubuntu centos}) do |platform,configuration|
             actual_matrix << [platform, configuration]
@@ -86,7 +86,7 @@ module TestKitchen
         end
         it "returns the product of platforms * configurations" do
           project = Base.new('mysql')
-          project.configurations = ['client', 'server']
+          project.configurations = {'client' => 'client', 'server' => 'server'}
           actual_matrix = []
           project.each_build(%w{ubuntu centos}) do |platform,configuration|
             actual_matrix << [platform, configuration]

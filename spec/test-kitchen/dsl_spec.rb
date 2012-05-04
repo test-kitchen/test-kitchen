@@ -65,11 +65,10 @@ module TestKitchen::DSL
       end
       assert project.specs
       assert project.features
-      # TODO: This is a test smell
-      refute project.configurations.find{|c| c.name == 'client'}.specs
-      refute project.configurations.find{|c| c.name == 'client'}.features
-      assert project.configurations.find{|c| c.name == 'server'}.specs
-      assert project.configurations.find{|c| c.name == 'server'}.features
+      refute project.configurations['client'].specs
+      refute project.configurations['client'].features
+      assert project.configurations['server'].specs
+      assert project.configurations['server'].features
     end
   end
 
@@ -97,7 +96,7 @@ module TestKitchen::DSL
       dsl.cookbook('mysql') do
         configuration 'client'
         configuration 'server'
-      end.configurations.map(&:name).must_equal %w{client server}
+      end.configurations.values.map(&:name).must_equal %w{client server}
     end
     it "can specify exclusions" do
       dsl.cookbook('mysql') do
