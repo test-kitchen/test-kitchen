@@ -7,7 +7,7 @@ module TestKitchen
 
       PROJECT_ROOT_INDICATORS = ["Gemfile", "metadata.rb"]
 
-      attr_reader :name, :guest_source_root, :guest_test_root
+      attr_reader :name, :guest_source_root, :guest_test_root, :exclusions
       attr_writer :language, :runtimes, :install, :script, :configurations
       attr_accessor :vm
 
@@ -15,6 +15,7 @@ module TestKitchen
         raise ArgumentError, "Project name must be specified" if name.nil? || name.empty?
         @name = name
         @configurations = []
+        @exclusions = []
         @guest_source_root = '/test-kitchen/source'
         @guest_test_root = '/test-kitchen/test'
         instance_eval(&block) if block_given?
@@ -35,14 +36,8 @@ module TestKitchen
         @configurations.empty? ? [self] : @configurations
       end
 
-      def platforms
-        @platforms ||= []
-      end
-
       def exclude(exclusion)
-        if exclusion.key?(:platform)
-          platforms.delete(exclusion[:platform])
-        end
+        @exclusions << exclusion
       end
 
       def run_list
@@ -84,6 +79,14 @@ module TestKitchen
 
       def memory(arg=nil)
         set_or_return(:memory, arg, {})
+      end
+
+      def specs(arg=nil)
+        set_or_return(:specs, arg, {:default => true})
+      end
+
+      def features(arg=nil)
+        set_or_return(:specs, arg, {:default => true})
       end
 
       def root_path

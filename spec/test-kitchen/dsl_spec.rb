@@ -37,7 +37,24 @@ module TestKitchen::DSL
       end
       project.install.must_equal 'make install'
     end
-
+    it "defaults to running unit tests if available" do
+      assert(dsl.integration_test('private_chef') do
+      end.specs)
+    end
+    it "can prevent units tests from being run" do
+      refute(dsl.integration_test('private_chef') do
+        specs false
+      end.specs)
+    end
+    it "defaults to running cucumber features if available" do
+      assert(dsl.integration_test('private_chef') do
+      end.features)
+    end
+    it "can prevent cucumber features from being run" do
+      refute(dsl.integration_test('private_chef') do
+        features false
+      end.specs)
+    end
   end
 
   describe CookbookDSL do
@@ -52,18 +69,43 @@ module TestKitchen::DSL
         lint false
       end.lint)
     end
+    it "can specify arguments for the lint check" do
+      lint = dsl.cookbook('mysql') do
+        lint(:tags => %w{correctness style}, :include_rules => '/custom/rules')
+      end.lint
+      assert(lint)
+      lint[:tags].must_equal ['correctness', 'style']
+      lint[:include_rules].must_equal '/custom/rules'
+    end
     it "can specify configurations additively" do
       dsl.cookbook('mysql') do
         configuration 'client'
         configuration 'server'
       end.configurations.map(&:name).must_equal %w{client server}
     end
-    it "can specify exclusions additively" do
+    it "can specify exclusions" do
       dsl.cookbook('mysql') do
         configuration 'client'
         configuration 'server'
         exclude :platform => 'amazon'
-      end.platforms.wont_include 'amazon'
+      end.exclusions.must_equal([{:platform => 'amazon'}])
+    end
+    it "can specify configuration-specific exclusions" do
+      dsl.cookbook('mysql') do
+        configuration 'client'
+        configuration 'server'
+        exclude :platform => 'amazon', :configuration => 'server'
+      end.exclusions.must_equal([{:platform => 'amazon',
+        :configuration => 'server'}])
+    end
+    it "can specify exclusions additively" do
+      dsl.cookbook('mysql') do
+        configuration 'client'
+        configuration 'server'
+        exclude :platform => 'amazon', :configuration => 'server'
+        exclude :platform => 'freebsd'
+      end.exclusions.must_equal([{:platform => 'amazon',
+        :configuration => 'server'}, {:platform => 'freebsd'}])
     end
   end
 
