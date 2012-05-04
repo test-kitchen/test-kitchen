@@ -42,6 +42,7 @@ module TestKitchen
     end
 
     command, node_name = ARGV[0..1]
+    node_name = {'centos-6.2' => 'centos-6', 'ubuntu-11.04' => 'natty'}[node_name]
     container = Container.new
     case command
       when 'provision'

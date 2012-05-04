@@ -1,7 +1,5 @@
-toft_base_url = "http://dl.dropbox.com/u/43220259"
-
 remote_file "/tmp/toft.deb" do
-  source "#{toft_base_url}/toft-lxc_0.0.6_all.deb"
+  source "http://dl.dropbox.com/u/43220259/toft-lxc_0.0.6_all.deb"
   mode "0600"
 end
 
@@ -39,10 +37,11 @@ directory "/var/cache/lxc" do
   action :create
 end
 
-['natty', 'centos-6'].each do |container_image| # %w{lucid natty centos-6 lenny}
-  image_file = "#{container_image}-amd64.tar.gz"
-  remote_file "/var/cache/lxc/#{image_file}" do
-    source "#{toft_base_url}/#{image_file}"
+node['test-kitchen']['lxc-image-urls'].each_pair do |local_name, remote_image|
+  # Hack for mapping platform to template names
+  local_name = {'centos-6.2' => 'centos-6', 'ubuntu-11.04' => 'natty'}[local_name]
+  remote_file "/var/cache/lxc/#{local_name}-amd64.tar.gz" do
+    source remote_image
     action :create_if_missing
   end
 end
