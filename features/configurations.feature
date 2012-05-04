@@ -10,8 +10,8 @@ I want test my cookbook against multiple possible configurations that I define
      When I run the integration tests with test kitchen
      Then the test cookbook default recipe will be converged once for each platform
 
-  Scenario: Client and Server configurations
-    Given a Chef cookbook that defines integration tests two configurations (client and server)
+  Scenario: Client and server configurations
+    Given a Chef cookbook that defines integration tests for two configurations (client and server)
       And a supporting test cookbook that includes client and server recipes
      When I run the integration tests with test kitchen
      Then the test cookbook default recipe will not be converged

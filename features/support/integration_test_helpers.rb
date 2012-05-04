@@ -32,12 +32,12 @@ module TestKitchen
       }
     end
 
-    def converged?(platform)
+    def converged?(platform, recipe)
       provision_banner = 'Provisioning Linux Container: '
       converges = all_output.split(/#{Regexp.escape(provision_banner)}/)
       converges.any? do |converge|
         converge.start_with?(platform) &&
-          converge.match(/Run List is .*#{Regexp.escape('example_test::default')}/)
+          converge.match(/Run List is .*#{Regexp.escape("example_test::#{recipe}")}/)
       end
     end
 
@@ -95,13 +95,15 @@ module TestKitchen
           }
         when "cookbook"
           # TODO: Template this properly
-          config = %Q{cookbook "#{options[:name]}" do\n}
-          config << %Q{  configuration "default"\n}
-          if options[:name] == 'apache2'
-            config << %Q{run_list_extras ['apache2_test::setup']\n}
+          dsl = %Q{cookbook "#{options[:name]}" do\n}
+          options[:configurations].each do |configuration|
+            dsl << %Q{  configuration "#{configuration}"\n}
           end
-          config << 'end' unless options[:malformed]
-          write_file "#{options[:name]}/test/kitchen/Kitchenfile", config
+          if options[:name] == 'apache2'
+            dsl << %Q{run_list_extras ['apache2_test::setup']\n}
+          end
+          dsl << 'end' unless options[:malformed]
+          write_file "#{options[:name]}/test/kitchen/Kitchenfile", dsl
         else
           fail "Unrecognised project type: #{options[:project_type]}"
       end

@@ -7,6 +7,11 @@ Given 'a Chef cookbook that defines integration tests with no configurations spe
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
 end
 
+Given 'a Chef cookbook that defines integration tests for two configurations (client and server)' do
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.')
+  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => %w{client server})
+end
+
 Given 'a Chef cookbook that would fail a lint tool correctness check' do
   chef_cookbook(:lint_problem => :correctness, :type => :real_world)
 end
@@ -22,6 +27,13 @@ end
 Given 'a supporting test cookbook that includes a default recipe' do
   chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
   configuration_recipe('example', 'example_test', 'default')
+  cd 'example'
+end
+
+Given 'a supporting test cookbook that includes client and server recipes' do
+  chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
+  configuration_recipe('example', 'example_test', 'client')
+  configuration_recipe('example', 'example_test', 'server')
   cd 'example'
 end
 
@@ -79,10 +91,26 @@ Then 'the expected platforms will be available' do
   available_platforms.must_equal(["ubuntu-10.04", "ubuntu-11.04", "centos-5.7", "centos-6.2"])
 end
 
+Then 'the test cookbook client and server recipes will be converged once for each platform' do
+  expected_platforms.each do |platform|
+    %w{client server}.each do |recipe|
+      assert(converged?(platform, recipe),
+        "Expected platform '#{platform}' to have been converged with configuration recipe '#{recipe}'.")
+    end
+  end
+end
+
 Then 'the test cookbook default recipe will be converged once for each platform' do
   expected_platforms.each do |platform|
-    assert(converged?(platform),
+    assert(converged?(platform, 'default'),
       "Expected platform '#{platform}' to have been converged.")
+  end
+end
+
+Then 'the test cookbook default recipe will not be converged' do
+  expected_platforms.each do |platform|
+    refute(converged?(platform, 'default'),
+      "Expected default recipe not to have been converged.")
   end
 end
 
