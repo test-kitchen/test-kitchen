@@ -8,10 +8,8 @@ module TestKitchen
         banner "kitchen platform list (options)"
 
         def run
-          env.platforms.values.each do |platform|
-            platform.versions.values.each do |version|
-              ui.info "  #{platform.name}-#{version.name}"
-            end
+          env.platform_names.each do |platform|
+            ui.info "  #{platform}"
           end
         end
 

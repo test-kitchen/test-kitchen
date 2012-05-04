@@ -1,28 +1,10 @@
+Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
+  chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
+end
 
 Given 'a Chef cookbook that defines integration tests with no configurations specified' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.')
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
-end
-
-Given 'a supporting test cookbook that includes a default recipe' do
-  chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
-  configuration_recipe('example', 'example_test', 'default')
-  cd 'example'
-end
-
-Then 'the test cookbook default recipe will be converged once for each platform' do
-  require 'pry'
-  binding.pry
-  platforms.each do |platform|
-    test_configuration_converge_count('default', platform).must_equal 1
-  end
-end
-
-
-
-
-Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
-  chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
 end
 
 Given 'a Chef cookbook that would fail a lint tool correctness check' do
@@ -37,8 +19,18 @@ Given 'a Ruby project that uses bundler to manage its dependencies' do
   ruby_project
 end
 
+Given 'a supporting test cookbook that includes a default recipe' do
+  chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
+  configuration_recipe('example', 'example_test', 'default')
+  cd 'example'
+end
+
 Given /^the integration tests are defined in a (malformed )?Kitchenfile included with the (cookbook|project)$/ do |malformed, project_type|
   define_integration_tests(:malformed => malformed, :project_type => project_type)
+end
+
+When 'I list the platforms' do
+  list_platforms
 end
 
 When 'I run the integration tests with test kitchen' do
@@ -81,6 +73,16 @@ Then 'the available options will be shown with a brief description of each' do
   assert_option_present('-r, --runner RUNNER',
     'The underlying virtualization platform to test with.')
   assert_option_present('-h, --help', 'Show this message')
+end
+
+Then 'the expected platforms will be available' do
+  available_platforms.must_equal(["ubuntu-10.04", "ubuntu-11.04", "centos-5.7", "centos-6.2"])
+end
+
+Then 'the test cookbook default recipe will be converged once for each platform' do
+  platforms.each do |platform|
+    test_configuration_converge_count('default', platform).must_equal 1
+  end
 end
 
 Then /^the tests will have been run( successfully)?$/ do |successfully|

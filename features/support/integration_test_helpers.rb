@@ -2,10 +2,14 @@ module TestKitchen
 
   module Helpers
 
+    def available_platforms
+      @platforms
+    end
+
     def configuration_recipe(cookbook_name, test_cookbook, configuration)
       write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/#{configuration}.rb", %q{
         Chef::Log.info("This is a configuration recipe.")
-      } 
+      }
     end
 
     # Setup a cookbook project that uses test-kitchen for integration testing
@@ -15,23 +19,30 @@ module TestKitchen
         when :real_world
           clone_and_merge_repositories
           add_gem_file('apache2')
-          add_test_setup_recipe
+          add_test_setup_recipe('apache2', 'apache2_test')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
           add_gem_file(options[:name])
+          add_test_setup_recipe('example', 'example_test')
         else
           fail "Unknown type: #{options[:type]}"
       end
       introduce_syntax_error if options[:malformed]
       introduce_correctness_problem if options[:lint_problem] == :correctness
       introduce_style_problem if options[:lint_problem] == :style
-   end
+    end
+
+    def list_platforms
+      cd 'apache2'
+      run_simple(unescape("bundle exec kitchen platform list"))
+      @platforms = all_output.split("\n").map(&:lstrip)
+    end
 
     def ruby_project
       run_simple('git clone --quiet https://github.com/opscode/mixlib-shellout.git')
       cd('mixlib-shellout')
-      run_simple('git checkout 3a72a18a9151b160cea1e47f226fc45ba295ed8e') #Ok
-      #run_simple('git checkout d67c9a9494c74e6443262024d0e46e83df1af6c6') #Broken
+      run_simple('git checkout --quiet 3a72a18a9151b160cea1e47f226fc45ba295ed8e') #Ok
+      #run_simple('git checkout --quiet d67c9a9494c74e6443262024d0e46e83df1af6c6') #Broken
       write_file 'Gemfile', %q{
         source :rubygems
         gemspec :name => "mixlib-shellout"
@@ -109,8 +120,8 @@ module TestKitchen
     def clone_and_merge_repositories
       run_simple('git clone --quiet git://github.com/opscode-cookbooks/apache2.git')
       cd('apache2')
-      run_simple('git checkout 3ceb3d31ea20ea1fa0c7657871e9b3dd43c31804')
-      run_simple('git clone git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
+      run_simple('git checkout --quiet 3ceb3d31ea20ea1fa0c7657871e9b3dd43c31804')
+      run_simple('git clone --quiet git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
       run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
     end
 
@@ -157,8 +168,8 @@ module TestKitchen
       }
     end
 
-    def add_test_setup_recipe
-      write_file 'test/kitchen/cookbooks/apache2_test/recipes/setup.rb', %q{
+    def add_test_setup_recipe(cookbook_name, test_cookbook)
+      write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/setup.rb", %q{
         case node.platform
           when 'ubuntu'
             %w{libxml2 libxml2-dev libxslt1-dev}.each do |pkg|
