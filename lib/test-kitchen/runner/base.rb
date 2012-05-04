@@ -16,6 +16,7 @@ module TestKitchen
 
       def provision
         assemble_cookbooks!
+        check_test_recipes_present!
       end
 
       def destroy
@@ -86,6 +87,15 @@ module TestKitchen
         Librarian::Action::Clean.new(librarian_env).run
         Librarian::Action::Resolve.new(librarian_env).run
         Librarian::Action::Install.new(librarian_env).run
+      end
+
+      def check_test_recipes_present!
+        missing_recipes = env.project.missing_test_recipes(env.cookbook_paths)
+        unless missing_recipes.empty?
+          env.ui.info("Your project is missing a test recipe for configuration: " +
+            "#{missing_recipes.first}", :red)
+          exit $?.exitstatus
+        end
       end
 
       def librarian_env

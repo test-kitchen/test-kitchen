@@ -37,6 +37,12 @@ Given 'a supporting test cookbook that includes client and server recipes' do
   cd 'example'
 end
 
+Given /^a supporting test cookbook that includes only the server recipe$/ do
+  chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
+  configuration_recipe('example', 'example_test', 'server')
+  cd 'example'
+end
+
 Given /^the integration tests are defined in a (malformed )?Kitchenfile included with the (cookbook|project)$/ do |malformed, project_type|
   define_integration_tests(:malformed => malformed, :project_type => project_type)
 end
@@ -55,6 +61,10 @@ end
 
 When /^I view command line help for the ([a-z]+) sub\-command$/ do |subcommand|
   command_help(subcommand)
+end
+
+Then 'an error indicating that the client configuration does not have a matching recipe will be shown' do
+  assert missing_config_recipe_error_shown?('client')
 end
 
 Then /^an error indicating that there is a problem with the (configuration|cookbook syntax) will be shown$/ do |error|
@@ -111,6 +121,15 @@ Then 'the test cookbook default recipe will not be converged' do
   expected_platforms.each do |platform|
     refute(converged?(platform, 'default'),
       "Expected default recipe not to have been converged.")
+  end
+end
+
+Then /^the test cookbook default and server recipes will not be converged$/ do
+  expected_platforms.each do |platform|
+    %w{default server}.each do |recipe|
+      refute(converged?(platform, recipe),
+        "Expected #{recipe} recipe not to have been converged.")
+    end
   end
 end
 

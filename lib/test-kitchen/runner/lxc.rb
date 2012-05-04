@@ -24,8 +24,11 @@ module TestKitchen
       def provision
         nested_runner.provision
         nested_runner.with_target_vms(LXC_HOST) do |vm|
+          recipe_name = "#{env.project.name}_test::"
+          recipe_name += env.project.name == configuration.name ?
+            'default' : configuration.name
           nested_runner.execute_remote_command vm,
-            "sudo test-kitchen-lxc provision '#{platform}' '#{env.project.name}_test::#{configuration.name}'",
+            "sudo test-kitchen-lxc provision '#{platform}' '#{recipe_name}'",
             "Provisioning Linux Container: #{platform} [#{configuration.name}]"
         end
       end

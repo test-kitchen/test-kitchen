@@ -18,8 +18,8 @@ I want test my cookbook against multiple possible configurations that I define
       And the test cookbook client and server recipes will be converged once for each platform
 
   Scenario: Missing test cookbook recipe
-    Given a Chef cookbook that defines integration tests two configurations (client and server)
+    Given a Chef cookbook that defines integration tests for two configurations (client and server)
       And a supporting test cookbook that includes only the server recipe
      When I run the integration tests with test kitchen
      Then the test cookbook default and server recipes will not be converged
-      And an error will be displayed that the client configuration does not have a matching recipe
+      And an error indicating that the client configuration does not have a matching recipe will be shown
