@@ -53,7 +53,23 @@ module TestKitchen::DSL
     it "can prevent cucumber features from being run" do
       refute(dsl.integration_test('private_chef') do
         features false
-      end.specs)
+      end.features)
+    end
+    it "allows tests to be selectively disabled for individual configurations" do
+      project = dsl.integration_test('private_chef') do
+        configuration "client" do
+          specs false
+          features false
+        end
+        configuration "server"
+      end
+      assert project.specs
+      assert project.features
+      # TODO: This is a test smell
+      refute project.configurations.find{|c| c.name == 'client'}.specs
+      refute project.configurations.find{|c| c.name == 'client'}.features
+      assert project.configurations.find{|c| c.name == 'server'}.specs
+      assert project.configurations.find{|c| c.name == 'server'}.features
     end
   end
 

@@ -28,8 +28,8 @@ module TestKitchen
         end
       end
 
-      def configuration(name)
-        @configurations << self.class.new(name)
+      def configuration(name, &block)
+        @configurations << self.class.new(name, &block)
       end
 
       def configurations
@@ -86,7 +86,7 @@ module TestKitchen
       end
 
       def features(arg=nil)
-        set_or_return(:specs, arg, {:default => true})
+        set_or_return(:features, arg, {:default => true})
       end
 
       def root_path
