@@ -24,7 +24,10 @@ module TestKitchen
       def each_build(platforms)
         raise ArgumentError if platforms.nil? || ! block_given?
         platforms.to_a.product(configurations.values).each do |platform,configuration|
-          yield [platform, configuration]
+          yield [platform, configuration] unless exclusions.any? do |e|
+            e[:platform] == platform &&
+              ((! e[:configuration]) || e[:configuration] == configuration)
+          end
         end
       end
 
