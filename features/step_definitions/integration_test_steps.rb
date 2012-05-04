@@ -1,13 +1,36 @@
+
+Given 'a Chef cookbook that defines integration tests with no configurations specified' do
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.')
+  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
+end
+
+Given 'a supporting test cookbook that includes a default recipe' do
+  chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
+  configuration_recipe('example', 'example_test', 'default')
+  cd 'example'
+end
+
+Then 'the test cookbook default recipe will be converged once for each platform' do
+  require 'pry'
+  binding.pry
+  platforms.each do |platform|
+    test_configuration_converge_count('default', platform).must_equal 1
+  end
+end
+
+
+
+
 Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
-  chef_cookbook(:malformed => ! syntax_errors.nil?)
+  chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
 end
 
 Given 'a Chef cookbook that would fail a lint tool correctness check' do
-  chef_cookbook(:lint_problem => :correctness)
+  chef_cookbook(:lint_problem => :correctness, :type => :real_world)
 end
 
 Given 'a Chef cookbook that would be flagged as having only style warnings by the lint tool' do
-  chef_cookbook(:lint_problem => :style)
+  chef_cookbook(:lint_problem => :style, :type => :real_world)
 end
 
 Given 'a Ruby project that uses bundler to manage its dependencies' do

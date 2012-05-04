@@ -2,16 +2,29 @@ module TestKitchen
 
   module Helpers
 
+    def configuration_recipe(cookbook_name, test_cookbook, configuration)
+      write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/#{configuration}.rb", %q{
+        Chef::Log.info("This is a configuration recipe.")
+      } 
+    end
+
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
-      # TODO: Replace with a simple git clone when cookbook changes have been
-      #       pushed.
-      clone_and_merge_repositories
+      options = {:type => :real_world}.merge(options)
+      case options[:type]
+        when :real_world
+          clone_and_merge_repositories
+          add_gem_file('apache2')
+          add_test_setup_recipe
+        when :newly_generated
+          generate_new_cookbook(options[:name], options[:path])
+          add_gem_file(options[:name])
+        else
+          fail "Unknown type: #{options[:type]}"
+      end
       introduce_syntax_error if options[:malformed]
       introduce_correctness_problem if options[:lint_problem] == :correctness
       introduce_style_problem if options[:lint_problem] == :style
-      add_gem_file
-      add_test_setup_recipe
    end
 
     def ruby_project
@@ -38,10 +51,16 @@ module TestKitchen
       }
     end
 
-    def define_integration_tests(options)
+    def define_integration_tests(options={})
+      options = {
+        :project_type => 'cookbook',
+        :name => 'apache2',
+        :configurations => []
+      }.merge(options)
+
       case options[:project_type]
         when "project"
-          write_file 'Kitchenfile', %Q{
+          write_file "#{File.join(options[:name], 'Kitchenfile')}", %Q{
             integration_test "mixlib-shellout" do
               language 'ruby'
               runner 'vagrant'
@@ -51,12 +70,16 @@ module TestKitchen
             #{'end' unless options[:malformed]}
           }
         when "cookbook"
-          write_file 'test/kitchen/Kitchenfile', %Q{
-            cookbook "apache2" do
-              configuration "default"
-              run_list_extras ['apache2_test::setup']
-            #{'end' unless options[:malformed]}
-          }
+          # TODO: Template this properly
+          config = %Q{cookbook "#{options[:name]}" do\n}
+          config << %Q{  configuration "default"\n}
+          if options[:name] == 'apache2'
+            config << %Q{run_list_extras ['apache2_test::setup']\n}
+          end
+          config << 'end' unless options[:malformed]
+          write_file "#{options[:name]}/test/kitchen/Kitchenfile", config
+        else
+          fail "Unrecognised project type: #{options[:project_type]}"
       end
     end
 
@@ -118,14 +141,13 @@ module TestKitchen
       })
     end
 
-    def add_gem_file
-      write_file 'test/Gemfile', %q{
+    def add_gem_file(cookbook_name)
+      gems = %w{cucumber minitest}
+      gems += %w{nokogiri httparty} if cookbook_name == 'apache2'
+      write_file "#{cookbook_name}/test/Gemfile", %Q{
         source :rubygems
 
-        gem "cucumber"
-        gem "httparty"
-        gem "minitest"
-        gem "nokogiri"
+        #{gems.map{|g| "gem '#{g}'"}.join("\n")}
 
         group(:kitchen) do
            # needed until Chef 0.10.10 ships
@@ -189,6 +211,10 @@ module TestKitchen
 
       def expected_subcommands
         %w{destroy init platform project ssh status test}
+      end
+
+      def generate_new_cookbook(name, path)
+        run_simple("knife cookbook create -o #{path} #{name}")
       end
 
       def option_flags
