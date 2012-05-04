@@ -8,7 +8,7 @@ module TestKitchen
       PROJECT_ROOT_INDICATORS = ["Gemfile", "metadata.rb"]
 
       attr_reader :name, :guest_source_root, :guest_test_root
-      attr_writer :language, :runtimes, :install, :script
+      attr_writer :language, :runtimes, :install, :script, :configurations
       attr_accessor :vm
 
       def initialize(name, &block)

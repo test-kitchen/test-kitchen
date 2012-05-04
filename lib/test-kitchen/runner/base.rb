@@ -64,10 +64,6 @@ module TestKitchen
         raise NotImplementedError
       end
 
-      def with_platforms
-        raise NotImplementedError
-      end
-
       def execute_remote_command(platform, command, mesage=nil)
         raise NotImplementedError
       end

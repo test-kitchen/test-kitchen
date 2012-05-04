@@ -32,12 +32,6 @@ module TestKitchen
         vagrant_env.cli(vagrant_cli_argv('ssh'))
       end
 
-      def with_platforms
-        with_target_vms do |vm|
-          vm if vm.created?
-        end
-      end
-
       def execute_remote_command(vm, command, message=nil)
         vm.ui.info(message, :color => :yellow) if message
         vm.channel.execute(command, :error_check => false) do |type, data|

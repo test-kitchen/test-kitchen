@@ -23,9 +23,9 @@ module TestKitchen
       def provision
         nested_runner.provision
         nested_runner.with_target_vms(LXC_HOST) do |vm|
-          with_platforms do |platform|
-            nested_runner.execute_remote_command vm, "sudo test-kitchen-lxc provision '#{platform}'", 'Provisioning Linux Container'
-          end
+          nested_runner.execute_remote_command vm,
+            "sudo test-kitchen-lxc provision '#{platform}' '#{env.project.name}_test::#{configuration.name}'",
+            'Provisioning Linux Container'
         end
       end
 
@@ -50,12 +50,6 @@ module TestKitchen
       def ssh
         # TODO: SSH to the correct host
         nested_runner.ssh
-      end
-
-      def with_platforms
-        ['centos-6', 'natty'].each do |platform|
-          yield platform
-        end
       end
 
       def execute_remote_command(node, command, message=nil)
