@@ -96,5 +96,18 @@ module TestKitchen
     def self.targets
       @@targets ||= {}
     end
+
+    def self.for_platform(env, options)
+      desired_platform = env.all_platforms[options[:platform]]
+      runner = if desired_platform.lxc_url
+        'lxc'
+      elsif desired_platform.box_url
+        'vagrant'
+      else
+        raise ArgumentError,
+          "No runner available for platform: #{desired_platform.name}"
+      end
+      TestKitchen::Runner.targets[runner].new(env, options)
+    end
   end
 end

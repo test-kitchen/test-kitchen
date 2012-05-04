@@ -63,6 +63,16 @@ module TestKitchen
       @platforms ||= {}
     end
 
+    def all_platforms
+      Hash[*platforms.values.map do |p|
+        p.versions.map{|key,value| ["#{p.name}-#{key}", value]}
+      end.flatten]
+    end
+
+    def platform_names
+      all_platforms.keys
+    end
+
     def create_tmp_file(file_name, contents)
       File.open(tmp_path.join(file_name), 'w') do |f|
         f.write(contents)
