@@ -51,16 +51,10 @@ execute "lxc-prepare-host" do
   action :run
 end
 
-lxc_run_list = ['test-kitchen::default']
-lxc_run_list << "test-kitchen::#{node['test-kitchen']['project']['language'] || 'chef'}"
-
 project = node['test-kitchen']['project']
-lxc_run_list << "#{project['name']}::default"
-
-if node['test-kitchen']['project']['run_list_extras']
-  lxc_run_list << node['test-kitchen']['project']['run_list_extras']
-end
-
+lxc_run_list = ['test-kitchen::default']
+lxc_run_list << "test-kitchen::#{project['language'] || 'chef'}"
+lxc_run_list << project['run_list_extras'] if project['run_list_extras']
 
 template "/usr/bin/test-kitchen-lxc" do
   variables({
