@@ -20,12 +20,19 @@ module TestKitchen
         instance_eval(&block) if block_given?
       end
 
+      def each_build(platforms)
+        raise ArgumentError if platforms.nil? || ! block_given?
+        platforms.to_a.product(configurations).each do |platform,configuration|
+          yield [platform, configuration]
+        end
+      end
+
       def configuration(name)
         @configurations << self.class.new(name)
       end
 
       def configurations
-        @configurations
+        @configurations.empty? ? [self] : @configurations
       end
 
       def platforms

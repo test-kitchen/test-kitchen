@@ -33,30 +33,18 @@ module TestKitchen
       end
 
       def test
-        with_platforms do |platform|
-           configurations = if configuration
-            [env.project.configurations.find{|p| p.name == configuration}]
-          elsif env.project.configurations.any?
-            env.project.configurations
-          else
-            [env.project]
-          end
+        runtimes = configuration.runtimes
+        runtimes.each do |runtime|
+          message = "Synchronizing latest code from source root => test root."
+          execute_remote_command(platform, configuration.update_code_command, message)
 
-          configurations.each do |configuration|
-            runtimes = configuration.runtimes ||= env.project.runtimes
-            runtimes.each do |runtime|
-              message = "Synchronizing latest code from source root => test root."
-              execute_remote_command(platform, configuration.update_code_command, message)
+          message = "Updating dependencies for [#{configuration.name}]"
+          message << " under [#{runtime}]" if runtime
+          execute_remote_command(platform, configuration.install_command(runtime), message)
 
-              message = "Updating dependencies for [#{configuration.name}]"
-              message << " under [#{runtime}]" if runtime
-              execute_remote_command(platform, configuration.install_command(runtime), message)
-
-              message = "Running tests for [#{configuration.name}]"
-              message << " under [#{runtime}]" if runtime
-              execute_remote_command(platform, configuration.test_command(runtime), message)
-            end
-          end
+          message = "Running tests for [#{configuration.name}]"
+          message << " under [#{runtime}]" if runtime
+          execute_remote_command(platform, configuration.test_command(runtime), message)
         end
       end
 
