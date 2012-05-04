@@ -18,6 +18,10 @@ module TestKitchen
         assemble_cookbooks!
       end
 
+      def destroy
+        raise NotImplementedError
+      end
+
       def run_list
         ['test-kitchen::default']
       end

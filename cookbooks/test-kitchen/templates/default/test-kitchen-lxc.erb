@@ -52,8 +52,9 @@ module TestKitchen
         ssh_cmd = ARGV[2]
         node = container.create_node(node_name, {:type => node_name})
         node.run_ssh ssh_cmd
+      when 'destroy'
+        node = container.create_node(node_name, {:type => node_name})
+        node.destroy
       end
-    #node.destroy
-
   end
 end
