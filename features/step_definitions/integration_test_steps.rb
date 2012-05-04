@@ -80,8 +80,9 @@ Then 'the expected platforms will be available' do
 end
 
 Then 'the test cookbook default recipe will be converged once for each platform' do
-  platforms.each do |platform|
-    test_configuration_converge_count('default', platform).must_equal 1
+  expected_platforms.each do |platform|
+    assert(converged?(platform),
+      "Expected platform '#{platform}' to have been converged.")
   end
 end
 

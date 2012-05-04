@@ -6,12 +6,6 @@ module TestKitchen
       @platforms
     end
 
-    def configuration_recipe(cookbook_name, test_cookbook, configuration)
-      write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/#{configuration}.rb", %q{
-        Chef::Log.info("This is a configuration recipe.")
-      }
-    end
-
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
       options = {:type => :real_world}.merge(options)
@@ -30,6 +24,25 @@ module TestKitchen
       introduce_syntax_error if options[:malformed]
       introduce_correctness_problem if options[:lint_problem] == :correctness
       introduce_style_problem if options[:lint_problem] == :style
+    end
+
+    def configuration_recipe(cookbook_name, test_cookbook, configuration)
+      write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/#{configuration}.rb", %q{
+        Chef::Log.info("This is a configuration recipe.")
+      }
+    end
+
+    def converged?(platform)
+      provision_banner = 'Provisioning Linux Container: '
+      converges = all_output.split(/#{Regexp.escape(provision_banner)}/)
+      converges.any? do |converge|
+        converge.start_with?(platform) &&
+          converge.match(/Run List is .*#{Regexp.escape('example_test::default')}/)
+      end
+    end
+
+    def expected_platforms
+      ['ubuntu-11.04', 'centos-6.2']
     end
 
     def list_platforms

@@ -4,13 +4,11 @@ In order to be able to test the full range of deployment options
 As a developer
 I want test my cookbook against multiple possible configurations that I define
 
-  @wip
-  @announce
   Scenario: No configurations
     Given a Chef cookbook that defines integration tests with no configurations specified
       And a supporting test cookbook that includes a default recipe
-#     When I run the integration tests with test kitchen
-#     Then the test cookbook default recipe will be converged once for each platform
+     When I run the integration tests with test kitchen
+     Then the test cookbook default recipe will be converged once for each platform
 
   Scenario: Client and Server configurations
     Given a Chef cookbook that defines integration tests two configurations (client and server)
