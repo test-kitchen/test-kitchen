@@ -25,7 +25,7 @@ module TestKitchen
       end
 
       def test_command(runtime=nil)
-        "#{cd} && #{path} bundle exec cucumber -t @#{name} features"
+        %q{#{cd} && if [ -d "features" ]; then #{path} bundle exec cucumber -t @#{name} features; fi}
       end
 
       private
