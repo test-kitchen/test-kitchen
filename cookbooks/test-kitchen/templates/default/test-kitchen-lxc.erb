@@ -27,14 +27,16 @@ module TestKitchen
         node.run_ssh "id -u #{user_name} &>/dev/null || useradd -U -m #{user_name}"
       end
 
-      def provision(node_name, json_path)
+      def provision(node_name, json_path, configuration_recipe)
         node = create_node(node_name, {:type => node_name})
         add_project_mount(node_name)
         node.start
         puts node.ip
         add_user(node, '<%= @test_user %>')
         node.run_ssh 'mkdir -p /tmp/chef-file-cache'
-        node.run_chef <%= @run_list %>, {:json => json_path}
+        run_list = <%= @run_list %>
+        run_list += [configuration_recipe]
+        node.run_chef run_list, {:json => json_path}
       end
 
     end
@@ -43,8 +45,9 @@ module TestKitchen
     container = Container.new
     case command
       when 'provision'
+        configuration_recipe = ARGV[2]
         container.remove_run_list('/vagrant/.cache/dna.json', '/vagrant/.cache/lxc-dna.json')
-        container.provision(node_name, '/vagrant/.cache/lxc-dna.json')
+        container.provision(node_name, '/vagrant/.cache/lxc-dna.json', configuration_recipe)
       when 'run'
         ssh_cmd = ARGV[2]
         node = container.create_node(node_name, {:type => node_name})
