@@ -10,6 +10,7 @@ module TestKitchen
 
       def initialize(env, options={})
         super
+        raise_unless_host_box_available
         @env, @options = env, options
       end
 
@@ -55,6 +56,15 @@ module TestKitchen
       def execute_remote_command(node, command, message=nil)
         nested_runner.with_target_vms(LXC_HOST) do |vm|
           nested_runner.execute_remote_command(vm, "sudo test-kitchen-lxc run '#{node}' '#{command}'", message)
+        end
+      end
+
+      private
+
+      def raise_unless_host_box_available
+        distro_name, distro_version = NATTY.split('-')
+        unless env.platforms[distro_name] and env.platforms[distro_name].versions[distro_version]
+          raise ArgumentError, "LXC host box '#{NATTY}' is not available"
         end
       end
 
