@@ -16,6 +16,8 @@ cookbook 'test-kitchen',
 env = TestKitchen::Environment.new
 
 # include user-provided cookbooks
-env.root_path.join('cookbooks').children.select(&:directory?).each do |c|
-  cookbook c.basename.to_s, :path => env.root_path.join('cookbooks', c.basename.to_s).to_s
+if env.root_path.join('cookbooks').exist?
+  env.root_path.join('cookbooks').children.select(&:directory?).each do |c|
+    cookbook c.basename.to_s, :path => env.root_path.join('cookbooks', c.basename.to_s).to_s
+  end
 end
