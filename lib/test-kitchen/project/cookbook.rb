@@ -40,6 +40,12 @@ module TestKitchen
           File.read(File.join(root_path, 'metadata.rb')))
       end
 
+      def non_buildable_platforms(platform_names)
+        supported_platforms.sort - platform_names.map do |platform|
+          platform.split('-').first
+        end.sort.uniq
+      end
+
       def each_build(platforms, &block)
         if supported_platforms.empty?
           super(platforms, &block)

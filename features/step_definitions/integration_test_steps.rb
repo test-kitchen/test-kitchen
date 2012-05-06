@@ -2,9 +2,23 @@ Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
   chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
 end
 
-Given 'a Chef cookbook that defines a set of supported platforms literally in its metadata' do
+Given 'a Chef cookbook that does not define a set of supported platforms in its metadata' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
-                :setup => false, :supports => "supports 'ubuntu'")
+                :setup => false)
+  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
+  cd 'example'
+end
+
+Given 'a Chef cookbook that defines several supported platforms, one of which is not recognised' do
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
+                :setup => false, :supports_type => :includes_unrecognised)
+  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
+  cd 'example'
+end
+
+Given /^a Chef cookbook that defines a set of supported platforms (literally|as a wordlist) in its metadata$/ do |supports_type|
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
+                :setup => false, :supports_type => supports_type == 'literally' ? :literal : :wordlist)
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
   cd 'example'
 end
@@ -70,6 +84,14 @@ When /^I view command line help for the ([a-z]+) sub\-command$/ do |subcommand|
   command_help(subcommand)
 end
 
+Then 'a warning will be displayed for the unrecognised platform' do
+  assert unrecognised_platform_warning_shown?('beos')
+end
+
+Then /^all (?:recognised )?platforms will be tested against$/ do
+  assert_only_platforms_converged(['centos', 'ubuntu'])
+end
+
 Then 'an error indicating that the client configuration does not have a matching recipe will be shown' do
   assert missing_config_recipe_error_shown?('client')
 end
@@ -90,16 +112,8 @@ Then 'each of the expected kitchen subcommands will be shown' do
   assert_correct_subcommands_shown
 end
 
-Then 'only the platforms specified in the metadata will be tested against' do
-  expected_platforms.each do |platform|
-    if platform.start_with?('ubuntu-')
-      assert(converged?(platform, 'default'),
-        "Expected platform '#{platform}' to have been converged.")
-    else
-      refute(converged?(platform, 'default'),
-        "Expected platform '#{platform}' not to have been converged.")
-    end
-  end
+Then /^only the platforms specified in the metadata (wordlist )?will be tested against$/ do |wordlist|
+  assert_only_platforms_converged(wordlist ? ['centos', 'ubuntu'] : ['ubuntu'])
 end
 
 Then 'the available options will be shown with a brief description of each' do

@@ -14,8 +14,7 @@ module TestKitchen
           #  :platform => config[:platform],
           #  :configuration => config[:configuration]
           #}
-          # TODO: Derive platforms from cookbook metadata
-
+          warn_for_non_buildable_platforms(env.platform_names)
           env.project.each_build(env.platform_names) do |platform,configuration|
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
@@ -31,6 +30,16 @@ module TestKitchen
               runner.test
             ensure
               runner.destroy
+            end
+          end
+        end
+
+        private
+
+        def warn_for_non_buildable_platforms(platform_names)
+          if env.project.respond_to?(:non_buildable_platforms)
+            env.project.non_buildable_platforms(platform_names).each do |platform|
+              env.ui.info("Cookbook metadata specifies an unrecognised platform that will not be tested: #{platform}", :red)
             end
           end
         end

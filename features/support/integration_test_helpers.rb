@@ -6,6 +6,18 @@ module TestKitchen
       @platforms
     end
 
+    def assert_only_platforms_converged(platform_prefixes)
+      expected_platforms.each do |platform|
+        if platform_prefixes.any?{|p| platform.start_with?("#{p}-")}
+          assert(converged?(platform, 'default'),
+            "Expected platform '#{platform}' to have been converged.")
+        else
+          refute(converged?(platform, 'default'),
+            "Expected platform '#{platform}' not to have been converged.")
+        end
+      end
+    end
+
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
       options = {:type => :real_world, :setup => true}.merge(options)
@@ -16,7 +28,7 @@ module TestKitchen
           add_test_setup_recipe('apache2', 'apache2_test')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
-          add_platform_metadata('example', options[:supports]) if options[:supports]
+          add_platform_metadata('example', options[:supports_type]) if options[:supports_type]
           add_gem_file(options[:name])
           add_test_setup_recipe('example', 'example_test') if options[:setup]
         else
@@ -135,6 +147,10 @@ module TestKitchen
       !! (all_output =~ /passed/)
     end
 
+    def unrecognised_platform_warning_shown?(platform_name)
+      !! (all_output =~ %r{Cookbook metadata specifies an unrecognised platform that will not be tested: #{Regexp.escape(platform_name)}})
+    end
+
     private
 
     def clone_and_merge_repositories
@@ -188,7 +204,21 @@ module TestKitchen
       }
     end
 
-    def add_platform_metadata(cookbook_name, supports)
+    def add_platform_metadata(cookbook_name, supports_type)
+      supports = case supports_type
+        when :literal then "supports 'ubuntu'"
+        when :wordlist then %q{
+          %w{ubuntu centos}.each do |os|
+            supports os
+          end
+        }
+        when :includes_unrecognised then %q{
+          %w{ubuntu beos centos}.each do |os|
+            supports os
+          end
+        }
+        else fail "Unrecognised supports_type: #{supports_type}"
+      end
       append_to_file("#{cookbook_name}/metadata.rb", "#{supports}\n")
     end
 
