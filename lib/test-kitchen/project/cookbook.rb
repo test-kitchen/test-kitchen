@@ -3,6 +3,12 @@ module TestKitchen
     class Cookbook < Ruby
 
       attr_writer :lint
+      attr_accessor :supported_platforms
+
+      def initialize(name, &block)
+        super(name, &block)
+        @supported_platforms = []
+      end
 
       def lint(arg=nil)
         set_or_return(:lint, arg, {:default => true})
@@ -26,6 +32,14 @@ module TestKitchen
 
       def test_command(runtime=nil)
         %q{#{cd} && if [ -d "features" ]; then #{path} bundle exec cucumber -t @#{name} features; fi}
+      end
+
+      def each_build(platforms, &block)
+        super(platforms.select do |platform|
+          supported_platforms.any? do |supported|
+            platform.start_with?("#{supported}-")
+          end
+        end, &block)
       end
 
       private
