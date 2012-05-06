@@ -2,12 +2,13 @@ module TestKitchen
   module Project
     class Cookbook < Ruby
 
+      include SupportedPlatforms
+
       attr_writer :lint
-      attr_accessor :supported_platforms
+      attr_writer :supported_platforms
 
       def initialize(name, &block)
         super(name, &block)
-        @supported_platforms = []
       end
 
       def lint(arg=nil)
@@ -34,12 +35,21 @@ module TestKitchen
         %q{#{cd} && if [ -d "features" ]; then #{path} bundle exec cucumber -t @#{name} features; fi}
       end
 
+      def supported_platforms
+        @supported_platforms ||= extract_supported_platforms(
+          File.read(File.join(root_path, 'metadata.rb')))
+      end
+
       def each_build(platforms, &block)
-        super(platforms.select do |platform|
-          supported_platforms.any? do |supported|
-            platform.start_with?("#{supported}-")
-          end
-        end, &block)
+        if supported_platforms.empty?
+          super(platforms, &block)
+        else
+          super(platforms.select do |platform|
+            supported_platforms.any? do |supported|
+              platform.start_with?("#{supported}-")
+            end
+          end, &block)
+        end
       end
 
       private

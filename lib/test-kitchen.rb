@@ -1,3 +1,4 @@
+require 'ripper'
 require 'test-kitchen/cli'
 require 'test-kitchen/dsl'
 require 'test-kitchen/project'
