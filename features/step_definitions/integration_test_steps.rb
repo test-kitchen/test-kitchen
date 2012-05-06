@@ -2,6 +2,13 @@ Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
   chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
 end
 
+Given 'a Chef cookbook that defines a set of supported platforms literally in its metadata' do
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
+                :setup => false, :supports => "supports 'ubuntu'")
+  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
+  cd 'example'
+end
+
 Given 'a Chef cookbook that defines integration tests with no configurations specified' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.')
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
@@ -81,6 +88,18 @@ end
 
 Then 'each of the expected kitchen subcommands will be shown' do
   assert_correct_subcommands_shown
+end
+
+Then 'only the platforms specified in the metadata will be tested against' do
+  expected_platforms.each do |platform|
+    if platform.start_with?('ubuntu-')
+      assert(converged?(platform, 'default'),
+        "Expected platform '#{platform}' to have been converged.")
+    else
+      refute(converged?(platform, 'default'),
+        "Expected platform '#{platform}' not to have been converged.")
+    end
+  end
 end
 
 Then 'the available options will be shown with a brief description of each' do

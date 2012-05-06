@@ -8,7 +8,7 @@ module TestKitchen
 
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
-      options = {:type => :real_world}.merge(options)
+      options = {:type => :real_world, :setup => true}.merge(options)
       case options[:type]
         when :real_world
           clone_and_merge_repositories
@@ -16,8 +16,9 @@ module TestKitchen
           add_test_setup_recipe('apache2', 'apache2_test')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
+          add_platform_metadata('example', options[:supports]) if options[:supports]
           add_gem_file(options[:name])
-          add_test_setup_recipe('example', 'example_test')
+          add_test_setup_recipe('example', 'example_test') if options[:setup]
         else
           fail "Unknown type: #{options[:type]}"
       end
@@ -185,6 +186,10 @@ module TestKitchen
           gem "test-kitchen", :path => '../../../..'
         end
       }
+    end
+
+    def add_platform_metadata(cookbook_name, supports)
+      append_to_file("#{cookbook_name}/metadata.rb", "#{supports}\n")
     end
 
     def add_test_setup_recipe(cookbook_name, test_cookbook)

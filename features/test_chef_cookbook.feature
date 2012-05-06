@@ -1,6 +1,6 @@
 Feature: Integration test Chef cookbook
 
-In order to be able to reproduceably test my cookbook
+In order to be able to confirm that my cookbook works on the chosen platforms
 As a developer
 I want to be able to integration test my Chef cookbook
 
