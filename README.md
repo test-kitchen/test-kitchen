@@ -91,3 +91,10 @@ would probably use `MiniTest::Spec` to implement these tests.
 
 * *<<< Add Cucumber feature example here >>>*
 * *<<< Add MiniTest::Spec example here >>>*
+
+# License
+The test-kitchen project is licensed under the Apache License, Version 2.0.
+Components used by test-kitchen are licensed under their own individual
+licenses. See the accompanying
+[LICENSE](https://github.com/opscode/test-kitchen/blob/master/LICENSE.md) file for
+details.
