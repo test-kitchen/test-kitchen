@@ -1,106 +1,92 @@
 # Test Kitchen
 
-# Quick Start
+Test Kitchen pulls together some of your favorite tools (Chef, Vagrant, Toft) to
+make it easy to get started testing Chef cookbooks.
 
-    gem install test-kitchen
+You define your test config in a `Kitchenfile` within your cookbook.
 
-    # create a new test kitchen project
-    mkdir my-test-kitchen && cd my-test-kitchen
-    kitchen init
+# Quick start
 
-    # install the dependencies
-    bundle install --binstubs
+When you use test-kitchen your test config and the tests themselves live
+along-side the cookbook within the cookbook repository. To get started, install
+the test-kitchen gem. This makes available the `kitchen` command which is the
+main way you will interact with test-kitchen. It is modelled closely on the
+vagrant cli.
 
-# Running tests
+    $ gem install test-kitchen
 
-    # create a test kitchen for the foo project
-    bin/kitchen create --project foo
+Now you can ask test-kitchen to generate basic scaffolding to get you up and
+running:
 
-    # run tests against the test kitchen for the foo project
-    bin/kitchen test --project foo
+    $ cd my-existing-cookbook
+    $ kitchen init
 
-    # check the status of our test kitchen
-    bin/kitchen status
+Even if you haven't yet got around to writing any tests, test-kitchen is still
+useful in providng an easy way to test that your cookbook converges successfully.
 
-    # ssh into the test instance for the ubuntu-10.04 platform
-    bin/kitchen ssh --platform ubuntu-10.04
+Run this command to converge your cookbook's default recipe:
 
-    # this is identical since ubuntu-10.04 is the default platform
-    bin/kitchen ssh
+    $ kitchen test
 
-    # destroy a single test instance in the kitchen
-    bin/kitchen destroy --platform ubuntu-11.04
+# Platforms
 
-    # fully destroy your test kitchen
-    bin/kitchen destroy
+Test-kitchen looks at your cookbook's `metadata.rb` file to see which platforms
+you have indicated that it should support.
 
-# Project Configuration
+For example your cookbook metadata might contain the following lines:
 
-Projects are configured in the `config/projects.json` file.  Here is an example
-project configuration:
+```ruby
+supports 'centos'
+supports 'ubuntu'
+```
 
-    "foo": {
-      "language": "ruby",
-      "rvm": ["1.8.7","1.9.2"],
-      "repository": "https://github.com/you/your-repo.git",
-      "revision": "master",
-      "test_command": "rspec spec"
-    }
+This says to Chef that you expect your cookbook to work on both CentOS and
+Ubuntu. When you run `kitchen test`, test-kitchen consults this metadata and
+will test your cookbook against these platforms only.
 
-The following options can be used in a project configuration:
+If your cookbook doesn't specify the platforms that it supports then it will be
+tested against all platforms supported by test-kitchen. Alternatively if you
+have specified a platform that test-kitchen doesn't yet support a warning
+message will be displayed.
 
-<table>
-  <tr>
-    <th>Option</th>
-    <th>Description</th>
-    <th>Valid values</th>
-    <th>Default value</th>
-  </tr>
-  <tr>
-    <td>repository</td>
-    <td>URI to the project's underlying Git repository</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>repository</td>
-    <td>Revision to checkout. can be symbolic, like "HEAD", a branch name or revision id</td>
-    <td></td>
-    <td>master</td>
-  </tr>
-  <tr>
-    <td>language</td>
-    <td>Programming language the project uses.</td>
-    <td>ruby</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>rvm</td>
-    <td>Ruby projects specify releases they need to be tested against using the `rvm` key.</td>
-    <td>`1.8.7`, `1.9.2`, `1.9.3` </td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>install</td>
-    <td>Command used to install project dependencies</td>
-    <td></td>
-    <td>256 MB</td>
-  </tr>
-  <tr>
-    <td>script</td>
-    <td>Main command used to run tests.</td>
-    <td></td>
-    <td>rspec spec</td>
-  </tr>
-  <tr>
-    <td>memory</td>
-    <td>Amount of memory the underlying guest VM will require for testing.</td>
-    <td></td>
-    <td>256 MB</td>
-  </tr>
-</table>
+If you are using Vagrant/VirtualBox (the default) you'll notice that
+test-kitchen doesn't tear down the VirtualBox VM between different platforms.
+This is because a single VM is provisioned which then uses Linux Containers (via
+Toft) to give you faster feedback.
 
-You may have noticed Test Kitchen's `projects.json` file shares much in common
-with [Travis CI's .travis.yml](http://about.travis-ci.org/docs/user/build-configuration/)
-file. This is intentional, as Test Kitchen will eventually support loading/parsing
-of `.travis.yml` files if they are present in a project's repository.
+# Configurations
+
+Very often you will want to test different independent usages or
+*configurations* of your cookbook. An example would be a cookbook like the
+`mysql` cookbook which has `client` and `server` recipes. These need to be
+converged separately to prove that they will work independently. If you only
+converged them both on the same node you might find that the `client` recipe
+unexpectedly relied on a resource declared by the `server` recipe.
+
+You need to tell test-kitchen what the different configurations are that you
+want your cookbook tested with.
+
+*<<< Add example DSL changes here >>>*
+
+# Adding Tests
+
+As we saw above, there is a lot of value in just converging your cookbooks
+against the platforms that they should support. However to really get the
+benefits of test-kitchen you should write tests that make assertions about the
+converged node. Test-kitchen will by default look for these tests and run them
+if they are present.
+
+You can add these tests at two levels:
+
+* You can test the converged node as a 'black box' - that is you can test that
+the node provides a service that you expect to be available, without looking at
+how that service was implemented. This is necessarily service-specific - for
+our MySQL example this would mean connecting to the running database and
+executing database queries. You might use Cucumber to implement these tests.
+* You can also ignore the service functionality and make assertions about the
+packages installed on the server and the file paths created. These tests are
+normally less useful than the black box tests, but are easier to write. You
+would probably use `MiniTest::Spec` to implement these tests.
+
+* *<<< Add Cucumber feature example here >>>*
+* *<<< Add MiniTest::Spec example here >>>*
