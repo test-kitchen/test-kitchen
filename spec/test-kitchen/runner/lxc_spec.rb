@@ -67,11 +67,62 @@ module TestKitchen
           runner.provision
           runner.nested_runner.verify
         end
+        describe "delegating commands" do
+          class MockRunner
+            def initialize(expected_cmd)
+              @expected_cmd = expected_cmd
+            end
+            def provision
+
+            end
+            def with_target_vms(name)
+              name.must_equal 'ubuntu-11.04'
+              yield 'a virtual machine'
+            end
+            def execute_remote_command(vm, command, log)
+              @executed = true
+              command.must_equal @expected_cmd
+            end
+            def executed_command?
+              @executed ||= false
+            end
+          end
+          it "provisions the linux container" do
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc provision 'ubuntu' 'example_test::default'")
+            env.project = TestKitchen::Project::Cookbook.new('example')
+            runner.configuration = env.project
+            runner.nested_runner = nested_runner
+            runner.provision
+            assert runner.nested_runner.executed_command?
+          end
+          it "delegates commands to the remote container" do
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc run 'centos-6' 'ls'")
+            env.project = TestKitchen::Project::Cookbook.new('example')
+            runner.configuration = env.project
+            runner.nested_runner = nested_runner
+            runner.execute_remote_command('centos-6', 'ls')
+            assert runner.nested_runner.executed_command?
+          end
+          it "destroys the remote container" do
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc destroy 'ubuntu'")
+            env.project = TestKitchen::Project::Cookbook.new('example')
+            runner.configuration = env.project
+            runner.nested_runner = nested_runner
+            runner.destroy
+            assert runner.nested_runner.executed_command?
+          end
+        end
       end
       describe "#run_list" do
         it "expresses the dependency on the LXC recipe" do
           runner = LXC.new(env, {:platform => 'ubuntu'})
           runner.run_list.must_include 'test-kitchen::lxc'
+        end
+      end
+      describe "#status" do
+        it "raises because it is not implemented" do
+          runner = LXC.new(env, {:platform => 'ubuntu'})
+          lambda { runner.status }.must_raise NotImplementedError
         end
       end
     end

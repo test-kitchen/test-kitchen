@@ -70,6 +70,15 @@ module TestKitchen::DSL
       assert project.configurations['server'].specs
       assert project.configurations['server'].features
     end
+    it "allows platforms to be defined" do
+      dsl.platform :ubuntu do
+        version '10.04' do
+          box "ubuntu-10.04"
+          box_url "http://example.org/ubuntu-10.04.box"
+          lxc_url "http://example.org/ubuntu-10.04.tar.gz"
+        end
+      end
+    end
   end
 
   describe CookbookDSL do

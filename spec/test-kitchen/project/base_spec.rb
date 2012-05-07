@@ -41,6 +41,17 @@ module TestKitchen
           project.install.must_equal 'make install'
         end
       end
+      describe "#run_list_extras" do
+        it "defaults to an empty" do
+          project = Base.new('foo')
+          project.run_list_extras.must_be_empty
+        end
+        it "allows the run_list to be extended" do
+          project = Base.new('foo')
+          project.run_list_extras(['foo::bar'])
+          project.run_list_extras.must_equal(['foo::bar'])
+        end
+      end
       describe "#script" do
         it "defaults to running rspec" do
           Base.new('foo').script.must_equal 'rspec spec'
@@ -144,5 +155,23 @@ module TestKitchen
           ])
         end
       end
+      describe "#update_code_command" do
+        it "rsyncs the code from the source root to the test root" do
+          project = Base.new('foo')
+          project.update_code_command.must_equal "rsync -aHv --update --progress --checksum /test-kitchen/source/ /test-kitchen/test"
+        end
+      end
+      describe "#install_command" do
+        let(:project) { Base.new('foo') }
+        it "requires subclasses to implement the install command" do
+          lambda { project.install_command }.must_raise NotImplementedError
+        end
+       describe "#test_command" do
+        let(:project) { Base.new('foo') }
+        it "requires subclasses to implement the test command" do
+          lambda { project.test_command }.must_raise NotImplementedError
+        end
+      end
+     end
   end
 end

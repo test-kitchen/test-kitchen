@@ -17,6 +17,20 @@ module TestKitchen
             ['centos-6.2', cookbook]
           ])
         end
+        it "yields all platforms if the cookbook does not specify the supported platforms" do
+          cookbook = Cookbook.new('example')
+          cookbook.supported_platforms = []
+          actual_matrix = []
+          cookbook.each_build(%w{beos-5.0 centos-5.0 centos-6.2}) do |platform,configuration|
+            actual_matrix << [platform, configuration]
+          end
+          actual_matrix.must_equal([
+            ['beos-5.0', cookbook],
+            ['centos-5.0', cookbook],
+            ['centos-6.2', cookbook]
+          ])
+        end
+
       end
     end
     describe "#extract_supported_platforms" do
@@ -66,6 +80,74 @@ module TestKitchen
             supports os
           end
         }).must_equal(%w{centos ubuntu debian})
+      end
+    end
+    describe "#non_buildable_platforms" do
+      let(:cookbook) { Cookbook.new('example') }
+      it "returns empty if all platforms can be built" do
+        cookbook.supported_platforms = 'centos', 'ubuntu'
+        cookbook.non_buildable_platforms(
+          ['centos-6.2', 'ubuntu-10.04']).must_be_empty
+      end
+      it "returns the platforms that are not supported for builds" do
+        cookbook.supported_platforms = 'centos', 'ubuntu', 'beos'
+        cookbook.non_buildable_platforms(
+          ['centos-6.2', 'ubuntu-10.04']).must_equal(['beos'])
+      end
+    end
+    describe "#language" do
+      let(:cookbook) { Cookbook.new('example') }
+      it "returns the language when asked" do
+        cookbook.language.must_equal 'chef'
+      end
+      it "doesn't allow the language to be overridden" do
+        cookbook.language('java')
+        cookbook.language.must_equal 'chef'
+      end
+    end
+    describe "#preflight_command" do
+      let(:cookbook) { Cookbook.new('example') }
+      it "returns nil if linting is disabled" do
+        cookbook.lint = false
+        refute cookbook.preflight_command
+      end
+      it "returns two commands if linting is enabled" do
+        cookbook.root_path = 'cookbooks/example'
+        cookbook.preflight_command.split(" && ").size.must_equal 2
+      end
+      it "includes the command to check the cookbook is well-formed" do
+        cookbook.root_path = 'cookbooks/example'
+        cookbook.preflight_command.split(" && ").first.must_equal "knife cookbook test -o cookbooks/example/.. example"
+      end
+      describe "lint options" do
+        let(:lint_cmd) do
+          cookbook.root_path = 'cookbooks/example'
+          cookbook.preflight_command.split(" && ").last
+        end
+        it "includes the command to lint the cookbook" do
+          lint_cmd.must_match /^foodcritic/
+        end
+        it "fails for any correctness warning except undeclared metadata dependencies" do
+          lint_cmd.must_equal "foodcritic -f ~FC007 -f correctness cookbooks/example"
+        end
+      end
+    end
+    describe "#install_command" do
+      let(:cookbook) { Cookbook.new('example') }
+      let(:commands) do
+        cookbook.install_command.split(/; | && /)
+      end
+      it "ensures it has the latest version of rubygems" do
+        commands.first.must_equal 'sudo gem update --system'
+      end
+      it "installs bundler" do
+        commands[1].must_equal "gem install bundler"
+      end
+      it "changes to the test directory" do
+        commands[2].must_equal "cd /test-kitchen/test/test"
+      end
+      it "installs ruby dependencies" do
+        commands[3].must_equal "PATH=$PATH:/var/lib/gems/1.8/bin bundle install"
       end
     end
   end

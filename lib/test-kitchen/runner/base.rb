@@ -9,6 +9,7 @@ module TestKitchen
       attr_accessor :env
 
       def initialize(env, options={})
+        raise ArgumentError, "Environment cannot be nil" if env.nil?
         @env = env
         @platform = options[:platform]
         @configuration = options[:configuration]
@@ -17,10 +18,6 @@ module TestKitchen
       def provision
         assemble_cookbooks!
         check_test_recipes_present!
-      end
-
-      def destroy
-        raise NotImplementedError
       end
 
       def run_list

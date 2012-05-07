@@ -38,7 +38,7 @@ module TestKitchen
       end
 
       def status
-        puts 'status'
+        raise NotImplementedError, "Not implemented"
       end
 
       def destroy

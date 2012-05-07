@@ -23,7 +23,7 @@ module TestKitchen
         return nil unless lint
         parent_dir = File.join(root_path, '..')
         cmd = "knife cookbook test -o #{parent_dir} #{name}"
-        cmd << "&& foodcritic -f ~FC007 -f correctness #{root_path}"
+        cmd << " && foodcritic -f ~FC007 -f correctness #{root_path}"
         cmd
       end
 
