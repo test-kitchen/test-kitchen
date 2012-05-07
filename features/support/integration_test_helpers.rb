@@ -24,6 +24,7 @@ module TestKitchen
       case options[:type]
         when :real_world
           clone_and_merge_repositories
+          cd '..'
           add_gem_file('apache2')
           add_test_setup_recipe('apache2', 'apache2_test')
         when :newly_generated
