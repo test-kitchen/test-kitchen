@@ -22,7 +22,8 @@ running:
     $ kitchen init
 
 Even if you haven't yet got around to writing any tests, test-kitchen is still
-useful in providng an easy way to test that your cookbook converges successfully.
+useful in providing an easy way to test that your cookbook converges
+successfully.
 
 Run this command to converge your cookbook's default recipe:
 
