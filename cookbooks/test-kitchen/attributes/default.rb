@@ -23,3 +23,5 @@ default['test-kitchen']['project'] = {
 
 default['test-kitchen']['user'] = 'vagrant'
 default['test-kitchen']['group'] = 'vagrant'
+
+override['yum']['epel_release'] = '6-6'
