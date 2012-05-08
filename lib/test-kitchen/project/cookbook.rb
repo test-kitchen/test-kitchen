@@ -20,6 +20,7 @@ module TestKitchen
   module Project
     class Cookbook < Ruby
 
+      include CookbookCopy
       include SupportedPlatforms
 
       attr_writer :lint
@@ -74,6 +75,10 @@ module TestKitchen
             end
           end, &block)
         end
+      end
+
+      def cookbook_path(root_path, tmp_path)
+        @cookbook_path ||= copy_cookbook_under_test(root_path, tmp_path)
       end
 
       private

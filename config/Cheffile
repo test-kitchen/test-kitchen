@@ -32,6 +32,12 @@ cookbook 'test-kitchen',
   :path => TestKitchen.source_root.join('cookbooks', 'test-kitchen').to_s
 
 env = TestKitchen::Environment.new
+env.load!
+
+# include cookbook being tested if this is a cookbook project
+if env.project.respond_to?(:cookbook_path)
+  cookbook env.project.name, :path => env.project.cookbook_path(env.root_path, env.tmp_path)
+end
 
 # include user-provided cookbooks
 if env.root_path.join('cookbooks').exist?
