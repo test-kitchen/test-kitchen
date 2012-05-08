@@ -56,6 +56,10 @@ module TestKitchen
         ARGV.last == '--help'
       end
 
+      def scaffolding?
+        ARGV == ['init']
+      end
+
       def run
         validate_and_parse_options
         quiet_traps
@@ -71,7 +75,7 @@ module TestKitchen
         @ui = TestKitchen::UI.new(STDOUT, STDERR, STDIN, {})
 
         # TODO: Move this out of the constructor
-        load_environment unless command_help?
+        load_environment unless command_help? || scaffolding?
       end
 
       def load_environment
