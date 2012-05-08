@@ -42,9 +42,13 @@ module TestKitchen
       def provision
         nested_runner.provision
         nested_runner.with_target_vms(LXC_HOST) do |vm|
-          recipe_name = "#{env.project.name}_test::"
-          recipe_name += env.project.name == configuration.name ?
-            'default' : configuration.name
+          recipe_name = env.project.name
+          if cookbook_exists?("#{env.project.name}_test")
+            recipe_name = "#{env.project.name}_test::"
+            recipe_name += env.project.name == configuration.name ?
+              'default' : configuration.name
+          end
+
           nested_runner.execute_remote_command vm,
             "sudo test-kitchen-lxc provision '#{platform}' '#{recipe_name}'",
             "Provisioning Linux Container: #{platform} [#{configuration.name}]"
@@ -81,6 +85,10 @@ module TestKitchen
       end
 
       private
+
+      def cookbook_exists?(name)
+        env.cookbook_paths.any?{|path| Dir.exists?(File.join(path, name)) }
+      end
 
       def raise_unless_host_box_available
         distro_name, distro_version = NATTY.split('-')

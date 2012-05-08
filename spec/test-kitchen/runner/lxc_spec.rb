@@ -108,7 +108,8 @@ module TestKitchen
             end
           end
           it "provisions the linux container" do
-            nested_runner = MockRunner.new("sudo test-kitchen-lxc provision 'ubuntu' 'example_test::default'")
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc provision 'ubuntu' 'example'",
+              'Provisioning Linux Container: ubuntu [example]')
             env.project = TestKitchen::Project::Cookbook.new('example')
             runner.configuration = env.project
             runner.nested_runner = nested_runner

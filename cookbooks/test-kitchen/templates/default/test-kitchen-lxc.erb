@@ -35,7 +35,9 @@ module TestKitchen
         add_user(node, '<%= @test_user %>')
         node.run_ssh 'mkdir -p /tmp/chef-file-cache'
         run_list = <%= @run_list %>
-        run_list += [configuration_recipe]
+        unless configuration_recipe.nil? || configuration_recipe.empty?
+          run_list += [configuration_recipe]
+        end
         node.run_chef run_list, {:json => json_path}
       end
 
