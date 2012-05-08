@@ -87,8 +87,9 @@ module TestKitchen
         end
         describe "delegating commands" do
           class MockRunner
-            def initialize(expected_cmd)
+            def initialize(expected_cmd, expected_log)
               @expected_cmd = expected_cmd
+              @expected_log = expected_log
             end
             def provision
 
@@ -100,6 +101,7 @@ module TestKitchen
             def execute_remote_command(vm, command, log)
               @executed = true
               command.must_equal @expected_cmd
+              log.must_equal @expected_log
             end
             def executed_command?
               @executed ||= false
@@ -114,7 +116,7 @@ module TestKitchen
             assert runner.nested_runner.executed_command?
           end
           it "delegates commands to the remote container" do
-            nested_runner = MockRunner.new("sudo test-kitchen-lxc run 'centos-6' 'ls'")
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc run 'centos-6' 'ls'", nil)
             env.project = TestKitchen::Project::Cookbook.new('example')
             runner.configuration = env.project
             runner.nested_runner = nested_runner
@@ -122,7 +124,8 @@ module TestKitchen
             assert runner.nested_runner.executed_command?
           end
           it "destroys the remote container" do
-            nested_runner = MockRunner.new("sudo test-kitchen-lxc destroy 'ubuntu'")
+            nested_runner = MockRunner.new("sudo test-kitchen-lxc destroy 'ubuntu'",
+              'Destroying Linux Container: ubuntu [example]')
             env.project = TestKitchen::Project::Cookbook.new('example')
             runner.configuration = env.project
             runner.nested_runner = nested_runner

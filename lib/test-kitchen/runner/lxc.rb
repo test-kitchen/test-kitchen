@@ -63,7 +63,7 @@ module TestKitchen
         nested_runner.with_target_vms(LXC_HOST) do |vm|
           nested_runner.execute_remote_command vm,
             "sudo test-kitchen-lxc destroy '#{platform}'",
-              'Destroying Linux Container'
+            "Destroying Linux Container: #{platform} [#{configuration.name}]"
         end
         # TODO: Need to collect the nested VM
         #nested_runner.destroy
