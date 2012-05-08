@@ -114,11 +114,16 @@ You can add these tests at two levels:
 the node provides a service that you expect to be available, without looking at
 how that service was implemented. This is necessarily service-specific - for
 our MySQL example this would mean connecting to the running database and
-executing database queries. You might use Cucumber to implement these tests.
+executing database queries. If you add a `features` directory with Cucumber
+features underneath the kitchen directory then test-kitchen will run these
+after converge to verify the service behaviour.
+
 * You can also ignore the service functionality and make assertions about the
-packages installed on the server and the file paths created. These tests are
-normally less useful than the black box tests, but are easier to write. You
-would probably use `MiniTest::Spec` to implement these tests.
+state of the server (packages installed on the server and the file paths
+created). These tests are normally less useful than the black box tests, but are
+probably easier to get started with if you haven't written tests before. If you
+use minitest-chef-handler then your `MiniTest::Spec` examples will be run
+following the converge in the report handler phase of the Chef run.
 
 * *<<< Add Cucumber feature example here >>>*
 * *<<< Add MiniTest::Spec example here >>>*
