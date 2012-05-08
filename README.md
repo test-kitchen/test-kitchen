@@ -69,36 +69,22 @@ want your cookbook tested with. To do this we edit the generated
 `test/kitchen/Kitchenfile` and define our configurations:
 
 ```ruby
-    cookbook "mysql" do
-      configuration "client"
-      configuration "server"
-    end
+cookbook "mysql" do
+  configuration "client"
+  configuration "server"
+end
 ```
 
-Each configuration has a matching recipe in the *cookbook*_test subdirectory.
+Each configuration has a matching recipe in the *cookbook*_test subdirectory:
+
+    mysql/test/kitchen/cookbooks/mysql_test/recipes/client.rb
+    mysql/test/kitchen/cookbooks/mysql_test/recipes/server.rb
+
 This recipe is responsible for doing the setup for the configuration tests.
 For example in the case of mysql the server recipe will include the standard
 `mysql::server` recipe but then also setup a dummy test database. The tests
 that then exercise the service will be able to verify that mysql is working
 correctly by running queries against the test database.
-
-    mysql/
-    +-- attributes
-    +-- libraries
-    +-- metadata.rb
-    +-- recipes
-    |   +-- client.rb
-    |   +-- default.rb
-    |   +-- server.rb
-    +-- test
-        +-- Gemfile
-        +-- kitchen
-            +-- Kitchenfile
-            +-- cookbooks
-                +-- mysql_test
-                    +-- recipes
-                        +-- client.rb
-                        +-- server.rb
 
 # Adding Tests
 
