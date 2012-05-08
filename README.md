@@ -65,9 +65,40 @@ converged them both on the same node you might find that the `client` recipe
 unexpectedly relied on a resource declared by the `server` recipe.
 
 You need to tell test-kitchen what the different configurations are that you
-want your cookbook tested with.
+want your cookbook tested with. To do this we edit the generated
+`test/kitchen/Kitchenfile` and define our configurations:
 
-*<<< Add example DSL changes here >>>*
+```ruby
+    cookbook "mysql" do
+      configuration "client"
+      configuration "server"
+    end
+```
+
+Each configuration has a matching recipe in the *cookbook*_test subdirectory.
+This recipe is responsible for doing the setup for the configuration tests.
+For example in the case of mysql the server recipe will include the standard
+`mysql::server` recipe but then also setup a dummy test database. The tests
+that then exercise the service will be able to verify that mysql is working
+correctly by running queries against the test database.
+
+    mysql/
+    +-- attributes
+    +-- libraries
+    +-- metadata.rb
+    +-- recipes
+    |   +-- client.rb
+    |   +-- default.rb
+    |   +-- server.rb
+    +-- test
+        +-- Gemfile
+        +-- kitchen
+            +-- Kitchenfile
+            +-- cookbooks
+                +-- mysql_test
+                    +-- recipes
+                        +-- client.rb
+                        +-- server.rb
 
 # Adding Tests
 
