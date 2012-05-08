@@ -82,6 +82,10 @@ Given /^a supporting test cookbook that includes only the server recipe$/ do
   cd 'example'
 end
 
+Given 'an existing Chef cookbook with no tests defined' do
+  chef_cookbook(:type => :real_world_testless)
+end
+
 Given /^the integration tests are defined in a (malformed )?Kitchenfile included with the (cookbook|project)$/ do |malformed, project_type|
   define_integration_tests(:malformed => malformed, :project_type => project_type)
 end
@@ -92,6 +96,10 @@ end
 
 When 'I run the integration tests with test kitchen' do
   run_integration_tests
+end
+
+When /^I scaffold the integration tests$/ do
+  scaffold_tests
 end
 
 When 'I view the command line help' do
@@ -146,6 +154,10 @@ Then 'the available options will be shown with a brief description of each' do
   assert_option_present('-r, --runner RUNNER',
     'The underlying virtualization platform to test with.')
   assert_option_present('-h, --help', 'Show this message')
+end
+
+Then 'the existing cookbook will have been converged' do
+  all_output.must_include 'package[vim-enhanced] installed'
 end
 
 Then 'the expected platforms will be available' do

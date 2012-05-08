@@ -32,18 +32,32 @@ module TestKitchen
           bin
         eos
 
-      scaffold_file 'Gemfile',
+      scaffold_file 'test/Gemfile',
         <<-eos
-          gem 'test-kitchen'
+          source :rubygems
         eos
 
-      scaffold_file 'test/setup/README.md',
+      scaffold_file 'test/kitchen/Kitchenfile',
         <<-eos
-          Place any cookbooks required for your testing under here.
+          #{project_type(output_dir)} "#{project_name(output_dir)}" do
+
+          end
         eos
     end
 
     private
+
+    def project_name(output_dir)
+      File.basename(output_dir)
+    end
+
+    def project_type(output_dir)
+      if File.exists?(File.join(output_dir, 'metadata.rb'))
+        'cookbook'
+      else
+        'integration_test'
+      end
+    end
 
     def scaffold_file(path, content)
       FileUtils.mkdir_p(File.dirname(path))

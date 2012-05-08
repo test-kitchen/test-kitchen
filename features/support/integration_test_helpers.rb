@@ -41,10 +41,12 @@ module TestKitchen
       options = {:type => :real_world, :setup => true}.merge(options)
       case options[:type]
         when :real_world
-          clone_and_merge_repositories
-          cd '..'
+          clone_cookbook_repository('apache2', '3ceb3d3')
+          merge_apache2_test
           add_gem_file('apache2')
           add_test_setup_recipe('apache2', 'apache2_test')
+        when :real_world_testless
+          clone_cookbook_repository('vim', '789bfc')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
           add_platform_metadata('example', options[:supports_type]) if options[:supports_type]
@@ -146,6 +148,11 @@ module TestKitchen
       run_simple(unescape("bundle exec kitchen test"), false)
     end
 
+    def scaffold_tests
+      run_simple(unescape("bundle install"))
+      run_simple(unescape("bundle exec kitchen init"))
+    end
+
     def kitchenfile_error_shown?
       !! (all_output =~ /Your Kitchenfile could not be loaded. Please check it for errors./)
     end
@@ -172,10 +179,13 @@ module TestKitchen
 
     private
 
-    def clone_and_merge_repositories
-      run_simple('git clone --quiet git://github.com/opscode-cookbooks/apache2.git')
-      cd('apache2')
-      run_simple('git checkout --quiet 3ceb3d31ea20ea1fa0c7657871e9b3dd43c31804')
+    def clone_cookbook_repository(cookbook_name, sha)
+      run_simple("git clone --quiet git://github.com/opscode-cookbooks/#{cookbook_name}.git")
+      cd(cookbook_name)
+      run_simple("git checkout --quiet #{sha}")
+    end
+
+    def merge_apache2_test
       run_simple('git clone --quiet git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
       run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
     end
