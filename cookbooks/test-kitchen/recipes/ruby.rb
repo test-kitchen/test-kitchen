@@ -56,7 +56,7 @@ project['runtimes'].each do |runtime|
       action :install
     end
   end
-  puts "ROOT => #{project['test_root']}"
+
   rvm_shell "[#{runtime}] bundle for [#{project['test_root']}]" do
     ruby_string runtime
     user node['test-kitchen']['user']
