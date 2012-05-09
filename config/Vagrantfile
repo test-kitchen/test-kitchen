@@ -38,11 +38,11 @@ project = tk_env.project
         vm_config.vm.customize [
           "modifyvm", :id,
            "--name", host_name,
-          "--memory", "256",
+          "--memory", (project.memory || "256"),
           "--cpus", "2",
           "--nictype1", "virtio",
           "--nictype2", "virtio",
-	  "--audio", "none",
+	        "--audio", "none",
           "--natdnsproxy1", "on",
           "--usb", "off",
           "--usbehci", "off"

@@ -1,7 +1,7 @@
 * test ALL THE THINGS!! - or at least some of them :)
 * make configurations look upward to enclosing project for default values
 * DSL:
-    * memory
+    * memory (should be generic... :small, :medium, :large?)
     * exclude/include platform
     *
 * Subcommands:
