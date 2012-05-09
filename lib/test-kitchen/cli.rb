@@ -27,7 +27,6 @@ module TestKitchen
 
       option :platform,
         :long  => "--platform PLATFORM",
-        :default => 'ubuntu-10.04',
         :description => "The platform to use. If not specified tests will be run against all platforms."
 
       option :configuration,
@@ -37,7 +36,6 @@ module TestKitchen
       option :runner,
         :short => "-r RUNNER",
         :long => "--runner RUNNER",
-        :default => "lxc",
         :description => "The underlying virtualization platform to test with."
 
       option :help,
@@ -49,6 +47,7 @@ module TestKitchen
         :show_options => true,
         :exit => 0
 
+      attr_accessor :runner
       attr_accessor :env
       attr_accessor :ui
 
@@ -80,6 +79,15 @@ module TestKitchen
 
       def load_environment
         @env = TestKitchen::Environment.new(:ui => @ui).tap{|e| e.load!}
+      end
+
+      def runner
+        @runner ||= begin
+          # CLI option takes presedence, then project
+          runner_name = config[:runner] || env.project.runner || 'vagrant'
+          runner_class = TestKitchen::Runner.targets[runner_name]
+          runner = runner_class.new(env, config)
+        end
       end
 
       # Class Methods

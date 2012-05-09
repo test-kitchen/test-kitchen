@@ -27,10 +27,6 @@ module TestKitchen
         banner "kitchen ssh (options)"
 
         def run
-          options = {
-            :platform => config[:platform],
-          }
-          runner = TestKitchen::Runner.targets[env.project.runner].new(env, options)
           runner.ssh
         end
 
