@@ -30,8 +30,8 @@ module TestKitchen
           ui.info("  #{env.project.name}\n")
           ui.info("Configurations: ", :yellow)
           if env.project.configurations.any?
-            env.project.configurations.each do |config|
-              ui.info("  #{config.name}")
+            env.project.configurations.each_key do |config_name|
+              ui.info("  #{config_name}")
             end
           else
             ui.info("  default")
