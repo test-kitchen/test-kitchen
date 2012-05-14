@@ -183,11 +183,14 @@ module TestKitchen
       run_simple("git clone --quiet git://github.com/opscode-cookbooks/#{cookbook_name}.git")
       cd(cookbook_name)
       run_simple("git checkout --quiet #{sha}")
+      cd '..'
     end
 
     def merge_apache2_test
+      cd 'apache2'
       run_simple('git clone --quiet git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
       run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
+      cd '..'
     end
 
     def introduce_syntax_error
