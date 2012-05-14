@@ -102,8 +102,6 @@ module TestKitchen
         end
 
         group(:kitchen) do
-           # needed until Chef 0.10.10 ships
-          gem "chef", :git => "https://github.com/opscode/chef.git", :ref => "ba4d58f4223"
           gem "test-kitchen", :path => '../../..'
         end
       }
@@ -229,8 +227,6 @@ module TestKitchen
         #{gems.map{|g| "gem '#{g}'"}.join("\n")}
 
         group(:kitchen) do
-           # needed until Chef 0.10.10 ships
-          gem "chef", :git => "https://github.com/opscode/chef.git", :ref => "ba4d58f4223"
           gem "test-kitchen", :path => '../../../..'
         end
       }
