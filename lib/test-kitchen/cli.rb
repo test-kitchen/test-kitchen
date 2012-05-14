@@ -83,7 +83,7 @@ module TestKitchen
 
       def runner
         @runner ||= begin
-          # CLI option takes presedence, then project
+          # CLI option takes precedence, then project
           runner_name = config[:runner] || env.project.runner || 'vagrant'
           runner_class = TestKitchen::Runner.targets[runner_name]
           runner = runner_class.new(env, config)
