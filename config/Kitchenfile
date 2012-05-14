@@ -19,11 +19,11 @@
 platform :ubuntu do
   version '10.04' do
     box "opscode-ubuntu-10.04"
-    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-10.04.box"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/ubuntu-10.04.box"
   end
   version '11.04' do
     box "opscode-ubuntu-11.04"
-    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-11.04.box"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/ubuntu-11.04.box"
     lxc_url "http://dl.dropbox.com/u/43220259/natty-amd64.tar.gz"
   end
 end
@@ -31,11 +31,6 @@ end
 platform :centos do
   version '5.7' do
     box "opscode-centos-5.7"
-    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-5.7.box"
-  end
-  version '6.2' do
-    box "opscode-centos-6.2"
-    box_url "http://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.2.box"
-    lxc_url "http://dl.dropbox.com/u/43220259/centos-6-amd64.tar.gz"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/centos-5.7.box"
   end
 end
