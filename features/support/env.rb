@@ -24,5 +24,5 @@ World(MiniTest::Assertions)
 MiniTest::Spec.new(nil)
 
 Before do
-  @aruba_timeout_seconds = 60 * 30
+  @aruba_timeout_seconds = 60 * 60
 end
