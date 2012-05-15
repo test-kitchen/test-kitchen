@@ -58,7 +58,7 @@ end
 node['test-kitchen']['lxc-image-urls'].each_pair do |local_name, remote_image|
   # Hack for mapping platform to template names
   local_name = {'centos-6.2' => 'centos-6', 'ubuntu-11.04' => 'natty'}[local_name]
-  remote_file "/var/cache/lxc/#{local_name}-amd64.tar.gz" do
+  remote_file "/var/cache/lxc/#{local_name}-i386.tar.gz" do
     source remote_image
     action :create_if_missing
   end
