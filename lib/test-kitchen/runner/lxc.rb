@@ -73,11 +73,6 @@ module TestKitchen
         #nested_runner.destroy
       end
 
-      def ssh
-        # TODO: SSH to the correct host
-        nested_runner.ssh
-      end
-
       def execute_remote_command(node, command, message=nil)
         nested_runner.with_target_vms(LXC_HOST) do |vm|
           nested_runner.execute_remote_command(vm, "sudo test-kitchen-lxc run '#{node}' '#{command}'", message)
