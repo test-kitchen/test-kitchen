@@ -46,6 +46,21 @@ module TestKitchen
         env.cache_path.to_s.must_equal(File.join(env.tmp_path, '.cache'))
       end
     end
+    describe "loading config" do
+      let(:env) do
+        env = Environment.new({:ignore_kitchenfile => true})
+      end
+      it "does not claim to be loaded until the config has actually been loaded" do
+        refute env.loaded?
+      end
+      it "reports it is loaded if the config has been loaded" do
+        env.load! # Why is this a bang operator?
+        assert env.loaded?
+      end
+      it "supports chaining on load" do
+        assert env.load!.loaded?
+      end
+    end
     describe "platforms" do
       let(:env) do
         env = Environment.new({:ignore_kitchenfile => true})

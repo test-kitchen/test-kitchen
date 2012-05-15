@@ -157,7 +157,7 @@ module TestKitchen
       # Load the user's Kitchenfile
       kitchenfiles << find_kitchenfile(root_path) if root_path
 
-      kitchenfiles.flatten.each do |kitchenfile|
+      kitchenfiles.flatten.compact.each do |kitchenfile|
         dsl_file = DSL::File.new
         dsl_file.load(kitchenfile, self)
       end
