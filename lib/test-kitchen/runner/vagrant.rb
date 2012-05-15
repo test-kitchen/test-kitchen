@@ -16,15 +16,21 @@
 # limitations under the License.
 #
 
+require 'forwardable'
 require 'vagrant'
+require 'vagrant/command/base'
 
 module TestKitchen
   module Runner
     class Vagrant < Base
+      extend ::Forwardable
 
-      def initialize(env, options={})
+      def_delegator :@command_base, :with_target_vms
+
+      def initialize(env, opts={})
         super
-        @env, @options = env, options
+        # TODO: We shouldn't do IO in the constructor
+        @command_base = ::Vagrant::Command::Base.new(nil, vagrant_env)
       end
 
       def provision
@@ -45,7 +51,6 @@ module TestKitchen
       end
 
       def execute_remote_command(vm, command, message=nil)
-        vm = vagrant_env.vms[vm.to_sym] unless vm.kind_of?(::Vagrant::VM)
         vm.ui.info(message, :color => :yellow) if message
         vm.channel.execute(command, :error_check => false) do |type, data|
           next if data =~ /stdin: is not a tty/
@@ -61,6 +66,7 @@ module TestKitchen
 
       def vagrant_env
         @vagrant_env ||= begin
+
           env.create_tmp_file('Vagrantfile',
             IO.read(TestKitchen.source_root.join('config', 'Vagrantfile')))
 
@@ -68,7 +74,6 @@ module TestKitchen
             :ui_class => ::Vagrant::UI::Colored,
             :cwd => env.tmp_path
           }
-
           env = ::Vagrant::Environment.new(options)
           env.load!
           env
