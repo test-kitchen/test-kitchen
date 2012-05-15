@@ -123,7 +123,7 @@ module TestKitchen
           root_finder.call(path.parent)
         end
 
-        @root_path = root_finder.call(Dir.pwd)
+        @root_path = root_finder.call(Pathname.new(Dir.pwd))
       end
 
       def update_code_command
