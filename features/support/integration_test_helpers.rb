@@ -136,6 +136,7 @@ module TestKitchen
           end
           dsl << 'end' unless options[:malformed]
           write_file "#{options[:name]}/test/kitchen/Kitchenfile", dsl
+          cd options[:name]
         else
           fail "Unrecognised project type: #{options[:project_type]}"
       end
