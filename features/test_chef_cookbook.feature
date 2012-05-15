@@ -1,3 +1,4 @@
+@announce
 Feature: Integration test Chef cookbook
 
 In order to be able to confirm that my cookbook works on the chosen platforms
