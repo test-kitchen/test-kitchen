@@ -37,7 +37,7 @@ module TestKitchen
       end
 
       def destroy
-        vagrant_env.cli(vagrant_cli_argv('destroy'))
+        vagrant_env.cli(vagrant_cli_argv(['destroy', '--force']))
       end
 
       def ssh
@@ -76,7 +76,7 @@ module TestKitchen
       end
 
       def vagrant_cli_argv(command)
-        argv = [command]
+        argv = Array(command)
         argv << platform if platform
         argv
       end
