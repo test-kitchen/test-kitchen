@@ -46,10 +46,6 @@ module TestKitchen
         cmd
       end
 
-      def install_command(runtime=nil)
-        "sudo gem update --system; gem install bundler && #{cd} && #{path} bundle install"
-      end
-
       def test_command(runtime=nil)
         %q{#{cd} && if [ -d "features" ]; then #{path} bundle exec cucumber -t @#{name} features; fi}
       end

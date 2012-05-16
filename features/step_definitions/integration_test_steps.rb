@@ -158,7 +158,7 @@ Then 'the existing cookbook will have been converged' do
 end
 
 Then 'the expected platforms will be available' do
-  available_platforms.must_equal(["ubuntu-10.04", "ubuntu-11.04", "centos-5.7", "centos-6.2"])
+  available_platforms.must_equal(["ubuntu-11.04"])
 end
 
 Then 'the test cookbook client and server recipes will be converged once for each platform' do

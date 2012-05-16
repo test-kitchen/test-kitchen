@@ -37,9 +37,6 @@ module TestKitchen
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
 
-            # TODO: Remove, just for development
-            next if runner.class == TestKitchen::Runner::Vagrant
-
             # TODO: Rethink this, no need for linting to be repeated
             runner.preflight_check
             begin

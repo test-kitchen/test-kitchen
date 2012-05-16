@@ -80,7 +80,6 @@ module TestKitchen
     end
 
     def list_platforms
-      cd 'apache2'
       run_simple(unescape("bundle exec kitchen platform list"))
       @platforms = all_output.split("\n").map(&:lstrip)
     end
