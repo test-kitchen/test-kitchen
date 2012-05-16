@@ -105,6 +105,7 @@ module TestKitchen
           gem "test-kitchen", :path => '../../..'
         end
       }
+      cd '..'
     end
 
     def define_integration_tests(options={})
@@ -116,8 +117,9 @@ module TestKitchen
 
       case options[:project_type]
         when "project"
+          options[:name] = 'mixlib-shellout'
           write_file "#{File.join(options[:name], 'Kitchenfile')}", %Q{
-            integration_test "mixlib-shellout" do
+            integration_test "#{options[:name]}" do
               language 'ruby'
               runner 'vagrant'
               runtimes ['1.8.7','1.9.2']
