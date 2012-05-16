@@ -24,21 +24,18 @@ Given 'a Chef cookbook that does not define a set of supported platforms in its 
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
                 :setup => false)
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
-  cd 'example'
 end
 
 Given 'a Chef cookbook that defines several supported platforms, one of which is not recognised' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
                 :setup => false, :supports_type => :includes_unrecognised)
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
-  cd 'example'
 end
 
 Given /^a Chef cookbook that defines a set of supported platforms (literally|as a wordlist) in its metadata$/ do |supports_type|
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
                 :setup => false, :supports_type => supports_type == 'literally' ? :literal : :wordlist)
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
-  cd 'example'
 end
 
 Given 'a Chef cookbook that defines integration tests with no configurations specified' do
