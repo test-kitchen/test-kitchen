@@ -23,7 +23,7 @@ require 'test-kitchen'
 module TestKitchen
   describe TestKitchen do
     it "gives the correct path to the gem source root" do
-      TestKitchen.source_root.basename.to_s.must_equal 'test-kitchen'
+      TestKitchen.source_root.basename.to_s.must_equal File.basename(Dir.pwd)
     end
   end
 end
