@@ -150,23 +150,5 @@ module TestKitchen
         end
       end
     end
-    describe "#install_command" do
-      let(:cookbook) { Cookbook.new('example') }
-      let(:commands) do
-        cookbook.install_command.split(/; | && /)
-      end
-      it "ensures it has the latest version of rubygems" do
-        commands.first.must_equal 'sudo gem update --system'
-      end
-      it "installs bundler" do
-        commands[1].must_equal "gem install bundler"
-      end
-      it "changes to the test directory" do
-        commands[2].must_equal "cd /test-kitchen/test/test"
-      end
-      it "installs ruby dependencies" do
-        commands[3].must_equal "PATH=$PATH:/var/lib/gems/1.8/bin bundle install"
-      end
-    end
   end
 end

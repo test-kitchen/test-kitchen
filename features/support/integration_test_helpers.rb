@@ -126,6 +126,7 @@ module TestKitchen
               script 'bundle exec rspec spec'
             #{'end' unless options[:malformed]}
           }
+          cd options[:name]
         when "cookbook"
           # TODO: Template this properly
           dsl = %Q{cookbook "#{options[:name]}" do\n}
