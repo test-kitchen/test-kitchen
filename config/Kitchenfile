@@ -24,7 +24,7 @@ platform :ubuntu do
   version '11.04' do
     box "opscode-ubuntu-11.04"
     box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/ubuntu-11.04.box"
-    lxc_url "http://dl.dropbox.com/u/43220259/natty-i386.tar.gz"
+    lxc_url "http://172.31.6.2/natty-i386.tar.gz"
   end
 end
 
@@ -32,6 +32,6 @@ platform :centos do
   version '6.2' do
     box "opscode-centos-6.2"
     box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/centos-5.7.box"
-    lxc_url "http://dl.dropbox.com/u/43220259/centos-6-i386.tar.gz"
+    lxc_url "http://172.31.6.2/centos-6-i386.tar.gz"
   end
 end
