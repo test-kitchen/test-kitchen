@@ -172,7 +172,7 @@ module TestKitchen
     end
 
     def tests_run?
-      !! (all_output =~ /passed/)
+      !! (all_output =~ /[0-9]+ examples, [0-9]+ failures/)
     end
 
     def unrecognised_platform_warning_shown?(platform_name)
