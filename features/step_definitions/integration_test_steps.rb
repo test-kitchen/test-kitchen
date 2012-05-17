@@ -92,7 +92,13 @@ When 'I list the platforms' do
 end
 
 When 'I run the integration tests with test kitchen' do
-  run_integration_tests
+  begin
+    run_integration_tests
+  rescue
+    raise
+  ensure
+    puts all_output
+  end
 end
 
 When /^I scaffold the integration tests$/ do
