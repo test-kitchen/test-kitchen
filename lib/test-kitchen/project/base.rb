@@ -152,6 +152,7 @@ module TestKitchen
       end
 
       def to_hash
+        self.runtimes # hack
         hash = {}
         self.instance_variables.each do |var|
           hash[var[1..-1].to_sym] = self.instance_variable_get(var)
