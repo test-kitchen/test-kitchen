@@ -32,6 +32,7 @@ ruby_block "remove test-kitchen entry in Gemfile" do
     fe.search_file_delete_line(/gem ['"]test-kitchen['"]/)
     fe.write_file
   end
+  only_if { File.exists?(gemfile_path) }
 end
 
 # ensure we blow away Gemfile.lock
