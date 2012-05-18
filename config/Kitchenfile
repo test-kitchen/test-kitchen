@@ -18,7 +18,7 @@
 
 platform :ubuntu do
   version '11.04' do
-    box "opscode-ubuntu-11.04"
-    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/ubuntu-11.04.box"
+    box "opscode-ubuntu-11.04-rvm"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/ubuntu-11.04-rvm.box"
   end
 end
