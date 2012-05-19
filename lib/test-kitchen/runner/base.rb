@@ -116,6 +116,24 @@ module TestKitchen
       def librarian_env
         @librarian_env ||= Librarian::Chef::Environment.new(:project_path => env.tmp_path)
       end
+
+      def test_recipe_name
+        recipe_name = nil
+        recipe_name = env.project.name if cookbook_exists?(env.project.name)
+        if cookbook_exists?("#{env.project.name}_test")
+          recipe_name = "#{env.project.name}_test::"
+          if configuration
+            recipe_name += env.project.name == configuration.name ?
+              'default' : configuration.name
+          end
+        end
+        recipe_name
+      end
+
+      def cookbook_exists?(name)
+        env.cookbook_paths.any?{|path| Dir.exists?(File.join(path, name)) }
+      end
+
     end
 
     def self.targets

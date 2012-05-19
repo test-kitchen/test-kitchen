@@ -61,8 +61,14 @@ module TestKitchen
 
       def vagrant_env
         @vagrant_env ||= begin
-          env.create_tmp_file('Vagrantfile',
-            IO.read(TestKitchen.source_root.join('config', 'Vagrantfile')))
+          # massive hack
+          if test_recipe_name
+            vagrant_file = "test_recipe_name='#{test_recipe_name}'\n"
+          else
+            vagrant_file = 'test_recipe_name=nil'
+          end
+          vagrant_file += IO.read(TestKitchen.source_root.join('config', 'Vagrantfile'))
+          env.create_tmp_file('Vagrantfile', vagrant_file)
 
           options = {
             :ui_class => ::Vagrant::UI::Colored,
