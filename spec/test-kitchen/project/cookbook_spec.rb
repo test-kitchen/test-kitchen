@@ -116,11 +116,7 @@ module TestKitchen
     describe "#language" do
       let(:cookbook) { Cookbook.new('example') }
       it "returns the language when asked" do
-        cookbook.language.must_equal 'chef'
-      end
-      it "doesn't allow the language to be overridden" do
-        cookbook.language('java')
-        cookbook.language.must_equal 'chef'
+        cookbook.language.must_equal 'ruby'
       end
     end
     describe "#preflight_command" do

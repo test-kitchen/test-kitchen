@@ -77,6 +77,12 @@ module TestKitchen
       describe "#provision" do
         let(:runner) do
           runner = LXC.new(env, {:platform => 'ubuntu'})
+          runner.instance_eval do
+            def test_recipe_name
+              'example'
+            end
+          end
+          runner
         end
         it "delegates the provision call to the nested runner" do
           runner.nested_runner = MiniTest::Mock.new

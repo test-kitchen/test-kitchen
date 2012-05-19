@@ -27,11 +27,11 @@ module TestKitchen
       describe "#install_command" do
         it "runs bundle install in the project directory" do
           project = Ruby.new('foo')
-          project.install_command.must_equal 'cd /test-kitchen/test && bundle install'
+          project.install_command.must_equal 'cd /test-kitchen/test && gem install bundler && bundle install'
         end
         it "uses rvm to switch to the selected runtime" do
           project = Ruby.new('foo')
-          project.install_command('1.9.3').must_equal 'cd /test-kitchen/test && rvm use 1.9.3 && bundle install'
+          project.install_command('1.9.3').must_equal 'cd /test-kitchen/test && rvm use 1.9.3 && gem install bundler && bundle install'
         end
       end
       describe "#test_command" do
