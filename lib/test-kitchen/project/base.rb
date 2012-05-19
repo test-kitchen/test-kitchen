@@ -65,7 +65,7 @@ module TestKitchen
         [case runner
           when 'lxc' then 'test-kitchen::lxc'
           else 'test-kitchen::default'
-        end]
+        end] + run_list_extras
       end
 
       def run_list_extras(arg=nil)

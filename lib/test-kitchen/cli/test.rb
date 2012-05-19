@@ -43,6 +43,8 @@ module TestKitchen
               # TODO: Cookbook assembly also doesn't need to be repeated
               runner.provision
               runner.test
+            rescue
+              raise
             ensure
               runner.destroy
             end

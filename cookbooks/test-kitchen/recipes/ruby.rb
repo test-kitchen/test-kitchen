@@ -18,20 +18,23 @@
 
 project = node.run_state[:project]
 
-gemfile_path = File.join(project['test_root'], 'Gemfile')
+[File.join(project['test_root'], 'Gemfile'),
+  File.join(project['test_root'], 'test', 'Gemfile')].each do |gemfile_path|
 
-# TODO - remove this when test-kitchen is public
-ruby_block "remove test-kitchen entry in Gemfile" do
-  block do
-    require 'chef/util/file_edit'
-    fe = Chef::Util::FileEdit.new(gemfile_path)
-    fe.search_file_delete_line(/gem ['"]test-kitchen['"]/)
-    fe.write_file
+  # TODO - remove this when test-kitchen is public
+  ruby_block "remove test-kitchen entry in Gemfile - #{gemfile_path}" do
+    block do
+      require 'chef/util/file_edit'
+      fe = Chef::Util::FileEdit.new(gemfile_path)
+      fe.search_file_delete_line(/gem ['"]test-kitchen['"]/)
+      fe.write_file
+    end
+    only_if { File.exists?(gemfile_path) }
   end
-  only_if { File.exists?(gemfile_path) }
-end
 
-# ensure we blow away Gemfile.lock
-file "#{gemfile_path}.lock" do
-  action :delete
+  # ensure we blow away Gemfile.lock
+  file "#{gemfile_path}.lock" do
+    action :delete
+  end
+
 end

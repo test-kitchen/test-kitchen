@@ -34,10 +34,6 @@ module TestKitchen
         set_or_return(:lint, arg, {:default => true})
       end
 
-      def language(arg=nil)
-        "chef"
-      end
-
       def preflight_command(runtime = nil)
         return nil unless lint
         parent_dir = File.join(root_path, '..')
@@ -46,8 +42,17 @@ module TestKitchen
         cmd
       end
 
+      def script(arg=nil)
+        set_or_return(:script, arg, :default =>
+          %Q{if [ -d "features" ]; then bundle exec cucumber -t @#{name} features; fi})
+      end
+
+      def install_command(runtime=nil)
+        super(runtime, File.join(guest_test_root, 'test'))
+      end
+
       def test_command(runtime=nil)
-        %q{#{cd} && if [ -d "features" ]; then #{path} bundle exec cucumber -t @#{name} features; fi}
+        super(runtime, File.join(guest_test_root, 'test'))
       end
 
       def supported_platforms
@@ -75,16 +80,6 @@ module TestKitchen
 
       def cookbook_path(root_path, tmp_path)
         @cookbook_path ||= copy_cookbook_under_test(root_path, tmp_path)
-      end
-
-      private
-
-      def cd
-        "cd #{File.join(guest_test_root, 'test')}"
-      end
-
-      def path
-        'PATH=$PATH:/var/lib/gems/1.8/bin'
       end
 
     end
