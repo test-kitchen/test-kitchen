@@ -200,9 +200,8 @@ Then /^the test cookbook default and server recipes will not be converged$/ do
 end
 
 Then /^the tests will have been run( successfully)?$/ do |successfully|
-  assert tests_run? if successfully
-  # TODO: Assert that the test output shows tests success too
-  last_exit_status.must_equal 0
+  assert tests_run?
+  last_exit_status.must_equal(0) if successfully
 end
 
 Then 'the tests will not have been run' do

@@ -20,6 +20,7 @@ require 'librarian/chef/cli'
 
 module TestKitchen
   module Runner
+    class TestFailureError < StandardError; end
     class Base
 
       attr_accessor :platform
@@ -64,7 +65,8 @@ module TestKitchen
 
           message = "Running tests for [#{configuration.name}]"
           message << " under [#{runtime}]" if runtime
-          execute_remote_command(platform, configuration.test_command(runtime), message)
+          exit_code = execute_remote_command(platform, configuration.test_command(runtime), message)
+          raise TestFailureError unless exit_code == 0
         end
       end
 
