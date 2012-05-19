@@ -192,6 +192,7 @@ module TestKitchen
       cd 'apache2'
       run_simple('git clone --quiet git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
       run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
+      remove_file('test/features/simple_statistics.feature')
       cd '..'
     end
 
