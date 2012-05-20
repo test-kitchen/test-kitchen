@@ -18,13 +18,6 @@ I want to be able to integration test my Chef cookbook
      Then an error indicating that there is a problem with the configuration will be shown
       And the tests will not have been run
 
-  Scenario: Cookbook has syntax errors
-    Given a Chef cookbook with syntax errors
-      And the integration tests are defined in a Kitchenfile included with the cookbook
-     When I run the integration tests with test kitchen
-     Then an error indicating that there is a problem with the cookbook syntax will be shown
-      And the tests will not have been run
-
   Scenario: Cookbook has correctness problems
     Given a Chef cookbook that would fail a lint tool correctness check
       And the integration tests are defined in a Kitchenfile included with the cookbook
