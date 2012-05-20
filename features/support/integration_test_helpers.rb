@@ -50,9 +50,9 @@ module TestKitchen
           clone_cookbook_repository('vim', '789bfc')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
-          add_platform_metadata(options[:name], options[:supports_type]) if options[:supports_type]
-          add_gem_file(options[:name])
-          add_test_setup_recipe(options[:name], "#{options[:name]}_test") if options[:setup]
+          add_platform_metadata(options[:name], options[:supports_type], options[:path]) if options[:supports_type]
+          add_gem_file(options[:name], options[:path])
+          add_test_setup_recipe(options[:name], "#{options[:name]}_test", options[:path]) if options[:setup]
         else
           fail "Unknown type: #{options[:type]}"
       end
@@ -224,10 +224,10 @@ module TestKitchen
       })
     end
 
-    def add_gem_file(cookbook_name)
+    def add_gem_file(cookbook_name, path='.')
       gems = %w{cucumber minitest}
       gems += %w{nokogiri httparty} if cookbook_name == 'apache2'
-      write_file "#{cookbook_name}/test/Gemfile", %Q{
+      write_file "#{path}/#{cookbook_name}/test/Gemfile", %Q{
         source :rubygems
 
         #{gems.map{|g| "gem '#{g}'"}.join("\n")}
@@ -238,7 +238,7 @@ module TestKitchen
       }
     end
 
-    def add_platform_metadata(cookbook_name, supports_type)
+    def add_platform_metadata(cookbook_name, supports_type, path='.')
       supports = case supports_type
         when :literal then "supports 'ubuntu'"
         when :wordlist then %q{
@@ -253,11 +253,11 @@ module TestKitchen
         }
         else fail "Unrecognised supports_type: #{supports_type}"
       end
-      append_to_file("#{cookbook_name}/metadata.rb", "#{supports}\n")
+      append_to_file("#{path}/#{cookbook_name}/metadata.rb", "#{supports}\n")
     end
 
-    def add_test_setup_recipe(cookbook_name, test_cookbook)
-      write_file "#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/setup.rb", %q{
+    def add_test_setup_recipe(cookbook_name, test_cookbook, path='.')
+      write_file "#{path}/#{cookbook_name}/test/kitchen/cookbooks/#{test_cookbook}/recipes/setup.rb", %q{
         case node.platform
           when 'ubuntu'
             %w{libxml2 libxml2-dev libxslt1-dev}.each do |pkg|

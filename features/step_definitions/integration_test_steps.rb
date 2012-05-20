@@ -67,6 +67,7 @@ Given 'a supporting test cookbook that includes a default recipe' do
 end
 
 Given 'a supporting test cookbook that includes client and server recipes' do
+  cd '..'
   chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
   configuration_recipe('example', 'example_test', 'client')
   configuration_recipe('example', 'example_test', 'server')
@@ -74,6 +75,7 @@ Given 'a supporting test cookbook that includes client and server recipes' do
 end
 
 Given /^a supporting test cookbook that includes only the server recipe$/ do
+  cd '..'
   chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
   configuration_recipe('example', 'example_test', 'server')
   cd 'example'

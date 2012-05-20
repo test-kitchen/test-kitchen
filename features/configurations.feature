@@ -1,3 +1,4 @@
+@announce
 Feature: Configurations
 
 In order to be able to test the full range of deployment options
