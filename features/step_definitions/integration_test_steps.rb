@@ -61,6 +61,7 @@ Given 'a Ruby project that uses bundler to manage its dependencies' do
 end
 
 Given 'a supporting test cookbook that includes a default recipe' do
+  cd '..'
   chef_cookbook(:type => :newly_generated, :name => 'example_test', :path => './example/test/kitchen/cookbooks')
   configuration_recipe('example', 'example_test', 'default')
   cd 'example'
