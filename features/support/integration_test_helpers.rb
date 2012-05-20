@@ -41,6 +41,7 @@ module TestKitchen
       options = {:type => :real_world, :setup => true}.merge(options)
       case options[:type]
         when :real_world
+          options[:name] = 'apache2'
           clone_cookbook_repository('apache2', '3ceb3d3')
           merge_apache2_test
           add_gem_file('apache2')
@@ -49,15 +50,15 @@ module TestKitchen
           clone_cookbook_repository('vim', '789bfc')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
-          add_platform_metadata('example', options[:supports_type]) if options[:supports_type]
+          add_platform_metadata(options[:name], options[:supports_type]) if options[:supports_type]
           add_gem_file(options[:name])
-          add_test_setup_recipe('example', 'example_test') if options[:setup]
+          add_test_setup_recipe(options[:name], "#{options[:name]}_test") if options[:setup]
         else
           fail "Unknown type: #{options[:type]}"
       end
-      introduce_syntax_error if options[:malformed]
-      introduce_correctness_problem if options[:lint_problem] == :correctness
-      introduce_style_problem if options[:lint_problem] == :style
+      introduce_syntax_error(options[:name]) if options[:malformed]
+      introduce_correctness_problem(options[:name]) if options[:lint_problem] == :correctness
+      introduce_style_problem(options[:name]) if options[:lint_problem] == :style
     end
 
     def configuration_recipe(cookbook_name, test_cookbook, configuration)
@@ -196,14 +197,14 @@ module TestKitchen
       cd '..'
     end
 
-    def introduce_syntax_error
-      append_to_file('recipes/default.rb', %q{
+    def introduce_syntax_error(cookbook_name)
+      append_to_file("#{cookbook_name}/recipes/default.rb", %q{
         end # Bang!
       })
     end
 
-    def introduce_correctness_problem
-      append_to_file('recipes/default.rb', %q{
+    def introduce_correctness_problem(cookbook_name)
+      append_to_file("#{cookbook_name}/recipes/default.rb", %q{
         # This resource should trigger a FC006 warning
         directory "/var/lib/foo" do
           owner "root"
@@ -214,8 +215,8 @@ module TestKitchen
       })
     end
 
-    def introduce_style_problem
-      append_to_file('recipes/default.rb', %q{
+    def introduce_style_problem(cookbook_name)
+      append_to_file("#{cookbook_name}/recipes/default.rb", %q{
         path = "/var/lib/foo"
         directory "#{path}" do
           action :create
