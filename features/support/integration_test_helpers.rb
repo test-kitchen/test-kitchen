@@ -68,16 +68,15 @@ module TestKitchen
     end
 
     def converged?(platform, recipe)
-      provision_banner = 'Provisioning Linux Container: '
-      converges = all_output.split(/#{Regexp.escape(provision_banner)}/)
+      converges = all_output.split(/Importing base box.*\n +/)
       converges.any? do |converge|
-        converge.start_with?(platform) &&
+        converge.start_with?("[#{platform}]") &&
           converge.match(/Run List is .*#{Regexp.escape("example_test::#{recipe}")}/)
       end
     end
 
     def expected_platforms
-      ['ubuntu-11.04', 'centos-6.2']
+      ['ubuntu-11.04']
     end
 
     def list_platforms
