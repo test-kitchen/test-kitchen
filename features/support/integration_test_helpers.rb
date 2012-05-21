@@ -150,7 +150,8 @@ module TestKitchen
       run_simple(unescape("bundle exec kitchen test"), false)
     end
 
-    def scaffold_tests
+    def scaffold_tests(cookbook_name)
+      cd cookbook_name
       run_simple(unescape("bundle install"))
       run_simple(unescape("bundle exec kitchen init"))
     end

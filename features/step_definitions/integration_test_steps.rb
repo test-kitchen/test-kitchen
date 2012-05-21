@@ -105,7 +105,7 @@ When 'I run the integration tests with test kitchen' do
 end
 
 When /^I scaffold the integration tests$/ do
-  scaffold_tests
+  scaffold_tests('vim')
 end
 
 When 'I view the command line help' do
