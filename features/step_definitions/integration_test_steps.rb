@@ -163,7 +163,7 @@ Then 'the available options will be shown with a brief description of each' do
 end
 
 Then 'the existing cookbook will have been converged' do
-  all_output.must_include 'package[vim-enhanced] installed'
+  all_output.must_match /package\[vim.*\] installed/
 end
 
 Then 'the expected platforms will be available' do
