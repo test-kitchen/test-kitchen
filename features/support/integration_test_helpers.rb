@@ -68,7 +68,7 @@ module TestKitchen
     end
 
     def converged?(platform, recipe)
-      converges = all_output.split(/Importing base box.*\n +/)
+      converges = all_output.split(/Importing base box.*\n */)
       converges.any? do |converge|
         converge.start_with?("[#{platform}]") &&
           converge.match(/Run List is .*#{Regexp.escape("example_test::#{recipe}")}/)
