@@ -78,10 +78,7 @@ project = tk_env.project
               'project' => project.to_hash.merge(
                 'source_root' => project.guest_source_root,
                 'test_root' => project.guest_test_root
-              ),
-              'lxc-image-urls' => Hash[*tk_env.all_platforms.map do |key, value|
-                [key, value.lxc_url] if value.lxc_url
-              end.flatten.compact]
+              )
             },
           }
 

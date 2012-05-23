@@ -93,7 +93,6 @@ module TestKitchen::DSL
         version '10.04' do
           box "ubuntu-10.04"
           box_url "http://example.org/ubuntu-10.04.box"
-          lxc_url "http://example.org/ubuntu-10.04.tar.gz"
         end
       end
     end

@@ -1,7 +1,7 @@
 # Test Kitchen
 
-Test Kitchen pulls together some of your favorite tools (Chef, Vagrant, Toft) to
-make it easy to get started testing Chef cookbooks.
+Test Kitchen pulls together some of your favorite tools to make it easy to get
+started testing Chef cookbooks.
 
 You define your test config in a `Kitchenfile` within your cookbook.
 
@@ -49,11 +49,6 @@ If your cookbook doesn't specify the platforms that it supports then it will be
 tested against all platforms supported by test-kitchen. Alternatively if you
 have specified a platform that test-kitchen doesn't yet support a warning
 message will be displayed.
-
-If you are using Vagrant/VirtualBox (the default) you'll notice that
-test-kitchen doesn't tear down the VirtualBox VM between different platforms.
-This is because a single VM is provisioned which then uses Linux Containers (via
-Toft) to give you faster feedback.
 
 # Configurations
 

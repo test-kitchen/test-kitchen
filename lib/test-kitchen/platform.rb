@@ -41,7 +41,7 @@ module TestKitchen
       include Chef::Mixin::ParamsValidate
 
       attr_reader :name
-      attr_writer :box, :box_url, :lxc_url
+      attr_writer :box, :box_url
 
       def initialize(name, &block)
         raise ArgumentError, "Version name must be specified" if name.nil? || name.empty?
@@ -55,10 +55,6 @@ module TestKitchen
 
       def box_url(arg=nil)
         set_or_return(:box_url, arg, {})
-      end
-
-      def lxc_url(arg=nil)
-        set_or_return(:lxc_url, arg, {})
       end
 
     end
