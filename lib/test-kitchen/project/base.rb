@@ -57,10 +57,6 @@ module TestKitchen
         @configurations.empty? ? {:default => self} : @configurations
       end
 
-      def tests_tag
-        @configurations.empty? ? 'default' : name
-      end
-
       def exclude(exclusion)
         @exclusions << exclusion
       end

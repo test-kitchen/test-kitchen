@@ -44,7 +44,7 @@ module TestKitchen
 
       def script(arg=nil)
         set_or_return(:script, arg, :default =>
-          %Q{if [ -d "features" ]; then bundle exec cucumber -t @#{tests_tag} features; fi})
+          %Q{if [ -d "features" ]; then bundle exec cucumber -t @#{name} features; fi})
       end
 
       def install_command(runtime=nil)
