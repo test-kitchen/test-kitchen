@@ -27,10 +27,10 @@ module TestKitchen
     def assert_only_platforms_converged(platform_prefixes)
       expected_platforms.each do |platform|
         if platform_prefixes.any?{|p| platform.start_with?("#{p}-")}
-          assert(converged?(platform, 'default'),
+          assert(converged?(platform, 'example'),
             "Expected platform '#{platform}' to have been converged.")
         else
-          refute(converged?(platform, 'default'),
+          refute(converged?(platform, 'example'),
             "Expected platform '#{platform}' not to have been converged.")
         end
       end
@@ -71,7 +71,7 @@ module TestKitchen
       converges = all_output.split(/Importing base box.*\n */)
       converges.any? do |converge|
         converge.start_with?("[#{platform}]") &&
-          converge.match(/Run List is .*#{Regexp.escape("example_test::#{recipe}")}/)
+          converge.match(/Run List is .*#{Regexp.escape(recipe)}/)
       end
     end
 

@@ -173,7 +173,7 @@ end
 Then 'the test cookbook client and server recipes will be converged once for each platform' do
   expected_platforms.each do |platform|
     %w{client server}.each do |recipe|
-      assert(converged?(platform, recipe),
+      assert(converged?(platform, "example_test::#{recipe}"),
         "Expected platform '#{platform}' to have been converged with configuration recipe '#{recipe}'.")
     end
   end
@@ -181,14 +181,14 @@ end
 
 Then 'the test cookbook default recipe will be converged once for each platform' do
   expected_platforms.each do |platform|
-    assert(converged?(platform, 'default'),
+    assert(converged?(platform, 'example_test::default'),
       "Expected platform '#{platform}' to have been converged.")
   end
 end
 
 Then 'the test cookbook default recipe will not be converged' do
   expected_platforms.each do |platform|
-    refute(converged?(platform, 'default'),
+    refute(converged?(platform, 'example_test::default'),
       "Expected default recipe not to have been converged.")
   end
 end
@@ -196,8 +196,8 @@ end
 Then /^the test cookbook default and server recipes will not be converged$/ do
   expected_platforms.each do |platform|
     %w{default server}.each do |recipe|
-      refute(converged?(platform, recipe),
-        "Expected #{recipe} recipe not to have been converged.")
+      refute(converged?(platform, "example_test::#{recipe}"),
+        "Expected example_test::#{recipe} recipe not to have been converged.")
     end
   end
 end
