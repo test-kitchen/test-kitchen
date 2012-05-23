@@ -242,7 +242,7 @@ module TestKitchen
       supports = case supports_type
         when :literal then "supports 'ubuntu'"
         when :wordlist then %q{
-          %w{ubuntu centos}.each do |os|
+          %w{ubuntu}.each do |os|
             supports os
           end
         }

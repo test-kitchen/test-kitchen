@@ -1,3 +1,4 @@
+@announce
 Feature: Infer cookbook platforms
 
 In order to remove the need to re-state the platforms that a cookbook supports
