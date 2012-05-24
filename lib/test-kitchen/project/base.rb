@@ -29,9 +29,10 @@ module TestKitchen
       attr_writer :language, :runtimes, :install, :script, :configurations, :root_path, :memory
       attr_accessor :vm
 
-      def initialize(name, &block)
+      def initialize(name, parent=nil, &block)
         raise ArgumentError, "Project name must be specified" if name.nil? || name.empty?
         @name = name
+        @parent = parent
         @configurations = {}
         @exclusions = []
         @guest_source_root = '/test-kitchen/source'
@@ -52,7 +53,7 @@ module TestKitchen
       end
 
       def configuration(name, &block)
-        @configurations[name] = self.class.new(name, &block)
+        @configurations[name] = self.class.new(name, self, &block)
       end
 
       def configurations
@@ -60,7 +61,7 @@ module TestKitchen
       end
 
       def tests_tag
-        @configurations.empty? ? 'default' : name
+        @parent.nil? ? 'default' : name
       end
 
       def exclude(exclusion)

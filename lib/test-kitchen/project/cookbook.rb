@@ -26,10 +26,6 @@ module TestKitchen
       attr_writer :lint
       attr_writer :supported_platforms
 
-      def initialize(name, &block)
-        super(name, &block)
-      end
-
       def lint(arg=nil)
         set_or_return(:lint, arg, {:default => true})
       end
