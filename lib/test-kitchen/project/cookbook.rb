@@ -66,15 +66,15 @@ module TestKitchen
         end.sort.uniq
       end
 
-      def each_build(platforms, &block)
+      def each_build(platforms, active_config=nil, &block)
         if supported_platforms.empty?
-          super(platforms, &block)
+          super(platforms, active_config, &block)
         else
           super(platforms.select do |platform|
             supported_platforms.any? do |supported|
               platform.start_with?("#{supported}-")
             end
-          end, &block)
+          end, active_config, &block)
         end
       end
 

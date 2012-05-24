@@ -39,9 +39,11 @@ module TestKitchen
         instance_eval(&block) if block_given?
       end
 
-      def each_build(platforms)
+      def each_build(platforms, active_config=nil)
         raise ArgumentError if platforms.nil? || ! block_given?
-        platforms.to_a.product(configurations.values).each do |platform,configuration|
+        c = Array(active_config ?
+          configurations[active_config] : configurations.values)
+        platforms.to_a.product(c).each do |platform,configuration|
           yield [platform, configuration] unless exclusions.any? do |e|
             e[:platform] == platform &&
               ((! e[:configuration]) || e[:configuration] == configuration)
