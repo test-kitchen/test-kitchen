@@ -17,11 +17,11 @@
 #
 
 # Make sure that the package list is up to date
-case node[:platform]
+case node['platform']
 when 'debian', 'ubuntu'
-  include_recipe "apt"
+  include_recipe 'apt'
 when 'centos','redhat'
-  include_recipe "yum::epel"
+  include_recipe 'yum::epel'
 end
 
 include_recipe 'git'
@@ -40,16 +40,16 @@ execute "stage project source to test root" do
 end
 
 # make the project_root available to other recipes
-node.run_state[:project] = project
+node.run_state['project'] = project
 
 language = project['language'] || 'chef'
 
 # if a project specific recipe exists use it for additional setup
 if recipe_for_project?(project['name'])
 
-  include_recipe "kitchen::#{name}"
+  include_recipe "test-kitchen::#{name}"
 
 end
 
-# ensure projects declared langauge toolchain is present
+# ensure projects declared language toolchain is present
 include_recipe "test-kitchen::#{language}"

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-project = node.run_state[:project]
+project = node.run_state['project']
 
 [File.join(project['test_root'], 'Gemfile'),
   File.join(project['test_root'], 'test', 'Gemfile')].each do |gemfile_path|
