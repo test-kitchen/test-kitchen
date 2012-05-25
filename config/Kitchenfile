@@ -15,7 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+platform :centos do
+  version '6.2' do
+    box "opscode-centos-6.2-rvm"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/centos-6.2-rvm.box"
+  end
+end
 platform :ubuntu do
   version '11.04' do
     box "opscode-ubuntu-11.04-rvm"
