@@ -121,7 +121,7 @@ Then 'a warning will be displayed for the unrecognised platform' do
 end
 
 Then /^all (?:recognised )?platforms will be tested against$/ do
-  assert_only_platforms_converged(['ubuntu'])
+  assert_only_platforms_converged(['centos', 'ubuntu'])
 end
 
 Then 'an error indicating that the client configuration does not have a matching recipe will be shown' do
@@ -145,7 +145,7 @@ Then 'each of the expected kitchen subcommands will be shown' do
 end
 
 Then /^only the platforms specified in the metadata (wordlist )?will be tested against$/ do |wordlist|
-  assert_only_platforms_converged(['ubuntu'])
+  assert_only_platforms_converged(wordlist ? ['centos', 'ubuntu'] : ['ubuntu'])
 end
 
 Then 'the available options will be shown with a brief description of each' do

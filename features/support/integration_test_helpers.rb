@@ -76,7 +76,7 @@ module TestKitchen
     end
 
     def expected_platforms
-      ['ubuntu-11.04']
+      ['centos-6.2', 'ubuntu-11.04']
     end
 
     def list_platforms
@@ -242,7 +242,7 @@ module TestKitchen
       supports = case supports_type
         when :literal then "supports 'ubuntu'"
         when :wordlist then %q{
-          %w{ubuntu}.each do |os|
+          %w{ubuntu centos}.each do |os|
             supports os
           end
         }
