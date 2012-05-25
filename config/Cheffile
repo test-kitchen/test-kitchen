@@ -44,4 +44,7 @@ if env.root_path.join('cookbooks').exist?
   env.root_path.join('cookbooks').children.select(&:directory?).each do |c|
     cookbook c.basename.to_s, :path => env.root_path.join('cookbooks', c.basename.to_s).to_s
   end
+  if env.root_path.join('cookbooks', 'Cheffile').exist?
+    eval(File.read(env.root_path.join('cookbooks', 'Cheffile')))
+  end
 end
