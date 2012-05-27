@@ -76,7 +76,7 @@ module TestKitchen
     end
 
     def expected_platforms
-      ['centos-6.2', 'ubuntu-11.04']
+      ['centos-5.7', 'ubuntu-11.04']
     end
 
     def list_platforms

@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 platform :centos do
-  version '6.2' do
-    box "opscode-centos-6.2-rvm"
-    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/centos-6.2-rvm.box"
+  version '5.7' do
+    box "opscode-centos-5.7-rvm"
+    box_url "http://acrmp-vm.s3.amazonaws.com/vagrant/boxes/centos-5.7-rvm.box"
   end
 end
 platform :ubuntu do
