@@ -42,12 +42,11 @@ module TestKitchen
       case options[:type]
         when :real_world
           options[:name] = 'apache2'
-          clone_cookbook_repository('apache2', '3ceb3d3')
-          merge_apache2_test
+          clone_cookbook_repository('kotiri', 'apache2', '9316d9')
           add_gem_file('apache2')
           add_test_setup_recipe('apache2', 'apache2_test')
         when :real_world_testless
-          clone_cookbook_repository('vim', '789bfc')
+          clone_cookbook_repository('opscode-cookbooks', 'vim', '789bfc')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path])
           add_platform_metadata(options[:name], options[:supports_type], options[:path]) if options[:supports_type]
@@ -182,18 +181,10 @@ module TestKitchen
 
     private
 
-    def clone_cookbook_repository(cookbook_name, sha)
-      run_simple("git clone --quiet git://github.com/opscode-cookbooks/#{cookbook_name}.git")
+    def clone_cookbook_repository(organization, cookbook_name, sha)
+      run_simple("git clone --quiet git://github.com/#{organization}/#{cookbook_name}.git")
       cd(cookbook_name)
       run_simple("git checkout --quiet #{sha}")
-      cd '..'
-    end
-
-    def merge_apache2_test
-      cd 'apache2'
-      run_simple('git clone --quiet git://github.com/kotiri/apache2_test.git test/kitchen/cookbooks/apache2_test')
-      run_simple('mv test/kitchen/cookbooks/apache2_test/features test/features')
-      remove_file('test/features/simple_statistics.feature')
       cd '..'
     end
 
