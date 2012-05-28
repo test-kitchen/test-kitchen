@@ -67,8 +67,6 @@ project = tk_env.project
         # Enable SSH agent forwarding for git clones
         vm_config.ssh.forward_agent = true
 
-        # share Chef::Config[:file_cache_path] between VMs and provisions
-        vm_config.vm.share_folder "cache", "/tmp/cache", tk_env.cache_path
         # mount the local code checkout up in the VM for testing
         vm_config.vm.share_folder "project", project.guest_source_root, project.root_path
 
@@ -83,7 +81,6 @@ project = tk_env.project
           }
 
         vm_config.vm.provision :chef_solo do |chef|
-          chef.provisioning_path = "/tmp/cache"
           chef.cookbooks_path = tk_env.cookbook_paths
           chef.run_list = test_recipe_name ? project.run_list + [test_recipe_name] : project.run_list
           chef.json = chef_json
