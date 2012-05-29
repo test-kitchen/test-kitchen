@@ -158,18 +158,20 @@ module TestKitchen
         end
         it "removes configuration-specific exclusions from the matrix" do
           project = Base.new('mysql')
-          project.configurations = {'client' => 'client', 'server' => 'server'}
+          client = Base.new('client')
+          server = Base.new('server')
+          project.configurations = {'client' => client, 'server' => server}
           project.exclude :platform => 'amazon', :configuration => 'server'
           actual_matrix = []
           project.each_build(['ubuntu', 'amazon', 'centos']) do |platform,configuration|
             actual_matrix << [platform, configuration]
           end
           actual_matrix.must_equal([
-            ['ubuntu', 'client'],
-            ['ubuntu', 'server'],
-            ['amazon', 'client'],
-            ['centos', 'client'],
-            ['centos', 'server']
+            ['ubuntu', client],
+            ['ubuntu', server],
+            ['amazon', client],
+            ['centos', client],
+            ['centos', server]
           ])
         end
       end

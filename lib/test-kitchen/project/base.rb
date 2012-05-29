@@ -46,8 +46,8 @@ module TestKitchen
           configurations[active_config] : configurations.values)
         platforms.to_a.product(c).each do |platform,configuration|
           yield [platform, configuration] unless exclusions.any? do |e|
-            e[:platform] == platform &&
-              ((! e[:configuration]) || e[:configuration] == configuration)
+            e[:platform] == platform.split('-').first &&
+              ((! e[:configuration]) || e[:configuration] == configuration.name)
           end
         end
       end
