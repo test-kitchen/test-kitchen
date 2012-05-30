@@ -82,7 +82,7 @@ project = tk_env.project
 
         vm_config.vm.provision :chef_solo do |chef|
           chef.cookbooks_path = tk_env.cookbook_paths
-          chef.run_list = test_recipe_name ? project.run_list + [test_recipe_name] : project.run_list
+          chef.run_list = test_recipe_name ? [test_recipe_name, test_recipe_name.sub('_test', '')] + project.run_list : project.run_list
           chef.json = chef_json
         end
 

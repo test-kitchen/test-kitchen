@@ -119,6 +119,12 @@ module TestKitchen
         cookbook.language.must_equal 'ruby'
       end
     end
+    describe "#run_list" do
+      let(:cookbook) { Cookbook.new('example') }
+      it "includes minitest-handler cookbook in the run_list as the last entry" do
+        cookbook.run_list.last.must_equal 'recipe[minitest-handler]'
+      end
+    end
     describe "#preflight_command" do
       let(:cookbook) { Cookbook.new('example') }
       it "returns nil if linting is disabled" do

@@ -30,6 +30,10 @@ module TestKitchen
         set_or_return(:lint, arg, {:default => true})
       end
 
+      def run_list
+        super + ['recipe[minitest-handler]']
+      end
+
       def preflight_command(runtime = nil)
         return nil unless lint
         parent_dir = File.join(root_path, '..')

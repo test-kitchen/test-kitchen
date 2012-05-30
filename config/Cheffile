@@ -39,6 +39,11 @@ if env.project.respond_to?(:cookbook_path)
   cookbook env.project.name, :path => env.project.cookbook_path(env.root_path, env.tmp_path)
 end
 
+if env.project.run_list.include? 'recipe[minitest-handler]'
+  cookbook 'minitest-handler',
+    :git => 'git://github.com/kotiri/minitest-handler-cookbook.git'
+end
+
 # include user-provided cookbooks
 if env.root_path.join('cookbooks').exist?
   env.root_path.join('cookbooks').children.select(&:directory?).each do |c|
