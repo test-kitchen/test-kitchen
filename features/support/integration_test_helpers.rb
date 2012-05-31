@@ -38,7 +38,7 @@ module TestKitchen
 
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
-      options = {:type => :real_world, :setup => true}.merge(options)
+      options = {:type => :real_world, :setup => true, :recipes => []}.merge(options)
       case options[:type]
         when :real_world
           options[:name] = 'apache2'
@@ -48,7 +48,7 @@ module TestKitchen
         when :real_world_testless
           clone_cookbook_repository('opscode-cookbooks', 'vim', '789bfc')
         when :newly_generated
-          generate_new_cookbook(options[:name], options[:path])
+          generate_new_cookbook(options[:name], options[:path], options[:recipes])
           add_platform_metadata(options[:name], options[:supports_type], options[:path]) if options[:supports_type]
           add_gem_file(options[:name], options[:path])
           add_test_setup_recipe(options[:name], "#{options[:name]}_test", options[:path]) if options[:setup]
@@ -303,8 +303,13 @@ module TestKitchen
         %w{destroy init platform project ssh status test}
       end
 
-      def generate_new_cookbook(name, path)
+      def generate_new_cookbook(name, path, recipes=[])
         run_simple("knife cookbook create -o #{path} #{name}")
+        recipes.each do |recipe|
+          write_file "#{path}/#{name}/recipes/#{recipe}.rb", %q{
+            Chef::Log.info("This is a cookbook recipe.")
+          }
+        end
       end
 
       def option_flags

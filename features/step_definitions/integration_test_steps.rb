@@ -44,7 +44,7 @@ Given 'a Chef cookbook that defines integration tests with no configurations spe
 end
 
 Given 'a Chef cookbook that defines integration tests for two configurations (client and server)' do
-  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.')
+  chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.', :recipes => %w{client server})
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => %w{client server})
 end
 
