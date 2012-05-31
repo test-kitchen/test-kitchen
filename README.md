@@ -81,6 +81,24 @@ For example in the case of mysql the server recipe will include the standard
 that then exercise the service will be able to verify that mysql is working
 correctly by running queries against the test database.
 
+## Excluding Platforms and Configurations
+
+If you know that a certain configuration is not expected to work on a platform
+you can choose to `exclude` it from the build:
+
+```ruby
+cookbook "mysql" do
+  configuration "client"
+  configuration "server"
+
+  # we only want to test amazon against the client configuration
+  exclude :platform => 'amazon', :configuration => 'server'
+
+  # we don't want to test freebsd at all even though it's in the metadata
+  exclude :platform => 'freebsd'
+end
+```
+
 # Adding Tests
 
 As we saw above, there is a lot of value in just converging your cookbooks
