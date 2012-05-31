@@ -106,9 +106,6 @@ probably easier to get started with if you haven't written tests before. If you
 use minitest-chef-handler then your `MiniTest::Spec` examples will be run
 following the converge in the report handler phase of the Chef run.
 
-* *<<< Add Cucumber feature example here >>>*
-* *<<< Add MiniTest::Spec example here >>>*
-
 # License
 The test-kitchen project is licensed under the Apache License, Version 2.0.
 Components used by test-kitchen are licensed under their own individual
