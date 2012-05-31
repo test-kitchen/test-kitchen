@@ -18,6 +18,22 @@
 
 require 'test-kitchen'
 
+def recipe_exists?(cookbook_path, recipe_name)
+  File.exists?(File.join(cookbook_path, "#{recipe_name}.rb".split('::').insert(1, 'recipes')))
+end
+
+def build_run_list(cookbook_paths, test_recipe_name)
+  run_list = []
+  if test_recipe_name
+    run_list << test_recipe_name
+    recipe_name = test_recipe_name.sub('_test', '')
+    if cookbook_paths.any? {|path| recipe_exists?(path, recipe_name)}
+      run_list << recipe_name
+    end
+  end
+  run_list
+end
+
 tk_env = TestKitchen::Environment.new
 tk_env.load!
 tk_config = tk_env.config
@@ -82,7 +98,7 @@ project = tk_env.project
 
         vm_config.vm.provision :chef_solo do |chef|
           chef.cookbooks_path = tk_env.cookbook_paths
-          chef.run_list = test_recipe_name ? [test_recipe_name, test_recipe_name.sub('_test', '')] + project.run_list : project.run_list
+          chef.run_list = build_run_list(tk_env.cookbook_paths, test_recipe_name) + project.run_list
           chef.json = chef_json
         end
 
