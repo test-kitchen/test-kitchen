@@ -100,6 +100,7 @@ project = tk_env.project
           chef.cookbooks_path = tk_env.cookbook_paths
           chef.run_list = build_run_list(tk_env.cookbook_paths, test_recipe_name) + project.run_list
           chef.json = chef_json
+          chef.log_level = :debug
         end
 
       end
