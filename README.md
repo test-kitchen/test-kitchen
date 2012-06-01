@@ -179,11 +179,13 @@ resources were actually created.
 
 For our MySQL example this looks like:
 
-    describe 'mysql::server' do
-      it 'runs as a daemon' do
-        service(node['mysql']['service_name']).must_be_running
-      end
-    end
+```ruby
+describe 'mysql::server' do
+  it 'runs as a daemon' do
+    service(node['mysql']['service_name']).must_be_running
+  end
+end
+```
 
 Matchers are [available for most resource types](https://github.com/calavera/minitest-chef-handler/blob/master/examples/spec_examples/files/default/tests/minitest/example_test.rb).
 
