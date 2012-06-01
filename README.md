@@ -10,7 +10,7 @@ You define your test config in a `Kitchenfile` within your cookbook.
 When you use test-kitchen your test config and the tests themselves live
 along-side the cookbook within the cookbook repository. To get started, install
 the test-kitchen gem. This makes available the `kitchen` command which is the
-main way you will interact with test-kitchen. It is modelled closely on the
+main way you will interact with test-kitchen. It is modelled loosely on the
 vagrant cli.
 
     $ gem install test-kitchen
@@ -21,15 +21,15 @@ running:
     $ cd my-existing-cookbook
     $ kitchen init
 
-Even if you haven't yet got around to writing any tests, test-kitchen is still
-useful in providing an easy way to test that your cookbook converges
-successfully.
-
 Run this command to converge your cookbook's default recipe:
 
     $ kitchen test
 
 # Platforms
+
+Even if you haven't yet got around to writing any tests, test-kitchen is still
+useful in providing an easy way to test that your cookbook converges
+successfully on a variety of platforms.
 
 Test-kitchen looks at your cookbook's `metadata.rb` file to see which platforms
 you have indicated that it should support.
@@ -81,7 +81,14 @@ For example in the case of mysql the server recipe will include the standard
 that then exercise the service will be able to verify that mysql is working
 correctly by running queries against the test database.
 
-## Excluding Platforms and Configurations
+## Testing a single configuration only
+
+To run the tests for a single configuration only specify the configuration
+on the command line:
+
+    $ kitchen test --configuration my_configuration
+
+## Excluding platforms and configurations
 
 If you know that a certain configuration is not expected to work on a platform
 you can choose to `exclude` it from the build:
@@ -123,6 +130,62 @@ created). These tests are normally less useful than the black box tests, but are
 probably easier to get started with if you haven't written tests before. If you
 use minitest-chef-handler then your `MiniTest::Spec` examples will be run
 following the converge in the report handler phase of the Chef run.
+
+## Cucumber Examples
+
+Here's an example feature for our MySQL cookbook:
+
+    @server
+    Feature: Query database
+
+    In order to persist and retrieve my application data
+    As a developer
+    I want to be able to query the database
+
+      Scenario: Query database
+        Given a new database server with some example data
+         When I query the database
+         Then the expected data should be returned
+
+The `@server` tag at the top of the feature specifies that this feature is
+associated with the `server` configuration. Test Kitchen will run any features
+in the `test/features` subdirectory tagged with the configuration name
+in order to check that the service is working as expected.
+
+In this case, after converging MySQL, we are going to check that we can query
+the database and get back the data that we expect. For a webserver we would
+check that the default webserver page was available.
+
+Writing our examples in plain english means that Chef users who know
+_just-enough-ruby_ are able to quickly see what functionality our cookbook
+should support, without having to wade through the actual test code.
+
+## Test Setup
+
+Frequently you will want to do some additional setup in order to be able to
+adequately test your cookbook. For example the scenario above assumes that
+the test database and example data have been created.
+
+To do this you can create a test cookbook at
+`mysql/test/kitchen/cookbooks/mysql_test/`. Each configuration has a matching
+test recipe of the same name where you can perform any necessary setup.
+
+## MiniTest
+
+Any minitest-chef-handler tests placed in `files/default/tests/minitest` within
+your cookbook will be run as the final part of the converge in the exception
+and reporting handler phase. You can use these to check that the expected
+resources were actually created.
+
+For our MySQL example this looks like:
+
+    describe 'mysql::server' do
+      it 'runs as a daemon' do
+        service(node['mysql']['service_name']).must_be_running
+      end
+    end
+
+Matchers are [available for most resource types](https://github.com/calavera/minitest-chef-handler/blob/master/examples/spec_examples/files/default/tests/minitest/example_test.rb).
 
 # License
 The test-kitchen project is licensed under the Apache License, Version 2.0.
