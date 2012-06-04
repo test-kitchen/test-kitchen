@@ -42,7 +42,7 @@ module TestKitchen
       case options[:type]
         when :real_world
           options[:name] = 'apache2'
-          clone_cookbook_repository('kotiri', 'apache2', '47b7ec')
+          clone_cookbook_repository('kotiri', 'apache2', '106976')
           add_gem_file('apache2')
           add_test_setup_recipe('apache2', 'apache2_test')
         when :real_world_testless
