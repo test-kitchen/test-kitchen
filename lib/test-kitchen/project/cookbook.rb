@@ -34,12 +34,12 @@ module TestKitchen
         super + ['recipe[minitest-handler]']
       end
 
-      def preflight_command(runtime = nil)
+      def preflight_command(cmd = nil)
         return nil unless lint
         parent_dir = File.join(root_path, '..')
-        cmd = "knife cookbook test -o #{parent_dir} #{name}"
-        cmd << " && foodcritic -f ~FC007 -f correctness #{root_path}"
-        cmd
+        set_or_return(:preflight_command, cmd, :default =>
+          "knife cookbook test -o #{parent_dir} #{name}" +
+          " && foodcritic -f ~FC007 -f correctness #{root_path}")
       end
 
       def script(arg=nil)
