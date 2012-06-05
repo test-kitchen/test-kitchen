@@ -86,9 +86,7 @@ module TestKitchen
     def ruby_project
       run_simple('git clone --quiet https://github.com/opscode/mixlib-shellout.git')
       cd('mixlib-shellout')
-      run_simple('git checkout --quiet 3a72a18a9151b160cea1e47f226fc45ba295ed8e') #Ok
-      run_simple('sed -i -e "584,594d" ./spec/mixlib/shellout/shellout_spec.rb')
-      #run_simple('git checkout --quiet d67c9a9494c74e6443262024d0e46e83df1af6c6') #Broken
+      run_simple('git checkout --quiet 3a72a18a9151b160cea1e47f226fc45ba295ed8e')
       write_file 'Gemfile', %q{
         source :rubygems
         gemspec :name => "mixlib-shellout"

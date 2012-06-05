@@ -33,10 +33,8 @@ module TestKitchen
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
 
-            # TODO: Rethink this, no need for linting to be repeated
             runner.preflight_check
             begin
-              # TODO: Cookbook assembly also doesn't need to be repeated
               runner.provision
               runner.test
             rescue
