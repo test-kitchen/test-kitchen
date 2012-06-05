@@ -39,7 +39,9 @@ module TestKitchen
         nodes.map do |node|
           var_name = find_nodes(find_nodes(node, [:var_ref]), [:@ident]).flatten
           if var_name.length > 1
-            add_block = find_nodes(ast, [:method_add_block])
+            add_block = find_nodes(ast, [:method_add_block]).reject do |n|
+              find_nodes(n, [:@ident, "supports"]).empty?
+            end
             unless find_nodes(find_nodes(add_block, [:do_block]),
               [:@ident, var_name[1]]).flatten.empty?
 

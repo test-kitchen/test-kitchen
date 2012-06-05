@@ -84,6 +84,7 @@ module TestKitchen
           version          "0.0.1"
           supports         "ubuntu"
           supports         "centos"
+          depends          "java"
         }).must_equal(%w{ubuntu centos})
       end
       it "returns the name of the supported platforms for a word list" do
@@ -97,7 +98,22 @@ module TestKitchen
           %w{centos ubuntu debian}.each do |os|
             supports os
           end
+          %w{java}.each do |cookbook|
+            depends cookbook
+          end
         }).must_equal(%w{centos ubuntu debian})
+      end
+      it "returns the name of the supported platforms" do
+        cookbook.extract_supported_platforms(%q{
+          maintainer       "Example Person"
+          maintainer_email "example@example.org"
+          license          "All rights reserved"
+          description      "Installs/Configures example"
+          long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+          version          "0.0.1"
+          supports         "ubuntu"
+          supports         "centos"
+        }).must_equal(%w{ubuntu centos})
       end
     end
     describe "#non_buildable_platforms" do
