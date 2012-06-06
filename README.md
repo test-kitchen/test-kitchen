@@ -70,7 +70,8 @@ cookbook "mysql" do
 end
 ```
 
-Each configuration has a matching recipe in the *cookbook*_test subdirectory:
+Each configuration optionally has a matching recipe in the *cookbook*_test
+subdirectory:
 
     mysql/test/kitchen/cookbooks/mysql_test/recipes/client.rb
     mysql/test/kitchen/cookbooks/mysql_test/recipes/server.rb
