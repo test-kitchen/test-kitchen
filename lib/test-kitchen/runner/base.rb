@@ -110,16 +110,15 @@ module TestKitchen
       end
 
       def test_recipe_name
-        recipe_name = nil
-        recipe_name = env.project.name if cookbook_exists?(env.project.name)
-        if cookbook_exists?("#{env.project.name}_test")
-          recipe_name = "#{env.project.name}_test::"
-          if configuration
-            recipe_name += env.project.name == configuration.name ?
-              'default' : configuration.name
+        ["#{env.project.name}_test", env.project.name].map do |cookbook_name|
+          if cookbook_exists?(cookbook_name)
+            cookbook_name + '::' + (if ! configuration || env.project.name == configuration.name
+              'default'
+            else
+              configuration.name
+            end)
           end
-        end
-        recipe_name
+        end.compact.first
       end
 
       def cookbook_exists?(name)
