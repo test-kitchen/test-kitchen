@@ -162,10 +162,6 @@ module TestKitchen
       !! (all_output =~ /Your cookbook had lint failures./)
     end
 
-    def missing_config_recipe_error_shown?(configuration)
-      !! (all_output =~ /Your project is missing a test recipe for configuration: #{Regexp.escape(configuration)}/)
-    end
-
     def syntax_error_shown?
       !! (all_output =~ %r{FATAL: Cookbook file recipes/default.rb has a ruby syntax error})
     end

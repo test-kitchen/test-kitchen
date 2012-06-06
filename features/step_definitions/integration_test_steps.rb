@@ -124,10 +124,6 @@ Then /^all (?:recognised )?platforms will be tested against$/ do
   assert_only_platforms_converged(['centos', 'ubuntu'])
 end
 
-Then 'an error indicating that the client configuration does not have a matching recipe will be shown' do
-  assert missing_config_recipe_error_shown?('client')
-end
-
 Then /^an error indicating that there is a problem with the (configuration|cookbook syntax) will be shown$/ do |error|
   assert error == 'configuration' ? kitchenfile_error_shown? : syntax_error_shown?
 end
@@ -162,6 +158,13 @@ Then 'the available options will be shown with a brief description of each' do
   assert_option_present('-h, --help', 'Show this message')
 end
 
+Then 'the cookbook client recipe will be converged' do
+  expected_platforms.each do |platform|
+    assert(converged?(platform, "example::client"),
+      "Expected client recipe to have been converged.")
+  end
+end
+
 Then 'the existing cookbook will have been converged' do
   all_output.must_match /package\[vim.*\] installed/
 end
@@ -193,12 +196,10 @@ Then 'the test cookbook default recipe will not be converged' do
   end
 end
 
-Then /^the test cookbook default and server recipes will not be converged$/ do
+Then 'the test cookbook server recipe will be converged' do
   expected_platforms.each do |platform|
-    %w{default server}.each do |recipe|
-      refute(converged?(platform, "example_test::#{recipe}"),
-        "Expected example_test::#{recipe} recipe not to have been converged.")
-    end
+    assert(converged?(platform, 'example_test::server'),
+      "Expected server test recipe to have been converged.")
   end
 end
 

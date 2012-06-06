@@ -146,15 +146,6 @@ module TestKitchen
         raise NotImplementedError
       end
 
-      def missing_test_recipes(cookbook_paths)
-        configurations.keys.reject{|c|c.to_s == 'default'}.select do |config_name|
-          ! cookbook_paths.any? do |path|
-            Dir.entries(File.join(path, "#{name}_test",
-              'recipes')).include?("#{config_name}.rb")
-          end
-        end
-      end
-
       def to_hash
         self.runtimes # hack
         hash = {}

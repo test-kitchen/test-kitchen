@@ -25,10 +25,10 @@ end
 def build_run_list(cookbook_paths, test_recipe_name)
   run_list = []
   if test_recipe_name
-    run_list << test_recipe_name
-    recipe_name = test_recipe_name.sub('_test', '')
-    if cookbook_paths.any? {|path| recipe_exists?(path, recipe_name)}
-      run_list << recipe_name
+    [test_recipe_name, test_recipe_name.sub('_test', '')].each do |recipe_name|
+      if cookbook_paths.any? {|path| recipe_exists?(path, recipe_name)}
+        run_list << recipe_name
+      end
     end
   end
   run_list
