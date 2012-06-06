@@ -57,10 +57,9 @@ module TestKitchen
 
       def string_literals(nodes)
         nodes.map do |node|
-          find_nodes(node, [:@tstring_content]).map do |tstring|
-            tstring[1] if tstring.length > 1
-          end.compact
-        end.flatten
+          tstring = find_nodes(node, [:@tstring_content]).find{|n| ! n.empty?}
+          tstring && tstring.length > 1 ? tstring[1] : nil
+        end.compact.flatten
       end
 
       def find_nodes(ast, node, result=[])

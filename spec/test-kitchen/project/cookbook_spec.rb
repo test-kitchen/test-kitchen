@@ -87,6 +87,19 @@ module TestKitchen
           depends          "java"
         }).must_equal(%w{ubuntu centos})
       end
+      it "returns the name of supported platforms when versions are specified" do
+        cookbook.extract_supported_platforms(%q{
+          maintainer       "Example Person"
+          maintainer_email "example@example.org"
+          license          "All rights reserved"
+          description      "Installs/Configures example"
+          long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+          version          "0.0.1"
+          supports         "ubuntu"
+          supports         "centos", ">= 6.0"
+          depends          "java"
+        }).must_equal(%w{ubuntu centos})
+      end
       it "returns the name of the supported platforms for a word list" do
         cookbook.extract_supported_platforms(%q{
           maintainer       "Example Person"
