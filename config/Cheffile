@@ -22,8 +22,7 @@ site 'http://community.opscode.com/api/v1'
 
 # base test-kitchen cookbooks
 cookbook 'apt', '1.4.2'
-cookbook 'yum',
-  :git => 'git://github.com/kotiri/yum.git'
+cookbook 'yum', '0.6.0'
 cookbook 'build-essential', '1.0.0'
 cookbook 'git', '0.10.0'
 cookbook 'rvm',
