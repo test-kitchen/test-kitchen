@@ -5,6 +5,12 @@ In order to be able to confirm that my cookbook works on the chosen platforms
 As a developer
 I want to be able to integration test my Chef cookbook
 
+  Scenario: No Kitchenfile
+    Given a Chef cookbook with no integration test configuration
+     When I run the integration tests with test kitchen
+     Then the cookbooks default recipe will have been converged successfully
+      And the tests will not have been run
+
   Scenario: Run cookbook integration tests
     Given a Chef cookbook
       And the integration tests are defined in a Kitchenfile included with the cookbook

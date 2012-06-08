@@ -38,13 +38,20 @@ module TestKitchen
 
     # Setup a cookbook project that uses test-kitchen for integration testing
     def chef_cookbook(options = {})
-      options = {:type => :real_world, :setup => true, :recipes => []}.merge(options)
+      options = {:type => :real_world, :missing_config => false, :setup => true,
+        :recipes => []}.merge(options)
       case options[:type]
         when :real_world
-          options[:name] = 'apache2'
-          clone_cookbook_repository('kotiri', 'apache2', '106976')
-          add_gem_file('apache2')
-          add_test_setup_recipe('apache2', 'apache2_test')
+          if options[:missing_config]
+            options[:name] = 'java'
+            clone_cookbook_repository('opscode-cookbooks', 'java', '4817ba')
+            cd 'java'
+          else
+            options[:name] = 'apache2'
+            clone_cookbook_repository('kotiri', 'apache2', '106976')
+            add_gem_file('apache2')
+            add_test_setup_recipe('apache2', 'apache2_test')
+          end
         when :real_world_testless
           clone_cookbook_repository('opscode-cookbooks', 'vim', '789bfc')
         when :newly_generated

@@ -31,11 +31,11 @@ module TestKitchen
         env = Environment.new({:kitchenfile_name => ['Cucinafile', 'cucinafile'], :ignore_kitchenfile => true})
         env.kitchenfile_name.must_equal ['Cucinafile', 'cucinafile', 'Kitchenfile', 'kitchenfile']
       end
-      it "raises if the kitchenfile could not be located" do
-        lambda { env = Environment.new }.must_raise(ArgumentError)
+      it "doesn't raise if the kitchenfile could not be located" do
+        Environment.new
       end
       it "doesn't raise if the kitchenfile should be ignored" do
-        env = Environment.new({:ignore_kitchenfile => true})
+        Environment.new({:ignore_kitchenfile => true})
       end
       it "sets the temp scratch directory to a path under the root directory" do
         env = Environment.new({:ignore_kitchenfile => true})

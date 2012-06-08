@@ -16,6 +16,10 @@
 # limitations under the License.
 #
 
+Given 'a Chef cookbook with no integration test configuration' do
+  chef_cookbook(:type => :real_world, :missing_config => true)
+end
+
 Given /^a Chef cookbook( with syntax errors)?$/ do |syntax_errors|
   chef_cookbook(:malformed => ! syntax_errors.nil?, :type => :real_world)
 end
@@ -163,6 +167,13 @@ Then 'the cookbook client recipe will be converged' do
     assert(converged?(platform, "example::client"),
       "Expected client recipe to have been converged.")
   end
+end
+
+Then 'the cookbooks default recipe will have been converged successfully' do
+  expected_platforms.each do |platform|
+    converged?(platform, 'java::default')
+  end
+  last_exit_status.must_equal(0)
 end
 
 Then 'the existing cookbook will have been converged' do

@@ -42,12 +42,9 @@ module TestKitchen
       options[:kitchenfile_name] += ["Kitchenfile", "kitchenfile"]
       @kitchenfile_name = options[:kitchenfile_name]
 
-      if options[:ignore_kitchenfile]
-        @root_path = Pathname.new(Dir.pwd)
-      else
-        root_path ||
-          (raise ArgumentError,
-            "Could not locate a Kitchenfile at [#{KITCHEN_SUBDIRS.map{|sub| File.join(Dir.pwd, sub)}.join(', ')}]")
+      if options[:ignore_kitchenfile] || ! root_path
+        @root_path = Pathname.new(Dir.pwd) + 'test' + 'kitchen'
+        @project = Project::Cookbook.new(File.basename(Dir.pwd))
       end
 
       @tmp_path = root_path.join('.kitchen')
