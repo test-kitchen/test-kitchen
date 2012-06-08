@@ -20,6 +20,9 @@
 case node['platform']
 when 'debian', 'ubuntu'
   include_recipe 'apt'
+  # Force an update at compile-time to avoid failure when a cookbook attempts
+  # a package install at compile-time.
+  resources(:execute => "apt-get update").run_action(:run)
 when 'centos','redhat'
   include_recipe 'yum::epel'
 end
