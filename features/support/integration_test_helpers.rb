@@ -48,7 +48,7 @@ module TestKitchen
             cd 'java'
           else
             options[:name] = 'apache2'
-            clone_cookbook_repository('kotiri', 'apache2', '106976')
+            clone_cookbook_repository('opscode-cookbooks', 'apache2', '2a9bd276')
             add_gem_file('apache2')
             add_test_setup_recipe('apache2', 'apache2_test')
           end
