@@ -47,12 +47,5 @@ node.run_state['project'] = project
 
 language = project['language'] || 'chef'
 
-# if a project specific recipe exists use it for additional setup
-if recipe_for_project?(project['name'])
-
-  include_recipe "test-kitchen::#{name}"
-
-end
-
 # ensure projects declared language toolchain is present
 include_recipe "test-kitchen::#{language}"
