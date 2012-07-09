@@ -32,7 +32,6 @@ module TestKitchen
                              config[:configuration]) do |platform,configuration|
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
-
             runner.preflight_check
             begin
               runner.provision
@@ -40,7 +39,7 @@ module TestKitchen
             rescue
               raise
             ensure
-              runner.destroy
+              runner.destroy if config[:teardown]
             end
           end
         end

@@ -20,6 +20,10 @@ module TestKitchen
 
   module Helpers
 
+    def any_platform_torn_down?
+      ! platform_boot_count.reject{|bc| bc[1] <= 1}.empty?
+    end
+
     def available_platforms
       @platforms
     end
@@ -90,6 +94,14 @@ module TestKitchen
       @platforms = all_output.split("\n").map(&:lstrip)
     end
 
+    def platform_boots
+      all_output.lines.grep(/Booting VM.../).map{|line| line.match(/^\[([^\]]+)\]/)[1]}
+    end
+
+    def platform_boot_count
+      platform_boots.uniq.map {|e| [e, (platform_boots.select {|ee| ee == e}).size]}
+    end
+
     def ruby_project
       run_simple('git clone --quiet https://github.com/opscode/mixlib-shellout.git')
       cd('mixlib-shellout')
@@ -150,9 +162,20 @@ module TestKitchen
       end
     end
 
-    def run_integration_tests
-      run_simple(unescape("bundle install"))
-      run_simple(unescape("bundle exec kitchen test"), false)
+    def run_integration_tests(options = {})
+      options = {:times => 1, :teardown => true}.merge(options)
+      begin
+        run_simple(unescape("bundle install"))
+        options[:times].times do
+          cmd = 'bundle exec kitchen test'
+          cmd << ' --teardown' if options[:teardown]
+          run_simple(unescape(cmd), false)
+        end
+      rescue
+        raise
+      ensure
+        puts all_output
+      end
     end
 
     def scaffold_tests(cookbook_name)

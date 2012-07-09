@@ -17,6 +17,18 @@ I want to be able to integration test my Chef cookbook
      When I run the integration tests with test kitchen
      Then the tests will have been run successfully
 
+  Scenario: Run cookbook integration tests with teardown
+    Given a Chef cookbook with no integration test configuration
+     When I run the integration tests twice with test kitchen with teardown
+     Then the cookbooks default recipe will have been converged successfully
+      And the node will have been torn down between runs
+
+  Scenario: Run cookbook integration tests without teardown
+    Given a Chef cookbook with no integration test configuration
+     When I run the integration tests twice with test kitchen without teardown
+     Then the cookbooks default recipe will have been converged successfully
+      And no node will have been torn down between runs
+
   Scenario: Malformed Kitchenfile
     Given a Chef cookbook
       And the integration tests are defined in a malformed Kitchenfile included with the project

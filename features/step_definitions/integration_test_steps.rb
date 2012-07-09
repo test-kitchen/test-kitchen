@@ -27,7 +27,7 @@ end
 Given 'a Chef cookbook that does not define a set of supported platforms in its metadata' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
                 :setup => false)
-  define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
+  define_integration_tests(:name => 'example', :project_type => 'cookbook')
 end
 
 Given 'a Chef cookbook that defines several supported platforms, one of which is not recognised' do
@@ -99,13 +99,11 @@ When 'I list the platforms' do
 end
 
 When 'I run the integration tests with test kitchen' do
-  begin
-    run_integration_tests
-  rescue
-    raise
-  ensure
-    puts all_output
-  end
+  run_integration_tests
+end
+
+When /^I run the integration tests twice with test kitchen with(out)? teardown$/ do |no_teardown|
+  run_integration_tests :times => 2, :teardown => ! no_teardown
 end
 
 When /^I scaffold the integration tests$/ do
@@ -144,6 +142,10 @@ Then 'each of the expected kitchen subcommands will be shown' do
   assert_correct_subcommands_shown
 end
 
+Then 'no node will have been torn down between runs' do
+  refute any_platform_torn_down?
+end
+
 Then /^only the platforms specified in the metadata (wordlist )?will be tested against$/ do |wordlist|
   assert_only_platforms_converged(wordlist ? ['centos', 'ubuntu'] : ['ubuntu'])
 end
@@ -151,12 +153,14 @@ end
 Then 'the available options will be shown with a brief description of each' do
   assert_command_banner_present(current_subcommand)
 
-  option_flags.must_equal ['configuration', 'platform', 'runner', 'help']
+  option_flags.must_equal ['configuration', 'platform', 'runner', 'teardown', 'help']
 
   assert_option_present('--configuration CONFIG',
     'The project configuration to test. Defaults to all configurations.')
   assert_option_present('--platform PLATFORM',
     'The platform to use. If not specified tests will be run against all platforms.')
+  assert_option_present('--teardown',
+    'Teardown test nodes between runs.')
   assert_option_present('-r, --runner RUNNER',
     'The underlying virtualization platform to test with.')
   assert_option_present('-h, --help', 'Show this message')
@@ -182,6 +186,10 @@ end
 
 Then 'the expected platforms will be available' do
   available_platforms.must_equal(["centos-5.7", "ubuntu-11.04"])
+end
+
+Then 'the node will have been torn down between runs' do
+  assert any_platform_torn_down?
 end
 
 Then 'the test cookbook client and server recipes will be converged once for each platform' do

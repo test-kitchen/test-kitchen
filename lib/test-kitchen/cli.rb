@@ -38,6 +38,12 @@ module TestKitchen
         :long => "--runner RUNNER",
         :description => "The underlying virtualization platform to test with."
 
+      option :teardown,
+        :boolean => true,
+        :default => false,
+        :long => "--teardown",
+        :description => "Teardown test nodes between runs."
+
       option :help,
         :short => "-h",
         :long => "--help",
