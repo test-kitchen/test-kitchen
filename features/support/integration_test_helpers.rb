@@ -158,7 +158,7 @@ module TestKitchen
           write_file "#{options[:name]}/test/kitchen/Kitchenfile", dsl
           cd options[:name]
         else
-          fail "Unrecognised project type: #{options[:project_type]}"
+          fail "Unrecognized project type: #{options[:project_type]}"
       end
     end
 
@@ -200,8 +200,8 @@ module TestKitchen
       !! (all_output =~ /[0-9]+ examples, [0-9]+ failures|[0-9]+ steps \(/)
     end
 
-    def unrecognised_platform_warning_shown?(platform_name)
-      !! (all_output =~ %r{Cookbook metadata specifies an unrecognised platform that will not be tested: #{Regexp.escape(platform_name)}})
+    def unrecognized_platform_warning_shown?(platform_name)
+      !! (all_output =~ %r{Cookbook metadata specifies an unrecognized platform that will not be tested: #{Regexp.escape(platform_name)}})
     end
 
     private
@@ -262,12 +262,12 @@ module TestKitchen
             supports os
           end
         }
-        when :includes_unrecognised then %q{
+        when :includes_unrecognized then %q{
           %w{ubuntu beos centos}.each do |os|
             supports os
           end
         }
-        else fail "Unrecognised supports_type: #{supports_type}"
+        else fail "Unrecognized supports_type: #{supports_type}"
       end
       append_to_file("#{path}/#{cookbook_name}/metadata.rb", "#{supports}\n")
     end

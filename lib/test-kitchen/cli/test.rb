@@ -49,7 +49,7 @@ module TestKitchen
         def warn_for_non_buildable_platforms(platform_names)
           if env.project.respond_to?(:non_buildable_platforms)
             env.project.non_buildable_platforms(platform_names).each do |platform|
-              env.ui.info("Cookbook metadata specifies an unrecognised platform that will not be tested: #{platform}", :red)
+              env.ui.info("Cookbook metadata specifies an unrecognized platform that will not be tested: #{platform}", :red)
             end
           end
         end

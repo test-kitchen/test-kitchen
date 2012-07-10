@@ -32,7 +32,7 @@ end
 
 Given 'a Chef cookbook that defines several supported platforms, one of which is not recognised' do
   chef_cookbook(:type => :newly_generated, :name => 'example', :path => '.',
-                :setup => false, :supports_type => :includes_unrecognised)
+                :setup => false, :supports_type => :includes_unrecognized)
   define_integration_tests(:name => 'example', :project_type => 'cookbook', :configurations => [])
 end
 
@@ -118,8 +118,8 @@ When /^I view command line help for the ([a-z]+) sub\-command$/ do |subcommand|
   command_help(subcommand)
 end
 
-Then 'a warning will be displayed for the unrecognised platform' do
-  assert unrecognised_platform_warning_shown?('beos')
+Then 'a warning will be displayed for the unrecognized platform' do
+  assert unrecognized_platform_warning_shown?('beos')
 end
 
 Then /^all (?:recognised )?platforms will be tested against$/ do

@@ -22,8 +22,8 @@ Note that currently this does not implement platform versions.
      When I run the integration tests with test kitchen
      Then all platforms will be tested against
 
-  Scenario: Unrecognised platform specified as supported
+  Scenario: Unrecognized platform specified as supported
     Given a Chef cookbook that defines several supported platforms, one of which is not recognised
      When I run the integration tests with test kitchen
-     Then a warning will be displayed for the unrecognised platform
+     Then a warning will be displayed for the unrecognized platform
       And all recognised platforms will be tested against
