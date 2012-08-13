@@ -56,8 +56,6 @@ project = tk_env.project
            "--name", host_name,
           "--memory", (project.memory || "256"),
           "--cpus", "1",
-          "--hwvirtex", "off",
-          "--vtxvpid", "off",
           "--nictype1", "82545EM",
           "--nictype2", "82545EM",
 	        "--audio", "none",
