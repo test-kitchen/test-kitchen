@@ -42,7 +42,7 @@ module TestKitchen
       scaffold_file 'test/kitchen/Kitchenfile',
         <<-eos
           #{project_type(output_dir)} "#{project_name(output_dir)}" do
-
+            #{'runtimes []' if project_type(output_dir) == 'cookbook'}
           end
         eos
     end
