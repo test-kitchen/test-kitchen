@@ -22,7 +22,6 @@ SimpleCov.start do
 end
 
 require 'minitest/autorun'
-require 'minitest/pride'
 require 'minitest/spec'
 
 SimpleCov.at_exit do
