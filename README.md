@@ -2,6 +2,8 @@ Test Kitchen is a framework for running project integration tests in
 an isolated environment using Vagrant and Chef. You describe the
 configuration for testing your project using a lightweight Ruby DSL.
 
+We use Vagrant baseboxes built with [Bento](https://github.com/opscode/bento).
+
 # Quick start
 
 When you use test-kitchen your test config and the tests themselves live
