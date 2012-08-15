@@ -1,9 +1,6 @@
-# Test Kitchen
-
-Test Kitchen pulls together some of your favorite tools to make it easy to get
-started testing Chef cookbooks.
-
-You define your test config in a `Kitchenfile` within your cookbook.
+Test Kitchen is a framework for running project integration tests in
+an isolated environment using Vagrant and Chef. You describe the
+configuration for testing your project using a lightweight Ruby DSL.
 
 # Quick start
 
@@ -190,8 +187,163 @@ end
 
 Matchers are [available for most resource types](https://github.com/calavera/minitest-chef-handler/blob/master/examples/spec_examples/files/default/tests/minitest/example_test.rb).
 
-# License
-The test-kitchen project is licensed under the Apache License, Version 2.0.
+# Kitchenfile DSL
+
+The Kitchenfile has a relatively lightweight Ruby domain-specific
+language that allows you to describe various aspects of how your
+project should be tested.
+
+## platform
+
+Use a platform block to describe the versions of a particular platform
+that should be tested.
+
+`platform` - This is the name of the platform, with a block containing
+its versions. Each platform named must match a platform in Chef
+(e.g. centos, ubuntu, debian, etc) and can be specified as a string or
+a symbol.
+
+`version` - Specify one or more versions for the platform, with a
+block containing the name of the box and the URL where the box can be
+downloaded.
+
+`box` - This is the name of the Vagrant box that should should be used
+for the platform and version.
+
+`box_url` - This is the URL to the base box file to use for the box
+for this platform and version.
+
+### Platform Example
+
+```ruby
+platform :centos do
+  version "5.8" do
+    box "opscode-centos-5.8"
+    box_url "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-5.8.box"
+  end
+end
+```
+
+## cookbook
+
+Describe the configurations that test-kitchen should run for a
+cookbook project in a `cookbook` block.
+
+`cookbook` - The name of the cookbook to test, with a block containing
+additional project configuration.
+
+`configuration` - Specify one or more configurations as a string. See
+the [configurations section](#configurations)
+
+`lint` - Specify whether to perform lint checking with foodcritic with a boolean.
+
+`exclude` - Exclude a configuration from a particular platform passing
+it a hash with the platforms and configuration to exclude. See example
+below.
+
+`run_list_extras` - Additional recipes that are required in order to
+run the tests. Create these cookbooks in `test/kitchen/cookbooks`.
+
+`preflight_command` - The command to run before provisioning the
+tests, by default this is `knife cookbook test` and `foodcritic` for
+the cookbook being tested.
+
+`script` - A script to use for running spec tests. Defaults to `rspec spec`.
+
+`runtimes` - An array of Ruby runtime versions to run tests (features,
+specs) under. This uses RVM, and that must be installed and available.
+At this time, that is assumed to be in the base box. The default for
+cookbook projects is `[]`, which effectively disables spec/feature
+tests. Set to the Ruby versions installed in your custom base box
+under RVM.
+
+### Cookbook Examples
+
+Excerpt from Opscode's apache2 cookbook Kitchenfile:
+
+```ruby
+cookbook "apache2" do
+  configuration "default"
+  configuration "basic_web_app"
+  configuration "mod_authnz_ldap"
+  configuration "mod_ssl"
+  exclude :platform => 'centos', :configuration => 'mod_authnz_ldap'
+  run_list_extras ['apache2_test::setup']
+end
+```
+
+Disable lint checking for the zsh cookbook:
+
+```ruby
+cookbook "zsh" do
+  lint false
+end
+```
+
+## integration\_test
+
+Describe how to perform integration tests for an arbitrary software
+project with an `integration_test` block.
+
+`integration_test` - The name of the project to test with a block of
+additional configuration for how to run the test(s).
+
+`language` - The language of the project.
+
+`install` - The command to install the requirements to run the test.
+
+`specs` - Specify whether to run specs with `true` or `false`, default `true`.
+
+`features` - Specify whether to run features with `true` or `false`, default `true`.
+
+`script` - A shell script used to run the tests.
+
+`runtimes` - An array of Ruby runtime versions to run tests (features,
+specs) under. This uses RVM, and that must be installed and available.
+At this time, that is assumed to be in the base box.
+
+### Integration Test Example
+
+```ruby
+integration_test "mixlib-shellout" do
+  language "ruby"
+  install "bundle install"
+  specs true
+  features false
+end
+```
+
+# Bugs and Issues
+
+Use the
+[issue tracker](http://tickets.opscode.com/browse/KITCHEN) to
+report bugs, features or other issues.
+
+# Contributing
+
+[How to contribute to Opscode open source software projects](http://wiki.opscode.com/display/chef/How+to+Contribute)
+
+# License and Author
+
+Author:: Andrew Crump (<andrew@kotirisoftware.com>)
+Author:: Seth Chisamore (<schisamo@opscode.com>)
+
+Copyright:: 2012, Opscode, Inc. (<legal@opscode.com>)
+
+License:: Apache License, Version 2.0
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 Components used by test-kitchen are licensed under their own individual
 licenses. See the accompanying
 [LICENSE](https://github.com/opscode/test-kitchen/blob/master/LICENSE.md) file for
