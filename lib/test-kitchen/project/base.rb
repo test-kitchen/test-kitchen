@@ -78,7 +78,7 @@ module TestKitchen
       end
 
       def runner(arg=nil)
-        set_or_return(:runner, arg, :default => 'vagrant')
+        set_or_return(:runner, arg, nil)
       end
 
       def language(arg=nil)

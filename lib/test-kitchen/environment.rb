@@ -32,6 +32,7 @@ module TestKitchen
     attr_reader :ui
     attr_reader :kitchenfile_name
     attr_accessor :project
+    attr_accessor :default_runner
 
     KITCHEN_SUBDIRS = [".", "kitchen", "test/kitchen"]
 
@@ -47,6 +48,7 @@ module TestKitchen
         @project = Project::Cookbook.new(File.basename(Dir.pwd))
       end
 
+      @default_runner = "vagrant"
       @tmp_path = root_path.join('.kitchen')
       @cache_path = tmp_path.join('.cache')
       @ui = options[:ui]

@@ -41,6 +41,8 @@ module TestKitchen
       include Chef::Mixin::ParamsValidate
 
       attr_reader :name
+
+      # Virtual Box Specific Attributes
       attr_writer :box, :box_url
 
       def initialize(name, &block)
@@ -48,6 +50,20 @@ module TestKitchen
         @name = name
         instance_eval(&block) if block_given?
       end
+
+      OPENSTACK_OPTIONS = {
+        :image_id => nil, :flavor_id => nil, :install_chef => false,
+        :install_chef_cmd =>  "curl -L http://www.opscode.com/chef/install.sh | sudo bash",
+        :keyname => nil, :instance_name => nil, :ssh_user => "root", :ssh_key => nil}
+
+      OPENSTACK_OPTIONS.each do |option, default|
+        attr_writer option
+        define_method(option) do |*args|
+          arg = args.first
+          set_or_return(option, arg, default.nil? ? {} : {:default => default})
+        end
+      end
+
 
       def box(arg=nil)
         set_or_return(:box, arg, {})
