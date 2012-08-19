@@ -45,7 +45,7 @@ project = tk_env.project
 
     platform.versions.values.each do |version|
 
-      name = "#{platform.name}-#{version.name}"
+      name = "#{project.name}-#{platform.name}-#{version.name}"
 
       vagrant_config.vm.define name do |vm_config|
 
