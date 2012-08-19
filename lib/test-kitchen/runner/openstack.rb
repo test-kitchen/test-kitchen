@@ -96,7 +96,7 @@ module TestKitchen
       end
 
       def run_chef_solo(name=platform)
-        execute_remote_command(name, "echo '{\"run_list\" : #{run_list.to_json}}' > node.json",
+        execute_remote_command(name, "echo '#{json_for_node}' > node.json",
                                "Creating node configuration JSON")
         execute_remote_command(name, "echo 'cookbook_path [ \"#{remote_cookbook_dir}\" ]' > solo.rb",
                                "Creating chef-solo configuration")
@@ -117,6 +117,15 @@ module TestKitchen
         @os_env.scp(name).upload(File.join(env.tmp_path, "cookbook_under_test"),
                                  configuration.guest_source_root,
                                  {:recursive => true})
+      end
+
+      def json_for_node
+        {
+          'test-kitchen' => {
+            'project' => configuration.to_hash.merge('source_root' => configuration.guest_source_root,
+                                                     'test_root' => configuration.guest_test_root)},
+          'run_list' => run_list
+        }.to_json
       end
 
       def run_list
