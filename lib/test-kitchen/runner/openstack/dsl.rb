@@ -32,7 +32,7 @@ module TestKitchen
   module DSL
     module BasicDSL
       def openstack(&block)
-        TestKitchen::Environment::Openstack.config =  TestKitchen::Openstack.new(&block)
+        TestKitchen::Environment::Openstack.config = TestKitchen::Openstack.new(&block)
       end
     end
   end
