@@ -179,6 +179,10 @@ module TestKitchen
         it "fails for any correctness warning except undeclared metadata dependencies" do
           lint_cmd.must_equal "foodcritic -f ~FC007 -f correctness cookbooks/example"
         end
+        it "includes ignored tags to the lint command" do
+          cookbook.lint(:ignore => %w{FC001 FC003})
+          lint_cmd.must_equal "foodcritic -f ~FC007 -f correctness -t ~FC001 -t ~FC003 cookbooks/example"
+        end
       end
     end
   end
