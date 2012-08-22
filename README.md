@@ -237,7 +237,8 @@ additional project configuration.
 `configuration` - Specify one or more configurations as a string. See
 the [configurations section](#configurations)
 
-`lint` - Specify whether to perform lint checking with foodcritic with a boolean.
+`lint` - Specify whether to perform lint checking with foodcritic with
+a boolean. Can also specify a list of tags to ignore, see example.
 
 `exclude` - Exclude a configuration from a particular platform passing
 it a hash with the platforms and configuration to exclude. See example
@@ -279,6 +280,25 @@ Disable lint checking for the zsh cookbook:
 ```ruby
 cookbook "zsh" do
   lint false
+end
+```
+
+Ignore certain foodcritic rules in the lint check, which must pass in
+an array. For example to ignore the ["prefer strings over symbols"](http://acrmp.github.com/foodcritic/#FC001) and
+["check for solo"](http://acrmp.github.com/foodcritic/#FC003) rules:
+
+```ruby
+cookbook "mycookbook" do
+  lint(:ignore => ["FC001", "FC003"])
+end
+```
+
+To ignore just the "prefer strings over symbols rule", it still needs
+to be an array at this time.
+
+```ruby
+cookbook "mycookbook" do
+  lint(:ignore => ["FC001"])
 end
 ```
 
