@@ -37,9 +37,13 @@ module TestKitchen
       def preflight_command(cmd = nil)
         return nil unless lint
         parent_dir = File.join(root_path, '..')
+        ignore_tags = ''
+        if lint.respond_to?(:has_key?) && lint[:ignore].respond_to?(:join)
+          ignore_tags = " -t ~#{lint[:ignore].join(' -t ~')}"
+        end
         set_or_return(:preflight_command, cmd, :default =>
           "knife cookbook test -o #{parent_dir} #{name}" +
-          " && foodcritic -f ~FC007 -f correctness #{root_path}")
+          " && foodcritic -f ~FC007 -f correctness#{ignore_tags} #{root_path}")
       end
 
       def script(arg=nil)
