@@ -36,7 +36,7 @@ module TestKitchen
         <<-eos
           source :rubygems
 
-          gem 'test-kitchen', :git => 'git@github.com:opscode/test-kitchen.git'
+          gem 'test-kitchen'
         eos
 
       scaffold_file 'test/kitchen/Kitchenfile',
