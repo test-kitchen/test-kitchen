@@ -118,6 +118,13 @@ module TestKitchen::DSL
       lint[:tags].must_equal ['correctness', 'style']
       lint[:include_rules].must_equal '/custom/rules'
     end
+    it "can specify tags as an array to ignore for the lint check" do
+      lint = dsl.cookbook('mysql') do
+        lint(:ignore => %w{FC001 FC003})
+      end.lint
+      assert(lint)
+      lint[:ignore].must_equal ['FC001', 'FC003']
+    end
     it "can specify configurations additively" do
       dsl.cookbook('mysql') do
         configuration 'client'
