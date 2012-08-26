@@ -40,6 +40,19 @@ module TestKitchen
         let(:runner) do
           Base.new(Environment.new(:ignore_kitchenfile => true))
         end
+
+        describe "#create" do
+          it "leaves the implementation of create to subclasses" do
+            lambda { runner.create }.must_raise NotImplementedError
+          end
+        end
+
+        describe "#converge" do
+          it "leaves the implementation of converge to the subclasses" do
+            lambda { runner.converge }.must_raise NotImplementedError
+          end
+        end
+
         describe "#destroy" do
           it "leaves the implementation of destroy to subclasses" do
             lambda { runner.destroy }.must_raise NotImplementedError

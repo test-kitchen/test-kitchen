@@ -34,8 +34,16 @@ module TestKitchen
         @configuration = options[:configuration]
       end
 
-      def provision
+      def prepare
         assemble_cookbooks!
+      end
+
+      def create
+        raise NotImplementedError
+      end
+
+      def converge
+        raise NotImplementedError
       end
 
       def run_list
