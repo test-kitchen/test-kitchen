@@ -27,9 +27,12 @@ module TestKitchen
         @env, @options = env, options
       end
 
-      def provision
-        super
-        vagrant_env.cli(vagrant_cli_argv('up'))
+      def create
+        vagrant_env.cli(vagrant_cli_argv(['up', '--no-provision']))
+      end
+
+      def converge
+        vagrant_env.cli(vagrant_cli_argv('provision'))
       end
 
       def status

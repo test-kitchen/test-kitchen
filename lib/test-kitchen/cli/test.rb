@@ -33,8 +33,10 @@ module TestKitchen
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
             runner.preflight_check
+            runner.prepare
             begin
-              runner.provision
+              runner.create
+              runner.converge
               runner.test
             rescue
               raise
