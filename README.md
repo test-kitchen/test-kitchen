@@ -24,6 +24,22 @@ Run this command to converge your cookbook's default recipe:
 
     $ kitchen test
 
+# What does it do?
+
+Test kitchen runs through several different kinds of tests, depending on the configuration.
+
+First, it does a syntax check using `knife cookbook test`. This does require a valid knife.rb with the cache path for the checksums stored by the syntax checker.
+
+Second, it performs a lint check using [foodcritic](http://acrmp.github.com/foodcritic), and will fail and exit if any correctness checks fail.
+
+For cookbook projects, it provisions a VM and runs the default recipe or recipes set as "configurations" (see below) in the Kitchenfile to ensure it can be converged. If a cookbook has minitest-chef tests, it will run those as well. If the cookbook has declared dependencies in the metadata, test-kitchen uses [Librarian](https://github.com/applicationsonline/librarian) to resolve those dependencies. Support for [Berkshelf](http://berkshelf.com) is [pending](http://tickets.opscode.com/browse/KITCHEN-9)
+
+For integration_test projects, it provisions a VM and runs the integration tests for the project, by default "rspec spec".
+
+In either cookbook or integration_test projects, if a "features" directory exists, test-kitchen will attempt to run those tests using cucumber.
+
+All this is configurable, see the DSL section below.
+
 # Platforms
 
 Even if you haven't yet got around to writing any tests, test-kitchen is still
