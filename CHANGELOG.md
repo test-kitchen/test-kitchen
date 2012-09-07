@@ -1,3 +1,8 @@
+Release Notes - test-kitchen Version ???
+
+    ** Bug
+        * [KITCHEN-4] - decouple rvm use for running integration/unit tests
+
 Release Notes - test-kitchen - Version 0.5.4
 
 ** Bug
