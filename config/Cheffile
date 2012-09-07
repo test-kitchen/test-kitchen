@@ -40,8 +40,7 @@ if env.project.respond_to?(:cookbook_path)
 end
 
 if env.project.run_list.include? 'recipe[minitest-handler]'
-  cookbook 'minitest-handler',
-    :git => 'git://github.com/kotiri/minitest-handler-cookbook.git'
+  cookbook 'minitest-handler'
 end
 
 # include user-provided cookbooks
