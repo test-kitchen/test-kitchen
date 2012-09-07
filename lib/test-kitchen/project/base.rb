@@ -138,6 +138,10 @@ module TestKitchen
         nil
       end
 
+      def data_bags_path
+        nil
+      end
+
       def install_command(runtime=nil)
         raise NotImplementedError
       end

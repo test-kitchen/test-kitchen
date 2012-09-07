@@ -278,6 +278,10 @@ cookbook projects is `[]`, which effectively disables spec/feature
 tests. Set to the Ruby versions installed in your custom base box
 under RVM.
 
+`data_bags_path` - Specify the directory containing data bags to make available
+to the `:chef_solo` Vagrant provisioner. Defaults to `test/kitchen/data_bags`.
+See: [Using Data Bags with Chef Solo](http://wiki.opscode.com/display/chef/Data+Bags#DataBags-UsingDataBagswithChefSolo) for more information.
+
 ### Cookbook Examples
 
 Excerpt from Opscode's apache2 cookbook Kitchenfile:
