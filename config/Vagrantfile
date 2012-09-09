@@ -96,7 +96,11 @@ project = tk_env.project
 
         vm_config.vm.provision :chef_solo do |chef|
           chef.cookbooks_path = tk_env.cookbook_paths
-          chef.data_bags_path = project.data_bags_path if project.data_bags_path
+
+          if project.data_bags_path && File.exists?(project.data_bags_path)
+            chef.data_bags_path = project.data_bags_path
+          end
+
           chef.run_list = project.run_list + build_run_list(tk_env.cookbook_paths, test_recipe_name)
           chef.json = chef_json
           chef.log_level = :debug
