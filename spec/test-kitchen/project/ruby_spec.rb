@@ -45,10 +45,10 @@ module TestKitchen
         end
       end
       describe "#runtimes" do
-        it "defaults to ruby 1.9.2 if the language is ruby" do
+        it "defaults to empty if the language is ruby" do
           project = Ruby.new('foo')
           project.language = 'ruby'
-          project.runtimes.must_equal ['1.9.2']
+          project.runtimes.must_be_empty
         end
       end
     end
