@@ -33,6 +33,7 @@ module TestKitchen
         raise ArgumentError, "Project name must be specified" if name.nil? || name.empty?
         @name = name
         @parent = parent
+        @runtimes = parent.runtimes if parent
         @configurations = {}
         @exclusions = []
         @guest_source_root = '/test-kitchen/source'
