@@ -86,12 +86,11 @@ module TestKitchen
       end
 
       def runtimes(arg=nil)
-        set_or_return(:runtimes, arg, :default =>
-          if language == 'ruby' || language == 'chef'
-            ['1.9.2']
-          else
-            []
-          end)
+        set_or_return(:runtimes, arg, :default => if language == 'ruby'
+                                                    ['1.9.2']
+                                                  else
+                                                    []
+                                                  end)
       end
 
       def install(arg=nil)
