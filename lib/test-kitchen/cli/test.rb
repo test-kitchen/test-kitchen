@@ -27,8 +27,14 @@ module TestKitchen
         banner "kitchen test (options)"
 
         def run
-          warn_for_non_buildable_platforms(env.platform_names)
-          env.project.each_build(env.platform_names,
+          if config[:platform]
+            test_platforms = [config[:platform]]
+          else
+            test_platforms = env.platform_names
+          end
+
+          warn_for_non_buildable_platforms(test_platforms)
+          env.project.each_build(test_platforms,
                              config[:configuration]) do |platform,configuration|
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
