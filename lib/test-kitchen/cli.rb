@@ -27,7 +27,8 @@ module TestKitchen
 
       option :platform,
         :long  => "--platform PLATFORM",
-        :description => "The platform to use. If not specified tests will be run against all platforms."
+        :description => "The platform to use. If not specified tests will be run against all platforms.",
+        :default => nil
 
       option :configuration,
         :long  => "--configuration CONFIG",
