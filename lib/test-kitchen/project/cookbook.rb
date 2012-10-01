@@ -25,6 +25,7 @@ module TestKitchen
 
       attr_writer :lint
       attr_writer :supported_platforms
+      attr_writer :data_bags_path
 
       def lint(arg=nil)
         set_or_return(:lint, arg, {:default => true})
@@ -44,6 +45,11 @@ module TestKitchen
         set_or_return(:preflight_command, cmd, :default =>
           "knife cookbook test -o #{parent_dir} #{name}" +
           " && foodcritic -f ~FC007 -f correctness#{ignore_tags} #{root_path}")
+      end
+
+      def data_bags_path(path = nil)
+        set_or_return(:data_bags_path, path,
+          { :default => root_path.join('test/kitchen/data_bags').to_s })
       end
 
       def script(arg=nil)

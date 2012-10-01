@@ -184,6 +184,16 @@ module TestKitchen
           lint_cmd.must_equal "foodcritic -f ~FC007 -f correctness -t ~FC001 -t ~FC003 cookbooks/example"
         end
       end
+      describe "#data_bags_path" do
+        let(:cookbook) { Cookbook.new('bar') }
+        it "is set to test/kitchen/data_bags by default" do
+          cookbook.data_bags_path.must_equal cookbook.root_path.join('test/kitchen/data_bags').to_s
+        end
+        it "can be set to /tmp" do
+          cookbook.data_bags_path = '/tmp'
+          cookbook.data_bags_path.must_equal '/tmp'
+        end
+      end
     end
   end
 end
