@@ -26,7 +26,7 @@ module TestKitchen
       PROJECT_ROOT_INDICATORS = ["Gemfile", "metadata.rb"]
 
       attr_reader :name, :guest_source_root, :guest_test_root, :exclusions
-      attr_writer :language, :runtimes, :install, :script, :configurations, :root_path, :memory
+      attr_writer :language, :runtimes, :install, :script, :configurations, :root_path, :memory, :cpus
       attr_accessor :vm
 
       def initialize(name, parent=nil, &block)
@@ -100,6 +100,10 @@ module TestKitchen
 
       def memory(arg=nil)
         set_or_return(:memory, arg, {})
+      end
+
+      def cpus(arg=nil)
+        set_or_return(:memory, arg, :default => 1)
       end
 
       def specs(arg=nil)
