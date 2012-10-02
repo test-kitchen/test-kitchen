@@ -54,7 +54,7 @@ project = tk_env.project
         vm_config.vm.customize [
           "modifyvm", :id,
            "--name", host_name,
-          "--memory", (project.memory || "256"),
+          "--memory", project.memory,
           "--cpus", project.cpus,
           "--nictype1", "82545EM",
           "--nictype2", "82545EM",

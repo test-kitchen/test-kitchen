@@ -99,7 +99,7 @@ module TestKitchen
       end
 
       def memory(arg=nil)
-        set_or_return(:memory, arg, {})
+        set_or_return(:memory, arg, :default => 256)
       end
 
       def cpus(arg=nil)
