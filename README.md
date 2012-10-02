@@ -260,7 +260,9 @@ a boolean. Can also specify a list of tags to ignore, see example.
 it a hash with the platforms and configuration to exclude. See example
 below.
 
-`memory` - Specify an amount of memory in megabytes as an integer. The default is 256.
+`memory` - Specify an amount of memory in megabytes as an integer. The default is 256(MB).
+
+`cpu` - Specify the number of CPUs as an integer. The default is 1.
 
 `run_list_extras` - Additional recipes that are required in order to
 run the tests. Create these cookbooks in `test/kitchen/cookbooks`.
