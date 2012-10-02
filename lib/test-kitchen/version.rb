@@ -17,5 +17,5 @@
 #
 
 module TestKitchen
-  VERSION = "0.5.5"
+  VERSION = "0.6.0"
 end
