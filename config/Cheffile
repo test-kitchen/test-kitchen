@@ -21,13 +21,6 @@ require 'test-kitchen'
 site 'http://community.opscode.com/api/v1'
 
 # base test-kitchen cookbooks
-cookbook 'apt', '1.4.6'
-cookbook 'yum', '0.8.0'
-cookbook 'build-essential', '1.1.0'
-cookbook 'git', '1.0.0'
-cookbook 'rvm',
-  :git => 'https://github.com/fnichol/chef-rvm.git',
-  :ref => 'c27a8942ed311ccce2c63c2e863201b049c70a0d'
 cookbook 'test-kitchen',
   :path => TestKitchen.source_root.join('cookbooks', 'test-kitchen').to_s
 
