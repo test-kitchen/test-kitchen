@@ -41,8 +41,7 @@ module TestKitchen
         @os_env = TestKitchen::Environment::Openstack.new()
       end
 
-      def provision
-        super
+      def create
         env.ui.msg "[#{platform}] Provisioning guest on Openstack", :green
         @os_env.create_server(@platform,
                               { :instance_name => (vm.instance_name || "cookbook-tester-#{platform}"),
@@ -51,6 +50,10 @@ module TestKitchen
                                 :keyname => vm.keyname,
                                 :ssh_key => vm.ssh_key,
                                 :ssh_user => vm.ssh_user})
+
+      end
+
+      def converge
         install_chef if vm.install_chef
         move_repo
         move_cookbooks
