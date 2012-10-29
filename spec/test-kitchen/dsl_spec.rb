@@ -88,13 +88,28 @@ module TestKitchen::DSL
       assert project.configurations['server'].specs
       assert project.configurations['server'].features
     end
-    it "allows platforms to be defined" do
+    it "allows platforms with virtual box options to be defined" do
       dsl.platform :ubuntu do
         version '10.04' do
           box "ubuntu-10.04"
           box_url "http://example.org/ubuntu-10.04.box"
         end
       end
+    end
+    it "allows platforms with openstack options to be defined" do
+      dsl.platform :ubuntu do
+        version '10.04' do
+          image_id "foobar"
+          flavor_id "wombat"
+          ssh_user "ubuntu"
+          ssh_key "/home/bob/mykey"
+          install_chef true
+          install_chef_cmd "sudo apt-get install chef"
+        end
+      end
+    end
+    it "allows default_runner to be set" do
+      dsl.default_runner("openstack").must_equal "openstack"
     end
   end
 

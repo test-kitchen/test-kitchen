@@ -143,6 +143,8 @@ module TestKitchen
       desired_platform = env.all_platforms[options[:platform]]
       if desired_platform.box_url
         TestKitchen::Runner.targets['vagrant'].new(env, options)
+      elsif desired_platform.image_id
+        TestKitchen::Runner.targets['openstack'].new(env, options)
       else
         raise ArgumentError,
           "No runner available for platform: #{desired_platform.name}"

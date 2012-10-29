@@ -231,6 +231,30 @@ for the platform and version.
 `box_url` - This is the URL to the base box file to use for the box
 for this platform and version.
 
+`image_id` - The openstack image id to use for this platform and
+version. (Openstack runner only, required)
+
+`flavor_id` - The instance flavor to start for this platform and
+version. (Openstack runner only, required)
+
+`keyname` - The openstack keyname that should be placed on the
+VM. (Openstack runner only)
+
+`instance_name` - Custom instance name for the this openstack
+instance. (Openstack runner only)
+
+`install_chef` - Boolean that controls whether Chef should be
+installed on the VM before convergence. Defaults to false. (Openstack runner only)
+
+`install_chef_cmd` - Command to install Chef with if `install_chef` is
+true. Defaults to an omnibus installation using curl. (Openstack runner only)
+
+`ssh_user` - User to authenticate with during remote
+commands. Defaults to 'root' (Openstack runner only)
+
+`ssh_key` - Path to the ssh private key to authenticate with during
+remote commands.  If unset, the ssh-agent will be used if available. (Openstack runner only)
+
 ### Platform Example
 
 ```ruby
@@ -355,6 +379,39 @@ integration_test "mixlib-shellout" do
   specs true
   features false
 end
+```
+
+## openstack
+
+Describes global configuration settings for the openstack runner:
+
+`username` - The openstack username with which to authenticate.
+
+`password` - The openstack password for the given username.
+
+`tenant` - The openstack tenant to authenticate against.
+
+`auth_url` - The URL of your openstack installations keystone server.
+
+### Openstack example
+
+```ruby
+openstack do
+  auth_url "http://172.0.0.100:5000/v2.0/tokens"
+  username "bobby"
+  password "p4ssw0rd"
+  tenant "openstack"
+end
+```
+
+## default_runner
+
+The default_runner option allows you to specify the runner to use in
+the absence of the --runner flag.  The available runners are currently
+'vagrant' and 'openstack'.  The default is 'vagrant'
+
+```ruby
+default_runner 'openstack'
 ```
 
 # Bugs and Issues

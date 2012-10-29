@@ -27,12 +27,6 @@ module TestKitchen
         banner "kitchen destroy (options)"
 
         def run
-          options = {
-            :platform => config[:platform],
-            :configuration => config[:configuration]
-          }
-
-          runner = TestKitchen::Runner.targets['vagrant'].new(env, options)
           runner.destroy
         end
 

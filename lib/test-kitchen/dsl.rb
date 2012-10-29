@@ -15,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 require 'hashr'
 require 'test-kitchen/project'
 require 'test-kitchen/platform'
+require 'test-kitchen/runner/openstack/dsl'
 
 module TestKitchen
   module DSL
@@ -30,6 +30,10 @@ module TestKitchen
 
       def platform(name, &block)
         env.platforms[name.to_s] = Platform.new(name, &block)
+      end
+
+      def default_runner(name)
+        env.default_runner = name
       end
     end
     module CookbookDSL
