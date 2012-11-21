@@ -54,6 +54,14 @@ module TestKitchen
         :show_options => true,
         :exit => 0
 
+      option :version,
+        :short => "-v",
+        :long => "--version",
+        :description => "Show Test Kitchen version",
+        :boolean => true,
+        :proc => lambda {|v| puts "test-kitchen: #{::TestKitchen::VERSION}"},
+        :exit => 0
+
       attr_accessor :runner
       attr_accessor :env
       attr_accessor :ui
@@ -257,6 +265,12 @@ module TestKitchen
 
       def print_help_and_exit(exitcode=1, fatal_message=nil)
         $stderr.puts(fatal_message) if fatal_message
+
+        begin
+          self.parse_options
+        rescue OptionParser::InvalidOption => e
+            puts "#{e}\n"
+        end
         puts self.opt_parser
         puts
         TestKitchen::CLI::Kitchen.list_commands
