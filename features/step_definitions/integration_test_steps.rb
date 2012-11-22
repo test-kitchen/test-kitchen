@@ -185,7 +185,7 @@ Then 'the existing cookbook will have been converged' do
 end
 
 Then 'the expected platforms will be available' do
-  available_platforms.must_equal(["centos-5.7", "ubuntu-11.04"])
+  available_platforms.must_equal(["centos-5.8", "centos-6.3", "ubuntu-10.04", "ubuntu-12.04"])
 end
 
 Then 'the node will have been torn down between runs' do
