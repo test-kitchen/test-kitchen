@@ -7,13 +7,13 @@ I want to be able to view command line help
 
   Scenario: List commands (no Kitchenfile)
     Given a Ruby project that uses bundler to manage its dependencies
-     When I view the command line help
+     When I run the command line tool from the bundle with no options
      Then each of the expected kitchen subcommands will be shown
 
   Scenario: List commands
     Given a Ruby project that uses bundler to manage its dependencies
       And the integration tests are defined in a Kitchenfile included with the project
-     When I view the command line help
+     When I run the command line tool from the bundle with no options
      Then each of the expected kitchen subcommands will be shown
 
   Scenario: Test command help

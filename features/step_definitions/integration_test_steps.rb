@@ -110,8 +110,8 @@ When /^I scaffold the integration tests$/ do
   scaffold_tests('vim')
 end
 
-When 'I view the command line help' do
-  run_simple(unescape("bundle exec kitchen --help"), false)
+When 'I run the command line tool from the bundle with no options' do
+  run_simple(unescape("bundle exec kitchen"), false)
 end
 
 When /^I view command line help for the ([a-z]+) sub\-command$/ do |subcommand|
@@ -153,7 +153,7 @@ end
 Then 'the available options will be shown with a brief description of each' do
   assert_command_banner_present(current_subcommand)
 
-  option_flags.must_equal ['configuration', 'platform', 'runner', 'teardown', 'help']
+  option_flags.must_equal ['configuration', 'platform', 'runner', 'teardown', 'version', 'help']
 
   assert_option_present('--configuration CONFIG',
     'The project configuration to test. Defaults to all configurations.')
