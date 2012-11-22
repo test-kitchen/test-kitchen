@@ -47,17 +47,17 @@ module TestKitchen
       case options[:type]
         when :real_world
           if options[:missing_config]
-            options[:name] = 'java'
-            clone_cookbook_repository('opscode-cookbooks', 'java', '4817ba')
-            cd 'java'
+            options[:name] = 'emacs'
+            clone_cookbook_repository('opscode-cookbooks', 'emacs', '96d1026')
+            cd 'emacs'
           else
             options[:name] = 'apache2'
-            clone_cookbook_repository('opscode-cookbooks', 'apache2', '2a9bd276')
+            clone_cookbook_repository('opscode-cookbooks', 'apache2', '964df63')
             add_gem_file('apache2')
             add_test_setup_recipe('apache2', 'apache2_test')
           end
         when :real_world_testless
-          clone_cookbook_repository('opscode-cookbooks', 'vim', '789bfc')
+          clone_cookbook_repository('opscode-cookbooks', 'vim', '88e8d01')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path], options[:recipes])
           add_platform_metadata(options[:name], options[:supports_type], options[:path]) if options[:supports_type]
