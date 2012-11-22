@@ -181,7 +181,7 @@ Then 'the cookbooks default recipe will have been converged successfully' do
 end
 
 Then 'the existing cookbook will have been converged' do
-  all_output.must_match /package\[vim.*\] installed/
+  all_output.must_match /Chef Run complete in/
 end
 
 Then 'the expected platforms will be available' do
