@@ -11,5 +11,5 @@ Rake::TestTask.new do |t|
 end
 
 Cucumber::Rake::Task.new(:features) do |t|
-  t.cucumber_opts = ['-f', 'progress', 'features']
+  t.cucumber_opts = ['-f', 'pretty', 'features']
 end
