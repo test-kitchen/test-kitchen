@@ -51,10 +51,10 @@ module TestKitchen
             clone_cookbook_repository('opscode-cookbooks', 'emacs', '96d1026')
             cd 'emacs'
           else
-            options[:name] = 'apache2'
-            clone_cookbook_repository('opscode-cookbooks', 'apache2', '964df63')
-            add_gem_file('apache2')
-            add_test_setup_recipe('apache2', 'apache2_test')
+            options[:name] = 'erlang'
+            clone_cookbook_repository('opscode-cookbooks', 'erlang', '0e910c5')
+            add_gem_file('erlang')
+            add_test_setup_recipe('erlang', 'erlang_test')
           end
         when :real_world_testless
           clone_cookbook_repository('opscode-cookbooks', 'vim', '88e8d01')
@@ -86,7 +86,7 @@ module TestKitchen
     end
 
     def expected_platforms
-      ['centos-5.8', 'centos-6.3', 'ubuntu-10.04', 'ubuntu-12.04']
+      ['centos-6.3', 'ubuntu-12.04']
     end
 
     def list_platforms
@@ -103,45 +103,31 @@ module TestKitchen
     end
 
     def ruby_project
-      run_simple('git clone --quiet https://github.com/opscode/mixlib-shellout.git')
+      run_simple('git clone --quiet https://github.com/jtimberman/mixlib-shellout.git')
       cd('mixlib-shellout')
-      run_simple('git checkout --quiet 3a72a18a9151b160cea1e47f226fc45ba295ed8e')
-      run_simple('sed -i -e "584,594d" ./spec/mixlib/shellout/shellout_spec.rb')
-      write_file 'Gemfile', %q{
-        source :rubygems
-        gemspec :name => "mixlib-shellout"
-
-        group(:test) do
-
-          gem "rspec_junit_formatter"
-          gem 'awesome_print'
-
-        end
-
-        group(:kitchen) do
-          gem "test-kitchen", :path => '../../..'
-        end
-      }
+      run_simple('git checkout --quiet 933784a3240d488cfbf79b5a9b8ecb89ef2cb44f')
+      run_simple('sed -i -e "682,692d" ./spec/mixlib/shellout_spec.rb')
       cd '..'
     end
 
     def define_integration_tests(options={})
       options = {
         :project_type => 'cookbook',
-        :name => 'apache2',
+        :name => 'erlang',
         :configurations => []
       }.merge(options)
 
       case options[:project_type]
         when "project"
           options[:name] = 'mixlib-shellout'
-          write_file "#{File.join(options[:name], 'Kitchenfile')}", %Q{
+          write_file "#{File.join(options[:name], 'test', 'kitchen', 'Kitchenfile')}", %Q{
             integration_test "#{options[:name]}" do
               language 'ruby'
               runner 'vagrant'
-              runtimes ['1.8.7','1.9.2']
+              runtimes ['1.9.3']
               install 'bundle install --without kitchen'
               script 'bundle exec rspec spec'
+              run_list_extras ['mixlib-shellout_test::default']
             #{'end' unless options[:malformed]}
           }
           cd options[:name]
@@ -151,8 +137,8 @@ module TestKitchen
           options[:configurations].each do |configuration|
             dsl << %Q{  configuration "#{configuration}"\n}
           end
-          if options[:name] == 'apache2'
-            dsl << %Q{run_list_extras ['apache2_test::setup']\n}
+          if options[:name] == 'erlang'
+            dsl << %Q{run_list_extras ['erlang_test::default']\n}
           end
           dsl << 'end' unless options[:malformed]
           write_file "#{options[:name]}/test/kitchen/Kitchenfile", dsl
@@ -197,7 +183,7 @@ module TestKitchen
     end
 
     def tests_run?
-      !! (all_output =~ /[0-9]+ tests, [0-9]+ assertions, [0-9]+ failures, [0-9]+ errors/)
+      !! (all_output =~ /([0-9]+ tests, [0-9]+ assertions, [0-9]+ failures, [0-9]+ errors|[0-9]+ examples, 0 failures)/)
     end
 
     def unrecognized_platform_warning_shown?(platform_name)

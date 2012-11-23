@@ -175,7 +175,7 @@ end
 
 Then 'the cookbooks default recipe will have been converged successfully' do
   expected_platforms.each do |platform|
-    converged?(platform, 'java::default')
+    converged?(platform, 'emacs::default')
   end
   last_exit_status.must_equal(0)
 end
