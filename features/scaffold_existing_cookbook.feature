@@ -9,3 +9,8 @@ I want to be able to quickly setup my existing cookbook for integration testing
      When I scaffold the integration tests
       And I run the integration tests with test kitchen
      Then the existing cookbook will have been converged
+
+  Scenario: Existing cookbook in different directory
+    Given an existing Chef cookbook named in metadata but not the directory
+    When I scaffold the integration tests in its directory
+    Then The generated Kitchenfile will contain the name from the metadata
