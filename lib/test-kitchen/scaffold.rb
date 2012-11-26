@@ -52,13 +52,13 @@ module TestKitchen
 
     def project_name(output_dir)
       if project_type(output_dir) =~ /cookbook/
-        get_cookbook_name
+        get_cookbook_name(output_dir)
       else
         File.basename(output_dir)
       end
     end
 
-    def get_cookbook_name()
+    def get_cookbook_name(output_dir)
       md = Chef::Cookbook::Metadata.new
       md.from_file(File.join(output_dir, 'metadata.rb'))
       md.name
