@@ -51,7 +51,7 @@ module TestKitchen
     private
 
     def project_name(output_dir)
-      if project_type(output_dir) =~ /cookbook/
+      if has_metadata?(output_dir)
         get_cookbook_name(output_dir)
       else
         File.basename(output_dir)
@@ -64,8 +64,12 @@ module TestKitchen
       md.name
     end
 
+    def has_metadata?(output_dir)
+      File.exists?(File.join(output_dir, 'metadata.rb'))
+    end
+
     def project_type(output_dir)
-      if File.exists?(File.join(output_dir, 'metadata.rb'))
+      if has_metadata?(output_dir)
         'cookbook'
       else
         'integration_test'
