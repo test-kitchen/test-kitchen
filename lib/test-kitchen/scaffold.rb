@@ -17,6 +17,7 @@
 #
 
 require 'fileutils'
+require 'chef/cookbook/metadata'
 
 module TestKitchen
 
@@ -50,11 +51,25 @@ module TestKitchen
     private
 
     def project_name(output_dir)
-      File.basename(output_dir)
+      if has_metadata?(output_dir)
+        get_cookbook_name(output_dir)
+      else
+        File.basename(output_dir)
+      end
+    end
+
+    def get_cookbook_name(output_dir)
+      md = Chef::Cookbook::Metadata.new
+      md.from_file(File.join(output_dir, 'metadata.rb'))
+      md.name
+    end
+
+    def has_metadata?(output_dir)
+      File.exists?(File.join(output_dir, 'metadata.rb'))
     end
 
     def project_type(output_dir)
-      if File.exists?(File.join(output_dir, 'metadata.rb'))
+      if has_metadata?(output_dir)
         'cookbook'
       else
         'integration_test'

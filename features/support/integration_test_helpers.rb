@@ -58,6 +58,8 @@ module TestKitchen
           end
         when :real_world_testless
           clone_cookbook_repository('opscode-cookbooks', 'vim', '88e8d01')
+        when :real_world_testless_dir
+          clone_cookbook_repository('opscode-cookbooks', 'vim', '88e8d01', 'cookbook-vim')
         when :newly_generated
           generate_new_cookbook(options[:name], options[:path], options[:recipes])
           add_platform_metadata(options[:name], options[:supports_type], options[:path]) if options[:supports_type]
@@ -170,6 +172,11 @@ module TestKitchen
       run_simple(unescape("bundle exec kitchen init"))
     end
 
+    def cookbook_project_name_metadata?
+      kf = File.join(File.expand_path(current_dir), 'test', 'kitchen', 'Kitchenfile')
+      check_file_content(kf, 'cookbook "vim" do', true)
+    end
+
     def kitchenfile_error_shown?
       !! (all_output =~ /Your Kitchenfile could not be loaded. Please check it for errors./)
     end
@@ -192,9 +199,10 @@ module TestKitchen
 
     private
 
-    def clone_cookbook_repository(organization, cookbook_name, sha)
-      run_simple("git clone --quiet git://github.com/#{organization}/#{cookbook_name}.git")
-      cd(cookbook_name)
+    def clone_cookbook_repository(organization, cookbook_name, sha, dirname = '')
+      run_simple("git clone --quiet git://github.com/#{organization}/#{cookbook_name}.git #{dirname}")
+      working_dir = dirname.length > 0 ? dirname : cookbook_name
+      cd(working_dir)
       run_simple("git checkout --quiet #{sha}")
       cd '..'
     end

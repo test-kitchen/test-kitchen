@@ -90,6 +90,10 @@ Given 'an existing Chef cookbook with no tests defined' do
   chef_cookbook(:type => :real_world_testless)
 end
 
+Given 'an existing Chef cookbook named in metadata but not the directory' do
+  chef_cookbook(:type => :real_world_testless_dir)
+end
+
 Given /^the integration tests are defined in a (malformed )?Kitchenfile included with the (cookbook|project)$/ do |malformed, project_type|
   define_integration_tests(:malformed => malformed, :project_type => project_type)
 end
@@ -108,6 +112,10 @@ end
 
 When /^I scaffold the integration tests$/ do
   scaffold_tests('vim')
+end
+
+When /^I scaffold the integration tests in its directory$/ do
+  scaffold_tests('cookbook-vim')
 end
 
 When 'I run the command line tool from the bundle with no options' do
@@ -182,6 +190,10 @@ end
 
 Then 'the existing cookbook will have been converged' do
   all_output.must_match /Chef Run complete in/
+end
+
+Then 'The generated Kitchenfile will contain the name from the metadata' do
+  assert cookbook_project_name_metadata?
 end
 
 Then 'the expected platforms will be available' do
