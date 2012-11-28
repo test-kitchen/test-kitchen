@@ -9,7 +9,7 @@ We use Vagrant baseboxes built with [Bento](https://github.com/opscode/bento).
 When you use test-kitchen your test config and the tests themselves live
 along-side the cookbook within the cookbook repository. To get started, install
 the test-kitchen gem. This makes available the `kitchen` command which is the
-main way you will interact with test-kitchen. It is modelled loosely on the
+main way you will interact with test-kitchen. It is modeled loosely on the
 vagrant cli.
 
     $ gem install test-kitchen
@@ -26,17 +26,28 @@ Run this command to converge your cookbook's default recipe:
 
 # What does it do?
 
-Test kitchen runs through several different kinds of tests, depending on the configuration.
+Test kitchen runs through several different kinds of tests, depending on the
+configuration.
 
-First, it does a syntax check using `knife cookbook test`. This does require a valid knife.rb with the cache path for the checksums stored by the syntax checker.
+First, it does a syntax check using `knife cookbook test`. This does require a
+valid knife.rb with the cache path for the checksums stored by the syntax checker.
 
-Second, it performs a lint check using [foodcritic](http://acrmp.github.com/foodcritic), and will fail and exit if any correctness checks fail.
+Second, it performs a lint check using [foodcritic](http://acrmp.github.com/foodcritic),
+and will fail and exit if any correctness checks fail.
 
-For cookbook projects, it provisions a VM and runs the default recipe or recipes set as "configurations" (see below) in the Kitchenfile to ensure it can be converged. If a cookbook has minitest-chef tests, it will run those as well. If the cookbook has declared dependencies in the metadata, test-kitchen uses [Librarian](https://github.com/applicationsonline/librarian) to resolve those dependencies. Support for [Berkshelf](http://berkshelf.com) is [pending](http://tickets.opscode.com/browse/KITCHEN-9)
+For cookbook projects, it provisions a VM and runs the default recipe or recipes
+set as "configurations" (see below) in the Kitchenfile to ensure it can be
+converged. If a cookbook has minitest-chef tests, it will run those as well. If
+the cookbook has declared dependencies in the metadata, test-kitchen uses
+[Librarian](https://github.com/applicationsonline/librarian) to resolve those
+dependencies. Support for [Berkshelf](http://berkshelf.com) is
+[pending](http://tickets.opscode.com/browse/KITCHEN-9)
 
-For integration_test projects, it provisions a VM and runs the integration tests for the project, by default "rspec spec".
+For integration_test projects, it provisions a VM and runs the integration tests
+for the project, by default "rspec spec".
 
-In either cookbook or integration_test projects, if a "features" directory exists, test-kitchen will attempt to run those tests using cucumber.
+In either cookbook or integration_test projects, if a "features" directory exists,
+test-kitchen will attempt to run those tests using cucumber.
 
 All this is configurable, see the DSL section below.
 
@@ -232,28 +243,30 @@ for the platform and version.
 for this platform and version.
 
 `image_id` - The openstack image id to use for this platform and
-version. (Openstack runner only, required)
+version. (OpenStack runner only, required)
 
 `flavor_id` - The instance flavor to start for this platform and
-version. (Openstack runner only, required)
+version. (OpenStack runner only, required)
 
 `keyname` - The openstack keyname that should be placed on the
-VM. (Openstack runner only)
+VM. (OpenStack runner only)
 
 `instance_name` - Custom instance name for the this openstack
-instance. (Openstack runner only)
+instance. (OpenStack runner only)
 
 `install_chef` - Boolean that controls whether Chef should be
-installed on the VM before convergence. Defaults to false. (Openstack runner only)
+installed on the VM before convergence. Defaults to false. (OpenStack runner
+only)
 
 `install_chef_cmd` - Command to install Chef with if `install_chef` is
-true. Defaults to an omnibus installation using curl. (Openstack runner only)
+true. Defaults to an omnibus installation using curl. (OpenStack runner only)
 
 `ssh_user` - User to authenticate with during remote
-commands. Defaults to 'root' (Openstack runner only)
+commands. Defaults to 'root' (OpenStack runner only)
 
 `ssh_key` - Path to the ssh private key to authenticate with during
-remote commands.  If unset, the ssh-agent will be used if available. (Openstack runner only)
+remote commands.  If unset, the ssh-agent will be used if available. (OpenStack
+runner only)
 
 ### Platform Example
 
@@ -284,7 +297,8 @@ a boolean. Can also specify a list of tags to ignore, see example.
 it a hash with the platforms and configuration to exclude. See example
 below.
 
-`memory` - Specify an amount of memory in megabytes as an integer. The default is 256.
+`memory` - Specify an amount of memory in megabytes as an integer. The default
+is 256.
 
 `run_list_extras` - Additional recipes that are required in order to
 run the tests. Create these cookbooks in `test/kitchen/cookbooks`.
@@ -304,7 +318,8 @@ under RVM.
 
 `data_bags_path` - Specify the directory containing data bags to make available
 to the `:chef_solo` Vagrant provisioner. Defaults to `test/kitchen/data_bags`.
-See: [Using Data Bags with Chef Solo](http://wiki.opscode.com/display/chef/Data+Bags#DataBags-UsingDataBagswithChefSolo) for more information.
+See: [Using Data Bags with Chef Solo](http://wiki.opscode.com/display/chef/Data+Bags#DataBags-UsingDataBagswithChefSolo)
+for more information.
 
 ### Cookbook Examples
 
@@ -330,8 +345,8 @@ end
 ```
 
 Ignore certain foodcritic rules in the lint check, which must pass in
-an array. For example to ignore the ["prefer strings over symbols"](http://acrmp.github.com/foodcritic/#FC001) and
-["check for solo"](http://acrmp.github.com/foodcritic/#FC003) rules:
+an array. For example to ignore the ["prefer strings over symbols"](http://acrmp.github.com/foodcritic/#FC001)
+and ["check for solo"](http://acrmp.github.com/foodcritic/#FC003) rules:
 
 ```ruby
 cookbook "mycookbook" do
@@ -393,7 +408,7 @@ Describes global configuration settings for the openstack runner:
 
 `auth_url` - The URL of your openstack installations keystone server.
 
-### Openstack example
+### OpenStack example
 
 ```ruby
 openstack do
