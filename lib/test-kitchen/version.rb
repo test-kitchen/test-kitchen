@@ -17,5 +17,5 @@
 #
 
 module TestKitchen
-  VERSION = "0.7.0.beta.1"
+  VERSION = "0.7.0.rc.1"
 end
