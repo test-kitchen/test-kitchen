@@ -18,14 +18,14 @@ module Jamie
     end
 
     def define
-      namespace(name) do
+      namespace name  do
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
-          task(instance.name) do
+          task instance.name do
             instance.test
           end
 
-          namespace(instance.name) do
+          namespace instance.name do
             desc "Destroy #{instance.name} test instance"
             task :destroy do
               instance.destroy
@@ -38,7 +38,7 @@ module Jamie
       end
 
       desc "Run Jamie integration"
-      task name => config.instances.map { |i| i.name }
+      task name => config.instances.map { |i| "#{name}:#{i.name}" }
     end
   end
 end
