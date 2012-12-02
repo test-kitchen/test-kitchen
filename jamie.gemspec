@@ -22,4 +22,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'vagrant', '~> 1.0.5'
 
   gem.add_development_dependency 'cane'
+  gem.add_development_dependency 'tailor'
 end
