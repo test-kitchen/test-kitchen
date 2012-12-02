@@ -181,7 +181,8 @@ module Jamie
           cmd, :live_stream => STDOUT, :timeout => 60000
         )
         shellout.run_command
-        puts "       [vagrant command] '#{cmd}' ran in #{shellout.execution_time} seconds."
+        puts "       [vagrant command] '#{cmd}' ran " +
+          "in #{shellout.execution_time} seconds."
         shellout.error!
       rescue Mixlib::ShellOut::ShellCommandFailed => ex
         raise CommandFailed, ex.message

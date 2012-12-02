@@ -20,4 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'hashie'
   gem.add_dependency 'mixlib-shellout'
   gem.add_dependency 'vagrant', '~> 1.0.5'
+
+  gem.add_development_dependency 'cane'
 end
