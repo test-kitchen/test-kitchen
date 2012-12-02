@@ -30,7 +30,6 @@ module Jamie
       @suite = suite
       @platform = platform
       @backend = backend
-      @backend.instance = self
     end
 
     def name
@@ -39,28 +38,28 @@ module Jamie
 
     def create
       puts "-----> Creating instance #{name}"
-      backend.create
+      backend.create(self)
       puts "       Creation of instance #{name} complete."
       self
     end
 
     def converge
       puts "-----> Converging instance #{name}"
-      backend.converge
+      backend.converge(self)
       puts "       Convergence of instance #{name} complete."
       self
     end
 
     def verify
       puts "-----> Verifying instance #{name}"
-      backend.verify
+      backend.verify(self)
       puts "       Verification of instance #{name} complete."
       self
     end
 
     def destroy
       puts "-----> Destroying instance #{name}"
-      backend.destroy
+      backend.destroy(self)
       puts "       Destruction of instance #{name} complete."
       self
     end
@@ -139,36 +138,34 @@ module Jamie
     end
 
     class Base
-      attr_accessor :instance
-
-      def create
+      def create(instance)
         raise NotImplementedError, "Subclass must implement"
       end
 
-      def converge
+      def converge(instance)
         raise NotImplementedError, "Subclass must implement"
       end
 
-      def verify
+      def verify(instance)
         # Subclass may choose to implement
         puts "       Nothing to do!"
       end
 
-      def destroy
+      def destroy(instance)
         raise NotImplementedError, "Subclass must implement"
       end
     end
 
     class Vagrant < Jamie::Backend::Base
-      def create
+      def create(instance)
         run "vagrant up #{instance.name} --no-provision"
       end
 
-      def converge
+      def converge(instance)
         run "vagrant provision #{instance.name}"
       end
 
-      def destroy
+      def destroy(instance)
         run "vagrant destroy #{instance.name} -f"
       end
 
