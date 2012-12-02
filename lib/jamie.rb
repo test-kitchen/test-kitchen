@@ -162,26 +162,20 @@ module Jamie
 
     class Vagrant < Jamie::Backend::Base
       def create
-        exec! "vagrant up #{instance.name} --no-provision"
-      rescue Mixlib::ShellOut::ShellCommandFailed => ex
-        raise CommandFailed, ex.message
+        run "vagrant up #{instance.name} --no-provision"
       end
 
       def converge
-        exec! "vagrant provision #{instance.name}"
-      rescue Mixlib::ShellOut::ShellCommandFailed => ex
-        raise CommandFailed, ex.message
+        run "vagrant provision #{instance.name}"
       end
 
       def destroy
-        exec! "vagrant destroy #{instance.name} -f"
-      rescue Mixlib::ShellOut::ShellCommandFailed => ex
-        raise CommandFailed, ex.message
+        run "vagrant destroy #{instance.name} -f"
       end
 
       private
 
-      def exec!(cmd)
+      def run(cmd)
         puts "       [vagrant command] '#{cmd}'"
         shellout = Mixlib::ShellOut.new(
           cmd, :live_stream => STDOUT, :timeout => 60000
@@ -189,6 +183,8 @@ module Jamie
         shellout.run_command
         puts "       [vagrant command] '#{cmd}' ran in #{shellout.execution_time} seconds."
         shellout.error!
+      rescue Mixlib::ShellOut::ShellCommandFailed => ex
+        raise CommandFailed, ex.message
       end
     end
   end
