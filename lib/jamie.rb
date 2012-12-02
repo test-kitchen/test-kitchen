@@ -87,6 +87,7 @@ module Jamie
     DEFAULT_YAML_FILE = File.join(Dir.pwd, '.jamie.yml')
     DEFAULT_LOG_LEVEL = :info
     DEFAULT_BACKEND_PLUGIN = "vagrant"
+    DEFAULT_DATA_BAGS_BASE_PATH = File.join(Dir.pwd, 'test/integration')
 
     def platforms
       @platforms ||= Array(yaml["platforms"]).map { |hash| Platform.new(hash) }
@@ -119,9 +120,7 @@ module Jamie
     end
 
     def data_bags_base_path
-      default_path = File.join(Dir.pwd, 'test/integration')
-
-      @data_bags_path ||= File.directory?(default_path) ? default_path : nil
+      @data_bags_path ||= DEFAULT_DATA_BAGS_BASE_PATH
     end
 
     private
