@@ -15,11 +15,11 @@ module Jamie
     #   @return [String] logical name of this platform
     property :name, :required => true
 
-    # @!attribute backend_plugin
-    #   @return [String] optional type of backend plugin for use on this
+    # @!attribute driver_plugin
+    #   @return [String] optional type of driver plugin for use on this
     #     platform
-    #   @see Backend.for_plugin
-    property :backend_plugin
+    #   @see Driver.for_plugin
+    property :driver_plugin
 
     # @!attribute vagrant_box
     #   @return [String] name of the Vagrant box to use for this platform
@@ -68,7 +68,7 @@ module Jamie
     property :json, :default => Hash.new
   end
 
-  # An instance of a suite running on a platform, managed by a backend.
+  # An instance of a suite running on a platform, managed by a driver.
   # A created instance may be a local virtual machine, cloud instance,
   # container, or even a bare metal server.
   class Instance
@@ -78,18 +78,18 @@ module Jamie
     # @return [Platform] the target platform configuration
     attr_reader :platform
 
-    # @return [Backend::Base] the backend which manages this instance
-    attr_reader :backend
+    # @return [Driver::Base] the driver which manages this instance
+    attr_reader :driver
 
-    # Creates a new instance, given a suite, platform, and Backend.
+    # Creates a new instance, given a suite, platform, and Driver.
     #
     # @param suite [Suite] a suite
     # @param platform [Platform] a platform
-    # @param backend [Backend::Base] a backend implementation
-    def initialize(suite, platform, backend)
+    # @param driver [Driver::Base] a driver implementation
+    def initialize(suite, platform, driver)
       @suite = suite
       @platform = platform
-      @backend = backend
+      @driver = driver
     end
 
     # @return [String] name of this instance
@@ -97,64 +97,64 @@ module Jamie
       "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
     end
 
-    # Creates this instancea via its backend.
+    # Creates this instancea via its driver.
     #
-    # @see Backend::Base#create
+    # @see Driver::Base#create
     # @return [self] this instance, used to chain actions
     #
-    # @todo rescue Backend::ActionFailed and return some kind of null object
+    # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def create
       puts "-----> Creating instance #{name}"
-      backend.create(self)
+      driver.create(self)
       puts "       Creation of instance #{name} complete."
       self
     end
 
-    # Converges this running instance via its backend.
+    # Converges this running instance via its driver.
     #
-    # @see Backend::Base#converge
+    # @see Driver::Base#converge
     # @return [self] this instance, used to chain actions
     #
-    # @todo rescue Backend::ActionFailed and return some kind of null object
+    # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def converge
       puts "-----> Converging instance #{name}"
-      backend.converge(self)
+      driver.converge(self)
       puts "       Convergence of instance #{name} complete."
       self
     end
 
-    # Verifies this converged instance by executing tests via its backend.
+    # Verifies this converged instance by executing tests via its driver.
     #
-    # @see Backend::Base#verify
+    # @see Driver::Base#verify
     # @return [self] this instance, used to chain actions
     #
-    # @todo rescue Backend::ActionFailed and return some kind of null object
+    # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def verify
       puts "-----> Verifying instance #{name}"
-      backend.verify(self)
+      driver.verify(self)
       puts "       Verification of instance #{name} complete."
       self
     end
 
-    # Destroys this instance via its backend.
+    # Destroys this instance via its driver.
     #
-    # @see Backend::Base#destroy
+    # @see Driver::Base#destroy
     # @return [self] this instance, used to chain actions
     #
-    # @todo rescue Backend::ActionFailed and return some kind of null object
+    # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def destroy
       puts "-----> Destroying instance #{name}"
-      backend.destroy(self)
+      driver.destroy(self)
       puts "       Destruction of instance #{name} complete."
       self
     end
 
     # Tests this instance by creating, converging and verifying via its
-    # backend. If this instance is running, it will be pre-emptively destroyed
+    # driver. If this instance is running, it will be pre-emptively destroyed
     # to ensure a clean slate. The instance will be left post-verify in a
     # running state.
     #
@@ -164,7 +164,7 @@ module Jamie
     # @see #verify
     # @return [self] this instance, used to chain actions
     #
-    # @todo rescue Backend::ActionFailed and return some kind of null object
+    # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def test
       puts "-----> Cleaning up any prior instances of #{name}"
@@ -193,8 +193,8 @@ module Jamie
     # Default log level verbosity
     DEFAULT_LOG_LEVEL = :info
 
-    # Default backend plugin to use
-    DEFAULT_BACKEND_PLUGIN = "vagrant".freeze
+    # Default driver plugin to use
+    DEFAULT_DRIVER_PLUGIN = "vagrant".freeze
 
     # Default base path which may contain `data_bags/` directories
     DEFAULT_DATA_BAGS_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
@@ -218,9 +218,9 @@ module Jamie
         arr = []
         suites.each do |suite|
           platforms.each do |platform|
-            plugin = platform.backend_plugin || yaml["backend_plugin"] ||
-              DEFAULT_BACKEND_PLUGIN
-            arr << Instance.new(suite, platform, Backend.for_plugin(plugin))
+            plugin = platform.driver_plugin || yaml["driver_plugin"] ||
+              DEFAULT_DRIVER_PLUGIN
+            arr << Instance.new(suite, platform, Driver.for_plugin(plugin))
           end
         end
         arr
@@ -250,20 +250,20 @@ module Jamie
     end
   end
 
-  module Backend
-    # Wrapped exception for any internally raised backend exceptions.
+  module Driver
+    # Wrapped exception for any internally raised driver exceptions.
     class ActionFailed < StandardError ; end
 
-    # Returns an instance of a backend given a plugin type string.
+    # Returns an instance of a driver given a plugin type string.
     #
-    # @param plugin [String] a backend plugin type, which will be constantized
-    # @return [Backend::Base] a backend instance
+    # @param plugin [String] a driver plugin type, which will be constantized
+    # @return [Driver::Base] a driver instance
     def self.for_plugin(plugin)
       klass = self.const_get(plugin.capitalize)
       klass.new
     end
 
-    # Base class for a backend. A backend is responsible for carrying out the
+    # Base class for a driver. A driver is responsible for carrying out the
     # lifecycle activities of an instance, such as creating, converging, and
     # destroying an instance.
     class Base
@@ -295,8 +295,8 @@ module Jamie
       end
     end
 
-    # Vagrant backend for Jamie. It communicates to Vagrant via the CLI.
-    class Vagrant < Jamie::Backend::Base
+    # Vagrant driver for Jamie. It communicates to Vagrant via the CLI.
+    class Vagrant < Jamie::Driver::Base
       def create(instance)
         run "vagrant up #{instance.name} --no-provision"
       end
