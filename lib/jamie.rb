@@ -1,11 +1,52 @@
 # -*- encoding: utf-8 -*-
 
-require 'mixlib/shellout'
 require 'yaml'
 
 require 'jamie/version'
 
 module Jamie
+
+  # A Chef run_list and attribute hash that will be used in a convergence
+  # integration.
+  class Suite
+
+    # @return [String] logical name of this suite
+    attr_reader :name
+
+    # @return [Array] Array of Chef run_list items that will be placed
+    #   after a Platform's base_run_list when a convergence is performed
+    attr_reader :run_list
+
+    # @return [Hash] Hash of Chef node attributes
+    attr_reader :json
+
+    # Constructs a new suite.
+    #
+    # @param [Hash] options yep
+    # @option options [String] :name logical name of this suit (**Required**)
+    # @option options [String] :run_list Array of Chef run_list items that
+    #   will be placed after a Platform's base_run_list when a convergence
+    #   is performed (**Required**)
+    # @option options [String] :json
+    def initialize(options = {})
+      validate_options(options)
+
+      @name = options['name']
+      @run_list = options['run_list']
+      @json = options['json'] || Hash.new
+    end
+
+    private
+
+    def validate_options(options)
+      if options['name'].nil?
+        raise ArgumentError, "The option 'name' is required."
+      end
+      if options['run_list'].nil?
+        raise ArgumentError, "The option 'run_list' is required."
+      end
+    end
+  end
 
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
@@ -58,48 +99,6 @@ module Jamie
     def validate_options(options)
       if options['name'].nil?
         raise ArgumentError, "The option 'name' is required."
-      end
-    end
-  end
-
-  # A Chef run_list and attribute hash that will be used in a convergence
-  # integration.
-  class Suite
-
-    # @return [String] logical name of this suite
-    attr_reader :name
-
-    # @return [Array] Array of Chef run_list items that will be placed
-    #   after a Platform's base_run_list when a convergence is performed
-    attr_reader :run_list
-
-    # @return [Hash] Hash of Chef node attributes
-    attr_reader :json
-
-    # Constructs a new suite.
-    #
-    # @param [Hash] options yep
-    # @option options [String] :name logical name of this suit (**Required**)
-    # @option options [String] :run_list Array of Chef run_list items that
-    #   will be placed after a Platform's base_run_list when a convergence
-    #   is performed (**Required**)
-    # @option options [String] :json
-    def initialize(options = {})
-      validate_options(options)
-
-      @name = options['name']
-      @run_list = options['run_list']
-      @json = options['json'] || Hash.new
-    end
-
-    private
-
-    def validate_options(options)
-      if options['name'].nil?
-        raise ArgumentError, "The option 'name' is required."
-      end
-      if options['run_list'].nil?
-        raise ArgumentError, "The option 'run_list' is required."
       end
     end
   end
@@ -298,6 +297,8 @@ module Jamie
     # @param plugin [String] a driver plugin type, which will be constantized
     # @return [Driver::Base] a driver instance
     def self.for_plugin(plugin)
+      require "jamie/driver/#{plugin}"
+
       klass = self.const_get(plugin.capitalize)
       klass.new
     end
@@ -332,37 +333,6 @@ module Jamie
       def verify(instance)
         # Subclass may choose to implement
         puts "       Nothing to do!"
-      end
-    end
-
-    # Vagrant driver for Jamie. It communicates to Vagrant via the CLI.
-    class Vagrant < Jamie::Driver::Base
-
-      def create(instance)
-        run "vagrant up #{instance.name} --no-provision"
-      end
-
-      def converge(instance)
-        run "vagrant provision #{instance.name}"
-      end
-
-      def destroy(instance)
-        run "vagrant destroy #{instance.name} -f"
-      end
-
-      private
-
-      def run(cmd)
-        puts "       [vagrant command] '#{cmd}'"
-        shellout = Mixlib::ShellOut.new(
-          cmd, :live_stream => STDOUT, :timeout => 60000
-        )
-        shellout.run_command
-        puts "       [vagrant command] '#{cmd}' ran " +
-          "in #{shellout.execution_time} seconds."
-        shellout.error!
-      rescue Mixlib::ShellOut::ShellCommandFailed => ex
-        raise ActionFailed, ex.message
       end
     end
   end
