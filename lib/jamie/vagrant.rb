@@ -6,7 +6,9 @@ require 'vagrant'
 require 'jamie'
 
 module Jamie
+
   module Vagrant
+
     # A Vagrant confiuration class which wraps a Jamie::Config instance.
     class Config < ::Vagrant::Config::Base
       extend Forwardable

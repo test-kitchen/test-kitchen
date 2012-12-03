@@ -4,9 +4,10 @@ require 'hashie/dash'
 require 'mixlib/shellout'
 require 'yaml'
 
-require "jamie/version"
+require 'jamie/version'
 
 module Jamie
+
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
   # and machine architecture.
@@ -72,6 +73,7 @@ module Jamie
   # A created instance may be a local virtual machine, cloud instance,
   # container, or even a bare metal server.
   class Instance
+
     # @return [Suite] the test suite configuration
     attr_reader :suite
 
@@ -181,6 +183,7 @@ module Jamie
   # Base configuration class for Jamie. This class exposes configuration such
   # as the location of the Jamie YAML file, instances, log_levels, etc.
   class Config
+
     attr_writer :yaml_file
     attr_writer :platforms
     attr_writer :suites
@@ -251,6 +254,7 @@ module Jamie
   end
 
   module Driver
+
     # Wrapped exception for any internally raised driver exceptions.
     class ActionFailed < StandardError ; end
 
@@ -267,6 +271,7 @@ module Jamie
     # lifecycle activities of an instance, such as creating, converging, and
     # destroying an instance.
     class Base
+
       # Creates an instance.
       #
       # @param instance [Instance] an instance
@@ -297,6 +302,7 @@ module Jamie
 
     # Vagrant driver for Jamie. It communicates to Vagrant via the CLI.
     class Vagrant < Jamie::Driver::Base
+
       def create(instance)
         run "vagrant up #{instance.name} --no-provision"
       end

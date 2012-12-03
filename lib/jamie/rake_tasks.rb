@@ -6,8 +6,10 @@ require 'rake/tasklib'
 require 'jamie'
 
 module Jamie
+
   # Jamie Rake task generator.
   class RakeTasks < ::Rake::TaskLib
+
     # @return [String] prefix name of all Jamie tasks
     attr_accessor :name
 
