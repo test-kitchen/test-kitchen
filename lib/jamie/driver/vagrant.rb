@@ -11,16 +11,18 @@ module Jamie
     # Vagrant driver for Jamie. It communicates to Vagrant via the CLI.
     class Vagrant < Jamie::Driver::Base
 
+      default_config 'memory', '256'
+
       def create(instance)
-        run "echo vagrant up #{instance.name} --no-provision"
+        run "vagrant up #{instance.name} --no-provision"
       end
 
       def converge(instance)
-        run "echo vagrant provision #{instance.name}"
+        run "vagrant provision #{instance.name}"
       end
 
       def destroy(instance)
-        run "echo vagrant destroy #{instance.name} -f"
+        run "vagrant destroy #{instance.name} -f"
       end
 
       private

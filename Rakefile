@@ -8,6 +8,12 @@ Cane::RakeTask.new do |cane|
     Jamie::RakeTasks#define
     Jamie::Vagrant.define_vagrant_vm
   )
+  cane.style_exclude = %w(
+    lib/jamie/core_ext.rb
+  )
+  cane.doc_exclude = %w(
+    lib/jamie/core_ext.rb
+  )
 end
 
 Tailor::RakeTask.new

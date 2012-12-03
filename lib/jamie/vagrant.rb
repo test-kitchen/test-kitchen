@@ -34,19 +34,18 @@ module Jamie
     private
 
     def self.define_vagrant_vm(config, instance)
-      suite = instance.suite
-      platform = instance.platform
+      driver = instance.platform.driver
 
       config.vm.define instance.name do |c|
-        c.vm.box = platform.vagrant_box
-        c.vm.box_url = platform.vagrant_box_url if platform.vagrant_box_url
+        c.vm.box = driver['box']
+        c.vm.box_url = driver['box_url'] if driver['box_url']
         c.vm.host_name = "#{instance.name}.vagrantup.com"
-        c.vm.customize ["modifyvm", :id, "--memory", "256"]
+        c.vm.customize ["modifyvm", :id, "--memory", driver['memory']]
 
         c.vm.provision :chef_solo do |chef|
           chef.log_level = config.jamie.log_level
-          chef.run_list = platform.base_run_list + Array(suite.run_list)
-          chef.json = suite.json
+          chef.run_list = instance.run_list
+          chef.json = instance.json
           chef.data_bags_path = calculate_data_bags_path(config, instance)
         end
       end
