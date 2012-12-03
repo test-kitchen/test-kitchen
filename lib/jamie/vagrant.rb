@@ -7,6 +7,7 @@ require 'jamie'
 
 module Jamie
   module Vagrant
+    # A Vagrant confiuration class which wraps a Jamie::Config instance.
     class Config < ::Vagrant::Config::Base
       extend Forwardable
 
@@ -19,10 +20,9 @@ module Jamie
       end
     end
 
-    def self.init!
-      ::Vagrant.config_keys.register(:jamie) { Jamie::Vagrant::Config }
-    end
-
+    # Defines all Vagrant virtual machines, one for each instance.
+    #
+    # @param config [Vagrant::Config::Top] Vagrant top level config object
     def self.define_vms(config)
       config.jamie.instances.each do |instance|
         define_vagrant_vm(config, instance)
@@ -66,4 +66,4 @@ module Jamie
   end
 end
 
-Jamie::Vagrant.init!
+Vagrant.config_keys.register(:jamie) { Jamie::Vagrant::Config }

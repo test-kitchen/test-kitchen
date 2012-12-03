@@ -6,10 +6,17 @@ require 'rake/tasklib'
 require 'jamie'
 
 module Jamie
+  # Jamie Rake task generator.
   class RakeTasks < ::Rake::TaskLib
+    # @return [String] prefix name of all Jamie tasks
     attr_accessor :name
+
+    # @return [Jamie::Config] a Jamie config object
     attr_accessor :config
 
+    # Creates Jamie Rake tasks and allows the callee to configure it.
+    #
+    # @yield [self] gives itself to the block
     def initialize(name = :jamie)
       @name = name
       @config = Jamie::Config.new
@@ -17,8 +24,10 @@ module Jamie
       define
     end
 
+    private
+
     def define
-      namespace name  do
+      namespace name do
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
           task instance.name do
