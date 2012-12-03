@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'hashie/dash'
 require 'mixlib/shellout'
 require 'yaml'
 
@@ -11,62 +10,98 @@ module Jamie
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
   # and machine architecture.
-  class Platform < Hashie::Dash
-    # @!attribute name
-    #   @return [String] logical name of this platform
-    property :name, :required => true
+  class Platform
 
-    # @!attribute driver_plugin
-    #   @return [String] optional type of driver plugin for use on this
-    #     platform
-    #   @see Driver.for_plugin
-    property :driver_plugin
+    # @return [String] logical name of this platform
+    attr_reader :name
 
-    # @!attribute vagrant_box
-    #   @return [String] name of the Vagrant box to use for this platform
-    #   @see http://vagrantup.com/v1/docs/config/vm/box.html
-    property :vagrant_box
+    # @return [String] optional type of driver plugin for use on this platform
+    attr_reader :driver_plugin
 
-    # @!attribute vagrant_box_url
-    #   @return [String] URL to download the desired Vagrant box for this
-    #     platform
-    #   @see http://vagrantup.com/v1/docs/config/vm/box_url.html
-    property :vagrant_box_url
+    # @return [String] name of the Vagrant box to use for this platform
+    attr_reader :vagrant_box
 
-    # @!attribute base_run_list
-    #   @return [Array] Array of Chef run_list items that will be placed
-    #     at the beginning of the run_list when a convergence is performed
-    #   @example
-    #     [ "recipe[apt]", "recipe[fix_something]" ]
-    property :base_run_list, :default => []
+    # @return [String] URL to download the desired Vagrant box for this
+    #   platform
+    attr_reader :vagrant_box_url
+
+    # @return [Array] Array of Chef run_list items that will be placed
+    #   at the beginning of the run_list when a convergence is performed
+    attr_reader :base_run_list
+
+    # Constructs a new platform.
+    #
+    # @param [Hash] options yep
+    # @option options [String] :name logical name of this platform
+    #   (**Required**)
+    # @option options [String] :driver_plugin optional type of driver plugin
+    #   for use on this platform
+    # @option options [String] :vagrant_box name of the Vagrant box to use
+    #   for this platform
+    # @option options [String] :vagrant_box_url URL to download the desired
+    #   Vagrant box for this platform
+    # @option options [Array<String>] :base_run_list Array of Chef run_list
+    #   items that will be placed at the beginning of the run_list when a
+    #   convergence is performed
+    def initialize(options = {})
+      validate_options(options)
+
+      @name = options['name']
+      @driver_plugin = options['driver_plugin']
+      @vagrant_box = options['vagrant_box']
+      @vagrant_box_url = options['vagrant_box_url']
+      @base_run_list = Array(options['base_run_list'])
+    end
+
+    private
+
+    def validate_options(options)
+      if options['name'].nil?
+        raise ArgumentError, "The option 'name' is required."
+      end
+    end
   end
 
   # A Chef run_list and attribute hash that will be used in a convergence
   # integration.
-  class Suite < Hashie::Dash
-    # @!attribute name
-    #   @return [String] logical name of this suite
-    property :name, :required => true
+  class Suite
 
-    # @!attribute run_list
-    #   @return [Array] Array of Chef run_list items that will be placed
-    #     after a Platform's base_run_list when a convergence is performed
-    #   @example
-    #     [ "recipe[rvm::system]", "recipe[rvm::user]" ]
-    property :run_list, :required => true
+    # @return [String] logical name of this suite
+    attr_reader :name
 
-    # @!attribute json
-    #   @return [Hash] Hash of Chef node attributes
-    #   @example
-    #     {
-    #       "rvm" => {
-    #         "user_installs" => [
-    #           { "user" => "john" }
-    #           { "user" => "jane" }
-    #         ]
-    #       }
-    #     }
-    property :json, :default => Hash.new
+    # @return [Array] Array of Chef run_list items that will be placed
+    #   after a Platform's base_run_list when a convergence is performed
+    attr_reader :run_list
+
+    # @return [Hash] Hash of Chef node attributes
+    attr_reader :json
+
+    # Constructs a new suite.
+    #
+    # @param [Hash] options yep
+    # @option options [String] :name logical name of this suit (**Required**)
+    # @option options [String] :run_list Array of Chef run_list items that
+    #   will be placed after a Platform's base_run_list when a convergence
+    #   is performed (**Required**)
+    # @option options [String] :json
+    def initialize(options = {})
+      validate_options(options)
+
+      @name = options['name']
+      @run_list = options['run_list']
+      @json = options['json'] || Hash.new
+    end
+
+    private
+
+    def validate_options(options)
+      if options['name'].nil?
+        raise ArgumentError, "The option 'name' is required."
+      end
+      if options['run_list'].nil?
+        raise ArgumentError, "The option 'run_list' is required."
+      end
+    end
   end
 
   # An instance of a suite running on a platform, managed by a driver.
