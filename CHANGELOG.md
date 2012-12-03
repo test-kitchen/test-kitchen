@@ -1,3 +1,23 @@
+# Release Notes - test-kitchen - Version 0.7.0
+
+### Bug
+
+* [KITCHEN-23] - Generated Kitchenfile should honor cookbook name from metadata.rb
+
+### Improvement
+
+* [KITCHEN-40] - If a cookbook project is included in the default Cheffile, librarian errors out
+
+### New Feature
+
+* [KITCHEN-5] - Create Openstack Runner for test-kitchen
+* [KITCHEN-34] - add --version to kitchen command to show test-kitchen's version
+
+### Task
+
+* [KITCHEN-50] - don't exit with `1` if rcov is slipping, just warn
+* [KITCHEN-51] - don't add runtimes [] line in cookbook scaffolding
+
 # Release Notes - test-kitchen - Version 0.6.0
 
 ### Bug
