@@ -131,12 +131,9 @@ module Jamie
 
     private
 
-    def validate_options(options)
-      if options['name'].nil?
-        raise ArgumentError, "The option 'name' is required."
-      end
-      if options['run_list'].nil?
-        raise ArgumentError, "The option 'run_list' is required."
+    def validate_options(opts)
+      %w(name run_list).each do |k|
+        raise ArgumentError, "Attribute '#{attr}' is required." if opts[k].nil?
       end
     end
   end
@@ -181,11 +178,8 @@ module Jamie
     private
 
     def validate_options(options)
-      if options['name'].nil?
-        raise ArgumentError, "The option 'name' is required."
-      end
-      if options['driver'].nil?
-        raise ArgumentError, "The option 'driver' is required."
+      %w(name driver).each do |k|
+        raise ArgumentError, "Attribute '#{attr}' is required." if opts[k].nil?
       end
     end
   end
