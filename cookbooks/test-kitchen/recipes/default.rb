@@ -34,12 +34,19 @@ project = node['test-kitchen']['project']
 source_root = project['source_root']
 test_root = project['test_root']
 
-package "rsync" do
-  action :install
-end
+case node['platform']
+when 'windows'
+  execute "stage project source to test root" do
+    command "xcopy /E /H /Y /I #{source_root.gsub('/', '\\')} #{test_root.gsub('/', '\\')} "
+  end  
+else
+  package "rsync" do
+    action :install
+  end
 
-execute "stage project source to test root" do
-  command "rsync -aHv --update --progress --checksum #{source_root}/ #{test_root} "
+  execute "stage project source to test root" do
+    command "rsync -aHv --update --progress --checksum #{source_root}/ #{test_root} "
+  end
 end
 
 # make the project_root available to other recipes
