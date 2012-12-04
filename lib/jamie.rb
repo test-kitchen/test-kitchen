@@ -177,7 +177,7 @@ module Jamie
 
     private
 
-    def validate_options(options)
+    def validate_options(opts)
       %w(name driver).each do |k|
         raise ArgumentError, "Attribute '#{attr}' is required." if opts[k].nil?
       end
