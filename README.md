@@ -1,5 +1,8 @@
 # Jamie
 
+[![Build Status](https://secure.travis-ci.org/jamie-ci/jamie.png)](https://travis-ci.org/jamie-ci/jamie)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jamie-ci/jamie)
+
 A Chef convergence integration test harness.
 
 ## Installation
