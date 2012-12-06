@@ -40,7 +40,14 @@ module TestKitchen
     class Version
       include Chef::Mixin::ParamsValidate
 
-      attr_reader :name
+      attr_reader :name, :chef_attributes
+
+      # Attributes for the Version
+      attr_writer :chef_attributes
+
+      def chef_attributes(arg=nil)
+        set_or_return(:chef_attributes, arg, {})
+      end
 
       # Virtual Box Specific Attributes
       attr_writer :box, :box_url
@@ -48,11 +55,12 @@ module TestKitchen
       def initialize(name, &block)
         raise ArgumentError, "Version name must be specified" if name.nil? || name.empty?
         @name = name
+        @chef_attributes = {}
         instance_eval(&block) if block_given?
       end
 
       OPENSTACK_OPTIONS = {
-        :image_id => nil, :flavor_id => nil, :install_chef => false,
+        :image_id => nil, :flavor_id => nil, :install_chef => false, :floating_ip => false,
         :install_chef_cmd =>  "curl -L http://www.opscode.com/chef/install.sh | sudo bash",
         :keyname => nil, :instance_name => nil, :ssh_user => "root", :ssh_key => nil}
 
@@ -63,7 +71,6 @@ module TestKitchen
           set_or_return(option, arg, default.nil? ? {} : {:default => default})
         end
       end
-
 
       def box(arg=nil)
         set_or_return(:box, arg, {})
