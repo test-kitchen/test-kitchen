@@ -19,6 +19,7 @@
 # Make sure that the package list is up to date
 case node['platform']
 when 'debian', 'ubuntu'
+  include_recipe 'apt::cacher-client'
   include_recipe 'apt'
   # Force an update at compile-time to avoid failure when a cookbook attempts
   # a package install at compile-time.
