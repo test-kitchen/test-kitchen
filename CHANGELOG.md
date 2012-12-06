@@ -1,3 +1,11 @@
+# Release Notes - test-kitchen - Version 0.7.2
+
+* [KITCHEN-60] - Improve the OpenStack runner experience
+  * [KITCHEN-55] - Add support for floating IPs with the OpenStack Runner.
+  * [KITCHEN-56] - Add --debug to the kitchen CLI.
+  * [KITCHEN-58] - Add chef_attributes to the Platform Version.
+  * [KITCHEN-59] - Enable use of apt::cacher-client with test-kitchen cookbook
+
 # Release Notes - test-kitchen - Version 0.7.0
 
 ### Bug
