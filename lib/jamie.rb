@@ -85,7 +85,22 @@ module Jamie
     end
 
     def yaml
-      @yaml ||= YAML.load_file(File.expand_path(yaml_file))
+      @yaml ||= YAML.load_file(File.expand_path(yaml_file)).rmerge(local_yaml)
+    end
+
+    def local_yaml_file
+      std = File.expand_path(yaml_file)
+      std.sub(/(#{File.extname(std)})$/, '.local\1')
+    end
+
+    def local_yaml
+      @local_yaml ||= begin
+        if File.exists?(local_yaml_file)
+          YAML.load_file(local_yaml_file)
+        else
+          Hash.new
+        end
+      end
     end
 
     def merge_platform_config(platform_config)
