@@ -17,6 +17,7 @@
 #
 
 require 'fog'
+require 'json'
 require 'test-kitchen/runner/openstack/environment'
 
 module TestKitchen
@@ -43,6 +44,18 @@ module TestKitchen
 
       def create
         env.ui.msg "[#{platform}] Provisioning guest on Openstack", :green
+        if TestKitchen::DEBUG
+          env.ui.msg("create:auth_url:[#{@os_env.auth_url}]", :cyan)
+          env.ui.msg("create:username:[#{@os_env.username}]", :cyan)
+          env.ui.msg("create:tenant:[#{@os_env.tenant}]", :cyan)
+          env.ui.msg("create:floating_ip:[#{@os_env.floating_ip}]", :cyan)
+          env.ui.msg("create:chef_attributes:[#{vm.chef_attributes}]", :cyan)
+          env.ui.msg("create:instance_name:[#{(vm.instance_name || "cookbook-tester-#{platform}")}]", :cyan)
+          env.ui.msg("create:image_id:[#{vm.image_id}]", :cyan)
+          env.ui.msg("create:keyname:[#{vm.keyname}]", :cyan)
+          env.ui.msg("create:ssh_key:[#{vm.ssh_key}]", :cyan)
+          env.ui.msg("create:ssh_user:[#{vm.ssh_user}]", :cyan)
+        end
         @os_env.create_server(@platform,
                               { :instance_name => (vm.instance_name || "cookbook-tester-#{platform}"),
                                 :image_id => vm.image_id,
@@ -50,7 +63,6 @@ module TestKitchen
                                 :keyname => vm.keyname,
                                 :ssh_key => vm.ssh_key,
                                 :ssh_user => vm.ssh_user})
-
       end
 
       def converge
@@ -64,31 +76,35 @@ module TestKitchen
       # vm's in an environment
       def status
         env.all_platforms.each do |name, ver|
-          env.ui.msg "#{name}\t#{@os_env.status(name)}"
+          env.ui.msg("#{name}\t#{@os_env.status(name)}")
         end
       end
 
       def destroy
         env.all_platforms.each do |name, platform|
-          env.ui.msg "[#{name}] Terminating openstack server", :yellow
+          env.ui.msg("[#{name}] Terminating openstack server", :yellow)
           @os_env.destroy name
         end
       end
 
       def execute_remote_command(platform_name, command, message=nil)
         env.ui.msg("[#{platform_name}] #{message}", :green) if message
+        if TestKitchen::DEBUG
+          env.ui.msg("execute_remote_command:SSH:[#{@os_env.servers[platform_name].username}@#{@os_env.servers[platform_name].public_ip_address['addr']}]", :cyan)
+          env.ui.msg("execute_remote_command:command:[#{command}]", :cyan)
+        end
         results = @os_env.ssh(platform_name).run(command) do |data|
           stdout, stderr = data.map {|s| s.rstrip}
           stdout.lines.each do |line|
-            env.ui.msg "[#{platform_name}] #{line}", :green
+            env.ui.msg("[#{platform_name}] #{line}", :green)
           end
           stderr.lines.each do |line|
-            env.ui.msg "[#{platform_name}] #{line}", :red
+            env.ui.msg("[#{platform_name}] #{line}", :red)
           end
         end
         if results.first.status != 0
           msg = message || "Remote command"
-          env.ui.msg "[#{platform_name}] #{msg} failed!", :red
+          env.ui.msg("[#{platform_name}] #{msg} failed!", :red)
         end
       end
 
@@ -123,12 +139,14 @@ module TestKitchen
       end
 
       def json_for_node
+        env.ui.msg("[#{vm.chef_attributes}] json_for_node", :cyan) if TestKitchen::DEBUG
+        attributes = JSON.parse(vm.chef_attributes)
         {
           'test-kitchen' => {
             'project' => configuration.to_hash.merge('source_root' => configuration.guest_source_root,
-                                                     'test_root' => configuration.guest_test_root)},
+              'test_root' => configuration.guest_test_root)},
           'run_list' => run_list
-        }.to_json
+        }.merge(attributes).to_json
       end
 
       def run_list
