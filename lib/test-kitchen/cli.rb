@@ -45,6 +45,13 @@ module TestKitchen
         :long => "--teardown",
         :description => "Teardown test nodes between runs."
 
+      option :debug,
+        :boolean => true,
+        :default => false,
+        :long => "--debug",
+        :description => "Show lots of Test Kitchen debugging output.",
+        :proc => Proc.new { |key| TestKitchen::DEBUG = key }
+
       option :help,
         :short => "-h",
         :long => "--help",
