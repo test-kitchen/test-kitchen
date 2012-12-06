@@ -5,7 +5,7 @@ require 'fog'
 module TestKitchen
   class Environment
     class Openstack < TestKitchen::Environment
-      attr_reader :username, :password, :tenant, :auth_url
+      attr_reader :username, :password, :tenant, :auth_url, :floating_ip
       attr_reader :servers
 
       def initialize(conf={})
@@ -14,6 +14,7 @@ module TestKitchen
         @password = conf[:password] || config.password
         @tenant = conf[:tenant] || config.tenant
         @auth_url = conf[:auth_url] || config.auth_url
+        @floating_ip = conf[:floating_ip] || config.floating_ip
         @servers = {}
         load
       end
@@ -25,13 +26,46 @@ module TestKitchen
                                                  :image_ref => server_def[:image_id],
                                                  :flavor_ref => server_def[:flavor_id],
                                                  :key_name => server_def[:keyname]})
-            server.wait_for { ready? }
-            sleep(2) until tcp_test_ssh(server.public_ip_address['addr'])
+            server.wait_for { print "."; ready? }
+            puts("server ready.\n")
+
+            #floating IPs cargo culted from knife-openstack
+            if @floating_ip
+              associated = false
+              connection.addresses.each do |address|
+              if address.instance_id.nil?
+                server.associate_address(address.ip)
+                #a bit of a hack, but server.reload takes a long time
+                server.addresses['public'].push({"version"=>4,"addr"=>address.ip})
+                associated = true
+                puts("Floating IP Address:#{address.ip}") if TestKitchen::DEBUG
+                break
+              end
+            end
+              unless associated
+                puts("Unable to associate floating IP.")
+                exit 1
+              end
+            end
+
+            #TODO: private IPs someday
+            bootstrap_ip_address = server.public_ip_address['addr']
+
+            puts("Public IP Address:#{bootstrap_ip_address}")
+
+            puts("Waiting for sshd")
+
+            print(".") until tcp_test_ssh(bootstrap_ip_address) {
+               sleep @initial_sleep_delay ||= 10
+               puts("done")
+            }
+            puts("\n")
+
             save
             server
           end
 
-        # These won't persist on the fog objectso we have to set them every
+        # These won't persist on the fog object so we have to set them every
         # time. :(
         @servers[platform_name].username = server_def[:ssh_user]
         if server_def[:ssh_key]
