@@ -273,7 +273,7 @@ true. Defaults to an omnibus installation using curl. (OpenStack runner only)
 `ssh_user` - User to authenticate with during remote commands. Defaults to
 'root' (OpenStack runner only)
 
-`ssh_Key` - Path to the ssh private key to authenticate with during
+`ssh_key` - Path to the ssh private key to authenticate with during
 remote commands.  If unset, the ssh-agent will be used if available. (OpenStack
 Runner Only)
 
