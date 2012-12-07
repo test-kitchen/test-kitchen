@@ -265,7 +265,7 @@ instance. (OpenStack runner only)
 
 `install_chef` - Boolean that controls whether Chef should be
 installed on the VM before convergence. Defaults to false. (OpenStack runner
-Only)
+only)
 
 `install_chef_cmd` - Command to install Chef with if `install_chef` is
 true. Defaults to an omnibus installation using curl. (OpenStack runner only)
@@ -275,7 +275,7 @@ true. Defaults to an omnibus installation using curl. (OpenStack runner only)
 
 `ssh_key` - Path to the ssh private key to authenticate with during
 remote commands.  If unset, the ssh-agent will be used if available. (OpenStack
-Runner Only)
+runner only)
 
 ### Platform Example
 
