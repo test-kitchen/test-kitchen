@@ -36,4 +36,5 @@ ruby_block "Give root access to the forwarded ssh agent" do
     # fail "Could not find running ssh agent - Is config.ssh.forward_agent enabled in Vagrantfile?" unless ENV['SSH_AUTH_SOCK']
   end
   action :create
+  not_if {RUBY_PLATFORM =~ /mingw32/}
 end
