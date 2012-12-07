@@ -1,10 +1,11 @@
 Test Kitchen is a framework for running project integration tests in
-an isolated environment using Vagrant and Chef. You describe the
+an isolated environment using Vagrant and/or OpenStack and Chef. You describe the
 configuration for testing your project using a lightweight Ruby DSL.
 
-We use Vagrant baseboxes built with [Bento](https://github.com/opscode/bento).
+We use Vagrant baseboxes built with [Bento](https://github.com/opscode/bento),
+OpenStack users may choose by their OpenStack 'image_id'.
 
-# Quick start
+# Quick Start
 
 When you use test-kitchen your test config and the tests themselves live
 along-side the cookbook within the cookbook repository. To get started, install
@@ -236,22 +237,30 @@ a symbol.
 block containing the name of the box and the URL where the box can be
 downloaded.
 
+`chef_attributes` - Pass a JSON string containing attributes to be used
+for the platform and version. If you pass
+```
+chef_attributes '{"apt": { "cacher_ipaddress": "10.0.111.3" }}'
+```
+this will be utilized by the `apt::cacher-client` recipe included in the
+`test-kitchen` recipe.
+
 `box` - This is the name of the Vagrant box that should should be used
 for the platform and version.
 
 `box_url` - This is the URL to the base box file to use for the box
 for this platform and version.
 
-`image_id` - The openstack image id to use for this platform and
+`image_id` - The OpenStack image id to use for this platform and
 version. (OpenStack runner only, required)
 
 `flavor_id` - The instance flavor to start for this platform and
 version. (OpenStack runner only, required)
 
-`keyname` - The openstack keyname that should be placed on the
+`keyname` - The OpenStack keyname that should be placed on the
 VM. (OpenStack runner only)
 
-`instance_name` - Custom instance name for the this openstack
+`instance_name` - Custom instance name for the this OpenStack
 instance. (OpenStack runner only)
 
 `install_chef` - Boolean that controls whether Chef should be
@@ -261,8 +270,8 @@ only)
 `install_chef_cmd` - Command to install Chef with if `install_chef` is
 true. Defaults to an omnibus installation using curl. (OpenStack runner only)
 
-`ssh_user` - User to authenticate with during remote
-commands. Defaults to 'root' (OpenStack runner only)
+`ssh_user` - User to authenticate with during remote commands. Defaults to
+'root' (OpenStack runner only)
 
 `ssh_key` - Path to the ssh private key to authenticate with during
 remote commands.  If unset, the ssh-agent will be used if available. (OpenStack
@@ -398,15 +407,17 @@ end
 
 ## openstack
 
-Describes global configuration settings for the openstack runner:
+Describes global configuration settings for the OpenStack runner:
 
-`username` - The openstack username with which to authenticate.
+`username` - The OpenStack username with which to authenticate.
 
-`password` - The openstack password for the given username.
+`password` - The OpenStack password for the given username.
 
-`tenant` - The openstack tenant to authenticate against.
+`tenant` - The OpenStack tenant to authenticate against.
 
-`auth_url` - The URL of your openstack installations keystone server.
+`auth_url` - The URL of your OpenStack installations keystone server.
+
+`floating_ip` - Whether or not to request a floating IP, default is 'false'.
 
 ### OpenStack example
 
@@ -422,7 +433,7 @@ end
 ## default_runner
 
 The default_runner option allows you to specify the runner to use in
-the absence of the --runner flag.  The available runners are currently
+the absence of the `--runner` flag.  The available runners are currently
 'vagrant' and 'openstack'.  The default is 'vagrant'
 
 ```ruby

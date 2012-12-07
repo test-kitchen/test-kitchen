@@ -66,10 +66,12 @@ module TestKitchen
         env = Environment.new({:ignore_kitchenfile => true})
         env.platforms['ubuntu'] = Platform.new(:ubuntu) do
           version '10.04' do
+            chef_attributes "{\"apt\": { \"cacher_ipaddress\": \"10.0.111.3\" }}"
             box "ubuntu-10.04"
             box_url "http://example.org/ubuntu-10.04.box"
           end
           version '11.04' do
+            chef_attributes "{\"apt\": { \"cacher_ipaddress\": \"10.0.111.3\" }}"
             box "ubuntu-11.04"
             box_url "http://example.org/ubuntu-11.04.box"
           end

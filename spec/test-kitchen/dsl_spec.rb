@@ -91,6 +91,7 @@ module TestKitchen::DSL
     it "allows platforms with virtual box options to be defined" do
       dsl.platform :ubuntu do
         version '10.04' do
+          chef_attributes "{\"apt\": { \"cacher_ipaddress\": \"10.0.111.3\" }}"
           box "ubuntu-10.04"
           box_url "http://example.org/ubuntu-10.04.box"
         end
@@ -99,6 +100,7 @@ module TestKitchen::DSL
     it "allows platforms with openstack options to be defined" do
       dsl.platform :ubuntu do
         version '10.04' do
+          chef_attributes "{\"apt\": { \"cacher_ipaddress\": \"10.0.111.3\" }}"
           image_id "foobar"
           flavor_id "wombat"
           ssh_user "ubuntu"

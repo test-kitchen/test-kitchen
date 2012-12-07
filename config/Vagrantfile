@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+require 'json'
 require 'test-kitchen'
 
 def recipe_exists?(cookbook_path, recipe_name)
@@ -85,6 +86,7 @@ project = tk_env.project
         vm_config.vm.share_folder "project", project.guest_source_root, project.root_path
 
         # default chef attribute json
+        attributes = JSON.parse(vm.chef_attributes)
         chef_json = {
             'test-kitchen' => {
               'project' => project.to_hash.merge(
@@ -92,7 +94,7 @@ project = tk_env.project
                 'test_root' => project.guest_test_root
               )
             },
-          }
+          }.merge(attributes)
 
         vm_config.vm.provision :chef_solo do |chef|
           chef.cookbooks_path = tk_env.cookbook_paths

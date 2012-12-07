@@ -24,6 +24,7 @@ require 'test-kitchen/runner'
 require 'test-kitchen/version'
 
 module TestKitchen
+  TestKitchen::DEBUG = false
 
   # The source root is the path to the root directory of
   # the test-kitchen gem.
