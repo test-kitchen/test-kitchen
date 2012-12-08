@@ -34,10 +34,13 @@ module TestKitchen
           end
 
           warn_for_non_buildable_platforms(test_platforms)
+          env.ui.info("run:test_platforms:#{test_platforms}", :cyan) if TestKitchen::DEBUG
           env.project.each_build(test_platforms,
                              config[:configuration]) do |platform,configuration|
+            env.ui.info("run:platform:#{platform}:configuration:#{configuration}", :cyan) if TestKitchen::DEBUG
             runner = TestKitchen::Runner.for_platform(env,
               {:platform => platform, :configuration => configuration})
+            env.ui.info("run:runner:#{runner}", :cyan) if TestKitchen::DEBUG
             runner.preflight_check
             runner.prepare
             begin

@@ -66,5 +66,12 @@ module TestKitchen::DSL
       end
       TestKitchen::Environment::Openstack.config.tenant.must_equal "openstack"
     end
+
+    it "allows the openstack floating_ip to be set" do
+      dsl.openstack do
+        floating_ip true
+      end
+      TestKitchen::Environment::Openstack.config.floating_ip.must_equal true
+    end
   end
 end
