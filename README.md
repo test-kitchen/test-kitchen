@@ -41,8 +41,12 @@ set as "configurations" (see below) in the Kitchenfile to ensure it can be
 converged. If a cookbook has minitest-chef tests, it will run those as well. If
 the cookbook has declared dependencies in the metadata, test-kitchen uses
 [Librarian](https://github.com/applicationsonline/librarian) to resolve those
-dependencies. Support for [Berkshelf](http://berkshelf.com) is
-[pending](http://tickets.opscode.com/browse/KITCHEN-9)
+dependencies. If you have cookbook dependencies not provided by the Community
+site (ie. local file system or from a Git repository), you may place a Librarian
+`Cheffile` in your `test/kitchen/cookbooks/` directory to take full advantage of
+Librarian's dependency resolution.
+
+Support for [Berkshelf](http://berkshelf.com) is [pending](http://tickets.opscode.com/browse/KITCHEN-9)
 
 For integration_test projects, it provisions a VM and runs the integration tests
 for the project, by default "rspec spec".
