@@ -388,11 +388,7 @@ module Jamie
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= if plugins.empty?
-        nil
-      else
-        plugins.map { |p| "#{sudo}#{jr_bin} #{p}" }.join(' && ')
-      end
+      @run_cmd ||= plugins.empty? ? nil : "#{sudo}#{jr_bin} test"
     end
 
     private
