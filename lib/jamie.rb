@@ -460,6 +460,7 @@ module Jamie
       jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
+        echo "       Uploading #{remote_path} (mode=#{perms})"
         cat <<"__EOFSTREAM__" | #{sudo}#{jr_stream_file}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
