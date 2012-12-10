@@ -15,7 +15,7 @@ module Jamie
 
       def_delegators :@config, :suites, :suites=, :platforms, :platforms=,
         :instances, :yaml_file, :yaml_file=, :log_level, :log_level=,
-        :data_bags_base_path, :data_bags_base_path=, :yaml_data
+        :test_base_path, :test_base_path=, :yaml_data
 
       def initialize
         @config = Jamie::Config.new
@@ -52,7 +52,7 @@ module Jamie
     end
 
     def self.calculate_data_bags_path(config, instance)
-      base_path = config.jamie.data_bags_base_path
+      base_path = config.jamie.test_base_path
       instance_data_bags_path = File.join(base_path, instance.name, "data_bags")
       common_data_bags_path = File.join(base_path, "data_bags")
 

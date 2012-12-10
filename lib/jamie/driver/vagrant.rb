@@ -21,6 +21,22 @@ module Jamie
         run "vagrant provision #{instance.name}"
       end
 
+      def setup(instance)
+        if instance.jr.setup_cmd
+          ssh instance, instance.jr.setup_cmd
+        else
+          super
+        end
+      end
+
+      def verify(instance)
+        if instance.jr.run_cmd
+          ssh instance, instance.jr.run_cmd
+        else
+          super
+        end
+      end
+
       def destroy(instance)
         run "vagrant destroy #{instance.name} -f"
       end
@@ -28,16 +44,25 @@ module Jamie
       private
 
       def run(cmd)
-        puts "       [vagrant command] '#{cmd}'"
+        puts "       [vagrant command] '#{display_cmd(cmd)}'"
         shellout = Mixlib::ShellOut.new(
           cmd, :live_stream => STDOUT, :timeout => 60000
         )
         shellout.run_command
-        puts "       [vagrant command] '#{cmd}' ran " +
+        puts "       [vagrant command] '#{display_cmd(cmd)}' ran " +
           "in #{shellout.execution_time} seconds."
         shellout.error!
       rescue Mixlib::ShellOut::ShellCommandFailed => ex
         raise ActionFailed, ex.message
+      end
+
+      def ssh(instance, cmd)
+        run %{vagrant ssh #{instance.name} --command '#{cmd}'}
+      end
+
+      def display_cmd(cmd)
+        parts = cmd.partition("\n")
+        parts[1] == "\n" ? "#{parts[0]}..." : cmd
       end
     end
   end

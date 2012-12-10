@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+require 'base64'
+require 'digest'
+require 'net/https'
 require 'yaml'
 
 require 'jamie/core_ext'
@@ -15,7 +18,7 @@ module Jamie
     attr_writer :platforms
     attr_writer :suites
     attr_writer :log_level
-    attr_writer :data_bags_base_path
+    attr_writer :test_base_path
 
     # Default path to the Jamie YAML file
     DEFAULT_YAML_FILE = File.join(Dir.pwd, '.jamie.yml').freeze
@@ -27,7 +30,7 @@ module Jamie
     DEFAULT_DRIVER_PLUGIN = "vagrant".freeze
 
     # Default base path which may contain `data_bags/` directories
-    DEFAULT_DATA_BAGS_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
+    DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
 
     # Creates a new configuration.
     #
@@ -68,8 +71,8 @@ module Jamie
 
     # @return [String] base path that may contain a common `data_bags/`
     #   directory or an instance's `data_bags/` directory
-    def data_bags_base_path
-      @data_bags_path ||= DEFAULT_DATA_BAGS_BASE_PATH
+    def test_base_path
+      @test_base_path ||= DEFAULT_TEST_BASE_PATH
     end
 
     private
@@ -210,6 +213,9 @@ module Jamie
     # @return [Platform] the target platform configuration
     attr_reader :platform
 
+    # @return [Jr] jr command string generator
+    attr_reader :jr
+
     # Creates a new instance, given a suite and a platform.
     #
     # @param suite [Suite] a suite
@@ -217,6 +223,7 @@ module Jamie
     def initialize(suite, platform)
       @suite = suite
       @platform = platform
+      @jr = Jr.new(@suite.name)
     end
 
     # @return [String] name of this instance
@@ -268,7 +275,21 @@ module Jamie
       self
     end
 
-    # Verifies this converged instance by executing tests.
+    # Sets up this converged instance for suite tests.
+    #
+    # @see Driver::Base#setup
+    # @return [self] this instance, used to chain actions
+    #
+    # @todo rescue Driver::ActionFailed and return some kind of null object
+    #   to gracfully stop action chaining
+    def setup
+      puts "-----> Setting up instance #{name}"
+      platform.driver.setup(self)
+      puts "       Setup of instance #{name} complete."
+      self
+    end
+
+    # Verifies this set up instance by executing suite tests.
     #
     # @see Driver::Base#verify
     # @return [self] this instance, used to chain actions
@@ -303,6 +324,7 @@ module Jamie
     # @see #destroy
     # @see #create
     # @see #converge
+    # @see #setup
     # @see #verify
     # @return [self] this instance, used to chain actions
     #
@@ -314,9 +336,154 @@ module Jamie
       puts "-----> Testing instance #{name}"
       create
       converge
+      setup
       verify
       puts "       Testing of instance #{name} complete."
       self
+    end
+  end
+
+  # Command string generator to interface with Jamie Runner (jr). The
+  # commands that are generated are safe to pass to an SSH command or as an
+  # unix command argument (escaped in single quotes).
+  class Jr
+
+    # Constructs a new jr command generator, given a suite name.
+    #
+    # @param [String] suite_name name of suite on which to operate
+    #   (**Required**)
+    # @param [Hash] opts optional configuration
+    # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
+    #   sudo before commands requiring root access (default: `true`)
+    def initialize(suite_name, opts = {:use_sudo => true})
+      validate_options(suite_name)
+
+      @suite_name = suite_name
+      @use_sudo = opts[:use_sudo]
+    end
+
+    # Returns a command string which installs the Jamie Runner (jr), installs
+    # all required jr plugins for the suite, and transfers all suite test
+    # files.
+    #
+    # If no work needs to be performed, for example if there are no tests for
+    # the given suite, then `nil` will be returned.
+    #
+    # @return [String] a command string to setup the test suite, or nil if no
+    #   work needs to be performed
+    def setup_cmd
+      @setup_cmd ||= begin
+        cmd = []
+        cmd << install_cmd  if install_cmd
+        cmd << sync_cmd     if sync_cmd
+        cmd.empty? ? nil : cmd.join("\n")
+      end
+    end
+
+    # Returns a command string which runs all jr suite tests for the suite.
+    #
+    # If no work needs to be performed, for example if there are no tests for
+    # the given suite, then `nil` will be returned.
+    #
+    # @return [String] a command string to run the test suites, or nil if no
+    #   work needs to be performed
+    def run_cmd
+      @run_cmd ||= if plugins.empty?
+        nil
+      else
+        plugins.map { |p| "#{sudo}#{jr_bin} #{p}" }.join(' && ')
+      end
+    end
+
+    private
+
+    INSTALL_URL = "https://raw.github.com/jamie-ci/jr/go".freeze
+    DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
+    DEFAULT_JR_ROOT = "/opt/jr".freeze
+    DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
+
+    def validate_options(suite_name)
+      raise ArgumentError, "'suite_name' is required." if suite_name.nil?
+    end
+
+    def install_cmd
+      @install_cmd ||= if plugins.empty?
+        nil
+      else
+        <<-INSTALL_CMD.gsub(/ {10}/, '')
+          #{sudo}#{ruby_bin} -e "$(cat <<"EOF"
+          #{install_script}
+          EOF
+          )"
+          #{sudo}#{jr_bin} install #{plugins.join(' ')}
+        INSTALL_CMD
+      end
+    end
+
+    def sync_cmd
+      @sync_cmd ||= if local_suite_files.empty?
+        nil
+      else
+        [ "#{sudo}rm -rf $(#{jr_bin} suitepath)/*",
+          local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join
+        ].join("\n")
+      end
+    end
+
+    def install_script
+      @install_script ||= begin
+        uri = URI.parse(INSTALL_URL)
+        http = Net::HTTP.new(uri.host, 443)
+        http.use_ssl = true
+        response = http.request(Net::HTTP::Get.new(uri.path))
+        response.body
+      end
+    end
+
+    def plugins
+      Dir.glob(File.join(test_root, @suite_name, "*")).select { |d|
+        File.directory?(d) && File.basename(d) != "data_bags"
+      }.map { |d| File.basename(d) }.sort.uniq
+    end
+
+    def local_suite_files
+      Dir.glob(File.join(test_root, @suite_name, "*/**/*")).reject do |f|
+        f["data_bags"] || File.directory?(f)
+      end
+    end
+
+    def remote_file(file)
+      local_prefix = File.join(test_root, @suite_name)
+      "$(#{jr_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+    end
+
+    def stream_file(local_path, remote_path)
+      local_file = IO.read(local_path)
+      md5 = Digest::MD5.hexdigest(local_file)
+      perms = sprintf("%o", File.stat(local_path).mode)[3,3]
+      jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
+
+      <<-STREAMFILE.gsub(/^ {8}/, '')
+        cat <<"__EOFSTREAM__" | #{sudo}#{jr_stream_file}
+        #{Base64.encode64(local_file)}
+        __EOFSTREAM__
+      STREAMFILE
+    end
+
+    def sudo
+      @use_sudo ? "sudo " : ""
+    end
+
+    def ruby_bin
+      File.join(DEFAULT_RUBY_BINPATH, "ruby")
+    end
+
+    def jr_bin
+      File.join(DEFAULT_JR_ROOT, "bin/jr")
+    end
+
+    def test_root
+      DEFAULT_TEST_ROOT
     end
   end
 
@@ -373,6 +540,11 @@ module Jamie
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
       def destroy(instance) ; end
+
+      def setup(instance)
+        # Subclass may choose to implement
+        puts "       Nothing to do!"
+      end
 
       # Verifies a converged instance.
       #
