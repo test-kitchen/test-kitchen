@@ -372,11 +372,18 @@ module Jamie
     # @return [String] a command string to setup the test suite, or nil if no
     #   work needs to be performed
     def setup_cmd
-      @setup_cmd ||= begin
-        cmd = []
-        cmd << install_cmd  if install_cmd
-        cmd << sync_cmd     if sync_cmd
-        cmd.empty? ? nil : cmd.join("\n")
+      @setup_cmd ||= if local_suite_files.empty?
+        nil
+      else
+        <<-INSTALL_CMD.gsub(/ {10}/, '')
+          #{sudo}#{ruby_bin} -e "$(cat <<"EOF"
+          #{install_script}
+          EOF
+          )"
+          #{sudo}#{jr_bin} install #{plugins.join(' ')}
+          #{sudo}rm -rf $(#{jr_bin} suitepath)/*
+          #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
+        INSTALL_CMD
       end
     end
 
@@ -388,7 +395,7 @@ module Jamie
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= plugins.empty? ? nil : "#{sudo}#{jr_bin} test"
+      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{jr_bin} test"
     end
 
     private
@@ -400,30 +407,6 @@ module Jamie
 
     def validate_options(suite_name)
       raise ArgumentError, "'suite_name' is required." if suite_name.nil?
-    end
-
-    def install_cmd
-      @install_cmd ||= if plugins.empty?
-        nil
-      else
-        <<-INSTALL_CMD.gsub(/ {10}/, '')
-          #{sudo}#{ruby_bin} -e "$(cat <<"EOF"
-          #{install_script}
-          EOF
-          )"
-          #{sudo}#{jr_bin} install #{plugins.join(' ')}
-        INSTALL_CMD
-      end
-    end
-
-    def sync_cmd
-      @sync_cmd ||= if local_suite_files.empty?
-        nil
-      else
-        [ "#{sudo}rm -rf $(#{jr_bin} suitepath)/*",
-          local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join
-        ].join("\n")
-      end
     end
 
     def install_script
