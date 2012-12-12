@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 require 'base64'
+require 'delegate'
 require 'digest'
 require 'net/https'
 require 'yaml'
@@ -42,21 +43,23 @@ module Jamie
     # @return [Array<Platform>] all defined platforms which will be used in
     #   convergence integration
     def platforms
-      @platforms ||= Array(yaml["platforms"]).map { |hash| new_platform(hash) }
+      @platforms ||= Collection.new(
+        Array(yaml["platforms"]).map { |hash| new_platform(hash) })
     end
 
     # @return [Array<Suite>] all defined suites which will be used in
     #   convergence integration
     def suites
-      @suites ||= Array(yaml["suites"]).map { |hash| Suite.new(hash) }
+      @suites ||= Collection.new(
+        Array(yaml["suites"]).map { |hash| Suite.new(hash) })
     end
 
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      @instances ||= suites.map { |suite|
+      @instances ||= Collection.new(suites.map { |suite|
         platforms.map { |platform| Instance.new(suite, platform) }
-      }.flatten
+      }.flatten)
     end
 
     # @return [String] path to the Jamie YAML file
@@ -73,6 +76,39 @@ module Jamie
     #   directory or an instance's `data_bags/` directory
     def test_base_path
       @test_base_path ||= DEFAULT_TEST_BASE_PATH
+    end
+
+    # Delegate class which adds the ability to find single and multiple
+    # objects by their #name in an Array. Hey, it's better than monkey-patching
+    # Array, right?
+    class Collection < SimpleDelegator
+
+      # Returns a single object by its name, or nil if none are found.
+      #
+      # @param name [String] name of object
+      # @return [Object] first match by name, or nil if none are found
+      def get(name)
+        __getobj__.find { |i| i.name == name }
+      end
+
+      # Returns a Collection of all objects whose #name is matched by the
+      # regular expression.
+      #
+      # @param regexp [Regexp] a regular expression pattern
+      # @return [Jamie::Config::Collection<Object>] a new collection of
+      #   matched objects
+      def get_all(regexp)
+        Jamie::Config::Collection.new(
+          __getobj__.find_all { |i| i.name =~ regexp }
+        )
+      end
+
+      # Returns an Array of names from the collection as strings.
+      #
+      # @return [Array<String>] array of name strings
+      def as_names
+        __getobj__.map { |i| i.name }
+      end
     end
 
     private
