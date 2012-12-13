@@ -29,6 +29,12 @@ module Jamie
       define_method(action) { |*args| exec_action(action) }
     end
 
+    desc "version", "Print Jamie's version information"
+    def version
+      say "Jamie version #{Jamie::VERSION}"
+    end
+    map %w(-v --version) => :version
+
     private
 
     attr_reader :task
