@@ -9,10 +9,10 @@ Cane::RakeTask.new do |cane|
     Jamie::Vagrant.define_vagrant_vm
   )
   cane.style_exclude = %w(
-    lib/jamie/core_ext.rb
+    lib/vendor/hash_recursive_merge.rb
   )
   cane.doc_exclude = %w(
-    lib/jamie/core_ext.rb
+    lib/vendor/hash_recursive_merge.rb
   )
 end
 

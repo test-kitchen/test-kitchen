@@ -5,8 +5,8 @@ require 'delegate'
 require 'digest'
 require 'net/https'
 require 'yaml'
+require 'vendor/hash_recursive_merge'
 
-require 'jamie/core_ext'
 require 'jamie/version'
 
 module Jamie
