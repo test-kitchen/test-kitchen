@@ -15,9 +15,10 @@ module Jamie
       @config = Jamie::Config.new(ENV['JAMIE_YAML'])
     end
 
-    desc "list", "List all instances"
-    def list
-      say @config.instances.as_names.join("\n")
+    desc "list (all ['REGEX']|[INSTANCE])", "List all instances"
+    def list(*args)
+      result = parse_subcommand(args[0], args[1])
+      say Array(result).map{ |i| i.name }.join("\n")
     end
 
     [:create, :converge, :setup, :verify, :test, :destroy].each do |action|
