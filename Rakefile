@@ -7,6 +7,7 @@ Cane::RakeTask.new do |cane|
   cane.abc_exclude = %w(
     Jamie::RakeTasks#define
     Jamie::Vagrant.define_vagrant_vm
+    Jamie::CLI#console
   )
   cane.style_exclude = %w(
     lib/vendor/hash_recursive_merge.rb
