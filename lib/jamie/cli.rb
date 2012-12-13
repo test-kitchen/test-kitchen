@@ -35,6 +35,29 @@ module Jamie
     end
     map %w(-v --version) => :version
 
+    desc "console", "Jamie Console!"
+    def console
+      require 'pry'
+      Pry.start(@config, :prompt => [
+        proc { |target_self, nest_level, pry|
+          [ "[#{pry.input_array.size}] ",
+            "jc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}> "
+          ].join
+        },
+        proc { |target_self, nest_level, pry|
+          [ "[#{pry.input_array.size}] ",
+            "jc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}* "
+          ].join
+        }
+      ])
+    rescue LoadError => e
+      warn %{Make sure you have the pry gem installed. You can install it with:}
+      warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
+      exit 1
+    end
+
     private
 
     attr_reader :task
