@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
+$:.unshift File.join(File.dirname(__FILE__), %w{.. lib})
+require 'jamie/cli'
+
+Jamie::CLI.start

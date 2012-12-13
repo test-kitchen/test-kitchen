@@ -13,10 +13,11 @@ Gem::Specification.new do |gem|
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.executables   = %w(jamie)
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
+  gem.add_dependency 'thor'
   gem.add_dependency 'mixlib-shellout'
   gem.add_dependency 'vagrant', '~> 1.0.5'
 
