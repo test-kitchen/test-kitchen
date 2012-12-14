@@ -399,8 +399,7 @@ module Jamie
     end
 
     # Returns a command string which installs the Jamie Runner (jr), installs
-    # all required jr plugins for the suite, and transfers all suite test
-    # files.
+    # all required jr plugins for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
     # the given suite, then `nil` will be returned.
@@ -417,6 +416,23 @@ module Jamie
           EOF
           )"
           #{sudo}#{jr_bin} install #{plugins.join(' ')}
+        INSTALL_CMD
+      end
+    end
+
+    # Returns a command string which transfers all suite test files to the
+    # instance.
+    #
+    # If no work needs to be performed, for example if there are no tests for
+    # the given suite, then `nil` will be returned.
+    #
+    # @return [String] a command string to transfer all suite test files, or
+    #   nil if no work needs to be performed.
+    def sync_cmd
+      @sync_cmd ||= if local_suite_files.empty?
+        nil
+      else
+        <<-INSTALL_CMD.gsub(/ {10}/, '')
           #{sudo}rm -rf $(#{jr_bin} suitepath)/*
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD

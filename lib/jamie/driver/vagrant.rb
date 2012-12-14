@@ -31,6 +31,7 @@ module Jamie
 
       def verify(instance)
         if instance.jr.run_cmd
+          ssh instance, instance.jr.sync_cmd
           ssh instance, instance.jr.run_cmd
         else
           super
