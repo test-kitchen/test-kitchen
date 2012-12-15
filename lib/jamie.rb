@@ -567,25 +567,23 @@ module Jamie
       # @raise [ActionFailed] if the action could not be completed
       def converge(instance) ; end
 
-      # Destroys an instance.
+      # Sets up an instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(instance) ; end
-
-      def setup(instance)
-        # Subclass may choose to implement
-        puts "       Nothing to do!"
-      end
+      def setup(instance) ; end
 
       # Verifies a converged instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def verify(instance)
-        # Subclass may choose to implement
-        puts "       Nothing to do!"
-      end
+      def verify(instance) ; end
+
+      # Destroys an instance.
+      #
+      # @param instance [Instance] an instance
+      # @raise [ActionFailed] if the action could not be completed
+      def destroy(instance) ; end
 
       private
 
