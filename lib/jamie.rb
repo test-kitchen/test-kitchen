@@ -433,7 +433,7 @@ module Jamie
         nil
       else
         <<-INSTALL_CMD.gsub(/ {10}/, '')
-          #{sudo}rm -rf $(#{jr_bin} suitepath)/*
+          #{sudo}#{jr_bin} cleanup-suites
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD
       end
