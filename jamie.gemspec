@@ -18,6 +18,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'thor'
+  gem.add_dependency 'net-ssh'
+  gem.add_dependency 'net-scp'
   gem.add_dependency 'mixlib-shellout'
   gem.add_dependency 'vagrant', '~> 1.0.5'
 

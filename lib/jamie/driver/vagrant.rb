@@ -9,56 +9,43 @@ module Jamie
   module Driver
 
     # Vagrant driver for Jamie. It communicates to Vagrant via the CLI.
-    class Vagrant < Jamie::Driver::Base
+    class Vagrant < Jamie::Driver::SSHBase
 
       default_config 'memory', '256'
 
-      def create(instance)
-        run "vagrant up #{instance.name} --no-provision"
+      def perform_create(instance, state)
+        state['name'] = instance.name
+        run "vagrant up #{state['name']} --no-provision"
       end
 
-      def converge(instance)
-        run "vagrant provision #{instance.name}"
+      def perform_converge(instance, state)
+        run "vagrant provision #{state['name']}"
       end
 
-      def setup(instance)
-        if instance.jr.setup_cmd
-          ssh instance, instance.jr.setup_cmd
-        else
-          super
-        end
+      def perform_destroy(instance, state)
+        run "vagrant destroy #{state['name']} -f"
+        state.delete('name')
       end
 
-      def verify(instance)
-        if instance.jr.run_cmd
-          ssh instance, instance.jr.sync_cmd
-          ssh instance, instance.jr.run_cmd
-        else
-          super
-        end
+      protected
+
+      def generate_ssh_args(state)
+        Array(state['name'])
       end
 
-      def destroy(instance)
-        run "vagrant destroy #{instance.name} -f"
+      def ssh(ssh_args, cmd)
+        run %{vagrant ssh #{ssh_args.first} --command '#{cmd}'}
       end
-
-      private
 
       def run(cmd)
         puts "       [vagrant command] '#{display_cmd(cmd)}'"
-        shellout = Mixlib::ShellOut.new(
-          cmd, :live_stream => STDOUT, :timeout => 60000
-        )
-        shellout.run_command
-        puts "       [vagrant command] '#{display_cmd(cmd)}' ran " +
-          "in #{shellout.execution_time} seconds."
-        shellout.error!
+        sh = Mixlib::ShellOut.new(cmd, :live_stream => STDOUT,
+          :timeout => 60000)
+        sh.run_command
+        puts "       [vagrant command] ran in #{sh.execution_time} seconds."
+        sh.error!
       rescue Mixlib::ShellOut::ShellCommandFailed => ex
         raise ActionFailed, ex.message
-      end
-
-      def ssh(instance, cmd)
-        run %{vagrant ssh #{instance.name} --command '#{cmd}'}
       end
 
       def display_cmd(cmd)

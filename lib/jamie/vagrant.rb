@@ -45,23 +45,9 @@ module Jamie
         c.vm.provision :chef_solo do |chef|
           chef.log_level = config.jamie.log_level
           chef.run_list = instance.run_list
-          chef.json = instance.json
-          chef.data_bags_path = calculate_data_bags_path(config, instance)
+          chef.json = instance.attributes
+          chef.data_bags_path = instance.suite.data_bags_path
         end
-      end
-    end
-
-    def self.calculate_data_bags_path(config, instance)
-      base_path = config.jamie.test_base_path
-      instance_data_bags_path = File.join(base_path, instance.name, "data_bags")
-      common_data_bags_path = File.join(base_path, "data_bags")
-
-      if File.directory?(instance_data_bags_path)
-        instance_data_bags_path
-      elsif File.directory?(common_data_bags_path)
-        common_data_bags_path
-      else
-        nil
       end
     end
   end

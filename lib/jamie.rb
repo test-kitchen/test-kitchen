@@ -3,7 +3,14 @@
 require 'base64'
 require 'delegate'
 require 'digest'
+require 'fileutils'
+require 'json'
+require 'mixlib/shellout'
 require 'net/https'
+require 'net/scp'
+require 'net/ssh'
+require 'socket'
+require 'stringio'
 require 'yaml'
 require 'vendor/hash_recursive_merge'
 
@@ -51,7 +58,7 @@ module Jamie
     #   convergence integration
     def suites
       @suites ||= Collection.new(
-        Array(yaml["suites"]).map { |hash| Suite.new(hash) })
+        Array(yaml["suites"]).map { |hash| new_suite(hash) })
     end
 
     # @return [Array<Instance>] all instances, resulting from all platform and
@@ -113,8 +120,14 @@ module Jamie
 
     private
 
+    def new_suite(hash)
+      data_bags_path = calculate_data_bags_path(hash['name'])
+      Suite.new(hash.rmerge({ 'data_bags_path' => data_bags_path }))
+    end
+
     def new_platform(hash)
       mpc = merge_platform_config(hash)
+      mpc['driver_config']['jamie_root'] = File.dirname(yaml_file)
       mpc['driver'] = new_driver(mpc['driver_plugin'], mpc['driver_config'])
       Platform.new(mpc)
     end
@@ -146,6 +159,19 @@ module Jamie
       default_driver_config.rmerge(common_driver_config.rmerge(platform_config))
     end
 
+    def calculate_data_bags_path(suite_name)
+      suite_data_bags_path = File.join(test_base_path, suite_name, "data_bags")
+      common_data_bags_path = File.join(test_base_path, "data_bags")
+
+      if File.directory?(suite_data_bags_path)
+        suite_data_bags_path
+      elsif File.directory?(common_data_bags_path)
+        common_data_bags_path
+      else
+        nil
+      end
+    end
+
     def default_driver_config
       { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN }
     end
@@ -168,6 +194,10 @@ module Jamie
     # @return [Hash] Hash of Chef node attributes
     attr_reader :attributes
 
+    # @return [String] local path to the suite's data bags, or nil if one does
+    #   not exist
+    attr_reader :data_bags_path
+
     # Constructs a new suite.
     #
     # @param [Hash] options configuration for a new suite
@@ -175,12 +205,14 @@ module Jamie
     # @option options [String] :run_list Array of Chef run_list items
     #   (**Required**)
     # @option options [Hash] :attributes Hash of Chef node attributes
+    # @option options [String] :data_bags_path path to data bags
     def initialize(options = {})
       validate_options(options)
 
       @name = options['name']
       @run_list = options['run_list']
       @attributes = options['attributes'] || Hash.new
+      @data_bags_path = options['data_bags_path']
     end
 
     private
@@ -281,6 +313,10 @@ module Jamie
     # @return [Hash] merged hash of Chef node attributes
     def attributes
       platform.attributes.rmerge(suite.attributes)
+    end
+
+    def dna
+      attributes.rmerge({ 'run_list' => run_list })
     end
 
     # Creates this instance.
@@ -552,40 +588,90 @@ module Jamie
       # @param attr [Object] configuration key
       # @return [Object] value at configuration key
       def [](attr)
-        @config[attr]
+        config[attr]
       end
 
       # Creates an instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def create(instance) ; end
+      def create(instance)
+        action(:create, instance)
+      end
 
       # Converges a running instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def converge(instance) ; end
+      def converge(instance)
+        action(:converge, instance)
+      end
 
       # Sets up an instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def setup(instance) ; end
+      def setup(instance)
+        action(:setup, instance)
+      end
 
       # Verifies a converged instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def verify(instance) ; end
+      def verify(instance)
+        action(:verify, instance)
+      end
 
       # Destroys an instance.
       #
       # @param instance [Instance] an instance
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(instance) ; end
+      def destroy(instance)
+        action(:destroy, instance)
+        destroy_state(instance)
+      end
 
-      private
+      protected
+
+      attr_reader :config
+
+      def action(what, instance)
+        state = load_state(instance)
+        public_send("perform_#{what}", instance, state)
+        state['last_action'] = what.to_s
+      ensure
+        dump_state(instance, state)
+      end
+
+      def load_state(instance)
+        statefile = state_filepath(instance)
+
+        if File.exists?(statefile)
+          YAML.load_file(statefile)
+        else
+          { 'name' => instance.name }
+        end
+      end
+
+      def dump_state(instance, state)
+        statefile = state_filepath(instance)
+        dir = File.dirname(statefile)
+
+        FileUtils.mkdir_p(dir) if !File.directory?(dir)
+        File.open(statefile, "wb") { |f| f.write(YAML.dump(state)) }
+      end
+
+      def destroy_state(instance)
+        statefile = state_filepath(instance)
+        FileUtils.rm(statefile) if File.exists?(statefile)
+      end
+
+      def state_filepath(instance)
+        File.expand_path(File.join(
+          config['jamie_root'], ".jamie", "#{instance.name}.yml"
+        ))
+      end
 
       def self.defaults
         @defaults ||= Hash.new
@@ -594,6 +680,245 @@ module Jamie
       def self.default_config(attr, value)
         defaults[attr] = value
       end
+    end
+
+    # Base class for a driver that uses SSH to communication with an instance.
+    # A subclass must implement the following methods:
+    # * #perform_create(instance, state)
+    # * #perform_destroy(instance, state)
+    class SSHBase < Base
+
+      def perform_converge(instance, state)
+        ssh_args = generate_ssh_args(state)
+
+        install_omnibus(ssh_args) if config['require_chef_omnibus']
+        prepare_chef_home(ssh_args)
+        upload_chef_data(ssh_args, instance)
+        run_chef_solo(ssh_args)
+      end
+
+      def perform_setup(instance, state)
+        ssh_args = generate_ssh_args(state)
+
+        if instance.jr.setup_cmd
+          ssh(ssh_args, instance.jr.setup_cmd)
+        else
+          super
+        end
+      end
+
+      def perform_verify(instance, state)
+        ssh_args = generate_ssh_args(state)
+
+        if instance.jr.run_cmd
+          ssh(ssh_args, instance.jr.sync_cmd)
+          ssh(ssh_args, instance.jr.run_cmd)
+        else
+          super
+        end
+      end
+
+      protected
+
+      def generate_ssh_args(state)
+        [ state['hostname'],
+          config['username'],
+          { :password => config['password'] }
+        ]
+      end
+
+      def chef_home
+        "/tmp/jamie-chef-solo".freeze
+      end
+
+      def install_omnibus(ssh_args)
+        ssh(ssh_args, <<-INSTALL)
+          if [ ! -d "/opt/chef" ] ; then
+            curl -L https://www.opscode.com/chef/install.sh | sudo bash
+          fi
+        INSTALL
+      end
+
+      def prepare_chef_home(ssh_args)
+        ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}")
+      end
+
+      def upload_chef_data(ssh_args, instance)
+        Jamie::ChefDataUploader.new(
+          instance, ssh_args, config['jamie_root'], chef_home
+        ).upload
+      end
+
+      def run_chef_solo(ssh_args)
+        ssh(ssh_args, <<-RUN_SOLO)
+          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json
+        RUN_SOLO
+      end
+
+      def ssh(ssh_args, cmd)
+        Net::SSH.start(*ssh_args) do |ssh|
+          exit_code = ssh_exec_with_exit!(ssh, cmd)
+
+          if exit_code != 0
+            shorter_cmd = cmd.squeeze(" ").strip
+            raise ActionFailed,
+              "SSH exited (#{exit_code}) for command: [#{shorter_cmd}]"
+          end
+        end
+      rescue Net::SSH::Exception => ex
+        raise ActionFailed, ex.message
+      end
+
+      def ssh_exec_with_exit!(ssh, cmd)
+        exit_code = nil
+        ssh.open_channel do |channel|
+          channel.exec(cmd) do |ch, success|
+
+            channel.on_data do |ch, data|
+              $stdout.print data
+            end
+
+            channel.on_extended_data do |ch, type, data|
+              $stderr.print data
+            end
+
+            channel.on_request("exit-status") do |ch, data|
+              exit_code = data.read_long
+            end
+          end
+        end
+        ssh.loop
+        exit_code
+      end
+
+      def wait_for_sshd(hostname)
+        print "." until test_ssh(hostname)
+      end
+
+      def test_ssh(hostname)
+        socket = TCPSocket.new(hostname, config['port'])
+        IO.select([socket], nil, nil, 5)
+      rescue SocketError, Errno::ECONNREFUSED,
+          Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
+        sleep 2
+        false
+      rescue Errno::EPERM, Errno::ETIMEDOUT
+        false
+      ensure
+        socket && socket.close
+      end
+    end
+  end
+
+  # Uploads Chef asset files such as dna.json, data bags, and cookbooks to an
+  # instance over SSH.
+  class ChefDataUploader
+
+    def initialize(instance, ssh_args, jamie_root, chef_home)
+      @instance = instance
+      @ssh_args = ssh_args
+      @jamie_root = jamie_root
+      @chef_home = chef_home
+    end
+
+    def upload
+      Net::SCP.start(*ssh_args) do |scp|
+        upload_json       scp
+        upload_solo_rb    scp
+        upload_cookbooks  scp
+        upload_data_bags  scp if instance.suite.data_bags_path
+      end
+    end
+
+    private
+
+    attr_reader :instance, :ssh_args, :jamie_root, :chef_home
+
+    def upload_json(scp)
+      json_file = StringIO.new(instance.dna.to_json)
+      scp.upload!(json_file, "#{chef_home}/dna.json")
+    end
+
+    def upload_solo_rb(scp)
+      solo_rb_file = StringIO.new(solo_rb_contents)
+      scp.upload!(solo_rb_file, "#{chef_home}/solo.rb")
+    end
+
+    def upload_cookbooks(scp)
+      cookbooks_dir = local_cookbooks
+      scp.upload!(cookbooks_dir, "#{chef_home}/cookbooks",
+        :recursive => true
+      ) do |ch, name, sent, total|
+        file = name.sub(%r{^#{cookbooks_dir}/}, '')
+        puts "       #{file}: #{sent}/#{total}"
+      end
+    ensure
+      FileUtils.rmtree(cookbooks_dir)
+    end
+
+    def upload_data_bags(scp)
+      data_bags_dir = instance.suite.data_bags_path
+      scp.upload!(data_bags_dir, "#{chef_home}/data_bags",
+        :recursive => true
+      ) do |ch, name, sent, total|
+        file = name.sub(%r{^#{data_bags_dir}/}, '')
+        puts "       #{file}: #{sent}/#{total}"
+      end
+    end
+
+    def solo_rb_contents
+      solo = []
+      solo << %{node_name "#{instance.name}"}
+      solo << %{file_cache_path "#{chef_home}/cache"}
+      solo << %{cookbook_path "#{chef_home}/cookbooks"}
+      solo << %{role_path "#{chef_home}/roles"}
+      if instance.suite.data_bags_path
+        solo << %{data_bag_path "#{chef_home}/data_bags"}
+      end
+      solo << %{log_level :info}
+      solo.join("\n")
+    end
+
+    def local_cookbooks
+      if File.exists?(File.join(jamie_root, "Berksfile"))
+        tmpdir = Dir.mktmpdir(instance.name)
+        run_berks(tmpdir)
+        tmpdir
+      elsif File.exists?(File.join(jamie_root, "Cheffile"))
+        tmpdir = Dir.mktmpdir(instance.name)
+        run_librarian(tmpdir)
+        tmpdir
+      else
+        abort "Berksfile or Cheffile must exist in #{jamie_root}"
+      end
+    end
+
+    def run_berks(tmpdir)
+      begin
+        run "if ! command -v berks >/dev/null ; then exit 1 ; fi"
+      rescue Mixlib::ShellOut::ShellCommandFailed
+        abort ">>>>>> Berkshelf must be installed, add it to your Gemfile."
+      end
+      run "berks install --path #{tmpdir}"
+    end
+
+    def run_librarian(tmpdir)
+      begin
+        run "if ! command -v librarian-chef >/dev/null ; then exit 1 ; fi"
+      rescue Mixlib::ShellOut::ShellCommandFailed
+        abort ">>>>>> Librarian must be installed, add it to your Gemfile."
+      end
+      run "librarian-chef install --path #{tmpdir}"
+    end
+
+    def run(cmd)
+      puts "       [local command] '#{cmd}'"
+      sh = Mixlib::ShellOut.new(cmd, :live_stream => STDOUT)
+      sh.run_command
+      puts "       [local command] ran in #{sh.execution_time} seconds."
+      sh.error!
+    rescue Mixlib::ShellOut::ShellCommandFailed => ex
+      raise ActionFailed, ex.message
     end
   end
 end
