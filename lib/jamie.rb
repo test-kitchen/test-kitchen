@@ -166,7 +166,7 @@ module Jamie
     attr_reader :run_list
 
     # @return [Hash] Hash of Chef node attributes
-    attr_reader :json
+    attr_reader :attributes
 
     # Constructs a new suite.
     #
@@ -174,13 +174,13 @@ module Jamie
     # @option options [String] :name logical name of this suit (**Required**)
     # @option options [String] :run_list Array of Chef run_list items
     #   (**Required**)
-    # @option options [Hash] :json Hash of Chef node attributes
+    # @option options [Hash] :attributes Hash of Chef node attributes
     def initialize(options = {})
       validate_options(options)
 
       @name = options['name']
       @run_list = options['run_list']
-      @json = options['json'] || Hash.new
+      @attributes = options['attributes'] || Hash.new
     end
 
     private
@@ -208,7 +208,7 @@ module Jamie
     attr_reader :run_list
 
     # @return [Hash] Hash of Chef node attributes
-    attr_reader :json
+    attr_reader :attributes
 
     # Constructs a new platform.
     #
@@ -219,14 +219,14 @@ module Jamie
     #   will manage this platform's lifecycle actions (**Required**)
     # @option options [Array<String>] :run_list Array of Chef run_list
     #   items
-    # @option options [Hash] :json Hash of Chef node attributes
+    # @option options [Hash] :attributes Hash of Chef node attributes
     def initialize(options = {})
       validate_options(options)
 
       @name = options['name']
       @driver = options['driver']
       @run_list = Array(options['run_list'])
-      @json = options['json'] || Hash.new
+      @attributes = options['attributes'] || Hash.new
     end
 
     private
@@ -279,8 +279,8 @@ module Jamie
     # suite overriding values from the platform.
     #
     # @return [Hash] merged hash of Chef node attributes
-    def json
-      platform.json.rmerge(suite.json)
+    def attributes
+      platform.attributes.rmerge(suite.attributes)
     end
 
     # Creates this instance.
