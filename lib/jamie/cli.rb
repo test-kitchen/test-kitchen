@@ -69,6 +69,8 @@ module Jamie
         end
       THOR
       empty_directory "test/integration/standard" if init_test_dir?
+      append_to_gitignore(".jamie/")
+      append_to_gitignore(".jamie.local.yml")
     end
 
     private
@@ -185,6 +187,14 @@ module Jamie
 
     def init_test_dir?
       Dir.glob("test/integration/*").select { |d| File.directory?(d) }.empty?
+    end
+
+    def append_to_gitignore(line)
+      create_file(".gitignore") unless File.exists?(".gitignore")
+
+      if IO.readlines(".gitignore").grep(%r{^#{line}}).empty?
+        append_to_file(".gitignore", "#{line}\n")
+      end
     end
 
     # A rather insane and questionable class to quickly consume a metadata.rb
