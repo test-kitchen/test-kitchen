@@ -6,6 +6,7 @@ desc "Run cane to check quality metrics"
 Cane::RakeTask.new do |cane|
   cane.abc_exclude = %w(
     Jamie::RakeTasks#define
+    Jamie::ThorTasks#define
     Jamie::Vagrant.define_vagrant_vm
     Jamie::CLI#console
   )
