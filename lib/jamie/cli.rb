@@ -68,6 +68,7 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       THOR
+      empty_directory "test/integration/standard" if init_test_dir?
     end
 
     private
@@ -180,6 +181,10 @@ module Jamie
     def init_thorfile?
       File.exists?("Thorfile") &&
         IO.readlines("Thorfile").grep(%r{require 'jamie/thor_tasks'}).empty?
+    end
+
+    def init_test_dir?
+      Dir.glob("test/integration/*").select { |d| File.directory?(d) }.empty?
     end
 
     # A rather insane and questionable class to quickly consume a metadata.rb
