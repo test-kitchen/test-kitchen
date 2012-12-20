@@ -555,6 +555,8 @@ module Jamie
     end
   end
 
+  # Stateless utility methods used in different contexts. Essentially a mini
+  # PassiveSupport library.
   module Util
 
     def self.to_camel_case(str)
@@ -570,10 +572,19 @@ module Jamie
     end
   end
 
+  # Mixin that wraps a command shell out invocation, providing a #run_command
+  # method.
   module ShellOut
 
+    # Wrapped exception for any interally raised shell out commands.
     class ShellCommandFailed < StandardError ; end
 
+    # Executes a command in a subshell on the local running system.
+    #
+    # @param cmd [String] command to be executed locally
+    # @param use_sudo [TrueClass, FalseClass] whether or not to use sudo
+    # @param log_subject [String] used in the output or log header for clarity
+    #   and context
     def run_command(cmd, use_sudo = false, log_subject = "local")
       cmd = "sudo #{cmd}" if use_sudo
       subject = "       [#{log_subject} command]"
