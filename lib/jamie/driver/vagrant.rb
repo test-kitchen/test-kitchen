@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'mixlib/shellout'
-
 require 'jamie'
 
 module Jamie
