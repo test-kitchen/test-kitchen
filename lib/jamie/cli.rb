@@ -38,20 +38,7 @@ module Jamie
     desc "console", "Jamie Console!"
     def console
       require 'pry'
-      Pry.start(@config, :prompt => [
-        proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
-            "jc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}> "
-          ].join
-        },
-        proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
-            "jc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}* "
-          ].join
-        }
-      ])
+      Pry.start(@config, :prompt => pry_prompts)
     rescue LoadError => e
       warn %{Make sure you have the pry gem installed. You can install it with:}
       warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
@@ -110,6 +97,22 @@ module Jamie
       error "\n#{msg}\n\n"
       help(task)
       exit 1
+    end
+
+    def pry_prompts
+      [ proc { |target_self, nest_level, pry|
+          [ "[#{pry.input_array.size}] ",
+            "jc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}> "
+          ].join
+        },
+        proc { |target_self, nest_level, pry|
+          [ "[#{pry.input_array.size}] ",
+            "jc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}* "
+          ].join
+        }
+      ]
     end
   end
 end
