@@ -211,17 +211,20 @@ module Jamie
     end
 
     def list_plugins
-      require 'rubygems/spec_fetcher'
-      req = Gem::Requirement.default
-      dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/guard-/i, req) }
-      fetcher = Gem::SpecFetcher.fetcher
-
-      specs = fetcher.find_matching(dep, false, false, false)
-      specs = specs.map { |t| t.first }.map { |t| t[0, 2] }.
+      specs = fetch_gem_specs.map { |t| t.first }.map { |t| t[0, 2] }.
         sort { |x,y| x[0] <=> y[0] }
       specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
       specs = specs.unshift(["Gem Name", "Latest Stable Release"])
       print_table(specs, :indent => 4)
+    end
+
+    def fetch_gem_specs
+      require 'rubygems/spec_fetcher'
+      req = Gem::Requirement.default
+      dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/jamie-/i, req) }
+      fetcher = Gem::SpecFetcher.fetcher
+
+      specs = fetcher.find_matching(dep, false, false, false)
     end
 
     # A rather insane and questionable class to quickly consume a metadata.rb
