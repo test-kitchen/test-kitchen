@@ -146,8 +146,8 @@ module Jamie
     def default_yaml
       url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
       platforms = [
-        { :n => 'ubuntu', :vers => %w(10.04 12.04), :rl => "recipe[apt]" },
-        { :n => 'centos', :vers => %w(5.8 6.3), :rl => "recipe[yum::epel]" }
+        { :n => 'ubuntu', :vers => %w(12.04 10.04), :rl => "recipe[apt]" },
+        { :n => 'centos', :vers => %w(6.3 5.8), :rl => "recipe[yum::epel]" }
       ]
       platforms = platforms.map do |p|
         p[:vers].map do |v|
