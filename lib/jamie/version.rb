@@ -2,5 +2,5 @@
 
 module Jamie
 
-  VERSION = "0.1.0.alpha11"
+  VERSION = "0.1.0.alpha12"
 end
