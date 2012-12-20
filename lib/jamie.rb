@@ -555,6 +555,48 @@ module Jamie
     end
   end
 
+  module Util
+
+    def self.to_camel_case(str)
+      str.split('_').map { |w| w.capitalize }.join
+    end
+
+    def self.to_snake_case(str)
+      str.split('::').
+        last.
+        gsub(/([A-Z+])([A-Z][a-z])/, '\1_\2').
+        gsub(/([a-z\d])([A-Z])/, '\1_\2').
+        downcase
+    end
+  end
+
+  module ShellOut
+
+    class ShellCommandFailed < StandardError ; end
+
+    def run_command(cmd, use_sudo = false, log_subject = "local")
+      cmd = "sudo #{cmd}" if use_sudo
+      subject = "       [#{log_subject} command]"
+
+      $stdout.puts "#{subject} (#{display_cmd(cmd)})"
+      sh = Mixlib::ShellOut.new(cmd, :live_stream => $stdout, :timeout => 60000)
+      sh.run_command
+      puts "#{subject} ran in #{sh.execution_time} seconds."
+      sh.error!
+    rescue Mixlib::ShellOut::ShellCommandFailed => ex
+      raise ShellCommandFailed, ex.message
+    end
+
+    private
+
+    def display_cmd(cmd)
+      first_line, newline, rest = cmd.partition("\n")
+      last_char = cmd[cmd.size - 1]
+
+      newline == "\n" ? "#{first_line}\\n...#{last_char}" : cmd
+    end
+  end
+
   module Driver
 
     # Wrapped exception for any internally raised driver exceptions.
@@ -567,7 +609,7 @@ module Jamie
     def self.for_plugin(plugin, config)
       require "jamie/driver/#{plugin}"
 
-      klass = self.const_get(plugin.split('_').map { |w| w.capitalize }.join)
+      klass = self.const_get(Util.to_camel_case(plugin))
       klass.new(config)
     end
 
@@ -575,6 +617,8 @@ module Jamie
     # lifecycle activities of an instance, such as creating, converging, and
     # destroying an instance.
     class Base
+
+      include ShellOut
 
       def initialize(config)
         @config = config
@@ -671,6 +715,13 @@ module Jamie
         File.expand_path(File.join(
           config['jamie_root'], ".jamie", "#{instance.name}.yml"
         ))
+      end
+
+      def run_command(cmd, use_sudo = nil, log_subject = nil)
+        use_sudo = config['use_sudo'] if use_sudo.nil?
+        log_subject = Util.to_snake_case(self.class.to_s)
+
+        super(cmd, use_sudo, log_subject)
       end
 
       def self.defaults
@@ -810,6 +861,8 @@ module Jamie
   # instance over SSH.
   class ChefDataUploader
 
+    include ShellOut
+
     def initialize(instance, ssh_args, jamie_root, chef_home)
       @instance = instance
       @ssh_args = ssh_args
@@ -891,30 +944,21 @@ module Jamie
 
     def run_berks(tmpdir)
       begin
-        run "if ! command -v berks >/dev/null ; then exit 1 ; fi"
+        run_command "if ! command -v berks >/dev/null; then exit 1; fi"
       rescue Mixlib::ShellOut::ShellCommandFailed
         abort ">>>>>> Berkshelf must be installed, add it to your Gemfile."
       end
-      run "berks install --path #{tmpdir}"
+      run_command "berks install --path #{tmpdir}"
     end
 
     def run_librarian(tmpdir)
       begin
-        run "if ! command -v librarian-chef >/dev/null ; then exit 1 ; fi"
+        run_command "if ! command -v librarian-chef >/dev/null; then exit 1; fi"
       rescue Mixlib::ShellOut::ShellCommandFailed
         abort ">>>>>> Librarian must be installed, add it to your Gemfile."
       end
-      run "librarian-chef install --path #{tmpdir}"
-    end
-
-    def run(cmd)
-      puts "       [local command] '#{cmd}'"
-      sh = Mixlib::ShellOut.new(cmd, :live_stream => STDOUT)
-      sh.run_command
-      puts "       [local command] ran in #{sh.execution_time} seconds."
-      sh.error!
-    rescue Mixlib::ShellOut::ShellCommandFailed => ex
-      raise ActionFailed, ex.message
+      run_command "librarian-chef install --path #{tmpdir}"
     end
   end
+
 end
