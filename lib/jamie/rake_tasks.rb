@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'rake'
 require 'rake/tasklib'
 
 require 'jamie'
@@ -10,17 +9,10 @@ module Jamie
   # Jamie Rake task generator.
   class RakeTasks < ::Rake::TaskLib
 
-    # @return [String] prefix name of all Jamie tasks
-    attr_accessor :name
-
-    # @return [Jamie::Config] a Jamie config object
-    attr_accessor :config
-
     # Creates Jamie Rake tasks and allows the callee to configure it.
     #
     # @yield [self] gives itself to the block
-    def initialize(name = :jamie)
-      @name = name
+    def initialize
       @config = Jamie::Config.new
       yield self if block_given?
       define
@@ -28,28 +20,18 @@ module Jamie
 
     private
 
+    attr_reader :config
+
     def define
-      namespace name do
+      namespace "jamie" do
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
-          task instance.name do
-            instance.test
-          end
-
-          namespace instance.name do
-            desc "Destroy #{instance.name} test instance"
-            task :destroy do
-              instance.destroy
-            end
-          end
+          task instance.name { instance.test }
         end
 
-        desc "Destroy all instances"
-        task :destroy => config.instances.map { |i| "#{i.name}:destroy" }
+        desc "Run all test instances"
+        task "all" => config.instances.map { |i| i.name }
       end
-
-      desc "Run Jamie integration"
-      task name => config.instances.map { |i| "#{name}:#{i.name}" }
     end
   end
 end
