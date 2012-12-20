@@ -9,6 +9,8 @@ module Jamie
   # The command line runner for Jamie.
   class CLI < Thor
 
+    include Thor::Actions
+
     # Constructs a new instance.
     def initialize(*args)
       super
@@ -43,6 +45,29 @@ module Jamie
       warn %{Make sure you have the pry gem installed. You can install it with:}
       warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
       exit 1
+    end
+
+    desc "init", "does the world"
+    def init
+      create_file ".jamie.yml", default_yaml
+      append_to_file("Rakefile", <<-RAKE.gsub(/ {8}/, '')) if init_rakefile?
+
+        begin
+          require 'jamie/rake_tasks'
+          Jamie::RakeTasks.new
+        rescue LoadError
+          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+        end
+      RAKE
+      append_to_file("Thorfile", <<-THOR.gsub(/ {8}/, '')) if init_thorfile?
+
+        begin
+          require 'jamie/thor_tasks'
+          Jamie::ThorTasks.new
+        rescue LoadError
+          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+        end
+      THOR
     end
 
     private
@@ -113,6 +138,80 @@ module Jamie
           ].join
         }
       ]
+    end
+
+    def default_yaml
+      url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
+      platforms = [
+        { :n => 'ubuntu', :vers => %w(10.04 12.04), :rl => "recipe[apt]" },
+        { :n => 'centos', :vers => %w(5.8 6.3), :rl => "recipe[yum::epel]" }
+      ]
+      platforms = platforms.map do |p|
+        p[:vers].map do |v|
+          { 'name' => "#{p[:n]}-#{v}",
+            'driver_config' => {
+              'box' => "opscode-#{p[:n]}-#{v}",
+              'box_url' => "#{url_base}/opscode-#{p[:n]}-#{v}.box"
+            },
+            'run_list' => Array(p[:rl])
+          }
+        end
+      end.flatten
+      cookbook_name = MetadataChopper.extract('metadata.rb').first
+      run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
+      attributes = cookbook_name ? { cookbook_name => nil } : nil
+
+      { 'default_driver' => 'vagrant',
+        'platforms' => platforms,
+        'suites' => [
+          { 'name' => 'standard',
+            'run_list' => Array(run_list),
+            'attributes' => attributes
+          }
+        ]
+      }.to_yaml
+    end
+
+    def init_rakefile?
+      File.exists?("Rakefile") &&
+        IO.readlines("Rakefile").grep(%r{require 'jamie/rake_tasks'}).empty?
+    end
+
+    def init_thorfile?
+      File.exists?("Thorfile") &&
+        IO.readlines("Thorfile").grep(%r{require 'jamie/thor_tasks'}).empty?
+    end
+
+    # A rather insane and questionable class to quickly consume a metadata.rb
+    # file and return the cookbook name and version attributes.
+    #
+    # @see https://twitter.com/fnichol/status/281650077901144064
+    # @see https://gist.github.com/4343327
+    class MetadataChopper < Hash
+
+      # Return an Array containing the cookbook name and version attributes,
+      # or nil values if they could not be parsed.
+      #
+      # @param metadata_file [String] path to a metadata.rb file
+      # @return [Array<String>] array containing the cookbook name and version
+      #   attributes or nil values if they could not be determined
+      def self.extract(metadata_file)
+        mc = new(File.expand_path(metadata_file))
+        [ mc[:name], mc[:version] ]
+      end
+
+      # Creates a new instances and loads in the contents of the metdata.rb
+      # file. If you value your life, you may want to avoid reading the
+      # implementation.
+      #
+      # @param metadata_file [String] path to a metadata.rb file
+      def initialize(metadata_file)
+        eval(IO.read(metadata_file), nil, metadata_file)
+      end
+
+      def method_missing(meth, *args, &block)
+        self[meth] = args.first
+      end
     end
   end
 end
