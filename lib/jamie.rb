@@ -567,7 +567,7 @@ module Jamie
     def self.for_plugin(plugin, config)
       require "jamie/driver/#{plugin}"
 
-      klass = self.const_get(plugin.capitalize)
+      klass = self.const_get(plugin.split('_').map { |w| w.capitalize }.join)
       klass.new(config)
     end
 
