@@ -71,6 +71,7 @@ module Jamie
       empty_directory "test/integration/standard" if init_test_dir?
       append_to_gitignore(".jamie/")
       append_to_gitignore(".jamie.local.yml")
+      add_plugins
     end
 
     private
@@ -195,6 +196,32 @@ module Jamie
       if IO.readlines(".gitignore").grep(%r{^#{line}}).empty?
         append_to_file(".gitignore", "#{line}\n")
       end
+    end
+
+    def add_plugins
+      prompt_add  = "Add a Driver plugin to your Gemfile? (y/n)>"
+      prompt_name = "Enter gem name, `list', or `skip'>"
+
+      if yes?(prompt_add, :green)
+        list_plugins while (plugin = ask(prompt_name, :green)) == "list"
+        return if plugin == "skip"
+        append_to_file("Gemfile", %{gem '#{plugin}', :group => :integration\n})
+        say "You must run `bundle install' to fetch any new gems.", :red
+      end
+    end
+
+    def list_plugins
+      require 'rubygems/spec_fetcher'
+      req = Gem::Requirement.default
+      dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/guard-/i, req) }
+      fetcher = Gem::SpecFetcher.fetcher
+
+      specs = fetcher.find_matching(dep, false, false, false)
+      specs = specs.map { |t| t.first }.map { |t| t[0, 2] }.
+        sort { |x,y| x[0] <=> y[0] }
+      specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
+      specs = specs.unshift(["Gem Name", "Latest Stable Release"])
+      print_table(specs, :indent => 4)
     end
 
     # A rather insane and questionable class to quickly consume a metadata.rb
