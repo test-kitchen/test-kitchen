@@ -702,8 +702,6 @@ module Jamie
 
         if instance.jr.setup_cmd
           ssh(ssh_args, instance.jr.setup_cmd)
-        else
-          super
         end
       end
 
@@ -713,8 +711,6 @@ module Jamie
         if instance.jr.run_cmd
           ssh(ssh_args, instance.jr.sync_cmd)
           ssh(ssh_args, instance.jr.run_cmd)
-        else
-          super
         end
       end
 
