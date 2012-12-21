@@ -47,31 +47,9 @@ module Jamie
       exit 1
     end
 
-    desc "init", "does the world"
+    desc "init", "Adds some configuration to your cookbook so Jamie can rock"
     def init
-      create_file ".jamie.yml", default_yaml
-      append_to_file("Rakefile", <<-RAKE.gsub(/ {8}/, '')) if init_rakefile?
-
-        begin
-          require 'jamie/rake_tasks'
-          Jamie::RakeTasks.new
-        rescue LoadError
-          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
-        end
-      RAKE
-      append_to_file("Thorfile", <<-THOR.gsub(/ {8}/, '')) if init_thorfile?
-
-        begin
-          require 'jamie/thor_tasks'
-          Jamie::ThorTasks.new
-        rescue LoadError
-          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
-        end
-      THOR
-      empty_directory "test/integration/standard" if init_test_dir?
-      append_to_gitignore(".jamie/")
-      append_to_gitignore(".jamie.local.yml")
-      add_plugins
+      InitGenerator.new.init
     end
 
     private
@@ -143,6 +121,42 @@ module Jamie
         }
       ]
     end
+  end
+
+  # A project initialization generator, to help prepare a cookbook project for
+  # testing with Jamie.
+  class InitGenerator < Thor
+
+    include Thor::Actions
+
+    desc "init", "Adds some configuration to your cookbook so Jamie can rock"
+    def init
+      create_file ".jamie.yml", default_yaml
+      append_to_file("Rakefile", <<-RAKE.gsub(/ {8}/, '')) if init_rakefile?
+
+        begin
+          require 'jamie/rake_tasks'
+          Jamie::RakeTasks.new
+        rescue LoadError
+          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+        end
+      RAKE
+      append_to_file("Thorfile", <<-THOR.gsub(/ {8}/, '')) if init_thorfile?
+
+        begin
+          require 'jamie/thor_tasks'
+          Jamie::ThorTasks.new
+        rescue LoadError
+          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+        end
+      THOR
+      empty_directory "test/integration/standard" if init_test_dir?
+      append_to_gitignore(".jamie/")
+      append_to_gitignore(".jamie.local.yml")
+      add_plugins
+    end
+
+    private
 
     def default_yaml
       url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
