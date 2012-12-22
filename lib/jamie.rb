@@ -129,7 +129,12 @@ module Jamie
 
     def new_suite(hash)
       data_bags_path = calculate_data_bags_path(hash['name'])
-      Suite.new(hash.rmerge({ 'data_bags_path' => data_bags_path }))
+      roles_path = calculate_roles_path(hash['name'])
+      path_hash = {
+        'data_bags_path' => data_bags_path,
+        'roles_path'     => roles_path
+      }
+      Suite.new(hash.rmerge(path_hash))
     end
 
     def new_platform(hash)
@@ -166,14 +171,33 @@ module Jamie
       default_driver_config.rmerge(common_driver_config.rmerge(platform_config))
     end
 
+    def calculate_roles_path(suite_name)
+      suite_roles_path = File.join(test_base_path, suite_name, "roles")
+      common_roles_path = File.join(test_base_path, "roles")
+      top_level_roles_path = File.join(Dir.pwd, "roles")
+
+      if File.directory?(suite_roles_path)
+        suite_roles_path
+      elsif File.directory?(common_roles_path)
+        common_roles_path
+      elsif File.directory?(top_level_roles_path)
+        top_level_roles_path
+      else
+        nil
+      end
+    end
+
     def calculate_data_bags_path(suite_name)
       suite_data_bags_path = File.join(test_base_path, suite_name, "data_bags")
       common_data_bags_path = File.join(test_base_path, "data_bags")
+      top_level_data_bags_path = File.join(Dir.pwd, "data_bags")
 
       if File.directory?(suite_data_bags_path)
         suite_data_bags_path
       elsif File.directory?(common_data_bags_path)
         common_data_bags_path
+      elsif File.directory?(top_level_data_bags_path)
+        top_level_data_bags_path
       else
         nil
       end
@@ -205,6 +229,10 @@ module Jamie
     #   not exist
     attr_reader :data_bags_path
 
+    # @return [String] local path to the suite's roles, or nil if one does
+    #   not exist
+    attr_reader :roles_path
+
     # Constructs a new suite.
     #
     # @param [Hash] options configuration for a new suite
@@ -220,6 +248,7 @@ module Jamie
       @run_list = options['run_list']
       @attributes = options['attributes'] || Hash.new
       @data_bags_path = options['data_bags_path']
+      @roles_path = options['roles_path']
     end
 
     private
@@ -894,6 +923,7 @@ module Jamie
         upload_solo_rb    scp
         upload_cookbooks  scp
         upload_data_bags  scp if instance.suite.data_bags_path
+        upload_roles      scp if instance.suite.roles_path
       end
     end
 
@@ -929,6 +959,16 @@ module Jamie
         :recursive => true
       ) do |ch, name, sent, total|
         file = name.sub(%r{^#{data_bags_dir}/}, '')
+        puts "       #{file}: #{sent}/#{total}"
+      end
+    end
+
+    def upload_roles(scp)
+      roles_dir = instance.suite.roles_path
+      scp.upload!(roles_dir, "#{chef_home}/roles",
+        :recursive => true
+      ) do |ch, name, sent, total|
+        file = name.sub(%r{^#{roles_dir}/}, '')
         puts "       #{file}: #{sent}/#{total}"
       end
     end
