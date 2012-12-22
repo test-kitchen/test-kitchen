@@ -834,7 +834,7 @@ module Jamie
       end
 
       def prepare_chef_home(ssh_args)
-        ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}")
+        ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}/cache")
       end
 
       def upload_chef_data(ssh_args, instance)
