@@ -18,6 +18,13 @@ require 'jamie/version'
 
 module Jamie
 
+  # Returns the root path of the Jamie gem source code.
+  #
+  # @return [Pathname] root path of gem
+  def self.source_root
+    @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+  end
+
   # Base configuration class for Jamie. This class exposes configuration such
   # as the location of the Jamie YAML file, instances, log_levels, etc.
   class Config

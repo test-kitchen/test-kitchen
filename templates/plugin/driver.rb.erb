@@ -1,0 +1,21 @@
+# -*- encoding: utf-8 -*-
+#
+<%= license %>
+
+require 'jamie'
+
+module Jamie
+
+  module Driver
+
+    # <%= klass_name %> driver for Jamie.
+    class <%= klass_name %> < Jamie::Driver::SSHBase
+
+      def perform_create(instance, state)
+      end
+
+      def perform_destroy(instance, state)
+      end
+    end
+  end
+end
