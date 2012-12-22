@@ -47,6 +47,7 @@ module Jamie
           chef.run_list = instance.run_list
           chef.json = instance.attributes
           chef.data_bags_path = instance.suite.data_bags_path
+          chef.roles_path = instance.suite.roles_path
         end
       end
     end
