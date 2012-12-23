@@ -19,6 +19,7 @@ module Jamie
 
       def initialize
         @config = Jamie::Config.new
+        @config.yaml_file = ENV['JAMIE_YAML'] if ENV['JAMIE_YAML']
       end
     end
 
