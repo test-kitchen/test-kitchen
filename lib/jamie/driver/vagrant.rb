@@ -27,12 +27,35 @@ module Jamie
 
       protected
 
+      def load_state(instance)
+        vagrantfile = File.join(config['jamie_root'], "Vagrantfile")
+        create_vagrantfile(vagrantfile) unless File.exists?(vagrantfile)
+        super
+      end
+
       def generate_ssh_args(state)
         Array(state['name'])
       end
 
       def ssh(ssh_args, cmd)
         run_command %{vagrant ssh #{ssh_args.first} --command '#{cmd}'}
+      end
+
+      def create_vagrantfile(vagrantfile)
+        File.open(vagrantfile, "wb") { |f| f.write(vagrantfile_contents) }
+      end
+
+      def vagrantfile_contents
+        arr = []
+        arr << %{require 'jamie/vagrant'}
+        if File.exists?(File.join(config['jamie_root'], "Berksfile"))
+          arr << %{require 'berkshelf/vagrant'}
+        end
+        arr << %{}
+        arr << %{Vagrant::Config.run do |config|}
+        arr << %{  Jamie::Vagrant.define_vms(config)}
+        arr << %{end\n}
+        arr.join("\n")
       end
     end
   end
