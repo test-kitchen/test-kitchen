@@ -7,7 +7,6 @@ Cane::RakeTask.new do |cane|
   cane.abc_exclude = %w(
     Jamie::RakeTasks#define
     Jamie::ThorTasks#define
-    Jamie::Vagrant.define_vagrant_vm
     Jamie::CLI#pry_prompts
   )
   cane.style_exclude = %w(
