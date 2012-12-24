@@ -190,7 +190,7 @@ module Jamie
       run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
       attributes = cookbook_name ? { cookbook_name => nil } : nil
 
-      { 'default_driver' => 'vagrant',
+      { 'driver_plugin' => 'vagrant',
         'platforms' => platforms,
         'suites' => [
           { 'name' => 'standard',
