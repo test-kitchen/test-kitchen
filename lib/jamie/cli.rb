@@ -251,38 +251,6 @@ module Jamie
 
       specs = fetcher.find_matching(dep, false, false, false)
     end
-
-    # A rather insane and questionable class to quickly consume a metadata.rb
-    # file and return the cookbook name and version attributes.
-    #
-    # @see https://twitter.com/fnichol/status/281650077901144064
-    # @see https://gist.github.com/4343327
-    class MetadataChopper < Hash
-
-      # Return an Array containing the cookbook name and version attributes,
-      # or nil values if they could not be parsed.
-      #
-      # @param metadata_file [String] path to a metadata.rb file
-      # @return [Array<String>] array containing the cookbook name and version
-      #   attributes or nil values if they could not be determined
-      def self.extract(metadata_file)
-        mc = new(File.expand_path(metadata_file))
-        [ mc[:name], mc[:version] ]
-      end
-
-      # Creates a new instances and loads in the contents of the metdata.rb
-      # file. If you value your life, you may want to avoid reading the
-      # implementation.
-      #
-      # @param metadata_file [String] path to a metadata.rb file
-      def initialize(metadata_file)
-        eval(IO.read(metadata_file), nil, metadata_file)
-      end
-
-      def method_missing(meth, *args, &block)
-        self[meth] = args.first
-      end
-    end
   end
 
   # A generator to create a new Jamie driver plugin.

@@ -988,16 +988,21 @@ module Jamie
     end
 
     def local_cookbooks
+      tmpdir = Dir.mktmpdir("#{instance.name}-cookbooks")
+      prepare_tmpdir(tmpdir)
+      tmpdir
+    end
+
+    def prepare_tmpdir(tmpdir)
       if File.exists?(File.join(jamie_root, "Berksfile"))
-        tmpdir = Dir.mktmpdir(instance.name)
         run_berks(tmpdir)
-        tmpdir
       elsif File.exists?(File.join(jamie_root, "Cheffile"))
-        tmpdir = Dir.mktmpdir(instance.name)
         run_librarian(tmpdir)
-        tmpdir
+      elsif File.directory?(File.join(jamie_root, "cookbooks"))
+        cp_cookbooks(tmpdir)
       else
-        abort "Berksfile or Cheffile must exist in #{jamie_root}"
+        FileUtils.rmtree(tmpdir)
+        abort "Berksfile, Cheffile or cookbooks/ must exist in #{jamie_root}"
       end
     end
 
@@ -1018,6 +1023,50 @@ module Jamie
       end
       run_command "librarian-chef install --path #{tmpdir}"
     end
+
+    def cp_cookbooks(tmpdir)
+      metadata_rb = File.join(jamie_root, "metadata.rb")
+      cb_name = MetadataChopper.extract(metadata_rb).first
+      abort ">>>>>> name attribute must be set in metadata.rb." if cb_name.nil?
+      cb_path = File.join(tmpdir, cb_name)
+      glob = Dir.glob("#{jamie_root}/{metadata.rb,README.*," +
+        "attributes,files,libraries,providers,recipes,resources,templates}")
+
+      FileUtils.cp_r(File.join(jamie_root, "cookbooks", "."), tmpdir)
+      FileUtils.mkdir_p(cb_path)
+      FileUtils.cp_r(glob, cb_path)
+    end
   end
 
+  # A rather insane and questionable class to quickly consume a metadata.rb
+  # file and return the cookbook name and version attributes.
+  #
+  # @see https://twitter.com/fnichol/status/281650077901144064
+  # @see https://gist.github.com/4343327
+  class MetadataChopper < Hash
+
+    # Return an Array containing the cookbook name and version attributes,
+    # or nil values if they could not be parsed.
+    #
+    # @param metadata_file [String] path to a metadata.rb file
+    # @return [Array<String>] array containing the cookbook name and version
+    #   attributes or nil values if they could not be determined
+    def self.extract(metadata_file)
+      mc = new(File.expand_path(metadata_file))
+      [ mc[:name], mc[:version] ]
+    end
+
+    # Creates a new instances and loads in the contents of the metdata.rb
+    # file. If you value your life, you may want to avoid reading the
+    # implementation.
+    #
+    # @param metadata_file [String] path to a metadata.rb file
+    def initialize(metadata_file)
+      eval(IO.read(metadata_file), nil, metadata_file)
+    end
+
+    def method_missing(meth, *args, &block)
+      self[meth] = args.first
+    end
+  end
 end
