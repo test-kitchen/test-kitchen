@@ -19,4 +19,9 @@ end
 
 Tailor::RakeTask.new
 
+desc "yep"
+task :stats do
+  sh "countloc -r lib/jamie lib/jamie.rb"
+end
+
 task :default => [ :cane, :tailor ]
