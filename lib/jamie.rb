@@ -369,10 +369,7 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def create
-      puts "-----> Creating instance #{name}"
-      action(:create) { |state| platform.driver.create(self, state) }
-      puts "       Creation of instance #{name} complete."
-      self
+      transition_to(:create)
     end
 
     # Converges this running instance.
@@ -383,10 +380,7 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def converge
-      puts "-----> Converging instance #{name}"
-      action(:converge) { |state| platform.driver.converge(self, state) }
-      puts "       Convergence of instance #{name} complete."
-      self
+      transition_to(:converge)
     end
 
     # Sets up this converged instance for suite tests.
@@ -397,10 +391,7 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def setup
-      puts "-----> Setting up instance #{name}"
-      action(:setup) { |state| platform.driver.setup(self, state) }
-      puts "       Setup of instance #{name} complete."
-      self
+      transition_to(:setup)
     end
 
     # Verifies this set up instance by executing suite tests.
@@ -411,10 +402,7 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def verify
-      puts "-----> Verifying instance #{name}"
-      action(:verify) { |state| platform.driver.verify(self, state) }
-      puts "       Verification of instance #{name} complete."
-      self
+      transition_to(:verify)
     end
 
     # Destroys this instance.
@@ -425,11 +413,7 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def destroy
-      puts "-----> Destroying instance #{name}"
-      action(:destroy) { |state| platform.driver.destroy(self, state) }
-      destroy_state
-      puts "       Destruction of instance #{name} complete."
-      self
+      transition_to(:destroy)
     end
 
     # Tests this instance by creating, converging and verifying. If this
@@ -449,15 +433,54 @@ module Jamie
       puts "-----> Cleaning up any prior instances of #{name}"
       destroy
       puts "-----> Testing instance #{name}"
-      create
-      converge
-      setup
       verify
       puts "       Testing of instance #{name} complete."
       self
     end
 
     private
+
+    def transition_to(desired)
+      FSM.actions(last_action, desired).each do |transition|
+        send("#{transition}_action")
+      end
+    end
+
+    def create_action
+      puts "-----> Creating instance #{name}"
+      action(:create) { |state| platform.driver.create(self, state) }
+      puts "       Creation of instance #{name} complete."
+      self
+    end
+
+    def converge_action
+      puts "-----> Converging instance #{name}"
+      action(:converge) { |state| platform.driver.converge(self, state) }
+      puts "       Convergence of instance #{name} complete."
+      self
+    end
+
+    def setup_action
+      puts "-----> Setting up instance #{name}"
+      action(:setup) { |state| platform.driver.setup(self, state) }
+      puts "       Setup of instance #{name} complete."
+      self
+    end
+
+    def verify_action
+      puts "-----> Verifying instance #{name}"
+      action(:verify) { |state| platform.driver.verify(self, state) }
+      puts "       Verification of instance #{name} complete."
+      self
+    end
+
+    def destroy_action
+      puts "-----> Destroying instance #{name}"
+      action(:destroy) { |state| platform.driver.destroy(self, state) }
+      destroy_state
+      puts "       Destruction of instance #{name} complete."
+      self
+    end
 
     def action(what)
       state = load_state
@@ -486,6 +509,46 @@ module Jamie
       File.expand_path(File.join(
         platform.driver['jamie_root'], ".jamie", "#{name}.yml"
       ))
+    end
+
+    def last_action
+      load_state['last_action']
+    end
+
+    # The simplest finite state machine pseudo-implementation needed to manage
+    # an Instance.
+    class FSM
+
+      # Returns an Array of all transitions to bring an Instance from its last
+      # reported transistioned state into the desired transitioned state.
+      #
+      # @param last [String,Symbol,nil] the last known transitioned state of
+      #   the Instance, defaulting to `nil` (for unknown or no history)
+      # @param desired [String,Symbol] the desired transitioned state for the
+      #   Instance
+      # @return [Array<Symbol>] an Array of transition actions to perform
+      def self.actions(last = nil, desired)
+        last_index = index(last)
+        desired_index = index(desired)
+
+        if last_index == desired_index || last_index > desired_index
+          Array(TRANSITIONS[desired_index])
+        else
+          TRANSITIONS.slice(last_index + 1, desired_index - last_index)
+        end
+      end
+
+      private
+
+      TRANSITIONS = [ :destroy, :create, :converge, :setup, :verify ]
+
+      def self.index(transition)
+        if transition.nil?
+          0
+        else
+          TRANSITIONS.find_index { |t| t == transition.to_sym }
+        end
+      end
     end
   end
 
