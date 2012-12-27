@@ -786,7 +786,7 @@ module Jamie
       end
 
       def converge(instance, state)
-        ssh_args = generate_ssh_args(state)
+        ssh_args = build_ssh_args(state)
 
         install_omnibus(ssh_args) if config['require_chef_omnibus']
         prepare_chef_home(ssh_args)
@@ -795,7 +795,7 @@ module Jamie
       end
 
       def setup(instance, state)
-        ssh_args = generate_ssh_args(state)
+        ssh_args = build_ssh_args(state)
 
         if instance.jr.setup_cmd
           ssh(ssh_args, instance.jr.setup_cmd)
@@ -803,7 +803,7 @@ module Jamie
       end
 
       def verify(instance, state)
-        ssh_args = generate_ssh_args(state)
+        ssh_args = build_ssh_args(state)
 
         if instance.jr.run_cmd
           ssh(ssh_args, instance.jr.sync_cmd)
@@ -817,11 +817,12 @@ module Jamie
 
       protected
 
-      def generate_ssh_args(state)
-        [ state['hostname'],
-          config['username'],
-          { :password => config['password'] }
-        ]
+      def build_ssh_args(state)
+        opts = Hash.new
+        opts[:password] = config['password'] if config['password']
+        opts[:keys] = Array(config['ssh_key']) if config['ssh_key']
+
+        [ state['hostname'], config['username'], opts ]
       end
 
       def chef_home
