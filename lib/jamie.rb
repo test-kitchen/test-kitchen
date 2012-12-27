@@ -365,7 +365,7 @@ module Jamie
     #   to gracfully stop action chaining
     def create
       puts "-----> Creating instance #{name}"
-      platform.driver.create(self)
+      action(:create) { |state| platform.driver.create(self, state) }
       puts "       Creation of instance #{name} complete."
       self
     end
@@ -379,7 +379,7 @@ module Jamie
     #   to gracfully stop action chaining
     def converge
       puts "-----> Converging instance #{name}"
-      platform.driver.converge(self)
+      action(:converge) { |state| platform.driver.converge(self, state) }
       puts "       Convergence of instance #{name} complete."
       self
     end
@@ -393,7 +393,7 @@ module Jamie
     #   to gracfully stop action chaining
     def setup
       puts "-----> Setting up instance #{name}"
-      platform.driver.setup(self)
+      action(:setup) { |state| platform.driver.setup(self, state) }
       puts "       Setup of instance #{name} complete."
       self
     end
@@ -407,7 +407,7 @@ module Jamie
     #   to gracfully stop action chaining
     def verify
       puts "-----> Verifying instance #{name}"
-      platform.driver.verify(self)
+      action(:verify) { |state| platform.driver.verify(self, state) }
       puts "       Verification of instance #{name} complete."
       self
     end
@@ -421,7 +421,8 @@ module Jamie
     #   to gracfully stop action chaining
     def destroy
       puts "-----> Destroying instance #{name}"
-      platform.driver.destroy(self)
+      action(:destroy) { |state| platform.driver.destroy(self, state) }
+      destroy_state
       puts "       Destruction of instance #{name} complete."
       self
     end
@@ -449,6 +450,37 @@ module Jamie
       verify
       puts "       Testing of instance #{name} complete."
       self
+    end
+
+    private
+
+    def action(what)
+      state = load_state
+      yield state if block_given?
+      state['last_action'] = what.to_s
+    ensure
+      dump_state(state)
+    end
+
+    def load_state
+      File.exists?(statefile) ?  YAML.load_file(statefile) : Hash.new
+    end
+
+    def dump_state(state)
+      dir = File.dirname(statefile)
+
+      FileUtils.mkdir_p(dir) if !File.directory?(dir)
+      File.open(statefile, "wb") { |f| f.write(YAML.dump(state)) }
+    end
+
+    def destroy_state
+      FileUtils.rm(statefile) if File.exists?(statefile)
+    end
+
+    def statefile
+      File.expand_path(File.join(
+        platform.driver['jamie_root'], ".jamie", "#{name}.yml"
+      ))
     end
   end
 
@@ -686,84 +718,41 @@ module Jamie
       # Creates an instance.
       #
       # @param instance [Instance] an instance
+      # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def create(instance)
-        action(:create, instance)
-      end
+      def create(instance, state) ; end
 
       # Converges a running instance.
       #
       # @param instance [Instance] an instance
+      # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(instance)
-        action(:converge, instance)
-      end
+      def converge(instance, state) ; end
 
       # Sets up an instance.
       #
       # @param instance [Instance] an instance
+      # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(instance)
-        action(:setup, instance)
-      end
+      def setup(instance, state) ; end
 
       # Verifies a converged instance.
       #
       # @param instance [Instance] an instance
+      # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(instance)
-        action(:verify, instance)
-      end
+      def verify(instance, state) ; end
 
       # Destroys an instance.
       #
       # @param instance [Instance] an instance
+      # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(instance)
-        action(:destroy, instance)
-        destroy_state(instance)
-      end
+      def destroy(instance, state) ; end
 
       protected
 
       attr_reader :config
-
-      def action(what, instance)
-        state = load_state(instance)
-        public_send("perform_#{what}", instance, state)
-        state['last_action'] = what.to_s
-      ensure
-        dump_state(instance, state)
-      end
-
-      def load_state(instance)
-        statefile = state_filepath(instance)
-
-        if File.exists?(statefile)
-          YAML.load_file(statefile)
-        else
-          { 'name' => instance.name }
-        end
-      end
-
-      def dump_state(instance, state)
-        statefile = state_filepath(instance)
-        dir = File.dirname(statefile)
-
-        FileUtils.mkdir_p(dir) if !File.directory?(dir)
-        File.open(statefile, "wb") { |f| f.write(YAML.dump(state)) }
-      end
-
-      def destroy_state(instance)
-        statefile = state_filepath(instance)
-        FileUtils.rm(statefile) if File.exists?(statefile)
-      end
-
-      def state_filepath(instance)
-        File.expand_path(File.join(
-          config['jamie_root'], ".jamie", "#{instance.name}.yml"
-        ))
-      end
 
       def run_command(cmd, use_sudo = nil, log_subject = nil)
         use_sudo = config['use_sudo'] if use_sudo.nil?
@@ -783,11 +772,15 @@ module Jamie
 
     # Base class for a driver that uses SSH to communication with an instance.
     # A subclass must implement the following methods:
-    # * #perform_create(instance, state)
-    # * #perform_destroy(instance, state)
+    # * #create(instance, state)
+    # * #destroy(instance, state)
     class SSHBase < Base
 
-      def perform_converge(instance, state)
+      def create(instance, state)
+        raise NotImplementedError, "#create must be implemented by subclass."
+      end
+
+      def converge(instance, state)
         ssh_args = generate_ssh_args(state)
 
         install_omnibus(ssh_args) if config['require_chef_omnibus']
@@ -796,7 +789,7 @@ module Jamie
         run_chef_solo(ssh_args)
       end
 
-      def perform_setup(instance, state)
+      def setup(instance, state)
         ssh_args = generate_ssh_args(state)
 
         if instance.jr.setup_cmd
@@ -804,13 +797,17 @@ module Jamie
         end
       end
 
-      def perform_verify(instance, state)
+      def verify(instance, state)
         ssh_args = generate_ssh_args(state)
 
         if instance.jr.run_cmd
           ssh(ssh_args, instance.jr.sync_cmd)
           ssh(ssh_args, instance.jr.run_cmd)
         end
+      end
+
+      def destroy(instance, state)
+        raise NotImplementedError, "#destroy must be implemented by subclass."
       end
 
       protected
