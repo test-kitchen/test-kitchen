@@ -24,12 +24,34 @@ module Jamie
       say Array(result).map{ |i| i.name }.join("\n")
     end
 
-    [:create, :converge, :setup, :verify, :test, :destroy].each do |action|
+    [:create, :converge, :setup, :verify, :destroy].each do |action|
       desc(
         "#{action} (all ['REGEX']|[INSTANCE])",
         "#{action.capitalize} one or more instances"
       )
       define_method(action) { |*args| exec_action(action) }
+    end
+
+    desc "test (all ['REGEX']|[INSTANCE]) [opts]", "Test one or more instances"
+    long_desc <<-DESC
+      Test one or more instances
+
+      There are 3 post-verify modes for instance cleanup, triggered with
+      the `--destroy' flag:
+
+      * passing: instances passing verify will be destroyed afterwards.\n
+      * always: instances will always be destroyed afterwards.\n
+      * never: instances will never be destroyed afterwards.
+    DESC
+    method_option :destroy, :aliases => "-d", :default => "passing",
+      :desc => "Destroy strategy to use after testing (passing, always, never)."
+    def test(*args)
+      destroy_mode = options[:destroy]
+      if ! %w{passing always never}.include?(options[:destroy])
+        raise ArgumentError, "Destroy mode must be passing, always, or never."
+      end
+      result = parse_subcommand(args[0], args[1])
+      Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
     end
 
     desc "version", "Print Jamie's version information"

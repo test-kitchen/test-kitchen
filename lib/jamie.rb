@@ -420,22 +420,22 @@ module Jamie
     # instance is running, it will be pre-emptively destroyed to ensure a
     # clean slate. The instance will be left post-verify in a running state.
     #
-    # @see #destroy
-    # @see #create
-    # @see #converge
-    # @see #setup
-    # @see #verify
+    # @param destroy_mode [Symbol] strategy used to cleanup after instance
+    #   has finished verifying (default: `:passing`)
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
-    def test
+    def test(destroy_mode = :passing)
       puts "-----> Cleaning up any prior instances of #{name}"
       destroy
       puts "-----> Testing instance #{name}"
       verify
+      destroy if destroy_mode == :passing
       puts "       Testing of instance #{name} complete."
       self
+    ensure
+      destroy if destroy_mode == :always
     end
 
     private
