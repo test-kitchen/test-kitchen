@@ -19,7 +19,7 @@ end
 
 Tailor::RakeTask.new
 
-desc "yep"
+desc "Display LOC stats"
 task :stats do
   sh "countloc -r lib/jamie lib/jamie.rb"
 end
