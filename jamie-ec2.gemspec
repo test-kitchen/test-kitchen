@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'jamie'
+  gem.add_dependency 'fog'
 
   gem.add_development_dependency 'cane'
   gem.add_development_dependency 'tailor'

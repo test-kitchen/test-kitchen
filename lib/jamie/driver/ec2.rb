@@ -16,6 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'benchmark'
+require 'fog'
+
 require 'jamie'
 
 module Jamie
@@ -25,10 +28,55 @@ module Jamie
     # Ec2 driver for Jamie.
     class Ec2 < Jamie::Driver::SSHBase
 
+      default_config 'region',            'us-east-1'
+      default_config 'availability_zone', 'us-east-1b'
+      default_config 'flavor_id',         'm1.small'
+      default_config 'groups',            [ 'default' ]
+      default_config 'username',          'root'
+      default_config 'port',              '22'
+
       def create(instance, state)
+        server = create_server(instance)
+        state['server_id'] = server.id
+
+        elapsed = Benchmark.measure do
+          server.wait_for { print "."; ready? } ; print "(server ready)"
+          state['hostname'] = server.public_ip_address
+          wait_for_sshd(state['hostname'])      ; print "(ssh ready)\n"
+        end
+        puts "       Created #{instance.name} in #{elapsed.real} seconds."
+      rescue Fog::Errors::Error, Excon::Errors::Error => ex
+        raise ActionFailed, ex.message
       end
 
       def destroy(instance, state)
+        return if state['server_id'].nil?
+
+        server = connection.servers.get(state['server_id'])
+        server.destroy unless server.nil?
+        state.delete('server_id')
+        state.delete('hostname')
+      end
+
+      private
+
+      def connection
+        Fog::Compute.new(
+          :provider               => :aws,
+          :aws_access_key_id      => config['aws_access_key_id'],
+          :aws_secret_access_key  => config['aws_secret_access_key'],
+          :region                 => config['region'],
+        )
+      end
+
+      def create_server(instance)
+        connection.servers.create(
+          :availability_zone  => config['availability_zone'],
+          :groups             => config['groups'],
+          :flavor_id          => config['flavor_id'],
+          :image_id           => config['image_id'],
+          :key_name           => config['aws_ssh_key_id'],
+        )
       end
     end
   end
