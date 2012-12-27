@@ -3,6 +3,7 @@
 require 'base64'
 require 'delegate'
 require 'digest'
+require 'erb'
 require 'fileutils'
 require 'json'
 require 'mixlib/shellout'
@@ -150,7 +151,11 @@ module Jamie
     end
 
     def yaml
-      @yaml ||= YAML.load_file(File.expand_path(yaml_file)).rmerge(local_yaml)
+      @yaml ||= YAML.load(yaml_contents).rmerge(local_yaml)
+    end
+
+    def yaml_contents
+      ERB.new(IO.read(File.expand_path(yaml_file))).result
     end
 
     def local_yaml_file
@@ -161,7 +166,7 @@ module Jamie
     def local_yaml
       @local_yaml ||= begin
         if File.exists?(local_yaml_file)
-          YAML.load_file(local_yaml_file)
+          YAML.load(ERB.new(IO.read(local_yaml_file)).result)
         else
           Hash.new
         end

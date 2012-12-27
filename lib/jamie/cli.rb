@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-require 'erb'
 require 'ostruct'
 require 'thor'
 
