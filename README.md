@@ -5,28 +5,16 @@
 
 A Chef convergence integration test harness.
 
-## Installation
+## A Note
 
-Add this line to your application's Gemfile:
+This project is currently in rapid development which means frequent releases,
+potential for massive refactorings (that could be API breaking), and minimal
+to no documentation. This will change as the project transitions to be used in
+production environments.
 
-    gem 'jamie'
+Despite the warnings above, if you are still interested, please get in touch
+via freenode/IRC (#jamie),
+Twitter ([@fnichol](https://twitter.com/fnichol)),
+or Email ([fnichol@nichol.ca](mailto:fnichol@nichol.ca)).
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install jamie
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+For everyone else, watch [this space](https://github.com/jamie-ci/jamie).

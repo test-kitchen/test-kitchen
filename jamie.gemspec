@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["fnichol@nichol.ca"]
   gem.description   = %q{A Chef convergence integration test harness}
   gem.summary       = gem.description
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/jamie-ci/jamie"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = %w(jamie)
