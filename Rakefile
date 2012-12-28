@@ -1,5 +1,6 @@
 require 'bundler/gem_tasks'
 require 'cane/rake_task'
+require 'rake/testtask'
 require 'tailor/rake_task'
 
 desc "Run cane to check quality metrics"
@@ -21,7 +22,16 @@ Tailor::RakeTask.new
 
 desc "Display LOC stats"
 task :stats do
+  puts "\n## Production Code Stats"
   sh "countloc -r lib/jamie lib/jamie.rb"
+  puts "\n## Test Code Stats"
+  sh "countloc -r spec"
 end
 
-task :default => [ :cane, :tailor ]
+Rake::TestTask.new do |t|
+  t.libs.push "lib"
+  t.test_files = FileList['spec/**/*_spec.rb']
+  t.verbose = true
+end
+
+task :default => [ :test, :cane, :tailor, :stats ]
