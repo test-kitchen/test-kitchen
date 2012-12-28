@@ -22,9 +22,13 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'net-scp'
   gem.add_dependency 'mixlib-shellout'
 
+  gem.add_development_dependency 'minitest'
+  gem.add_development_dependency 'guard-minitest'
+
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'maruku'
   gem.add_development_dependency 'cane'
   gem.add_development_dependency 'tailor'
+  gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'countloc'
 end
