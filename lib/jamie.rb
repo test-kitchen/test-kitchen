@@ -141,6 +141,7 @@ module Jamie
 
     def new_platform(hash)
       mpc = merge_platform_config(hash)
+      mpc['driver_config'] ||= Hash.new
       mpc['driver_config']['jamie_root'] = File.dirname(yaml_file)
       mpc['driver'] = new_driver(mpc['driver_plugin'], mpc['driver_config'])
       Platform.new(mpc)
@@ -331,6 +332,8 @@ module Jamie
     # @param suite [Suite] a suite
     # @param platform [Platform] a platform
     def initialize(suite, platform)
+      validate_options(suite, platform)
+
       @suite = suite
       @platform = platform
       @jr = Jr.new(@suite.name)
@@ -439,6 +442,11 @@ module Jamie
     end
 
     private
+
+    def validate_options(suite, platform)
+      raise ArgumentError, "Attribute 'suite' is required." if suite.nil?
+      raise ArgumentError, "Attribute 'platform' is required." if platform.nil?
+    end
 
     def transition_to(desired)
       FSM.actions(last_action, desired).each do |transition|
