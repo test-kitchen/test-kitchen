@@ -23,6 +23,8 @@ module Jamie
   module Driver
 
     # Dummy driver for Jamie.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Jamie::Driver::Base
 
       def create(instance, state)

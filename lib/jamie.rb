@@ -1,4 +1,20 @@
 # -*- encoding: utf-8 -*-
+#
+# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+#
+# Copyright (C) 2012, Fletcher Nichol
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 require 'base64'
 require 'delegate'
@@ -29,6 +45,8 @@ module Jamie
 
   # Base configuration class for Jamie. This class exposes configuration such
   # as the location of the Jamie YAML file, instances, log_levels, etc.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
 
     attr_writer :yaml_file
@@ -97,6 +115,8 @@ module Jamie
     # Delegate class which adds the ability to find single and multiple
     # objects by their #name in an Array. Hey, it's better than monkey-patching
     # Array, right?
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Collection < SimpleDelegator
 
       # Returns a single object by its name, or nil if none are found.
@@ -221,6 +241,8 @@ module Jamie
 
   # A Chef run_list and attribute hash that will be used in a convergence
   # integration.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class Suite
 
     # @return [String] logical name of this suite
@@ -270,6 +292,8 @@ module Jamie
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
   # and machine architecture.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class Platform
 
     # @return [String] logical name of this platform
@@ -316,6 +340,8 @@ module Jamie
   # An instance of a suite running on a platform. A created instance may be a
   # local virtual machine, cloud instance, container, or even a bare metal
   # server, which is determined by the platform's driver.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
     # @return [Suite] the test suite configuration
@@ -525,6 +551,8 @@ module Jamie
 
     # The simplest finite state machine pseudo-implementation needed to manage
     # an Instance.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class FSM
 
       # Returns an Array of all transitions to bring an Instance from its last
@@ -563,6 +591,8 @@ module Jamie
   # Command string generator to interface with Jamie Runner (jr). The
   # commands that are generated are safe to pass to an SSH command or as an
   # unix command argument (escaped in single quotes).
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class Jr
 
     # Constructs a new jr command generator, given a suite name.
@@ -719,6 +749,8 @@ module Jamie
 
   # Mixin that wraps a command shell out invocation, providing a #run_command
   # method.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module ShellOut
 
     # Wrapped exception for any interally raised shell out commands.
@@ -772,6 +804,8 @@ module Jamie
     # Base class for a driver. A driver is responsible for carrying out the
     # lifecycle activities of an instance, such as creating, converging, and
     # destroying an instance.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
 
       include ShellOut
@@ -850,6 +884,8 @@ module Jamie
     # A subclass must implement the following methods:
     # * #create(instance, state)
     # * #destroy(instance, state)
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class SSHBase < Base
 
       def create(instance, state)
@@ -981,6 +1017,8 @@ module Jamie
 
   # Uploads Chef asset files such as dna.json, data bags, and cookbooks to an
   # instance over SSH.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class ChefDataUploader
 
     include ShellOut
