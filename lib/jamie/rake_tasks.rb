@@ -26,7 +26,7 @@ module Jamie
       namespace "jamie" do
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
-          task instance.name { instance.test }
+          task instance.name { instance.test(:always) }
         end
 
         desc "Run all test instances"

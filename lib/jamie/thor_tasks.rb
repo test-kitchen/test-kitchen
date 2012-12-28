@@ -29,7 +29,7 @@ module Jamie
       config.instances.each do |instance|
         self.class.desc instance.name, "Run #{instance.name} test instance"
         self.class.send(:define_method, instance.name.gsub(/-/, '_')) do
-          instance.test
+          instance.test(:always)
         end
       end
 
