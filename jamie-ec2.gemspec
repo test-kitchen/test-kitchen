@@ -22,4 +22,5 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'cane'
   gem.add_development_dependency 'tailor'
+  gem.add_development_dependency 'countloc'
 end
