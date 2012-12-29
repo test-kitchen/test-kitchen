@@ -20,7 +20,7 @@ module Jamie
 
   module Driver
 
-    # Version string for Ec2 Jamie driver
+    # Version string for EC2 Jamie driver
     EC2_VERSION = "0.1.0"
   end
 end

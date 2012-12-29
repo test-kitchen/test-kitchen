@@ -25,7 +25,9 @@ module Jamie
 
   module Driver
 
-    # Ec2 driver for Jamie.
+    # Amazon EC2 driver for Jamie.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Jamie::Driver::SSHBase
 
       default_config 'region',            'us-east-1'
