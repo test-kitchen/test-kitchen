@@ -475,9 +475,11 @@ module Jamie
     end
 
     def transition_to(desired)
+      result = nil
       FSM.actions(last_action, desired).each do |transition|
-        send("#{transition}_action")
+        result = send("#{transition}_action")
       end
+      result
     end
 
     def create_action
