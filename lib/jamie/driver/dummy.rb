@@ -27,6 +27,8 @@ module Jamie
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Jamie::Driver::Base
 
+      default_config 'sleep', 0
+
       def create(instance, state)
         state['my_id'] = "#{instance.name}-#{Time.now.to_i}"
         report(:create, instance, state)
@@ -54,6 +56,10 @@ module Jamie
       def report(action, instance, state)
         puts "[Dummy] Action ##{action} called on " +
           "instance=#{instance} with state=#{state}"
+        if config['sleep'].to_f > 0.0
+          sleep config['sleep'].to_f
+          puts "[Dummy] Action ##{action} completed (#{config['sleep']}s)."
+        end
       end
     end
   end
