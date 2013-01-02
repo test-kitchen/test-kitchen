@@ -650,12 +650,12 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def test(destroy_mode = :passing)
-      info "-----> Cleaning up any prior instances of #{name}"
+      banner "Cleaning up any prior instances of #{name}"
       destroy
-      info "-----> Testing instance #{name}"
+      banner "Testing instance #{name}"
       verify
       destroy if destroy_mode == :passing
-      info "       Testing of instance #{name} complete."
+      info "Testing of instance #{name} complete."
       self
     ensure
       destroy if destroy_mode == :always
@@ -678,38 +678,38 @@ module Jamie
     end
 
     def create_action
-      info "-----> Creating instance #{name}"
+      banner "Creating instance #{name}"
       action(:create) { |state| driver.create(self, state) }
-      info "       Creation of instance #{name} complete."
+      info "Creation of instance #{name} complete."
       self
     end
 
     def converge_action
-      info "-----> Converging instance #{name}"
+      banner "Converging instance #{name}"
       action(:converge) { |state| driver.converge(self, state) }
-      info "       Convergence of instance #{name} complete."
+      info "Convergence of instance #{name} complete."
       self
     end
 
     def setup_action
-      info "-----> Setting up instance #{name}"
+      banner "Setting up instance #{name}"
       action(:setup) { |state| driver.setup(self, state) }
-      info "       Setup of instance #{name} complete."
+      info "Setup of instance #{name} complete."
       self
     end
 
     def verify_action
-      info "-----> Verifying instance #{name}"
+      banner "Verifying instance #{name}"
       action(:verify) { |state| driver.verify(self, state) }
-      info "       Verification of instance #{name} complete."
+      info "Verification of instance #{name} complete."
       self
     end
 
     def destroy_action
-      info "-----> Destroying instance #{name}"
+      banner "Destroying instance #{name}"
       action(:destroy) { |state| driver.destroy(self, state) }
       destroy_state
-      info "       Destruction of instance #{name} complete."
+      info "Destruction of instance #{name} complete."
       self
     end
 
@@ -903,7 +903,7 @@ module Jamie
       jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
-        echo "       Uploading #{remote_path} (mode=#{perms})"
+        echo "Uploading #{remote_path} (mode=#{perms})"
         cat <<"__EOFSTREAM__" | #{sudo}#{jr_stream_file}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
@@ -967,12 +967,12 @@ module Jamie
     #   and context
     def run_command(cmd, use_sudo = false, log_subject = "local")
       cmd = "sudo #{cmd}" if use_sudo
-      subject = "       [#{log_subject} command]"
+      subject = "[#{log_subject} command]"
 
-      info("#{subject} (#{display_cmd(cmd)})")
-      sh = Mixlib::ShellOut.new(cmd, :live_stream => $stdout, :timeout => 60000)
+      info("#{subject} BEGIN (#{display_cmd(cmd)})")
+      sh = Mixlib::ShellOut.new(cmd, :live_stream => logger, :timeout => 60000)
       sh.run_command
-      info("#{subject} ran in #{sh.execution_time} seconds.")
+      info("#{subject} END (Ran in #{sh.execution_time} seconds)")
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
@@ -1198,11 +1198,11 @@ module Jamie
           channel.exec(cmd) do |ch, success|
 
             channel.on_data do |ch, data|
-              $stdout.print data
+              logger << data
             end
 
             channel.on_extended_data do |ch, type, data|
-              $stderr.print data
+              logger << data
             end
 
             channel.on_request("exit-status") do |ch, data|
@@ -1215,7 +1215,7 @@ module Jamie
       end
 
       def wait_for_sshd(hostname)
-        print "." until test_ssh(hostname)
+        logger << "." until test_ssh(hostname)
       end
 
       def test_ssh(hostname)
@@ -1283,7 +1283,7 @@ module Jamie
         :recursive => true
       ) do |ch, name, sent, total|
         file = name.sub(%r{^#{cookbooks_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        info("#{file}: #{sent}/#{total}")
       end
     ensure
       FileUtils.rmtree(cookbooks_dir)
@@ -1295,7 +1295,7 @@ module Jamie
         :recursive => true
       ) do |ch, name, sent, total|
         file = name.sub(%r{^#{data_bags_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        info("#{file}: #{sent}/#{total}")
       end
     end
 
@@ -1305,7 +1305,7 @@ module Jamie
         :recursive => true
       ) do |ch, name, sent, total|
         file = name.sub(%r{^#{roles_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        info("#{file}: #{sent}/#{total}")
       end
     end
 
