@@ -862,10 +862,10 @@ module Jamie
       cmd = "sudo #{cmd}" if use_sudo
       subject = "       [#{log_subject} command]"
 
-      $stdout.puts "#{subject} (#{display_cmd(cmd)})"
+      info("#{subject} (#{display_cmd(cmd)})")
       sh = Mixlib::ShellOut.new(cmd, :live_stream => $stdout, :timeout => 60000)
       sh.run_command
-      puts "#{subject} ran in #{sh.execution_time} seconds."
+      info("#{subject} ran in #{sh.execution_time} seconds.")
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
@@ -905,6 +905,7 @@ module Jamie
     class Base
 
       include ShellOut
+      include Logging
 
       attr_writer :instance
 
@@ -961,6 +962,18 @@ module Jamie
       protected
 
       attr_reader :config, :instance
+
+      def logger
+        instance.logger
+      end
+
+      def puts(msg)
+        info(msg)
+      end
+
+      def print(msg)
+        info(msg)
+      end
 
       def run_command(cmd, use_sudo = nil, log_subject = nil)
         use_sudo = config['use_sudo'] if use_sudo.nil?
