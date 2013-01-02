@@ -29,8 +29,10 @@ SimpleCov.start 'gem'
 
 require 'fakefs/spec_helpers'
 require 'minitest/autorun'
+require 'ostruct'
 
 require 'jamie'
+require 'jamie/driver/dummy'
 
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO
@@ -44,13 +46,14 @@ describe Jamie::Config do
 
   let(:config) { Jamie::Config.new("/tmp/.jamie.yml") }
 
+  before do
+    FileUtils.mkdir_p("/tmp")
+  end
+
   describe "#platforms" do
 
     it "returns platforms loaded from a jamie.yml" do
-      stub_yaml!({'platforms' => [
-        { 'name' => 'one', 'driver_plugin' => 'dummy' },
-        { 'name' => 'two', 'driver_plugin' => 'dummy' },
-      ]})
+      stub_yaml!({'platforms' => [ { 'name' => 'one' }, { 'name' => 'two' } ]})
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
       config.platforms[1].name.must_equal 'two'
@@ -59,29 +62,6 @@ describe Jamie::Config do
     it "returns an empty Array if no platforms are given" do
       stub_yaml!({})
       config.platforms.must_equal []
-    end
-
-    it "returns a platform containing a driver instance" do
-      stub_yaml!({'platforms' => [
-        { 'name' => 'platform', 'driver_plugin' => 'dummy' }
-      ]})
-      config.platforms.first.driver.must_be_instance_of Jamie::Driver::Dummy
-    end
-
-    it "returns a platform with a driver initialized with jamie_root" do
-      stub_yaml!({'platforms' => [
-        { 'name' => 'platform', 'driver_plugin' => 'dummy' }
-      ]})
-      config.platforms.first.driver['jamie_root'].must_equal "/tmp"
-    end
-
-    it "returns a platform with a driver initialized with passed in config" do
-      stub_yaml!({'platforms' => [
-        { 'name' => 'platform', 'driver_plugin' => 'dummy',
-          'driver_config' => { 'foo' => 'bar' }
-        }
-      ]})
-      config.platforms.first.driver['foo'].must_equal "bar"
     end
   end
 
@@ -146,8 +126,8 @@ describe Jamie::Config do
     it "returns instances loaded from a jamie.yml" do
       stub_yaml!({
         'platforms' => [
-          { 'name' => 'p1', 'driver_plugin' => 'dummy' },
-          { 'name' => 'p2', 'driver_plugin' => 'dummy' },
+          { 'name' => 'p1' },
+          { 'name' => 'p2' },
         ],
         'suites' => [
           { 'name' => 's1', 'run_list' => [] },
@@ -157,29 +137,58 @@ describe Jamie::Config do
       config.instances.size.must_equal 4
       config.instances.map { |i| i.name }.must_equal %w{s1-p1 s1-p2 s2-p1 s2-p2}
     end
+
+    it "returns an instance containing a driver instance" do
+      stub_yaml!({
+        'platforms' => [ { 'name' => 'platform', 'driver_plugin' => 'dummy' } ],
+        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+      })
+      config.instances.first.driver.must_be_instance_of Jamie::Driver::Dummy
+    end
+
+    it "returns an instance with a driver initialized with jamie_root" do
+      stub_yaml!({
+        'platforms' => [ { 'name' => 'platform', 'driver_plugin' => 'dummy' } ],
+        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+      })
+      config.instances.first.driver['jamie_root'].must_equal "/tmp"
+    end
+
+    it "returns an instance with a driver initialized with passed in config" do
+      stub_yaml!({
+        'platforms' => [
+          { 'name' => 'platform', 'driver_plugin' => 'dummy',
+            'driver_config' => { 'foo' => 'bar' } }
+        ],
+        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+      })
+      config.instances.first.driver['foo'].must_equal "bar"
+    end
   end
 
   describe "jamie.local.yml" do
 
     it "merges in configuration with jamie.yml" do
       stub_yaml!(".jamie.yml", {
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ]
+        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
+        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
       })
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
-      config.platforms.first.driver['foo'].must_equal 'bar'
+      config.instances.first.driver['foo'].must_equal 'bar'
     end
 
     it "merges over configuration in jamie.yml" do
       stub_yaml!(".jamie.yml", {
         'driver_config' => { 'foo' => 'nope' },
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ]
+        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
+        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
       })
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
-      config.platforms.first.driver['foo'].must_equal 'bar'
+      config.instances.first.driver['foo'].must_equal 'bar'
     end
   end
 
@@ -200,7 +209,8 @@ describe Jamie::Config do
 
     it "evaluates jamie.local.yml through erb before loading" do
       stub_yaml!({
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ]
+        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
+        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
       })
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.jamie.local.yml", "wb") do |f|
@@ -212,8 +222,8 @@ describe Jamie::Config do
           <% end %>
         YAML
       end
-      config.platforms.first.driver['noodle'].must_equal "soup"
-      config.platforms.first.driver['mushroom'].must_equal "soup"
+      config.instances.first.driver['noodle'].must_equal "soup"
+      config.instances.first.driver['mushroom'].must_equal "soup"
     end
   end
 
@@ -335,16 +345,11 @@ end
 
 describe Jamie::Platform do
 
-  let(:opts) do ; { 'name' => 'plata', 'driver' => 'imadriver' } ; end
+  let(:opts) do ; { 'name' => 'plata' } ; end
   let(:platform) { Jamie::Platform.new(opts) }
 
   it "raises an ArgumentError if name is missing" do
     opts.delete('name')
-    proc { Jamie::Platform.new(opts) }.must_raise ArgumentError
-  end
-
-  it "raises an ArgumentError if driver is missing" do
-    opts.delete('driver')
     proc { Jamie::Platform.new(opts) }.must_raise ArgumentError
   end
 
@@ -359,7 +364,6 @@ describe Jamie::Platform do
   it "returns attributes from constructor" do
     opts.merge!({ 'run_list' => [ 'a', 'b' ], 'attributes' => { 'c' => 'd' }})
     platform.name.must_equal 'plata'
-    platform.driver.must_equal 'imadriver'
     platform.run_list.must_equal [ 'a', 'b' ]
     platform.attributes.must_equal({ 'c' => 'd' })
   end
@@ -373,18 +377,28 @@ describe Jamie::Instance do
   end
 
   let(:platform) do
-    Jamie::Platform.new({ 'name' => 'platform', 'driver' => 'driver',
+    Jamie::Platform.new({ 'name' => 'platform',
       'run_list' => 'platform_list', 'attributes' => { 'p' => 'pp' } })
   end
 
-  let(:instance) { Jamie::Instance.new(suite, platform) }
+  let(:driver) { Jamie::Driver::Dummy.new({}) }
+
+  let(:jr) { Jamie::Jr.new(suite.name) }
+
+  let(:opts) do
+    { 'suite' => suite, 'platform' => platform, 'driver' => driver, 'jr' => jr }
+  end
+
+  let(:instance) { Jamie::Instance.new(opts) }
 
   it "raises an ArgumentError if suite is missing" do
-    proc { Jamie::Instance.new(nil, platform) }.must_raise ArgumentError
+    opts.delete('suite')
+    proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
   end
 
   it "raises an ArgumentError if platform is missing" do
-    proc { Jamie::Instance.new(suite, nil) }.must_raise ArgumentError
+    opts.delete('platform')
+    proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
   end
 
   it "returns suite" do
@@ -402,10 +416,13 @@ describe Jamie::Instance do
   describe "#name" do
 
     def combo(suite_name, platform_name)
-      Jamie::Instance.new(
-        Jamie::Suite.new({ 'name' => suite_name, 'run_list' => [] }),
-        Jamie::Platform.new({ 'name' => platform_name, 'driver' => 'd' })
+      opts['suite'] = Jamie::Suite.new(
+        'name' => suite_name, 'run_list' => []
       )
+      opts['platform'] = Jamie::Platform.new(
+        'name' => platform_name
+      )
+      Jamie::Instance.new(opts)
     end
 
     it "combines the suite and platform names with a dash" do
@@ -428,11 +445,13 @@ describe Jamie::Instance do
   describe "#run_list" do
 
     def combo(suite_list, platform_list)
-      Jamie::Instance.new(
-        Jamie::Suite.new({ 'name' => 'suite', 'run_list' => suite_list }),
-        Jamie::Platform.new({ 'name' => 'platform', 'driver' => 'd',
-                              'run_list' => platform_list })
+      opts['suite'] = Jamie::Suite.new(
+        'name' => 'suite', 'run_list' => suite_list
       )
+      opts['platform'] = Jamie::Platform.new(
+        'name' => 'platform', 'run_list' => platform_list
+      )
+      Jamie::Instance.new(opts)
     end
 
     it "combines the platform then suite run_lists" do
@@ -451,12 +470,13 @@ describe Jamie::Instance do
   describe "#attributes" do
 
     def combo(suite_attrs, platform_attrs)
-      Jamie::Instance.new(
-        Jamie::Suite.new({ 'name' => 'suite', 'run_list' => [],
-                           'attributes' => suite_attrs }),
-        Jamie::Platform.new({ 'name' => 'platform', 'driver' => 'd',
-                              'attributes' => platform_attrs })
+      opts['suite'] = Jamie::Suite.new(
+        'name' => 'suite', 'run_list' => [], 'attributes' => suite_attrs
       )
+      opts['platform'] = Jamie::Platform.new(
+        'name' => 'platform', 'attributes' => platform_attrs
+      )
+      Jamie::Instance.new(opts)
     end
 
     it "merges suite and platform hashes together" do

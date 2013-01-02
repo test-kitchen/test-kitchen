@@ -74,7 +74,7 @@ module Jamie
     DEFAULT_LOG_LEVEL = :info
 
     # Default driver plugin to use
-    DEFAULT_DRIVER_PLUGIN = "vagrant".freeze
+    DEFAULT_DRIVER_PLUGIN = "dummy".freeze
 
     # Default base path which may contain `data_bags/` directories
     DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
@@ -172,22 +172,34 @@ module Jamie
     end
 
     def new_platform(hash)
-      mpc = merge_platform_config(hash)
-      mpc['driver_config'] ||= Hash.new
-      mpc['driver_config']['jamie_root'] = jamie_root
-      mpc['driver'] = new_driver(mpc['driver_plugin'], mpc['driver_config'])
-      Platform.new(mpc)
+      Platform.new(hash)
     end
 
-    def new_driver(plugin, config)
-      Driver.for_plugin(plugin, config)
+    def new_driver(hash)
+      hash['driver_config'] ||= Hash.new
+      hash['driver_config']['jamie_root'] = jamie_root
+      Driver.for_plugin(hash['driver_plugin'], hash['driver_config'])
     end
 
     def new_instance(suite, platform)
       log_root = File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+      platform_hash = platform_driver_hash(platform.name)
+      driver = new_driver(merge_driver_hash(platform_hash))
       FileUtils.mkdir_p(log_root)
 
-      Instance.new(suite, platform, new_instance_logger(log_root))
+      Instance.new(
+        'suite'     => suite,
+        'platform'  => platform,
+        'driver'    => driver,
+        'jr'        => Jr.new(suite.name),
+        'logger'    => new_instance_logger(log_root)
+      )
+    end
+
+    def platform_driver_hash(platform_name)
+      h = yaml['platforms'].find { |p| p['name'] == platform_name } || Hash.new
+
+      h.select { |key, value| %w(driver_plugin driver_config).include?(key) }
     end
 
     def new_instance_logger(log_root)
@@ -226,8 +238,8 @@ module Jamie
       File.dirname(yaml_file)
     end
 
-    def merge_platform_config(platform_config)
-      default_driver_config.rmerge(common_driver_config.rmerge(platform_config))
+    def merge_driver_hash(driver_hash)
+      default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
     end
 
     def calculate_roles_path(suite_name)
@@ -262,11 +274,11 @@ module Jamie
       end
     end
 
-    def default_driver_config
-      { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN }
+    def default_driver_hash
+      { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN, 'driver_config' => {} }
     end
 
-    def common_driver_config
+    def common_driver_hash
       yaml.select { |key, value| %w(driver_plugin driver_config).include?(key) }
     end
   end
@@ -356,10 +368,6 @@ module Jamie
     # @return [String] logical name of this platform
     attr_reader :name
 
-    # @return [Driver::Base] driver object which will manage this platform's
-    #   lifecycle actions
-    attr_reader :driver
-
     # @return [Array] Array of Chef run_list items
     attr_reader :run_list
 
@@ -371,8 +379,6 @@ module Jamie
     # @param [Hash] options configuration for a new platform
     # @option options [String] :name logical name of this platform
     #   (**Required**)
-    # @option options [Driver::Base] :driver subclass of Driver::Base which
-    #   will manage this platform's lifecycle actions (**Required**)
     # @option options [Array<String>] :run_list Array of Chef run_list
     #   items
     # @option options [Hash] :attributes Hash of Chef node attributes
@@ -380,7 +386,6 @@ module Jamie
       validate_options(options)
 
       @name = options['name']
-      @driver = options['driver']
       @run_list = Array(options['run_list'])
       @attributes = options['attributes'] || Hash.new
     end
@@ -388,7 +393,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      %w(name driver).each do |k|
+      %w(name).each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
       end
     end
@@ -409,6 +414,10 @@ module Jamie
     # @return [Platform] the target platform configuration
     attr_reader :platform
 
+    # @return [Driver::Base] driver object which will manage this instance's
+    #   lifecycle actions
+    attr_reader :driver
+
     # @return [Jr] jr command string generator
     attr_reader :jr
 
@@ -417,16 +426,24 @@ module Jamie
 
     # Creates a new instance, given a suite and a platform.
     #
-    # @param suite [Suite] a suite
-    # @param platform [Platform] a platform
-    # @param logger [Logger] a logger for this instance
-    def initialize(suite, platform, logger = Logger.new(STDOUT))
-      validate_options(suite, platform)
+    # @param [Hash] options configuration for a new suite
+    # @option options [Suite] :suite the suite
+    # @option options [Platform] :platform the platform
+    # @option options [Driver::Base] :driver the driver
+    # @option options [Jr] :jr the jr command string generator
+    # @option options [Logger] :logger the instance logger
+    def initialize(options = {})
+      options = { 'logger' => Jamie.logger }.merge(options)
+      validate_options(options)
+      logger = options['logger']
 
-      @suite = suite
-      @platform = platform
-      @jr = Jr.new(@suite.name)
+      @suite = options['suite']
+      @platform = options['platform']
+      @driver = options['driver']
+      @jr = options['jr']
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
+
+      @driver.instance = self
     end
 
     # @return [String] name of this instance
@@ -533,9 +550,10 @@ module Jamie
 
     private
 
-    def validate_options(suite, platform)
-      raise ArgumentError, "Attribute 'suite' is required." if suite.nil?
-      raise ArgumentError, "Attribute 'platform' is required." if platform.nil?
+    def validate_options(opts)
+      %w(suite platform driver jr logger).each do |k|
+        raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+      end
     end
 
     def transition_to(desired)
@@ -548,35 +566,35 @@ module Jamie
 
     def create_action
       info "-----> Creating instance #{name}"
-      action(:create) { |state| platform.driver.create(self, state) }
+      action(:create) { |state| driver.create(self, state) }
       info "       Creation of instance #{name} complete."
       self
     end
 
     def converge_action
       info "-----> Converging instance #{name}"
-      action(:converge) { |state| platform.driver.converge(self, state) }
+      action(:converge) { |state| driver.converge(self, state) }
       info "       Convergence of instance #{name} complete."
       self
     end
 
     def setup_action
       info "-----> Setting up instance #{name}"
-      action(:setup) { |state| platform.driver.setup(self, state) }
+      action(:setup) { |state| driver.setup(self, state) }
       info "       Setup of instance #{name} complete."
       self
     end
 
     def verify_action
       info "-----> Verifying instance #{name}"
-      action(:verify) { |state| platform.driver.verify(self, state) }
+      action(:verify) { |state| driver.verify(self, state) }
       info "       Verification of instance #{name} complete."
       self
     end
 
     def destroy_action
       info "-----> Destroying instance #{name}"
-      action(:destroy) { |state| platform.driver.destroy(self, state) }
+      action(:destroy) { |state| driver.destroy(self, state) }
       destroy_state
       info "       Destruction of instance #{name} complete."
       self
@@ -607,7 +625,7 @@ module Jamie
 
     def statefile
       File.expand_path(File.join(
-        platform.driver['jamie_root'], ".jamie", "#{name}.yml"
+        driver['jamie_root'], ".jamie", "#{name}.yml"
       ))
     end
 
@@ -875,6 +893,8 @@ module Jamie
     class Base
 
       include ShellOut
+
+      attr_accessor :instance
 
       def initialize(config)
         @config = config
