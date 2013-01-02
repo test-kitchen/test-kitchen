@@ -285,6 +285,10 @@ module Jamie
 
   module Logging
 
+    def debug(progname = nil, &block)
+      add(Logger::DEBUG, nil, progname, &block)
+    end
+
     def info(progname = nil, &block)
       add(Logger::INFO, nil, progname, &block)
     end
