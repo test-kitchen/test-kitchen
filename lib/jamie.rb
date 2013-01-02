@@ -54,6 +54,7 @@ module Jamie
     def default_logger
       logger = Logger.new(STDOUT)
       logger.progname = "Jamie"
+      logger.level = Util.to_logger_level(DEFAULT_LOG_LEVEL)
       logger
     end
   end
@@ -203,9 +204,12 @@ module Jamie
     end
 
     def new_instance_logger(log_root)
+      level = Util.to_logger_level(self.log_level)
+
       lambda do |name|
         logfile = File.join(log_root, "#{name}.log")
         logger = Logger.new(logfile)
+        logger.level = level
         logger.progname = name
         logger
       end
@@ -832,6 +836,10 @@ module Jamie
         gsub(/([A-Z+])([A-Z][a-z])/, '\1_\2').
         gsub(/([a-z\d])([A-Z])/, '\1_\2').
         downcase
+    end
+
+    def self.to_logger_level(symbol)
+      Logger.const_get(symbol.to_s.upcase)
     end
   end
 
