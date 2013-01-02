@@ -37,9 +37,6 @@ require 'jamie/version'
 
 module Jamie
 
-  # Default log level verbosity
-  DEFAULT_LOG_LEVEL = :info
-
   class << self
 
     attr_accessor :logger
@@ -52,10 +49,9 @@ module Jamie
     end
 
     def default_logger
-      logger = Logger.new(STDOUT)
-      logger.progname = "Jamie"
-      logger.level = Util.to_logger_level(DEFAULT_LOG_LEVEL)
-      logger
+      env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+
+      Logger.new(:console => STDOUT, :level => env_log)
     end
   end
 
@@ -116,7 +112,10 @@ module Jamie
 
     # @return [Symbol] log level verbosity
     def log_level
-      @log_level ||= Jamie::DEFAULT_LOG_LEVEL
+      @log_level ||= begin
+        ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
+        Jamie::DEFAULT_LOG_LEVEL
+      end
     end
 
     # @return [String] base path that may contain a common `data_bags/`
@@ -208,10 +207,9 @@ module Jamie
 
       lambda do |name|
         logfile = File.join(log_root, "#{name}.log")
-        logger = Logger.new(logfile)
-        logger.level = level
-        logger.progname = name
-        logger
+
+        Logger.new(:stdout => STDOUT, :logdev => logfile,
+          :level => level, :progname => name)
       end
     end
 
@@ -287,32 +285,139 @@ module Jamie
     end
   end
 
-  module Logging
+  # Default log level verbosity
+  DEFAULT_LOG_LEVEL = :info
 
-    def debug(progname = nil, &block)
-      add(Logger::DEBUG, nil, progname, &block)
+  # Logging implementation for Jamie. By default the console/stdout output will
+  # be displayed differently than the file log output. Therefor, this class
+  # wraps multiple loggers that conform to the stdlib `Logger` class behavior.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
+  class Logger
+
+    include ::Logger::Severity
+
+    def initialize(options = {})
+      @loggers = []
+      @loggers << logdev_logger(options[:logdev]) if options[:logdev]
+      @loggers << stdout_logger(options[:stdout]) if options[:stdout]
+      @loggers << stdout_logger(STDOUT) if @loggers.empty?
+
+      self.progname = options[:progname] || "Jamie"
+      self.level = options[:level] || default_log_level
     end
 
-    def info(progname = nil, &block)
-      add(Logger::INFO, nil, progname, &block)
+    %w{ level progname datetime_format debug? info? error? warn? fatal?
+    }.each do |meth|
+      define_method(meth) do |*args|
+        @loggers.first.public_send(meth, *args)
+      end
     end
 
-    def warn(progname = nil, &block)
-      add(Logger::WARN, nil, progname, &block)
-    end
-
-    def error(progname = nil, &block)
-      add(Logger::ERROR, nil, progname, &block)
-    end
-
-    def fatal(progname = nil, &block)
-      add(Logger::FATAL, nil, progname, &block)
+    %w{ level= progname= datetime_format= add <<
+        banner debug info error warn fatal unknown close
+    }.map(&:to_sym).each do |meth|
+      define_method(meth) do |*args|
+        result = nil
+        @loggers.each { |l| result = l.public_send(meth, *args) }
+        result
+      end
     end
 
     private
 
-    def add(severity, message = nil, progname = nil, &block)
-      logger.add(severity, message, progname, &block)
+    def default_log_level
+      Util.to_logger_level(Jamie::DEFAULT_LOG_LEVEL)
+    end
+
+    def stdout_logger(stdout)
+      logger = StdoutLogger.new(stdout)
+      logger.formatter = proc do |severity, datetime, progname, msg|
+        "#{msg}\n"
+      end
+      logger
+    end
+
+    def logdev_logger(filepath_or_logdev)
+      LogdevLogger.new(logdev(filepath_or_logdev))
+    end
+
+    def logdev(filepath_or_logdev)
+      if filepath_or_logdev.is_a? String
+        file = File.open(File.expand_path(filepath_or_logdev), "wb")
+        file.sync = true
+        file
+      else
+        filepath_or_logdev
+      end
+    end
+
+    # Internal class which adds a #banner method call that displays the
+    # message with a callout arrow.
+    class LogdevLogger < ::Logger
+
+      alias_method :super_info, :info
+
+      def banner(msg = nil, &block)
+        super_info("-----> #{msg}", &block)
+        info(msg, &block)
+      end
+    end
+
+    # Internal class which reformats logging methods for display as console
+    # output.
+    class StdoutLogger < LogdevLogger
+
+      def <<(msg)
+        msg =~ /\n/ ? msg.split("\n").each { |l| info(l) } : super
+      end
+
+      def debug(msg = nil, &block)
+        super("D      #{msg}", &block)
+      end
+
+      def info(msg = nil, &block)
+        super("       #{msg}", &block)
+      end
+
+      def warn(msg = nil, &block)
+        super("$$$$$$ #{msg}", &block)
+      end
+
+      def error(msg = nil, &block)
+        super(">>>>>> #{msg}", &block)
+      end
+
+      def fatal(msg = nil, &block)
+        super("!!!!!! #{msg}", &block)
+      end
+    end
+  end
+
+  module Logging
+
+    def banner(*args)
+      logger.banner(*args)
+    end
+
+    def debug(*args)
+      logger.debug(*args)
+    end
+
+    def info(*args)
+      logger.info(*args)
+    end
+
+    def warn(*args)
+      logger.warn(*args)
+    end
+
+    def error(*args)
+      logger.error(*args)
+    end
+
+    def fatal(*args)
+      logger.fatal(*args)
     end
   end
 
@@ -839,6 +944,8 @@ module Jamie
     end
 
     def self.to_logger_level(symbol)
+      return nil unless [:debug, :info, :warn, :error, :fatal].include?(symbol)
+
       Logger.const_get(symbol.to_s.upcase)
     end
   end
@@ -1133,6 +1240,7 @@ module Jamie
   class ChefDataUploader
 
     include ShellOut
+    include Logging
 
     def initialize(instance, ssh_args, jamie_root, chef_home)
       @instance = instance
@@ -1154,6 +1262,10 @@ module Jamie
     private
 
     attr_reader :instance, :ssh_args, :jamie_root, :chef_home
+
+    def logger
+      instance.logger
+    end
 
     def upload_json(scp)
       json_file = StringIO.new(instance.dna.to_json)
