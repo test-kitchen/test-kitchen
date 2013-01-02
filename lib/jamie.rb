@@ -894,7 +894,7 @@ module Jamie
 
       include ShellOut
 
-      attr_accessor :instance
+      attr_writer :instance
 
       def initialize(config)
         @config = config
@@ -948,7 +948,7 @@ module Jamie
 
       protected
 
-      attr_reader :config
+      attr_reader :config, :instance
 
       def run_command(cmd, use_sudo = nil, log_subject = nil)
         use_sudo = config['use_sudo'] if use_sudo.nil?
