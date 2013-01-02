@@ -22,6 +22,7 @@ require 'digest'
 require 'erb'
 require 'fileutils'
 require 'json'
+require 'logger'
 require 'mixlib/shellout'
 require 'net/https'
 require 'net/scp'
@@ -36,11 +37,22 @@ require 'jamie/version'
 
 module Jamie
 
-  # Returns the root path of the Jamie gem source code.
-  #
-  # @return [Pathname] root path of gem
-  def self.source_root
-    @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+  class << self
+
+    attr_accessor :logger
+
+    # Returns the root path of the Jamie gem source code.
+    #
+    # @return [Pathname] root path of gem
+    def source_root
+      @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+    end
+
+    def default_logger
+      logger = Logger.new(STDOUT)
+      logger.progname = "Jamie"
+      logger
+    end
   end
 
   # Base configuration class for Jamie. This class exposes configuration such
@@ -92,7 +104,7 @@ module Jamie
     #   suite combinations
     def instances
       @instances ||= Collection.new(suites.map { |suite|
-        platforms.map { |platform| Instance.new(suite, platform) }
+        platforms.map { |platform| new_instance(suite, platform) }
       }.flatten)
     end
 
@@ -162,13 +174,29 @@ module Jamie
     def new_platform(hash)
       mpc = merge_platform_config(hash)
       mpc['driver_config'] ||= Hash.new
-      mpc['driver_config']['jamie_root'] = File.dirname(yaml_file)
+      mpc['driver_config']['jamie_root'] = jamie_root
       mpc['driver'] = new_driver(mpc['driver_plugin'], mpc['driver_config'])
       Platform.new(mpc)
     end
 
     def new_driver(plugin, config)
       Driver.for_plugin(plugin, config)
+    end
+
+    def new_instance(suite, platform)
+      log_root = File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+      FileUtils.mkdir_p(log_root)
+
+      Instance.new(suite, platform, new_instance_logger(log_root))
+    end
+
+    def new_instance_logger(log_root)
+      lambda do |name|
+        logfile = File.join(log_root, "#{name}.log")
+        logger = Logger.new(logfile)
+        logger.progname = name
+        logger
+      end
     end
 
     def yaml
@@ -192,6 +220,10 @@ module Jamie
           Hash.new
         end
       end
+    end
+
+    def jamie_root
+      File.dirname(yaml_file)
     end
 
     def merge_platform_config(platform_config)
@@ -236,6 +268,31 @@ module Jamie
 
     def common_driver_config
       yaml.select { |key, value| %w(driver_plugin driver_config).include?(key) }
+    end
+  end
+
+  module Logging
+
+    def info(progname = nil, &block)
+      add(Logger::INFO, nil, progname, &block)
+    end
+
+    def warn(progname = nil, &block)
+      add(Logger::WARN, nil, progname, &block)
+    end
+
+    def error(progname = nil, &block)
+      add(Logger::ERROR, nil, progname, &block)
+    end
+
+    def fatal(progname = nil, &block)
+      add(Logger::FATAL, nil, progname, &block)
+    end
+
+    private
+
+    def add(severity, message = nil, progname = nil, &block)
+      logger.add(severity, message, progname, &block)
     end
   end
 
@@ -344,6 +401,8 @@ module Jamie
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
+    include Logging
+
     # @return [Suite] the test suite configuration
     attr_reader :suite
 
@@ -353,16 +412,21 @@ module Jamie
     # @return [Jr] jr command string generator
     attr_reader :jr
 
+    # @return [Logger] the logger for this instance
+    attr_reader :logger
+
     # Creates a new instance, given a suite and a platform.
     #
     # @param suite [Suite] a suite
     # @param platform [Platform] a platform
-    def initialize(suite, platform)
+    # @param logger [Logger] a logger for this instance
+    def initialize(suite, platform, logger = Logger.new(STDOUT))
       validate_options(suite, platform)
 
       @suite = suite
       @platform = platform
       @jr = Jr.new(@suite.name)
+      @logger = logger.is_a?(Proc) ? logger.call(name) : logger
     end
 
     # @return [String] name of this instance
@@ -456,12 +520,12 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def test(destroy_mode = :passing)
-      puts "-----> Cleaning up any prior instances of #{name}"
+      info "-----> Cleaning up any prior instances of #{name}"
       destroy
-      puts "-----> Testing instance #{name}"
+      info "-----> Testing instance #{name}"
       verify
       destroy if destroy_mode == :passing
-      puts "       Testing of instance #{name} complete."
+      info "       Testing of instance #{name} complete."
       self
     ensure
       destroy if destroy_mode == :always
@@ -483,38 +547,38 @@ module Jamie
     end
 
     def create_action
-      puts "-----> Creating instance #{name}"
+      info "-----> Creating instance #{name}"
       action(:create) { |state| platform.driver.create(self, state) }
-      puts "       Creation of instance #{name} complete."
+      info "       Creation of instance #{name} complete."
       self
     end
 
     def converge_action
-      puts "-----> Converging instance #{name}"
+      info "-----> Converging instance #{name}"
       action(:converge) { |state| platform.driver.converge(self, state) }
-      puts "       Convergence of instance #{name} complete."
+      info "       Convergence of instance #{name} complete."
       self
     end
 
     def setup_action
-      puts "-----> Setting up instance #{name}"
+      info "-----> Setting up instance #{name}"
       action(:setup) { |state| platform.driver.setup(self, state) }
-      puts "       Setup of instance #{name} complete."
+      info "       Setup of instance #{name} complete."
       self
     end
 
     def verify_action
-      puts "-----> Verifying instance #{name}"
+      info "-----> Verifying instance #{name}"
       action(:verify) { |state| platform.driver.verify(self, state) }
-      puts "       Verification of instance #{name} complete."
+      info "       Verification of instance #{name} complete."
       self
     end
 
     def destroy_action
-      puts "-----> Destroying instance #{name}"
+      info "-----> Destroying instance #{name}"
       action(:destroy) { |state| platform.driver.destroy(self, state) }
       destroy_state
-      puts "       Destruction of instance #{name} complete."
+      info "       Destruction of instance #{name} complete."
       self
     end
 
@@ -1184,3 +1248,5 @@ module Jamie
     end
   end
 end
+
+Jamie.logger = Jamie.default_logger
