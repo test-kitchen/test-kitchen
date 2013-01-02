@@ -37,6 +37,9 @@ require 'jamie/version'
 
 module Jamie
 
+  # Default log level verbosity
+  DEFAULT_LOG_LEVEL = :info
+
   class << self
 
     attr_accessor :logger
@@ -69,9 +72,6 @@ module Jamie
 
     # Default path to the Jamie YAML file
     DEFAULT_YAML_FILE = File.join(Dir.pwd, '.jamie.yml').freeze
-
-    # Default log level verbosity
-    DEFAULT_LOG_LEVEL = :info
 
     # Default driver plugin to use
     DEFAULT_DRIVER_PLUGIN = "dummy".freeze
@@ -115,7 +115,7 @@ module Jamie
 
     # @return [Symbol] log level verbosity
     def log_level
-      @log_level ||= DEFAULT_LOG_LEVEL
+      @log_level ||= Jamie::DEFAULT_LOG_LEVEL
     end
 
     # @return [String] base path that may contain a common `data_bags/`
