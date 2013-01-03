@@ -41,13 +41,10 @@ module Jamie
         server = create_server
         state['server_id'] = server.id
 
-        elapsed = Benchmark.measure do
-          server.wait_for { print "."; ready? } ; print "(server ready)"
-          state['hostname'] = server.public_ip_address
-          wait_for_sshd(state['hostname'])      ; print "(ssh ready)\n"
-        end
-        info("Created #{instance.name} (#{server.id})" +
-          " in #{elapsed.real} seconds.")
+        info("EC2 instance <#{state['server_id']}> created.")
+        server.wait_for { print "."; ready? } ; print "(server ready)"
+        state['hostname'] = server.public_ip_address
+        wait_for_sshd(state['hostname'])      ; print "(ssh ready)\n"
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
       end
@@ -57,6 +54,7 @@ module Jamie
 
         server = connection.servers.get(state['server_id'])
         server.destroy unless server.nil?
+        info("EC2 instance <#{state['server_id']}> destroyed.")
         state.delete('server_id')
         state.delete('hostname')
       end
