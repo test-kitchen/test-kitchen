@@ -396,28 +396,10 @@ module Jamie
 
   module Logging
 
-    def banner(*args)
-      logger.banner(*args)
-    end
-
-    def debug(*args)
-      logger.debug(*args)
-    end
-
-    def info(*args)
-      logger.info(*args)
-    end
-
-    def warn(*args)
-      logger.warn(*args)
-    end
-
-    def error(*args)
-      logger.error(*args)
-    end
-
-    def fatal(*args)
-      logger.fatal(*args)
+    %w{banner debug info warn error fatal}.map(&:to_sym).each do |meth|
+      define_method(meth) do |*args|
+        logger.public_send(meth, *args)
+      end
     end
   end
 
