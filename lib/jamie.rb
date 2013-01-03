@@ -360,7 +360,6 @@ module Jamie
 
       def banner(msg = nil, &block)
         super_info("-----> #{msg}", &block)
-        info(msg, &block)
       end
     end
 
