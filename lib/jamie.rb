@@ -17,11 +17,13 @@
 # limitations under the License.
 
 require 'base64'
+require 'benchmark'
 require 'delegate'
 require 'digest'
 require 'erb'
 require 'fileutils'
 require 'json'
+require 'logger'
 require 'mixlib/shellout'
 require 'net/https'
 require 'net/scp'
@@ -36,11 +38,22 @@ require 'jamie/version'
 
 module Jamie
 
-  # Returns the root path of the Jamie gem source code.
-  #
-  # @return [Pathname] root path of gem
-  def self.source_root
-    @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+  class << self
+
+    attr_accessor :logger
+
+    # Returns the root path of the Jamie gem source code.
+    #
+    # @return [Pathname] root path of gem
+    def source_root
+      @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+    end
+
+    def default_logger
+      env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+
+      Logger.new(:console => STDOUT, :level => env_log)
+    end
   end
 
   # Base configuration class for Jamie. This class exposes configuration such
@@ -58,11 +71,8 @@ module Jamie
     # Default path to the Jamie YAML file
     DEFAULT_YAML_FILE = File.join(Dir.pwd, '.jamie.yml').freeze
 
-    # Default log level verbosity
-    DEFAULT_LOG_LEVEL = :info
-
     # Default driver plugin to use
-    DEFAULT_DRIVER_PLUGIN = "vagrant".freeze
+    DEFAULT_DRIVER_PLUGIN = "dummy".freeze
 
     # Default base path which may contain `data_bags/` directories
     DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
@@ -92,7 +102,7 @@ module Jamie
     #   suite combinations
     def instances
       @instances ||= Collection.new(suites.map { |suite|
-        platforms.map { |platform| Instance.new(suite, platform) }
+        platforms.map { |platform| new_instance(suite, platform) }
       }.flatten)
     end
 
@@ -103,7 +113,10 @@ module Jamie
 
     # @return [Symbol] log level verbosity
     def log_level
-      @log_level ||= DEFAULT_LOG_LEVEL
+      @log_level ||= begin
+        ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
+        Jamie::DEFAULT_LOG_LEVEL
+      end
     end
 
     # @return [String] base path that may contain a common `data_bags/`
@@ -160,15 +173,45 @@ module Jamie
     end
 
     def new_platform(hash)
-      mpc = merge_platform_config(hash)
-      mpc['driver_config'] ||= Hash.new
-      mpc['driver_config']['jamie_root'] = File.dirname(yaml_file)
-      mpc['driver'] = new_driver(mpc['driver_plugin'], mpc['driver_config'])
-      Platform.new(mpc)
+      Platform.new(hash)
     end
 
-    def new_driver(plugin, config)
-      Driver.for_plugin(plugin, config)
+    def new_driver(hash)
+      hash['driver_config'] ||= Hash.new
+      hash['driver_config']['jamie_root'] = jamie_root
+      Driver.for_plugin(hash['driver_plugin'], hash['driver_config'])
+    end
+
+    def new_instance(suite, platform)
+      log_root = File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+      platform_hash = platform_driver_hash(platform.name)
+      driver = new_driver(merge_driver_hash(platform_hash))
+      FileUtils.mkdir_p(log_root)
+
+      Instance.new(
+        'suite'     => suite,
+        'platform'  => platform,
+        'driver'    => driver,
+        'jr'        => Jr.new(suite.name),
+        'logger'    => new_instance_logger(log_root)
+      )
+    end
+
+    def platform_driver_hash(platform_name)
+      h = yaml['platforms'].find { |p| p['name'] == platform_name } || Hash.new
+
+      h.select { |key, value| %w(driver_plugin driver_config).include?(key) }
+    end
+
+    def new_instance_logger(log_root)
+      level = Util.to_logger_level(self.log_level)
+
+      lambda do |name|
+        logfile = File.join(log_root, "#{name}.log")
+
+        Logger.new(:stdout => STDOUT, :logdev => logfile,
+          :level => level, :progname => name)
+      end
     end
 
     def yaml
@@ -194,8 +237,12 @@ module Jamie
       end
     end
 
-    def merge_platform_config(platform_config)
-      default_driver_config.rmerge(common_driver_config.rmerge(platform_config))
+    def jamie_root
+      File.dirname(yaml_file)
+    end
+
+    def merge_driver_hash(driver_hash)
+      default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
     end
 
     def calculate_roles_path(suite_name)
@@ -230,12 +277,140 @@ module Jamie
       end
     end
 
-    def default_driver_config
-      { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN }
+    def default_driver_hash
+      { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN, 'driver_config' => {} }
     end
 
-    def common_driver_config
+    def common_driver_hash
       yaml.select { |key, value| %w(driver_plugin driver_config).include?(key) }
+    end
+  end
+
+  # Default log level verbosity
+  DEFAULT_LOG_LEVEL = :info
+
+  # Logging implementation for Jamie. By default the console/stdout output will
+  # be displayed differently than the file log output. Therefor, this class
+  # wraps multiple loggers that conform to the stdlib `Logger` class behavior.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
+  class Logger
+
+    include ::Logger::Severity
+
+    def initialize(options = {})
+      @loggers = []
+      @loggers << logdev_logger(options[:logdev]) if options[:logdev]
+      @loggers << stdout_logger(options[:stdout]) if options[:stdout]
+      @loggers << stdout_logger(STDOUT) if @loggers.empty?
+
+      self.progname = options[:progname] || "Jamie"
+      self.level = options[:level] || default_log_level
+    end
+
+    %w{ level progname datetime_format debug? info? error? warn? fatal?
+    }.each do |meth|
+      define_method(meth) do |*args|
+        @loggers.first.public_send(meth, *args)
+      end
+    end
+
+    %w{ level= progname= datetime_format= add <<
+        banner debug info error warn fatal unknown close
+    }.map(&:to_sym).each do |meth|
+      define_method(meth) do |*args|
+        result = nil
+        @loggers.each { |l| result = l.public_send(meth, *args) }
+        result
+      end
+    end
+
+    private
+
+    def default_log_level
+      Util.to_logger_level(Jamie::DEFAULT_LOG_LEVEL)
+    end
+
+    def stdout_logger(stdout)
+      logger = StdoutLogger.new(stdout)
+      logger.formatter = proc do |severity, datetime, progname, msg|
+        "#{msg}\n"
+      end
+      logger
+    end
+
+    def logdev_logger(filepath_or_logdev)
+      LogdevLogger.new(logdev(filepath_or_logdev))
+    end
+
+    def logdev(filepath_or_logdev)
+      if filepath_or_logdev.is_a? String
+        file = File.open(File.expand_path(filepath_or_logdev), "ab")
+        file.sync = true
+        file
+      else
+        filepath_or_logdev
+      end
+    end
+
+    # Internal class which adds a #banner method call that displays the
+    # message with a callout arrow.
+    class LogdevLogger < ::Logger
+
+      alias_method :super_info, :info
+
+      def <<(msg)
+        msg =~ /\n/ ? msg.split("\n").each { |l| format_line(l) } : super
+      end
+
+      def banner(msg = nil, &block)
+        super_info("-----> #{msg}", &block)
+      end
+
+      private
+
+      def format_line(line)
+        case line
+        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ''))
+        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ''))
+        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ''))
+        else info(line)
+        end
+      end
+    end
+
+    # Internal class which reformats logging methods for display as console
+    # output.
+    class StdoutLogger < LogdevLogger
+
+      def debug(msg = nil, &block)
+        super("D      #{msg}", &block)
+      end
+
+      def info(msg = nil, &block)
+        super("       #{msg}", &block)
+      end
+
+      def warn(msg = nil, &block)
+        super("$$$$$$ #{msg}", &block)
+      end
+
+      def error(msg = nil, &block)
+        super(">>>>>> #{msg}", &block)
+      end
+
+      def fatal(msg = nil, &block)
+        super("!!!!!! #{msg}", &block)
+      end
+    end
+  end
+
+  module Logging
+
+    %w{banner debug info warn error fatal}.map(&:to_sym).each do |meth|
+      define_method(meth) do |*args|
+        logger.public_send(meth, *args)
+      end
     end
   end
 
@@ -299,10 +474,6 @@ module Jamie
     # @return [String] logical name of this platform
     attr_reader :name
 
-    # @return [Driver::Base] driver object which will manage this platform's
-    #   lifecycle actions
-    attr_reader :driver
-
     # @return [Array] Array of Chef run_list items
     attr_reader :run_list
 
@@ -314,8 +485,6 @@ module Jamie
     # @param [Hash] options configuration for a new platform
     # @option options [String] :name logical name of this platform
     #   (**Required**)
-    # @option options [Driver::Base] :driver subclass of Driver::Base which
-    #   will manage this platform's lifecycle actions (**Required**)
     # @option options [Array<String>] :run_list Array of Chef run_list
     #   items
     # @option options [Hash] :attributes Hash of Chef node attributes
@@ -323,7 +492,6 @@ module Jamie
       validate_options(options)
 
       @name = options['name']
-      @driver = options['driver']
       @run_list = Array(options['run_list'])
       @attributes = options['attributes'] || Hash.new
     end
@@ -331,7 +499,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      %w(name driver).each do |k|
+      %w(name).each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
       end
     end
@@ -344,30 +512,53 @@ module Jamie
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
+    include Logging
+
     # @return [Suite] the test suite configuration
     attr_reader :suite
 
     # @return [Platform] the target platform configuration
     attr_reader :platform
 
+    # @return [Driver::Base] driver object which will manage this instance's
+    #   lifecycle actions
+    attr_reader :driver
+
     # @return [Jr] jr command string generator
     attr_reader :jr
 
+    # @return [Logger] the logger for this instance
+    attr_reader :logger
+
     # Creates a new instance, given a suite and a platform.
     #
-    # @param suite [Suite] a suite
-    # @param platform [Platform] a platform
-    def initialize(suite, platform)
-      validate_options(suite, platform)
+    # @param [Hash] options configuration for a new suite
+    # @option options [Suite] :suite the suite
+    # @option options [Platform] :platform the platform
+    # @option options [Driver::Base] :driver the driver
+    # @option options [Jr] :jr the jr command string generator
+    # @option options [Logger] :logger the instance logger
+    def initialize(options = {})
+      options = { 'logger' => Jamie.logger }.merge(options)
+      validate_options(options)
+      logger = options['logger']
 
-      @suite = suite
-      @platform = platform
-      @jr = Jr.new(@suite.name)
+      @suite = options['suite']
+      @platform = options['platform']
+      @driver = options['driver']
+      @jr = options['jr']
+      @logger = logger.is_a?(Proc) ? logger.call(name) : logger
+
+      @driver.instance = self
     end
 
     # @return [String] name of this instance
     def name
       "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+    end
+
+    def to_s
+      "<#{name}>"
     end
 
     # Returns a combined run_list starting with the platform's run_list
@@ -456,12 +647,14 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def test(destroy_mode = :passing)
-      puts "-----> Cleaning up any prior instances of #{name}"
-      destroy
-      puts "-----> Testing instance #{name}"
-      verify
-      destroy if destroy_mode == :passing
-      puts "       Testing of instance #{name} complete."
+      elapsed = Benchmark.measure do
+        banner "Cleaning up any prior instances of #{self}"
+        destroy
+        banner "Testing #{self}"
+        verify
+        destroy if destroy_mode == :passing
+      end
+      info "Testing of #{self} complete (#{elapsed.real} seconds)."
       self
     ensure
       destroy if destroy_mode == :always
@@ -469,9 +662,10 @@ module Jamie
 
     private
 
-    def validate_options(suite, platform)
-      raise ArgumentError, "Attribute 'suite' is required." if suite.nil?
-      raise ArgumentError, "Attribute 'platform' is required." if platform.nil?
+    def validate_options(opts)
+      %w(suite platform driver jr logger).each do |k|
+        raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+      end
     end
 
     def transition_to(desired)
@@ -483,45 +677,48 @@ module Jamie
     end
 
     def create_action
-      puts "-----> Creating instance #{name}"
-      action(:create) { |state| platform.driver.create(self, state) }
-      puts "       Creation of instance #{name} complete."
+      banner "Creating #{self}"
+      elapsed = action(:create) { |state| driver.create(state) }
+      info "Creation of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def converge_action
-      puts "-----> Converging instance #{name}"
-      action(:converge) { |state| platform.driver.converge(self, state) }
-      puts "       Convergence of instance #{name} complete."
+      banner "Converging #{self}"
+      elapsed = action(:converge) { |state| driver.converge(state) }
+      info "Convergence of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def setup_action
-      puts "-----> Setting up instance #{name}"
-      action(:setup) { |state| platform.driver.setup(self, state) }
-      puts "       Setup of instance #{name} complete."
+      banner "Setting up #{self}"
+      elapsed = action(:setup) { |state| driver.setup(state) }
+      info "Setup of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def verify_action
-      puts "-----> Verifying instance #{name}"
-      action(:verify) { |state| platform.driver.verify(self, state) }
-      puts "       Verification of instance #{name} complete."
+      banner "Verifying #{self}"
+      elapsed = action(:verify) { |state| driver.verify(state) }
+      info "Verification of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def destroy_action
-      puts "-----> Destroying instance #{name}"
-      action(:destroy) { |state| platform.driver.destroy(self, state) }
+      banner "Destroying #{self}"
+      elapsed = action(:destroy) { |state| driver.destroy(state) }
       destroy_state
-      puts "       Destruction of instance #{name} complete."
+      info "Destruction of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def action(what)
       state = load_state
-      yield state if block_given?
+      elapsed = Benchmark.measure do
+        yield state if block_given?
+      end
       state['last_action'] = what.to_s
+      elapsed
     ensure
       dump_state(state)
     end
@@ -543,7 +740,7 @@ module Jamie
 
     def statefile
       File.expand_path(File.join(
-        platform.driver['jamie_root'], ".jamie", "#{name}.yml"
+        driver['jamie_root'], ".jamie", "#{name}.yml"
       ))
     end
 
@@ -708,7 +905,7 @@ module Jamie
       jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
-        echo "       Uploading #{remote_path} (mode=#{perms})"
+        echo "Uploading #{remote_path} (mode=#{perms})"
         cat <<"__EOFSTREAM__" | #{sudo}#{jr_stream_file}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
@@ -747,6 +944,22 @@ module Jamie
         gsub(/([a-z\d])([A-Z])/, '\1_\2').
         downcase
     end
+
+    def self.to_logger_level(symbol)
+      return nil unless [:debug, :info, :warn, :error, :fatal].include?(symbol)
+
+      Logger.const_get(symbol.to_s.upcase)
+    end
+
+    def self.from_logger_level(const)
+      case const
+      when Logger::DEBUG then :debug
+      when Logger::INFO then :info
+      when Logger::WARN then :warn
+      when Logger::ERROR then :error
+      else :fatal
+      end
+    end
   end
 
   # Mixin that wraps a command shell out invocation, providing a #run_command
@@ -766,12 +979,12 @@ module Jamie
     #   and context
     def run_command(cmd, use_sudo = false, log_subject = "local")
       cmd = "sudo #{cmd}" if use_sudo
-      subject = "       [#{log_subject} command]"
+      subject = "[#{log_subject} command]"
 
-      $stdout.puts "#{subject} (#{display_cmd(cmd)})"
-      sh = Mixlib::ShellOut.new(cmd, :live_stream => $stdout, :timeout => 60000)
+      info("#{subject} BEGIN (#{display_cmd(cmd)})")
+      sh = Mixlib::ShellOut.new(cmd, :live_stream => logger, :timeout => 60000)
       sh.run_command
-      puts "#{subject} ran in #{sh.execution_time} seconds."
+      info("#{subject} END (#{sh.execution_time} seconds)")
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
@@ -811,6 +1024,9 @@ module Jamie
     class Base
 
       include ShellOut
+      include Logging
+
+      attr_writer :instance
 
       def initialize(config)
         @config = config
@@ -829,42 +1045,49 @@ module Jamie
 
       # Creates an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def create(instance, state) ; end
+      def create(state) ; end
 
       # Converges a running instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(instance, state) ; end
+      def converge(state) ; end
 
       # Sets up an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(instance, state) ; end
+      def setup(state) ; end
 
       # Verifies a converged instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(instance, state) ; end
+      def verify(state) ; end
 
       # Destroys an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(instance, state) ; end
+      def destroy(state) ; end
 
       protected
 
-      attr_reader :config
+      attr_reader :config, :instance
+
+      def logger
+        instance.logger
+      end
+
+      def puts(msg)
+        info(msg)
+      end
+
+      def print(msg)
+        info(msg)
+      end
 
       def run_command(cmd, use_sudo = nil, log_subject = nil)
         use_sudo = config['use_sudo'] if use_sudo.nil?
@@ -884,26 +1107,26 @@ module Jamie
 
     # Base class for a driver that uses SSH to communication with an instance.
     # A subclass must implement the following methods:
-    # * #create(instance, state)
-    # * #destroy(instance, state)
+    # * #create(state)
+    # * #destroy(state)
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SSHBase < Base
 
-      def create(instance, state)
+      def create(state)
         raise NotImplementedError, "#create must be implemented by subclass."
       end
 
-      def converge(instance, state)
+      def converge(state)
         ssh_args = build_ssh_args(state)
 
         install_omnibus(ssh_args) if config['require_chef_omnibus']
         prepare_chef_home(ssh_args)
-        upload_chef_data(ssh_args, instance)
+        upload_chef_data(ssh_args)
         run_chef_solo(ssh_args)
       end
 
-      def setup(instance, state)
+      def setup(state)
         ssh_args = build_ssh_args(state)
 
         if instance.jr.setup_cmd
@@ -911,7 +1134,7 @@ module Jamie
         end
       end
 
-      def verify(instance, state)
+      def verify(state)
         ssh_args = build_ssh_args(state)
 
         if instance.jr.run_cmd
@@ -920,7 +1143,7 @@ module Jamie
         end
       end
 
-      def destroy(instance, state)
+      def destroy(state)
         raise NotImplementedError, "#destroy must be implemented by subclass."
       end
 
@@ -928,6 +1151,8 @@ module Jamie
 
       def build_ssh_args(state)
         opts = Hash.new
+        opts[:user_known_hosts_file] = "/dev/null"
+        opts[:paranoid] = false
         opts[:password] = config['password'] if config['password']
         opts[:keys] = Array(config['ssh_key']) if config['ssh_key']
 
@@ -950,7 +1175,7 @@ module Jamie
         ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}/cache")
       end
 
-      def upload_chef_data(ssh_args, instance)
+      def upload_chef_data(ssh_args)
         Jamie::ChefDataUploader.new(
           instance, ssh_args, config['jamie_root'], chef_home
         ).upload
@@ -958,7 +1183,8 @@ module Jamie
 
       def run_chef_solo(ssh_args)
         ssh(ssh_args, <<-RUN_SOLO)
-          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json
+          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json \
+            --log_level #{Util.from_logger_level(logger.level)}
         RUN_SOLO
       end
 
@@ -982,11 +1208,11 @@ module Jamie
           channel.exec(cmd) do |ch, success|
 
             channel.on_data do |ch, data|
-              $stdout.print data
+              logger << data
             end
 
             channel.on_extended_data do |ch, type, data|
-              $stderr.print data
+              logger << data
             end
 
             channel.on_request("exit-status") do |ch, data|
@@ -999,7 +1225,7 @@ module Jamie
       end
 
       def wait_for_sshd(hostname)
-        print "." until test_ssh(hostname)
+        logger << "." until test_ssh(hostname)
       end
 
       def test_ssh(hostname)
@@ -1024,6 +1250,7 @@ module Jamie
   class ChefDataUploader
 
     include ShellOut
+    include Logging
 
     def initialize(instance, ssh_args, jamie_root, chef_home)
       @instance = instance
@@ -1046,6 +1273,10 @@ module Jamie
 
     attr_reader :instance, :ssh_args, :jamie_root, :chef_home
 
+    def logger
+      instance.logger
+    end
+
     def upload_json(scp)
       json_file = StringIO.new(instance.dna.to_json)
       scp.upload!(json_file, "#{chef_home}/dna.json")
@@ -1057,24 +1288,26 @@ module Jamie
     end
 
     def upload_cookbooks(scp)
-      cookbooks_dir = local_cookbooks
-      scp.upload!(cookbooks_dir, "#{chef_home}/cookbooks",
+      ckbks_dir = local_cookbooks
+      scp.upload!(ckbks_dir, "#{chef_home}/cookbooks",
         :recursive => true
       ) do |ch, name, sent, total|
-        file = name.sub(%r{^#{cookbooks_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        if sent == total
+          info("Uploaded #{name.sub(%r{^#{ckbks_dir}/}, '')} (#{total} bytes)")
+        end
       end
     ensure
-      FileUtils.rmtree(cookbooks_dir)
+      FileUtils.rmtree(ckbks_dir)
     end
 
     def upload_data_bags(scp)
-      data_bags_dir = instance.suite.data_bags_path
-      scp.upload!(data_bags_dir, "#{chef_home}/data_bags",
+      dbags_dir = instance.suite.data_bags_path
+      scp.upload!(dbags_dir, "#{chef_home}/data_bags",
         :recursive => true
       ) do |ch, name, sent, total|
-        file = name.sub(%r{^#{data_bags_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        if sent == total
+          info("Uploaded #{name.sub(%r{^#{dbags_dir}/}, '')} (#{total} bytes)")
+        end
       end
     end
 
@@ -1083,8 +1316,9 @@ module Jamie
       scp.upload!(roles_dir, "#{chef_home}/roles",
         :recursive => true
       ) do |ch, name, sent, total|
-        file = name.sub(%r{^#{roles_dir}/}, '')
-        puts "       #{file}: #{sent}/#{total}"
+        if sent == total
+          info("Uploaded #{name.sub(%r{^#{roles_dir}/}, '')} (#{total} bytes)")
+        end
       end
     end
 
@@ -1097,7 +1331,6 @@ module Jamie
       if instance.suite.data_bags_path
         solo << %{data_bag_path "#{chef_home}/data_bags"}
       end
-      solo << %{log_level :info}
       solo.join("\n")
     end
 
@@ -1184,3 +1417,5 @@ module Jamie
     end
   end
 end
+
+Jamie.logger = Jamie.default_logger

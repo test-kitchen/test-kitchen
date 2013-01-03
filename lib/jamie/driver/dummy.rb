@@ -29,37 +29,35 @@ module Jamie
 
       default_config 'sleep', 0
 
-      def create(instance, state)
+      def create(state)
         state['my_id'] = "#{instance.name}-#{Time.now.to_i}"
-        report(:create, instance, state)
+        report(:create, state)
       end
 
-      def converge(instance, state)
-        report(:converge, instance, state)
+      def converge(state)
+        report(:converge, state)
       end
 
-      def setup(instance, state)
-        report(:setup, instance, state)
+      def setup(state)
+        report(:setup, state)
       end
 
-      def verify(instance, state)
-        report(:verify, instance, state)
+      def verify(state)
+        report(:verify, state)
       end
 
-      def destroy(instance, state)
-        report(:destroy, instance, state)
+      def destroy(state)
+        report(:destroy, state)
         state.delete('my_id')
       end
 
       private
 
-      def report(action, instance, state)
-        puts "[Dummy] Action ##{action} called on " +
-          "instance=#{instance} with state=#{state}"
-        if config['sleep'].to_f > 0.0
-          sleep config['sleep'].to_f
-          puts "[Dummy] Action ##{action} completed (#{config['sleep']}s)."
-        end
+      def report(action, state)
+        info("[Dummy] Action ##{action} called on " +
+          "instance=#{instance} with state=#{state}")
+        sleep(config['sleep'].to_f) if config['sleep'].to_f > 0.0
+        debug("[Dummy] Action ##{action} completed (#{config['sleep']}s).")
       end
     end
   end
