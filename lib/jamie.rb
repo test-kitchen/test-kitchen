@@ -1151,6 +1151,8 @@ module Jamie
 
       def build_ssh_args(state)
         opts = Hash.new
+        opts[:user_known_hosts_file] = "/dev/null"
+        opts[:paranoid] = false
         opts[:password] = config['password'] if config['password']
         opts[:keys] = Array(config['ssh_key']) if config['ssh_key']
 
