@@ -948,6 +948,16 @@ module Jamie
 
       Logger.const_get(symbol.to_s.upcase)
     end
+
+    def self.from_logger_level(const)
+      case const
+      when Logger::DEBUG then :debug
+      when Logger::INFO then :info
+      when Logger::WARN then :warn
+      when Logger::ERROR then :error
+      else :fatal
+      end
+    end
   end
 
   # Mixin that wraps a command shell out invocation, providing a #run_command
@@ -1169,7 +1179,8 @@ module Jamie
 
       def run_chef_solo(ssh_args)
         ssh(ssh_args, <<-RUN_SOLO)
-          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json
+          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json \
+            --log_level #{Util.from_logger_level(logger.level)}
         RUN_SOLO
       end
 
@@ -1313,7 +1324,6 @@ module Jamie
       if instance.suite.data_bags_path
         solo << %{data_bag_path "#{chef_home}/data_bags"}
       end
-      solo << %{log_level :info}
       solo.join("\n")
     end
 
