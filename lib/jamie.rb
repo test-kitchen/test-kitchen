@@ -1028,7 +1028,7 @@ module Jamie
 
       attr_writer :instance
 
-      def initialize(config)
+      def initialize(config = {})
         @config = config
         self.class.defaults.each do |attr, value|
           @config[attr] = value unless @config[attr]
