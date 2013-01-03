@@ -345,7 +345,7 @@ module Jamie
 
     def logdev(filepath_or_logdev)
       if filepath_or_logdev.is_a? String
-        file = File.open(File.expand_path(filepath_or_logdev), "wb")
+        file = File.open(File.expand_path(filepath_or_logdev), "ab")
         file.sync = true
         file
       else
