@@ -679,35 +679,35 @@ module Jamie
 
     def create_action
       banner "Creating instance #{name}"
-      action(:create) { |state| driver.create(self, state) }
+      action(:create) { |state| driver.create(state) }
       info "Creation of instance #{name} complete."
       self
     end
 
     def converge_action
       banner "Converging instance #{name}"
-      action(:converge) { |state| driver.converge(self, state) }
+      action(:converge) { |state| driver.converge(state) }
       info "Convergence of instance #{name} complete."
       self
     end
 
     def setup_action
       banner "Setting up instance #{name}"
-      action(:setup) { |state| driver.setup(self, state) }
+      action(:setup) { |state| driver.setup(state) }
       info "Setup of instance #{name} complete."
       self
     end
 
     def verify_action
       banner "Verifying instance #{name}"
-      action(:verify) { |state| driver.verify(self, state) }
+      action(:verify) { |state| driver.verify(state) }
       info "Verification of instance #{name} complete."
       self
     end
 
     def destroy_action
       banner "Destroying instance #{name}"
-      action(:destroy) { |state| driver.destroy(self, state) }
+      action(:destroy) { |state| driver.destroy(state) }
       destroy_state
       info "Destruction of instance #{name} complete."
       self
@@ -1033,38 +1033,33 @@ module Jamie
 
       # Creates an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def create(instance, state) ; end
+      def create(state) ; end
 
       # Converges a running instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(instance, state) ; end
+      def converge(state) ; end
 
       # Sets up an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(instance, state) ; end
+      def setup(state) ; end
 
       # Verifies a converged instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(instance, state) ; end
+      def verify(state) ; end
 
       # Destroys an instance.
       #
-      # @param instance [Instance] an instance
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(instance, state) ; end
+      def destroy(state) ; end
 
       protected
 
@@ -1100,26 +1095,26 @@ module Jamie
 
     # Base class for a driver that uses SSH to communication with an instance.
     # A subclass must implement the following methods:
-    # * #create(instance, state)
-    # * #destroy(instance, state)
+    # * #create(state)
+    # * #destroy(state)
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SSHBase < Base
 
-      def create(instance, state)
+      def create(state)
         raise NotImplementedError, "#create must be implemented by subclass."
       end
 
-      def converge(instance, state)
+      def converge(state)
         ssh_args = build_ssh_args(state)
 
         install_omnibus(ssh_args) if config['require_chef_omnibus']
         prepare_chef_home(ssh_args)
-        upload_chef_data(ssh_args, instance)
+        upload_chef_data(ssh_args)
         run_chef_solo(ssh_args)
       end
 
-      def setup(instance, state)
+      def setup(state)
         ssh_args = build_ssh_args(state)
 
         if instance.jr.setup_cmd
@@ -1127,7 +1122,7 @@ module Jamie
         end
       end
 
-      def verify(instance, state)
+      def verify(state)
         ssh_args = build_ssh_args(state)
 
         if instance.jr.run_cmd
@@ -1136,7 +1131,7 @@ module Jamie
         end
       end
 
-      def destroy(instance, state)
+      def destroy(state)
         raise NotImplementedError, "#destroy must be implemented by subclass."
       end
 
@@ -1166,7 +1161,7 @@ module Jamie
         ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}/cache")
       end
 
-      def upload_chef_data(ssh_args, instance)
+      def upload_chef_data(ssh_args)
         Jamie::ChefDataUploader.new(
           instance, ssh_args, config['jamie_root'], chef_home
         ).upload
