@@ -359,18 +359,29 @@ module Jamie
 
       alias_method :super_info, :info
 
+      def <<(msg)
+        msg =~ /\n/ ? msg.split("\n").each { |l| format_line(l) } : super
+      end
+
       def banner(msg = nil, &block)
         super_info("-----> #{msg}", &block)
+      end
+
+      private
+
+      def format_line(line)
+        case line
+        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ''))
+        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ''))
+        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ''))
+        else info(line)
+        end
       end
     end
 
     # Internal class which reformats logging methods for display as console
     # output.
     class StdoutLogger < LogdevLogger
-
-      def <<(msg)
-        msg =~ /\n/ ? msg.split("\n").each { |l| info(l) } : super
-      end
 
       def debug(msg = nil, &block)
         super("D      #{msg}", &block)
@@ -1195,11 +1206,11 @@ module Jamie
           channel.exec(cmd) do |ch, success|
 
             channel.on_data do |ch, data|
-              logger << data
+              logger << data #.gsub(%r{^[ >-]{6} }, '')
             end
 
             channel.on_extended_data do |ch, type, data|
-              logger << data
+              logger << data #.gsub(%r{^[ >-]{6} }, '')
             end
 
             channel.on_request("exit-status") do |ch, data|
