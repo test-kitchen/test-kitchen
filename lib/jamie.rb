@@ -1208,11 +1208,11 @@ module Jamie
           channel.exec(cmd) do |ch, success|
 
             channel.on_data do |ch, data|
-              logger << data #.gsub(%r{^[ >-]{6} }, '')
+              logger << data
             end
 
             channel.on_extended_data do |ch, type, data|
-              logger << data #.gsub(%r{^[ >-]{6} }, '')
+              logger << data
             end
 
             channel.on_request("exit-status") do |ch, data|
