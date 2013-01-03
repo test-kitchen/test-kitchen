@@ -37,8 +37,8 @@ module Jamie
       default_config 'username',          'root'
       default_config 'port',              '22'
 
-      def create(instance, state)
-        server = create_server(instance)
+      def create(state)
+        server = create_server
         state['server_id'] = server.id
 
         elapsed = Benchmark.measure do
@@ -51,7 +51,7 @@ module Jamie
         raise ActionFailed, ex.message
       end
 
-      def destroy(instance, state)
+      def destroy(state)
         return if state['server_id'].nil?
 
         server = connection.servers.get(state['server_id'])
@@ -71,7 +71,7 @@ module Jamie
         )
       end
 
-      def create_server(instance)
+      def create_server
         connection.servers.create(
           :availability_zone  => config['availability_zone'],
           :groups             => config['groups'],
