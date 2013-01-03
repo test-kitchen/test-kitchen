@@ -46,7 +46,8 @@ module Jamie
           state['hostname'] = server.public_ip_address
           wait_for_sshd(state['hostname'])      ; print "(ssh ready)\n"
         end
-        puts "       Created #{instance.name} in #{elapsed.real} seconds."
+        info("Created #{instance.name} (#{server.id})" +
+          " in #{elapsed.real} seconds.")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
       end
