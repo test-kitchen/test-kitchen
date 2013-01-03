@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'base64'
+require 'benchmark'
 require 'delegate'
 require 'digest'
 require 'erb'
@@ -563,6 +564,10 @@ module Jamie
       "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
     end
 
+    def to_s
+      "<#{name}>"
+    end
+
     # Returns a combined run_list starting with the platform's run_list
     # followed by the suite's run_list.
     #
@@ -649,12 +654,14 @@ module Jamie
     # @todo rescue Driver::ActionFailed and return some kind of null object
     #   to gracfully stop action chaining
     def test(destroy_mode = :passing)
-      banner "Cleaning up any prior instances of #{name}"
-      destroy
-      banner "Testing instance #{name}"
-      verify
-      destroy if destroy_mode == :passing
-      info "Testing of instance #{name} complete."
+      elapsed = Benchmark.measure do
+        banner "Cleaning up any prior instances of #{self}"
+        destroy
+        banner "Testing #{self}"
+        verify
+        destroy if destroy_mode == :passing
+      end
+      info "Testing of #{self} complete (#{elapsed.real} seconds)."
       self
     ensure
       destroy if destroy_mode == :always
@@ -677,45 +684,48 @@ module Jamie
     end
 
     def create_action
-      banner "Creating instance #{name}"
-      action(:create) { |state| driver.create(state) }
-      info "Creation of instance #{name} complete."
+      banner "Creating #{self}"
+      elapsed = action(:create) { |state| driver.create(state) }
+      info "Creation of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def converge_action
-      banner "Converging instance #{name}"
-      action(:converge) { |state| driver.converge(state) }
-      info "Convergence of instance #{name} complete."
+      banner "Converging #{self}"
+      elapsed = action(:converge) { |state| driver.converge(state) }
+      info "Convergence of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def setup_action
-      banner "Setting up instance #{name}"
-      action(:setup) { |state| driver.setup(state) }
-      info "Setup of instance #{name} complete."
+      banner "Setting up #{self}"
+      elapsed = action(:setup) { |state| driver.setup(state) }
+      info "Setup of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def verify_action
-      banner "Verifying instance #{name}"
-      action(:verify) { |state| driver.verify(state) }
-      info "Verification of instance #{name} complete."
+      banner "Verifying #{self}"
+      elapsed = action(:verify) { |state| driver.verify(state) }
+      info "Verification of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def destroy_action
-      banner "Destroying instance #{name}"
-      action(:destroy) { |state| driver.destroy(state) }
+      banner "Destroying #{self}"
+      elapsed = action(:destroy) { |state| driver.destroy(state) }
       destroy_state
-      info "Destruction of instance #{name} complete."
+      info "Destruction of #{self} complete (#{elapsed.real} seconds)."
       self
     end
 
     def action(what)
       state = load_state
-      yield state if block_given?
+      elapsed = Benchmark.measure do
+        yield state if block_given?
+      end
       state['last_action'] = what.to_s
+      elapsed
     ensure
       dump_state(state)
     end
@@ -981,7 +991,7 @@ module Jamie
       info("#{subject} BEGIN (#{display_cmd(cmd)})")
       sh = Mixlib::ShellOut.new(cmd, :live_stream => logger, :timeout => 60000)
       sh.run_command
-      info("#{subject} END (Ran in #{sh.execution_time} seconds)")
+      info("#{subject} END (#{sh.execution_time} seconds)")
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
