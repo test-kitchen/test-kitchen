@@ -36,21 +36,21 @@ module Jamie
       @config = Jamie::Config.new(ENV['JAMIE_YAML'])
     end
 
-    desc "list (all ['REGEX']|[INSTANCE])", "List all instances"
+    desc "list [(all|<REGEX>)]", "List all instances"
     def list(*args)
-      result = parse_subcommand(args[0], args[1])
+      result = parse_subcommand(args.first)
       say Array(result).map{ |i| i.name }.join("\n")
     end
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
       desc(
-        "#{action} (all ['REGEX']|[INSTANCE])",
+        "#{action} [(all|<REGEX>)]",
         "#{action.capitalize} one or more instances"
       )
       define_method(action) { |*args| exec_action(action) }
     end
 
-    desc "test (all ['REGEX']|[INSTANCE]) [opts]", "Test one or more instances"
+    desc "test [all|<REGEX>)] [opts]", "Test one or more instances"
     long_desc <<-DESC
       Test one or more instances
 
@@ -68,7 +68,7 @@ module Jamie
       if ! %w{passing always never}.include?(options[:destroy])
         raise ArgumentError, "Destroy mode must be passing, always, or never."
       end
-      result = parse_subcommand(args[0], args[1])
+      result = parse_subcommand(args.first)
       Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
     end
 
@@ -120,20 +120,12 @@ module Jamie
 
     def exec_action(action)
       @task = action
-      result = parse_subcommand(args[0], args[1])
+      result = parse_subcommand(args.first)
       Array(result).each { |instance| instance.send(task) }
     end
 
-    def parse_subcommand(name_or_all, regexp)
-      if name_or_all.nil? || (name_or_all == "all" && regexp.nil?)
-        get_all_instances
-      elsif name_or_all == "all" && regexp
-        get_filtered_instances(regexp)
-      elsif name_or_all != "all" && regexp.nil?
-        get_instance(name_or_all)
-      else
-        die task, "Invalid invocation."
-      end
+    def parse_subcommand(arg = nil)
+      arg == "all" ? get_all_instances : get_filtered_instances(arg)
     end
 
     def get_all_instances
