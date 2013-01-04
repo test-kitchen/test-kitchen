@@ -695,19 +695,19 @@ module Jamie
     end
 
     def converge_action
-      perform_action(:create, "Converging")
+      perform_action(:converge, "Converging")
     end
 
     def setup_action
-      perform_action(:create, "Setting up")
+      perform_action(:setup, "Setting up")
     end
 
     def verify_action
-      perform_action(:create, "Verifying")
+      perform_action(:verify, "Verifying")
     end
 
     def destroy_action
-      perform_action(:create, "Destroying") { destroy_state }
+      perform_action(:destroy, "Destroying") { destroy_state }
     end
 
     def perform_action(verb, output_verb)
