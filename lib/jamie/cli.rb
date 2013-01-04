@@ -72,6 +72,18 @@ module Jamie
       Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
     end
 
+    desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
+    def login(regexp)
+      results = get_filtered_instances(regexp)
+      if results.size > 1
+        die task, "Argument `#{regexp}' returned multiple results:\n" +
+          results.map{ |i| "  * #{i.name}" }.join("\n")
+      end
+      instance = results.pop
+
+      instance.login
+    end
+
     desc "version", "Print Jamie's version information"
     def version
       say "Jamie version #{Jamie::VERSION}"

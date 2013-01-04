@@ -660,6 +660,20 @@ module Jamie
       destroy if destroy_mode == :always
     end
 
+    # Logs in to this instance by invoking a system command, provided by the
+    # instance's driver. This could be an SSH command, telnet, or serial
+    # console session.
+    #
+    # **Note** This method calls exec and will not return.
+    #
+    # @see Driver::Base#login_command
+    def login
+      command, *args = driver.login_command(load_state)
+
+      debug("Login command: #{command} #{args.join(' ')}")
+      Kernel.exec(command, *args)
+    end
+
     private
 
     def validate_options(opts)
@@ -1073,6 +1087,16 @@ module Jamie
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) ; end
 
+      # Returns the shell command array that will log into an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @return [Array] an array of command line tokens to be used in a
+      #   fork/exec
+      # @raise [ActionFailed] if the action could not be completed
+      def login_command(state)
+        raise ActionFailed, "Remote login is not supported in this driver."
+      end
+
       protected
 
       attr_reader :config, :instance
@@ -1145,6 +1169,15 @@ module Jamie
 
       def destroy(state)
         raise NotImplementedError, "#destroy must be implemented by subclass."
+      end
+
+      def login_command(state)
+        args  = %W{ -o UserKnownHostsFile=/dev/null }
+        args += %W{ -o StrictHostKeyChecking=no }
+        args += %W{ -i #{config['ssh_key']}} if config['ssh_key']
+        args += %W{ #{config['username']}@#{state['hostname']}}
+
+        ["ssh", *args]
       end
 
       protected
