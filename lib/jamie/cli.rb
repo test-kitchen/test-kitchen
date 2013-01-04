@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'benchmark'
 require 'ostruct'
 require 'thor'
 
@@ -29,6 +30,7 @@ module Jamie
   class CLI < Thor
 
     include Thor::Actions
+    include Logging
 
     # Constructs a new instance.
     def initialize(*args)
@@ -64,12 +66,16 @@ module Jamie
     method_option :destroy, :aliases => "-d", :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
     def test(*args)
-      destroy_mode = options[:destroy]
-      if ! %w{passing always never}.include?(options[:destroy])
-        raise ArgumentError, "Destroy mode must be passing, always, or never."
+      banner "Starting Jamie"
+      elapsed = Benchmark.measure do
+        destroy_mode = options[:destroy]
+        if ! %w{passing always never}.include?(options[:destroy])
+          raise ArgumentError, "Destroy mode must be passing, always, or never."
+        end
+        result = parse_subcommand(args.first)
+        Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
       end
-      result = parse_subcommand(args.first)
-      Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
+      banner "Jamie is finished. (#{elapsed.real} seconds)"
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
@@ -118,10 +124,18 @@ module Jamie
 
     attr_reader :task
 
+    def logger
+      Jamie.logger
+    end
+
     def exec_action(action)
-      @task = action
-      result = parse_subcommand(args.first)
-      Array(result).each { |instance| instance.send(task) }
+      banner "Starting Jamie"
+      elapsed = Benchmark.measure do
+        @task = action
+        result = parse_subcommand(args.first)
+        Array(result).each { |instance| instance.send(task) }
+      end
+      banner "Jamie is finished. (#{elapsed.real} seconds)"
     end
 
     def parse_subcommand(arg = nil)
