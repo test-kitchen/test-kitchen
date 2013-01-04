@@ -1297,36 +1297,25 @@ module Jamie
     end
 
     def upload_cookbooks(scp)
-      ckbks_dir = local_cookbooks
-      scp.upload!(ckbks_dir, "#{chef_home}/cookbooks",
-        :recursive => true
-      ) do |ch, name, sent, total|
-        if sent == total
-          info("Uploaded #{name.sub(%r{^#{ckbks_dir}/}, '')} (#{total} bytes)")
-        end
-      end
+      cookbooks_dir = local_cookbooks
+      upload_path(scp, cookbooks_dir, "cookbooks")
     ensure
-      FileUtils.rmtree(ckbks_dir)
+      FileUtils.rmtree(cookbooks_dir)
     end
 
     def upload_data_bags(scp)
-      dbags_dir = instance.suite.data_bags_path
-      scp.upload!(dbags_dir, "#{chef_home}/data_bags",
-        :recursive => true
-      ) do |ch, name, sent, total|
-        if sent == total
-          info("Uploaded #{name.sub(%r{^#{dbags_dir}/}, '')} (#{total} bytes)")
-        end
-      end
+      upload_path(scp, instance.suite.data_bags_path)
     end
 
     def upload_roles(scp)
-      roles_dir = instance.suite.roles_path
-      scp.upload!(roles_dir, "#{chef_home}/roles",
-        :recursive => true
+      upload_path(scp, instance.suite.roles_path)
+    end
+
+    def upload_path(scp, path, dir = File.basename(path))
+      scp.upload!(path, "#{chef_home}/#{dir}", :recursive => true
       ) do |ch, name, sent, total|
         if sent == total
-          info("Uploaded #{name.sub(%r{^#{roles_dir}/}, '')} (#{total} bytes)")
+          info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
         end
       end
     end
