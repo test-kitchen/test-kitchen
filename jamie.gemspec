@@ -6,6 +6,7 @@ require 'jamie/version'
 Gem::Specification.new do |gem|
   gem.name          = "jamie"
   gem.version       = Jamie::VERSION
+  gem.license       = 'Apache 2.0'
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
   gem.description   = %q{A Chef convergence integration test harness}
