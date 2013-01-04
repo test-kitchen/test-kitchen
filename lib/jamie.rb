@@ -654,7 +654,7 @@ module Jamie
         verify
         destroy if destroy_mode == :passing
       end
-      info "Testing of #{self} complete (#{elapsed.real} seconds)."
+      info "Finished testing #{self} (#{elapsed.real} seconds)."
       self
     ensure
       destroy if destroy_mode == :always
@@ -691,38 +691,30 @@ module Jamie
     end
 
     def create_action
-      banner "Creating #{self}"
-      elapsed = action(:create) { |state| driver.create(state) }
-      info "Creation of #{self} complete (#{elapsed.real} seconds)."
-      self
+      perform_action(:create, "Creating")
     end
 
     def converge_action
-      banner "Converging #{self}"
-      elapsed = action(:converge) { |state| driver.converge(state) }
-      info "Convergence of #{self} complete (#{elapsed.real} seconds)."
-      self
+      perform_action(:create, "Converging")
     end
 
     def setup_action
-      banner "Setting up #{self}"
-      elapsed = action(:setup) { |state| driver.setup(state) }
-      info "Setup of #{self} complete (#{elapsed.real} seconds)."
-      self
+      perform_action(:create, "Setting up")
     end
 
     def verify_action
-      banner "Verifying #{self}"
-      elapsed = action(:verify) { |state| driver.verify(state) }
-      info "Verification of #{self} complete (#{elapsed.real} seconds)."
-      self
+      perform_action(:create, "Verifying")
     end
 
     def destroy_action
-      banner "Destroying #{self}"
-      elapsed = action(:destroy) { |state| driver.destroy(state) }
-      destroy_state
-      info "Destruction of #{self} complete (#{elapsed.real} seconds)."
+      perform_action(:create, "Destroying") { destroy_state }
+    end
+
+    def perform_action(verb, output_verb)
+      banner "#{output_verb} #{self}"
+      elapsed = action(verb) { |state| driver.public_send(verb, state) }
+      info "Finished #{output_verb.downcase} #{self} (#{elapsed.real} seconds)."
+      yield if block_given?
       self
     end
 
