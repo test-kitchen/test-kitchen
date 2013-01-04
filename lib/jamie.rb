@@ -31,8 +31,8 @@ require 'net/ssh'
 require 'pathname'
 require 'socket'
 require 'stringio'
-require 'yaml'
 require 'vendor/hash_recursive_merge'
+require 'yaml'
 
 require 'jamie/version'
 
