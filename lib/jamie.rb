@@ -163,12 +163,11 @@ module Jamie
     private
 
     def new_suite(hash)
-      data_bags_path = calculate_data_bags_path(hash['name'])
-      roles_path = calculate_roles_path(hash['name'])
       path_hash = {
-        'data_bags_path' => data_bags_path,
-        'roles_path'     => roles_path
+        'data_bags_path' => calculate_path("data_bags", hash['name']),
+        'roles_path'     => calculate_path("roles", hash['name']),
       }
+
       Suite.new(hash.rmerge(path_hash))
     end
 
@@ -179,6 +178,7 @@ module Jamie
     def new_driver(hash)
       hash['driver_config'] ||= Hash.new
       hash['driver_config']['jamie_root'] = jamie_root
+
       Driver.for_plugin(hash['driver_plugin'], hash['driver_config'])
     end
 
@@ -245,33 +245,17 @@ module Jamie
       default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
     end
 
-    def calculate_roles_path(suite_name)
-      suite_roles_path = File.join(test_base_path, suite_name, "roles")
-      common_roles_path = File.join(test_base_path, "roles")
-      top_level_roles_path = File.join(Dir.pwd, "roles")
+    def calculate_path(path, suite_name)
+      suite_path      = File.join(test_base_path, suite_name, path)
+      common_path     = File.join(test_base_path, path)
+      top_level_path  = File.join(Dir.pwd, path)
 
-      if File.directory?(suite_roles_path)
-        suite_roles_path
-      elsif File.directory?(common_roles_path)
-        common_roles_path
-      elsif File.directory?(top_level_roles_path)
-        top_level_roles_path
-      else
-        nil
-      end
-    end
-
-    def calculate_data_bags_path(suite_name)
-      suite_data_bags_path = File.join(test_base_path, suite_name, "data_bags")
-      common_data_bags_path = File.join(test_base_path, "data_bags")
-      top_level_data_bags_path = File.join(Dir.pwd, "data_bags")
-
-      if File.directory?(suite_data_bags_path)
-        suite_data_bags_path
-      elsif File.directory?(common_data_bags_path)
-        common_data_bags_path
-      elsif File.directory?(top_level_data_bags_path)
-        top_level_data_bags_path
+      if File.directory?(suite_path)
+        suite_path
+      elsif File.directory?(common_path)
+        common_path
+      elsif File.directory?(top_level_path)
+        top_level_path
       else
         nil
       end
