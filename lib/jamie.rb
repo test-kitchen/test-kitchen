@@ -42,12 +42,17 @@ module Jamie
   class << self
 
     attr_accessor :logger
+    attr_accessor :crashes
 
     # Returns the root path of the Jamie gem source code.
     #
     # @return [Pathname] root path of gem
     def source_root
       @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+    end
+
+    def crashes?
+      ! crashes.empty?
     end
 
     def default_logger
@@ -103,9 +108,9 @@ module Jamie
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      @instances ||= Collection.new(suites.map { |suite|
-        platforms.map { |platform| new_instance(suite, platform) }
-      }.flatten)
+      load_instances if ! instances_loaded?
+
+      instances_array
     end
 
     # @return [String] path to the Jamie YAML file
@@ -164,6 +169,26 @@ module Jamie
 
     private
 
+    def instances_loaded?
+      @instance_count && @instance_count > 0
+    end
+
+    def load_instances
+      results = []
+      suites.product(platforms).each_with_index do |arr, index|
+        results << new_instance(arr[0], arr[1], index)
+      end
+      @instance_count = results.size
+    end
+
+    def instances_array
+      results = []
+      @instance_count.times do |index|
+        results << Celluloid::Actor["instance_#{index}".to_sym]
+      end
+      Collection.new(results)
+    end
+
     def new_suite(hash)
       path_hash = {
         :data_bags_path => calculate_path("data_bags", hash[:name]),
@@ -184,19 +209,24 @@ module Jamie
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
 
-    def new_instance(suite, platform)
-      log_root = File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+    def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
       FileUtils.mkdir_p(log_root)
 
-      Instance.new(
+      supervisor = Instance.supervise_as(
+        "instance_#{index}".to_sym,
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
         :jr       => Jr.new(suite.name),
-        :logger   => new_instance_logger(log_root)
+        :logger   => new_instance_logger
       )
+      supervisor.actors.first
+    end
+
+    def log_root
+      File.expand_path(File.join(jamie_root, ".jamie", "logs"))
     end
 
     def platform_driver_hash(platform_name)
@@ -205,7 +235,7 @@ module Jamie
       h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
     end
 
-    def new_instance_logger(log_root)
+    def new_instance_logger
       level = Util.to_logger_level(self.log_level)
 
       lambda do |name|
@@ -1438,5 +1468,13 @@ module Jamie
   end
 end
 
+# Initialize the base logger and use that for Celluloid's logger
 Jamie.logger = Jamie.default_logger
 Celluloid.logger = Jamie.logger
+
+# Setup a collection of instance crash exceptions for error reporting
+Jamie.crashes = []
+Celluloid.exception_handler do |exception|
+  Jamie.logger.debug("An instance crashed because of #{exception.inspect}")
+  Jamie.crashes << exception
+end
