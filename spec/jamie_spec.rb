@@ -151,7 +151,7 @@ describe Jamie::Config do
         'platforms' => [ { 'name' => 'platform', 'driver_plugin' => 'dummy' } ],
         'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
       })
-      config.instances.first.driver['jamie_root'].must_equal "/tmp"
+      config.instances.first.driver[:jamie_root].must_equal "/tmp"
     end
 
     it "returns an instance with a driver initialized with passed in config" do
@@ -162,7 +162,7 @@ describe Jamie::Config do
         ],
         'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
       })
-      config.instances.first.driver['foo'].must_equal "bar"
+      config.instances.first.driver[:foo].must_equal "bar"
     end
   end
 
@@ -176,7 +176,7 @@ describe Jamie::Config do
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
-      config.instances.first.driver['foo'].must_equal 'bar'
+      config.instances.first.driver[:foo].must_equal 'bar'
     end
 
     it "merges over configuration in jamie.yml" do
@@ -188,7 +188,7 @@ describe Jamie::Config do
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
-      config.instances.first.driver['foo'].must_equal 'bar'
+      config.instances.first.driver[:foo].must_equal 'bar'
     end
   end
 
@@ -222,8 +222,8 @@ describe Jamie::Config do
           <% end %>
         YAML
       end
-      config.instances.first.driver['noodle'].must_equal "soup"
-      config.instances.first.driver['mushroom'].must_equal "soup"
+      config.instances.first.driver[:noodle].must_equal "soup"
+      config.instances.first.driver[:mushroom].must_equal "soup"
     end
   end
 
@@ -307,16 +307,16 @@ end
 
 describe Jamie::Suite do
 
-  let(:opts) do ; { 'name' => 'suitezy', 'run_list' => [ 'doowah' ] } ; end
+  let(:opts) do ; { :name => 'suitezy', :run_list => [ 'doowah' ] } ; end
   let(:suite) { Jamie::Suite.new(opts) }
 
   it "raises an ArgumentError if name is missing" do
-    opts.delete('name')
+    opts.delete(:name)
     proc { Jamie::Suite.new(opts) }.must_raise ArgumentError
   end
 
   it "raises an ArgumentError if run_list is missing" do
-    opts.delete('run_list')
+    opts.delete(:run_list)
     proc { Jamie::Suite.new(opts) }.must_raise ArgumentError
   end
 
@@ -333,11 +333,11 @@ describe Jamie::Suite do
   end
 
   it "returns attributes from constructor" do
-    opts.merge!({ 'attributes' => { 'a' => 'b' }, 'data_bags_path' => 'crazy',
-                  'roles_path' => 'town' })
+    opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
+                  :roles_path => 'town' })
     suite.name.must_equal 'suitezy'
     suite.run_list.must_equal [ 'doowah' ]
-    suite.attributes.must_equal({ 'a' => 'b' })
+    suite.attributes.must_equal({ :a => 'b' })
     suite.data_bags_path.must_equal 'crazy'
     suite.roles_path.must_equal 'town'
   end
@@ -345,11 +345,11 @@ end
 
 describe Jamie::Platform do
 
-  let(:opts) do ; { 'name' => 'plata' } ; end
+  let(:opts) do ; { :name => 'plata' } ; end
   let(:platform) { Jamie::Platform.new(opts) }
 
   it "raises an ArgumentError if name is missing" do
-    opts.delete('name')
+    opts.delete(:name)
     proc { Jamie::Platform.new(opts) }.must_raise ArgumentError
   end
 
@@ -362,23 +362,23 @@ describe Jamie::Platform do
   end
 
   it "returns attributes from constructor" do
-    opts.merge!({ 'run_list' => [ 'a', 'b' ], 'attributes' => { 'c' => 'd' }})
+    opts.merge!({ :run_list => [ 'a', 'b' ], :attributes => { :c => 'd' }})
     platform.name.must_equal 'plata'
     platform.run_list.must_equal [ 'a', 'b' ]
-    platform.attributes.must_equal({ 'c' => 'd' })
+    platform.attributes.must_equal({ :c => 'd' })
   end
 end
 
 describe Jamie::Instance do
 
   let(:suite) do
-    Jamie::Suite.new({ 'name' => 'suite',
-      'run_list' => 'suite_list', 'attributes' => { 's' => 'ss' } })
+    Jamie::Suite.new({ :name => 'suite',
+      :run_list => 'suite_list', :attributes => { :s => 'ss' } })
   end
 
   let(:platform) do
-    Jamie::Platform.new({ 'name' => 'platform',
-      'run_list' => 'platform_list', 'attributes' => { 'p' => 'pp' } })
+    Jamie::Platform.new({ :name => 'platform',
+      :run_list => 'platform_list', :attributes => { :p => 'pp' } })
   end
 
   let(:driver) { Jamie::Driver::Dummy.new({}) }
@@ -386,18 +386,18 @@ describe Jamie::Instance do
   let(:jr) { Jamie::Jr.new(suite.name) }
 
   let(:opts) do
-    { 'suite' => suite, 'platform' => platform, 'driver' => driver, 'jr' => jr }
+    { :suite => suite, :platform => platform, :driver => driver, :jr => jr }
   end
 
   let(:instance) { Jamie::Instance.new(opts) }
 
   it "raises an ArgumentError if suite is missing" do
-    opts.delete('suite')
+    opts.delete(:suite)
     proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
   end
 
   it "raises an ArgumentError if platform is missing" do
-    opts.delete('platform')
+    opts.delete(:platform)
     proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
   end
 
@@ -416,11 +416,11 @@ describe Jamie::Instance do
   describe "#name" do
 
     def combo(suite_name, platform_name)
-      opts['suite'] = Jamie::Suite.new(
-        'name' => suite_name, 'run_list' => []
+      opts[:suite] = Jamie::Suite.new(
+        :name => suite_name, :run_list => []
       )
-      opts['platform'] = Jamie::Platform.new(
-        'name' => platform_name
+      opts[:platform] = Jamie::Platform.new(
+        :name => platform_name
       )
       Jamie::Instance.new(opts)
     end
@@ -445,11 +445,11 @@ describe Jamie::Instance do
   describe "#run_list" do
 
     def combo(suite_list, platform_list)
-      opts['suite'] = Jamie::Suite.new(
-        'name' => 'suite', 'run_list' => suite_list
+      opts[:suite] = Jamie::Suite.new(
+        :name => 'suite', :run_list => suite_list
       )
-      opts['platform'] = Jamie::Platform.new(
-        'name' => 'platform', 'run_list' => platform_list
+      opts[:platform] = Jamie::Platform.new(
+        :name => 'platform', :run_list => platform_list
       )
       Jamie::Instance.new(opts)
     end
@@ -470,37 +470,37 @@ describe Jamie::Instance do
   describe "#attributes" do
 
     def combo(suite_attrs, platform_attrs)
-      opts['suite'] = Jamie::Suite.new(
-        'name' => 'suite', 'run_list' => [], 'attributes' => suite_attrs
+      opts[:suite] = Jamie::Suite.new(
+        :name => 'suite', :run_list => [], :attributes => suite_attrs
       )
-      opts['platform'] = Jamie::Platform.new(
-        'name' => 'platform', 'attributes' => platform_attrs
+      opts[:platform] = Jamie::Platform.new(
+        :name => 'platform', :attributes => platform_attrs
       )
       Jamie::Instance.new(opts)
     end
 
     it "merges suite and platform hashes together" do
       combo(
-        { 'suite' => { 's1' => 'sv1' } },
-        { 'suite' => { 'p1' => 'pv1' }, 'platform' => 'pp' }
+        { :suite => { :s1 => 'sv1' } },
+        { :suite => { :p1 => 'pv1' }, :platform => 'pp' }
       ).attributes.must_equal({
-        'suite' => { 's1' => 'sv1', 'p1' => 'pv1' },
-        'platform' => 'pp'
+        :suite => { :s1 => 'sv1', :p1 => 'pv1' },
+        :platform => 'pp'
       })
     end
 
     it "merges suite values over platform values" do
       combo(
-        { 'common' => { 'c1' => 'xxx' } },
-        { 'common' => { 'c1' => 'cv1', 'c2' => 'cv2' } },
+        { :common => { :c1 => 'xxx' } },
+        { :common => { :c1 => 'cv1', :c2 => 'cv2' } },
       ).attributes.must_equal({
-        'common' => { 'c1' => 'xxx', 'c2' => 'cv2' }
+        :common => { :c1 => 'xxx', :c2 => 'cv2' }
       })
     end
   end
 
   it "#dna combines attributes with the run_list" do
-    instance.dna.must_equal({ 's' => 'ss', 'p' => 'pp',
-      'run_list' => [ 'platform_list', 'suite_list' ] })
+    instance.dna.must_equal({ :s => 'ss', :p => 'pp',
+      :run_list => [ 'platform_list', 'suite_list' ] })
   end
 end

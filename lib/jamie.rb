@@ -88,14 +88,14 @@ module Jamie
     #   convergence integration
     def platforms
       @platforms ||= Collection.new(
-        Array(yaml["platforms"]).map { |hash| new_platform(hash) })
+        Array(yaml[:platforms]).map { |hash| new_platform(hash) })
     end
 
     # @return [Array<Suite>] all defined suites which will be used in
     #   convergence integration
     def suites
       @suites ||= Collection.new(
-        Array(yaml["suites"]).map { |hash| new_suite(hash) })
+        Array(yaml[:suites]).map { |hash| new_suite(hash) })
     end
 
     # @return [Array<Instance>] all instances, resulting from all platform and
@@ -164,8 +164,8 @@ module Jamie
 
     def new_suite(hash)
       path_hash = {
-        'data_bags_path' => calculate_path("data_bags", hash['name']),
-        'roles_path'     => calculate_path("roles", hash['name']),
+        :data_bags_path => calculate_path("data_bags", hash[:name]),
+        :roles_path     => calculate_path("roles", hash[:name]),
       }
 
       Suite.new(hash.rmerge(path_hash))
@@ -176,10 +176,10 @@ module Jamie
     end
 
     def new_driver(hash)
-      hash['driver_config'] ||= Hash.new
-      hash['driver_config']['jamie_root'] = jamie_root
+      hash[:driver_config] ||= Hash.new
+      hash[:driver_config][:jamie_root] = jamie_root
 
-      Driver.for_plugin(hash['driver_plugin'], hash['driver_config'])
+      Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
 
     def new_instance(suite, platform)
@@ -189,18 +189,18 @@ module Jamie
       FileUtils.mkdir_p(log_root)
 
       Instance.new(
-        'suite'     => suite,
-        'platform'  => platform,
-        'driver'    => driver,
-        'jr'        => Jr.new(suite.name),
-        'logger'    => new_instance_logger(log_root)
+        :suite    => suite,
+        :platform => platform,
+        :driver   => driver,
+        :jr       => Jr.new(suite.name),
+        :logger   => new_instance_logger(log_root)
       )
     end
 
     def platform_driver_hash(platform_name)
-      h = yaml['platforms'].find { |p| p['name'] == platform_name } || Hash.new
+      h = yaml[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
-      h.select { |key, value| %w(driver_plugin driver_config).include?(key) }
+      h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
     end
 
     def new_instance_logger(log_root)
@@ -215,7 +215,8 @@ module Jamie
     end
 
     def yaml
-      @yaml ||= YAML.load(yaml_contents).rmerge(local_yaml)
+      @yaml ||= Util.symbolized_hash(
+        YAML.load(yaml_contents).rmerge(local_yaml))
     end
 
     def yaml_contents
@@ -262,11 +263,13 @@ module Jamie
     end
 
     def default_driver_hash
-      { 'driver_plugin' => DEFAULT_DRIVER_PLUGIN, 'driver_config' => {} }
+      { :driver_plugin => DEFAULT_DRIVER_PLUGIN, :driver_config => {} }
     end
 
     def common_driver_hash
-      yaml.select { |key, value| %w(driver_plugin driver_config).include?(key) }
+      yaml.select do |key, value|
+        [ :driver_plugin, :driver_config ].include?(key)
+      end
     end
   end
 
@@ -429,20 +432,21 @@ module Jamie
     #   (**Required**)
     # @option options [Hash] :attributes Hash of Chef node attributes
     # @option options [String] :data_bags_path path to data bags
+    # @option options [String] :roles_path path to roles
     def initialize(options = {})
       validate_options(options)
 
-      @name = options['name']
-      @run_list = options['run_list']
-      @attributes = options['attributes'] || Hash.new
-      @data_bags_path = options['data_bags_path']
-      @roles_path = options['roles_path']
+      @name = options[:name]
+      @run_list = options[:run_list]
+      @attributes = options[:attributes] || Hash.new
+      @data_bags_path = options[:data_bags_path]
+      @roles_path = options[:roles_path]
     end
 
     private
 
     def validate_options(opts)
-      %w(name run_list).each do |k|
+      [ :name, :run_list ].each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
       end
     end
@@ -475,15 +479,15 @@ module Jamie
     def initialize(options = {})
       validate_options(options)
 
-      @name = options['name']
-      @run_list = Array(options['run_list'])
-      @attributes = options['attributes'] || Hash.new
+      @name = options[:name]
+      @run_list = Array(options[:run_list])
+      @attributes = options[:attributes] || Hash.new
     end
 
     private
 
     def validate_options(opts)
-      %w(name).each do |k|
+      [ :name ].each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
       end
     end
@@ -523,14 +527,14 @@ module Jamie
     # @option options [Jr] :jr the jr command string generator
     # @option options [Logger] :logger the instance logger
     def initialize(options = {})
-      options = { 'logger' => Jamie.logger }.merge(options)
+      options = { :logger => Jamie.logger }.merge(options)
       validate_options(options)
-      logger = options['logger']
+      logger = options[:logger]
 
-      @suite = options['suite']
-      @platform = options['platform']
-      @driver = options['driver']
-      @jr = options['jr']
+      @suite = options[:suite]
+      @platform = options[:platform]
+      @driver = options[:driver]
+      @jr = options[:jr]
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
 
       @driver.instance = self
@@ -541,7 +545,7 @@ module Jamie
       "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
     end
 
-    def to_s
+    def to_str
       "<#{name}>"
     end
 
@@ -562,7 +566,7 @@ module Jamie
     end
 
     def dna
-      attributes.rmerge({ 'run_list' => run_list })
+      attributes.rmerge({ :run_list => run_list })
     end
 
     # Creates this instance.
@@ -632,13 +636,13 @@ module Jamie
     #   to gracfully stop action chaining
     def test(destroy_mode = :passing)
       elapsed = Benchmark.measure do
-        banner "Cleaning up any prior instances of #{self}"
+        banner "Cleaning up any prior instances of #{to_str}"
         destroy
-        banner "Testing #{self}"
+        banner "Testing #{to_str}"
         verify
         destroy if destroy_mode == :passing
       end
-      info "Finished testing #{self} (#{elapsed.real} seconds)."
+      info "Finished testing #{to_str} (#{elapsed.real} seconds)."
       self
     ensure
       destroy if destroy_mode == :always
@@ -661,7 +665,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      %w(suite platform driver jr logger).each do |k|
+      [ :suite, :platform, :driver, :jr, :logger ].each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
       end
     end
@@ -695,9 +699,10 @@ module Jamie
     end
 
     def perform_action(verb, output_verb)
-      banner "#{output_verb} #{self}"
+      banner "#{output_verb} #{to_str}"
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
-      info "Finished #{output_verb.downcase} #{self} (#{elapsed.real} seconds)."
+      info("Finished #{output_verb.downcase} #{to_str}" +
+           " (#{elapsed.real} seconds).")
       yield if block_given?
       self
     end
@@ -707,14 +712,18 @@ module Jamie
       elapsed = Benchmark.measure do
         yield state if block_given?
       end
-      state['last_action'] = what.to_s
+      state[:last_action] = what.to_s
       elapsed
     ensure
       dump_state(state)
     end
 
     def load_state
-      File.exists?(statefile) ?  YAML.load_file(statefile) : Hash.new
+      if File.exists?(statefile)
+        Util.symbolized_hash(YAML.load_file(statefile))
+      else
+        Hash.new
+      end
     end
 
     def dump_state(state)
@@ -730,12 +739,12 @@ module Jamie
 
     def statefile
       File.expand_path(File.join(
-        driver['jamie_root'], ".jamie", "#{name}.yml"
+        driver[:jamie_root], ".jamie", "#{name}.yml"
       ))
     end
 
     def last_action
-      load_state['last_action']
+      load_state[:last_action]
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage
@@ -950,6 +959,16 @@ module Jamie
       else :fatal
       end
     end
+
+    def self.symbolized_hash(obj)
+      if obj.is_a?(Hash)
+        obj.inject({}) { |h, (k,v)| h[k.to_sym] = symbolized_hash(v) ; h }
+      elsif obj.is_a?(Array)
+        obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
+      else
+        obj
+      end
+    end
   end
 
   # Mixin that wraps a command shell out invocation, providing a #run_command
@@ -1090,7 +1109,7 @@ module Jamie
       end
 
       def run_command(cmd, use_sudo = nil, log_subject = nil)
-        use_sudo = config['use_sudo'] if use_sudo.nil?
+        use_sudo = config[:use_sudo] if use_sudo.nil?
         log_subject = Util.to_snake_case(self.class.to_s)
 
         super(cmd, use_sudo, log_subject)
@@ -1120,7 +1139,7 @@ module Jamie
       def converge(state)
         ssh_args = build_ssh_args(state)
 
-        install_omnibus(ssh_args) if config['require_chef_omnibus']
+        install_omnibus(ssh_args) if config[:require_chef_omnibus]
         prepare_chef_home(ssh_args)
         upload_chef_data(ssh_args)
         run_chef_solo(ssh_args)
@@ -1150,8 +1169,8 @@ module Jamie
       def login_command(state)
         args  = %W{ -o UserKnownHostsFile=/dev/null }
         args += %W{ -o StrictHostKeyChecking=no }
-        args += %W{ -i #{config['ssh_key']}} if config['ssh_key']
-        args += %W{ #{config['username']}@#{state['hostname']}}
+        args += %W{ -i #{config[:ssh_key]}} if config[:ssh_key]
+        args += %W{ #{config[:username]}@#{state[:hostname]}}
 
         ["ssh", *args]
       end
@@ -1162,10 +1181,10 @@ module Jamie
         opts = Hash.new
         opts[:user_known_hosts_file] = "/dev/null"
         opts[:paranoid] = false
-        opts[:password] = config['password'] if config['password']
-        opts[:keys] = Array(config['ssh_key']) if config['ssh_key']
+        opts[:password] = config[:password] if config[:password]
+        opts[:keys] = Array(config[:ssh_key]) if config[:ssh_key]
 
-        [ state['hostname'], config['username'], opts ]
+        [ state[:hostname], config[:username], opts ]
       end
 
       def chef_home
@@ -1186,7 +1205,7 @@ module Jamie
 
       def upload_chef_data(ssh_args)
         Jamie::ChefDataUploader.new(
-          instance, ssh_args, config['jamie_root'], chef_home
+          instance, ssh_args, config[:jamie_root], chef_home
         ).upload
       end
 
@@ -1238,7 +1257,7 @@ module Jamie
       end
 
       def test_ssh(hostname)
-        socket = TCPSocket.new(hostname, config['port'])
+        socket = TCPSocket.new(hostname, config[:port])
         IO.select([socket], nil, nil, 5)
       rescue SocketError, Errno::ECONNREFUSED,
           Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
