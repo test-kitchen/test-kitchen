@@ -646,7 +646,7 @@ module Jamie
         destroy if destroy_mode == :passing
       end
       info "Finished testing #{to_str} (#{elapsed.real} seconds)."
-      self
+      Actor.current
     ensure
       destroy if destroy_mode == :always
     end
@@ -707,7 +707,7 @@ module Jamie
       info("Finished #{output_verb.downcase} #{to_str}" +
            " (#{elapsed.real} seconds).")
       yield if block_given?
-      self
+      Actor.current
     end
 
     def action(what)
