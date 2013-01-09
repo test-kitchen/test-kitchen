@@ -1354,7 +1354,7 @@ module Jamie
     def run_berks(tmpdir)
       begin
         run_command "if ! command -v berks >/dev/null; then exit 1; fi"
-      rescue Mixlib::ShellOut::ShellCommandFailed
+      rescue Jamie::ShellOut::ShellCommandFailed
         abort ">>>>>> Berkshelf must be installed, add it to your Gemfile."
       end
       run_command "berks install --path #{tmpdir}"
@@ -1363,7 +1363,7 @@ module Jamie
     def run_librarian(tmpdir)
       begin
         run_command "if ! command -v librarian-chef >/dev/null; then exit 1; fi"
-      rescue Mixlib::ShellOut::ShellCommandFailed
+      rescue Jamie::ShellOut::ShellCommandFailed
         abort ">>>>>> Librarian must be installed, add it to your Gemfile."
       end
       run_command "librarian-chef install --path #{tmpdir}"
