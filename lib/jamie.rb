@@ -108,9 +108,7 @@ module Jamie
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      load_instances if ! instances_loaded?
-
-      instances_array
+      instances_array(load_instances)
     end
 
     # @return [String] path to the Jamie YAML file
@@ -169,11 +167,9 @@ module Jamie
 
     private
 
-    def instances_loaded?
-      @instance_count && @instance_count > 0
-    end
-
     def load_instances
+      return @instance_count if @instance_count && @instance_count > 0
+
       results = []
       suites.product(platforms).each_with_index do |arr, index|
         results << new_instance(arr[0], arr[1], index)
@@ -181,9 +177,9 @@ module Jamie
       @instance_count = results.size
     end
 
-    def instances_array
+    def instances_array(instance_count)
       results = []
-      @instance_count.times do |index|
+      instance_count.times do |index|
         results << Celluloid::Actor["instance_#{index}".to_sym]
       end
       Collection.new(results)
