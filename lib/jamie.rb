@@ -18,6 +18,7 @@
 
 require 'base64'
 require 'benchmark'
+require 'celluloid'
 require 'delegate'
 require 'digest'
 require 'erb'
@@ -51,6 +52,7 @@ module Jamie
 
     def default_logger
       env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+      env_log = Util.to_logger_level(env_log) unless env_log.nil?
 
       Logger.new(:console => STDOUT, :level => env_log)
     end
@@ -500,6 +502,7 @@ module Jamie
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
+    include Celluloid
     include Logging
 
     # @return [Suite] the test suite configuration
@@ -1436,3 +1439,4 @@ module Jamie
 end
 
 Jamie.logger = Jamie.default_logger
+Celluloid.logger = Jamie.logger
