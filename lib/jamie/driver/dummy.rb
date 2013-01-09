@@ -27,10 +27,11 @@ module Jamie
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Jamie::Driver::Base
 
-      default_config 'sleep', 0
+      default_config :sleep, 0
+      default_config :random_failure, false
 
       def create(state)
-        state['my_id'] = "#{instance.name}-#{Time.now.to_i}"
+        state[:my_id] = "#{instance.name}-#{Time.now.to_i}"
         report(:create, state)
       end
 
@@ -48,7 +49,7 @@ module Jamie
 
       def destroy(state)
         report(:destroy, state)
-        state.delete('my_id')
+        state.delete(:my_id)
       end
 
       private
@@ -56,8 +57,12 @@ module Jamie
       def report(action, state)
         info("[Dummy] Action ##{action} called on " +
           "instance=#{instance} with state=#{state}")
-        sleep(config['sleep'].to_f) if config['sleep'].to_f > 0.0
-        debug("[Dummy] Action ##{action} completed (#{config['sleep']}s).")
+        sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
+        if config[:random_failure] && [true, false].sample
+          debug("[Dummy] Random failure for action ##{action}.")
+          raise ActionFailed, "Action ##{action} failed for #{instance.to_str}."
+        end
+        debug("[Dummy] Action ##{action} completed (#{config[:sleep]}s).")
       end
     end
   end
