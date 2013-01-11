@@ -35,6 +35,7 @@ module Jamie
     # Constructs a new instance.
     def initialize(*args)
       super
+      $stdout.sync = true
       @config = Jamie::Config.new(ENV['JAMIE_YAML'])
     end
 
