@@ -30,6 +30,7 @@ require 'net/https'
 require 'net/scp'
 require 'net/ssh'
 require 'pathname'
+require 'thread'
 require 'socket'
 require 'stringio'
 require 'vendor/hash_recursive_merge'
@@ -43,6 +44,7 @@ module Jamie
 
     attr_accessor :logger
     attr_accessor :crashes
+    attr_accessor :mutex
 
     # Returns the root path of the Jamie gem source code.
     #
@@ -559,6 +561,10 @@ module Jamie
     include Celluloid
     include Logging
 
+    class << self
+      attr_accessor :mutexes
+    end
+
     # @return [Suite] the test suite configuration
     attr_reader :suite
 
@@ -595,6 +601,7 @@ module Jamie
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
 
       @driver.instance = self
+      setup_driver_mutex
     end
 
     # @return [String] name of this instance
@@ -727,6 +734,15 @@ module Jamie
       end
     end
 
+    def setup_driver_mutex
+      if driver.class.serial_actions
+        Jamie.mutex.synchronize do
+          self.class.mutexes ||= Hash.new
+          self.class.mutexes[driver.class] = Mutex.new
+        end
+      end
+    end
+
     def transition_to(desired)
       result = nil
       FSM.actions(last_action, desired).each do |transition|
@@ -764,15 +780,27 @@ module Jamie
       Actor.current
     end
 
-    def action(what)
+    def action(what, &block)
       state = load_state
       elapsed = Benchmark.measure do
-        yield state if block_given?
+        synchronize_or_call(what, state, &block)
       end
       state[:last_action] = what.to_s
       elapsed
     ensure
       dump_state(state)
+    end
+
+    def synchronize_or_call(what, state, &block)
+      if Array(driver.class.serial_actions).include?(what)
+        debug("#{to_str} is synchronizing on #{driver.class}##{what}")
+        self.class.mutexes[driver.class].synchronize do
+          debug("#{to_str} is messaging #{driver.class}##{what}")
+          block.call(state)
+        end
+      else
+        block.call(state)
+      end
     end
 
     def load_state
@@ -1094,6 +1122,10 @@ module Jamie
 
       attr_writer :instance
 
+      class << self
+        attr_reader :serial_actions
+      end
+
       def initialize(config = {})
         @config = config
         self.class.defaults.each do |attr, value|
@@ -1153,6 +1185,9 @@ module Jamie
 
       attr_reader :config, :instance
 
+      ACTION_METHODS = %w{create converge setup verify destroy}.
+        map(&:to_sym).freeze
+
       def logger
         instance.logger
       end
@@ -1178,6 +1213,17 @@ module Jamie
 
       def self.default_config(attr, value)
         defaults[attr] = value
+      end
+
+      def self.no_parallel_for(*methods)
+        Array(methods).each do |meth|
+          if ! ACTION_METHODS.include?(meth)
+            raise ArgumentError, "##{meth} is not a whitelisted method."
+          end
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
       end
     end
 
@@ -1502,3 +1548,5 @@ Celluloid.exception_handler do |exception|
   Jamie.logger.debug("An instance crashed because of #{exception.inspect}")
   Jamie.crashes << exception
 end
+
+Jamie.mutex = Mutex.new
