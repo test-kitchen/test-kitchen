@@ -216,7 +216,7 @@ module Jamie
         :platform => platform,
         :driver   => driver,
         :jr       => Jr.new(suite.name),
-        :logger   => new_instance_logger
+        :logger   => new_instance_logger(index)
       )
       supervisor.actors.first
     end
@@ -231,13 +231,14 @@ module Jamie
       h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
     end
 
-    def new_instance_logger
+    def new_instance_logger(index)
       level = Util.to_logger_level(self.log_level)
+      color = Color::COLORS[index % Color::COLORS.size].to_sym
 
       lambda do |name|
         logfile = File.join(log_root, "#{name}.log")
 
-        Logger.new(:stdout => STDOUT, :logdev => logfile,
+        Logger.new(:stdout => STDOUT, :color => color, :logdev => logfile,
           :level => level, :progname => name)
       end
     end
@@ -304,6 +305,41 @@ module Jamie
   # Default log level verbosity
   DEFAULT_LOG_LEVEL = :info
 
+  module Color
+    ANSI = {
+      :reset          => 0,
+      :black          => 30,
+      :red            => 31,
+      :green          => 32,
+      :yellow         => 33,
+      :blue           => 34,
+      :magenta        => 35,
+      :cyan           => 36,
+      :white          => 37,
+      :bright_black   => 30,
+      :bright_red     => 31,
+      :bright_green   => 32,
+      :bright_yellow  => 33,
+      :bright_blue    => 34,
+      :bright_magenta => 35,
+      :bright_cyan    => 36,
+      :bright_white   => 37,
+    }
+
+    COLORS = %w( cyan yellow green magenta red blue bright_cyan
+      bright_yellow bright_green bright_magenta bright_red, bright_blue )
+
+    def self.escape(name)
+      return "" if name.nil?
+      return "" unless ansi = ANSI[name]
+      "\e[#{ansi}m"
+    end
+
+    def self.colorize(str, name)
+      "#{escape(name)}#{str}#{escape(:reset)}"
+    end
+  end
+
   # Logging implementation for Jamie. By default the console/stdout output will
   # be displayed differently than the file log output. Therefor, this class
   # wraps multiple loggers that conform to the stdlib `Logger` class behavior.
@@ -314,10 +350,12 @@ module Jamie
     include ::Logger::Severity
 
     def initialize(options = {})
+      color = options[:color] || :bright_white
+
       @loggers = []
       @loggers << logdev_logger(options[:logdev]) if options[:logdev]
-      @loggers << stdout_logger(options[:stdout]) if options[:stdout]
-      @loggers << stdout_logger(STDOUT) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
+      @loggers << stdout_logger(STDOUT, color) if @loggers.empty?
 
       self.progname = options[:progname] || "Jamie"
       self.level = options[:level] || default_log_level
@@ -346,10 +384,10 @@ module Jamie
       Util.to_logger_level(Jamie::DEFAULT_LOG_LEVEL)
     end
 
-    def stdout_logger(stdout)
+    def stdout_logger(stdout, color)
       logger = StdoutLogger.new(stdout)
       logger.formatter = proc do |severity, datetime, progname, msg|
-        "#{msg}\n"
+        Color.colorize("#{msg}\n", color)
       end
       logger
     end
