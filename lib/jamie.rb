@@ -59,7 +59,7 @@ module Jamie
       env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
       env_log = Util.to_logger_level(env_log) unless env_log.nil?
 
-      Logger.new(:console => STDOUT, :level => env_log)
+      Logger.new(:stdout => STDOUT, :level => env_log)
     end
   end
 
