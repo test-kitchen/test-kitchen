@@ -307,27 +307,17 @@ module Jamie
 
   module Color
     ANSI = {
-      :reset          => 0,
-      :black          => 30,
-      :red            => 31,
-      :green          => 32,
-      :yellow         => 33,
-      :blue           => 34,
-      :magenta        => 35,
-      :cyan           => 36,
-      :white          => 37,
-      :bright_black   => 30,
-      :bright_red     => 31,
-      :bright_green   => 32,
-      :bright_yellow  => 33,
-      :bright_blue    => 34,
-      :bright_magenta => 35,
-      :bright_cyan    => 36,
-      :bright_white   => 37,
-    }
+      :reset => 0, :black => 30, :red => 31, :green => 32, :yellow => 33,
+      :blue => 34, :magenta => 35, :cyan => 36, :white => 37,
+      :bright_black => 30, :bright_red => 31, :bright_green => 32,
+      :bright_yellow => 33, :bright_blue => 34, :bright_magenta => 35,
+      :bright_cyan => 36, :bright_white => 37
+    }.freeze
 
-    COLORS = %w( cyan yellow green magenta red blue bright_cyan
-      bright_yellow bright_green bright_magenta bright_red, bright_blue )
+    COLORS = %w(
+      cyan yellow green magenta red blue bright_cyan bright_yellow
+      bright_green bright_magenta bright_red, bright_blue
+    ).freeze
 
     def self.escape(name)
       return "" if name.nil?
