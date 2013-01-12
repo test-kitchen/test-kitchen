@@ -1,25 +1,38 @@
 require 'bundler/gem_tasks'
-require 'cane/rake_task'
 require 'rake/testtask'
-require 'tailor/rake_task'
 
-desc "Run cane to check quality metrics"
-Cane::RakeTask.new do |cane|
-  cane.abc_exclude = %w(
-    Jamie::RakeTasks#define
-    Jamie::ThorTasks#define
-    Jamie::CLI#pry_prompts
-    Jamie::Instance#synchronize_or_call
-  )
-  cane.style_exclude = %w(
-    lib/vendor/hash_recursive_merge.rb
-  )
-  cane.doc_exclude = %w(
-    lib/vendor/hash_recursive_merge.rb
-  )
+Rake::TestTask.new do |t|
+  t.libs.push "lib"
+  t.test_files = FileList['spec/**/*_spec.rb']
+  t.verbose = true
 end
 
-Tailor::RakeTask.new
+task :default => [ :test ]
+
+unless RUBY_ENGINE == 'jruby'
+  require 'cane/rake_task'
+  require 'tailor/rake_task'
+
+  desc "Run cane to check quality metrics"
+  Cane::RakeTask.new do |cane|
+    cane.abc_exclude = %w(
+      Jamie::RakeTasks#define
+      Jamie::ThorTasks#define
+      Jamie::CLI#pry_prompts
+      Jamie::Instance#synchronize_or_call
+    )
+    cane.style_exclude = %w(
+      lib/vendor/hash_recursive_merge.rb
+    )
+    cane.doc_exclude = %w(
+      lib/vendor/hash_recursive_merge.rb
+    )
+  end
+
+  Tailor::RakeTask.new
+
+  Rake::Task[:default].enhance [ :cane, :tailor ]
+end
 
 desc "Display LOC stats"
 task :stats do
@@ -29,10 +42,4 @@ task :stats do
   sh "countloc -r spec"
 end
 
-Rake::TestTask.new do |t|
-  t.libs.push "lib"
-  t.test_files = FileList['spec/**/*_spec.rb']
-  t.verbose = true
-end
-
-task :default => [ :test, :cane, :tailor, :stats ]
+Rake::Task[:default].enhance [ :stats ]

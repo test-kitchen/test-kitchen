@@ -1,6 +1,14 @@
 language: ruby
+
 rvm:
   - 1.9.3
+  - jruby-19mode
+  - ruby-head
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+
 notifications:
   irc:
     channels:
