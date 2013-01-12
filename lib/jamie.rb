@@ -18,6 +18,7 @@
 
 require 'base64'
 require 'benchmark'
+require 'celluloid'
 require 'delegate'
 require 'digest'
 require 'erb'
@@ -29,6 +30,7 @@ require 'net/https'
 require 'net/scp'
 require 'net/ssh'
 require 'pathname'
+require 'thread'
 require 'socket'
 require 'stringio'
 require 'vendor/hash_recursive_merge'
@@ -41,6 +43,8 @@ module Jamie
   class << self
 
     attr_accessor :logger
+    attr_accessor :crashes
+    attr_accessor :mutex
 
     # Returns the root path of the Jamie gem source code.
     #
@@ -49,10 +53,15 @@ module Jamie
       @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
     end
 
+    def crashes?
+      ! crashes.empty?
+    end
+
     def default_logger
       env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+      env_log = Util.to_logger_level(env_log) unless env_log.nil?
 
-      Logger.new(:console => STDOUT, :level => env_log)
+      Logger.new(:stdout => STDOUT, :level => env_log)
     end
   end
 
@@ -101,9 +110,7 @@ module Jamie
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      @instances ||= Collection.new(suites.map { |suite|
-        platforms.map { |platform| new_instance(suite, platform) }
-      }.flatten)
+      instances_array(load_instances)
     end
 
     # @return [String] path to the Jamie YAML file
@@ -162,6 +169,24 @@ module Jamie
 
     private
 
+    def load_instances
+      return @instance_count if @instance_count && @instance_count > 0
+
+      results = []
+      suites.product(platforms).each_with_index do |arr, index|
+        results << new_instance(arr[0], arr[1], index)
+      end
+      @instance_count = results.size
+    end
+
+    def instances_array(instance_count)
+      results = []
+      instance_count.times do |index|
+        results << Celluloid::Actor["instance_#{index}".to_sym]
+      end
+      Collection.new(results)
+    end
+
     def new_suite(hash)
       path_hash = {
         :data_bags_path => calculate_path("data_bags", hash[:name]),
@@ -182,19 +207,24 @@ module Jamie
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
 
-    def new_instance(suite, platform)
-      log_root = File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+    def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
       FileUtils.mkdir_p(log_root)
 
-      Instance.new(
+      supervisor = Instance.supervise_as(
+        "instance_#{index}".to_sym,
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
         :jr       => Jr.new(suite.name),
-        :logger   => new_instance_logger(log_root)
+        :logger   => new_instance_logger(index)
       )
+      supervisor.actors.first
+    end
+
+    def log_root
+      File.expand_path(File.join(jamie_root, ".jamie", "logs"))
     end
 
     def platform_driver_hash(platform_name)
@@ -203,13 +233,14 @@ module Jamie
       h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
     end
 
-    def new_instance_logger(log_root)
+    def new_instance_logger(index)
       level = Util.to_logger_level(self.log_level)
+      color = Color::COLORS[index % Color::COLORS.size].to_sym
 
       lambda do |name|
         logfile = File.join(log_root, "#{name}.log")
 
-        Logger.new(:stdout => STDOUT, :logdev => logfile,
+        Logger.new(:stdout => STDOUT, :color => color, :logdev => logfile,
           :level => level, :progname => name)
       end
     end
@@ -276,6 +307,31 @@ module Jamie
   # Default log level verbosity
   DEFAULT_LOG_LEVEL = :info
 
+  module Color
+    ANSI = {
+      :reset => 0, :black => 30, :red => 31, :green => 32, :yellow => 33,
+      :blue => 34, :magenta => 35, :cyan => 36, :white => 37,
+      :bright_black => 30, :bright_red => 31, :bright_green => 32,
+      :bright_yellow => 33, :bright_blue => 34, :bright_magenta => 35,
+      :bright_cyan => 36, :bright_white => 37
+    }.freeze
+
+    COLORS = %w(
+      cyan yellow green magenta red blue bright_cyan bright_yellow
+      bright_green bright_magenta bright_red, bright_blue
+    ).freeze
+
+    def self.escape(name)
+      return "" if name.nil?
+      return "" unless ansi = ANSI[name]
+      "\e[#{ansi}m"
+    end
+
+    def self.colorize(str, name)
+      "#{escape(name)}#{str}#{escape(:reset)}"
+    end
+  end
+
   # Logging implementation for Jamie. By default the console/stdout output will
   # be displayed differently than the file log output. Therefor, this class
   # wraps multiple loggers that conform to the stdlib `Logger` class behavior.
@@ -286,10 +342,12 @@ module Jamie
     include ::Logger::Severity
 
     def initialize(options = {})
+      color = options[:color] || :bright_white
+
       @loggers = []
       @loggers << logdev_logger(options[:logdev]) if options[:logdev]
-      @loggers << stdout_logger(options[:stdout]) if options[:stdout]
-      @loggers << stdout_logger(STDOUT) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
+      @loggers << stdout_logger(STDOUT, color) if @loggers.empty?
 
       self.progname = options[:progname] || "Jamie"
       self.level = options[:level] || default_log_level
@@ -318,10 +376,10 @@ module Jamie
       Util.to_logger_level(Jamie::DEFAULT_LOG_LEVEL)
     end
 
-    def stdout_logger(stdout)
+    def stdout_logger(stdout, color)
       logger = StdoutLogger.new(stdout)
       logger.formatter = proc do |severity, datetime, progname, msg|
-        "#{msg}\n"
+        Color.colorize("#{msg}\n", color)
       end
       logger
     end
@@ -500,7 +558,12 @@ module Jamie
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
+    include Celluloid
     include Logging
+
+    class << self
+      attr_accessor :mutexes
+    end
 
     # @return [Suite] the test suite configuration
     attr_reader :suite
@@ -538,6 +601,7 @@ module Jamie
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
 
       @driver.instance = self
+      setup_driver_mutex
     end
 
     # @return [String] name of this instance
@@ -643,7 +707,7 @@ module Jamie
         destroy if destroy_mode == :passing
       end
       info "Finished testing #{to_str} (#{elapsed.real} seconds)."
-      self
+      Actor.current
     ensure
       destroy if destroy_mode == :always
     end
@@ -667,6 +731,15 @@ module Jamie
     def validate_options(opts)
       [ :suite, :platform, :driver, :jr, :logger ].each do |k|
         raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+      end
+    end
+
+    def setup_driver_mutex
+      if driver.class.serial_actions
+        Jamie.mutex.synchronize do
+          self.class.mutexes ||= Hash.new
+          self.class.mutexes[driver.class] = Mutex.new
+        end
       end
     end
 
@@ -704,18 +777,30 @@ module Jamie
       info("Finished #{output_verb.downcase} #{to_str}" +
            " (#{elapsed.real} seconds).")
       yield if block_given?
-      self
+      Actor.current
     end
 
-    def action(what)
+    def action(what, &block)
       state = load_state
       elapsed = Benchmark.measure do
-        yield state if block_given?
+        synchronize_or_call(what, state, &block)
       end
       state[:last_action] = what.to_s
       elapsed
     ensure
       dump_state(state)
+    end
+
+    def synchronize_or_call(what, state, &block)
+      if Array(driver.class.serial_actions).include?(what)
+        debug("#{to_str} is synchronizing on #{driver.class}##{what}")
+        self.class.mutexes[driver.class].synchronize do
+          debug("#{to_str} is messaging #{driver.class}##{what}")
+          block.call(state)
+        end
+      else
+        block.call(state)
+      end
     end
 
     def load_state
@@ -1037,6 +1122,10 @@ module Jamie
 
       attr_writer :instance
 
+      class << self
+        attr_reader :serial_actions
+      end
+
       def initialize(config = {})
         @config = config
         self.class.defaults.each do |attr, value|
@@ -1096,6 +1185,9 @@ module Jamie
 
       attr_reader :config, :instance
 
+      ACTION_METHODS = %w{create converge setup verify destroy}.
+        map(&:to_sym).freeze
+
       def logger
         instance.logger
       end
@@ -1121,6 +1213,17 @@ module Jamie
 
       def self.default_config(attr, value)
         defaults[attr] = value
+      end
+
+      def self.no_parallel_for(*methods)
+        Array(methods).each do |meth|
+          if ! ACTION_METHODS.include?(meth)
+            raise ArgumentError, "##{meth} is not a whitelisted method."
+          end
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
       end
     end
 
@@ -1435,4 +1538,15 @@ module Jamie
   end
 end
 
+# Initialize the base logger and use that for Celluloid's logger
 Jamie.logger = Jamie.default_logger
+Celluloid.logger = Jamie.logger
+
+# Setup a collection of instance crash exceptions for error reporting
+Jamie.crashes = []
+Celluloid.exception_handler do |exception|
+  Jamie.logger.debug("An instance crashed because of #{exception.inspect}")
+  Jamie.crashes << exception
+end
+
+Jamie.mutex = Mutex.new

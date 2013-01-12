@@ -35,6 +35,7 @@ module Jamie
     # Constructs a new instance.
     def initialize(*args)
       super
+      $stdout.sync = true
       @config = Jamie::Config.new(ENV['JAMIE_YAML'])
     end
 
@@ -46,9 +47,11 @@ module Jamie
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
       desc(
-        "#{action} [(all|<REGEX>)]",
+        "#{action} [(all|<REGEX>)] [opts]",
         "#{action.capitalize} one or more instances"
       )
+      method_option :parallel, :aliases => "-p", :type => :boolean,
+        :desc => "Perform action against all matching instances in parallel"
       define_method(action) { |*args| exec_action(action) }
     end
 
@@ -63,17 +66,26 @@ module Jamie
       * always: instances will always be destroyed afterwards.\n
       * never: instances will never be destroyed afterwards.
     DESC
+    method_option :parallel, :aliases => "-p", :type => :boolean,
+      :desc => "Perform action against all matching instances in parallel"
     method_option :destroy, :aliases => "-d", :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
     def test(*args)
+      if ! %w{passing always never}.include?(options[:destroy])
+        raise ArgumentError, "Destroy mode must be passing, always, or never."
+      end
+
       banner "Starting Jamie"
       elapsed = Benchmark.measure do
-        destroy_mode = options[:destroy]
-        if ! %w{passing always never}.include?(options[:destroy])
-          raise ArgumentError, "Destroy mode must be passing, always, or never."
+        destroy_mode = options[:destroy].to_sym
+        @task = :test
+        results = parse_subcommand(args.first)
+
+        if options[:parallel]
+          run_parallel(results, destroy_mode)
+        else
+          run_serial(results, destroy_mode)
         end
-        result = parse_subcommand(args.first)
-        Array(result).each { |instance| instance.test(destroy_mode.to_sym) }
       end
       banner "Jamie is finished. (#{elapsed.real} seconds)"
     end
@@ -132,10 +144,19 @@ module Jamie
       banner "Starting Jamie"
       elapsed = Benchmark.measure do
         @task = action
-        result = parse_subcommand(args.first)
-        Array(result).each { |instance| instance.send(task) }
+        results = parse_subcommand(args.first)
+        options[:parallel] ? run_parallel(results) : run_serial(results)
       end
       banner "Jamie is finished. (#{elapsed.real} seconds)"
+    end
+
+    def run_serial(instances, *args)
+      Array(instances).map { |i| i.public_send(task, *args) }
+    end
+
+    def run_parallel(instances, *args)
+      futures = Array(instances).map { |i| i.future.public_send(task) }
+      futures.map { |i| i.value }
     end
 
     def parse_subcommand(arg = nil)

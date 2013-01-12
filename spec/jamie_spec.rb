@@ -28,8 +28,10 @@ end
 SimpleCov.start 'gem'
 
 require 'fakefs/spec_helpers'
+require 'logger'
 require 'minitest/autorun'
 require 'ostruct'
+require 'stringio'
 
 require 'jamie'
 require 'jamie/driver/dummy'
@@ -390,6 +392,10 @@ describe Jamie::Instance do
   end
 
   let(:instance) { Jamie::Instance.new(opts) }
+
+  before do
+    Celluloid.logger = Logger.new(StringIO.new)
+  end
 
   it "raises an ArgumentError if suite is missing" do
     opts.delete(:suite)

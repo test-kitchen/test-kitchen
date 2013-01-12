@@ -9,6 +9,7 @@ Cane::RakeTask.new do |cane|
     Jamie::RakeTasks#define
     Jamie::ThorTasks#define
     Jamie::CLI#pry_prompts
+    Jamie::Instance#synchronize_or_call
   )
   cane.style_exclude = %w(
     lib/vendor/hash_recursive_merge.rb
