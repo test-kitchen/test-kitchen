@@ -314,12 +314,12 @@ describe Jamie::Suite do
 
   it "raises an ArgumentError if name is missing" do
     opts.delete(:name)
-    proc { Jamie::Suite.new(opts) }.must_raise ArgumentError
+    proc { Jamie::Suite.new(opts) }.must_raise Jamie::ClientError
   end
 
   it "raises an ArgumentError if run_list is missing" do
     opts.delete(:run_list)
-    proc { Jamie::Suite.new(opts) }.must_raise ArgumentError
+    proc { Jamie::Suite.new(opts) }.must_raise Jamie::ClientError
   end
 
   it "returns an empty Hash given no attributes" do
@@ -352,7 +352,7 @@ describe Jamie::Platform do
 
   it "raises an ArgumentError if name is missing" do
     opts.delete(:name)
-    proc { Jamie::Platform.new(opts) }.must_raise ArgumentError
+    proc { Jamie::Platform.new(opts) }.must_raise Jamie::ClientError
   end
 
   it "returns an empty Array given no run_list" do
@@ -399,12 +399,12 @@ describe Jamie::Instance do
 
   it "raises an ArgumentError if suite is missing" do
     opts.delete(:suite)
-    proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
+    proc { Jamie::Instance.new(opts) }.must_raise Jamie::ClientError
   end
 
   it "raises an ArgumentError if platform is missing" do
     opts.delete(:platform)
-    proc { Jamie::Instance.new(opts) }.must_raise ArgumentError
+    proc { Jamie::Instance.new(opts) }.must_raise Jamie::ClientError
   end
 
   it "returns suite" do

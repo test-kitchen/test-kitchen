@@ -65,6 +65,38 @@ module Jamie
     end
   end
 
+  module Error ; end
+
+  # Base exception class from which all Jamie exceptions derive. This class
+  # nests an exception when this class is re-raised from a rescue block.
+  class StandardError < ::StandardError
+
+    include Error
+
+    attr_reader :original
+
+    def initialize(msg, original = $!)
+      super(msg)
+      @original = original
+    end
+  end
+
+  # Base exception class for all exceptions that are caused by user input
+  # errors.
+  class UserError < StandardError ; end
+
+  # Base exception class for all exceptions that are caused by incorrect use
+  # of an API.
+  class ClientError < StandardError ; end
+
+  # Base exception class for exceptions that are caused by external library
+  # failures which may be temporary.
+  class TransientFailure < StandardError ; end
+
+  # Exception class for any exceptions raised when performing an instance
+  # action.
+  class ActionFailed < TransientFailure ; end
+
   # Base configuration class for Jamie. This class exposes configuration such
   # as the location of the Jamie YAML file, instances, log_levels, etc.
   #
@@ -225,11 +257,14 @@ module Jamie
       }
 
       FileUtils.mkdir_p(log_root)
+      new_instance_supervised_or_not(actor_name, opts)
+    end
 
+    def new_instance_supervised_or_not(actor_name, opts)
       if supervised
         supervisor = Instance.supervise_as(actor_name, opts)
         actor = supervisor.actors.first
-        debug("Supervising #{actor.to_str} with #{supervisor}")
+        Jamie.logger.debug("Supervising #{actor.to_str} with #{supervisor}")
         actor
       else
         Celluloid::Actor[actor_name] = Instance.new(opts)
@@ -518,7 +553,7 @@ module Jamie
 
     def validate_options(opts)
       [ :name, :run_list ].each do |k|
-        raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+        raise ClientError, "Suite#new requires option :#{k}" if opts[k].nil?
       end
     end
   end
@@ -559,7 +594,7 @@ module Jamie
 
     def validate_options(opts)
       [ :name ].each do |k|
-        raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+        raise ClientError, "Platform#new requires option :#{k}" if opts[k].nil?
       end
     end
   end
@@ -747,7 +782,7 @@ module Jamie
 
     def validate_options(opts)
       [ :suite, :platform, :driver, :jr, :logger ].each do |k|
-        raise ArgumentError, "Attribute '#{k}' is required." if opts[k].nil?
+        raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
       end
     end
 
@@ -804,6 +839,10 @@ module Jamie
       end
       state[:last_action] = what
       elapsed
+    rescue ActionFailed
+      raise
+    rescue Exception => e
+      raise ActionFailed, "Failed to complete ##{what} action: [#{e.message}]"
     ensure
       dump_state(state)
     end
@@ -965,7 +1004,7 @@ module Jamie
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     def validate_options(suite_name)
-      raise ArgumentError, "'suite_name' is required." if suite_name.nil?
+      raise ClientError, "Jr#new requires a suite_name" if suite_name.nil?
     end
 
     def install_script
@@ -1076,7 +1115,7 @@ module Jamie
   module ShellOut
 
     # Wrapped exception for any interally raised shell out commands.
-    class ShellCommandFailed < StandardError ; end
+    class ShellCommandFailed < TransientFailure ; end
 
     # Executes a command in a subshell on the local running system.
     #
@@ -1084,6 +1123,8 @@ module Jamie
     # @param use_sudo [TrueClass, FalseClass] whether or not to use sudo
     # @param log_subject [String] used in the output or log header for clarity
     #   and context
+    # @raise [ShellCommandFailed] if the command fails
+    # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, use_sudo = false, log_subject = "local")
       cmd = "sudo #{cmd}" if use_sudo
       subject = "[#{log_subject} command]"
@@ -1095,6 +1136,9 @@ module Jamie
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
+    rescue Exception => error
+      error.extend(Jamie::Error)
+      raise
     end
 
     private
@@ -1109,18 +1153,23 @@ module Jamie
 
   module Driver
 
-    # Wrapped exception for any internally raised driver exceptions.
-    class ActionFailed < StandardError ; end
-
     # Returns an instance of a driver given a plugin type string.
     #
     # @param plugin [String] a driver plugin type, which will be constantized
     # @return [Driver::Base] a driver instance
+    # @raise [ClientError] if a driver instance could not be created
     def self.for_plugin(plugin, config)
       require "jamie/driver/#{plugin}"
 
-      klass = self.const_get(Util.to_camel_case(plugin))
+      str_const = Util.to_camel_case(plugin)
+      klass = self.const_get(str_const)
       klass.new(config)
+    rescue LoadError
+      raise ClientError, "Could not require '#{plugin}' plugin from load path"
+    rescue NameError
+      raise ClientError, "No class 'Jamie::Driver::#{str_const}' could be found"
+    rescue
+      raise ClientError, "Failed to create a driver for '#{plugin}' plugin"
     end
 
     # Base class for a driver. A driver is responsible for carrying out the
@@ -1231,7 +1280,7 @@ module Jamie
       def self.no_parallel_for(*methods)
         Array(methods).each do |meth|
           if ! ACTION_METHODS.include?(meth)
-            raise ArgumentError, "##{meth} is not a whitelisted method."
+            raise ClientError, "##{meth} is not a valid no_parallel_for method"
           end
         end
 
@@ -1249,7 +1298,7 @@ module Jamie
     class SSHBase < Base
 
       def create(state)
-        raise NotImplementedError, "#create must be implemented by subclass."
+        raise ClientError, "#{self.class}#create must be implemented"
       end
 
       def converge(state)
@@ -1279,7 +1328,7 @@ module Jamie
       end
 
       def destroy(state)
-        raise NotImplementedError, "#destroy must be implemented by subclass."
+        raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
       def login_command(state)
@@ -1486,7 +1535,8 @@ module Jamie
         cp_cookbooks(tmpdir)
       else
         FileUtils.rmtree(tmpdir)
-        abort "Berksfile, Cheffile or cookbooks/ must exist in #{jamie_root}"
+        fatal("Berksfile, Cheffile or cookbooks/ must exist in #{jamie_root}")
+        raise UserError, "Cookbooks could not be found"
       end
     end
 
@@ -1494,7 +1544,8 @@ module Jamie
       begin
         run_command "if ! command -v berks >/dev/null; then exit 1; fi"
       rescue Jamie::ShellOut::ShellCommandFailed
-        abort ">>>>>> Berkshelf must be installed, add it to your Gemfile."
+        fatal("Berkshelf must be installed, add it to your Gemfile.")
+        raise UserError, "berks command not found"
       end
       run_command "berks install --path #{tmpdir}"
     end
@@ -1503,7 +1554,8 @@ module Jamie
       begin
         run_command "if ! command -v librarian-chef >/dev/null; then exit 1; fi"
       rescue Jamie::ShellOut::ShellCommandFailed
-        abort ">>>>>> Librarian must be installed, add it to your Gemfile."
+        fatal("Librarian must be installed, add it to your Gemfile.")
+        raise UserError, "librarian-chef command not found"
       end
       run_command "librarian-chef install --path #{tmpdir}"
     end
@@ -1516,7 +1568,6 @@ module Jamie
     def cp_this_cookbook(tmpdir)
       metadata_rb = File.join(jamie_root, "metadata.rb")
       cb_name = MetadataChopper.extract(metadata_rb).first
-      abort ">>>>>> name attribute must be set in metadata.rb." if cb_name.nil?
       cb_path = File.join(tmpdir, cb_name)
       glob = Dir.glob("#{jamie_root}/{metadata.rb,README.*," +
         "attributes,files,libraries,providers,recipes,resources,templates}")
