@@ -1333,6 +1333,7 @@ module Jamie
       end
 
       def ssh(ssh_args, cmd)
+        debug("[SSH] #{ssh_args[1]}@#{ssh_args[0]} (#{cmd})")
         Net::SSH.start(*ssh_args) do |ssh|
           exit_code = ssh_exec_with_exit!(ssh, cmd)
 
@@ -1349,6 +1350,9 @@ module Jamie
       def ssh_exec_with_exit!(ssh, cmd)
         exit_code = nil
         ssh.open_channel do |channel|
+
+          channel.request_pty
+
           channel.exec(cmd) do |ch, success|
 
             channel.on_data do |ch, data|
