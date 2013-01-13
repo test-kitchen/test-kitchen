@@ -1528,9 +1528,9 @@ module Jamie
 
     def prepare_tmpdir(tmpdir)
       if File.exists?(File.join(jamie_root, "Berksfile"))
-        run_berks(tmpdir)
+        run_resolver("Berkshelf", "berks", tmpdir)
       elsif File.exists?(File.join(jamie_root, "Cheffile"))
-        run_librarian(tmpdir)
+        run_resolver("Librarian", "librarian-chef", tmpdir)
       elsif File.directory?(File.join(jamie_root, "cookbooks"))
         cp_cookbooks(tmpdir)
       else
@@ -1540,24 +1540,14 @@ module Jamie
       end
     end
 
-    def run_berks(tmpdir)
+    def run_resolver(name, bin, tmpdir)
       begin
-        run_command "if ! command -v berks >/dev/null; then exit 1; fi"
+        run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
       rescue Jamie::ShellOut::ShellCommandFailed
-        fatal("Berkshelf must be installed, add it to your Gemfile.")
-        raise UserError, "berks command not found"
+        fatal("#{name} must be installed, add it to your Gemfile.")
+        raise UserError, "#{bin} command not found"
       end
-      run_command "berks install --path #{tmpdir}"
-    end
-
-    def run_librarian(tmpdir)
-      begin
-        run_command "if ! command -v librarian-chef >/dev/null; then exit 1; fi"
-      rescue Jamie::ShellOut::ShellCommandFailed
-        fatal("Librarian must be installed, add it to your Gemfile.")
-        raise UserError, "librarian-chef command not found"
-      end
-      run_command "librarian-chef install --path #{tmpdir}"
+      run_command "#{bin} install --path #{tmpdir}"
     end
 
     def cp_cookbooks(tmpdir)
