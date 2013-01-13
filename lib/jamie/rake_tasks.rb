@@ -33,6 +33,7 @@ module Jamie
     def initialize
       @config = Jamie::Config.new
       @config.supervised = false
+      Jamie.logger = Jamie.default_file_logger
       yield self if block_given?
       define
     end

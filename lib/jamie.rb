@@ -58,10 +58,19 @@ module Jamie
     end
 
     def default_logger
-      env_log = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
-      env_log = Util.to_logger_level(env_log) unless env_log.nil?
-
       Logger.new(:stdout => STDOUT, :level => env_log)
+    end
+
+    def default_file_logger
+      logfile = File.expand_path(File.join(".jamie", "logs", "jamie.log"))
+      Logger.new(:stdout => STDOUT, :logdev => logfile, :level => env_log)
+    end
+
+    private
+
+    def env_log
+      level = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+      level = Util.to_logger_level(level) unless level.nil?
     end
   end
 
@@ -256,7 +265,6 @@ module Jamie
         :logger   => new_instance_logger(index)
       }
 
-      FileUtils.mkdir_p(log_root)
       new_instance_supervised_or_not(actor_name, opts)
     end
 
@@ -389,11 +397,13 @@ module Jamie
 
     include ::Logger::Severity
 
+    attr_reader :logdev
+
     def initialize(options = {})
       color = options[:color] || :bright_white
 
       @loggers = []
-      @loggers << logdev_logger(options[:logdev]) if options[:logdev]
+      @loggers << @logdev = logdev_logger(options[:logdev]) if options[:logdev]
       @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
       @loggers << stdout_logger(STDOUT, color) if @loggers.empty?
 
@@ -433,11 +443,12 @@ module Jamie
     end
 
     def logdev_logger(filepath_or_logdev)
-      LogdevLogger.new(logdev(filepath_or_logdev))
+      LogdevLogger.new(resolve_logdev(filepath_or_logdev))
     end
 
-    def logdev(filepath_or_logdev)
+    def resolve_logdev(filepath_or_logdev)
       if filepath_or_logdev.is_a? String
+        FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
         file = File.open(File.expand_path(filepath_or_logdev), "ab")
         file.sync = true
         file
@@ -882,6 +893,11 @@ module Jamie
       File.expand_path(File.join(
         driver[:jamie_root], ".jamie", "#{name}.yml"
       ))
+    end
+
+    def banner(*args)
+      Jamie.logger.logdev && Jamie.logger.logdev.banner(*args)
+      super
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

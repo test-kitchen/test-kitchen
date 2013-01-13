@@ -38,6 +38,7 @@ module Jamie
       $stdout.sync = true
       @config = Jamie::Config.new(ENV['JAMIE_YAML'])
       @config.supervised = false
+      Jamie.logger = Jamie.default_file_logger
     end
 
     desc "list [(all|<REGEX>)]", "List all instances"
