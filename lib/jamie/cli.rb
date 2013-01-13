@@ -288,7 +288,11 @@ module Jamie
           }
         end
       end.flatten
-      cookbook_name = MetadataChopper.extract('metadata.rb').first
+      cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
+        MetadataChopper.extract('metadata.rb').first
+      else
+        nil
+      end
       run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
       attributes = cookbook_name ? { cookbook_name => nil } : nil
 
