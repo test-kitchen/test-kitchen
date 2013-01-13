@@ -726,6 +726,10 @@ module Jamie
       Kernel.exec(command, *args)
     end
 
+    def last_action
+      load_state[:last_action]
+    end
+
     private
 
     def validate_options(opts)
@@ -785,7 +789,7 @@ module Jamie
       elapsed = Benchmark.measure do
         synchronize_or_call(what, state, &block)
       end
-      state[:last_action] = what.to_s
+      state[:last_action] = what
       elapsed
     ensure
       dump_state(state)
@@ -826,10 +830,6 @@ module Jamie
       File.expand_path(File.join(
         driver[:jamie_root], ".jamie", "#{name}.yml"
       ))
-    end
-
-    def last_action
-      load_state[:last_action]
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage
