@@ -75,6 +75,7 @@ module Jamie
     attr_writer :platforms
     attr_writer :suites
     attr_writer :log_level
+    attr_writer :supervised
     attr_writer :test_base_path
 
     # Default path to the Jamie YAML file
@@ -124,6 +125,10 @@ module Jamie
         ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
         Jamie::DEFAULT_LOG_LEVEL
       end
+    end
+
+    def supervised
+      @supervised.nil? ? @supervised = true : @supervised
     end
 
     # @return [String] base path that may contain a common `data_bags/`
@@ -210,17 +215,25 @@ module Jamie
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
-      FileUtils.mkdir_p(log_root)
-
-      supervisor = Instance.supervise_as(
-        "instance_#{index}".to_sym,
+      actor_name = "instance_#{index}".to_sym
+      opts = {
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
         :jr       => Jr.new(suite.name),
         :logger   => new_instance_logger(index)
-      )
-      supervisor.actors.first
+      }
+
+      FileUtils.mkdir_p(log_root)
+
+      if supervised
+        supervisor = Instance.supervise_as(actor_name, opts)
+        actor = supervisor.actors.first
+        debug("Supervising #{actor.to_str} with #{supervisor}")
+        actor
+      else
+        Celluloid::Actor[actor_name] = Instance.new(opts)
+      end
     end
 
     def log_root

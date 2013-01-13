@@ -32,6 +32,7 @@ module Jamie
     # @yield [self] gives itself to the block
     def initialize
       @config = Jamie::Config.new
+      @config.supervised = false
       yield self if block_given?
       define
     end

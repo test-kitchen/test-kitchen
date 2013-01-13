@@ -35,6 +35,7 @@ module Jamie
     def initialize(*args)
       super
       @config = Jamie::Config.new
+      @config.supervised = false
       yield self if block_given?
       define
     end
