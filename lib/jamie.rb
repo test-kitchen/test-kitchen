@@ -1308,9 +1308,9 @@ module Jamie
       end
 
       def install_omnibus(ssh_args)
-        ssh(ssh_args, <<-INSTALL)
+        ssh(ssh_args, <<-INSTALL.gsub(/^ {10}/, ''))
           if [ ! -d "/opt/chef" ] ; then
-            curl -L https://www.opscode.com/chef/install.sh | sudo bash
+            curl -sSL https://www.opscode.com/chef/install.sh | sudo bash
           fi
         INSTALL
       end
