@@ -40,9 +40,19 @@ module Jamie
     end
 
     desc "list [(all|<REGEX>)]", "List all instances"
+    method_option :bare, :aliases => "-b", :type => :boolean,
+      :desc => "List the name of each instance only, one per line"
     def list(*args)
       result = parse_subcommand(args.first)
-      say Array(result).map{ |i| i.name }.join("\n")
+      if options[:bare]
+        say Array(result).map{ |i| i.name }.join("\n")
+      else
+        table = [
+          [ set_color("Instance", :green), set_color("Last Action", :green) ]
+        ]
+        table += Array(result).map { |i| display_instance(i) }
+        print_table(table)
+      end
     end
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
@@ -187,6 +197,18 @@ module Jamie
         die task, "No instance `#{name}', try running `jamie list'"
       end
       result
+    end
+
+    def display_instance(instance)
+      action = case instance.last_action
+      when :create then set_color("Created", :cyan)
+      when :converge then set_color("Converged", :magenta)
+      when :setup then set_color("Set Up", :blue)
+      when :verify then set_color("Verified", :yellow)
+      when nil then set_color("<Not Created>", :red)
+      else set_color("<Unknown>", :white)
+      end
+      [ set_color(instance.name, :white), action ]
     end
 
     def die(task, msg)
