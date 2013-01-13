@@ -1624,7 +1624,7 @@ Celluloid.logger = Jamie.logger
 Jamie.crashes = []
 Celluloid.exception_handler do |exception|
   Jamie.logger.debug("An instance crashed because of #{exception.inspect}")
-  Jamie.crashes << exception
+  Jamie.mutex.synchronize { Jamie.crashes << exception }
 end
 
 Jamie.mutex = Mutex.new
