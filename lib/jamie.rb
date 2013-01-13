@@ -1492,6 +1492,11 @@ module Jamie
     end
 
     def cp_cookbooks(tmpdir)
+      FileUtils.cp_r(File.join(jamie_root, "cookbooks", "."), tmpdir)
+      cp_this_cookbook(tmpdir) if File.exists?(File.expand_path('metadata.rb'))
+    end
+
+    def cp_this_cookbook(tmpdir)
       metadata_rb = File.join(jamie_root, "metadata.rb")
       cb_name = MetadataChopper.extract(metadata_rb).first
       abort ">>>>>> name attribute must be set in metadata.rb." if cb_name.nil?
@@ -1499,7 +1504,6 @@ module Jamie
       glob = Dir.glob("#{jamie_root}/{metadata.rb,README.*," +
         "attributes,files,libraries,providers,recipes,resources,templates}")
 
-      FileUtils.cp_r(File.join(jamie_root, "cookbooks", "."), tmpdir)
       FileUtils.mkdir_p(cb_path)
       FileUtils.cp_r(glob, cb_path)
     end
