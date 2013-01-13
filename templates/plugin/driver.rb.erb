@@ -9,12 +9,14 @@ module Jamie
   module Driver
 
     # <%= klass_name %> driver for Jamie.
+    #
+    # @author <%= author %> <<%= email %>>
     class <%= klass_name %> < Jamie::Driver::SSHBase
 
-      def create(instance, state)
+      def create(state)
       end
 
-      def destroy(instance, state)
+      def destroy(state)
       end
     end
   end

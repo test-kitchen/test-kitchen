@@ -459,7 +459,8 @@ module Jamie
         :license => license_comments)
       create_template("plugin/driver.rb",
         "lib/jamie/driver/#{plugin_name}.rb",
-        :klass_name => klass_name, :license => license_comments)
+        :klass_name => klass_name, :license => license_comments,
+        :author => author, :email => email)
     end
 
     def rendered_license
