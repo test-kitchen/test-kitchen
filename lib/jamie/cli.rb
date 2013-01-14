@@ -99,7 +99,7 @@ module Jamie
           run_serial(results, destroy_mode)
         end
       end
-      banner "Jamie is finished. (#{elapsed.real} seconds)"
+      banner "Jamie is finished. #{Util.duration(elapsed.real)}"
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
@@ -159,7 +159,7 @@ module Jamie
         results = parse_subcommand(args.first)
         options[:parallel] ? run_parallel(results) : run_serial(results)
       end
-      banner "Jamie is finished. (#{elapsed.real} seconds)"
+      banner "Jamie is finished. #{Util.duration(elapsed.real)}"
     end
 
     def run_serial(instances, *args)

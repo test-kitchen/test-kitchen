@@ -765,7 +765,7 @@ module Jamie
         verify
         destroy if destroy_mode == :passing
       end
-      info "Finished testing #{to_str} (#{elapsed.real} seconds)."
+      info "Finished testing #{to_str} #{Util.duration(elapsed.real)}."
       Actor.current
     ensure
       destroy if destroy_mode == :always
@@ -838,7 +838,7 @@ module Jamie
       banner "#{output_verb} #{to_str}"
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
       info("Finished #{output_verb.downcase} #{to_str}" +
-           " (#{elapsed.real} seconds).")
+           " #{Util.duration(elapsed.real)}.")
       yield if block_given?
       Actor.current
     end
@@ -1122,6 +1122,12 @@ module Jamie
         obj
       end
     end
+
+    def self.duration(total)
+      minutes = (total / 60).to_i
+      seconds = (total - (minutes * 60))
+      "(%dm%.2fs)" % [ minutes, seconds ]
+    end
   end
 
   # Mixin that wraps a command shell out invocation, providing a #run_command
@@ -1148,7 +1154,7 @@ module Jamie
       info("#{subject} BEGIN (#{display_cmd(cmd)})")
       sh = Mixlib::ShellOut.new(cmd, :live_stream => logger, :timeout => 60000)
       sh.run_command
-      info("#{subject} END (#{sh.execution_time} seconds)")
+      info("#{subject} END #{Util.duration(sh.execution_time)}")
       sh.error!
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
