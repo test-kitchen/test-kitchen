@@ -1393,9 +1393,13 @@ module Jamie
       end
 
       def install_omnibus(ssh_args)
+        flag = config[:require_chef_omnibus]
+        version = flag.is_a?(String) ? "-s -- -v #{flag}" : ""
+
         ssh(ssh_args, <<-INSTALL.gsub(/^ {10}/, ''))
           if [ ! -d "/opt/chef" ] ; then
-            curl -sSL https://www.opscode.com/chef/install.sh | sudo bash
+            curl -sSL https://www.opscode.com/chef/install.sh \
+              | sudo bash #{version}
           fi
         INSTALL
       end
