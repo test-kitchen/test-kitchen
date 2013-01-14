@@ -1180,10 +1180,10 @@ module Jamie
       str_const = Util.to_camel_case(plugin)
       klass = self.const_get(str_const)
       klass.new(config)
+    rescue UserError
+      raise
     rescue LoadError
       raise ClientError, "Could not require '#{plugin}' plugin from load path"
-    rescue NameError
-      raise ClientError, "No class 'Jamie::Driver::#{str_const}' could be found"
     rescue
       raise ClientError, "Failed to create a driver for '#{plugin}' plugin"
     end
@@ -1208,6 +1208,9 @@ module Jamie
         @config = config
         self.class.defaults.each do |attr, value|
           @config[attr] = value unless @config[attr]
+        end
+        Array(self.class.validations).each do |tuple|
+          tuple.last.call(tuple.first, config[tuple.first])
         end
       end
 
@@ -1291,6 +1294,23 @@ module Jamie
 
       def self.default_config(attr, value)
         defaults[attr] = value
+      end
+
+      def self.validations
+        @validations
+      end
+
+      def self.required_config(attr, &block)
+        @validations = [] if @validations.nil?
+        if ! block_given?
+          klass = self
+          block = lambda do |attr, value|
+            if value.nil? || value.to_s.empty?
+              raise UserError, "#{klass}#config[:#{attr}] cannot be blank"
+            end
+          end
+        end
+        @validations << [ attr, block ]
       end
 
       def self.no_parallel_for(*methods)
