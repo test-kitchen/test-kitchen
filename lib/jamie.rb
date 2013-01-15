@@ -1593,7 +1593,8 @@ module Jamie
         fatal("#{name} must be installed, add it to your Gemfile.")
         raise UserError, "#{bin} command not found"
       end
-      run_command "#{bin} install --path #{tmpdir}"
+
+      Jamie.mutex.synchronize { run_command "#{bin} install --path #{tmpdir}" }
     end
 
     def cp_cookbooks(tmpdir)
