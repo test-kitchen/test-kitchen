@@ -5,7 +5,7 @@ require 'fog'
 module TestKitchen
   class Environment
     class Openstack < TestKitchen::Environment
-      attr_reader :username, :password, :tenant, :auth_url
+      attr_reader :username, :password, :tenant, :auth_url, :region
       attr_reader :servers
 
       def initialize(conf={})
@@ -14,6 +14,7 @@ module TestKitchen
         @password = conf[:password] || config.password
         @tenant = conf[:tenant] || config.tenant
         @auth_url = conf[:auth_url] || config.auth_url
+        @region = conf[:region] || config.region
         @servers = {}
         load
       end
@@ -55,6 +56,7 @@ module TestKitchen
                                          :openstack_username => username,
                                          :openstack_api_key => password,
                                          :openstack_auth_url => auth_url,
+                                         :openstack_region => region,
                                          :openstack_tenant => tenant)
       end
 
