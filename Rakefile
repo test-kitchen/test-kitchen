@@ -32,7 +32,8 @@ unless RUBY_ENGINE == 'jruby'
   Tailor::RakeTask.new do |task|
     task.file_set('bin/*', 'binaries')
     task.file_set('lib/**/*.rb', 'code') do |style|
-      style.max_code_lines_in_method 210, level: :warn # FIXME: A few of these really LONG methods
+      # FIXME: A few of these really LONG methods
+      style.max_code_lines_in_method 210, level: :warn
     end
     task.file_set('spec/**/*.rb', 'tests')
   end
