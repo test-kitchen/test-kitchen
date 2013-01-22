@@ -107,7 +107,7 @@ module Jamie
       results = get_filtered_instances(regexp)
       if results.size > 1
         die task, "Argument `#{regexp}' returned multiple results:\n" +
-          results.map{ |i| "  * #{i.name}" }.join("\n")
+          results.map { |i| "  * #{i.name}" }.join("\n")
       end
       instance = results.pop
 

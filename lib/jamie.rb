@@ -953,7 +953,7 @@ module Jamie
     # @param [Hash] opts optional configuration
     # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
-    def initialize(suite_name, opts = {:use_sudo => true})
+    def initialize(suite_name, opts = { :use_sudo => true })
       validate_options(suite_name)
 
       @suite_name = suite_name

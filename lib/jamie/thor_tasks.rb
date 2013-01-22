@@ -55,7 +55,7 @@ module Jamie
 
       self.class.desc "all", "Run all test instances"
       self.class.send(:define_method, :all) do
-        config.instances.each { |i| invoke i.name.gsub(/-/, '_')  }
+        config.instances.each { |i| invoke i.name.gsub(/-/, '_') }
       end
     end
   end

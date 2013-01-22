@@ -45,10 +45,10 @@ describe Jamie::Config do
   describe "#suites" do
 
     it "returns suites loaded from a jamie.yml" do
-      stub_yaml!({'suites' => [
+      stub_yaml!({ 'suites' => [
         { 'name' => 'one', 'run_list' => [] },
         { 'name' => 'two', 'run_list' => [] },
-      ]})
+      ] })
       config.suites.size.must_equal 2
       config.suites[0].name.must_equal 'one'
       config.suites[1].name.must_equal 'two'
@@ -135,7 +135,8 @@ describe Jamie::Config do
       stub_yaml!({
         'platforms' => [
           { 'name' => 'platform', 'driver_plugin' => 'dummy',
-            'driver_config' => { 'foo' => 'bar' } }
+            'driver_config' => { 'foo' => 'bar' }
+          }
         ],
         'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
