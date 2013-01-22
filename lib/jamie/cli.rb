@@ -297,14 +297,13 @@ module Jamie
         nil
       end
       run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
-      attributes = cookbook_name ? { cookbook_name => nil } : nil
 
       { 'driver_plugin' => 'vagrant',
         'platforms' => platforms,
         'suites' => [
           { 'name' => 'standard',
             'run_list' => Array(run_list),
-            'attributes' => attributes
+            'attributes' => Hash.new
           },
         ]
       }.to_yaml
