@@ -32,8 +32,9 @@ unless RUBY_ENGINE == 'jruby'
   Tailor::RakeTask.new do |task|
     task.file_set('bin/*', 'binaries')
     task.file_set('lib/**/*.rb', 'code') do |style|
-      # FIXME: A few of these really LONG methods
-      style.max_code_lines_in_method 210, level: :warn
+      # TODO: Tailor is confused thinking `module Jamie` is a class. Until
+      # the classes are split in seperate files, let's punt on this
+      style.max_code_lines_in_class 1550, level: :warn
     end
     task.file_set('spec/**/*.rb', 'tests')
   end
