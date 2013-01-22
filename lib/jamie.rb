@@ -1053,7 +1053,7 @@ module Jamie
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       md5 = Digest::MD5.hexdigest(local_file)
-      perms = sprintf("%o", File.stat(local_path).mode)[3,3]
+      perms = sprintf("%o", File.stat(local_path).mode)[3, 3]
       jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
@@ -1115,7 +1115,7 @@ module Jamie
 
     def self.symbolized_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k,v)| h[k.to_sym] = symbolized_hash(v) ; h }
+        obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v) ; h }
       elsif obj.is_a?(Array)
         obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
       else
