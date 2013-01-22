@@ -47,7 +47,7 @@ describe Jamie::Suite do
 
   it "returns attributes from constructor" do
     opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
-                  :roles_path => 'town' })
+      :roles_path => 'town' })
     suite.name.must_equal 'suitezy'
     suite.run_list.must_equal ['doowah']
     suite.attributes.must_equal({ :a => 'b' })

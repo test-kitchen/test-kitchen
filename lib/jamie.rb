@@ -164,7 +164,7 @@ module Jamie
     def log_level
       @log_level ||= begin
         ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
-        Jamie::DEFAULT_LOG_LEVEL
+          Jamie::DEFAULT_LOG_LEVEL
       end
     end
 
@@ -838,7 +838,7 @@ module Jamie
       banner "#{output_verb} #{to_str}"
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
       info("Finished #{output_verb.downcase} #{to_str}" +
-           " #{Util.duration(elapsed.real)}.")
+        " #{Util.duration(elapsed.real)}.")
       yield if block_given?
       Actor.current
     end
@@ -1475,7 +1475,7 @@ module Jamie
         socket = TCPSocket.new(hostname, config[:port])
         IO.select([socket], nil, nil, 5)
       rescue SocketError, Errno::ECONNREFUSED,
-          Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
+        Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
         sleep 2
         false
       rescue Errno::EPERM, Errno::ETIMEDOUT
@@ -1548,9 +1548,9 @@ module Jamie
     def upload_path(scp, path, dir = File.basename(path))
       scp.upload!(path, "#{chef_home}/#{dir}", :recursive => true
       ) do |ch, name, sent, total|
-        if sent == total
-          info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
-        end
+          if sent == total
+            info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
+          end
       end
     end
 

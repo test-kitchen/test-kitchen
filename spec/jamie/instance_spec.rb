@@ -137,9 +137,9 @@ describe Jamie::Instance do
         { :suite => { :s1 => 'sv1' } },
         { :suite => { :p1 => 'pv1' }, :platform => 'pp' }
       ).attributes.must_equal({
-        :suite => { :s1 => 'sv1', :p1 => 'pv1' },
-        :platform => 'pp'
-      })
+          :suite => { :s1 => 'sv1', :p1 => 'pv1' },
+          :platform => 'pp'
+        })
     end
 
     it "merges suite values over platform values" do
