@@ -972,7 +972,7 @@ module Jamie
       @setup_cmd ||= if local_suite_files.empty?
         nil
       else
-        <<-INSTALL_CMD.gsub(/ {10}/, '')
+        <<-INSTALL_CMD.gsub(/^ {10}/, '')
           #{sudo}#{ruby_bin} -e "$(cat <<"EOF"
           #{install_script}
           EOF
@@ -994,7 +994,7 @@ module Jamie
       @sync_cmd ||= if local_suite_files.empty?
         nil
       else
-        <<-INSTALL_CMD.gsub(/ {10}/, '')
+        <<-INSTALL_CMD.gsub(/^ {10}/, '')
           #{sudo}#{jr_bin} cleanup-suites
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD
