@@ -164,7 +164,7 @@ module Jamie
     def log_level
       @log_level ||= begin
         ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
-        Jamie::DEFAULT_LOG_LEVEL
+          Jamie::DEFAULT_LOG_LEVEL
       end
     end
 
@@ -286,7 +286,7 @@ module Jamie
     def platform_driver_hash(platform_name)
       h = yaml[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
-      h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
+      h.select { |key, value| [:driver_plugin, :driver_config].include?(key) }
     end
 
     def new_instance_logger(index)
@@ -355,7 +355,7 @@ module Jamie
 
     def common_driver_hash
       yaml.select do |key, value|
-        [ :driver_plugin, :driver_config ].include?(key)
+        [:driver_plugin, :driver_config].include?(key)
       end
     end
   end
@@ -563,7 +563,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :name, :run_list ].each do |k|
+      [:name, :run_list].each do |k|
         raise ClientError, "Suite#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -604,7 +604,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :name ].each do |k|
+      [:name].each do |k|
         raise ClientError, "Platform#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -792,7 +792,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :suite, :platform, :driver, :jr, :logger ].each do |k|
+      [:suite, :platform, :driver, :jr, :logger].each do |k|
         raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -838,7 +838,7 @@ module Jamie
       banner "#{output_verb} #{to_str}"
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
       info("Finished #{output_verb.downcase} #{to_str}" +
-           " #{Util.duration(elapsed.real)}.")
+        " #{Util.duration(elapsed.real)}.")
       yield if block_given?
       Actor.current
     end
@@ -927,7 +927,7 @@ module Jamie
 
       private
 
-      TRANSITIONS = [ :destroy, :create, :converge, :setup, :verify ]
+      TRANSITIONS = [:destroy, :create, :converge, :setup, :verify]
 
       def self.index(transition)
         if transition.nil?
@@ -953,7 +953,7 @@ module Jamie
     # @param [Hash] opts optional configuration
     # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
-    def initialize(suite_name, opts = {:use_sudo => true})
+    def initialize(suite_name, opts = { :use_sudo => true })
       validate_options(suite_name)
 
       @suite_name = suite_name
@@ -1053,7 +1053,7 @@ module Jamie
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       md5 = Digest::MD5.hexdigest(local_file)
-      perms = sprintf("%o", File.stat(local_path).mode)[3,3]
+      perms = sprintf("%o", File.stat(local_path).mode)[3, 3]
       jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
@@ -1115,7 +1115,7 @@ module Jamie
 
     def self.symbolized_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k,v)| h[k.to_sym] = symbolized_hash(v) ; h }
+        obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v) ; h }
       elsif obj.is_a?(Array)
         obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
       else
@@ -1126,7 +1126,7 @@ module Jamie
     def self.duration(total)
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
-      "(%dm%.2fs)" % [ minutes, seconds ]
+      "(%dm%.2fs)" % [minutes, seconds]
     end
   end
 
@@ -1316,7 +1316,7 @@ module Jamie
             end
           end
         end
-        @validations << [ attr, block ]
+        @validations << [attr, block]
       end
 
       def self.no_parallel_for(*methods)
@@ -1391,7 +1391,7 @@ module Jamie
         opts[:password] = config[:password] if config[:password]
         opts[:keys] = Array(config[:ssh_key]) if config[:ssh_key]
 
-        [ state[:hostname], config[:username], opts ]
+        [state[:hostname], config[:username], opts]
       end
 
       def chef_home
@@ -1475,7 +1475,7 @@ module Jamie
         socket = TCPSocket.new(hostname, config[:port])
         IO.select([socket], nil, nil, 5)
       rescue SocketError, Errno::ECONNREFUSED,
-          Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
+        Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
         sleep 2
         false
       rescue Errno::EPERM, Errno::ETIMEDOUT
@@ -1548,9 +1548,9 @@ module Jamie
     def upload_path(scp, path, dir = File.basename(path))
       scp.upload!(path, "#{chef_home}/#{dir}", :recursive => true
       ) do |ch, name, sent, total|
-        if sent == total
-          info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
-        end
+          if sent == total
+            info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
+          end
       end
     end
 
@@ -1629,7 +1629,7 @@ module Jamie
     #   attributes or nil values if they could not be determined
     def self.extract(metadata_file)
       mc = new(File.expand_path(metadata_file))
-      [ mc[:name], mc[:version] ]
+      [mc[:name], mc[:version]]
     end
 
     # Creates a new instances and loads in the contents of the metdata.rb

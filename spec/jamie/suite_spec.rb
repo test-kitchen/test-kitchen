@@ -20,7 +20,7 @@ require_relative '../spec_helper'
 
 describe Jamie::Suite do
 
-  let(:opts) do ; { :name => 'suitezy', :run_list => [ 'doowah' ] } ; end
+  let(:opts) do ; { :name => 'suitezy', :run_list => ['doowah'] } ; end
   let(:suite) { Jamie::Suite.new(opts) }
 
   it "raises an ArgumentError if name is missing" do
@@ -47,9 +47,9 @@ describe Jamie::Suite do
 
   it "returns attributes from constructor" do
     opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
-                  :roles_path => 'town' })
+      :roles_path => 'town' })
     suite.name.must_equal 'suitezy'
-    suite.run_list.must_equal [ 'doowah' ]
+    suite.run_list.must_equal ['doowah']
     suite.attributes.must_equal({ :a => 'b' })
     suite.data_bags_path.must_equal 'crazy'
     suite.roles_path.must_equal 'town'

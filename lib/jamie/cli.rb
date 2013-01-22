@@ -47,10 +47,10 @@ module Jamie
     def list(*args)
       result = parse_subcommand(args.first)
       if options[:bare]
-        say Array(result).map{ |i| i.name }.join("\n")
+        say Array(result).map { |i| i.name }.join("\n")
       else
         table = [
-          [ set_color("Instance", :green), set_color("Last Action", :green) ]
+          [set_color("Instance", :green), set_color("Last Action", :green)]
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
@@ -107,7 +107,7 @@ module Jamie
       results = get_filtered_instances(regexp)
       if results.size > 1
         die task, "Argument `#{regexp}' returned multiple results:\n" +
-          results.map{ |i| "  * #{i.name}" }.join("\n")
+          results.map { |i| "  * #{i.name}" }.join("\n")
       end
       instance = results.pop
 
@@ -210,7 +210,7 @@ module Jamie
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-      [ set_color(instance.name, :white), action ]
+      [set_color(instance.name, :white), action]
     end
 
     def die(task, msg)
@@ -220,18 +220,19 @@ module Jamie
     end
 
     def pry_prompts
-      [ proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
+      [
+        proc { |target_self, nest_level, pry|
+          ["[#{pry.input_array.size}] ",
             "jc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}> "
           ].join
         },
         proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
+          ["[#{pry.input_array.size}] ",
             "jc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}* "
           ].join
-        }
+        },
       ]
     end
   end
@@ -277,7 +278,7 @@ module Jamie
       url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
       platforms = [
         { :n => 'ubuntu', :vers => %w(12.04 10.04), :rl => "recipe[apt]" },
-        { :n => 'centos', :vers => %w(6.3 5.8), :rl => "recipe[yum::epel]" }
+        { :n => 'centos', :vers => %w(6.3 5.8), :rl => "recipe[yum::epel]" },
       ]
       platforms = platforms.map do |p|
         p[:vers].map do |v|
@@ -304,7 +305,7 @@ module Jamie
           { 'name' => 'standard',
             'run_list' => Array(run_list),
             'attributes' => attributes
-          }
+          },
         ]
       }.to_yaml
     end
@@ -345,7 +346,7 @@ module Jamie
 
     def list_plugins
       specs = fetch_gem_specs.map { |t| t.first }.map { |t| t[0, 2] }.
-        sort { |x,y| x[0] <=> y[0] }
+        sort { |x, y| x[0] <=> y[0] }
       specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
       specs = specs.unshift(["Gem Name", "Latest Stable Release"])
       print_table(specs, :indent => 4)
