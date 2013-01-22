@@ -374,7 +374,7 @@ module Jamie
 
     COLORS = %w(
       cyan yellow green magenta red blue bright_cyan bright_yellow
-      bright_green bright_magenta bright_red, bright_blue
+      bright_green bright_magenta bright_red bright_blue
     ).freeze
 
     def self.escape(name)
