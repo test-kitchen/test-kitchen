@@ -30,7 +30,7 @@ describe Jamie::Config do
   describe "#platforms" do
 
     it "returns platforms loaded from a jamie.yml" do
-      stub_yaml!({'platforms' => [ { 'name' => 'one' }, { 'name' => 'two' } ]})
+      stub_yaml!({ 'platforms' => [{ 'name' => 'one' }, { 'name' => 'two' }] })
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
       config.platforms[1].name.must_equal 'two'
@@ -60,38 +60,38 @@ describe Jamie::Config do
     end
 
     it "returns a suite with nil for data_bags_path by default" do
-      stub_yaml!({'suites' => [ { 'name' => 'one', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
       config.suites.first.data_bags_path.must_be_nil
     end
 
     it "retuns a suite with a common data_bags_path set" do
-      stub_yaml!({'suites' => [ { 'name' => 'one', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/data_bags"
       config.suites.first.data_bags_path.must_equal "/tmp/base/data_bags"
     end
 
     it "retuns a suite with a suite-specific data_bags_path set" do
-      stub_yaml!({'suites' => [ { 'name' => 'cool', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'cool', 'run_list' => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/cool/data_bags"
       config.suites.first.data_bags_path.must_equal "/tmp/base/cool/data_bags"
     end
 
     it "returns a suite with nil for roles_path by default" do
-      stub_yaml!({'suites' => [ { 'name' => 'one', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
       config.suites.first.roles_path.must_be_nil
     end
 
     it "returns a suite with a common roles_path set" do
-      stub_yaml!({'suites' => [ { 'name' => 'one', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/roles"
       config.suites.first.roles_path.must_equal "/tmp/base/roles"
     end
 
     it "returns a suite with a suite-specific roles_path set" do
-      stub_yaml!({'suites' => [ { 'name' => 'mysuite', 'run_list' => [] } ]})
+      stub_yaml!({ 'suites' => [{ 'name' => 'mysuite', 'run_list' => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/mysuite/roles"
       config.suites.first.roles_path.must_equal "/tmp/base/mysuite/roles"
@@ -117,16 +117,16 @@ describe Jamie::Config do
 
     it "returns an instance containing a driver instance" do
       stub_yaml!({
-        'platforms' => [ { 'name' => 'platform', 'driver_plugin' => 'dummy' } ],
-        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+        'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
+        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
       config.instances.first.driver.must_be_instance_of Jamie::Driver::Dummy
     end
 
     it "returns an instance with a driver initialized with jamie_root" do
       stub_yaml!({
-        'platforms' => [ { 'name' => 'platform', 'driver_plugin' => 'dummy' } ],
-        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+        'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
+        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
       config.instances.first.driver[:jamie_root].must_equal "/tmp"
     end
@@ -137,7 +137,7 @@ describe Jamie::Config do
           { 'name' => 'platform', 'driver_plugin' => 'dummy',
             'driver_config' => { 'foo' => 'bar' } }
         ],
-        'suites' => [ { 'name' => 'suite', 'run_list' => [] }]
+        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
       config.instances.first.driver[:foo].must_equal "bar"
     end
@@ -147,8 +147,8 @@ describe Jamie::Config do
 
     it "merges in configuration with jamie.yml" do
       stub_yaml!(".jamie.yml", {
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
-        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
+        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
+        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
@@ -159,8 +159,8 @@ describe Jamie::Config do
     it "merges over configuration in jamie.yml" do
       stub_yaml!(".jamie.yml", {
         'driver_config' => { 'foo' => 'nope' },
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
-        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
+        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
+        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
       stub_yaml!(".jamie.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
@@ -186,8 +186,8 @@ describe Jamie::Config do
 
     it "evaluates jamie.local.yml through erb before loading" do
       stub_yaml!({
-        'platforms' => [ { 'name' => 'p1', 'driver_plugin' => 'dummy' } ],
-        'suites' => [ { 'name' => 's1', 'run_list' => [] } ]
+        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
+        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.jamie.local.yml", "wb") do |f|

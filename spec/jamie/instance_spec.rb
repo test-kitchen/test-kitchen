@@ -147,13 +147,13 @@ describe Jamie::Instance do
         { :common => { :c1 => 'xxx' } },
         { :common => { :c1 => 'cv1', :c2 => 'cv2' } },
       ).attributes.must_equal({
-        :common => { :c1 => 'xxx', :c2 => 'cv2' }
-      })
+          :common => { :c1 => 'xxx', :c2 => 'cv2' }
+        })
     end
   end
 
   it "#dna combines attributes with the run_list" do
     instance.dna.must_equal({ :s => 'ss', :p => 'pp',
-      :run_list => [ 'platform_list', 'suite_list' ] })
+      :run_list => ['platform_list', 'suite_list'] })
   end
 end

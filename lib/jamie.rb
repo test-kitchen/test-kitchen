@@ -286,7 +286,7 @@ module Jamie
     def platform_driver_hash(platform_name)
       h = yaml[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
-      h.select { |key, value| [ :driver_plugin, :driver_config ].include?(key) }
+      h.select { |key, value| [:driver_plugin, :driver_config].include?(key) }
     end
 
     def new_instance_logger(index)
@@ -355,7 +355,7 @@ module Jamie
 
     def common_driver_hash
       yaml.select do |key, value|
-        [ :driver_plugin, :driver_config ].include?(key)
+        [:driver_plugin, :driver_config].include?(key)
       end
     end
   end
@@ -563,7 +563,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :name, :run_list ].each do |k|
+      [:name, :run_list].each do |k|
         raise ClientError, "Suite#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -604,7 +604,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :name ].each do |k|
+      [:name].each do |k|
         raise ClientError, "Platform#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -792,7 +792,7 @@ module Jamie
     private
 
     def validate_options(opts)
-      [ :suite, :platform, :driver, :jr, :logger ].each do |k|
+      [:suite, :platform, :driver, :jr, :logger].each do |k|
         raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
       end
     end
@@ -927,7 +927,7 @@ module Jamie
 
       private
 
-      TRANSITIONS = [ :destroy, :create, :converge, :setup, :verify ]
+      TRANSITIONS = [:destroy, :create, :converge, :setup, :verify]
 
       def self.index(transition)
         if transition.nil?
@@ -1126,7 +1126,7 @@ module Jamie
     def self.duration(total)
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
-      "(%dm%.2fs)" % [ minutes, seconds ]
+      "(%dm%.2fs)" % [minutes, seconds]
     end
   end
 
@@ -1316,7 +1316,7 @@ module Jamie
             end
           end
         end
-        @validations << [ attr, block ]
+        @validations << [attr, block]
       end
 
       def self.no_parallel_for(*methods)
@@ -1391,7 +1391,7 @@ module Jamie
         opts[:password] = config[:password] if config[:password]
         opts[:keys] = Array(config[:ssh_key]) if config[:ssh_key]
 
-        [ state[:hostname], config[:username], opts ]
+        [state[:hostname], config[:username], opts]
       end
 
       def chef_home
@@ -1629,7 +1629,7 @@ module Jamie
     #   attributes or nil values if they could not be determined
     def self.extract(metadata_file)
       mc = new(File.expand_path(metadata_file))
-      [ mc[:name], mc[:version] ]
+      [mc[:name], mc[:version]]
     end
 
     # Creates a new instances and loads in the contents of the metdata.rb

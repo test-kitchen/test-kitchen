@@ -37,9 +37,9 @@ describe Jamie::Platform do
   end
 
   it "returns attributes from constructor" do
-    opts.merge!({ :run_list => [ 'a', 'b' ], :attributes => { :c => 'd' }})
+    opts.merge!({ :run_list => ['a', 'b'], :attributes => { :c => 'd' } })
     platform.name.must_equal 'plata'
-    platform.run_list.must_equal [ 'a', 'b' ]
+    platform.run_list.must_equal ['a', 'b']
     platform.attributes.must_equal({ :c => 'd' })
   end
 end

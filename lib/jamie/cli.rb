@@ -47,10 +47,10 @@ module Jamie
     def list(*args)
       result = parse_subcommand(args.first)
       if options[:bare]
-        say Array(result).map{ |i| i.name }.join("\n")
+        say Array(result).map { |i| i.name }.join("\n")
       else
         table = [
-          [ set_color("Instance", :green), set_color("Last Action", :green) ]
+          [set_color("Instance", :green), set_color("Last Action", :green)]
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
@@ -210,7 +210,7 @@ module Jamie
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-      [ set_color(instance.name, :white), action ]
+      [set_color(instance.name, :white), action]
     end
 
     def die(task, msg)
@@ -220,14 +220,15 @@ module Jamie
     end
 
     def pry_prompts
-      [ proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
+      [
+        proc { |target_self, nest_level, pry|
+          ["[#{pry.input_array.size}] ",
             "jc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}> "
           ].join
         },
         proc { |target_self, nest_level, pry|
-          [ "[#{pry.input_array.size}] ",
+          ["[#{pry.input_array.size}] ",
             "jc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}* "
           ].join

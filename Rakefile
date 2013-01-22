@@ -7,7 +7,7 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-task :default => [ :test ]
+task :default => [:test]
 
 unless RUBY_ENGINE == 'jruby'
   require 'cane/rake_task'
@@ -31,7 +31,7 @@ unless RUBY_ENGINE == 'jruby'
 
   Tailor::RakeTask.new
 
-  Rake::Task[:default].enhance [ :cane, :tailor ]
+  Rake::Task[:default].enhance [:cane, :tailor]
 end
 
 desc "Display LOC stats"
@@ -42,4 +42,4 @@ task :stats do
   sh "countloc -r spec"
 end
 
-Rake::Task[:default].enhance [ :stats ]
+Rake::Task[:default].enhance [:stats]
