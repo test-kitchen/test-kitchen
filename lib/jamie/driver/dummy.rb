@@ -55,14 +55,22 @@ module Jamie
       private
 
       def report(action, state)
-        info("[Dummy] Action ##{action} called on " +
-          "instance=#{instance} with state=#{state}")
+        what = action.capitalize
+        info("[Dummy] #{what} on instance=#{instance} with state=#{state}")
+        sleep_if_set
+        random_failure_if_set
+        debug("[Dummy] #{what} completed (#{config[:sleep]}s).")
+      end
+
+      def sleep_if_set
         sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
+      end
+
+      def random_failure_if_set
         if config[:random_failure] && [true, false].sample
           debug("[Dummy] Random failure for action ##{action}.")
           raise ActionFailed, "Action ##{action} failed for #{instance.to_str}."
         end
-        debug("[Dummy] Action ##{action} completed (#{config[:sleep]}s).")
       end
     end
   end
