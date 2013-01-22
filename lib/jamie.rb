@@ -1546,11 +1546,12 @@ module Jamie
     end
 
     def upload_path(scp, path, dir = File.basename(path))
-      scp.upload!(path, "#{chef_home}/#{dir}", :recursive => true
-      ) do |ch, name, sent, total|
-          if sent == total
-            info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
-          end
+      dest = "#{chef_home}/#{dir}"
+
+      scp.upload!(path, dest, :recursive => true) do |ch, name, sent, total|
+        if sent == total
+          info("Uploaded #{name.sub(%r{^#{path}/}, '')} (#{total} bytes)")
+        end
       end
     end
 
