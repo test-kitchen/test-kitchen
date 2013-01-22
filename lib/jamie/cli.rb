@@ -266,7 +266,7 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       THOR
-      empty_directory "test/integration/standard" if init_test_dir?
+      empty_directory "test/integration/default" if init_test_dir?
       append_to_gitignore(".jamie/")
       append_to_gitignore(".jamie.local.yml")
       add_plugins
@@ -301,7 +301,7 @@ module Jamie
       { 'driver_plugin' => 'vagrant',
         'platforms' => platforms,
         'suites' => [
-          { 'name' => 'standard',
+          { 'name' => 'default',
             'run_list' => Array(run_list),
             'attributes' => Hash.new
           },
