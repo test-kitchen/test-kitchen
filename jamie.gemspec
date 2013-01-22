@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'celluloid'
   gem.add_dependency 'thor'
+  gem.add_dependency 'pry'
   gem.add_dependency 'net-ssh'
   gem.add_dependency 'net-scp'
   gem.add_dependency 'mixlib-shellout'
