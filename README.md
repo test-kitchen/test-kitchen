@@ -248,6 +248,9 @@ version. (OpenStack runner only, required)
 `flavor_id` - The instance flavor to start for this platform and
 version. (OpenStack runner only, required)
 
+`security_groups` - A list of security groups for this platform and
+version. (OpenStack runner only, required)
+
 `keyname` - The openstack keyname that should be placed on the
 VM. (OpenStack runner only)
 

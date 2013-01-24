@@ -25,6 +25,7 @@ module TestKitchen
             server = connection.servers.create({ :name => server_def[:instance_name],
                                                  :image_ref => server_def[:image_id],
                                                  :flavor_ref => server_def[:flavor_id],
+                                                 :security_groups => server_def[:security_groups],
                                                  :key_name => server_def[:keyname]})
             server.wait_for { ready? }
             sleep(2) until tcp_test_ssh(server.public_ip_address['addr'])
