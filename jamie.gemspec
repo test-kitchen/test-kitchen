@@ -30,6 +30,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'fakefs'
   gem.add_development_dependency 'guard-minitest'
+  gem.add_development_dependency 'aruba'
+  gem.add_development_dependency 'guard-cucumber'
 
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'maruku'

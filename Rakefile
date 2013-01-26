@@ -12,6 +12,8 @@ task :default => [:test]
 unless RUBY_ENGINE == 'jruby'
   require 'cane/rake_task'
   require 'tailor/rake_task'
+  require 'cucumber'
+  require 'cucumber/rake/task'
 
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
@@ -39,7 +41,11 @@ unless RUBY_ENGINE == 'jruby'
     task.file_set('spec/**/*.rb', 'tests')
   end
 
-  Rake::Task[:default].enhance [:cane, :tailor]
+  Cucumber::Rake::Task.new(:features) do |t|
+    t.cucumber_opts = ['features', '-x', '--format progress']
+  end
+
+  Rake::Task[:default].enhance [:cane, :tailor, :features]
 end
 
 desc "Display LOC stats"
@@ -47,7 +53,7 @@ task :stats do
   puts "\n## Production Code Stats"
   sh "countloc -r lib/jamie lib/jamie.rb"
   puts "\n## Test Code Stats"
-  sh "countloc -r spec"
+  sh "countloc -r spec features"
 end
 
 Rake::Task[:default].enhance [:stats]
