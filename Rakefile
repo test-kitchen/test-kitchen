@@ -29,6 +29,7 @@ unless RUBY_ENGINE == 'jruby'
     cane.doc_exclude = %w(
       lib/vendor/hash_recursive_merge.rb
     )
+    cane.style_measure = 160
   end
 
   Tailor::RakeTask.new do |task|
@@ -41,6 +42,8 @@ unless RUBY_ENGINE == 'jruby'
       # and produces a warning. Since most of it is increasing readability of
       # the data structure, allowing it here to prevent it from growing
       style.max_code_lines_in_method 34
+      style.max_line_length 80, level: :warn
+      style.max_line_length 160, level: :error
     end
     task.file_set('spec/**/*.rb', 'tests')
   end
