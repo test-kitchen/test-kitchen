@@ -344,7 +344,9 @@ module Jamie
         list_plugins while (plugin = ask(prompt_name, :green)) == "list"
         return if plugin == "skip"
         begin
-          append_to_file("Gemfile", %{gem '#{plugin}', :group => :integration\n})
+          append_to_file(
+            "Gemfile", %{gem '#{plugin}', :group => :integration\n}
+          )
           say "You must run `bundle install' to fetch any new gems.", :red
         rescue Errno::ENOENT
           warn %{You do not have an existing Gemfile}
