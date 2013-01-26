@@ -31,7 +31,7 @@ SimpleCov.start 'gem'
 require 'fakefs/spec_helpers'
 require 'logger'
 require 'minitest/autorun'
-require 'ostruct'
+require 'mocha/setup'
 require 'stringio'
 
 require 'jamie'

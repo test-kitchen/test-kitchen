@@ -58,7 +58,7 @@ module Jamie
         what = action.capitalize
         info("[Dummy] #{what} on instance=#{instance} with state=#{state}")
         sleep_if_set
-        random_failure_if_set
+        random_failure_if_set(action)
         debug("[Dummy] #{what} completed (#{config[:sleep]}s).")
       end
 
@@ -66,11 +66,15 @@ module Jamie
         sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
       end
 
-      def random_failure_if_set
-        if config[:random_failure] && [true, false].sample
+      def random_failure_if_set(action)
+        if config[:random_failure] && randomly_fail?
           debug("[Dummy] Random failure for action ##{action}.")
           raise ActionFailed, "Action ##{action} failed for #{instance.to_str}."
         end
+      end
+
+      def randomly_fail?
+        [true, false].sample
       end
     end
   end

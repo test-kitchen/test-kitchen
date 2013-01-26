@@ -45,7 +45,10 @@ unless RUBY_ENGINE == 'jruby'
       style.max_line_length 80, level: :warn
       style.max_line_length 160, level: :error
     end
-    task.file_set('spec/**/*.rb', 'tests')
+    task.file_set('spec/**/*.rb', 'tests') do |style|
+      # allow vertical alignment of `let(:foo) { block }` blocks
+      style.spaces_before_lbrace 1, level: :off
+    end
   end
 
   Cucumber::Rake::Task.new(:features) do |t|

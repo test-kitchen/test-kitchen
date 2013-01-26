@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require_relative '../../spec_helper'
+require 'ostruct'
 
 describe Jamie::Config::Collection do
 
