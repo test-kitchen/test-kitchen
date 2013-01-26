@@ -248,7 +248,8 @@ module Jamie
     desc "init", "Adds some configuration to your cookbook so Jamie can rock"
     def init
       create_file ".jamie.yml", default_yaml
-      append_to_file("Rakefile", <<-RAKE.gsub(/ {8}/, '')) if init_rakefile?
+
+      rakedoc = <<-RAKE.gsub(/^ {8}/, '')
 
         begin
           require 'jamie/rake_tasks'
@@ -257,7 +258,9 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       RAKE
-      append_to_file("Thorfile", <<-THOR.gsub(/ {8}/, '')) if init_thorfile?
+      append_to_file("Rakefile", rakedoc) if init_rakefile?
+
+      thordoc = <<-THOR.gsub(/^ {8}/, '')
 
         begin
           require 'jamie/thor_tasks'
@@ -266,6 +269,8 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       THOR
+      append_to_file("Thorfile", thordoc) if init_thorfile?
+
       empty_directory "test/integration/default" if init_test_dir?
       append_to_gitignore(".jamie/")
       append_to_gitignore(".jamie.local.yml")
