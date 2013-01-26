@@ -392,7 +392,7 @@ module Jamie
     private
 
     attr_reader :plugin_name, :gem_name, :gemspec, :klass_name,
-                :constant, :license, :author, :email, :year
+      :constant, :license, :author, :email, :year
 
     def create_plugin
       run("bundle gem #{gem_name}") unless File.directory?(gem_name)
@@ -417,12 +417,12 @@ module Jamie
         '\1 = []')
       gsub_file(gemspec, %r{(gem\.description\s*) =.*$},
         '\1 = "' + "Jamie::Driver::#{klass_name} - " +
-        "A Jamie Driver for #{klass_name}\"")
+          "A Jamie Driver for #{klass_name}\"")
       gsub_file(gemspec, %r{(gem\.summary\s*) =.*$},
         '\1 = gem.description')
       gsub_file(gemspec, %r{(gem\.homepage\s*) =.*$},
         '\1 = "https://github.com/jamie-ci/' +
-        "#{gem_name}/\"")
+          "#{gem_name}/\"")
       insert_into_file(gemspec,
         "\n  gem.add_dependency 'jamie'\n", :before => "end\n")
       insert_into_file(gemspec,
