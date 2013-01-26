@@ -45,7 +45,7 @@ unless RUBY_ENGINE == 'jruby'
     t.cucumber_opts = ['features', '-x', '--format progress']
   end
 
-  Rake::Task[:default].enhance [:cane, :tailor, :features]
+  Rake::Task[:default].enhance [:cane, :features, :tailor]
 end
 
 desc "Display LOC stats"
