@@ -384,7 +384,8 @@ module Jamie
     end
 
     def self.colorize(str, name)
-      "#{escape(name)}#{str}#{escape(:reset)}"
+      color = escape(name)
+      color.empty? ? str : "#{color}#{str}#{escape(:reset)}"
     end
   end
 
