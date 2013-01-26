@@ -37,6 +37,10 @@ unless RUBY_ENGINE == 'jruby'
       # TODO: Tailor is confused thinking `module Jamie` is a class. Until
       # the classes are split in seperate files, let's punt on this
       style.max_code_lines_in_class 1550, level: :warn
+      # NOTE: Jamie::InitGenerator.default_yaml is over the default 30 lines
+      # and produces a warning. Since most of it is increasing readability of
+      # the data structure, allowing it here to prevent it from growing
+      style.max_code_lines_in_method 34
     end
     task.file_set('spec/**/*.rb', 'tests')
   end

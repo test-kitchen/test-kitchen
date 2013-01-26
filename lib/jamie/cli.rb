@@ -248,7 +248,8 @@ module Jamie
     desc "init", "Adds some configuration to your cookbook so Jamie can rock"
     def init
       create_file ".jamie.yml", default_yaml
-      append_to_file("Rakefile", <<-RAKE.gsub(/ {8}/, '')) if init_rakefile?
+
+      rakedoc = <<-RAKE.gsub(/^ {8}/, '')
 
         begin
           require 'jamie/rake_tasks'
@@ -257,7 +258,9 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       RAKE
-      append_to_file("Thorfile", <<-THOR.gsub(/ {8}/, '')) if init_thorfile?
+      append_to_file("Rakefile", rakedoc) if init_rakefile?
+
+      thordoc = <<-THOR.gsub(/^ {8}/, '')
 
         begin
           require 'jamie/thor_tasks'
@@ -266,6 +269,8 @@ module Jamie
           puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
         end
       THOR
+      append_to_file("Thorfile", thordoc) if init_thorfile?
+
       empty_directory "test/integration/default" if init_test_dir?
       append_to_gitignore(".jamie/")
       append_to_gitignore(".jamie.local.yml")
@@ -338,8 +343,16 @@ module Jamie
       if yes?(prompt_add, :green)
         list_plugins while (plugin = ask(prompt_name, :green)) == "list"
         return if plugin == "skip"
-        append_to_file("Gemfile", %{gem '#{plugin}', :group => :integration\n})
-        say "You must run `bundle install' to fetch any new gems.", :red
+        begin
+          append_to_file(
+            "Gemfile", %{gem '#{plugin}', :group => :integration\n}
+          )
+          say "You must run `bundle install' to fetch any new gems.", :red
+        rescue Errno::ENOENT
+          warn %{You do not have an existing Gemfile}
+          warn %{Exiting...}
+          exit 1
+        end
       end
     end
 
@@ -392,7 +405,7 @@ module Jamie
     private
 
     attr_reader :plugin_name, :gem_name, :gemspec, :klass_name,
-                :constant, :license, :author, :email, :year
+      :constant, :license, :author, :email, :year
 
     def create_plugin
       run("bundle gem #{gem_name}") unless File.directory?(gem_name)
@@ -417,12 +430,12 @@ module Jamie
         '\1 = []')
       gsub_file(gemspec, %r{(gem\.description\s*) =.*$},
         '\1 = "' + "Jamie::Driver::#{klass_name} - " +
-        "A Jamie Driver for #{klass_name}\"")
+          "A Jamie Driver for #{klass_name}\"")
       gsub_file(gemspec, %r{(gem\.summary\s*) =.*$},
         '\1 = gem.description')
       gsub_file(gemspec, %r{(gem\.homepage\s*) =.*$},
         '\1 = "https://github.com/jamie-ci/' +
-        "#{gem_name}/\"")
+          "#{gem_name}/\"")
       insert_into_file(gemspec,
         "\n  gem.add_dependency 'jamie'\n", :before => "end\n")
       insert_into_file(gemspec,
