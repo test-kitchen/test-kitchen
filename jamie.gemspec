@@ -30,7 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'fakefs'
   gem.add_development_dependency 'guard-minitest'
-  gem.add_development_dependency 'aruba'
+  gem.add_development_dependency 'aruba', '~> 0.5'
   gem.add_development_dependency 'guard-cucumber'
 
   gem.add_development_dependency 'yard'
