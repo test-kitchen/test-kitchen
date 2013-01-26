@@ -130,3 +130,30 @@ Scenario: Running the init command succeeds
   And a file named ".gitignore" should exist
   And the file "Gemfile" should contain "gem 'jamie-vagrant', :group => :integration"
 
+
+@ok
+Scenario: Running init with a correct metadata.rb works
+  Given a file named "metadata.rb" with:
+  """
+  name              "ntp"
+  license           "Apache 2.0"
+  description       "Installs and configures ntp as a client or server"
+  version           "0.1.0"
+  recipe "ntp", "Installs and configures ntp either as a server or client"
+
+  %w{ ubuntu debian redhat centos fedora scientific amazon oracle freebsd }.each do |os|
+    supports os
+  end
+  """
+  When I run `jamie init` interactively
+  And I type "n"
+  Then the exit status should be 0
+  And the file ".jamie.yml" should contain:
+  """
+  suites:
+  - name: default
+    run_list:
+    - recipe[ntp]
+    attributes: {}
+  """
+
