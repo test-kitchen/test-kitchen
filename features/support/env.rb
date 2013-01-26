@@ -2,9 +2,9 @@
 require 'aruba/cucumber'
 require 'jamie'
 
-# Before do
-#   @aruba_timeout_seconds = 5
-# end
+Before do
+  @aruba_timeout_seconds = 5
+end
 
 After do |s| 
   # Tell Cucumber to quit after this scenario is done - if it failed.
