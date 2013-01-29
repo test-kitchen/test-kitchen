@@ -18,35 +18,35 @@
 
 require_relative '../spec_helper'
 
-describe Jamie::Color do
+describe Kitchen::Color do
 
   describe ".escape" do
 
     it "returns an empty string if name is nil" do
-      Jamie::Color.escape(nil).must_equal ""
+      Kitchen::Color.escape(nil).must_equal ""
     end
 
     it "returns an empty string if name is not in the ANSI hash" do
-      Jamie::Color.escape(:puce).must_equal ""
+      Kitchen::Color.escape(:puce).must_equal ""
     end
 
     it "returns an ansi escape sequence string for cyan" do
-      Jamie::Color.escape(:cyan).must_equal "\e[36m"
+      Kitchen::Color.escape(:cyan).must_equal "\e[36m"
     end
 
     it "returns an ansi escape sequence string for reset" do
-      Jamie::Color.escape(:reset).must_equal "\e[0m"
+      Kitchen::Color.escape(:reset).must_equal "\e[0m"
     end
   end
 
   describe ".colorize" do
 
     it "returns an ansi escaped string colored yellow" do
-      Jamie::Color.colorize("hello", :yellow).must_equal "\e[33mhello\e[0m"
+      Kitchen::Color.colorize("hello", :yellow).must_equal "\e[33mhello\e[0m"
     end
 
     it "returns an unescaped string if color is not in the ANSI hash" do
-      Jamie::Color.colorize("double", :rainbow).must_equal "double"
+      Kitchen::Color.colorize("double", :rainbow).must_equal "double"
     end
   end
 end

@@ -18,27 +18,27 @@
 
 require_relative '../spec_helper'
 
-describe Jamie::Instance do
+describe Kitchen::Instance do
 
   let(:suite) do
-    Jamie::Suite.new({ :name => 'suite',
+    Kitchen::Suite.new({ :name => 'suite',
       :run_list => 'suite_list', :attributes => { :s => 'ss' } })
   end
 
   let(:platform) do
-    Jamie::Platform.new({ :name => 'platform',
+    Kitchen::Platform.new({ :name => 'platform',
       :run_list => 'platform_list', :attributes => { :p => 'pp' } })
   end
 
-  let(:driver) { Jamie::Driver::Dummy.new({}) }
+  let(:driver) { Kitchen::Driver::Dummy.new({}) }
 
-  let(:jr) { Jamie::Jr.new(suite.name) }
+  let(:jr) { Kitchen::Jr.new(suite.name) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver, :jr => jr }
   end
 
-  let(:instance) { Jamie::Instance.new(opts) }
+  let(:instance) { Kitchen::Instance.new(opts) }
 
   before do
     Celluloid.logger = Logger.new(StringIO.new)
@@ -46,12 +46,12 @@ describe Jamie::Instance do
 
   it "raises an ArgumentError if suite is missing" do
     opts.delete(:suite)
-    proc { Jamie::Instance.new(opts) }.must_raise Jamie::ClientError
+    proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
   end
 
   it "raises an ArgumentError if platform is missing" do
     opts.delete(:platform)
-    proc { Jamie::Instance.new(opts) }.must_raise Jamie::ClientError
+    proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
   end
 
   it "returns suite" do
@@ -63,19 +63,19 @@ describe Jamie::Instance do
   end
 
   it "returns an instance of Jr" do
-    instance.jr.must_be_instance_of Jamie::Jr
+    instance.jr.must_be_instance_of Kitchen::Jr
   end
 
   describe "#name" do
 
     def combo(suite_name, platform_name)
-      opts[:suite] = Jamie::Suite.new(
+      opts[:suite] = Kitchen::Suite.new(
         :name => suite_name, :run_list => []
       )
-      opts[:platform] = Jamie::Platform.new(
+      opts[:platform] = Kitchen::Platform.new(
         :name => platform_name
       )
-      Jamie::Instance.new(opts)
+      Kitchen::Instance.new(opts)
     end
 
     it "combines the suite and platform names with a dash" do
@@ -98,13 +98,13 @@ describe Jamie::Instance do
   describe "#run_list" do
 
     def combo(suite_list, platform_list)
-      opts[:suite] = Jamie::Suite.new(
+      opts[:suite] = Kitchen::Suite.new(
         :name => 'suite', :run_list => suite_list
       )
-      opts[:platform] = Jamie::Platform.new(
+      opts[:platform] = Kitchen::Platform.new(
         :name => 'platform', :run_list => platform_list
       )
-      Jamie::Instance.new(opts)
+      Kitchen::Instance.new(opts)
     end
 
     it "combines the platform then suite run_lists" do
@@ -123,13 +123,13 @@ describe Jamie::Instance do
   describe "#attributes" do
 
     def combo(suite_attrs, platform_attrs)
-      opts[:suite] = Jamie::Suite.new(
+      opts[:suite] = Kitchen::Suite.new(
         :name => 'suite', :run_list => [], :attributes => suite_attrs
       )
-      opts[:platform] = Jamie::Platform.new(
+      opts[:platform] = Kitchen::Platform.new(
         :name => 'platform', :attributes => platform_attrs
       )
-      Jamie::Instance.new(opts)
+      Kitchen::Instance.new(opts)
     end
 
     it "merges suite and platform hashes together" do

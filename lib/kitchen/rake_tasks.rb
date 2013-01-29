@@ -18,22 +18,22 @@
 
 require 'rake/tasklib'
 
-require 'jamie'
+require 'kitchen'
 
-module Jamie
+module Kitchen
 
-  # Jamie Rake task generator.
+  # Kitchen Rake task generator.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class RakeTasks < ::Rake::TaskLib
 
-    # Creates Jamie Rake tasks and allows the callee to configure it.
+    # Creates Kitchen Rake tasks and allows the callee to configure it.
     #
     # @yield [self] gives itself to the block
     def initialize
-      @config = Jamie::Config.new
+      @config = Kitchen::Config.new
       @config.supervised = false
-      Jamie.logger = Jamie.default_file_logger
+      Kitchen.logger = Kitchen.default_file_logger
       yield self if block_given?
       define
     end
@@ -43,7 +43,7 @@ module Jamie
     attr_reader :config
 
     def define
-      namespace "jamie" do
+      namespace "kitchen" do
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
           task instance.name do

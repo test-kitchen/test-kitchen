@@ -18,9 +18,9 @@
 
 require_relative '../../spec_helper'
 
-require 'jamie/driver/dummy'
+require 'kitchen/driver/dummy'
 
-describe Jamie::Driver::Dummy do
+describe Kitchen::Driver::Dummy do
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
@@ -32,7 +32,7 @@ describe Jamie::Driver::Dummy do
   end
 
   let(:driver) do
-    d = Jamie::Driver::Dummy.new(config)
+    d = Kitchen::Driver::Dummy.new(config)
     d.instance = instance
     d
   end
@@ -67,7 +67,7 @@ describe Jamie::Driver::Dummy do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      proc { driver.create(state) }.must_raise Jamie::ActionFailed
+      proc { driver.create(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "will only raise ActionFailed if :random_failure is set" do
@@ -75,8 +75,8 @@ describe Jamie::Driver::Dummy do
 
       begin
         driver.create(state)
-      rescue Jamie::ActionFailed => ex
-        # If exception is anything other than Jamie::ActionFailed, this spec
+      rescue Kitchen::ActionFailed => ex
+        # If exception is anything other than Kitchen::ActionFailed, this spec
         # will fail
       end
     end
@@ -101,7 +101,7 @@ describe Jamie::Driver::Dummy do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      proc { driver.converge(state) }.must_raise Jamie::ActionFailed
+      proc { driver.converge(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a converge event to INFO" do
@@ -124,7 +124,7 @@ describe Jamie::Driver::Dummy do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      proc { driver.setup(state) }.must_raise Jamie::ActionFailed
+      proc { driver.setup(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a setup event to INFO" do
@@ -147,7 +147,7 @@ describe Jamie::Driver::Dummy do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      proc { driver.verify(state) }.must_raise Jamie::ActionFailed
+      proc { driver.verify(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a verify event to INFO" do
@@ -177,7 +177,7 @@ describe Jamie::Driver::Dummy do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      proc { driver.destroy(state) }.must_raise Jamie::ActionFailed
+      proc { driver.destroy(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a destroy event to INFO" do

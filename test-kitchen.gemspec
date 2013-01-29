@@ -1,20 +1,20 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'jamie/version'
+require 'kitchen/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "jamie"
-  gem.version       = Jamie::VERSION
+  gem.name          = "test-kitchen"
+  gem.version       = Kitchen::VERSION
   gem.license       = 'Apache 2.0'
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
   gem.description   = %q{A Chef convergence integration test harness}
   gem.summary       = gem.description
-  gem.homepage      = "https://github.com/jamie-ci/jamie"
+  gem.homepage      = "https://github.com/opscode/test-kitchen"
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = %w(jamie)
+  gem.executables   = %w(kitchen)
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 

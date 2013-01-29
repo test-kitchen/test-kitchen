@@ -7,6 +7,6 @@ Signal.trap("INT") { exit 1 }
 
 $:.unshift File.join(File.dirname(__FILE__), %w{.. lib})
 require 'rubygems'
-require 'jamie/cli'
+require 'kitchen/cli'
 
-Jamie::CLI.start
+Kitchen::CLI.start

@@ -36,9 +36,9 @@ require 'stringio'
 require 'vendor/hash_recursive_merge'
 require 'yaml'
 
-require 'jamie/version'
+require 'kitchen/version'
 
-module Jamie
+module Kitchen
 
   class << self
 
@@ -46,7 +46,7 @@ module Jamie
     attr_accessor :crashes
     attr_accessor :mutex
 
-    # Returns the root path of the Jamie gem source code.
+    # Returns the root path of the Kitchen gem source code.
     #
     # @return [Pathname] root path of gem
     def source_root
@@ -62,21 +62,21 @@ module Jamie
     end
 
     def default_file_logger
-      logfile = File.expand_path(File.join(".jamie", "logs", "jamie.log"))
+      logfile = File.expand_path(File.join(".kitchen", "logs", "kitchen.log"))
       Logger.new(:stdout => STDOUT, :logdev => logfile, :level => env_log)
     end
 
     private
 
     def env_log
-      level = ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym
+      level = ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
       level = Util.to_logger_level(level) unless level.nil?
     end
   end
 
   module Error ; end
 
-  # Base exception class from which all Jamie exceptions derive. This class
+  # Base exception class from which all Kitchen exceptions derive. This class
   # nests an exception when this class is re-raised from a rescue block.
   class StandardError < ::StandardError
 
@@ -106,8 +106,8 @@ module Jamie
   # action.
   class ActionFailed < TransientFailure ; end
 
-  # Base configuration class for Jamie. This class exposes configuration such
-  # as the location of the Jamie YAML file, instances, log_levels, etc.
+  # Base configuration class for Kitchen. This class exposes configuration such
+  # as the location of the Kitchen YAML file, instances, log_levels, etc.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
@@ -119,8 +119,8 @@ module Jamie
     attr_writer :supervised
     attr_writer :test_base_path
 
-    # Default path to the Jamie YAML file
-    DEFAULT_YAML_FILE = File.join(Dir.pwd, '.jamie.yml').freeze
+    # Default path to the Kitchen YAML file
+    DEFAULT_YAML_FILE = File.join(Dir.pwd, '.kitchen.yml').freeze
 
     # Default driver plugin to use
     DEFAULT_DRIVER_PLUGIN = "dummy".freeze
@@ -130,7 +130,7 @@ module Jamie
 
     # Creates a new configuration.
     #
-    # @param yaml_file [String] optional path to Jamie YAML file
+    # @param yaml_file [String] optional path to Kitchen YAML file
     def initialize(yaml_file = nil)
       @yaml_file = yaml_file
     end
@@ -155,7 +155,7 @@ module Jamie
       instances_array(load_instances)
     end
 
-    # @return [String] path to the Jamie YAML file
+    # @return [String] path to the Kitchen YAML file
     def yaml_file
       @yaml_file ||= DEFAULT_YAML_FILE
     end
@@ -163,8 +163,8 @@ module Jamie
     # @return [Symbol] log level verbosity
     def log_level
       @log_level ||= begin
-        ENV['JAMIE_LOG'] && ENV['JAMIE_LOG'].downcase.to_sym ||
-          Jamie::DEFAULT_LOG_LEVEL
+        ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym ||
+          Kitchen::DEFAULT_LOG_LEVEL
       end
     end
 
@@ -197,10 +197,10 @@ module Jamie
       # regular expression.
       #
       # @param regexp [Regexp] a regular expression pattern
-      # @return [Jamie::Config::Collection<Object>] a new collection of
+      # @return [Kitchen::Config::Collection<Object>] a new collection of
       #   matched objects
       def get_all(regexp)
-        Jamie::Config::Collection.new(
+        Kitchen::Config::Collection.new(
           __getobj__.find_all { |i| i.name =~ regexp }
         )
       end
@@ -248,7 +248,7 @@ module Jamie
 
     def new_driver(hash)
       hash[:driver_config] ||= Hash.new
-      hash[:driver_config][:jamie_root] = jamie_root
+      hash[:driver_config][:kitchen_root] = kitchen_root
 
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
@@ -272,7 +272,7 @@ module Jamie
       if supervised
         supervisor = Instance.supervise_as(actor_name, opts)
         actor = supervisor.actors.first
-        Jamie.logger.debug("Supervising #{actor.to_str} with #{supervisor}")
+        Kitchen.logger.debug("Supervising #{actor.to_str} with #{supervisor}")
         actor
       else
         Celluloid::Actor[actor_name] = Instance.new(opts)
@@ -280,7 +280,7 @@ module Jamie
     end
 
     def log_root
-      File.expand_path(File.join(jamie_root, ".jamie", "logs"))
+      File.expand_path(File.join(kitchen_root, ".kitchen", "logs"))
     end
 
     def platform_driver_hash(platform_name)
@@ -325,7 +325,7 @@ module Jamie
       end
     end
 
-    def jamie_root
+    def kitchen_root
       File.dirname(yaml_file)
     end
 
@@ -389,9 +389,10 @@ module Jamie
     end
   end
 
-  # Logging implementation for Jamie. By default the console/stdout output will
-  # be displayed differently than the file log output. Therefor, this class
-  # wraps multiple loggers that conform to the stdlib `Logger` class behavior.
+  # Logging implementation for Kitchen. By default the console/stdout output
+  # will be displayed differently than the file log output. Therefor, this
+  # class wraps multiple loggers that conform to the stdlib `Logger` class
+  # behavior.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Logger
@@ -408,7 +409,7 @@ module Jamie
       @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
       @loggers << stdout_logger(STDOUT, color) if @loggers.empty?
 
-      self.progname = options[:progname] || "Jamie"
+      self.progname = options[:progname] || "Kitchen"
       self.level = options[:level] || default_log_level
     end
 
@@ -432,7 +433,7 @@ module Jamie
     private
 
     def default_log_level
-      Util.to_logger_level(Jamie::DEFAULT_LOG_LEVEL)
+      Util.to_logger_level(Kitchen::DEFAULT_LOG_LEVEL)
     end
 
     def stdout_logger(stdout, color)
@@ -650,7 +651,7 @@ module Jamie
     # @option options [Jr] :jr the jr command string generator
     # @option options [Logger] :logger the instance logger
     def initialize(options = {})
-      options = { :logger => Jamie.logger }.merge(options)
+      options = { :logger => Kitchen.logger }.merge(options)
       validate_options(options)
       logger = options[:logger]
 
@@ -800,7 +801,7 @@ module Jamie
 
     def setup_driver_mutex
       if driver.class.serial_actions
-        Jamie.mutex.synchronize do
+        Kitchen.mutex.synchronize do
           self.class.mutexes ||= Hash.new
           self.class.mutexes[driver.class] = Mutex.new
         end
@@ -892,12 +893,12 @@ module Jamie
 
     def statefile
       File.expand_path(File.join(
-        driver[:jamie_root], ".jamie", "#{name}.yml"
+        driver[:kitchen_root], ".kitchen", "#{name}.yml"
       ))
     end
 
     def banner(*args)
-      Jamie.logger.logdev && Jamie.logger.logdev.banner(*args)
+      Kitchen.logger.logdev && Kitchen.logger.logdev.banner(*args)
       super
     end
 
@@ -940,7 +941,7 @@ module Jamie
     end
   end
 
-  # Command string generator to interface with Jamie Runner (jr). The
+  # Command string generator to interface with Kitchen Runner (jr). The
   # commands that are generated are safe to pass to an SSH command or as an
   # unix command argument (escaped in single quotes).
   #
@@ -961,7 +962,7 @@ module Jamie
       @use_sudo = opts[:use_sudo]
     end
 
-    # Returns a command string which installs the Jamie Runner (jr), installs
+    # Returns a command string which installs the Kitchen Runner (jr), installs
     # all required jr plugins for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
@@ -1160,7 +1161,7 @@ module Jamie
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
     rescue Exception => error
-      error.extend(Jamie::Error)
+      error.extend(Kitchen::Error)
       raise
     end
 
@@ -1182,7 +1183,7 @@ module Jamie
     # @return [Driver::Base] a driver instance
     # @raise [ClientError] if a driver instance could not be created
     def self.for_plugin(plugin, config)
-      require "jamie/driver/#{plugin}"
+      require "kitchen/driver/#{plugin}"
 
       str_const = Util.to_camel_case(plugin)
       klass = self.const_get(str_const)
@@ -1396,7 +1397,7 @@ module Jamie
       end
 
       def chef_home
-        "/tmp/jamie-chef-solo".freeze
+        "/tmp/kitchen-chef-solo".freeze
       end
 
       def install_omnibus(ssh_args)
@@ -1416,8 +1417,8 @@ module Jamie
       end
 
       def upload_chef_data(ssh_args)
-        Jamie::ChefDataUploader.new(
-          instance, ssh_args, config[:jamie_root], chef_home
+        Kitchen::ChefDataUploader.new(
+          instance, ssh_args, config[:kitchen_root], chef_home
         ).upload
       end
 
@@ -1496,10 +1497,10 @@ module Jamie
     include ShellOut
     include Logging
 
-    def initialize(instance, ssh_args, jamie_root, chef_home)
+    def initialize(instance, ssh_args, kitchen_root, chef_home)
       @instance = instance
       @ssh_args = ssh_args
-      @jamie_root = jamie_root
+      @kitchen_root = kitchen_root
       @chef_home = chef_home
     end
 
@@ -1515,7 +1516,7 @@ module Jamie
 
     private
 
-    attr_reader :instance, :ssh_args, :jamie_root, :chef_home
+    attr_reader :instance, :ssh_args, :kitchen_root, :chef_home
 
     def logger
       instance.logger
@@ -1575,15 +1576,15 @@ module Jamie
     end
 
     def prepare_tmpdir(tmpdir)
-      if File.exists?(File.join(jamie_root, "Berksfile"))
+      if File.exists?(File.join(kitchen_root, "Berksfile"))
         run_resolver("Berkshelf", "berks", tmpdir)
-      elsif File.exists?(File.join(jamie_root, "Cheffile"))
+      elsif File.exists?(File.join(kitchen_root, "Cheffile"))
         run_resolver("Librarian", "librarian-chef", tmpdir)
-      elsif File.directory?(File.join(jamie_root, "cookbooks"))
+      elsif File.directory?(File.join(kitchen_root, "cookbooks"))
         cp_cookbooks(tmpdir)
       else
         FileUtils.rmtree(tmpdir)
-        fatal("Berksfile, Cheffile or cookbooks/ must exist in #{jamie_root}")
+        fatal("Berksfile, Cheffile or cookbooks/ must exist in #{kitchen_root}")
         raise UserError, "Cookbooks could not be found"
       end
     end
@@ -1591,24 +1592,26 @@ module Jamie
     def run_resolver(name, bin, tmpdir)
       begin
         run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
-      rescue Jamie::ShellOut::ShellCommandFailed
+      rescue Kitchen::ShellOut::ShellCommandFailed
         fatal("#{name} must be installed, add it to your Gemfile.")
         raise UserError, "#{bin} command not found"
       end
 
-      Jamie.mutex.synchronize { run_command "#{bin} install --path #{tmpdir}" }
+      Kitchen.mutex.synchronize do
+        run_command "#{bin} install --path #{tmpdir}"
+      end
     end
 
     def cp_cookbooks(tmpdir)
-      FileUtils.cp_r(File.join(jamie_root, "cookbooks", "."), tmpdir)
+      FileUtils.cp_r(File.join(kitchen_root, "cookbooks", "."), tmpdir)
       cp_this_cookbook(tmpdir) if File.exists?(File.expand_path('metadata.rb'))
     end
 
     def cp_this_cookbook(tmpdir)
-      metadata_rb = File.join(jamie_root, "metadata.rb")
+      metadata_rb = File.join(kitchen_root, "metadata.rb")
       cb_name = MetadataChopper.extract(metadata_rb).first
       cb_path = File.join(tmpdir, cb_name)
-      glob = Dir.glob("#{jamie_root}/{metadata.rb,README.*," +
+      glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*," +
         "attributes,files,libraries,providers,recipes,resources,templates}")
 
       FileUtils.mkdir_p(cb_path)
@@ -1650,14 +1653,14 @@ module Jamie
 end
 
 # Initialize the base logger and use that for Celluloid's logger
-Jamie.logger = Jamie.default_logger
-Celluloid.logger = Jamie.logger
+Kitchen.logger = Kitchen.default_logger
+Celluloid.logger = Kitchen.logger
 
 # Setup a collection of instance crash exceptions for error reporting
-Jamie.crashes = []
+Kitchen.crashes = []
 Celluloid.exception_handler do |exception|
-  Jamie.logger.debug("An instance crashed because of #{exception.inspect}")
-  Jamie.mutex.synchronize { Jamie.crashes << exception }
+  Kitchen.logger.debug("An instance crashed because of #{exception.inspect}")
+  Kitchen.mutex.synchronize { Kitchen.crashes << exception }
 end
 
-Jamie.mutex = Mutex.new
+Kitchen.mutex = Mutex.new

@@ -18,10 +18,10 @@
 
 require_relative '../spec_helper'
 
-describe Jamie::Config do
+describe Kitchen::Config do
   include FakeFS::SpecHelpers
 
-  let(:config) { Jamie::Config.new("/tmp/.jamie.yml") }
+  let(:config) { Kitchen::Config.new("/tmp/.kitchen.yml") }
 
   before do
     FileUtils.mkdir_p("/tmp")
@@ -29,7 +29,7 @@ describe Jamie::Config do
 
   describe "#platforms" do
 
-    it "returns platforms loaded from a jamie.yml" do
+    it "returns platforms loaded from a kitchen.yml" do
       stub_yaml!({ 'platforms' => [{ 'name' => 'one' }, { 'name' => 'two' }] })
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
@@ -44,7 +44,7 @@ describe Jamie::Config do
 
   describe "#suites" do
 
-    it "returns suites loaded from a jamie.yml" do
+    it "returns suites loaded from a kitchen.yml" do
       stub_yaml!({ 'suites' => [
         { 'name' => 'one', 'run_list' => [] },
         { 'name' => 'two', 'run_list' => [] },
@@ -100,7 +100,7 @@ describe Jamie::Config do
 
   describe "#instances" do
 
-    it "returns instances loaded from a jamie.yml" do
+    it "returns instances loaded from a kitchen.yml" do
       stub_yaml!({
         'platforms' => [
           { 'name' => 'p1' },
@@ -120,15 +120,15 @@ describe Jamie::Config do
         'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
         'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
-      config.instances.first.driver.must_be_instance_of Jamie::Driver::Dummy
+      config.instances.first.driver.must_be_instance_of Kitchen::Driver::Dummy
     end
 
-    it "returns an instance with a driver initialized with jamie_root" do
+    it "returns an instance with a driver initialized with kitchen_root" do
       stub_yaml!({
         'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
         'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
       })
-      config.instances.first.driver[:jamie_root].must_equal "/tmp"
+      config.instances.first.driver[:kitchen_root].must_equal "/tmp"
     end
 
     it "returns an instance with a driver initialized with passed in config" do
@@ -144,26 +144,26 @@ describe Jamie::Config do
     end
   end
 
-  describe "jamie.local.yml" do
+  describe "kitchen.local.yml" do
 
-    it "merges in configuration with jamie.yml" do
-      stub_yaml!(".jamie.yml", {
+    it "merges in configuration with kitchen.yml" do
+      stub_yaml!(".kitchen.yml", {
         'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
         'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
-      stub_yaml!(".jamie.local.yml", {
+      stub_yaml!(".kitchen.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
       config.instances.first.driver[:foo].must_equal 'bar'
     end
 
-    it "merges over configuration in jamie.yml" do
-      stub_yaml!(".jamie.yml", {
+    it "merges over configuration in kitchen.yml" do
+      stub_yaml!(".kitchen.yml", {
         'driver_config' => { 'foo' => 'nope' },
         'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
         'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
-      stub_yaml!(".jamie.local.yml", {
+      stub_yaml!(".kitchen.local.yml", {
         'driver_config' => { 'foo' => 'bar' }
       })
       config.instances.first.driver[:foo].must_equal 'bar'
@@ -172,9 +172,9 @@ describe Jamie::Config do
 
   describe "erb filtering" do
 
-    it "evaluates jamie.yml through erb before loading" do
+    it "evaluates kitchen.yml through erb before loading" do
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.jamie.yml", "wb") do |f|
+      File.open("/tmp/.kitchen.yml", "wb") do |f|
         f.write <<-YAML.gsub(/^ {10}/, '')
           ---
           driver_plugin: dummy
@@ -185,13 +185,13 @@ describe Jamie::Config do
       config.platforms.first.name.must_equal "ahhchoo"
     end
 
-    it "evaluates jamie.local.yml through erb before loading" do
+    it "evaluates kitchen.local.yml through erb before loading" do
       stub_yaml!({
         'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
         'suites' => [{ 'name' => 's1', 'run_list' => [] }]
       })
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.jamie.local.yml", "wb") do |f|
+      File.open("/tmp/.kitchen.local.yml", "wb") do |f|
         f.write <<-YAML.gsub(/^ {10}/, '')
           ---
           driver_config:
@@ -219,7 +219,7 @@ describe Jamie::Config do
 
   private
 
-  def stub_yaml!(name = ".jamie.yml", hash)
+  def stub_yaml!(name = ".kitchen.yml", hash)
     FileUtils.mkdir_p "/tmp"
     File.open("/tmp/#{name}", "wb") { |f| f.write(hash.to_yaml) }
   end

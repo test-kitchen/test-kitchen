@@ -20,11 +20,11 @@ require 'benchmark'
 require 'ostruct'
 require 'thor'
 
-require 'jamie'
+require 'kitchen'
 
-module Jamie
+module Kitchen
 
-  # The command line runner for Jamie.
+  # The command line runner for Kitchen.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class CLI < Thor
@@ -36,9 +36,9 @@ module Jamie
     def initialize(*args)
       super
       $stdout.sync = true
-      @config = Jamie::Config.new(ENV['JAMIE_YAML'])
+      @config = Kitchen::Config.new(ENV['KITCHEN_YAML'])
       @config.supervised = false
-      Jamie.logger = Jamie.default_file_logger
+      Kitchen.logger = Kitchen.default_file_logger
     end
 
     desc "list [(all|<REGEX>)]", "List all instances"
@@ -87,7 +87,7 @@ module Jamie
         raise ArgumentError, "Destroy mode must be passing, always, or never."
       end
 
-      banner "Starting Jamie"
+      banner "Starting Kitchen"
       elapsed = Benchmark.measure do
         destroy_mode = options[:destroy].to_sym
         @task = :test
@@ -99,7 +99,7 @@ module Jamie
           run_serial(results, destroy_mode)
         end
       end
-      banner "Jamie is finished. #{Util.duration(elapsed.real)}"
+      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
@@ -114,13 +114,13 @@ module Jamie
       instance.login
     end
 
-    desc "version", "Print Jamie's version information"
+    desc "version", "Print Kitchen's version information"
     def version
-      say "Jamie version #{Jamie::VERSION}"
+      say "Kitchen version #{Kitchen::VERSION}"
     end
     map %w(-v --version) => :version
 
-    desc "console", "Jamie Console!"
+    desc "console", "Kitchen Console!"
     def console
       require 'pry'
       Pry.start(@config, :prompt => pry_prompts)
@@ -130,12 +130,12 @@ module Jamie
       exit 1
     end
 
-    desc "init", "Adds some configuration to your cookbook so Jamie can rock"
+    desc "init", "Adds some configuration to your cookbook so Kitchen can rock"
     def init
       InitGenerator.new.init
     end
 
-    desc "new_plugin [NAME]", "Generate a new Jamie Driver plugin gem project"
+    desc "new_plugin [NAME]", "Generate a new Kitchen Driver plugin gem project"
     method_option :license, :aliases => "-l", :default => "apachev2",
       :desc => "Type of license for gem (apachev2, mit, gplv3, gplv2, reserved)"
     def new_plugin(name)
@@ -149,17 +149,17 @@ module Jamie
     attr_reader :task
 
     def logger
-      Jamie.logger
+      Kitchen.logger
     end
 
     def exec_action(action)
-      banner "Starting Jamie"
+      banner "Starting Kitchen"
       elapsed = Benchmark.measure do
         @task = action
         results = parse_subcommand(args.first)
         options[:parallel] ? run_parallel(results) : run_serial(results)
       end
-      banner "Jamie is finished. #{Util.duration(elapsed.real)}"
+      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     def run_serial(instances, *args)
@@ -187,7 +187,7 @@ module Jamie
     def get_filtered_instances(regexp)
       result = @config.instances.get_all(/#{regexp}/)
       if result.empty?
-        die task, "No instances for regex `#{regexp}', try running `jamie list'"
+        die task, "No instances for regex `#{regexp}', try running `kitchen list'"
       else
         result
       end
@@ -196,7 +196,7 @@ module Jamie
     def get_instance(name)
       result = @config.instances.get(name)
       if result.nil?
-        die task, "No instance `#{name}', try running `jamie list'"
+        die task, "No instance `#{name}', try running `kitchen list'"
       end
       result
     end
@@ -238,24 +238,24 @@ module Jamie
   end
 
   # A project initialization generator, to help prepare a cookbook project for
-  # testing with Jamie.
+  # testing with Kitchen.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class InitGenerator < Thor
 
     include Thor::Actions
 
-    desc "init", "Adds some configuration to your cookbook so Jamie can rock"
+    desc "init", "Adds some configuration to your cookbook so Kitchen can rock"
     def init
-      create_file ".jamie.yml", default_yaml
+      create_file ".kitchen.yml", default_yaml
 
       rakedoc = <<-RAKE.gsub(/^ {8}/, '')
 
         begin
-          require 'jamie/rake_tasks'
-          Jamie::RakeTasks.new
+          require 'kitchen/rake_tasks'
+          Kitchen::RakeTasks.new
         rescue LoadError
-          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+          puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
         end
       RAKE
       append_to_file("Rakefile", rakedoc) if init_rakefile?
@@ -263,17 +263,17 @@ module Jamie
       thordoc = <<-THOR.gsub(/^ {8}/, '')
 
         begin
-          require 'jamie/thor_tasks'
-          Jamie::ThorTasks.new
+          require 'kitchen/thor_tasks'
+          Kitchen::ThorTasks.new
         rescue LoadError
-          puts ">>>>> Jamie gem not loaded, omitting tasks" unless ENV['CI']
+          puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
         end
       THOR
       append_to_file("Thorfile", thordoc) if init_thorfile?
 
       empty_directory "test/integration/default" if init_test_dir?
-      append_to_gitignore(".jamie/")
-      append_to_gitignore(".jamie.local.yml")
+      append_to_gitignore(".kitchen/")
+      append_to_gitignore(".kitchen.local.yml")
       add_plugins
     end
 
@@ -316,12 +316,12 @@ module Jamie
 
     def init_rakefile?
       File.exists?("Rakefile") &&
-        IO.readlines("Rakefile").grep(%r{require 'jamie/rake_tasks'}).empty?
+        IO.readlines("Rakefile").grep(%r{require 'kitchen/rake_tasks'}).empty?
     end
 
     def init_thorfile?
       File.exists?("Thorfile") &&
-        IO.readlines("Thorfile").grep(%r{require 'jamie/thor_tasks'}).empty?
+        IO.readlines("Thorfile").grep(%r{require 'kitchen/thor_tasks'}).empty?
     end
 
     def init_test_dir?
@@ -367,21 +367,21 @@ module Jamie
     def fetch_gem_specs
       require 'rubygems/spec_fetcher'
       req = Gem::Requirement.default
-      dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/jamie-/i, req) }
+      dep = Gem::Deprecate.skip_during { Gem::Dependency.new(/kitchen-/i, req) }
       fetcher = Gem::SpecFetcher.fetcher
 
       specs = fetcher.find_matching(dep, false, false, false)
     end
   end
 
-  # A generator to create a new Jamie driver plugin.
+  # A generator to create a new Kitchen driver plugin.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class NewPluginGenerator < Thor
 
     include Thor::Actions
 
-    desc "new_plugin [NAME]", "Generate a new Jamie Driver plugin gem project"
+    desc "new_plugin [NAME]", "Generate a new Kitchen Driver plugin gem project"
     method_option :license, :aliases => "-l", :default => "apachev2",
       :desc => "Type of license for gem (apachev2, mit, gplv3, gplv2, reserved)"
     def new_plugin(plugin_name)
@@ -390,7 +390,7 @@ module Jamie
       end
 
       @plugin_name = plugin_name
-      @gem_name = "jamie-#{plugin_name}"
+      @gem_name = "kitchen-#{plugin_name}"
       @gemspec = "#{gem_name}.gemspec"
       @klass_name = Util.to_camel_case(plugin_name)
       @constant = Util.to_snake_case(plugin_name).upcase
@@ -423,21 +423,21 @@ module Jamie
 
     def update_gemspec
       gsub_file(gemspec, %r{require '#{gem_name}/version'},
-        %{require 'jamie/driver/#{plugin_name}_version.rb'})
-      gsub_file(gemspec, %r{Jamie::#{klass_name}::VERSION},
-        %{Jamie::Driver::#{constant}_VERSION})
+        %{require 'kitchen/driver/#{plugin_name}_version.rb'})
+      gsub_file(gemspec, %r{Kitchen::#{klass_name}::VERSION},
+        %{Kitchen::Driver::#{constant}_VERSION})
       gsub_file(gemspec, %r{(gem\.executables\s*) =.*$},
         '\1 = []')
       gsub_file(gemspec, %r{(gem\.description\s*) =.*$},
-        '\1 = "' + "Jamie::Driver::#{klass_name} - " +
-          "A Jamie Driver for #{klass_name}\"")
+        '\1 = "' + "Kitchen::Driver::#{klass_name} - " +
+          "A Kitchen Driver for #{klass_name}\"")
       gsub_file(gemspec, %r{(gem\.summary\s*) =.*$},
         '\1 = gem.description')
       gsub_file(gemspec, %r{(gem\.homepage\s*) =.*$},
-        '\1 = "https://github.com/jamie-ci/' +
+        '\1 = "https://github.com/opscode/' +
           "#{gem_name}/\"")
       insert_into_file(gemspec,
-        "\n  gem.add_dependency 'jamie'\n", :before => "end\n")
+        "\n  gem.add_dependency 'test-kitchen'\n", :before => "end\n")
       insert_into_file(gemspec,
         "\n  gem.add_development_dependency 'cane'\n", :before => "end\n")
       insert_into_file(gemspec,
@@ -465,13 +465,13 @@ module Jamie
     def create_src_files
       license_comments = rendered_license.gsub(/^/, '# ').gsub(/\s+$/, '')
 
-      empty_directory("lib/jamie/driver")
+      empty_directory("lib/kitchen/driver")
       create_template("plugin/version.rb",
-        "lib/jamie/driver/#{plugin_name}_version.rb",
+        "lib/kitchen/driver/#{plugin_name}_version.rb",
         :klass_name => klass_name, :constant => constant,
         :license => license_comments)
       create_template("plugin/driver.rb",
-        "lib/jamie/driver/#{plugin_name}.rb",
+        "lib/kitchen/driver/#{plugin_name}.rb",
         :klass_name => klass_name, :license => license_comments,
         :author => author, :email => email)
     end
@@ -532,7 +532,7 @@ module Jamie
       private
 
       def template_file
-        Jamie.source_root.join("templates", "#{template}.erb").to_s
+        Kitchen.source_root.join("templates", "#{template}.erb").to_s
       end
     end
   end
