@@ -1,6 +1,6 @@
 # Set up the environment for testing
 require 'aruba/cucumber'
-require 'jamie'
+require 'kitchen'
 
 Before do
   @aruba_timeout_seconds = 5

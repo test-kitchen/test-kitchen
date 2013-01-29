@@ -16,16 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'jamie'
+require 'kitchen'
 
-module Jamie
+module Kitchen
 
   module Driver
 
-    # Dummy driver for Jamie.
+    # Dummy driver for Kitchen.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Dummy < Jamie::Driver::Base
+    class Dummy < Kitchen::Driver::Base
 
       default_config :sleep, 0
       default_config :random_failure, false

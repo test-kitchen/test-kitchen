@@ -19,10 +19,10 @@
 require_relative '../../spec_helper'
 require 'ostruct'
 
-describe Jamie::Config::Collection do
+describe Kitchen::Config::Collection do
 
   let(:collection) do
-    Jamie::Config::Collection.new([
+    Kitchen::Config::Collection.new([
       obj('one'), obj('two', 'a'), obj('two', 'b'), obj('three')
     ])
   end

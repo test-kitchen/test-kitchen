@@ -18,25 +18,25 @@
 
 require 'thor'
 
-require 'jamie'
+require 'kitchen'
 
-module Jamie
+module Kitchen
 
-  # Jamie Thor task generator.
+  # Kitchen Thor task generator.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class ThorTasks < Thor
 
-    namespace :jamie
+    namespace :kitchen
 
-    # Creates Jamie Thor tasks and allows the callee to configure it.
+    # Creates Kitchen Thor tasks and allows the callee to configure it.
     #
     # @yield [self] gives itself to the block
     def initialize(*args)
       super
-      @config = Jamie::Config.new
+      @config = Kitchen::Config.new
       @config.supervised = false
-      Jamie.logger = Jamie.default_file_logger
+      Kitchen.logger = Kitchen.default_file_logger
       yield self if block_given?
       define
     end

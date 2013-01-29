@@ -2,16 +2,16 @@
 #
 <%= license %>
 
-require 'jamie'
+require 'kitchen'
 
-module Jamie
+module Kitchen
 
   module Driver
 
-    # <%= klass_name %> driver for Jamie.
+    # <%= klass_name %> driver for Kitchen.
     #
     # @author <%= author %> <<%= email %>>
-    class <%= klass_name %> < Jamie::Driver::SSHBase
+    class <%= klass_name %> < Kitchen::Driver::SSHBase
 
       def create(state)
       end

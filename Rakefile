@@ -18,10 +18,10 @@ unless RUBY_ENGINE == 'jruby'
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
     cane.abc_exclude = %w(
-      Jamie::RakeTasks#define
-      Jamie::ThorTasks#define
-      Jamie::CLI#pry_prompts
-      Jamie::Instance#synchronize_or_call
+      Kitchen::RakeTasks#define
+      Kitchen::ThorTasks#define
+      Kitchen::CLI#pry_prompts
+      Kitchen::Instance#synchronize_or_call
     )
     cane.style_exclude = %w(
       lib/vendor/hash_recursive_merge.rb
@@ -35,10 +35,10 @@ unless RUBY_ENGINE == 'jruby'
   Tailor::RakeTask.new do |task|
     task.file_set('bin/*', 'binaries')
     task.file_set('lib/**/*.rb', 'code') do |style|
-      # TODO: Tailor is confused thinking `module Jamie` is a class. Until
+      # TODO: Tailor is confused thinking `module Kitchen` is a class. Until
       # the classes are split in seperate files, let's punt on this
       style.max_code_lines_in_class 1550, level: :warn
-      # NOTE: Jamie::InitGenerator.default_yaml is over the default 30 lines
+      # NOTE: Kitchen::InitGenerator.default_yaml is over the default 30 lines
       # and produces a warning. Since most of it is increasing readability of
       # the data structure, allowing it here to prevent it from growing
       style.max_code_lines_in_method 34
@@ -61,7 +61,7 @@ end
 desc "Display LOC stats"
 task :stats do
   puts "\n## Production Code Stats"
-  sh "countloc -r lib/jamie lib/jamie.rb"
+  sh "countloc -r lib/kitchen lib/kitchen.rb"
   puts "\n## Test Code Stats"
   sh "countloc -r spec features"
 end
