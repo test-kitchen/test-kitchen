@@ -18,6 +18,9 @@
 
 require_relative '../spec_helper'
 
+require 'kitchen/errors'
+require 'kitchen/suite'
+
 describe Kitchen::Suite do
 
   let(:opts) do ; { :name => 'suitezy', :run_list => ['doowah'] } ; end

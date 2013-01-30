@@ -18,6 +18,9 @@
 
 require_relative '../spec_helper'
 
+require 'kitchen/errors'
+require 'kitchen/platform'
+
 describe Kitchen::Platform do
 
   let(:opts) do ; { :name => 'plata' } ; end
