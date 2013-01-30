@@ -18,6 +18,14 @@
 
 require_relative '../spec_helper'
 
+require 'kitchen/logging'
+require 'kitchen/collection'
+require 'kitchen/config'
+require 'kitchen/instance'
+require 'kitchen/platform'
+require 'kitchen/suite'
+require 'kitchen/util'
+
 describe Kitchen::Config do
   include FakeFS::SpecHelpers
 

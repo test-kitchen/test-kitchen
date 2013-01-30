@@ -16,13 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
+require_relative '../spec_helper'
 require 'ostruct'
 
-describe Kitchen::Config::Collection do
+require 'kitchen/collection'
+
+describe Kitchen::Collection do
 
   let(:collection) do
-    Kitchen::Config::Collection.new([
+    Kitchen::Collection.new([
       obj('one'), obj('two', 'a'), obj('two', 'b'), obj('three')
     ])
   end

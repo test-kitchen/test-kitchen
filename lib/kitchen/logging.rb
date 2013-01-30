@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,25 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'simplecov'
-SimpleCov.adapters.define 'gem' do
-  command_name 'Specs'
+module Kitchen
 
-  add_filter '.gem/'
-  add_filter '/spec/'
-  add_filter '/lib/vendor/'
+  module Logging
 
-  add_group 'Libraries', '/lib/'
-end
-SimpleCov.start 'gem'
-
-require 'fakefs/spec_helpers'
-require 'minitest/autorun'
-require 'mocha/setup'
-
-# Nasty hack to redefine IO.read in terms of File#read for fakefs
-class IO
-  def self.read(*args)
-    File.open(args[0], "rb") { |f| f.read(args[1]) }
+    %w{banner debug info warn error fatal}.map(&:to_sym).each do |meth|
+      define_method(meth) do |*args|
+        logger.public_send(meth, *args)
+      end
+    end
   end
 end

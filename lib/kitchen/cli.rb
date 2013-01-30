@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'benchmark'
+require 'erb'
 require 'ostruct'
 require 'thor'
 

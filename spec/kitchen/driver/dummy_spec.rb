@@ -17,6 +17,8 @@
 # limitations under the License.
 
 require_relative '../../spec_helper'
+require 'logger'
+require 'stringio'
 
 require 'kitchen/driver/dummy'
 

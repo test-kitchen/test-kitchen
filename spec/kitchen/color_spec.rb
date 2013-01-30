@@ -18,6 +18,8 @@
 
 require_relative '../spec_helper'
 
+require 'kitchen/color'
+
 describe Kitchen::Color do
 
   describe ".escape" do

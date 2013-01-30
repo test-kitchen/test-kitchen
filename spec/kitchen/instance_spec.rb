@@ -17,6 +17,15 @@
 # limitations under the License.
 
 require_relative '../spec_helper'
+require 'logger'
+require 'stringio'
+
+require 'kitchen/logging'
+require 'kitchen/instance'
+require 'kitchen/driver'
+require 'kitchen/driver/dummy'
+require 'kitchen/platform'
+require 'kitchen/suite'
 
 describe Kitchen::Instance do
 
