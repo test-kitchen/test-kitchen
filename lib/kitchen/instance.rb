@@ -77,9 +77,18 @@ module Kitchen
       setup_driver_mutex
     end
 
+    # @return [String] name of this instance w/ characters sanitized for the console
+    def sanitize_name(dirty_name)
+      dirty_name.gsub(/_/, '-').gsub(/\./, '')
+    end
+    
     # @return [String] name of this instance
     def name
-      "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+      unless suite.name.empty?
+        sanitize_name("#{suite.name}-#{platform.name}")
+      else
+        sanitize_name(platform.name)
+      end
     end
 
     def to_str
@@ -206,7 +215,7 @@ module Kitchen
     private
 
     def validate_options(opts)
-      [:suite, :platform, :driver, :jr, :logger].each do |k|
+      [:platform, :driver, :jr, :logger].each do |k|
         raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
       end
     end
