@@ -101,8 +101,15 @@ module Kitchen
       return @instance_count if @instance_count && @instance_count > 0
 
       results = []
-      suites.product(platforms).each_with_index do |arr, index|
-        results << new_instance(arr[0], arr[1], index)
+      unless suites.empty?
+        suites.product(platforms).each_with_index do |arr, index|
+          results << new_instance(arr[0], arr[1], index)
+        end
+      else
+        empty_suite = Suite.new({ :name => "", :run_list => []})
+        platforms.each_with_index do |platform, index|
+          results << new_instance(empty_suite, platform, index)
+        end
       end
       @instance_count = results.size
     end
