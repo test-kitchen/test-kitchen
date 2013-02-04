@@ -53,11 +53,6 @@ describe Kitchen::Instance do
     Celluloid.logger = Logger.new(StringIO.new)
   end
 
-  it "raises an ArgumentError if suite is missing" do
-    opts.delete(:suite)
-    proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
-  end
-
   it "raises an ArgumentError if platform is missing" do
     opts.delete(:platform)
     proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
