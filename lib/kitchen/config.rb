@@ -101,11 +101,14 @@ module Kitchen
       return @instance_count if @instance_count && @instance_count > 0
 
       results = []
-      suites.product(platforms).each_with_index do |arr, index|
+      suites_platforms_non_excludes = suites.product(platforms).delete_if do |arr|
+        arr[0].excludes.include?(arr[1].name)
+      end
+      suites_platforms_non_excludes.each_with_index do |arr, index|
         results << new_instance(arr[0], arr[1], index)
       end
       @instance_count = results.size
-    end
+    end    
 
     def instances_array(instance_count)
       results = []
