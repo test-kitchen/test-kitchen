@@ -120,6 +120,26 @@ module Kitchen
         super(cmd, use_sudo, log_subject)
       end
 
+      def kb_setup_cmd
+        kb.setup_cmd
+      end
+
+      def kb_sync_cmd
+        kb.sync_cmd
+      end
+
+      def kb_run_cmd
+        kb.run_cmd
+      end
+
+      def kb
+        @kb ||= begin
+          raise ClientError, "Instance must be set for Driver" if instance.nil?
+
+          Kb.new(instance.suite.name)
+        end
+      end
+
       def self.defaults
         @defaults ||= Hash.new
       end

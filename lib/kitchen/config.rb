@@ -143,7 +143,6 @@ module Kitchen
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
-        :kb       => Kb.new(suite.name),
         :logger   => new_instance_logger(index)
       }
 

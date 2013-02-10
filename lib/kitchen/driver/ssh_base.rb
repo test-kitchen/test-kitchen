@@ -47,17 +47,17 @@ module Kitchen
       def setup(state)
         ssh_args = build_ssh_args(state)
 
-        if instance.kb.setup_cmd
-          ssh(ssh_args, instance.kb.setup_cmd)
+        if kb_setup_cmd
+          ssh(ssh_args, kb_setup_cmd)
         end
       end
 
       def verify(state)
         ssh_args = build_ssh_args(state)
 
-        if instance.kb.run_cmd
-          ssh(ssh_args, instance.kb.sync_cmd)
-          ssh(ssh_args, instance.kb.run_cmd)
+        if kb_run_cmd
+          ssh(ssh_args, kb_sync_cmd)
+          ssh(ssh_args, kb_run_cmd)
         end
       end
 
