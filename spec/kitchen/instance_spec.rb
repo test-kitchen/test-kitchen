@@ -41,10 +41,10 @@ describe Kitchen::Instance do
 
   let(:driver) { Kitchen::Driver::Dummy.new({}) }
 
-  let(:jr) { Kitchen::Jr.new(suite.name) }
+  let(:kb) { Kitchen::Kb.new(suite.name) }
 
   let(:opts) do
-    { :suite => suite, :platform => platform, :driver => driver, :jr => jr }
+    { :suite => suite, :platform => platform, :driver => driver, :kb => kb }
   end
 
   let(:instance) { Kitchen::Instance.new(opts) }
@@ -71,8 +71,8 @@ describe Kitchen::Instance do
     instance.platform.must_equal platform
   end
 
-  it "returns an instance of Jr" do
-    instance.jr.must_be_instance_of Kitchen::Jr
+  it "returns an instance of Kb" do
+    instance.kb.must_be_instance_of Kitchen::Kb
   end
 
   describe "#name" do

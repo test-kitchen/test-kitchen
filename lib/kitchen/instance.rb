@@ -48,8 +48,8 @@ module Kitchen
     #   lifecycle actions
     attr_reader :driver
 
-    # @return [Jr] jr command string generator
-    attr_reader :jr
+    # @return [Kb] kb command string generator
+    attr_reader :kb
 
     # @return [Logger] the logger for this instance
     attr_reader :logger
@@ -60,7 +60,7 @@ module Kitchen
     # @option options [Suite] :suite the suite
     # @option options [Platform] :platform the platform
     # @option options [Driver::Base] :driver the driver
-    # @option options [Jr] :jr the jr command string generator
+    # @option options [Kb] :kb the kb command string generator
     # @option options [Logger] :logger the instance logger
     def initialize(options = {})
       options = { :logger => Kitchen.logger }.merge(options)
@@ -70,7 +70,7 @@ module Kitchen
       @suite = options[:suite]
       @platform = options[:platform]
       @driver = options[:driver]
-      @jr = options[:jr]
+      @kb = options[:kb]
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
 
       @driver.instance = self
@@ -206,7 +206,7 @@ module Kitchen
     private
 
     def validate_options(opts)
-      [:suite, :platform, :driver, :jr, :logger].each do |k|
+      [:suite, :platform, :driver, :kb, :logger].each do |k|
         raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
       end
     end

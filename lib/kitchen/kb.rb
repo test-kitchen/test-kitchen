@@ -22,14 +22,14 @@ require 'net/https'
 
 module Kitchen
 
-  # Command string generator to interface with Kitchen Runner (jr). The
+  # Command string generator to interface with Kitchen Runner (kb). The
   # commands that are generated are safe to pass to an SSH command or as an
   # unix command argument (escaped in single quotes).
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
-  class Jr
+  class Kb
 
-    # Constructs a new jr command generator, given a suite name.
+    # Constructs a new kb command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
     #   (**Required**)
@@ -43,8 +43,8 @@ module Kitchen
       @use_sudo = opts[:use_sudo]
     end
 
-    # Returns a command string which installs the Kitchen Runner (jr), installs
-    # all required jr plugins for the suite.
+    # Returns a command string which installs the Kitchen Runner (kb), installs
+    # all required kb plugins for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
     # the given suite, then `nil` will be returned.
@@ -60,7 +60,7 @@ module Kitchen
           #{install_script}
           EOF
           )"
-          #{sudo}#{jr_bin} install #{plugins.join(' ')}
+          #{sudo}#{kb_bin} install #{plugins.join(' ')}
         INSTALL_CMD
       end
     end
@@ -78,13 +78,13 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          #{sudo}#{jr_bin} cleanup-suites
+          #{sudo}#{kb_bin} cleanup-suites
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD
       end
     end
 
-    # Returns a command string which runs all jr suite tests for the suite.
+    # Returns a command string which runs all kb suite tests for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
     # the given suite, then `nil` will be returned.
@@ -92,18 +92,18 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{jr_bin} test"
+      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{kb_bin} test"
     end
 
     private
 
-    INSTALL_URL = "https://raw.github.com/jamie-ci/jr/go".freeze
+    INSTALL_URL = "https://raw.github.com/opscode/kb/go".freeze
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-    DEFAULT_JR_ROOT = "/opt/jr".freeze
+    DEFAULT_KB_ROOT = "/opt/kb".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     def validate_options(suite_name)
-      raise ClientError, "Jr#new requires a suite_name" if suite_name.nil?
+      raise ClientError, "Kb#new requires a suite_name" if suite_name.nil?
     end
 
     def install_script
@@ -130,18 +130,18 @@ module Kitchen
 
     def remote_file(file)
       local_prefix = File.join(test_root, @suite_name)
-      "$(#{jr_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{kb_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       md5 = Digest::MD5.hexdigest(local_file)
       perms = sprintf("%o", File.stat(local_path).mode)[3, 3]
-      jr_stream_file = "#{jr_bin} stream-file #{remote_path} #{md5} #{perms}"
+      kb_stream_file = "#{kb_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
         echo "Uploading #{remote_path} (mode=#{perms})"
-        cat <<"__EOFSTREAM__" | #{sudo}#{jr_stream_file}
+        cat <<"__EOFSTREAM__" | #{sudo}#{kb_stream_file}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
       STREAMFILE
@@ -155,8 +155,8 @@ module Kitchen
       File.join(DEFAULT_RUBY_BINPATH, "ruby")
     end
 
-    def jr_bin
-      File.join(DEFAULT_JR_ROOT, "bin/jr")
+    def kb_bin
+      File.join(DEFAULT_KB_ROOT, "bin/kb")
     end
 
     def test_root
