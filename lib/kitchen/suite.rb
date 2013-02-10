@@ -33,6 +33,9 @@ module Kitchen
     # @return [Hash] Hash of Chef node attributes
     attr_reader :attributes
 
+    # @return [Array] Array of names of excluded platforms
+    attr_reader :excludes
+
     # @return [String] local path to the suite's data bags, or nil if one does
     #   not exist
     attr_reader :data_bags_path
@@ -48,6 +51,7 @@ module Kitchen
     # @option options [String] :run_list Array of Chef run_list items
     #   (**Required**)
     # @option options [Hash] :attributes Hash of Chef node attributes
+    # @option options [String] :excludes Array of names of excluded platforms
     # @option options [String] :data_bags_path path to data bags
     # @option options [String] :roles_path path to roles
     def initialize(options = {})
@@ -56,6 +60,7 @@ module Kitchen
       @name = options[:name]
       @run_list = options[:run_list]
       @attributes = options[:attributes] || Hash.new
+      @excludes = options[:excludes]      
       @data_bags_path = options[:data_bags_path]
       @roles_path = options[:roles_path]
     end
