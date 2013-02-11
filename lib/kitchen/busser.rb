@@ -22,14 +22,14 @@ require 'net/https'
 
 module Kitchen
 
-  # Command string generator to interface with Kitchen Runner (kb). The
+  # Command string generator to interface with Kitchen Busser (kb). The
   # commands that are generated are safe to pass to an SSH command or as an
   # unix command argument (escaped in single quotes).
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
-  class Kb
+  class Busser
 
-    # Constructs a new kb command generator, given a suite name.
+    # Constructs a new busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
     #   (**Required**)
@@ -43,7 +43,7 @@ module Kitchen
       @use_sudo = opts[:use_sudo]
     end
 
-    # Returns a command string which installs the Kitchen Runner (kb), installs
+    # Returns a command string which installs the Kitchen Busser (kb), installs
     # all required kb plugins for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
@@ -103,7 +103,7 @@ module Kitchen
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     def validate_options(suite_name)
-      raise ClientError, "Kb#new requires a suite_name" if suite_name.nil?
+      raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
     end
 
     def install_script

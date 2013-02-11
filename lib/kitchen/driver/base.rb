@@ -121,22 +121,22 @@ module Kitchen
       end
 
       def kb_setup_cmd
-        kb.setup_cmd
+        busser.setup_cmd
       end
 
       def kb_sync_cmd
-        kb.sync_cmd
+        busser.sync_cmd
       end
 
       def kb_run_cmd
-        kb.run_cmd
+        busser.run_cmd
       end
 
-      def kb
-        @kb ||= begin
+      def busser
+        @busser ||= begin
           raise ClientError, "Instance must be set for Driver" if instance.nil?
 
-          Kb.new(instance.suite.name)
+          Busser.new(instance.suite.name)
         end
       end
 
