@@ -1,23 +1,23 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'jamie/driver/ec2_version.rb'
+require 'kitchen/driver/ec2_version.rb'
 
 Gem::Specification.new do |gem|
-  gem.name          = "jamie-ec2"
-  gem.version       = Jamie::Driver::EC2_VERSION
+  gem.name          = "kitchen-ec2"
+  gem.version       = Kitchen::Driver::EC2_VERSION
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
-  gem.description   = "Jamie::Driver::Ec2 - A Jamie Driver for Ec2"
+  gem.description   = "Kitchen::Driver::Ec2 - A Test Kitchen Driver for Ec2"
   gem.summary       = gem.description
-  gem.homepage      = "https://github.com/jamie-ci/jamie-ec2/"
+  gem.homepage      = "https://github.com/opscode/kitchen-ec2/"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = []
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency 'jamie', '~> 0.1.0.alpha21'
+  gem.add_dependency 'test-kitchen', '~> 1.0.0.alpha.0'
   gem.add_dependency 'fog'
 
   gem.add_development_dependency 'cane'
