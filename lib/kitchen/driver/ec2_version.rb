@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Jamie
+module Kitchen
 
   module Driver
 
-    # Version string for EC2 Jamie driver
+    # Version string for EC2 Test Kitchen driver
     EC2_VERSION = "0.3.1.dev"
   end
 end

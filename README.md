@@ -1,4 +1,4 @@
-# Jamie::Ec2
+# Kichent::Driver::Ec2
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'jamie-ec2'
+    gem 'kitchen-ec2'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install jamie-ec2
+    $ gem install kitchen-ec2
 
 ## Usage
 
