@@ -1,4 +1,4 @@
-# Kichent::Driver::Ec2
+# Kitchen::Driver::Ec2
 
 TODO: Write a gem description
 
