@@ -19,7 +19,7 @@
 require 'celluloid'
 require 'erb'
 require 'vendor/hash_recursive_merge'
-require 'yaml'
+require 'safe_yaml'
 
 module Kitchen
 
@@ -184,7 +184,7 @@ module Kitchen
 
     def yaml
       @yaml ||= Util.symbolized_hash(
-        YAML.load(yaml_contents).rmerge(local_yaml))
+        YAML.safe_load(yaml_contents).rmerge(local_yaml))
     end
 
     def yaml_contents
@@ -199,7 +199,7 @@ module Kitchen
     def local_yaml
       @local_yaml ||= begin
         if File.exists?(local_yaml_file)
-          YAML.load(ERB.new(IO.read(local_yaml_file)).result)
+          YAML.safe_load(ERB.new(IO.read(local_yaml_file)).result)
         else
           Hash.new
         end

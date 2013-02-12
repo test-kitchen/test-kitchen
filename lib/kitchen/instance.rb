@@ -257,7 +257,7 @@ module Kitchen
       elapsed = Benchmark.measure do
         synchronize_or_call(what, state, &block)
       end
-      state[:last_action] = what
+      state[:last_action] = what.to_s
       elapsed
     rescue ActionFailed
       raise
@@ -281,7 +281,7 @@ module Kitchen
 
     def load_state
       if File.exists?(statefile)
-        Util.symbolized_hash(YAML.load_file(statefile))
+        Util.symbolized_hash(YAML.safe_load(IO.read(statefile)))
       else
         Hash.new
       end
@@ -289,9 +289,10 @@ module Kitchen
 
     def dump_state(state)
       dir = File.dirname(statefile)
+      stringified_state = Util.stringified_hash(state)
 
       FileUtils.mkdir_p(dir) if !File.directory?(dir)
-      File.open(statefile, "wb") { |f| f.write(YAML.dump(state)) }
+      File.open(statefile, "wb") { |f| f.write(YAML.dump(stringified_state)) }
     end
 
     def destroy_state

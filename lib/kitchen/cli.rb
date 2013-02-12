@@ -204,10 +204,10 @@ module Kitchen
 
     def display_instance(instance)
       action = case instance.last_action
-      when :create then set_color("Created", :cyan)
-      when :converge then set_color("Converged", :magenta)
-      when :setup then set_color("Set Up", :blue)
-      when :verify then set_color("Verified", :yellow)
+      when 'create' then set_color("Created", :cyan)
+      when 'converge' then set_color("Converged", :magenta)
+      when 'setup' then set_color("Set Up", :blue)
+      when 'verify' then set_color("Verified", :yellow)
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
