@@ -37,8 +37,11 @@ module Kitchen
     def initialize(*args)
       super
       $stdout.sync = true
-      @config = Kitchen::Config.new(ENV['KITCHEN_YAML'])
-      @config.supervised = false
+      @config = Kitchen::Config.new(
+        :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
+        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym,
+        :supervised => false
+      )
       Kitchen.logger = Kitchen.default_file_logger
     end
 
@@ -204,10 +207,10 @@ module Kitchen
 
     def display_instance(instance)
       action = case instance.last_action
-      when :create then set_color("Created", :cyan)
-      when :converge then set_color("Converged", :magenta)
-      when :setup then set_color("Set Up", :blue)
-      when :verify then set_color("Verified", :yellow)
+      when 'create' then set_color("Created", :cyan)
+      when 'converge' then set_color("Converged", :magenta)
+      when 'setup' then set_color("Set Up", :blue)
+      when 'verify' then set_color("Verified", :yellow)
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end

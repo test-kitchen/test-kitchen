@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'net-ssh'
   gem.add_dependency 'net-scp'
   gem.add_dependency 'mixlib-shellout'
+  gem.add_dependency 'safe_yaml'
 
   gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'mocha'

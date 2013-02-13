@@ -1,0 +1,105 @@
+# -*- encoding: utf-8 -*-
+#
+# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+#
+# Copyright (C) 2013, Fletcher Nichol
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+require 'erb'
+require 'vendor/hash_recursive_merge'
+require 'safe_yaml'
+
+module Kitchen
+
+  module Loader
+
+    # YAML file loader for Test Kitchen configuration. This class is
+    # responisble for parsing the main YAML file and the local YAML if it
+    # exists. Local file configuration will win over the default configuration.
+    # The client of this class should not require any YAML loading or parsing
+    # logic.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class YAML
+
+      attr_reader :config_file
+
+      # Creates a new loader that can parse and load YAML files.
+      #
+      # @param config_file [String] path to Kitchen config YAML file
+      # @param options [Hash] configuration for a new loader
+      # @option options [String] :process_erb whether or not to process YAML
+      #   through an ERB processor (default: `true`)
+      # @option options [String] :process_local whether or not to process a
+      #   local kitchen YAML file, if it exists (default: `true`)
+      def initialize(config_file = nil, options = {})
+        @config_file = File.expand_path(config_file || default_config_file)
+        @process_erb = options.fetch(:process_erb, true)
+        @process_local = options.fetch(:process_local, true)
+      end
+
+      # Reads, parses, and merges YAML configuration files and returns a Hash
+      # of tne merged data.
+      #
+      # @return [Hash] merged configuration data
+      def read
+        if ! File.exists?(config_file)
+          raise UserError, "Kitchen YAML file #{config_file} does not exist."
+        end
+
+        Util.symbolized_hash(combined_hash)
+      end
+
+      protected
+
+      def default_config_file
+        File.join(Dir.pwd, '.kitchen.yml')
+      end
+
+      def combined_hash
+        @process_local ? yaml.rmerge(local_yaml) : yaml
+      end
+
+      def yaml
+        parse_yaml_string(yaml_string(config_file), config_file)
+      end
+
+      def local_yaml
+        parse_yaml_string(yaml_string(local_config_file), local_config_file)
+      end
+
+      def yaml_string(file)
+        string = read_file(file)
+
+        @process_erb ? ERB.new(string).result : string
+      end
+
+      def read_file(file)
+        File.exists?(file.to_s) ? IO.read(file) : ""
+      end
+
+      def local_config_file
+        config_file.sub(/(#{File.extname(config_file)})$/, '.local\1')
+      end
+
+      def parse_yaml_string(string, file_name)
+        return Hash.new if string.nil? || string.empty?
+
+        ::YAML.safe_load(string)
+      rescue SyntaxError => ex
+        raise UserError, "Error parsing #{file_name} (#{ex.message})"
+      end
+    end
+  end
+end
