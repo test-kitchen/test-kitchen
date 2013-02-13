@@ -38,6 +38,7 @@ require 'kitchen/instance'
 require 'kitchen/loader/yaml'
 require 'kitchen/metadata_chopper'
 require 'kitchen/platform'
+require 'kitchen/state_file'
 require 'kitchen/suite'
 require 'kitchen/version'
 
