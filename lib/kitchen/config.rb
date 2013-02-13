@@ -17,27 +17,22 @@
 # limitations under the License.
 
 require 'celluloid'
-require 'erb'
 require 'vendor/hash_recursive_merge'
-require 'safe_yaml'
 
 module Kitchen
 
   # Base configuration class for Kitchen. This class exposes configuration such
-  # as the location of the Kitchen YAML file, instances, log_levels, etc.
+  # as the location of the Kitchen config file, instances, log_levels, etc.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
 
-    attr_writer :yaml_file
+    attr_accessor :kitchen_root
+    attr_accessor :test_base_path
+    attr_accessor :log_level
+    attr_writer :supervised
     attr_writer :platforms
     attr_writer :suites
-    attr_writer :log_level
-    attr_writer :supervised
-    attr_writer :test_base_path
-
-    # Default path to the Kitchen YAML file
-    DEFAULT_YAML_FILE = File.join(Dir.pwd, '.kitchen.yml').freeze
 
     # Default driver plugin to use
     DEFAULT_DRIVER_PLUGIN = "dummy".freeze
@@ -47,23 +42,32 @@ module Kitchen
 
     # Creates a new configuration.
     #
-    # @param yaml_file [String] optional path to Kitchen YAML file
-    def initialize(yaml_file = nil)
-      @yaml_file = yaml_file
+    # @param [Hash] options configuration
+    # @option options [#read] :loader
+    # @option options [String] :kitchen_root
+    # @option options [String] :test_base_path
+    # @option options [Symbol] :log_level
+    # @option options [TrueClass,FalseClass] :supervised
+    def initialize(options = {})
+      @loader         = options[:loader] || Kitchen::Loader::YAML.new
+      @kitchen_root   = options[:kitchen_root] || Dir.pwd
+      @test_base_path = options[:test_base_path] || DEFAULT_TEST_BASE_PATH
+      @log_level      = options[:log_level] || Kitchen::DEFAULT_LOG_LEVEL
+      @supervised     = options[:supervised]
     end
 
     # @return [Array<Platform>] all defined platforms which will be used in
     #   convergence integration
     def platforms
       @platforms ||= Collection.new(
-        Array(yaml[:platforms]).map { |hash| new_platform(hash) })
+        Array(data[:platforms]).map { |hash| new_platform(hash) })
     end
 
     # @return [Array<Suite>] all defined suites which will be used in
     #   convergence integration
     def suites
       @suites ||= Collection.new(
-        Array(yaml[:suites]).map { |hash| new_suite(hash) })
+        Array(data[:suites]).map { |hash| new_suite(hash) })
     end
 
     # @return [Array<Instance>] all instances, resulting from all platform and
@@ -72,27 +76,8 @@ module Kitchen
       instances_array(load_instances)
     end
 
-    # @return [String] path to the Kitchen YAML file
-    def yaml_file
-      @yaml_file ||= DEFAULT_YAML_FILE
-    end
-
-    # @return [Symbol] log level verbosity
-    def log_level
-      @log_level ||= begin
-        ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym ||
-          Kitchen::DEFAULT_LOG_LEVEL
-      end
-    end
-
     def supervised
       @supervised.nil? ? @supervised = true : @supervised
-    end
-
-    # @return [String] base path that may contain a common `data_bags/`
-    #   directory or an instance's `data_bags/` directory
-    def test_base_path
-      @test_base_path ||= DEFAULT_TEST_BASE_PATH
     end
 
     private
@@ -165,7 +150,7 @@ module Kitchen
     end
 
     def platform_driver_hash(platform_name)
-      h = yaml[:platforms].find { |p| p[:name] == platform_name } || Hash.new
+      h = data[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
       h.select { |key, value| [:driver_plugin, :driver_config].include?(key) }
     end
@@ -182,32 +167,8 @@ module Kitchen
       end
     end
 
-    def yaml
-      @yaml ||= Util.symbolized_hash(
-        YAML.safe_load(yaml_contents).rmerge(local_yaml))
-    end
-
-    def yaml_contents
-      ERB.new(IO.read(File.expand_path(yaml_file))).result
-    end
-
-    def local_yaml_file
-      std = File.expand_path(yaml_file)
-      std.sub(/(#{File.extname(std)})$/, '.local\1')
-    end
-
-    def local_yaml
-      @local_yaml ||= begin
-        if File.exists?(local_yaml_file)
-          YAML.safe_load(ERB.new(IO.read(local_yaml_file)).result)
-        else
-          Hash.new
-        end
-      end
-    end
-
-    def kitchen_root
-      File.dirname(yaml_file)
+    def data
+      @data ||= @loader.read
     end
 
     def merge_driver_hash(driver_hash)
@@ -235,7 +196,7 @@ module Kitchen
     end
 
     def common_driver_hash
-      yaml.select do |key, value|
+      data.select do |key, value|
         [:driver_plugin, :driver_config].include?(key)
       end
     end

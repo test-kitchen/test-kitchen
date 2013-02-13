@@ -18,34 +18,58 @@
 
 require_relative '../spec_helper'
 
+require 'kitchen'
 require 'kitchen/logging'
 require 'kitchen/collection'
 require 'kitchen/config'
+require 'kitchen/driver'
 require 'kitchen/instance'
 require 'kitchen/platform'
 require 'kitchen/suite'
 require 'kitchen/util'
 
-describe Kitchen::Config do
-  include FakeFS::SpecHelpers
+module Kitchen
 
-  let(:config) { Kitchen::Config.new("/tmp/.kitchen.yml") }
+  class DummyLoader
+
+    def read
+      @data || Hash.new
+    end
+
+    def data=(hash)
+      @data = hash
+    end
+  end
+end
+
+describe Kitchen::Config do
+
+  let(:loader)  { Kitchen::DummyLoader.new }
+  let(:config)  { Kitchen::Config.new(:loader => loader) }
 
   before do
+    FakeFS.activate!
     FileUtils.mkdir_p("/tmp")
+  end
+
+  after do
+    FakeFS.deactivate!
+    FakeFS::FileSystem.clear
   end
 
   describe "#platforms" do
 
     it "returns platforms loaded from a kitchen.yml" do
-      stub_yaml!({ 'platforms' => [{ 'name' => 'one' }, { 'name' => 'two' }] })
+      stub_data!({ :platforms => [{ :name => 'one' }, { :name => 'two' }] })
+
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
       config.platforms[1].name.must_equal 'two'
     end
 
     it "returns an empty Array if no platforms are given" do
-      stub_yaml!({})
+      stub_data!({})
+
       config.platforms.must_equal []
     end
   end
@@ -53,53 +77,56 @@ describe Kitchen::Config do
   describe "#suites" do
 
     it "returns suites loaded from a kitchen.yml" do
-      stub_yaml!({ 'suites' => [
-        { 'name' => 'one', 'run_list' => [] },
-        { 'name' => 'two', 'run_list' => [] },
+      stub_data!({ :suites => [
+        { :name => 'one', :run_list => [] },
+        { :name => 'two', :run_list => [] },
       ] })
+
       config.suites.size.must_equal 2
       config.suites[0].name.must_equal 'one'
       config.suites[1].name.must_equal 'two'
     end
 
     it "returns an empty Array if no suites are given" do
-      stub_yaml!({})
+      stub_data!({})
+
       config.suites.must_equal []
     end
 
     it "returns a suite with nil for data_bags_path by default" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.suites.first.data_bags_path.must_be_nil
     end
 
     it "retuns a suite with a common data_bags_path set" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/data_bags"
+
       config.suites.first.data_bags_path.must_equal "/tmp/base/data_bags"
     end
 
     it "retuns a suite with a suite-specific data_bags_path set" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'cool', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'cool', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/cool/data_bags"
       config.suites.first.data_bags_path.must_equal "/tmp/base/cool/data_bags"
     end
 
     it "returns a suite with nil for roles_path by default" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.suites.first.roles_path.must_be_nil
     end
 
     it "returns a suite with a common roles_path set" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'one', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/roles"
       config.suites.first.roles_path.must_equal "/tmp/base/roles"
     end
 
     it "returns a suite with a suite-specific roles_path set" do
-      stub_yaml!({ 'suites' => [{ 'name' => 'mysuite', 'run_list' => [] }] })
+      stub_data!({ :suites => [{ :name => 'mysuite', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/mysuite/roles"
       config.suites.first.roles_path.must_equal "/tmp/base/mysuite/roles"
@@ -109,14 +136,14 @@ describe Kitchen::Config do
   describe "#instances" do
 
     it "returns instances loaded from a kitchen.yml" do
-      stub_yaml!({
-        'platforms' => [
-          { 'name' => 'p1' },
-          { 'name' => 'p2' },
+      stub_data!({
+        :platforms => [
+          { :name => 'p1' },
+          { :name => 'p2' },
         ],
-        'suites' => [
-          { 'name' => 's1', 'run_list' => [] },
-          { 'name' => 's2', 'run_list' => [] },
+        :suites => [
+          { :name => 's1', :run_list => [] },
+          { :name => 's2', :run_list => [] },
         ]
       })
       config.instances.size.must_equal 4
@@ -124,92 +151,32 @@ describe Kitchen::Config do
     end
 
     it "returns an instance containing a driver instance" do
-      stub_yaml!({
-        'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
-        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
+      stub_data!({
+        :platforms => [{ :name => 'platform', :driver_plugin => 'dummy' }],
+        :suites => [{ :name => 'suite', :run_list => [] }]
       })
       config.instances.first.driver.must_be_instance_of Kitchen::Driver::Dummy
     end
 
     it "returns an instance with a driver initialized with kitchen_root" do
-      stub_yaml!({
-        'platforms' => [{ 'name' => 'platform', 'driver_plugin' => 'dummy' }],
-        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
+      config.kitchen_root = "/tmp"
+      stub_data!({
+        :platforms => [{ :name => 'platform', :driver_plugin => 'dummy' }],
+        :suites => [{ :name => 'suite', :run_list => [] }]
       })
       config.instances.first.driver[:kitchen_root].must_equal "/tmp"
     end
 
     it "returns an instance with a driver initialized with passed in config" do
-      stub_yaml!({
-        'platforms' => [
-          { 'name' => 'platform', 'driver_plugin' => 'dummy',
-            'driver_config' => { 'foo' => 'bar' }
+      stub_data!({
+        :platforms => [
+          { :name => 'platform', :driver_plugin => 'dummy',
+            :driver_config => { :foo => 'bar' }
           }
         ],
-        'suites' => [{ 'name' => 'suite', 'run_list' => [] }]
+        :suites => [{ :name => 'suite', :run_list => [] }]
       })
       config.instances.first.driver[:foo].must_equal "bar"
-    end
-  end
-
-  describe "kitchen.local.yml" do
-
-    it "merges in configuration with kitchen.yml" do
-      stub_yaml!(".kitchen.yml", {
-        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
-        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
-      })
-      stub_yaml!(".kitchen.local.yml", {
-        'driver_config' => { 'foo' => 'bar' }
-      })
-      config.instances.first.driver[:foo].must_equal 'bar'
-    end
-
-    it "merges over configuration in kitchen.yml" do
-      stub_yaml!(".kitchen.yml", {
-        'driver_config' => { 'foo' => 'nope' },
-        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
-        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
-      })
-      stub_yaml!(".kitchen.local.yml", {
-        'driver_config' => { 'foo' => 'bar' }
-      })
-      config.instances.first.driver[:foo].must_equal 'bar'
-    end
-  end
-
-  describe "erb filtering" do
-
-    it "evaluates kitchen.yml through erb before loading" do
-      FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.yml", "wb") do |f|
-        f.write <<-YAML.gsub(/^ {10}/, '')
-          ---
-          driver_plugin: dummy
-          platforms:
-          - name: <%= "AHH".downcase + "choo" %>
-        YAML
-      end
-      config.platforms.first.name.must_equal "ahhchoo"
-    end
-
-    it "evaluates kitchen.local.yml through erb before loading" do
-      stub_yaml!({
-        'platforms' => [{ 'name' => 'p1', 'driver_plugin' => 'dummy' }],
-        'suites' => [{ 'name' => 's1', 'run_list' => [] }]
-      })
-      FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.local.yml", "wb") do |f|
-        f.write <<-YAML.gsub(/^ {10}/, '')
-          ---
-          driver_config:
-          <% %w{noodle mushroom}.each do |kind| %>
-            <%= kind %>: soup
-          <% end %>
-        YAML
-      end
-      config.instances.first.driver[:noodle].must_equal "soup"
-      config.instances.first.driver[:mushroom].must_equal "soup"
     end
   end
 
@@ -227,8 +194,7 @@ describe Kitchen::Config do
 
   private
 
-  def stub_yaml!(name = ".kitchen.yml", hash)
-    FileUtils.mkdir_p "/tmp"
-    File.open("/tmp/#{name}", "wb") { |f| f.write(hash.to_yaml) }
+  def stub_data!(hash)
+    loader.data = hash
   end
 end

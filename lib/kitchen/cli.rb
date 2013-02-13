@@ -37,8 +37,11 @@ module Kitchen
     def initialize(*args)
       super
       $stdout.sync = true
-      @config = Kitchen::Config.new(ENV['KITCHEN_YAML'])
-      @config.supervised = false
+      @config = Kitchen::Config.new(
+        :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
+        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym,
+        :supervised => false
+      )
       Kitchen.logger = Kitchen.default_file_logger
     end
 

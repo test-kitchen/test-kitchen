@@ -28,9 +28,16 @@ SimpleCov.adapters.define 'gem' do
 end
 SimpleCov.start 'gem'
 
-require 'fakefs/spec_helpers'
+require 'fakefs/safe'
 require 'minitest/autorun'
 require 'mocha/setup'
+
+# enable yaml symbol parsing if code is executing under guard
+if ENV['GUARD_NOTIFY']
+  require 'safe_yaml'
+  YAML.enable_symbol_parsing!
+  SafeYAML::OPTIONS[:suppress_warnings] = true
+end
 
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO
