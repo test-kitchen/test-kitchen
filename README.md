@@ -4,61 +4,78 @@ configuration for testing your project using a lightweight Ruby DSL.
 
 We use Vagrant baseboxes built with [Bento](https://github.com/opscode/bento).
 
+**Plans for Test Kitchen** See
+  [this post to the Chef mailing list](http://lists.opscode.com/sympa/arc/chef-dev/2013-01/msg00038.html)
+  about the upcoming plans for Test Kitchen.
+
 # Quick start
 
-When you use test-kitchen your test config and the tests themselves live
-along-side the cookbook within the cookbook repository. To get started, install
-the test-kitchen gem. This makes available the `kitchen` command which is the
-main way you will interact with test-kitchen. It is modeled loosely on the
-vagrant cli.
+When you use test-kitchen your test config and the tests themselves
+live along-side the project within the project's repository. To get
+started, install the test-kitchen gem using
+[Bundler](http://gembundler.com/). The reason for bundler is isolation
+of the gem to prevent conflicts present in interdependent RubyGems.
 
-    $ gem install test-kitchen
+Install Bundler if you don't already have it:
+
+    $ gem install bundler
+
+Add to your Gemfile:
+
+    gem "test-kitchen", "< 1.0"
+
+Create the Gemfile if your project does not yet have one, with `bundle init`.
 
 Now you can ask test-kitchen to generate basic scaffolding to get you up and
 running:
 
-    $ cd my-existing-cookbook
-    $ kitchen init
+    $ bundle exec kitchen init
 
-Run this command to converge your cookbook's default recipe:
+If your project is a cookbook, run this command to converge your
+cookbook's default recipe:
 
-    $ kitchen test
+    $ bundle exec kitchen test
 
 # What does it do?
 
 Test kitchen runs through several different kinds of tests, depending on the
 configuration.
 
-First, it does a syntax check using `knife cookbook test`. This does require a
-valid knife.rb with the cache path for the checksums stored by the syntax checker.
+First, it does a syntax check using `knife cookbook test`. This does
+require a valid knife.rb with the cache path for the checksums stored
+by the syntax checker.
 
-Second, it performs a lint check using [foodcritic](http://acrmp.github.com/foodcritic),
-and will fail and exit if any correctness checks fail.
+Second, it performs a lint check using
+[foodcritic](http://acrmp.github.com/foodcritic), and will fail and
+exit if any correctness checks fail.
 
-For cookbook projects, it provisions a VM and runs the default recipe or recipes
-set as "configurations" (see below) in the Kitchenfile to ensure it can be
-converged. If a cookbook has minitest-chef tests, it will run those as well. If
-the cookbook has declared dependencies in the metadata, test-kitchen uses
-[Librarian](https://github.com/applicationsonline/librarian) to resolve those
-dependencies. Support for [Berkshelf](http://berkshelf.com) is
+For cookbook projects, it provisions a VM and runs the default recipe
+or recipes set as "configurations" (see below) in the Kitchenfile to
+ensure it can be converged. If a cookbook has minitest-chef tests, it
+will run those as well. If the cookbook has declared dependencies in
+the metadata, test-kitchen uses
+[Librarian](https://github.com/applicationsonline/librarian) to
+resolve those dependencies. Support for
+[Berkshelf](http://berkshelf.com) is
 [pending](http://tickets.opscode.com/browse/KITCHEN-9)
 
-For integration_test projects, it provisions a VM and runs the integration tests
-for the project, by default "rspec spec".
+For integration_test projects, it provisions a VM and runs the
+integration tests for the project, by default "rspec spec".
 
-In either cookbook or integration_test projects, if a "features" directory exists,
-test-kitchen will attempt to run those tests using cucumber.
+In either cookbook or integration_test projects, if a "features"
+directory exists, test-kitchen will attempt to run those tests using
+cucumber.
 
 All this is configurable, see the DSL section below.
 
 # Platforms
 
-Even if you haven't yet got around to writing any tests, test-kitchen is still
+Even if you have not yet written any tests, test-kitchen is still
 useful in providing an easy way to test that your cookbook converges
 successfully on a variety of platforms.
 
-Test-kitchen looks at your cookbook's `metadata.rb` file to see which platforms
-you have indicated that it should support.
+Test-kitchen looks at your cookbook's `metadata.rb` file to see which
+platforms you have indicated that it should support.
 
 For example your cookbook metadata might contain the following lines:
 
@@ -67,27 +84,28 @@ supports 'centos'
 supports 'ubuntu'
 ```
 
-This says to Chef that you expect your cookbook to work on both CentOS and
-Ubuntu. When you run `kitchen test`, test-kitchen consults this metadata and
-will test your cookbook against these platforms only.
+This says to Chef that you expect your cookbook to work on both CentOS
+and Ubuntu. When you run `kitchen test`, test-kitchen consults this
+metadata and will test your cookbook against these platforms only.
 
-If your cookbook doesn't specify the platforms that it supports then it will be
-tested against all platforms supported by test-kitchen. Alternatively if you
-have specified a platform that test-kitchen doesn't yet support a warning
-message will be displayed.
+If your cookbook doesn't specify the platforms that it supports then
+it will be tested against all platforms supported by test-kitchen.
+Alternatively if you have specified a platform that test-kitchen
+doesn't yet support a warning message will be displayed.
 
 # Configurations
 
 Very often you will want to test different independent usages or
-*configurations* of your cookbook. An example would be a cookbook like the
-`mysql` cookbook which has `client` and `server` recipes. These need to be
-converged separately to prove that they will work independently. If you only
-converged them both on the same node you might find that the `client` recipe
-unexpectedly relied on a resource declared by the `server` recipe.
+*configurations* of your cookbook. An example would be a cookbook like
+the `mysql` cookbook which has `client` and `server` recipes. These
+need to be converged separately to prove that they will work
+independently. If you only converged them both on the same node you
+might find that the `client` recipe unexpectedly relied on a resource
+declared by the `server` recipe.
 
-You need to tell test-kitchen what the different configurations are that you
-want your cookbook tested with. To do this we edit the generated
-`test/kitchen/Kitchenfile` and define our configurations:
+You need to tell test-kitchen what the different configurations are
+that you want your cookbook tested with. To do this we edit the
+generated `test/kitchen/Kitchenfile` and define our configurations:
 
 ```ruby
 cookbook "mysql" do
@@ -96,29 +114,30 @@ cookbook "mysql" do
 end
 ```
 
-Each configuration optionally has a matching recipe in the *cookbook*_test
-subdirectory:
+Each configuration optionally has a matching recipe in the
+*cookbook*_test subdirectory:
 
     mysql/test/kitchen/cookbooks/mysql_test/recipes/client.rb
     mysql/test/kitchen/cookbooks/mysql_test/recipes/server.rb
 
-This recipe is responsible for doing the setup for the configuration tests.
-For example in the case of mysql the server recipe will include the standard
-`mysql::server` recipe but then also setup a dummy test database. The tests
-that then exercise the service will be able to verify that mysql is working
-correctly by running queries against the test database.
+This recipe is responsible for doing the setup for the configuration
+tests. For example in the case of mysql the server recipe will include
+the standard `mysql::server` recipe but then also setup a dummy test
+database. The tests that then exercise the service will be able to
+verify that mysql is working correctly by running queries against the
+test database.
 
 ## Testing a single configuration only
 
-To run the tests for a single configuration only specify the configuration
-on the command line:
+To run the tests for a single configuration only specify the
+configuration on the command line:
 
     $ kitchen test --configuration my_configuration
 
 ## Excluding platforms and configurations
 
-If you know that a certain configuration is not expected to work on a platform
-you can choose to `exclude` it from the build:
+If you know that a certain configuration is not expected to work on a
+platform you can choose to `exclude` it from the build:
 
 ```ruby
 cookbook "mysql" do
@@ -265,8 +284,8 @@ true. Defaults to an omnibus installation using curl. (OpenStack runner only)
 commands. Defaults to 'root' (OpenStack runner only)
 
 `ssh_key` - Path to the ssh private key to authenticate with during
-remote commands.  If unset, the ssh-agent will be used if available. (OpenStack
-runner only)
+remote commands. If unset, the ssh-agent will be used if available.
+(OpenStack runner only)
 
 ### Platform Example
 
@@ -316,9 +335,10 @@ cookbook projects is `[]`, which effectively disables spec/feature
 tests. Set to the Ruby versions installed in your custom base box
 under RVM.
 
-`data_bags_path` - Specify the directory containing data bags to make available
-to the `:chef_solo` Vagrant provisioner. Defaults to `test/kitchen/data_bags`.
-See: [Using Data Bags with Chef Solo](http://wiki.opscode.com/display/chef/Data+Bags#DataBags-UsingDataBagswithChefSolo)
+`data_bags_path` - Specify the directory containing data bags to make
+available to the `:chef_solo` Vagrant provisioner. Defaults to
+`test/kitchen/data_bags`. See:
+[Using Data Bags with Chef Solo](http://docs.opscode.com/chef/essentials_data_bags.html#use-data-bags-with-chef-solo)
 for more information.
 
 ### Cookbook Examples
@@ -345,8 +365,10 @@ end
 ```
 
 Ignore certain foodcritic rules in the lint check, which must pass in
-an array. For example to ignore the ["prefer strings over symbols"](http://acrmp.github.com/foodcritic/#FC001)
-and ["check for solo"](http://acrmp.github.com/foodcritic/#FC003) rules:
+an array. For example to ignore the
+["prefer strings over symbols"](http://acrmp.github.com/foodcritic/#FC001)
+and ["check for solo"](http://acrmp.github.com/foodcritic/#FC003)
+rules:
 
 ```ruby
 cookbook "mycookbook" do
@@ -431,9 +453,13 @@ default_runner 'openstack'
 
 # Bugs and Issues
 
-Use the
+For the released versions of Test Kitchen (pre-1.0), use the
 [issue tracker](http://tickets.opscode.com/browse/KITCHEN) to
-report bugs, features or other issues.
+report bugs or other issues.
+
+For the "1.0" release, use this repository's
+[issues](https://github.com/opscode/test-kitchen/issues). After 1.0 is
+released, we may migrate issue tracking to Jira.
 
 # Contributing
 
