@@ -77,6 +77,8 @@ project = tk_env.project
         vm_config.vm.host_name = host_name
         vm_config.vm.box = version.box
         vm_config.vm.box_url = version.box_url
+        vm_config.ssh.username = version.ssh_user unless version.ssh_user.nil?
+        vm_config.ssh.private_key_path = version.ssh_key unless version.ssh_key.nil?
 
         # Enable SSH agent forwarding for git clones
         vm_config.ssh.forward_agent = true
