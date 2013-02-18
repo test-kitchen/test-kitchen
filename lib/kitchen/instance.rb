@@ -188,14 +188,14 @@ module Kitchen
     #
     # @see Driver::Base#login_command
     def login
-      command, *args = driver.login_command(load_state)
+      command, *args = driver.login_command(state_file.read)
 
       debug("Login command: #{command} #{args.join(' ')}")
       Kernel.exec(command, *args)
     end
 
     def last_action
-      load_state[:last_action]
+      state_file.read[:last_action]
     end
 
     private
@@ -240,7 +240,7 @@ module Kitchen
     end
 
     def destroy_action
-      perform_action(:destroy, "Destroying") { destroy_state }
+      perform_action(:destroy, "Destroying") { state_file.destroy }
     end
 
     def perform_action(verb, output_verb)
@@ -253,18 +253,18 @@ module Kitchen
     end
 
     def action(what, &block)
-      state = load_state
+      state = state_file.read
       elapsed = Benchmark.measure do
         synchronize_or_call(what, state, &block)
       end
-      state[:last_action] = what
+      state[:last_action] = what.to_s
       elapsed
     rescue ActionFailed
       raise
     rescue Exception => e
       raise ActionFailed, "Failed to complete ##{what} action: [#{e.message}]"
     ensure
-      dump_state(state)
+      state_file.write(state)
     end
 
     def synchronize_or_call(what, state, &block)
@@ -279,29 +279,8 @@ module Kitchen
       end
     end
 
-    def load_state
-      if File.exists?(statefile)
-        Util.symbolized_hash(YAML.load_file(statefile))
-      else
-        Hash.new
-      end
-    end
-
-    def dump_state(state)
-      dir = File.dirname(statefile)
-
-      FileUtils.mkdir_p(dir) if !File.directory?(dir)
-      File.open(statefile, "wb") { |f| f.write(YAML.dump(state)) }
-    end
-
-    def destroy_state
-      FileUtils.rm(statefile) if File.exists?(statefile)
-    end
-
-    def statefile
-      File.expand_path(File.join(
-        driver[:kitchen_root], ".kitchen", "#{name}.yml"
-      ))
+    def state_file
+      @state_file ||= StateFile.new(driver[:kitchen_root], name)
     end
 
     def banner(*args)

@@ -60,6 +60,16 @@ module Kitchen
       end
     end
 
+    def self.stringified_hash(obj)
+      if obj.is_a?(Hash)
+        obj.inject({}) { |h, (k, v)| h[k.to_s] = symbolized_hash(v) ; h }
+      elsif obj.is_a?(Array)
+        obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
+      else
+        obj
+      end
+    end
+
     def self.duration(total)
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
