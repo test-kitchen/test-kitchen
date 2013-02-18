@@ -91,11 +91,23 @@ module Kitchen
       end
 
       def install_omnibus(ssh_args)
-        flag = config[:require_chef_omnibus]
-        version = flag.is_a?(String) ? "-s -- -v #{flag}" : ""
+        flag = config[:require_chef_omnibus].downcase
+        version = if flag.is_a?(String) && flag != "latest"
+          "-s -- -v #{flag}"
+        else
+          ""
+        end
 
         ssh(ssh_args, <<-INSTALL.gsub(/^ {10}/, ''))
-          if [ ! -d "/opt/chef" ] ; then
+          should_update_chef() {
+            case "#{flag}" in
+              $(chef-solo --v | awk '{print $2}')) return 1 ;;
+              latest|*) return 0 ;;
+            esac
+          }
+
+          if [ ! -d "/opt/chef" ] || should_update_chef ; then
+            echo '-----> Installing Chef Omnibus (#{flag})'
             curl -sSL https://www.opscode.com/chef/install.sh \
               | sudo bash #{version}
           fi
