@@ -101,13 +101,13 @@ module Kitchen
         ssh(ssh_args, <<-INSTALL.gsub(/^ {10}/, ''))
           should_update_chef() {
             case "#{flag}" in
-              $(chef-solo --v | awk '{print $2}')) return 1 ;;
+              $(chef-solo --v | awk "{print \$2}")) return 1 ;;
               latest|*) return 0 ;;
             esac
           }
 
           if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo '-----> Installing Chef Omnibus (#{flag})'
+            echo "-----> Installing Chef Omnibus (#{flag})"
             curl -sSL https://www.opscode.com/chef/install.sh \
               | sudo bash #{version}
           fi
