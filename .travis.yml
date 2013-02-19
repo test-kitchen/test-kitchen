@@ -9,10 +9,3 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-19mode
-
-notifications:
-  irc:
-    channels:
-    - "irc.freenode.org#jamie-ci"
-    use_notice: true
-    skip_join: true
