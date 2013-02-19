@@ -5,7 +5,7 @@
 
 A convergence integration test harness for configuration management systems.
 
-# Getting started 
+# Getting started
 
 
 Project Setup
@@ -15,20 +15,20 @@ In your `Gemfile`, add `test-kitchen` as a
 dependency:
 
 ```ruby
-gem 'test-kitchen', git: 'git://github.com/opscode/test-kitchen.git', branch: '1.0' 
+gem 'test-kitchen', git: 'git://github.com/opscode/test-kitchen.git', branch: '1.0'
 ```
 
 and run the `bundle` command to install:
-    
+
     $ bundle install
-    
+
 This will expose the `test-kitchen` CLI. Run `bundle exec kitchen init` to get started:
 
     $ kitchen init
-        
+
 You will be prompted with a series of questions. In this guide, we
 will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant).
-        
+
 ```text
 $ bundle exec kitchen init
       create  .kitchen.yml
@@ -47,14 +47,14 @@ $ bundle exec kitchen init
 Run the `bundle` command again to install the new vagrant driver:
 
     $ bundle install
-    
+
 Open up the `.kitchen.yml` file created in the root of your
-repository. 
-    
+repository.
+
 Now, it is time to get testing. Use the `--parallel` option to run
 your tests in parallel. Trust us, it's faster!
-    
-    $ bundle exec kitchen test 
+
+    $ bundle exec kitchen test
 
 ## The Kitchen YAML format
 
