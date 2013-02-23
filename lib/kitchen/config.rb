@@ -92,10 +92,14 @@ module Kitchen
       @instance_count = results.size
     end
 
+    def instance_actor_name(index)
+      "config_#{object_id}_instance_#{index}".to_sym
+    end
+
     def instances_array(instance_count)
       results = []
       instance_count.times do |index|
-        results << Celluloid::Actor["instance_#{index}".to_sym]
+        results << Celluloid::Actor[instance_actor_name(index)]
       end
       Collection.new(results)
     end
@@ -123,7 +127,7 @@ module Kitchen
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
-      actor_name = "instance_#{index}".to_sym
+      actor_name = instance_actor_name(index)
       opts = {
         :suite    => suite,
         :platform => platform,
