@@ -73,7 +73,17 @@ module Kitchen
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      instances_array(load_instances)
+      @instances ||= build_instances
+    end
+
+    # Returns an InstanceActor for all instance names matched by the regexp,
+    # or all by default.
+    #
+    # @param [Regexp] a regular expression to match on instance names
+    # @return [Array<InstanceActor>] all instance actors matching the regexp
+    def instance_actors(regexp = nil)
+      result = regexp.nil? ? instances : instances.get_all(regexp)
+      Collection.new(result.map { |instance| actor_registry(instance) })
     end
 
     def supervised
@@ -81,28 +91,6 @@ module Kitchen
     end
 
     private
-
-    def load_instances
-      return @instance_count if @instance_count && @instance_count > 0
-
-      results = []
-      suites.product(platforms).each_with_index do |arr, index|
-        results << new_instance(arr[0], arr[1], index)
-      end
-      @instance_count = results.size
-    end
-
-    def instance_actor_name(index)
-      "config_#{object_id}_instance_#{index}".to_sym
-    end
-
-    def instances_array(instance_count)
-      results = []
-      instance_count.times do |index|
-        results << Celluloid::Actor[instance_actor_name(index)]
-      end
-      Collection.new(results)
-    end
 
     def new_suite(hash)
       path_hash = {
@@ -124,29 +112,53 @@ module Kitchen
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
 
+    def build_instances
+      results = []
+      suites.product(platforms).each_with_index do |arr, index|
+        results << new_instance(arr[0], arr[1], index)
+      end
+      Collection.new(results)
+    end
+
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
-      actor_name = instance_actor_name(index)
-      opts = {
+
+      Instance.new(
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
         :logger   => new_instance_logger(index)
-      }
-
-      new_instance_supervised_or_not(actor_name, opts)
+      )
     end
 
-    def new_instance_supervised_or_not(actor_name, opts)
-      if supervised
-        supervisor = Instance.supervise_as(actor_name, opts)
+    def actor_registry(instance)
+      Celluloid::Actor[actor_key(instance)] || new_instance_actor(instance)
+    end
+
+    def actor_key(instance)
+      "#{object_id}__#{instance.name}"
+    end
+
+    def new_instance_actor(instance)
+      actor_name = actor_key(instance)
+
+      actor = if supervised
+        supervisor = InstanceActor.supervise_as(actor_name, instance)
         actor = supervisor.actors.first
         Kitchen.logger.debug("Supervising #{actor.to_str} with #{supervisor}")
         actor
       else
-        Celluloid::Actor[actor_name] = Instance.new(opts)
+        Celluloid::Actor[actor_name] = InstanceActor.new(instance)
       end
+
+      manager.link(actor)
+
+      actor
+    end
+
+    def manager
+      @manager ||= Manager.new
     end
 
     def log_root

@@ -189,20 +189,17 @@ module Kitchen
     end
 
     def get_filtered_instances(regexp)
-      result = @config.instances.get_all(/#{regexp}/)
+      result = if options[:parallel]
+        @config.instance_actors(/#{regexp}/)
+      else
+        @config.instances.get_all(/#{regexp}/)
+      end
+
       if result.empty?
         die task, "No instances for regex `#{regexp}', try running `kitchen list'"
       else
         result
       end
-    end
-
-    def get_instance(name)
-      result = @config.instances.get(name)
-      if result.nil?
-        die task, "No instance `#{name}', try running `kitchen list'"
-      end
-      result
     end
 
     def display_instance(instance)

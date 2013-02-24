@@ -17,7 +17,6 @@
 # limitations under the License.
 
 require 'benchmark'
-require 'celluloid'
 require 'fileutils'
 require 'thread'
 require 'vendor/hash_recursive_merge'
@@ -31,7 +30,6 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
 
-    include Celluloid
     include Logging
 
     class << self
@@ -175,7 +173,7 @@ module Kitchen
         destroy if destroy_mode == :passing
       end
       info "Finished testing #{to_str} #{Util.duration(elapsed.real)}."
-      Actor.current
+      self
     ensure
       destroy if destroy_mode == :always
     end
@@ -249,7 +247,7 @@ module Kitchen
       info("Finished #{output_verb.downcase} #{to_str}" +
         " #{Util.duration(elapsed.real)}.")
       yield if block_given?
-      Actor.current
+      self
     end
 
     def action(what, &block)
