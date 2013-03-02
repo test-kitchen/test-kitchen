@@ -60,7 +60,7 @@ module Kitchen
       @name = options[:name]
       @run_list = options[:run_list]
       @attributes = options[:attributes] || Hash.new
-      @excludes = options[:excludes]     || Array.new 
+      @excludes = options[:excludes]     || Array.new
       @data_bags_path = options[:data_bags_path]
       @roles_path = options[:roles_path]
     end
