@@ -114,7 +114,10 @@ module Kitchen
 
     def build_instances
       results = []
-      suites.product(platforms).each_with_index do |arr, index|
+      filtered_instances = suites.product(platforms).delete_if do |arr|
+        arr[0].excludes.include?(arr[1].name)
+      end
+      filtered_instances.each_with_index do |arr, index|
         results << new_instance(arr[0], arr[1], index)
       end
       Collection.new(results)

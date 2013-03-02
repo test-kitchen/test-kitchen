@@ -144,10 +144,11 @@ describe Kitchen::Config do
         :suites => [
           { :name => 's1', :run_list => [] },
           { :name => 's2', :run_list => [] },
+          { :name => 's3', :run_list => [], :excludes => ['p1'] }
         ]
       })
-      config.instances.size.must_equal 4
-      config.instances.map { |i| i.name }.must_equal %w{s1-p1 s1-p2 s2-p1 s2-p2}
+      config.instances.size.must_equal 5
+      config.instances.map { |i| i.name }.must_equal %w{s1-p1 s1-p2 s2-p1 s2-p2 s3-p2}
     end
 
     it "returns an instance containing a driver instance" do
