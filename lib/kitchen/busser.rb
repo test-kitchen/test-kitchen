@@ -111,6 +111,7 @@ module Kitchen
         uri = URI.parse(INSTALL_URL)
         http = Net::HTTP.new(uri.host, 443)
         http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         response = http.request(Net::HTTP::Get.new(uri.path))
         response.body
       end
