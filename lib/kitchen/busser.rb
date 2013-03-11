@@ -101,6 +101,7 @@ module Kitchen
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
     DEFAULT_KB_ROOT = "/opt/kb".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
+    RESERVED_NAMES = ["data_bags", "roles"].freeze
 
     def validate_options(suite_name)
       raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
@@ -117,9 +118,19 @@ module Kitchen
     end
 
     def plugins
+      [plugins_by_directory, plugins_by_extension].sort.uniq
+    end
+
+    def plugins_by_directory
       Dir.glob(File.join(test_root, @suite_name, "*")).select { |d|
-        File.directory?(d) && File.basename(d) != "data_bags"
+        File.directory?(d) && !RESERVED_NAMES.include?(File.basename(d))
       }.map { |d| File.basename(d) }.sort.uniq
+    end
+
+    def plugins_by_extension
+      Dir.glob(File.join(test_root, @suite_name, "*/**/*")).reject do |f|
+        f["data_bags"] || File.directory?(f)
+      end.map { |i| File.extname(i)[1..-1] }.sort.uniq
     end
 
     def local_suite_files
