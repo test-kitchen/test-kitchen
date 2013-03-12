@@ -430,6 +430,8 @@ Describes global configuration settings for the openstack runner:
 
 `auth_url` - The URL of your openstack installations keystone server.
 
+`region` - An optional openstack region in which to create the server.
+
 ### OpenStack example
 
 ```ruby

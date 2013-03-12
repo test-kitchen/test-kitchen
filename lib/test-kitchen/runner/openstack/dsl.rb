@@ -4,7 +4,7 @@ module TestKitchen
   class Openstack
     include Chef::Mixin::ParamsValidate
 
-    attr_writer :username, :password, :tenant, :auth_url
+    attr_writer :username, :password, :tenant, :auth_url, :region
 
     def initialize(&block)
       instance_eval(&block) if block_given?
@@ -24,6 +24,10 @@ module TestKitchen
 
     def auth_url(arg=nil)
       set_or_return(:auth_url, arg, {})
+    end
+
+    def region(arg=nil)
+      set_or_return(:region, arg, {})
     end
   end
 end
