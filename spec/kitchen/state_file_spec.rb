@@ -28,7 +28,7 @@ end
 
 describe Kitchen::StateFile do
 
-  let(:state_file)  { Kitchen::StateFile.new('/tmp', 'oftheunion')}
+  let(:state_file)  { Kitchen::StateFile.new('/tmp', 'oftheunion') }
   let(:file_name)   { '/tmp/.kitchen/oftheunion.yml' }
 
   before do
