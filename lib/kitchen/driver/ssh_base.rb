@@ -91,9 +91,9 @@ module Kitchen
       end
 
       def install_omnibus(ssh_args)
-        flag = config[:require_chef_omnibus].downcase
+        flag = config[:require_chef_omnibus]
         version = if flag.is_a?(String) && flag != "latest"
-          "-s -- -v #{flag}"
+          "-s -- -v #{flag.downcase}"
         else
           ""
         end
