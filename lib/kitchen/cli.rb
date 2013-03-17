@@ -220,13 +220,13 @@ module Kitchen
       [
         proc { |target_self, nest_level, pry|
           ["[#{pry.input_array.size}] ",
-            "jc(#{Pry.view_clip(target_self.class)})",
+            "kc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}> "
           ].join
         },
         proc { |target_self, nest_level, pry|
           ["[#{pry.input_array.size}] ",
-            "jc(#{Pry.view_clip(target_self.class)})",
+            "kc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}* "
           ].join
         },
