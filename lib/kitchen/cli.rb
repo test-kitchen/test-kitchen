@@ -138,11 +138,90 @@ module Kitchen
 
     register Kitchen::Generator::Init, "init",
       "init", "Adds some configuration to your cookbook so Kitchen can rock"
-    all_tasks["init"].options = Kitchen::Generator::Init.class_options
+    long_desc <<-D, :for => "init"
+      Init will add Test Kitchen support to an existing project for
+      convergence integration testing. A default .kitchen.yml file (which is
+      intended to be customized) is created in the project's root directory
+      and one or more gems will be added to the project's Gemfile.
+    D
+    tasks["init"].options = Kitchen::Generator::Init.class_options
 
-    register Kitchen::Generator::NewPlugin, "new_plugin",
-      "new_plugin [NAME]", "Generate a new Kitchen Driver plugin gem project"
-    all_tasks["new_plugin"].options = Kitchen::Generator::NewPlugin.class_options
+    # Thor class for kitchen driver commands.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class Driver < Thor
+
+      register Kitchen::Generator::NewPlugin, "create",
+        "create [NAME]", "Create a new Kitchen Driver gem project"
+      long_desc <<-D, :for => "create"
+        Create will generate a project scaffold for a brand new Test Kitchen
+        Driver RubyGem. For example:
+
+        > kitchen driver create foobar
+
+        will create a project scaffold for a RubyGem called `kitchen-foobar'.
+      D
+      tasks["create"].options = Kitchen::Generator::NewPlugin.class_options
+
+      desc "discover", "Discover Test Kitchen drivers published on RubyGems"
+      long_desc <<-D
+        Discover will perform a search aginst the RubyGems service for any
+        published gems of the form: "kitchen-*". Note that it it cannot be
+        guarenteed that every result is a driver, but chances are good most
+        relevant drivers will be returned.
+      D
+      def discover
+        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
+        specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
+        specs = specs.unshift(["Gem Name", "Latest Stable Release"])
+        print_table(specs, :indent => 4)
+      end
+
+      def self.basename
+        super + " driver"
+      end
+
+      private
+
+      def fetch_gem_specs
+        require 'rubygems/spec_fetcher'
+        SafeYAML::OPTIONS[:suppress_warnings] = true
+        req = Gem::Requirement.default
+        dep = Gem::Deprecate.skip_during do
+          Gem::Dependency.new(/kitchen-/i, req)
+        end
+        fetcher = Gem::SpecFetcher.fetcher
+
+        specs = if fetcher.respond_to?(:find_matching)
+          fetch_gem_specs_pre_rubygems_2(fetcher, dep)
+        else
+          fetch_gem_specs_post_rubygems_2(fetcher, dep)
+        end
+      end
+
+      def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
+        specs = fetcher.find_matching(dep, false, false, false)
+        specs.map { |t| t.first }.map { |t| t[0, 2] }
+      end
+
+      def fetch_gem_specs_post_rubygems_2(fetcher, dep)
+        specs = fetcher.spec_for_dependency(dep, false)
+        specs.first.map { |t| [t.first.name, t.first.version] }
+      end
+    end
+
+    register Kitchen::CLI::Driver, "driver",
+      "driver", "Driver subcommands"
+
+    no_tasks do
+      def invoke_task(task, *args)
+        if task.name == "help" && args.first.first == "driver"
+          Kitchen::CLI::Driver.task_help(shell, args.first.last)
+        else
+          super
+        end
+      end
+    end
 
     private
 

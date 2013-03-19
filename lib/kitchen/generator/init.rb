@@ -30,6 +30,10 @@ module Kitchen
 
       include Thor::Actions
 
+      class_option :driver, :type => :array, :aliases => "-d",
+        :default => "kitchen-vagrant",
+        :desc => "One or more Kitchen Driver gems to be added to the Gemfile"
+
       def init
         create_file ".kitchen.yml", default_yaml
 
@@ -58,7 +62,13 @@ module Kitchen
         empty_directory "test/integration/default" if init_test_dir?
         append_to_gitignore(".kitchen/")
         append_to_gitignore(".kitchen.local.yml")
-        add_plugins
+        create_gemfile_if_missing
+        add_gem_to_gemfile
+        add_drivers
+
+        if @display_bundle_msg
+          say "You must run `bundle install' to fetch any new gems.", :red
+        end
       end
 
       private
@@ -86,8 +96,9 @@ module Kitchen
           nil
         end
         run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
+        driver_plugin = Array(options[:driver]).first || 'dummy'
 
-        { 'driver_plugin' => 'vagrant',
+        { 'driver_plugin' => driver_plugin.sub(/^kitchen-/, ''),
           'platforms' => platforms,
           'suites' => [
             { 'name' => 'default',
@@ -100,12 +111,12 @@ module Kitchen
 
       def init_rakefile?
         File.exists?("Rakefile") &&
-          IO.readlines("Rakefile").grep(%r{require 'kitchen/rake_tasks'}).empty?
+          not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
       end
 
       def init_thorfile?
         File.exists?("Thorfile") &&
-          IO.readlines("Thorfile").grep(%r{require 'kitchen/thor_tasks'}).empty?
+          not_in_file?("Thorfile", %r{require 'kitchen/thor_tasks'})
       end
 
       def init_test_dir?
@@ -120,56 +131,35 @@ module Kitchen
         end
       end
 
-      def add_plugins
-        prompt_add  = "Add a Driver plugin to your Gemfile? (y/n)>"
-        prompt_name = "Enter gem name, `list', or `skip'>"
+      def create_gemfile_if_missing
+        unless File.exists?("Gemfile")
+          create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
+        end
+      end
 
-        if yes?(prompt_add, :green)
-          list_plugins while (plugin = ask(prompt_name, :green)) == "list"
-          return if plugin == "skip"
-          begin
-            append_to_file(
-              "Gemfile", %{gem '#{plugin}', :group => :integration\n}
-            )
-            say "You must run `bundle install' to fetch any new gems.", :red
-          rescue Errno::ENOENT
-            warn %{You do not have an existing Gemfile}
-            warn %{Exiting...}
-            exit 1
+      def add_gem_to_gemfile
+        if not_in_file?("Gemfile", %r{gem 'test-kitchen'})
+          append_to_file("Gemfile",
+            %{gem 'test-kitchen', :group => :integration\n})
+          @display_bundle_msg = true
+        end
+      end
+
+      def add_drivers
+        return if options[:driver].nil? || options[:driver].empty?
+        display_warning = false
+
+        Array(options[:driver]).each do |driver_gem|
+          if not_in_file?("Gemfile", %r{gem '#{driver_gem}'})
+            append_to_file("Gemfile",
+              %{gem '#{driver_gem}', :group => :integration\n})
+            @display_bundle_msg = true
           end
         end
       end
 
-      def list_plugins
-        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
-        specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
-        specs = specs.unshift(["Gem Name", "Latest Stable Release"])
-        print_table(specs, :indent => 4)
-      end
-
-      def fetch_gem_specs
-        require 'rubygems/spec_fetcher'
-        req = Gem::Requirement.default
-        dep = Gem::Deprecate.skip_during do
-          Gem::Dependency.new(/kitchen-/i, req)
-        end
-        fetcher = Gem::SpecFetcher.fetcher
-
-        specs = if fetcher.respond_to?(:find_matching)
-          fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        else
-          fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        end
-      end
-
-      def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        specs = fetcher.find_matching(dep, false, false, false)
-        specs.map { |t| t.first }.map { |t| t[0, 2] }
-      end
-
-      def fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        specs = fetcher.spec_for_dependency(dep, false)
-        specs.first.map { |t| [t.first.name, t.first.version] }
+      def not_in_file?(filename, regexp)
+        IO.readlines(filename).grep(regexp).empty?
       end
     end
   end
