@@ -77,7 +77,7 @@ module Kitchen
 
     def deserialize_string(string)
       ::YAML.safe_load(string)
-    rescue SyntaxError => ex
+    rescue SyntaxError, Psych::SyntaxError => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end
 

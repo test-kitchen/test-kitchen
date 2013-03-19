@@ -97,7 +97,7 @@ module Kitchen
         return Hash.new if string.nil? || string.empty?
 
         ::YAML.safe_load(string)
-      rescue SyntaxError => ex
+      rescue SyntaxError, Psych::SyntaxError => ex
         raise UserError, "Error parsing #{file_name} (#{ex.message})"
       end
     end
