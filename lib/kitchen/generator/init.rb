@@ -156,7 +156,11 @@ module Kitchen
         end
         fetcher = Gem::SpecFetcher.fetcher
 
-        specs = fetcher.find_matching(dep, false, false, false)
+        specs = if fetcher.respond_to?(:find_matching)
+          fetcher.find_matching(dep, false, false, false)
+        else
+          fetcher.spec_for_dependency(dep, false)
+        end
       end
     end
   end
