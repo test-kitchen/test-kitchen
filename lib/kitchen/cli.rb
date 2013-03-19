@@ -122,7 +122,7 @@ module Kitchen
 
     desc "version", "Print Kitchen's version information"
     def version
-      say "Kitchen version #{Kitchen::VERSION}"
+      say "Test Kitchen version #{Kitchen::VERSION}"
     end
     map %w(-v --version) => :version
 
