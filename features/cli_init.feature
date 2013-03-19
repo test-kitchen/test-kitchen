@@ -3,7 +3,6 @@ Feature: Ensure that the Command Line Interface init creates the correct files
   As an Operator
   I want to initialize a cookbook
 
-
 @ok
 Scenario: Basic init with no extras succeeds
   When I run `kitchen init` interactively
@@ -64,7 +63,7 @@ Scenario: Running with a Rakefile file appends Kitchen tasks
   Then the exit status should be 0
   And the file "Rakefile" should contain exactly:
   """
-  
+
   begin
     require 'kitchen/rake_tasks'
     Kitchen::RakeTasks.new
@@ -74,7 +73,6 @@ Scenario: Running with a Rakefile file appends Kitchen tasks
 
   """
 
-
 @ok
 Scenario: Running with a Thorfile file appends Kitchen tasks
   Given an empty file named "Thorfile"
@@ -83,7 +81,7 @@ Scenario: Running with a Thorfile file appends Kitchen tasks
   Then the exit status should be 0
   And the file "Thorfile" should contain exactly:
   """
-  
+
   begin
     require 'kitchen/thor_tasks'
     Kitchen::ThorTasks.new
@@ -92,7 +90,6 @@ Scenario: Running with a Thorfile file appends Kitchen tasks
   end
 
   """
-
 
 @ok
 Scenario: Listing the drivers provides correct output, does not write Gemfile
@@ -105,7 +102,6 @@ Scenario: Listing the drivers provides correct output, does not write Gemfile
   And a directory named ".kitchen" should exist
   And a file named "Gemfile" should not exist
 
-
 @ok
 Scenario: Running the init command without a Gemfile provides warning and fails
   When I run `kitchen init` interactively
@@ -113,7 +109,6 @@ Scenario: Running the init command without a Gemfile provides warning and fails
   And I type "kitchen-vagrant"
   And the output should contain "You do not have an existing Gemfile"
   Then the exit status should be 1
-
 
 @ok
 Scenario: Running the init command succeeds
@@ -126,7 +121,6 @@ Scenario: Running the init command succeeds
   And a file named ".kitchen.yml" should exist
   And a file named ".gitignore" should exist
   And the file "Gemfile" should contain "gem 'kitchen-vagrant', :group => :integration"
-
 
 @ok
 Scenario: Running init with a correct metadata.rb works
@@ -153,4 +147,3 @@ Scenario: Running init with a correct metadata.rb works
     - recipe[ntp]
     attributes: {}
   """
-

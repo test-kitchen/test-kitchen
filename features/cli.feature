@@ -12,6 +12,3 @@ Scenario: Running the help command exits cleanly
 Scenario: Show the version number
   When I successfully run `kitchen version`
   Then the exit status should be 0
-  
-
-
