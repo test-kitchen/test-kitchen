@@ -141,8 +141,7 @@ module Kitchen
       end
 
       def list_plugins
-        specs = fetch_gem_specs.map { |t| t.first }.map { |t| t[0, 2] }.
-          sort { |x, y| x[0] <=> y[0] }
+        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
         specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
         specs = specs.unshift(["Gem Name", "Latest Stable Release"])
         print_table(specs, :indent => 4)
@@ -157,10 +156,20 @@ module Kitchen
         fetcher = Gem::SpecFetcher.fetcher
 
         specs = if fetcher.respond_to?(:find_matching)
-          fetcher.find_matching(dep, false, false, false)
+          fetch_gem_specs_pre_rubygems_2(fetcher, dep)
         else
-          fetcher.spec_for_dependency(dep, false)
+          fetch_gem_specs_post_rubygems_2(fetcher, dep)
         end
+      end
+
+      def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
+        specs = fetcher.find_matching(dep, false, false, false)
+        specs.map { |t| t.first }.map { |t| t[0, 2] }
+      end
+
+      def fetch_gem_specs_post_rubygems_2(fetcher, dep)
+        specs = fetcher.spec_for_dependency(dep, false)
+        specs.first.map { |t| [t.first.name, t.first.version] }
       end
     end
   end
