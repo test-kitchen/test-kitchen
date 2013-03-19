@@ -74,6 +74,26 @@ module Kitchen
       private
 
       def default_yaml
+        cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
+          MetadataChopper.extract('metadata.rb').first
+        else
+          nil
+        end
+        run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
+        driver_plugin = Array(options[:driver]).first || 'dummy'
+
+        { 'driver_plugin' => driver_plugin.sub(/^kitchen-/, ''),
+          'platforms' => platforms_hash,
+          'suites' => [
+            { 'name' => 'default',
+              'run_list' => Array(run_list),
+              'attributes' => Hash.new
+            },
+          ]
+        }.to_yaml
+      end
+
+      def platforms_hash
         url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
         platforms = [
           { :n => 'ubuntu', :vers => %w(12.04 10.04), :rl => "recipe[apt]" },
@@ -90,23 +110,6 @@ module Kitchen
             }
           end
         end.flatten
-        cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
-          MetadataChopper.extract('metadata.rb').first
-        else
-          nil
-        end
-        run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
-        driver_plugin = Array(options[:driver]).first || 'dummy'
-
-        { 'driver_plugin' => driver_plugin.sub(/^kitchen-/, ''),
-          'platforms' => platforms,
-          'suites' => [
-            { 'name' => 'default',
-              'run_list' => Array(run_list),
-              'attributes' => Hash.new
-            },
-          ]
-        }.to_yaml
       end
 
       def init_rakefile?
