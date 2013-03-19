@@ -1,19 +1,26 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'cucumber'
+require 'cucumber/rake/task'
 
-Rake::TestTask.new do |t|
+Rake::TestTask.new(:unit) do |t|
   t.libs.push "lib"
   t.test_files = FileList['spec/**/*_spec.rb']
   t.verbose = true
 end
+
+Cucumber::Rake::Task.new(:features) do |t|
+  t.cucumber_opts = ['features', '-x', '--format progress']
+end
+
+desc "Run all test suites"
+task :test => [:unit, :features]
 
 task :default => [:test]
 
 unless RUBY_ENGINE == 'jruby'
   require 'cane/rake_task'
   require 'tailor/rake_task'
-  require 'cucumber'
-  require 'cucumber/rake/task'
 
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
@@ -51,11 +58,7 @@ unless RUBY_ENGINE == 'jruby'
     end
   end
 
-  Cucumber::Rake::Task.new(:features) do |t|
-    t.cucumber_opts = ['features', '-x', '--format progress']
-  end
-
-  Rake::Task[:default].enhance [:cane, :features, :tailor]
+  Rake::Task[:default].enhance [:cane, :tailor]
 end
 
 desc "Display LOC stats"
