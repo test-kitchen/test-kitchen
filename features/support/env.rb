@@ -3,7 +3,7 @@ require 'aruba/cucumber'
 require 'kitchen'
 
 Before do
-  @aruba_timeout_seconds = 15
+  @aruba_timeout_seconds = 5
   @cleanup_dirs = []
 end
 
