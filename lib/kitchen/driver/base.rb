@@ -116,7 +116,7 @@ module Kitchen
         map(&:to_sym).freeze
 
       def logger
-        instance.logger
+        instance ? instance.logger : Kitchen.logger
       end
 
       def puts(msg)
