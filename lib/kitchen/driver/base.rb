@@ -113,11 +113,12 @@ module Kitchen
         info(msg)
       end
 
-      def run_command(cmd, use_sudo = nil, log_subject = nil)
-        use_sudo = config[:use_sudo] if use_sudo.nil?
-        log_subject = Util.to_snake_case(self.class.to_s)
-
-        super(cmd, use_sudo, log_subject)
+      def run_command(cmd, options = {})
+        base_options = {
+          :use_sudo => config[:use_sudo],
+          :log_subject => Util.to_snake_case(self.class.to_s)
+        }.merge(options)
+        super(cmd, base_options)
       end
 
       def kb_setup_cmd
