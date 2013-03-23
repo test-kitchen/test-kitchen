@@ -12,19 +12,19 @@ Feature: Add Test Kitchen support to an existing project
     """
     And the exit status should be 0
 
-  # Scenario: Running init with default values
-  #   Given a sandboxed GEM_HOME directory named "kitchen-init"
-  #   When I run `kitchen init`
-  #   Then the exit status should be 0
-  #   And a directory named ".kitchen" should exist
-  #   And a directory named "test/integration/default" should exist
-  #   And the file ".gitignore" should contain ".kitchen/"
-  #   And the file ".gitignore" should contain ".kitchen.local.yml"
-  #   And the file ".kitchen.yml" should contain "driver_plugin: vagrant"
-  #   And a file named "Gemfile" should not exist
-  #   And a file named "Rakefile" should not exist
-  #   And a file named "Thorfile" should not exist
-  #   And a gem named "kitchen-vagrant" is installed
+  Scenario: Running init with default values
+    Given a sandboxed GEM_HOME directory named "kitchen-init"
+    When I run `kitchen init`
+    Then the exit status should be 0
+    And a directory named ".kitchen" should exist
+    And a directory named "test/integration/default" should exist
+    And the file ".gitignore" should contain ".kitchen/"
+    And the file ".gitignore" should contain ".kitchen.local.yml"
+    And the file ".kitchen.yml" should contain "driver_plugin: vagrant"
+    And a file named "Gemfile" should not exist
+    And a file named "Rakefile" should not exist
+    And a file named "Thorfile" should not exist
+    And a gem named "kitchen-vagrant" is installed
 
   Scenario: Running init that creates a Gemfile
     When I successfully run `kitchen init --create-gemfile`
