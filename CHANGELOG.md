@@ -1,4 +1,4 @@
-## 1.0.0.alpha.1 / Unreleased
+## 1.0.0.alpha.1 / 2013-03-22
 
 ### Bug fixes
 
