@@ -7,10 +7,14 @@
 ### New features
 
 * Pull request [#71][]: Updates to `kitchen init` to be non-interactive (add `--driver` flag), add subcommand support, and introduce `kitchen driver discover`. ([@fnichol][])
+* Add `Driver#verify_dependencies` to be invoked once when Driver is loaded. ([@fnichol][])
 
 ### Improvements
 
 * Pull request [#73][]: [Breaking] Modify `ShellOut#run_command` to take an options Hash. ([@fnichol][])
+* Add :quiet option on `ShellOut#run_command`. ([@fnichol][])
+* [Breaking] `Driver#login_command` returns a Driver::LoginCommand object. ([@fnichol][])
+* Pull request [#74][]: Switch driver alias (-d) to (-D) in Init generator ([@reset][])
 * Pull request [#64][]: Make `require_chef_omnibus: true` safe. ([@mattray][])
 * Pull request [#65][]: Fix for line length and style (tailor). ([@ChrisLundquist][])
 
@@ -24,6 +28,8 @@ The initial release.
 [#65]: https://github.com/opscode/test/issues/65
 [#71]: https://github.com/opscode/test/issues/71
 [#73]: https://github.com/opscode/test/issues/73
+[#74]: https://github.com/opscode/test/issues/74
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@fnichol]: https://github.com/fnichol
 [@mattray]: https://github.com/mattray
+[@reset]: https://github.com/reset
