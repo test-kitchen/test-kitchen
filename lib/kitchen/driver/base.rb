@@ -108,6 +108,15 @@ module Kitchen
         raise ActionFailed, "Remote login is not supported in this driver."
       end
 
+      # Performs whatever tests that may be required to ensure that this driver
+      # will be able to function in the current environment. This may involve
+      # checking for the presence of certain directories, software installed,
+      # etc.
+      #
+      # @raise [UserError] if the driver will not be able to perform or if a
+      #   documented dependency is missing from the system
+      def verify_dependencies ; end
+
       protected
 
       attr_reader :config, :instance

@@ -26,11 +26,13 @@ module Kitchen
     # @return [Driver::Base] a driver instance
     # @raise [ClientError] if a driver instance could not be created
     def self.for_plugin(plugin, config)
-      require "kitchen/driver/#{plugin}"
+      first_load = require("kitchen/driver/#{plugin}")
 
       str_const = Util.to_camel_case(plugin)
       klass = self.const_get(str_const)
-      klass.new(config)
+      object = klass.new(config)
+      object.verify_dependencies if first_load
+      object
     rescue UserError
       raise
     rescue LoadError
