@@ -32,7 +32,16 @@ module Kitchen
 
       class_option :driver, :type => :array, :aliases => "-d",
         :default => "kitchen-vagrant",
-        :desc => "One or more Kitchen Driver gems to be added to the Gemfile"
+        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+          One or more Kitchen Driver gems to be installed or added to a
+          Gemfile
+        D
+
+      class_option :create_gemfile, :type => :boolean, :default => false,
+        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+          Whether or not to create a Gemfile if one does not exist.
+          Default: false
+        D
 
       def init
         create_file ".kitchen.yml", default_yaml
@@ -62,8 +71,7 @@ module Kitchen
         empty_directory "test/integration/default" if init_test_dir?
         append_to_gitignore(".kitchen/")
         append_to_gitignore(".kitchen.local.yml")
-        create_gemfile_if_missing
-        add_gem_to_gemfile
+        prepare_gemfile if File.exists?("Gemfile") || options[:create_gemfile]
         add_drivers
 
         if @display_bundle_msg
@@ -134,6 +142,11 @@ module Kitchen
         end
       end
 
+      def prepare_gemfile
+        create_gemfile_if_missing
+        add_gem_to_gemfile
+      end
+
       def create_gemfile_if_missing
         unless File.exists?("Gemfile")
           create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
@@ -153,11 +166,25 @@ module Kitchen
         display_warning = false
 
         Array(options[:driver]).each do |driver_gem|
-          if not_in_file?("Gemfile", %r{gem '#{driver_gem}'})
-            append_to_file("Gemfile",
-              %{gem '#{driver_gem}', :group => :integration\n})
-            @display_bundle_msg = true
+          if File.exists?("Gemfile") || options[:create_gemfile]
+            add_driver_to_gemfile(driver_gem)
+          else
+            install_gem(driver_gem)
           end
+        end
+      end
+
+      def add_driver_to_gemfile(driver_gem)
+        if not_in_file?("Gemfile", %r{gem '#{driver_gem}'})
+          append_to_file("Gemfile",
+            %{gem '#{driver_gem}', :group => :integration\n})
+          @display_bundle_msg = true
+        end
+      end
+
+      def install_gem(driver_gem)
+        Bundler.with_clean_env do
+          run "gem install #{driver_gem}"
         end
       end
 
