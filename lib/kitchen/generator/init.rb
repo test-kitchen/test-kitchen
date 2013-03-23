@@ -30,7 +30,7 @@ module Kitchen
 
       include Thor::Actions
 
-      class_option :driver, :type => :array, :aliases => "-d",
+      class_option :driver, :type => :array, :aliases => "-D",
         :default => "kitchen-vagrant",
         :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
           One or more Kitchen Driver gems to be installed or added to a
