@@ -184,12 +184,15 @@ module Kitchen
     #
     # **Note** This method calls exec and will not return.
     #
+    # @see Driver::LoginCommand
     # @see Driver::Base#login_command
     def login
-      command, *args = driver.login_command(state_file.read)
+      login_command = driver.login_command(state_file.read)
+      command, *args = login_command.cmd_array
+      options = login_command.options
 
-      debug("Login command: #{command} #{args.join(' ')}")
-      Kernel.exec(command, *args)
+      debug("Login command: #{command} #{args.join(' ')} (Options: #{options})")
+      Kernel.exec(command, *args, options)
     end
 
     def last_action

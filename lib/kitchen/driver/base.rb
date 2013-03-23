@@ -20,6 +20,20 @@ module Kitchen
 
   module Driver
 
+    # Value object to track a shell command that will be passed to Kernel.exec
+    # for execution.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class LoginCommand
+
+      attr_reader :cmd_array, :options
+
+      def initialize(cmd_array, options = {})
+        @cmd_array = cmd_array
+        @options = options
+      end
+    end
+
     # Base class for a driver. A driver is responsible for carrying out the
     # lifecycle activities of an instance, such as creating, converging, and
     # destroying an instance.
@@ -84,11 +98,11 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) ; end
 
-      # Returns the shell command array that will log into an instance.
+      # Returns the shell command that will log into an instance.
       #
       # @param state [Hash] mutable instance and driver state
-      # @return [Array] an array of command line tokens to be used in a
-      #   fork/exec
+      # @return [LoginCommand] an object containing the array of command line
+      #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
       def login_command(state)
         raise ActionFailed, "Remote login is not supported in this driver."

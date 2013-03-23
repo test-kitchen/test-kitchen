@@ -71,7 +71,7 @@ module Kitchen
         args += %W{ -i #{config[:ssh_key]}} if config[:ssh_key]
         args += %W{ #{config[:username]}@#{state[:hostname]}}
 
-        ["ssh", *args]
+        Driver::LoginCommand.new(["ssh", *args])
       end
 
       protected
