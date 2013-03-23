@@ -12,22 +12,36 @@ Feature: Add Test Kitchen support to an existing project
     """
     And the exit status should be 0
 
-  Scenario: Running init with default values
-    When I run `kitchen init`
-    Then the exit status should be 0
-    And a directory named ".kitchen" should exist
-    And a directory named "test/integration/default" should exist
-    And the file ".gitignore" should contain ".kitchen/"
-    And the file ".gitignore" should contain ".kitchen.local.yml"
-    And the file "Gemfile" should contain "https://rubygems.org"
+  # Scenario: Running init with default values
+  #   Given a sandboxed GEM_HOME directory named "kitchen-init"
+  #   When I run `kitchen init`
+  #   Then the exit status should be 0
+  #   And a directory named ".kitchen" should exist
+  #   And a directory named "test/integration/default" should exist
+  #   And the file ".gitignore" should contain ".kitchen/"
+  #   And the file ".gitignore" should contain ".kitchen.local.yml"
+  #   And the file ".kitchen.yml" should contain "driver_plugin: vagrant"
+  #   And a file named "Gemfile" should not exist
+  #   And a file named "Rakefile" should not exist
+  #   And a file named "Thorfile" should not exist
+  #   And a gem named "kitchen-vagrant" is installed
+
+  Scenario: Running init that creates a Gemfile
+    When I successfully run `kitchen init --create-gemfile`
+    Then the file "Gemfile" should contain "https://rubygems.org"
     And the file "Gemfile" should contain "gem 'test-kitchen'"
     And the file "Gemfile" should contain "gem 'kitchen-vagrant'"
-    And the file ".kitchen.yml" should contain "driver_plugin: vagrant"
-    And a file named "Rakefile" should not exist
-    And a file named "Thorfile" should not exist
+    And the output should contain "You must run `bundle install'"
+
+  Scenario: Running init with an existing Gemfile appends to the Gemfile
+    Given an empty file named "Gemfile"
+    When I successfully run `kitchen init`
+    And the file "Gemfile" should contain "gem 'test-kitchen'"
+    And the file "Gemfile" should contain "gem 'kitchen-vagrant'"
     And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with multiple drivers appends to the Gemfile
+    Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
     Then the file "Gemfile" should contain "gem 'kitchen-bluebox'"
     And the file "Gemfile" should contain "gem 'kitchen-wakka'"
@@ -35,16 +49,19 @@ Feature: Add Test Kitchen support to an existing project
 
   Scenario: Running init with multiple driver sets the plugin_driver to the
     first driver given
+    Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
     Then the file ".kitchen.yml" should contain "driver_plugin: bluebox"
 
   Scenario: Running init with no drivers sets the plugin_driver to the
     dummy driver
+    Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
     Then the file ".kitchen.yml" should contain "driver_plugin: dummy"
 
   Scenario: Running with a Rakefile file appends Kitchen tasks
-    Given an empty file named "Rakefile"
+    Given an empty file named "Gemfile"
+    And an empty file named "Rakefile"
     When I successfully run `kitchen init`
     Then the file "Rakefile" should contain:
     """
@@ -57,6 +74,7 @@ Feature: Add Test Kitchen support to an existing project
     """
 
   Scenario: Running with a Thorfile file appends Kitchen tasks
+    Given an empty file named "Gemfile"
     Given an empty file named "Thorfile"
     When I successfully run `kitchen init`
     Then the file "Thorfile" should contain:
@@ -70,6 +88,7 @@ Feature: Add Test Kitchen support to an existing project
     """
 
   Scenario: Running init with a the name attribute metadata.rb sets a run list
+    Given an empty file named "Gemfile"
     Given a file named "metadata.rb" with:
     """
     name              "ntp"
