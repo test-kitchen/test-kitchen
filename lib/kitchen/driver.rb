@@ -37,8 +37,6 @@ module Kitchen
       raise
     rescue LoadError
       raise ClientError, "Could not require '#{plugin}' plugin from load path"
-    rescue
-      raise ClientError, "Failed to create a driver for '#{plugin}' plugin"
     end
   end
 end
