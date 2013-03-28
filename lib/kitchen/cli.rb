@@ -222,14 +222,14 @@ module Kitchen
       "driver", "Driver subcommands"
 
     no_tasks do
-      def invoke_command(command, *args)
+      def invoke_task(command, *args)
         if command.name == "help" && args.first.first == "driver"
           Kitchen::CLI::Driver.task_help(shell, args.first.last)
         else
           super
         end
       end
-      alias_method :invoke_task, :invoke_command
+      alias_method :invoke_command, :invoke_task
     end
 
     private
