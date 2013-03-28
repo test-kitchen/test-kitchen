@@ -70,6 +70,8 @@ module Kitchen
       )
       method_option :parallel, :aliases => "-p", :type => :boolean,
         :desc => "Perform action against all matching instances in parallel"
+      method_option :log_level, :aliases => "-l",
+        :desc => "Set the log level (debug, info, warn, error, fatal)"
       define_method(action) { |*args| exec_action(action) }
     end
 
@@ -86,6 +88,8 @@ module Kitchen
     DESC
     method_option :parallel, :aliases => "-p", :type => :boolean,
       :desc => "Perform action against all matching instances in parallel"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :destroy, :aliases => "-d", :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
     def test(*args)
@@ -93,6 +97,7 @@ module Kitchen
         raise ArgumentError, "Destroy mode must be passing, always, or never."
       end
 
+      update_config!
       banner "Starting Kitchen"
       elapsed = Benchmark.measure do
         destroy_mode = options[:destroy].to_sym
@@ -109,7 +114,10 @@ module Kitchen
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
     def login(regexp)
+      update_config!
       results = get_filtered_instances(regexp)
       if results.size > 1
         die task, "Argument `#{regexp}' returned multiple results:\n" +
@@ -233,6 +241,7 @@ module Kitchen
     end
 
     def exec_action(action)
+      update_config!
       banner "Starting Kitchen"
       elapsed = Benchmark.measure do
         @task = action
@@ -288,6 +297,12 @@ module Kitchen
       else set_color("<Unknown>", :white)
       end
       [set_color(instance.name, :white), action]
+    end
+
+    def update_config!
+      if options[:log_level]
+        @config.log_level = options[:log_level].downcase.to_sym
+      end
     end
 
     def die(task, msg)
