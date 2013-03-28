@@ -22,14 +22,14 @@ require 'net/https'
 
 module Kitchen
 
-  # Command string generator to interface with Kitchen Busser (kb). The
-  # commands that are generated are safe to pass to an SSH command or as an
-  # unix command argument (escaped in single quotes).
+  # Command string generator to interface with Busser. The commands that are
+  # generated are safe to pass to an SSH command or as an unix command
+  # argument (escaped in single quotes).
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Busser
 
-    # Constructs a new busser command generator, given a suite name.
+    # Constructs a new Busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
     #   (**Required**)
@@ -43,8 +43,8 @@ module Kitchen
       @use_sudo = opts[:use_sudo]
     end
 
-    # Returns a command string which installs the Kitchen Busser (kb), installs
-    # all required kb plugins for the suite.
+    # Returns a command string which installs Busser, and installs all
+    # required Busser plugins for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
     # the given suite, then `nil` will be returned.
@@ -60,7 +60,7 @@ module Kitchen
           #{install_script}
           EOF
           )"
-          #{sudo}#{kb_bin} install #{plugins.join(' ')}
+          #{sudo}#{busser_bin} install #{plugins.join(' ')}
         INSTALL_CMD
       end
     end
@@ -78,13 +78,13 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          #{sudo}#{kb_bin} cleanup-suites
+          #{sudo}#{busser_bin} cleanup-suites
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD
       end
     end
 
-    # Returns a command string which runs all kb suite tests for the suite.
+    # Returns a command string which runs all Busser suite tests for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
     # the given suite, then `nil` will be returned.
@@ -92,14 +92,14 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{kb_bin} test"
+      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{busser_bin} test"
     end
 
     private
 
     INSTALL_URL = "https://raw.github.com/opscode/kb/go".freeze
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-    DEFAULT_KB_ROOT = "/opt/kb".freeze
+    DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     def validate_options(suite_name)
@@ -130,18 +130,18 @@ module Kitchen
 
     def remote_file(file)
       local_prefix = File.join(test_root, @suite_name)
-      "$(#{kb_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{busser_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       md5 = Digest::MD5.hexdigest(local_file)
       perms = sprintf("%o", File.stat(local_path).mode)[3, 3]
-      kb_stream_file = "#{kb_bin} stream-file #{remote_path} #{md5} #{perms}"
+      stream_file = "#{busser_bin} stream-file #{remote_path} #{md5} #{perms}"
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
         echo "Uploading #{remote_path} (mode=#{perms})"
-        cat <<"__EOFSTREAM__" | #{sudo}#{kb_stream_file}
+        cat <<"__EOFSTREAM__" | #{sudo}#{stream_file}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
       STREAMFILE
@@ -155,8 +155,8 @@ module Kitchen
       File.join(DEFAULT_RUBY_BINPATH, "ruby")
     end
 
-    def kb_bin
-      File.join(DEFAULT_KB_ROOT, "bin/kb")
+    def busser_bin
+      File.join(DEFAULT_BUSSER_ROOT, "bin/busser")
     end
 
     def test_root

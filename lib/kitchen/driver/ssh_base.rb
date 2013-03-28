@@ -47,17 +47,17 @@ module Kitchen
       def setup(state)
         ssh_args = build_ssh_args(state)
 
-        if kb_setup_cmd
-          ssh(ssh_args, kb_setup_cmd)
+        if busser_setup_cmd
+          ssh(ssh_args, busser_setup_cmd)
         end
       end
 
       def verify(state)
         ssh_args = build_ssh_args(state)
 
-        if kb_run_cmd
-          ssh(ssh_args, kb_sync_cmd)
-          ssh(ssh_args, kb_run_cmd)
+        if busser_run_cmd
+          ssh(ssh_args, busser_sync_cmd)
+          ssh(ssh_args, busser_run_cmd)
         end
       end
 
