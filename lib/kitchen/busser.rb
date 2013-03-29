@@ -18,7 +18,6 @@
 
 require 'base64'
 require 'digest'
-require 'net/https'
 
 module Kitchen
 
@@ -56,11 +55,11 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          #{sudo}#{ruby_bin} -e "$(cat <<"EOF"
-          #{install_script}
-          EOF
-          )"
-          #{sudo}#{busser_bin} install #{plugins.join(' ')}
+          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null ; then
+            #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
+          fi
+          #{sudo}#{ruby_binpath}/busser setup
+          #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}
         INSTALL_CMD
       end
     end
@@ -78,7 +77,7 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          #{sudo}#{busser_bin} cleanup-suites
+          #{sudo}#{busser_bin} suite cleanup
           #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
         INSTALL_CMD
       end
@@ -97,7 +96,6 @@ module Kitchen
 
     private
 
-    INSTALL_URL = "https://raw.github.com/opscode/kb/go".freeze
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
     DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
@@ -106,20 +104,10 @@ module Kitchen
       raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
     end
 
-    def install_script
-      @install_script ||= begin
-        uri = URI.parse(INSTALL_URL)
-        http = Net::HTTP.new(uri.host, 443)
-        http.use_ssl = true
-        response = http.request(Net::HTTP::Get.new(uri.path))
-        response.body
-      end
-    end
-
     def plugins
       Dir.glob(File.join(test_root, @suite_name, "*")).select { |d|
         File.directory?(d) && File.basename(d) != "data_bags"
-      }.map { |d| File.basename(d) }.sort.uniq
+      }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
     def local_suite_files
@@ -130,18 +118,24 @@ module Kitchen
 
     def remote_file(file)
       local_prefix = File.join(test_root, @suite_name)
-      "$(#{busser_bin} suitepath)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       md5 = Digest::MD5.hexdigest(local_file)
-      perms = sprintf("%o", File.stat(local_path).mode)[3, 3]
-      stream_file = "#{busser_bin} stream-file #{remote_path} #{md5} #{perms}"
+      perms = sprintf("%o", File.stat(local_path).mode)[2, 4]
+      stream_cmd = [
+        busser_bin,
+        "deserialize",
+        "--destination=#{remote_path}",
+        "--md5sum=#{md5}",
+        "--perms=#{perms}"
+      ].join(" ")
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
         echo "Uploading #{remote_path} (mode=#{perms})"
-        cat <<"__EOFSTREAM__" | #{sudo}#{stream_file}
+        cat <<"__EOFSTREAM__" | #{sudo}#{stream_cmd}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
       STREAMFILE
@@ -151,12 +145,16 @@ module Kitchen
       @use_sudo ? "sudo " : ""
     end
 
-    def ruby_bin
-      File.join(DEFAULT_RUBY_BINPATH, "ruby")
+    def ruby_binpath
+      DEFAULT_RUBY_BINPATH
     end
 
     def busser_bin
       File.join(DEFAULT_BUSSER_ROOT, "bin/busser")
+    end
+
+    def busser_gem
+      "busser"
     end
 
     def test_root
