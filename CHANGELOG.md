@@ -1,3 +1,20 @@
+## 1.0.0.alpha.2 / 2013-03-28
+
+### Bug fixes
+
+* Remove catch-all rescue in Driver.for_plugin (reason provided in commit message). ([@fnichol][])
+
+### New features
+
+* Add --log-level flag to CLI for test, create, converge, setup, verify, destroy, and login actions. The environment variable `KITCHEN_LOG` may still be used to also set the logging level. ([@fnichol][])
+* Driver::SSHBase and subclass drivers now support setting a :port number in .kitchen.yml or in instance state. ([@fnichol][])
+
+### Improvements
+
+* Support thor 0.16.0 and 0.17.0+. ([@fnichol][])
+* Support SSH config from #state & #config in Driver::SSHBase, helping drivers such as kitchen-vagrant. ([@fnichol][])
+
+
 ## 1.0.0.alpha.1 / 2013-03-22
 
 ### Bug fixes
