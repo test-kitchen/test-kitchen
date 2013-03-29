@@ -66,10 +66,14 @@ module Kitchen
       end
 
       def login_command(state)
+        combined = config.merge(state)
+
         args  = %W{ -o UserKnownHostsFile=/dev/null }
         args += %W{ -o StrictHostKeyChecking=no }
-        args += %W{ -i #{config[:ssh_key]}} if config[:ssh_key]
-        args += %W{ #{config[:username]}@#{state[:hostname]}}
+        args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
+        args += %W{ -i #{combined[:ssh_key]}} if combined[:ssh_key]
+        args += %W{ -p #{combined[:port]}} if combined[:port]
+        args += %W{ #{combined[:username]}@#{combined[:hostname]}}
 
         Driver::LoginCommand.new(["ssh", *args])
       end
@@ -77,13 +81,16 @@ module Kitchen
       protected
 
       def build_ssh_args(state)
+        combined = config.merge(state)
+
         opts = Hash.new
         opts[:user_known_hosts_file] = "/dev/null"
         opts[:paranoid] = false
-        opts[:password] = config[:password] if config[:password]
-        opts[:keys] = Array(config[:ssh_key]) if config[:ssh_key]
+        opts[:password] = combined[:password] if combined[:password]
+        opts[:port] = combined[:port] if combined[:port]
+        opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
 
-        [state[:hostname], config[:username], opts]
+        [combined[:hostname], combined[:username], opts]
       end
 
       def chef_home
