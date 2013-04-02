@@ -50,9 +50,9 @@ module Kitchen
 
     def self.stringified_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k, v)| h[k.to_s] = symbolized_hash(v) ; h }
+        obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v) ; h }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
+        obj.inject([]) { |a, v| a << stringified_hash(v) ; a }
       else
         obj
       end
