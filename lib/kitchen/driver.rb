@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'thor/util'
+
 module Kitchen
 
   module Driver
@@ -25,17 +27,18 @@ module Kitchen
     # @param plugin [String] a driver plugin type, which will be constantized
     # @return [Driver::Base] a driver instance
     # @raise [ClientError] if a driver instance could not be created
+    # @raise [UserError] if the driver's dependencies could not be met
     def self.for_plugin(plugin, config)
       first_load = require("kitchen/driver/#{plugin}")
 
-      str_const = Util.to_camel_case(plugin)
+      str_const = Thor::Util.camel_case(plugin)
       klass = self.const_get(str_const)
       object = klass.new(config)
       object.verify_dependencies if first_load
       object
     rescue UserError
       raise
-    rescue LoadError
+    rescue LoadError, NameError
       raise ClientError, "Could not require '#{plugin}' plugin from load path"
     end
   end
