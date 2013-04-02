@@ -20,14 +20,30 @@ module Kitchen
 
   # Stateless utility methods used in different contexts. Essentially a mini
   # PassiveSupport library.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Util
 
+    # Returns the standard library Logger level constants for a given symbol
+    # representation.
+    #
+    # @param symbol [Symbol] symbol representation of a logger level (:debug,
+    #   :info, :warn, :error, :fatal)
+    # @return [Integer] Logger::Severity constant value or nil if input is not
+    #   valid
     def self.to_logger_level(symbol)
       return nil unless [:debug, :info, :warn, :error, :fatal].include?(symbol)
 
       Logger.const_get(symbol.to_s.upcase)
     end
 
+    # Returns the symbol represenation of a logging levels for a given
+    # standard library Logger::Severity constant.
+    #
+    # @param const [Integer] Logger::Severity constant value for a logging
+    #   level (Logger::DEBUG, Logger::INFO, Logger::WARN, Logger::ERROR,
+    #   Logger::FATAL)
+    # @return [Symbol] symbol representation of the logging level
     def self.from_logger_level(const)
       case const
       when Logger::DEBUG then :debug
@@ -38,6 +54,13 @@ module Kitchen
       end
     end
 
+    # Returns a new Hash with all key values coerced to symbols. All keys
+    # within a Hash are coerced by calling #to_sym and hashes within arrays
+    # and other hashes are traversed.
+    #
+    # @param obj [Object] the hash to be processed. While intended for
+    #   hashes, this method safely processes arbitrary objects
+    # @return [Object] a converted hash with all keys as symbols
     def self.symbolized_hash(obj)
       if obj.is_a?(Hash)
         obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v) ; h }
@@ -48,6 +71,13 @@ module Kitchen
       end
     end
 
+    # Returns a new Hash with all key values coerced to strings. All keys
+    # within a Hash are coerced by calling #to_s and hashes with arrays
+    # and other hashes are traversed.
+    #
+    # @param obj [Object] the hash to be processed. While intended for
+    #   hashes, this method safely processes arbitrary objects
+    # @return [Object] a converted hash with all keys as strings
     def self.stringified_hash(obj)
       if obj.is_a?(Hash)
         obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v) ; h }
@@ -58,6 +88,10 @@ module Kitchen
       end
     end
 
+    # Returns a formatted string representing a duration in seconds.
+    #
+    # @param total [Integer] the total number of seconds
+    # @return [String] a formatted string of the form (XmYY.00s)
     def self.duration(total)
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
