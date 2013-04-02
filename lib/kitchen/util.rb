@@ -22,18 +22,6 @@ module Kitchen
   # PassiveSupport library.
   module Util
 
-    def self.to_camel_case(str)
-      str.split('_').map { |w| w.capitalize }.join
-    end
-
-    def self.to_snake_case(str)
-      str.split('::').
-        last.
-        gsub(/([A-Z+])([A-Z][a-z])/, '\1_\2').
-        gsub(/([a-z\d])([A-Z])/, '\1_\2').
-        downcase
-    end
-
     def self.to_logger_level(symbol)
       return nil unless [:debug, :info, :warn, :error, :fatal].include?(symbol)
 

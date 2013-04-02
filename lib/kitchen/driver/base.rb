@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'thor/util'
+
 module Kitchen
 
   module Driver
@@ -139,7 +141,7 @@ module Kitchen
       def run_command(cmd, options = {})
         base_options = {
           :use_sudo => config[:use_sudo],
-          :log_subject => Util.to_snake_case(self.class.to_s)
+          :log_subject => Thor::Util.snake_case(self.class.to_s)
         }.merge(options)
         super(cmd, base_options)
       end

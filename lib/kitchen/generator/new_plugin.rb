@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'thor/group'
+require 'thor/util'
 
 module Kitchen
 
@@ -42,8 +43,8 @@ module Kitchen
         @plugin_name = plugin_name
         @gem_name = "kitchen-#{plugin_name}"
         @gemspec = "#{gem_name}.gemspec"
-        @klass_name = Util.to_camel_case(plugin_name)
-        @constant = Util.to_snake_case(plugin_name).upcase
+        @klass_name = ::Thor::Util.camel_case(plugin_name)
+        @constant = ::Thor::Util.snake_case(plugin_name).upcase
         @license = options[:license]
         @author = %x{git config user.name}.chomp
         @email = %x{git config user.email}.chomp
