@@ -52,13 +52,18 @@ describe Kitchen::Suite do
     suite.roles_path.must_be_nil
   end
 
+  it "returns nil given no encrypted_data_bag_secret_key_path" do
+    suite.encrypted_data_bag_secret_key_path.must_be_nil
+  end
+
   it "returns attributes from constructor" do
     opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
-      :roles_path => 'town' })
+      :roles_path => 'town', :encrypted_data_bag_secret_key_path => 'secret' })
     suite.name.must_equal 'suitezy'
     suite.run_list.must_equal ['doowah']
     suite.attributes.must_equal({ :a => 'b' })
     suite.data_bags_path.must_equal 'crazy'
     suite.roles_path.must_equal 'town'
+    suite.encrypted_data_bag_secret_key_path.must_equal 'secret'
   end
 end
