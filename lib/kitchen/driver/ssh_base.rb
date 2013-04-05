@@ -108,7 +108,7 @@ module Kitchen
         ssh(ssh_args, <<-INSTALL.gsub(/^ {10}/, ''))
           should_update_chef() {
             case "#{flag}" in
-              $(chef-solo --v | awk "{print \$2}")) return 1 ;;
+              true|$(chef-solo -v | cut -d " " -f 2)) return 1 ;;
               latest|*) return 0 ;;
             esac
           }
