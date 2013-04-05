@@ -2,18 +2,18 @@
 
 ### Bug fixes
 
-* Fix :require_chef_omnibus driver_config option to eliminate re-installation (@fnichol)
-* Remove implicit Bundler dependency in `kitchen init`. (@fnichol)
+* Fix :require_chef_omnibus driver_config option to eliminate re-installation ([@fnichol][])
+* Remove implicit Bundler dependency in `kitchen init`. ([@fnichol][])
 
 ### New features
 
-* Add --auto-init flag to `kitchen test` (default: false) (@fnichol)
+* Add --auto-init flag to `kitchen test` (default: false) ([@fnichol][])
 
 ### Improvements
 
-* Update base box URLs. (@fnichol)
-* Extract .kitchen.yml to an ERB template & update box URLs. (@fnichol)
-* Add more spec coverage. (@fnichol)
+* Update base box URLs. ([@fnichol][])
+* Extract .kitchen.yml to an ERB template & update box URLs. ([@fnichol][])
+* Add more spec coverage. ([@fnichol][])
 
 
 ## 1.0.0.alpha.2 / 2013-03-28
