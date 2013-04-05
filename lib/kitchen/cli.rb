@@ -92,6 +92,8 @@ module Kitchen
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :destroy, :aliases => "-d", :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
+    method_option :auto_init, :type => :boolean, :default => false,
+      :desc => "Invoke init command if .kitchen.yml is missing"
     def test(*args)
       if ! %w{passing always never}.include?(options[:destroy])
         raise ArgumentError, "Destroy mode must be passing, always, or never."
@@ -100,6 +102,7 @@ module Kitchen
       update_config!
       banner "Starting Kitchen"
       elapsed = Benchmark.measure do
+        ensure_initialized
         destroy_mode = options[:destroy].to_sym
         @task = :test
         results = parse_subcommand(args.first)
@@ -309,6 +312,15 @@ module Kitchen
       error "\n#{msg}\n\n"
       help(task)
       exit 1
+    end
+
+    def ensure_initialized
+      yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
+
+      if options[:auto_init] && ! File.exists?(yaml)
+        banner "Invoking init as '#{yaml}' file is missing"
+        invoke "init"
+      end
     end
 
     def pry_prompts
