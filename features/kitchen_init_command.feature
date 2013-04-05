@@ -104,7 +104,6 @@ Feature: Add Test Kitchen support to an existing project
     """
     suites:
     - name: default
-      run_list:
-      - recipe[ntp]
+      run_list: ["recipe[ntp]"]
       attributes: {}
     """

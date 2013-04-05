@@ -44,7 +44,9 @@ module Kitchen
         D
 
       def init
-        create_file ".kitchen.yml", default_yaml
+        self.class.source_root(Kitchen.source_root.join("templates", "plugin"))
+
+        create_kitchen_yaml
 
         rakedoc = <<-RAKE.gsub(/^ {10}/, '')
 
@@ -81,7 +83,7 @@ module Kitchen
 
       private
 
-      def default_yaml
+      def create_kitchen_yaml
         cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
           MetadataChopper.extract('metadata.rb').first
         else
@@ -90,34 +92,10 @@ module Kitchen
         run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
         driver_plugin = Array(options[:driver]).first || 'dummy'
 
-        { 'driver_plugin' => driver_plugin.sub(/^kitchen-/, ''),
-          'platforms' => platforms_hash,
-          'suites' => [
-            { 'name' => 'default',
-              'run_list' => Array(run_list),
-              'attributes' => Hash.new
-            },
-          ]
-        }.to_yaml
-      end
-
-      def platforms_hash
-        url_base = "https://opscode-vm.s3.amazonaws.com/vagrant/boxes"
-        platforms = [
-          { :n => 'ubuntu', :vers => %w(12.04 10.04), :rl => "recipe[apt]" },
-          { :n => 'centos', :vers => %w(6.3 5.8), :rl => "recipe[yum::epel]" },
-        ]
-        platforms = platforms.map do |p|
-          p[:vers].map do |v|
-            { 'name' => "#{p[:n]}-#{v}",
-              'driver_config' => {
-                'box' => "opscode-#{p[:n]}-#{v}",
-                'box_url' => "#{url_base}/opscode-#{p[:n]}-#{v}.box"
-              },
-              'run_list' => Array(p[:rl])
-            }
-          end
-        end.flatten
+        template("kitchen.yml.erb", ".kitchen.yml", {
+          :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
+          :run_list => Array(run_list)
+        })
       end
 
       def init_rakefile?
