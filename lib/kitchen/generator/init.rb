@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'bundler'
-
 require 'thor/group'
 
 module Kitchen
@@ -185,13 +183,21 @@ module Kitchen
       end
 
       def install_gem(driver_gem)
-        Bundler.with_clean_env do
+        unbundlerize do
           run "gem install #{driver_gem}"
         end
       end
 
       def not_in_file?(filename, regexp)
         IO.readlines(filename).grep(regexp).empty?
+      end
+
+      def unbundlerize
+        keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
+
+        keys.each { |key| ENV["__#{key}"] = ENV[key] ; ENV.delete(key) }
+        yield
+        keys.each { |key| ENV[key] = ENV.delete("__#{key}") }
       end
     end
   end
