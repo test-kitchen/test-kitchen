@@ -44,7 +44,7 @@ module Kitchen
         D
 
       def init
-        self.class.source_root(Kitchen.source_root.join("templates", "plugin"))
+        self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
         create_kitchen_yaml
 

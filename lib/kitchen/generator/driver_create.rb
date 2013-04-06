@@ -30,161 +30,113 @@ module Kitchen
 
       include Thor::Actions
 
-      argument :plugin_name
+      argument :name, :type => :string
 
       class_option :license, :aliases => "-l", :default => "apachev2",
-        :desc => "License type for gem (apachev2, mit, gplv3, gplv2, reserved)"
+        :desc => "License type for gem (apachev2, mit, lgplv3, reserved)"
 
       def create
-        if ! run("command -v bundle", :verbose => false)
-          die "Bundler must be installed and on your PATH: `gem install bundler'"
-        end
+        self.class.source_root(Kitchen.source_root.join("templates", "driver"))
 
-        @plugin_name = plugin_name
-        @gem_name = "kitchen-#{plugin_name}"
-        @gemspec = "#{gem_name}.gemspec"
-        @klass_name = ::Thor::Util.camel_case(plugin_name)
-        @constant = ::Thor::Util.snake_case(plugin_name).upcase
-        @license = options[:license]
-        @author = %x{git config user.name}.chomp
-        @email = %x{git config user.email}.chomp
-        @year = Time.now.year
-
-        create_plugin
+        create_core_files
+        create_source_files
+        initialize_git
       end
 
       private
 
-      attr_reader :plugin_name, :gem_name, :gemspec, :klass_name,
-        :constant, :license, :author, :email, :year
+      def create_core_files
+        empty_directory(target_dir)
 
-      def create_plugin
-        run("bundle gem #{gem_name}") unless File.directory?(gem_name)
+        create_template("CHANGELOG.md.erb", "CHANGELOG.md")
+        create_template("Gemfile.erb", "Gemfile")
+        create_template("Rakefile.erb", "Rakefile")
+        create_template("README.md.erb", "README.md")
+        create_template("gemspec.erb", "#{config[:gem_name]}.gemspec")
+        create_template("license_#{config[:license]}.erb", license_filename)
+        create_template("gitignore.erb", ".gitignore")
+        create_template("tailor.erb", ".tailor")
+        create_template("travis.yml.erb", ".travis.yml")
+        create_file(File.join(target_dir, ".cane"))
+      end
 
-        inside(gem_name) do
-          update_gemspec
-          update_gemfile
-          update_rakefile
-          create_src_files
-          cleanup
-          create_license
-          add_git_files
+      def create_source_files
+        empty_directory(File.join(target_dir, "lib/kitchen/driver"))
+
+        create_template(
+          "version.rb.erb",
+          "lib/kitchen/driver/#{name}_version.rb"
+        )
+        create_template(
+          "driver.rb.erb",
+          "lib/kitchen/driver/#{name}.rb"
+        )
+      end
+
+      def initialize_git
+        inside(target_dir) do
+          run("git init")
+          run("git add .")
         end
       end
 
-      def update_gemspec
-        gsub_file(gemspec, %r{require '#{gem_name}/version'},
-          %{require 'kitchen/driver/#{plugin_name}_version.rb'})
-        gsub_file(gemspec, %r{Kitchen::#{klass_name}::VERSION},
-          %{Kitchen::Driver::#{constant}_VERSION})
-        gsub_file(gemspec, %r{(gem\.executables\s*) =.*$},
-          '\1 = []')
-        gsub_file(gemspec, %r{(gem\.description\s*) =.*$},
-          '\1 = "' + "Kitchen::Driver::#{klass_name} - " +
-            "A Kitchen Driver for #{klass_name}\"")
-        gsub_file(gemspec, %r{(gem\.summary\s*) =.*$},
-          '\1 = gem.description')
-        gsub_file(gemspec, %r{(gem\.homepage\s*) =.*$},
-          '\1 = "https://github.com/opscode/' +
-            "#{gem_name}/\"")
-        insert_into_file(gemspec,
-          "\n  gem.add_dependency 'test-kitchen'\n", :before => "end\n")
-        insert_into_file(gemspec,
-          "\n  gem.add_development_dependency 'cane'\n", :before => "end\n")
-        insert_into_file(gemspec,
-          "  gem.add_development_dependency 'tailor'\n", :before => "end\n")
+      def create_template(erb, dest)
+        template(erb, File.join(target_dir, dest), config)
       end
 
-      def update_gemfile
-        append_to_file("Gemfile", "\ngroup :test do\n  gem 'rake'\nend\n")
+      def target_dir
+        File.join(Dir.pwd, "kitchen-#{name}")
       end
 
-      def update_rakefile
-        append_to_file("Rakefile", <<-RAKEFILE.gsub(/^ {10}/, ''))
-          require 'cane/rake_task'
-          require 'tailor/rake_task'
-
-          desc "Run cane to check quality metrics"
-          Cane::RakeTask.new
-
-          Tailor::RakeTask.new
-
-          task :default => [ :cane, :tailor ]
-        RAKEFILE
+      def config
+        @config ||= {
+          :name => name,
+          :gem_name => "kitchen-#{name}",
+          :gemspec => "kitchen-#{name}.gemspec",
+          :klass_name => ::Thor::Util.camel_case(name),
+          :constant_name => ::Thor::Util.snake_case(name).upcase,
+          :author => author,
+          :email => email,
+          :license => options[:license],
+          :license_string => license_string,
+          :year => Time.now.year,
+        }
       end
 
-      def create_src_files
-        license_comments = rendered_license.gsub(/^/, '# ').gsub(/\s+$/, '')
-
-        empty_directory("lib/kitchen/driver")
-        create_template("plugin/version.rb",
-          "lib/kitchen/driver/#{plugin_name}_version.rb",
-          :klass_name => klass_name, :constant => constant,
-          :license => license_comments)
-        create_template("plugin/driver.rb",
-          "lib/kitchen/driver/#{plugin_name}.rb",
-          :klass_name => klass_name, :license => license_comments,
-          :author => author, :email => email)
+      def author
+        git_user_name = %x{git config user.name}.chomp
+        git_user_name.empty? ? "TODO: Write your name" : git_user_name
       end
 
-      def rendered_license
-        TemplateRenderer.render("plugin/license_#{license}",
-          :author => author, :email => email, :year => year)
+      def email
+        git_user_email = %x{git config user.email}.chomp
+        git_user_email.empty? ? "TODO: Write your email" : git_user_email
       end
 
-      def create_license
-        dest_file = case license
+      def license_string
+        case options[:license]
+        when "mit" then "MIT"
+        when "apachev2" then "Apache 2.0"
+        when "lgplv3" then "LGPL 3.0"
+        when "reserved" then "All rights reserved"
+        else
+          raise ArgumentError, "No such license #{options[:license]}"
+        end
+      end
+
+      def license_filename
+        case options[:license]
         when "mit" then "LICENSE.txt"
         when "apachev2", "reserved" then "LICENSE"
-        when "gplv2", "gplv3" then "COPYING"
+        when "lgplv3" then "COPYING"
         else
-          raise ArgumentError, "No such license #{license}"
+          raise ArgumentError, "No such license #{options[:license]}"
         end
-
-        create_file(dest_file, rendered_license)
       end
 
-      def cleanup
-        %W(LICENSE.txt lib/#{gem_name}/version.rb lib/#{gem_name}.rb).each do |f|
-          run("git rm -f #{f}") if File.exists?(f)
-        end
-        remove_dir("lib/#{gem_name}")
-      end
-
-      def add_git_files
-        run("git add .")
-      end
-
-      def create_template(template, destination, data = {})
-        create_file(destination, TemplateRenderer.render(template, data))
-      end
-
-      # Renders an ERB template with a hash of template variables.
-      #
-      # @author Fletcher Nichol <fnichol@nichol.ca>
-      class TemplateRenderer < OpenStruct
-
-        def self.render(template, data = {})
-          renderer = new(template, data)
-          yield renderer if block_given?
-          renderer.render
-        end
-
-        def initialize(template, data = {})
-          super()
-          data[:template] = template
-          data.each { |key, value| send("#{key}=", value) }
-        end
-
-        def render
-          ERB.new(IO.read(template_file)).result(binding)
-        end
-
-        private
-
-        def template_file
-          Kitchen.source_root.join("templates", "#{template}.erb").to_s
-        end
+      def license_comment
+        @license_comment ||= IO.read(File.join(target_dir, license_filename)).
+          gsub(/^/, '# ').gsub(/\s+$/, '')
       end
     end
   end
