@@ -22,8 +22,8 @@ require 'ostruct'
 require 'thor'
 
 require 'kitchen'
+require 'kitchen/generator/driver_create'
 require 'kitchen/generator/init'
-require 'kitchen/generator/new_plugin'
 
 module Kitchen
 
@@ -162,7 +162,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Driver < Thor
 
-      register Kitchen::Generator::NewPlugin, "create",
+      register Kitchen::Generator::DriverCreate, "create",
         "create [NAME]", "Create a new Kitchen Driver gem project"
       long_desc <<-D, :for => "create"
         Create will generate a project scaffold for a brand new Test Kitchen
@@ -172,7 +172,7 @@ module Kitchen
 
         will create a project scaffold for a RubyGem called `kitchen-foobar'.
       D
-      tasks["create"].options = Kitchen::Generator::NewPlugin.class_options
+      tasks["create"].options = Kitchen::Generator::DriverCreate.class_options
 
       desc "discover", "Discover Test Kitchen drivers published on RubyGems"
       long_desc <<-D

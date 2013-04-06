@@ -26,7 +26,7 @@ module Kitchen
     # A generator to create a new Kitchen Driver gem project.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class NewPlugin < Thor::Group
+    class DriverCreate < Thor::Group
 
       include Thor::Actions
 
@@ -35,7 +35,7 @@ module Kitchen
       class_option :license, :aliases => "-l", :default => "apachev2",
         :desc => "License type for gem (apachev2, mit, gplv3, gplv2, reserved)"
 
-      def new_plugin
+      def create
         if ! run("command -v bundle", :verbose => false)
           die "Bundler must be installed and on your PATH: `gem install bundler'"
         end
