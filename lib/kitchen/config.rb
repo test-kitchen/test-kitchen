@@ -120,7 +120,7 @@ module Kitchen
       filtered_instances.each_with_index do |arr, index|
         results << new_instance(arr[0], arr[1], index)
       end
-      Collection.new(results)
+      Collection.new(results.map {|instance| actor_registry(instance)})
     end
 
     def new_instance(suite, platform, index)
