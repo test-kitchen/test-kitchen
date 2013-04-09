@@ -268,7 +268,12 @@ module Kitchen
     end
 
     def get_all_instances
-      result = @config.instances
+      result = if options[:parallel]
+        @config.instance_actors
+      else
+        @config.instances
+      end
+
       if result.empty?
         die task, "No instances defined"
       else
