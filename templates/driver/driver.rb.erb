@@ -1,0 +1,23 @@
+# -*- encoding: utf-8 -*-
+#
+<%= license_comment %>
+
+require 'kitchen'
+
+module Kitchen
+
+  module Driver
+
+    # <%= config[:klass_name] %> driver for Kitchen.
+    #
+    # @author <%= config[:author] %> <<%= config[:email] %>>
+    class <%= config[:klass_name] %> < Kitchen::Driver::SSHBase
+
+      def create(state)
+      end
+
+      def destroy(state)
+      end
+    end
+  end
+end
