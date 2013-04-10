@@ -1,3 +1,14 @@
+## 1.0.0.alpha.4 / 2013-04-10
+
+### Bug fixes
+
+* #get_all_instances must return actors in parallel mode in CLI. ([@fnichol][], [@bryanwb][]).
+
+### Improvements
+
+* Refactor `kitchen plugin create` to drop Bundler dependency completely. ([@fnichol][])
+
+
 ## 1.0.0.alpha.3 / 2013-04-05
 
 ### Bug fixes
@@ -65,6 +76,7 @@ The initial release.
 [#73]: https://github.com/opscode/test/issues/73
 [#74]: https://github.com/opscode/test/issues/74
 [@ChrisLundquist]: https://github.com/ChrisLundquist
+[@bryanwb]: https://github.com/bryanwb
 [@fnichol]: https://github.com/fnichol
 [@mattray]: https://github.com/mattray
 [@reset]: https://github.com/reset
