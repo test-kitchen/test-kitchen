@@ -69,6 +69,9 @@ module Kitchen
 
       def combined_hash
         @process_local ? yaml.rmerge(local_yaml) : yaml
+      rescue NoMethodError
+        raise UserError, "Error merging #{File.basename(config_file)} and" +
+          "#{File.basename(local_config_file)}"
       end
 
       def yaml
@@ -97,8 +100,8 @@ module Kitchen
         return Hash.new if string.nil? || string.empty?
 
         ::YAML.safe_load(string)
-      rescue SyntaxError, Psych::SyntaxError => ex
-        raise UserError, "Error parsing #{file_name} (#{ex.message})"
+      rescue SyntaxError, Psych::SyntaxError
+        raise UserError, "Error parsing #{file_name}"
       end
     end
   end
