@@ -41,8 +41,8 @@ module Kitchen
     rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' driver from the load path." +
-        " Please ensure that your driver is installed as a gem or included" +
-        " in your Gemfile if using Bundler."
+          " Please ensure that your driver is installed as a gem or included" +
+          " in your Gemfile if using Bundler."
     end
   end
 end
