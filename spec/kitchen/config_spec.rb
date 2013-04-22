@@ -160,6 +160,15 @@ describe Kitchen::Config do
       config.instances.first.driver.must_be_instance_of Kitchen::Driver::Dummy
     end
 
+    it "returns an instance containing a driver instance with a provisioner" do
+      config.provisioner = 'foo'
+      stub_data!({
+        :platforms => [{ :name => 'platform', :driver_plugin => 'dummy' }],
+        :suites => [{ :name => 'suite', :run_list => [] }]
+      })
+      config.instances.first.driver[:provisioner].must_equal "foo"
+    end
+
     it "returns an instance with a driver initialized with kitchen_root" do
       config.kitchen_root = "/tmp"
       stub_data!({
@@ -191,6 +200,18 @@ describe Kitchen::Config do
     it "returns an overridden log_level" do
       config.log_level = :error
       config.log_level.must_equal :error
+    end
+  end
+
+  describe "provisioner" do
+
+    it "returns a default provisioner of chef" do
+      config.provisioner.must_equal 'chef'
+    end
+
+    it "returns an overriden provisioner" do
+      config.provisioner = 'foo'
+      config.provisioner.must_equal 'foo'
     end
   end
 

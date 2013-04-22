@@ -46,8 +46,6 @@ module Kitchen
       def init
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
-        create_kitchen_yaml
-
         rakedoc = <<-RAKE.gsub(/^ {10}/, '')
 
           begin
@@ -74,6 +72,7 @@ module Kitchen
         append_to_gitignore(".kitchen/")
         append_to_gitignore(".kitchen.local.yml")
         prepare_gemfile if File.exists?("Gemfile") || options[:create_gemfile]
+        create_kitchen_yaml
         add_drivers
 
         if @display_bundle_msg
@@ -84,17 +83,50 @@ module Kitchen
       private
 
       def create_kitchen_yaml
-        cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
-          MetadataChopper.extract('metadata.rb').first
+        if File.exists?(File.expand_path('metadata.rb'))
+          chef_kitchen_yaml
+        elsif File.exists?(File.expand_path('Modulefile'))
+          puppet_kitchen_yaml
+          puppet_manifest_dir
+          puppet_default_manifest
         else
-          nil
+          say "Unable to detect project type.", :red
         end
-        run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
-        driver_plugin = Array(options[:driver]).first || 'dummy'
+      end
 
-        template("kitchen.yml.erb", ".kitchen.yml", {
+      def driver_plugin
+        Array(options[:driver]).first || 'dummy'
+      end
+
+      def chef_kitchen_yaml
+        provisioner = 'chef'
+        cookbook_name = MetadataChopper.extract('metadata.rb').first
+        run_list = cookbook_name ? "recipe[#{cookbook_name}]" : nil
+        template("chef_kitchen.yml.erb", ".kitchen.yml", {
           :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
-          :run_list => Array(run_list)
+          :run_list => Array(run_list),
+          :provisioner => provisioner
+        })
+      end
+
+      def puppet_kitchen_yaml
+        provisioner = 'puppet'
+        module_name = MetadataChopper.extract('Modulefile').first.sub(/^(.*)-/, '')
+        @klass = module_name ? module_name : "default"
+        template("puppet_kitchen.yml.erb", ".kitchen.yml", {
+          :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
+          :klass => @klass,
+          :provisioner => provisioner
+        })
+      end
+
+      def puppet_manifest_dir
+        empty_directory "test/manifests" unless Dir.exists?("manifests")
+      end
+
+      def puppet_default_manifest
+        template("puppet_manifest.pp.erb", "test/manifests/#{@klass}.pp", {
+          :klass => @klass
         })
       end
 
