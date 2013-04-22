@@ -111,9 +111,9 @@ module Kitchen
   end
 
   def self.handle_instance_failure(e)
-    stderr_log(e.message.split("\n"))
+    stderr_log(e.message.split(/\s{2,}/))
     stderr_log(Error.formatted_exception(e.original))
-    file_log(:error, e.message.split("\n").first)
+    file_log(:error, e.message.split(/\s{2,}/).first)
     debug_log(Error.formatted_trace(e))
   end
 

@@ -263,7 +263,7 @@ module Kitchen
     rescue ActionFailed => e
       log_failure(what, e)
       raise InstanceFailure, failure_message(what) +
-        "\nPlease see .kitchen/logs/#{self.name}.log for more details", caller
+        "  Please see .kitchen/logs/#{self.name}.log for more details", caller
     rescue Exception => e
       log_failure(what, e)
       raise ActionFailed,
@@ -301,7 +301,7 @@ module Kitchen
     end
 
     def failure_message(what)
-      "#{what.capitalize} failed on instance #{self.to_str}"
+      "#{what.capitalize} failed on instance #{self.to_str}."
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage
