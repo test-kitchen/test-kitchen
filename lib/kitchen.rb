@@ -72,6 +72,11 @@ module Kitchen
       Logger.new(:stdout => STDOUT, :logdev => logfile, :level => env_log)
     end
 
+    def celluloid_file_logger
+      logfile = File.expand_path(File.join(".kitchen", "logs", "celluloid.log"))
+      Logger.new(:logdev => logfile, :level => env_log, :progname => "Celluloid")
+    end
+
     private
 
     def env_log
@@ -86,7 +91,7 @@ end
 
 # Initialize the base logger and use that for Celluloid's logger
 Kitchen.logger = Kitchen.default_logger
-Celluloid.logger = Kitchen.logger
+Celluloid.logger = Kitchen.celluloid_file_logger
 
 # Setup a collection of instance crash exceptions for error reporting
 Kitchen.crashes = []
