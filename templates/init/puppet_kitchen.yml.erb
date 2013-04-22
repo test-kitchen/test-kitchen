@@ -1,0 +1,25 @@
+---
+driver_plugin: <%= config[:driver_plugin] %>
+provisioner: <%= config[:provisioner] %>
+
+platforms:
+- name: ubuntu-12.04
+  driver_config:
+    box: puppetlabs-ubuntu-12.04
+    box_url: http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box
+- name: ubuntu-10.04
+  driver_config:
+    box: puppetlabs-ubuntu-10.04
+    box_url: http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-10044-x64-vbox4210.box
+- name: centos-6.4
+  driver_config:
+    box: puppetlabs-centos-6.4
+    box_url: http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210.box
+- name: centos-5.9
+  driver_config:
+    box: puppetlabs-centos-5.9
+    box_url: http://puppet-vagrant-boxes.puppetlabs.com/centos-59-x64-vbox4210.box
+
+suites:
+- name: <%= config[:klass] %>
+  run_list: []

@@ -30,6 +30,7 @@ module Kitchen
     attr_accessor :kitchen_root
     attr_accessor :test_base_path
     attr_accessor :log_level
+    attr_writer :provisioner
     attr_writer :supervised
     attr_writer :platforms
     attr_writer :suites
@@ -90,6 +91,11 @@ module Kitchen
       @supervised.nil? ? @supervised = true : @supervised
     end
 
+    def provisioner
+      provisioner = data[:provisioner].nil? ? 'chef' : data[:provisioner]
+      @provisioner ||= provisioner
+    end
+
     private
 
     def new_suite(hash)
@@ -109,7 +115,7 @@ module Kitchen
     def new_driver(hash)
       hash[:driver_config] ||= Hash.new
       hash[:driver_config][:kitchen_root] = kitchen_root
-      hash[:driver_config][:provisioner] = hash[:provisioner]
+      hash[:driver_config][:provisioner] = provisioner
 
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
