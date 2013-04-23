@@ -34,7 +34,7 @@ module Kitchen
     attr_reader :logdev
 
     def initialize(options = {})
-      color = options[:color] || :bright_white
+      color = options[:color]
 
       @loggers = []
       @loggers << @logdev = logdev_logger(options[:logdev]) if options[:logdev]

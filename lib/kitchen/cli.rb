@@ -304,7 +304,7 @@ module Kitchen
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-      [set_color(instance.name, :white), action]
+      [instance.name, action]
     end
 
     def update_config!
