@@ -152,6 +152,13 @@ describe Kitchen::Loader::YAML do
       proc { loader.read }.must_raise Kitchen::UserError
     end
 
+    it "raises a UserError if kitchen.yml cannot be parsed" do
+      FileUtils.mkdir_p "/tmp"
+      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write 'uhoh' }
+
+      proc { loader.read }.must_raise Kitchen::UserError
+    end
+
     it "raises a UserError if kitchen.local.yml cannot be parsed" do
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.local.yml", "wb") { |f| f.write '&*%^*' }

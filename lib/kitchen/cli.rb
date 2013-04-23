@@ -39,12 +39,12 @@ module Kitchen
     def initialize(*args)
       super
       $stdout.sync = true
+      Kitchen.logger = Kitchen.default_file_logger
       @config = Kitchen::Config.new(
         :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
         :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym,
         :supervised => false
       )
-      Kitchen.logger = Kitchen.default_file_logger
     end
 
     desc "list [(all|<REGEX>)]", "List all instances"
@@ -309,7 +309,9 @@ module Kitchen
 
     def update_config!
       if options[:log_level]
-        @config.log_level = options[:log_level].downcase.to_sym
+        level = options[:log_level].downcase.to_sym
+        @config.log_level = level
+        Kitchen.logger.level = Util.to_logger_level(level)
       end
     end
 

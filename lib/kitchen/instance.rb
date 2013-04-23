@@ -260,10 +260,14 @@ module Kitchen
       end
       state[:last_action] = what.to_s
       elapsed
-    rescue ActionFailed
-      raise
+    rescue ActionFailed => e
+      log_failure(what, e)
+      raise InstanceFailure, failure_message(what) +
+        "  Please see .kitchen/logs/#{self.name}.log for more details", caller
     rescue Exception => e
-      raise ActionFailed, "Failed to complete ##{what} action: [#{e.message}]"
+      log_failure(what, e)
+      raise ActionFailed,
+        "Failed to complete ##{what} action: [#{e.message}]", caller
     ensure
       state_file.write(state)
     end
@@ -287,6 +291,17 @@ module Kitchen
     def banner(*args)
       Kitchen.logger.logdev && Kitchen.logger.logdev.banner(*args)
       super
+    end
+
+    def log_failure(what, e)
+      return if logger.logdev.nil?
+
+      logger.logdev.error(failure_message(what))
+      Error.formatted_trace(e).each { |line| logger.logdev.error(line) }
+    end
+
+    def failure_message(what)
+      "#{what.capitalize} failed on instance #{self.to_str}."
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage
