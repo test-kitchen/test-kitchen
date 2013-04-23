@@ -146,15 +146,15 @@ module Kitchen
         super(cmd, base_options)
       end
 
-      def kb_setup_cmd
+      def busser_setup_cmd
         busser.setup_cmd
       end
 
-      def kb_sync_cmd
+      def busser_sync_cmd
         busser.sync_cmd
       end
 
-      def kb_run_cmd
+      def busser_run_cmd
         busser.run_cmd
       end
 
