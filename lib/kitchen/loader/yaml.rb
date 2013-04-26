@@ -47,6 +47,7 @@ module Kitchen
         @config_file = File.expand_path(config_file || default_config_file)
         @process_erb = options.fetch(:process_erb, true)
         @process_local = options.fetch(:process_local, true)
+        @process_global = options.fetch(:process_global, true)
       end
 
       # Reads, parses, and merges YAML configuration files and returns a Hash
@@ -68,7 +69,8 @@ module Kitchen
       end
 
       def combined_hash
-        @process_local ? yaml.rmerge(local_yaml) : yaml
+        y = @process_local ? yaml.rmerge(local_yaml) : yaml
+        @process_global ? y.rmerge(global_yaml) : y
       rescue NoMethodError
         raise UserError, "Error merging #{File.basename(config_file)} and" +
           "#{File.basename(local_config_file)}"
@@ -80,6 +82,10 @@ module Kitchen
 
       def local_yaml
         parse_yaml_string(yaml_string(local_config_file), local_config_file)
+      end
+
+      def global_yaml
+        parse_yaml_string(yaml_string(global_config_file), global_config_file)
       end
 
       def yaml_string(file)
@@ -94,6 +100,10 @@ module Kitchen
 
       def local_config_file
         config_file.sub(/(#{File.extname(config_file)})$/, '.local\1')
+      end
+
+      def global_config_file
+        File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
       end
 
       def parse_yaml_string(string, file_name)
