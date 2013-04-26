@@ -83,6 +83,28 @@ describe Kitchen::Loader::YAML do
       })
     end
 
+    it "deep merges in a global config file with both kitchen.local.yml and kitchen.yml" do
+      stub_yaml!(".kitchen.yml", {
+        'common' => { 'xx' => 1 },
+        'a' => 'b'
+      })
+      stub_yaml!(".kitchen.local.yml", {
+        'common' => { 'yy' => 2 },
+        'c' => 'd'
+      })
+      stub_global!({
+        'common' => { 'zz' => 3 },
+        'e' => 'f'
+      })
+
+      loader.read.must_equal({
+        :a => 'b',
+        :c => 'd',
+        :e => 'f',
+        :common => { :xx => 1, :yy => 2, :zz => 3 }
+      })
+    end
+
     it "merges kitchen.local.yml over configuration in kitchen.yml" do
       stub_yaml!(".kitchen.yml", {
         'common' => { 'thekey' => 'nope' }
@@ -92,6 +114,20 @@ describe Kitchen::Loader::YAML do
       })
 
       loader.read.must_equal({ :common => { :thekey => 'yep' } })
+    end
+
+    it "merges global config over both kitchen.local.yml and kitchen.yml" do
+      stub_yaml!(".kitchen.yml", {
+        'common' => { 'thekey' => 'nope' }
+      })
+      stub_yaml!(".kitchen.local.yml", {
+        'common' => { 'thekey' => 'yep' }
+      })
+      stub_global!({
+        'common' => { 'thekey' => 'kinda' }
+      })
+
+      loader.read.must_equal({ :common => { :thekey => 'kinda' } })
     end
 
     it "handles a kitchen.local.yml with no yaml elements" do
@@ -239,12 +275,34 @@ describe Kitchen::Loader::YAML do
 
       loader.read.must_equal({ :a => 'b' })
     end
+
+    it "skips the global config if disabled" do
+      loader = Kitchen::Loader::YAML.new(
+        '/tmp/.kitchen.yml', :process_global => false)
+      stub_yaml!(".kitchen.yml", {
+        'a' => 'b'
+      })
+      stub_global!({
+        'superawesomesauceadditions' => 'enabled, yo'
+      })
+
+      loader.read.must_equal({ :a => 'b' })
+    end
   end
 
   private
 
+  def stub_file(path, hash)
+    FileUtils.mkdir_p(File.dirname(path))
+    File.open(path, "wb") { |f| f.write(hash.to_yaml) }
+  end
+
   def stub_yaml!(name = ".kitchen.yml", hash)
-    FileUtils.mkdir_p "/tmp"
-    File.open("/tmp/#{name}", "wb") { |f| f.write(hash.to_yaml) }
+    stub_file(File.join("/tmp",name), hash)
+  end
+
+  def stub_global!(hash)
+    stub_file(File.join(File.expand_path(ENV["HOME"]),
+                   ".kitchen", "config.yml"), hash)
   end
 end
