@@ -83,7 +83,7 @@ describe Kitchen::Loader::YAML do
       })
     end
 
-    it "deep merges in a global config file with both kitchen.local.yml and kitchen.yml" do
+    it "deep merges in a global config file with all other configs" do
       stub_yaml!(".kitchen.yml", {
         'common' => { 'xx' => 1 },
         'a' => 'b'
@@ -298,11 +298,11 @@ describe Kitchen::Loader::YAML do
   end
 
   def stub_yaml!(name = ".kitchen.yml", hash)
-    stub_file(File.join("/tmp",name), hash)
+    stub_file(File.join("/tmp", name), hash)
   end
 
   def stub_global!(hash)
     stub_file(File.join(File.expand_path(ENV["HOME"]),
-                   ".kitchen", "config.yml"), hash)
+      ".kitchen", "config.yml"), hash)
   end
 end
