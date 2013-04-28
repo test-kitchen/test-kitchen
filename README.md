@@ -233,7 +233,7 @@ describe 'mysql::server' do
 end
 ```
 
-Matchers are [available for most resource types](https://github.com/calavera/minitest-chef-handler/blob/master/examples/spec_examples/files/default/tests/minitest/example_test.rb).
+Matchers are [available for most resource types](https://github.com/calavera/minitest-chef-handler/blob/master/examples/spec_examples/files/default/tests/minitest/default_test.rb).
 
 # Kitchenfile DSL
 
