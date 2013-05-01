@@ -119,9 +119,9 @@ module Kitchen
 
           if [ ! -d "/opt/chef" ] || should_update_chef ; then
             echo "-----> Installing Chef Omnibus (#{flag})"
-            if command -v wget &>/dev/null ; then
+            if command -v wget >/dev/null ; then
               wget #{url} -O - | sudo bash #{version}
-            elif command -v curl &>/dev/null ; then
+            elif command -v curl >/dev/null ; then
               curl -sSL #{url} | sudo bash #{version}
             else
               echo ">>>>>> Neither wget nor curl found on this instance."
