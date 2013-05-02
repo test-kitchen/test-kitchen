@@ -117,9 +117,12 @@ module Kitchen
         run_resolver("Librarian", "librarian-chef", tmpdir)
       elsif File.directory?(File.join(kitchen_root, "cookbooks"))
         cp_cookbooks(tmpdir)
+      elsif File.exists?(File.join(kitchen_root, "metadata.rb"))
+        cp_this_cookbook(tmpdir)
       else
         FileUtils.rmtree(tmpdir)
-        fatal("Berksfile, Cheffile or cookbooks/ must exist in #{kitchen_root}")
+        fatal("Berksfile, Cheffile, cookbooks/, or metadata.rb" +
+          " must exist in #{kitchen_root}")
         raise UserError, "Cookbooks could not be found"
       end
     end
