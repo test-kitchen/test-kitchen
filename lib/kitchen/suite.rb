@@ -58,6 +58,8 @@ module Kitchen
     # @option options [String] :excludes Array of names of excluded platforms
     # @option options [String] :data_bags_path path to data bags
     # @option options [String] :roles_path path to roles
+    # @option options [String] :encrypted_data_bag_secret_key_path path to
+    #   secret key file
     def initialize(options = {})
       validate_options(options)
 

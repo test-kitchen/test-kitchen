@@ -46,6 +46,7 @@ module Kitchen
         upload_cookbooks  scp
         upload_data_bags  scp if instance.suite.data_bags_path
         upload_roles      scp if instance.suite.roles_path
+        upload_secret scp if instance.suite.encrypted_data_bag_secret_key_path
       end
     end
 
@@ -82,6 +83,11 @@ module Kitchen
       upload_path(scp, instance.suite.roles_path)
     end
 
+    def upload_secret(scp)
+      scp.upload!(instance.suite.encrypted_data_bag_secret_key_path,
+        "#{chef_home}/encrypted_data_bag_secret")
+    end
+
     def upload_path(scp, path, dir = File.basename(path))
       dest = "#{chef_home}/#{dir}"
 
@@ -100,6 +106,10 @@ module Kitchen
       solo << %{role_path "#{chef_home}/roles"}
       if instance.suite.data_bags_path
         solo << %{data_bag_path "#{chef_home}/data_bags"}
+      end
+      if instance.suite.encrypted_data_bag_secret_key_path
+        secret = "#{chef_home}/encrypted_data_bag_secret"
+        solo << %{encrypted_data_bag_secret "#{secret}"}
       end
       solo.join("\n")
     end
