@@ -40,6 +40,10 @@ module Kitchen
     #   not exist
     attr_reader :data_bags_path
 
+    # @return [String] local path to the suite's encrypted data bag secret
+    #   key path, or nil if one does not exist
+    attr_reader :encrypted_data_bag_secret_key_path
+
     # @return [String] local path to the suite's roles, or nil if one does
     #   not exist
     attr_reader :roles_path
@@ -63,6 +67,7 @@ module Kitchen
       @excludes = options[:excludes]     || Array.new
       @data_bags_path = options[:data_bags_path]
       @roles_path = options[:roles_path]
+      @encrypted_data_bag_secret_key_path = options[:encrypted_data_bag_secret_key_path]
     end
 
     private
