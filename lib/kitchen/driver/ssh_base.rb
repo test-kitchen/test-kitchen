@@ -31,6 +31,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SSHBase < Base
 
+      default_config :port, 22
+
       def create(state)
         raise ClientError, "#{self.class}#create must be implemented"
       end
