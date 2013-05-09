@@ -56,6 +56,17 @@ your tests in parallel. Trust us, it's faster!
 
     $ bundle exec kitchen test
 
+### Helpful Switches
+
+ - `--destroy=always|passed|never`
+   - `passed` (default): destroy the machine after a successful test
+     run (which implies passing tests.)
+   - `never`: Never clean up builds, even if they pass or fail.
+   - `always`: Regardless of the success or failure of the build,
+     destroy the machine.
+ - `--log-level=debug|info|warn|error|fatal` - Set the log-level of
+     the entire stack, including the chef-solo run. 
+
 ## The Kitchen YAML format
 
 Test-Kitchen reads its configuration from the .kitchen.yml
