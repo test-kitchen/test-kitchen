@@ -267,6 +267,9 @@ version. (OpenStack runner only, required)
 `flavor_id` - The instance flavor to start for this platform and
 version. (OpenStack runner only, required)
 
+`security_groups` - A list of security groups for this platform and
+version. (OpenStack runner only, required)
+
 `keyname` - The openstack keyname that should be placed on the
 VM. (OpenStack runner only)
 
@@ -429,6 +432,8 @@ Describes global configuration settings for the openstack runner:
 `tenant` - The openstack tenant to authenticate against.
 
 `auth_url` - The URL of your openstack installations keystone server.
+
+`region` - An optional openstack region in which to create the server.
 
 ### OpenStack example
 

@@ -48,6 +48,7 @@ module TestKitchen
                                 :image_id => vm.image_id,
                                 :flavor_id => vm.flavor_id,
                                 :keyname => vm.keyname,
+                                :security_groups => vm.security_groups,
                                 :ssh_key => vm.ssh_key,
                                 :ssh_user => vm.ssh_user})
 

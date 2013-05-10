@@ -54,7 +54,8 @@ module TestKitchen
       OPENSTACK_OPTIONS = {
         :image_id => nil, :flavor_id => nil, :install_chef => false,
         :install_chef_cmd =>  "curl -L http://www.opscode.com/chef/install.sh | sudo bash",
-        :keyname => nil, :instance_name => nil, :ssh_user => "root", :ssh_key => nil}
+        :keyname => nil, :instance_name => nil, :ssh_user => "root", :ssh_key => nil,
+        :security_groups => []}
 
       OPENSTACK_OPTIONS.each do |option, default|
         attr_writer option

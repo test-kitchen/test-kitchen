@@ -5,7 +5,7 @@ require 'fog'
 module TestKitchen
   class Environment
     class Openstack < TestKitchen::Environment
-      attr_reader :username, :password, :tenant, :auth_url
+      attr_reader :username, :password, :tenant, :auth_url, :region
       attr_reader :servers
 
       def initialize(conf={})
@@ -14,6 +14,7 @@ module TestKitchen
         @password = conf[:password] || config.password
         @tenant = conf[:tenant] || config.tenant
         @auth_url = conf[:auth_url] || config.auth_url
+        @region = conf[:region] || config.region
         @servers = {}
         load
       end
@@ -24,6 +25,7 @@ module TestKitchen
             server = connection.servers.create({ :name => server_def[:instance_name],
                                                  :image_ref => server_def[:image_id],
                                                  :flavor_ref => server_def[:flavor_id],
+                                                 :security_groups => server_def[:security_groups],
                                                  :key_name => server_def[:keyname]})
             server.wait_for { ready? }
             sleep(2) until tcp_test_ssh(server.public_ip_address['addr'])
@@ -55,6 +57,7 @@ module TestKitchen
                                          :openstack_username => username,
                                          :openstack_api_key => password,
                                          :openstack_auth_url => auth_url,
+                                         :openstack_region => region,
                                          :openstack_tenant => tenant)
       end
 
