@@ -31,6 +31,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SSHBase < Base
 
+      default_config :sudo, true
+
       def create(state)
         raise ClientError, "#{self.class}#create must be implemented"
       end
@@ -117,9 +119,9 @@ module Kitchen
           if [ ! -d "/opt/chef" ] || should_update_chef ; then
             echo "-----> Installing Chef Omnibus (#{flag})"
             if command -v wget >/dev/null ; then
-              wget #{url} -O - | sudo bash #{version}
+              wget #{url} -O - | #{cmd('bash')} #{version}
             elif command -v curl >/dev/null ; then
-              curl -sSL #{url} | sudo bash #{version}
+              curl -sSL #{url} | #{cmd('bash')} #{version}
             else
               echo ">>>>>> Neither wget nor curl found on this instance."
               exit 1
@@ -129,7 +131,7 @@ module Kitchen
       end
 
       def prepare_chef_home(ssh_args)
-        ssh(ssh_args, "sudo rm -rf #{chef_home} && mkdir -p #{chef_home}/cache")
+        ssh(ssh_args, "#{cmd('rm')} -rf #{chef_home} && mkdir -p #{chef_home}/cache")
       end
 
       def upload_chef_data(ssh_args)
@@ -140,7 +142,7 @@ module Kitchen
 
       def run_chef_solo(ssh_args)
         ssh(ssh_args, <<-RUN_SOLO)
-          sudo chef-solo -c #{chef_home}/solo.rb -j #{chef_home}/dna.json \
+          #{cmd('chef-solo')} -c #{chef_home}/solo.rb -j #{chef_home}/dna.json \
             --log_level #{Util.from_logger_level(logger.level)}
         RUN_SOLO
       end
@@ -200,6 +202,10 @@ module Kitchen
         false
       ensure
         socket && socket.close
+      end
+
+      def cmd(script)
+        config[:sudo] ? "sudo #{script}" : script
       end
     end
   end
