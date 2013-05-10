@@ -259,7 +259,7 @@ module Kitchen
     end
 
     def run_parallel(instances, *args)
-      futures = Array(instances).map { |i| i.future.public_send(task) }
+      futures = Array(instances).map { |i| i.future.public_send(task, *args) }
       futures.map { |i| i.value }
     end
 
