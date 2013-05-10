@@ -167,7 +167,17 @@ module Kitchen
       end
 
       def self.defaults
-        @defaults ||= Hash.new
+        @defaults ||= Hash.new.merge(super_defaults)
+      end
+
+      def self.super_defaults
+        klass = self.superclass
+
+        if klass.respond_to?(:defaults)
+          klass.defaults
+        else
+          Hash.new
+        end
       end
 
       def self.default_config(attr, value)
