@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'net/ssh'
+require 'net/scp'
 require 'socket'
 
 module Kitchen
@@ -62,6 +63,8 @@ module Kitchen
           ssh(ssh_args, busser_sync_cmd)
           ssh(ssh_args, busser_run_cmd)
         end
+
+        download_results(ssh_args) if config[:download_results]
       end
 
       def destroy(state)
@@ -161,6 +164,12 @@ module Kitchen
         end
       rescue Net::SSH::Exception => ex
         raise ActionFailed, ex.message
+      end
+
+      def download_results(ssh_args)
+        Net::SCP.start(*ssh_args) do |scp|
+          scp.download!(config[:download_results], "results", recursive: true)
+        end
       end
 
       def ssh_exec_with_exit!(ssh, cmd)
