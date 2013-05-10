@@ -137,6 +137,29 @@ module Kitchen
     end
     map %w(-v --version) => :version
 
+    desc "sink", "Show the Kitchen sink!", :hide => true
+    def sink
+      say [
+        "",
+        "                    ___              ",
+        "                   ' _ '.            ",
+        "                 / /` `\\ \\         ",
+        "                 | |   [__]          ",
+        "                 | |    {{           ",
+        "                 | |    }}           ",
+        "              _  | |  _ {{           ",
+        "  ___________<_>_| |_<_>}}________   ",
+        "      .=======^=(___)=^={{====.      ",
+        "     / .----------------}}---. \\    ",
+        "    / /                 {{    \\ \\  ",
+        "   / /                  }}     \\ \\ ",
+        "  (  '========================='  )  ",
+        "   '-----------------------------'   ",
+        "                                     ",  # necessary newline
+        ""
+      ].map(&:rstrip).join("\n")
+    end
+
     desc "console", "Kitchen Console!"
     def console
       require 'pry'
