@@ -22,39 +22,27 @@ and run the `bundle` command to install:
 
     $ bundle install
 
-This will expose the `test-kitchen` CLI. Run `bundle exec kitchen init` to get started:
+This will expose the `test-kitchen` CLI. Run `kitchen init` to get started:
 
     $ kitchen init
 
 You will be prompted with a series of questions. In this guide, we
-will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant).
+will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant):
 
-```text
-$ bundle exec kitchen init
+      $ kitchen init
       create  .kitchen.yml
       append  Rakefile
       create  test/integration/default
       append  .gitignore
       append  .gitignore
-      Add a Driver plugin to your Gemfile?
-      (y/n)> y
-      Enter gem name, `list', or `skip'>
-      kitchen-vagrant
-      append  Gemfile
-      You must run `bundle install' to fetch any new gems.
-```
 
-Run the `bundle` command again to install the new vagrant driver:
-
-    $ bundle install
-
-Open up the `.kitchen.yml` file created in the root of your
-repository.
+To review the configuration, open up the `.kitchen.yml` file created in
+the root of your repository.
 
 Now, it is time to get testing. Use the `--parallel` option to run
 your tests in parallel. Trust us, it's faster!
 
-    $ bundle exec kitchen test
+    $ kitchen test
 
 ### Helpful Switches
 
@@ -69,24 +57,37 @@ your tests in parallel. Trust us, it's faster!
 
 ## The Kitchen YAML format
 
-Test-Kitchen reads its configuration from the .kitchen.yml
-configuration file at the root of your cookbook. It closely resembles
-the format of .travis.yml which is intentional.
+Test-Kitchen reads its configuration from the `.kitchen.yml`
+configuration file at the root of your cookbook or module. It closely resembles
+the format of `.travis.yml` which is intentional.
 
-There are 4 stanzas in .kitchen.yml, driver_plugin, driver_config,
-platforms, and suites. driver_plugin, platforms, and suites are
-currently required. driver_config can optionally be used to set values
-for all platforms defined.
+There are 5 stanzas in `.kitchen.yml`:
 
-The driver_plugin stanza is only one line long and defines which
-driver is used by test-kitchen.
+* `driver_plugin`
+* `provisioner`
+* `driver_config`
+* `platforms`
+* `suites`
 
-The platforms stanza defines individual virtual machines. Additional
-driver_config, node attributes, and run_list can be defined in this stanza
+The `driver_plugin`, `platforms`, and `suites` stanzas are currently all
+required. The `driver_config` stanza can optionally be used to set
+values for all platforms defined.
 
-The suites stanza defines sets of tests that you intend to be run on
-each platform. A run_list and node attributes can be defined for each
-suite. The run_list and node attributes will be merged with that of
+The `driver_plugin` stanza is only one line long and defines which
+driver is used by Test-Kitchen.
+
+The `provisioner` stanza is only one line long and defines which
+configuration management tool a driver should use. It defines a
+configuration value passed to the driver of `provisioner`. When
+Test-Kitchen is initialized it detects if it is in a Chef cookbook or a
+Puppet module and sets itself accordingly. Otherwise, it defaults to `chef`.
+
+The `platforms` stanza defines individual virtual machines. Additional
+`driver_config`, node attributes, and `run_list` can be defined in this stanza
+
+The `suites` stanza defines sets of tests that you intend to be run on
+each platform. A `run_list` and node attributes can be defined for each
+suite. The `run_list` and node attributes will be merged with that of
 each platform. In case of the conflict, the attributes defined on the
 suite will triumph.
 
@@ -94,6 +95,7 @@ suite will triumph.
 
 ---
 driver_plugin: vagrant
+provisioner: chef
 
 platforms:
 - name: ubuntu-12.04
