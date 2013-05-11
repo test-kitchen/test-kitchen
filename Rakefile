@@ -16,7 +16,13 @@ end
 desc "Run all test suites"
 task :test => [:unit, :features]
 
-task :default => [:test]
+desc "Display LOC stats"
+task :stats do
+  puts "\n## Production Code Stats"
+  sh "countloc -r lib/kitchen lib/kitchen.rb"
+  puts "\n## Test Code Stats"
+  sh "countloc -r spec features"
+end
 
 unless RUBY_ENGINE == 'jruby'
   require 'cane/rake_task'
@@ -58,15 +64,11 @@ unless RUBY_ENGINE == 'jruby'
     end
   end
 
-  Rake::Task[:default].enhance [:cane, :tailor]
+  desc "Run all quality tasks"
+  task :quality => [:cane, :tailor, :stats]
+else
+  desc "Run all quality tasks"
+  task :quality => [:stats]
 end
 
-desc "Display LOC stats"
-task :stats do
-  puts "\n## Production Code Stats"
-  sh "countloc -r lib/kitchen lib/kitchen.rb"
-  puts "\n## Test Code Stats"
-  sh "countloc -r spec features"
-end
-
-Rake::Task[:default].enhance [:stats]
+task :default => [:test, :quality]
