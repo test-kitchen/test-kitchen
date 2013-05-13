@@ -123,7 +123,7 @@ suites:
         default_ruby: 1.8.7
 ```
 
-## Overriding .kitchen.yaml with .kitchen.<driver>.local.yml
+## Overriding .kitchen.yaml with .kitchen.&lt;driver&gt;.local.yml
 
 TODO
 
