@@ -31,6 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'bundler', '~> 1.3'
   gem.add_development_dependency 'rake'
 
+  gem.add_development_dependency 'minitest', '~> 4.7'
   gem.add_development_dependency 'mocha'
   gem.add_development_dependency 'fakefs'
   gem.add_development_dependency 'guard-minitest'
