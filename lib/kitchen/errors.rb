@@ -74,6 +74,24 @@ module Kitchen
   # Exception class capturing what caused an instance to die.
   class InstanceFailure < TransientFailure ; end
 
+  # Exception class raised when a cookbook's metadata is missing the name
+  # attribute.
+  class MissingCookbookName  < StandardError
+    def initialize(name)
+      @name = name
+    end
+
+    def to_s
+      [
+        "The metadata.rb does not define the 'name' key. Please add:",
+        "",
+        "  name '#{@name}'",
+        "",
+        "to the metadata.rb for '#{@name}' and try again."
+      ].join("\n")
+    end
+  end
+
   def self.with_friendly_errors
     yield
   rescue Kitchen::InstanceFailure => e
