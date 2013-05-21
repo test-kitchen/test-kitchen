@@ -34,6 +34,7 @@ module Kitchen
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
       default_config :groups,             [ 'default' ]
+      default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :username,           'root'
       default_config :port,               '22'
 
@@ -74,6 +75,7 @@ module Kitchen
         connection.servers.create(
           :availability_zone  => config[:availability_zone],
           :groups             => config[:groups],
+          :tags               => config[:tags],
           :flavor_id          => config[:flavor_id],
           :image_id           => config[:image_id],
           :key_name           => config[:aws_ssh_key_id],
