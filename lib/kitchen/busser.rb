@@ -142,7 +142,7 @@ module Kitchen
     end
 
     def sudo
-      @use_sudo ? "sudo " : ""
+      @use_sudo ? "sudo -E " : ""
     end
 
     def ruby_binpath

@@ -214,7 +214,17 @@ module Kitchen
       end
 
       def cmd(script)
-        config[:sudo] ? "sudo #{script}" : script
+        env = "env"
+        if config[:http_proxy]
+          env << " http_proxy=#{config[:http_proxy]}"
+        end
+        if config[:https_proxy]
+          env << " https_proxy=#{config[:https_proxy]}"
+        end
+        if env != "env"
+          script = "#{env} #{script}"
+        end
+        config[:sudo] ? "sudo -E #{script}" : script
       end
     end
   end
