@@ -73,12 +73,8 @@ module Kitchen
       end
 
       def create_server
-        debug("ec2:region '#{config[:region]}'")
-        debug("ec2:availability_zone '#{config[:availability_zone]}'")
-        debug("ec2:flavor_id '#{config[:flavor_id]}'")
-        debug("ec2:image_id '#{config[:image_id]}'")
-        debug("ec2:groups '#{config[:groups]}'")
-        debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
+        debug_server_config
+
         connection.servers.create(
           :availability_zone  => config[:availability_zone],
           :groups             => config[:groups],
@@ -87,6 +83,16 @@ module Kitchen
           :image_id           => config[:image_id],
           :key_name           => config[:aws_ssh_key_id],
         )
+      end
+
+      def debug_server_config
+        debug("ec2:region '#{config[:region]}'")
+        debug("ec2:availability_zone '#{config[:availability_zone]}'")
+        debug("ec2:flavor_id '#{config[:flavor_id]}'")
+        debug("ec2:image_id '#{config[:image_id]}'")
+        debug("ec2:groups '#{config[:groups]}'")
+        debug("ec2:tags '#{config[:tags]}'")
+        debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
       end
     end
   end
