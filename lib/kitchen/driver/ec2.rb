@@ -33,7 +33,7 @@ module Kitchen
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
-      default_config :groups,             [ 'default' ]
+      default_config :groups,             ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :username,           'root'
 
