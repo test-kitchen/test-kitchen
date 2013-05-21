@@ -37,6 +37,11 @@ module Kitchen
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :username,           'root'
 
+      required_config :aws_access_key_id
+      required_config :aws_secret_access_key
+      required_config :aws_ssh_key_id
+      required_config :image_id
+
       def create(state)
         server = create_server
         state[:server_id] = server.id
