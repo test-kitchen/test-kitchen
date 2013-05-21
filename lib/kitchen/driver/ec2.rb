@@ -36,7 +36,6 @@ module Kitchen
       default_config :groups,             [ 'default' ]
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :username,           'root'
-      default_config :port,               '22'
 
       def create(state)
         server = create_server
