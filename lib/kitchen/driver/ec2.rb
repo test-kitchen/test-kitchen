@@ -46,6 +46,7 @@ module Kitchen
         server.wait_for { print "."; ready? } ; print "(server ready)"
         state[:hostname] = server.public_ip_address
         wait_for_sshd(state[:hostname])      ; print "(ssh ready)\n"
+        debug("ec2:create '#{state[:hostname]}'")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
       end
@@ -72,6 +73,12 @@ module Kitchen
       end
 
       def create_server
+        debug("ec2:region '#{config[:region]}'")
+        debug("ec2:availability_zone '#{config[:availability_zone]}'")
+        debug("ec2:flavor_id '#{config[:flavor_id]}'")
+        debug("ec2:image_id '#{config[:image_id]}'")
+        debug("ec2:groups '#{config[:groups]}'")
+        debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
         connection.servers.create(
           :availability_zone  => config[:availability_zone],
           :groups             => config[:groups],
