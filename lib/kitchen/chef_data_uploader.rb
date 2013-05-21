@@ -138,7 +138,7 @@ module Kitchen
     end
 
     def run_resolver(name, bin, tmpdir)
-      # Just going to have to take your chanes on Windows - no way to
+      # Just going to have to take your chances on Windows - no way to
       # check for a command without running it, and looking for an
       # exit code. Good times.
       if RUBY_PLATFORM !~ /mswin|mingw/
