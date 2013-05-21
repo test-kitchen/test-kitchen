@@ -3,7 +3,9 @@ require 'cane/rake_task'
 require 'tailor/rake_task'
 
 desc "Run cane to check quality metrics"
-Cane::RakeTask.new
+Cane::RakeTask.new do |cane|
+  cane.canefile = './.cane'
+end
 
 Tailor::RakeTask.new
 
@@ -13,4 +15,7 @@ task :stats do
   sh "countloc -r lib/kitchen"
 end
 
-task :default => [ :cane, :tailor, :stats ]
+desc "Run all quality tasks"
+task :quality => [:cane, :tailor, :stats]
+
+task :default => [:quality]
