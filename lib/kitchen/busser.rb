@@ -55,11 +55,12 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
+          bash -c '
           if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null ; then
             #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
           fi
           #{sudo}#{ruby_binpath}/busser setup
-          #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}
+          #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
         INSTALL_CMD
       end
     end
@@ -77,8 +78,9 @@ module Kitchen
         nil
       else
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
+          bash -c '
           #{sudo}#{busser_bin} suite cleanup
-          #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}
+          #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}'
         INSTALL_CMD
       end
     end
