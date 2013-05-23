@@ -162,9 +162,9 @@ module Kitchen
 
     def cp_this_cookbook(tmpdir)
       metadata_rb = File.join(kitchen_root, "metadata.rb")
-      cb_name = MetadataChopper.extract(metadata_rb).first
-
-      raise TestKitchen::Errors::MissingCookbookName.new(name) if cb_name.nil?
+      cb_name = MetadataChopper.extract(metadata_rb).first or raise(UserError,
+        "The metadata.rb does not define the 'name' key." +
+          " Please add: `name '<cookbook_name>'` to metadata.rb and try again")
 
       cb_path = File.join(tmpdir, cb_name)
       glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*," +
