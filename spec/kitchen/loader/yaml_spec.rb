@@ -148,6 +148,15 @@ describe Kitchen::Loader::YAML do
       loader.read.must_equal({ :a => 'b' })
     end
 
+    it "handles a kitchen.yml with yaml elements that parse as nil" do
+      stub_yaml!(".kitchen.yml", nil)
+      stub_yaml!(".kitchen.local.yml", {
+        'a' => 'b'
+      })
+
+      loader.read.must_equal({ :a => 'b' })
+    end
+
     it "raises an UserError if the config_file does not exist" do
       proc { loader.read }.must_raise Kitchen::UserError
     end
