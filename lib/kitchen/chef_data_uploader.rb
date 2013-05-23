@@ -138,11 +138,16 @@ module Kitchen
     end
 
     def run_resolver(name, bin, tmpdir)
-      begin
-        run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
-      rescue Kitchen::ShellOut::ShellCommandFailed
-        fatal("#{name} must be installed, add it to your Gemfile.")
-        raise UserError, "#{bin} command not found"
+      # Just going to have to take your chances on Windows - no way to
+      # check for a command without running it, and looking for an
+      # exit code. Good times.
+      if RUBY_PLATFORM !~ /mswin|mingw/
+        begin
+          run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
+        rescue Kitchen::ShellOut::ShellCommandFailed
+          fatal("#{name} must be installed, add it to your Gemfile.")
+          raise UserError, "#{bin} command not found"
+        end
       end
 
       Kitchen.mutex.synchronize do
