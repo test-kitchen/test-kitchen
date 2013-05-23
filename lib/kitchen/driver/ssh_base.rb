@@ -149,6 +149,17 @@ module Kitchen
       end
 
       def ssh(ssh_args, cmd)
+        env = "env"
+        if config[:http_proxy]
+          env << " http_proxy=#{config[:http_proxy]}"
+        end
+        if config[:https_proxy]
+          env << " https_proxy=#{config[:https_proxy]}"
+        end
+        if env != "env"
+          cmd = "#{env} #{cmd}"
+        end
+
         debug("[SSH] #{ssh_args[1]}@#{ssh_args[0]} (#{cmd})")
         Net::SSH.start(*ssh_args) do |ssh|
           exit_code = ssh_exec_with_exit!(ssh, cmd)
@@ -206,7 +217,7 @@ module Kitchen
       end
 
       def cmd(script)
-        config[:sudo] ? "sudo #{script}" : script
+        config[:sudo] ? "sudo -E #{script}" : script
       end
     end
   end
