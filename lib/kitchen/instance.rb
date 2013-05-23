@@ -262,12 +262,13 @@ module Kitchen
       elapsed
     rescue ActionFailed => e
       log_failure(what, e)
-      raise InstanceFailure, failure_message(what) +
-        "  Please see .kitchen/logs/#{self.name}.log for more details", caller
+      raise(InstanceFailure, failure_message(what) +
+        "  Please see .kitchen/logs/#{self.name}.log for more details",
+        e.backtrace)
     rescue Exception => e
       log_failure(what, e)
       raise ActionFailed,
-        "Failed to complete ##{what} action: [#{e.message}]", caller
+        "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
     ensure
       state_file.write(state)
     end
