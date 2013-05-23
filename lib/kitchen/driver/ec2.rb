@@ -86,6 +86,7 @@ module Kitchen
           :flavor_id          => config[:flavor_id],
           :image_id           => config[:image_id],
           :key_name           => config[:aws_ssh_key_id],
+          :subnet_id          => config[:subnet_id],
         )
       end
 
@@ -97,6 +98,7 @@ module Kitchen
         debug("ec2:groups '#{config[:groups]}'")
         debug("ec2:tags '#{config[:tags]}'")
         debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
+        debug("ec2:subnet_id '#{config[:subnet_id]}'")
       end
     end
   end
