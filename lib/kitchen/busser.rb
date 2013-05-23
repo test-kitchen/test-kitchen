@@ -120,7 +120,7 @@ module Kitchen
 
     def remote_file(file)
       local_prefix = File.join(test_root, @suite_name)
-      "$(#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
@@ -128,7 +128,7 @@ module Kitchen
       md5 = Digest::MD5.hexdigest(local_file)
       perms = sprintf("%o", File.stat(local_path).mode)[2, 4]
       stream_cmd = [
-        busser_bin,
+        "#{sudo}#{busser_bin}",
         "deserialize",
         "--destination=#{remote_path}",
         "--md5sum=#{md5}",
@@ -137,7 +137,7 @@ module Kitchen
 
       <<-STREAMFILE.gsub(/^ {8}/, '')
         echo "Uploading #{remote_path} (mode=#{perms})"
-        cat <<"__EOFSTREAM__" | #{sudo}#{stream_cmd}
+        #{sudo}cat <<"__EOFSTREAM__" | #{sudo}#{stream_cmd}
         #{Base64.encode64(local_file)}
         __EOFSTREAM__
       STREAMFILE
