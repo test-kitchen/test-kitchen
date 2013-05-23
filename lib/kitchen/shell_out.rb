@@ -60,7 +60,7 @@ module Kitchen
     def run_command(cmd, options = {})
       use_sudo = options[:use_sudo].nil? ? false : options[:use_sudo]
       quiet = options[:quiet]
-      cmd = "sudo #{cmd}" if use_sudo
+      cmd = "sudo -E #{cmd}" if use_sudo
       subject = "[#{options[:log_subject] || "local"} command]"
 
       info("#{subject} BEGIN (#{display_cmd(cmd)})") unless quiet
