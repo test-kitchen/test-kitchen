@@ -92,6 +92,10 @@ describe Kitchen::Util do
 
   describe ".duration" do
 
+    it "turns nil into a zero" do
+      Kitchen::Util.duration(nil).must_equal "(0m0.00s)"
+    end
+
     it "formats seconds to 2 digits" do
       Kitchen::Util.duration(60).must_equal "(1m0.00s)"
     end

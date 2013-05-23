@@ -93,6 +93,7 @@ module Kitchen
     # @param total [Integer] the total number of seconds
     # @return [String] a formatted string of the form (XmYY.00s)
     def self.duration(total)
+      total = 0 if total.nil?
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
       "(%dm%.2fs)" % [minutes, seconds]
