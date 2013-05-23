@@ -97,6 +97,12 @@ Path to the private SSH key used to connect to the instance.
 
 The default is unset, or `nil`.
 
+### <a name="config-subnet-id"></a> subnet\_id
+
+The EC2 [subnet][subnet_docs] to use.
+
+The default is unset, or `nil`.
+
 ### <a name="config-sudo"></a> sudo
 
 Whether or not to prefix remote system commands such as installing and
@@ -132,6 +138,7 @@ driver_config:
   region: us-east-1
   availability_zone: us-east-1b
   require_chef_omnibus: true
+  subnet_id: subnet-6d6...
 
 platforms:
 - name: ubuntu-12.04
@@ -215,3 +222,4 @@ Apache 2.0 (see [LICENSE][license])
 [instance_docs]:    http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
 [key_id_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verifying-your-key-pair.html
 [region_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+[subnet_docs]:      http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
