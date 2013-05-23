@@ -72,7 +72,7 @@ module Kitchen
       cookbooks_dir = local_cookbooks
       upload_path(scp, cookbooks_dir, "cookbooks")
     ensure
-      FileUtils.rmtree(cookbooks_dir)
+      FileUtils.rmtree(cookbooks_dir) unless cookbooks_dir.nil?
     end
 
     def upload_data_bags(scp)
