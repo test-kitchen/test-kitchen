@@ -14,7 +14,7 @@
 * Pull request [#116][]: Require the 'name' attribute is present in `metadata.rb`. ([@sethvargo][])
 * Pull request [#113][]: Handle case where YAML parses as nil. ([@smith][])
 * Pass original exception's backtrace to InstanceFailure and ActionFailed. ([@fnichol][])
-* Fix bug where action failures are swallowed with a nil inside an ensure. ([@fnichol][])
+* Pull request [#112][]: Fix bug where action failures are swallowed with a nil inside an ensure. ([@manul][])
 
 ### Improvements
 
@@ -146,6 +146,7 @@ The initial release.
 [#105]: https://github.com/opscode/test-kitchen/issues/105
 [#108]: https://github.com/opscode/test-kitchen/issues/108
 [#111]: https://github.com/opscode/test-kitchen/issues/111
+[#112]: https://github.com/opscode/test-kitchen/issues/112
 [#113]: https://github.com/opscode/test-kitchen/issues/113
 [#114]: https://github.com/opscode/test-kitchen/issues/114
 [#116]: https://github.com/opscode/test-kitchen/issues/116
@@ -159,6 +160,7 @@ The initial release.
 [@fnichol]: https://github.com/fnichol
 [@grahamc]: https://github.com/grahamc
 [@jtimberman]: https://github.com/jtimberman
+[@manul]: https://github.com/manul
 [@mattray]: https://github.com/mattray
 [@reset]: https://github.com/reset
 [@sethvargo]: https://github.com/sethvargo
