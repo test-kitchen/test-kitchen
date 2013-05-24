@@ -121,8 +121,8 @@ module Kitchen
     end
 
     def prepare_tmpdir(tmpdir)
-      if File.exists?(File.join(kitchen_root, "Berksfile"))
-        run_resolver("Berkshelf", "berks", tmpdir)
+      if File.exists?(berksfile)
+        resolve_with_berkshelf(tmpdir)
       elsif File.exists?(File.join(kitchen_root, "Cheffile"))
         run_resolver("Librarian", "librarian-chef", tmpdir)
       elsif File.directory?(File.join(kitchen_root, "cookbooks"))
@@ -135,6 +135,10 @@ module Kitchen
           " must exist in #{kitchen_root}")
         raise UserError, "Cookbooks could not be found"
       end
+    end
+
+    def berksfile
+      File.join(kitchen_root, "Berksfile")
     end
 
     def run_resolver(name, bin, tmpdir)
@@ -172,6 +176,23 @@ module Kitchen
 
       FileUtils.mkdir_p(cb_path)
       FileUtils.cp_r(glob, cb_path)
+    end
+
+    def resolve_with_berkshelf(tmpdir)
+      info("Resolving cookbook dependencies with Berkshelf using #{berksfile}")
+
+      begin
+        require 'berkshelf'
+      rescue LoadError
+        fatal("The `berkself' gem is missing and must be installed." +
+          " Run `gem install berkshelf` or add the following " +
+          "to your Gemfile if you are using Bundler: `gem 'berkshelf'`.")
+        raise UserError, "Could not load Berkshelf to resolve dependencies"
+      end
+
+      Kitchen.mutex.synchronize do
+        Berkshelf::Berksfile.from_file(berksfile).install(:path => tmpdir)
+      end
     end
   end
 end
