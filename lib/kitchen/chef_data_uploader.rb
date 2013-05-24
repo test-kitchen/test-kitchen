@@ -145,24 +145,6 @@ module Kitchen
       File.join(kitchen_root, "Cheffile")
     end
 
-    def run_resolver(name, bin, tmpdir)
-      # Just going to have to take your chances on Windows - no way to
-      # check for a command without running it, and looking for an
-      # exit code. Good times.
-      if RUBY_PLATFORM !~ /mswin|mingw/
-        begin
-          run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
-        rescue Kitchen::ShellOut::ShellCommandFailed
-          fatal("#{name} must be installed, add it to your Gemfile.")
-          raise UserError, "#{bin} command not found"
-        end
-      end
-
-      Kitchen.mutex.synchronize do
-        run_command "#{bin} install --path #{tmpdir}"
-      end
-    end
-
     def cp_cookbooks(tmpdir)
       FileUtils.cp_r(File.join(kitchen_root, "cookbooks", "."), tmpdir)
       cp_this_cookbook(tmpdir) if File.exists?(File.expand_path('metadata.rb'))
