@@ -123,8 +123,8 @@ module Kitchen
     def prepare_tmpdir(tmpdir)
       if File.exists?(berksfile)
         resolve_with_berkshelf(tmpdir)
-      elsif File.exists?(File.join(kitchen_root, "Cheffile"))
-        run_resolver("Librarian", "librarian-chef", tmpdir)
+      elsif File.exists?(cheffile)
+        resolve_with_librarian(tmpdir)
       elsif File.directory?(File.join(kitchen_root, "cookbooks"))
         cp_cookbooks(tmpdir)
       elsif File.exists?(File.join(kitchen_root, "metadata.rb"))
@@ -139,6 +139,10 @@ module Kitchen
 
     def berksfile
       File.join(kitchen_root, "Berksfile")
+    end
+
+    def cheffile
+      File.join(kitchen_root, "Cheffile")
     end
 
     def run_resolver(name, bin, tmpdir)
@@ -192,6 +196,28 @@ module Kitchen
 
       Kitchen.mutex.synchronize do
         Berkshelf::Berksfile.from_file(berksfile).install(:path => tmpdir)
+      end
+    end
+
+    def resolve_with_librarian(tmpdir)
+      info("Resolving cookbook dependencies with Librarian-Chef using #{cheffile}")
+
+      begin
+        require 'librarian/chef/environment'
+        require 'librarian/action/resolve'
+        require 'librarian/action/install'
+      rescue LoadError
+        fatal("The `librarian-chef' gem is missing and must be installed." +
+          " Run `gem install librarian-chef` or add the following " +
+          "to your Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
+        raise UserError, "Could not load Librarian-Chef to resolve dependencies"
+      end
+
+      Kitchen.mutex.synchronize do
+        env = Librarian::Chef::Environment.new
+        env.config_db.local["path"] = tmpdir
+        Librarian::Action::Resolve.new(env).run
+        Librarian::Action::Install.new(env).run
       end
     end
   end
