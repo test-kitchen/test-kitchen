@@ -121,10 +121,10 @@ module Kitchen
     end
 
     def prepare_tmpdir(tmpdir)
-      if File.exists?(File.join(kitchen_root, "Berksfile"))
-        run_resolver("Berkshelf", "berks", tmpdir)
-      elsif File.exists?(File.join(kitchen_root, "Cheffile"))
-        run_resolver("Librarian", "librarian-chef", tmpdir)
+      if File.exists?(berksfile)
+        resolve_with_berkshelf(tmpdir)
+      elsif File.exists?(cheffile)
+        resolve_with_librarian(tmpdir)
       elsif File.directory?(File.join(kitchen_root, "cookbooks"))
         cp_cookbooks(tmpdir)
       elsif File.exists?(File.join(kitchen_root, "metadata.rb"))
@@ -137,22 +137,12 @@ module Kitchen
       end
     end
 
-    def run_resolver(name, bin, tmpdir)
-      # Just going to have to take your chances on Windows - no way to
-      # check for a command without running it, and looking for an
-      # exit code. Good times.
-      if RUBY_PLATFORM !~ /mswin|mingw/
-        begin
-          run_command "if ! command -v #{bin} >/dev/null; then exit 1; fi"
-        rescue Kitchen::ShellOut::ShellCommandFailed
-          fatal("#{name} must be installed, add it to your Gemfile.")
-          raise UserError, "#{bin} command not found"
-        end
-      end
+    def berksfile
+      File.join(kitchen_root, "Berksfile")
+    end
 
-      Kitchen.mutex.synchronize do
-        run_command "#{bin} install --path #{tmpdir}"
-      end
+    def cheffile
+      File.join(kitchen_root, "Cheffile")
     end
 
     def cp_cookbooks(tmpdir)
@@ -172,6 +162,45 @@ module Kitchen
 
       FileUtils.mkdir_p(cb_path)
       FileUtils.cp_r(glob, cb_path)
+    end
+
+    def resolve_with_berkshelf(tmpdir)
+      info("Resolving cookbook dependencies with Berkshelf using #{berksfile}")
+
+      begin
+        require 'berkshelf'
+      rescue LoadError
+        fatal("The `berkself' gem is missing and must be installed." +
+          " Run `gem install berkshelf` or add the following " +
+          "to your Gemfile if you are using Bundler: `gem 'berkshelf'`.")
+        raise UserError, "Could not load Berkshelf to resolve dependencies"
+      end
+
+      Kitchen.mutex.synchronize do
+        Berkshelf::Berksfile.from_file(berksfile).install(:path => tmpdir)
+      end
+    end
+
+    def resolve_with_librarian(tmpdir)
+      info("Resolving cookbook dependencies with Librarian-Chef using #{cheffile}")
+
+      begin
+        require 'librarian/chef/environment'
+        require 'librarian/action/resolve'
+        require 'librarian/action/install'
+      rescue LoadError
+        fatal("The `librarian-chef' gem is missing and must be installed." +
+          " Run `gem install librarian-chef` or add the following " +
+          "to your Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
+        raise UserError, "Could not load Librarian-Chef to resolve dependencies"
+      end
+
+      Kitchen.mutex.synchronize do
+        env = Librarian::Chef::Environment.new
+        env.config_db.local["path"] = tmpdir
+        Librarian::Action::Resolve.new(env).run
+        Librarian::Action::Install.new(env).run
+      end
     end
   end
 end
