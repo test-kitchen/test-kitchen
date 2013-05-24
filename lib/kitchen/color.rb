@@ -34,7 +34,7 @@ module Kitchen
     }.freeze
 
     COLORS = %w(
-      cyan yellow green magenta red blue bright_cyan bright_yellow
+      cyan yellow green magenta blue bright_cyan bright_yellow
       bright_green bright_magenta bright_red bright_blue
     ).freeze
 
