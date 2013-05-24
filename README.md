@@ -1,6 +1,6 @@
 # Test Kitchen
 
-[![Build Status](https://secure.travis-ci.org/opscode/test-kitchen.png?branch=1.0)](https://travis-ci.org/opscode/test-kitchen)
+[![Build Status](https://secure.travis-ci.org/opscode/test-kitchen.png?branch=master)](https://travis-ci.org/opscode/test-kitchen)
 [![Code Climate](https://codeclimate.com/github/opscode/test-kitchen.png)](https://codeclimate.com/github/opscode/test-kitchen)
 
 A convergence integration test harness for configuration management systems.
