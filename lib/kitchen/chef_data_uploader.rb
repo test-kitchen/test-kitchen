@@ -151,7 +151,8 @@ module Kitchen
     def cookbook_files_glob
       files = %w{README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
-        providers/**/* recipes/**/* resources/**/* templates/**/*}
+        providers/**/* recipes/**/* resources/**/* templates/**/*
+      }
 
       "*/{#{files.join(',')}}"
     end
