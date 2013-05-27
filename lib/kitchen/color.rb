@@ -35,7 +35,7 @@ module Kitchen
 
     COLORS = %w(
       cyan yellow green magenta blue bright_cyan bright_yellow
-      bright_green bright_magenta bright_red bright_blue
+      bright_green bright_magenta bright_blue
     ).freeze
 
     # Returns an ansi escaped string representing a color control sequence.
