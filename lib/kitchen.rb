@@ -91,7 +91,7 @@ end
 
 # Initialize the base logger and use that for Celluloid's logger
 Kitchen.logger = Kitchen.default_logger
-Celluloid.logger = Kitchen.celluloid_file_logger
+Celluloid.logger = Kitchen.logger
 
 # Setup a collection of instance crash exceptions for error reporting
 Kitchen.crashes = []
