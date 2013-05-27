@@ -28,9 +28,9 @@ module Kitchen
     ANSI = {
       :reset => 0, :black => 30, :red => 31, :green => 32, :yellow => 33,
       :blue => 34, :magenta => 35, :cyan => 36, :white => 37,
-      :bright_black => 30, :bright_red => 31, :bright_green => 32,
-      :bright_yellow => 33, :bright_blue => 34, :bright_magenta => 35,
-      :bright_cyan => 36, :bright_white => 37
+      :bright_black => 90, :bright_red => 91, :bright_green => 92,
+      :bright_yellow => 93, :bright_blue => 94, :bright_magenta => 95,
+      :bright_cyan => 96, :bright_white => 97
     }.freeze
 
     COLORS = %w(
