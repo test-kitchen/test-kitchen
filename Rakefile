@@ -35,6 +35,7 @@ unless RUBY_ENGINE == 'jruby'
       Kitchen::ThorTasks#define
       Kitchen::CLI#pry_prompts
       Kitchen::Instance#synchronize_or_call
+      Kitchen::Driver::SSHBase#converge
     )
     cane.style_exclude = %w(
       lib/vendor/hash_recursive_merge.rb
