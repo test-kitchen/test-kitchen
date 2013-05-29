@@ -48,6 +48,13 @@ module Kitchen
         end
       end
 
+      # Returns the name of this driver, suitable for display in a CLI.
+      #
+      # @return [String] name of this driver
+      def name
+        self.class.name.split('::').last
+      end
+
       # Provides hash-like access to configuration keys.
       #
       # @param attr [Object] configuration key

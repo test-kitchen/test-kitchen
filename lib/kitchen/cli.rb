@@ -56,11 +56,7 @@ module Kitchen
       if options[:bare]
         say Array(result).map { |i| i.name }.join("\n")
       else
-        table = [
-          [set_color("Instance", :green), set_color("Last Action", :green)]
-        ]
-        table += Array(result).map { |i| display_instance(i) }
-        print_table(table)
+        list_table(result)
       end
     end
 
@@ -319,8 +315,26 @@ module Kitchen
       end
     end
 
+    def list_table(result)
+      table = [
+        [set_color("Instance", :green), set_color("Driver", :green),
+          set_color("Provisioner", :green), set_color("Last Action", :green)]
+      ]
+      table += Array(result).map { |i| display_instance(i) }
+      print_table(table)
+    end
+
     def display_instance(instance)
-      action = case instance.last_action
+      [
+        set_color(instance.name, :on_black),
+        set_color(instance.driver.name, :on_black),
+        set_color(format_provisioner(instance.driver[:provisioner]), :on_black),
+        format_last_action(instance.last_action)
+      ]
+    end
+
+    def format_last_action(last_action)
+      case last_action
       when 'create' then set_color("Created", :cyan)
       when 'converge' then set_color("Converged", :magenta)
       when 'setup' then set_color("Set Up", :blue)
@@ -328,7 +342,10 @@ module Kitchen
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-      [set_color(instance.name, :on_black), action]
+    end
+
+    def format_provisioner(name)
+      name.split('_').map { |word| word.capitalize }.join(' ')
     end
 
     def update_config!
