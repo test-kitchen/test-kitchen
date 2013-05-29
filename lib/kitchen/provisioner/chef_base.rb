@@ -82,6 +82,7 @@ module Kitchen
         prepare_json
         prepare_data_bags
         prepare_roles
+        prepare_nodes
         prepare_secret
         prepare_cache
         prepare_cookbooks
@@ -114,6 +115,17 @@ module Kitchen
         tmproles_dir = File.join(tmpdir, "roles")
         FileUtils.mkdir_p(tmproles_dir)
         FileUtils.cp_r(Dir.glob("#{roles}/*"), tmproles_dir)
+      end
+
+      def prepare_nodes
+        return unless nodes
+
+        info("Preparing nodes")
+        debug("Using nodes from #{nodes}")
+
+        tmpnodes_dir = File.join(tmpdir, "nodes")
+        FileUtils.mkdir_p(tmpnodes_dir)
+        FileUtils.cp_r(Dir.glob("#{nodes}/*"), tmpnodes_dir)
       end
 
       def prepare_secret
@@ -190,6 +202,10 @@ module Kitchen
 
       def roles
         instance.suite.roles_path
+      end
+
+      def nodes
+        instance.suite.nodes_path
       end
 
       def secret

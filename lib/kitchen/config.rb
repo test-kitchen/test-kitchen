@@ -96,6 +96,7 @@ module Kitchen
       path_hash = {
         :data_bags_path => calculate_path("data_bags", hash[:name]),
         :roles_path     => calculate_path("roles", hash[:name]),
+        :nodes_path     => calculate_path("nodes", hash[:name]),
       }
 
       Suite.new(hash.rmerge(path_hash))

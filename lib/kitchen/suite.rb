@@ -48,6 +48,10 @@ module Kitchen
     #   not exist
     attr_reader :roles_path
 
+    # @return [String] local path to the suite's nodes, or nil if one does
+    #   not exist
+    attr_reader :nodes_path
+
     # Constructs a new suite.
     #
     # @param [Hash] options configuration for a new suite
@@ -58,6 +62,7 @@ module Kitchen
     # @option options [String] :excludes Array of names of excluded platforms
     # @option options [String] :data_bags_path path to data bags
     # @option options [String] :roles_path path to roles
+    # @option options [String] :nodes_path path to nodes
     # @option options [String] :encrypted_data_bag_secret_key_path path to
     #   secret key file
     def initialize(options = {})
@@ -69,6 +74,7 @@ module Kitchen
       @excludes = options[:excludes]     || Array.new
       @data_bags_path = options[:data_bags_path]
       @roles_path = options[:roles_path]
+      @nodes_path = options[:nodes_path]
       @encrypted_data_bag_secret_key_path = options[:encrypted_data_bag_secret_key_path]
     end
 
