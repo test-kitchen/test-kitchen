@@ -37,6 +37,9 @@ module Kitchen
     # Default driver plugin to use
     DEFAULT_DRIVER_PLUGIN = "dummy".freeze
 
+    # Default provisioner to use
+    DEFAULT_PROVISIONER = "chef_solo".freeze
+
     # Default base path which may contain `data_bags/` directories
     DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
 
@@ -109,6 +112,7 @@ module Kitchen
     def new_driver(hash)
       hash[:driver_config] ||= Hash.new
       hash[:driver_config][:kitchen_root] = kitchen_root
+      hash[:driver_config][:provisioner] = hash[:provisioner]
 
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
@@ -172,7 +176,9 @@ module Kitchen
     def platform_driver_hash(platform_name)
       h = data[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
-      h.select { |key, value| [:driver_plugin, :driver_config].include?(key) }
+      h.select do |key, value|
+        [:driver_plugin, :driver_config, :provisioner].include?(key)
+      end
     end
 
     def new_instance_logger(index)
@@ -212,12 +218,16 @@ module Kitchen
     end
 
     def default_driver_hash
-      { :driver_plugin => DEFAULT_DRIVER_PLUGIN, :driver_config => {} }
+      {
+        :driver_plugin  => DEFAULT_DRIVER_PLUGIN,
+        :driver_config  => {},
+        :provisioner    => DEFAULT_PROVISIONER
+      }
     end
 
     def common_driver_hash
       data.select do |key, value|
-        [:driver_plugin, :driver_config].include?(key)
+        [:driver_plugin, :driver_config, :provisioner].include?(key)
       end
     end
   end

@@ -75,7 +75,7 @@ module Kitchen
       def new_provisioner
         combined = config.dup
         combined[:log_level] = Util.from_logger_level(logger.level)
-        Kitchen::Provisioner.for_plugin("chef_solo", instance, combined)
+        Provisioner.for_plugin(combined[:provisioner], instance, combined)
       end
 
       def build_ssh_args(state)

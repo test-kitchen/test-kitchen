@@ -25,7 +25,7 @@ module Kitchen
     # Chef Solo provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class ChefSolo < Base
+    class ChefSolo < ChefBase
 
       def create_sandbox
         create_chef_sandbox { prepare_solo_rb }
