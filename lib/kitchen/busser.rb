@@ -80,7 +80,8 @@ module Kitchen
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           bash -c '
           #{sudo}#{busser_bin} suite cleanup
-          #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}'
+          #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
+          #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
         INSTALL_CMD
       end
     end
@@ -104,6 +105,7 @@ module Kitchen
 
     def validate_options(suite_name)
       raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
+      raise UserError, "Suite name invalid: 'helper' is a reserved directory name." if suite_name == 'helper'
     end
 
     def plugins
@@ -118,8 +120,12 @@ module Kitchen
       end
     end
 
-    def remote_file(file)
-      local_prefix = File.join(test_root, @suite_name)
+    def helper_files
+      Dir.glob(File.join(test_root, "helpers", "*/**/*"))
+    end
+
+    def remote_file(file, dir)
+      local_prefix = File.join(test_root, dir)
       "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
