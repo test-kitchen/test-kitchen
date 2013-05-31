@@ -40,6 +40,7 @@ module Kitchen
         end
 
         <<-INSTALL.gsub(/^ {10}/, '')
+          bash -c '
           should_update_chef() {
             case "#{flag}" in
               true|$(chef-solo -v | cut -d " " -f 2)) return 1 ;;
@@ -57,7 +58,7 @@ module Kitchen
               echo ">>>>>> Neither wget nor curl found on this instance."
               exit 16
             fi
-          fi
+          fi'
         INSTALL
       end
 
