@@ -81,7 +81,7 @@ module Kitchen
     private
 
     def validate_options(opts)
-      [:name, :run_list].each do |k|
+      [:name].each do |k|
         raise ClientError, "Suite#new requires option :#{k}" if opts[k].nil?
       end
     end

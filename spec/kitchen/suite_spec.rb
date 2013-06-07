@@ -31,11 +31,6 @@ describe Kitchen::Suite do
     proc { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
   end
 
-  it "raises an ArgumentError if run_list is missing" do
-    opts.delete(:run_list)
-    proc { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
-  end
-
   it "returns an empty Hash given no attributes" do
     suite.attributes.must_equal Hash.new
   end
