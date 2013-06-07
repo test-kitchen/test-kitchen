@@ -15,7 +15,7 @@ In your `Gemfile`, add `test-kitchen` as a
 dependency:
 
 ```ruby
-gem 'test-kitchen', git: 'git://github.com/opscode/test-kitchen.git', branch: '1.0'
+gem 'test-kitchen', git: 'git://github.com/opscode/test-kitchen.git'
 ```
 
 and run the `bundle` command to install:
