@@ -101,7 +101,7 @@ module Kitchen
       end
 
       def install_omnibus(ssh_args)
-        url = "https://www.opscode.com/chef/install.sh"
+        url = config[:chef_omnibus_url] || "https://www.opscode.com/chef/install.sh"
         flag = config[:require_chef_omnibus]
         version = if flag.is_a?(String) && flag != "latest"
           "-s -- -v #{flag.downcase}"
