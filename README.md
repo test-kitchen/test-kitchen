@@ -161,8 +161,8 @@ ERB which can help to factor out secrets and credentials. For example:
 ---
 driver_plugin: ec2
 driver_config:
-  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-  aws_secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY'] %>
+  aws_secret_access_key: <%= ENV['AWS_SECRET_KEY'] %>
   aws_ssh_key_id: <%= ENV['AWS_SSH_KEY_ID'] %>
   ssh_key: <%= File.expand_path('~/.ssh/id_rsa') %>
   region: us-east-1
