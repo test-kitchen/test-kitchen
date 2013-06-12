@@ -21,21 +21,15 @@ require 'rubygems'
 require 'chef'
 require 'chef/application/client'
 require 'chef_zero/server'
-require 'chef/knife/serve_essentials'
+require 'chef_fs/chef_fs_data_store'
+require 'chef_fs/config'
 require 'tmpdir'
 
 client = Chef::Application::Client.new
 client.reconfigure
 
-data_store = Chef::Knife::Serve::ChefFSDataStore.new(
-  proc do
-    hash = Hash.new
-    %w(client cookbook data_bag node role).each do |object_name|
-      paths = Array(Chef::Config["#{object_name}_path"]).flatten
-      hash["#{object_name}s"] = paths.map { |path| File.expand_path(path) }
-    end
-    ChefFS::FileSystem::ChefRepositoryFileSystemRootDir.new(hash)
-  end
+data_store = ChefFS::ChefFSDataStore.new(
+  ChefFS::Config.new(Chef::Config).local_fs
 )
 
 server_opts = {
