@@ -131,13 +131,38 @@ module Kitchen
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
+      provisioner = driver[:provisioner]
 
-      Instance.new(
-        :suite    => suite,
-        :platform => platform,
+      instance = Instance.new(
+        :suite    => extend_suite(suite, provisioner),
+        :platform => extend_platform(platform, provisioner),
         :driver   => driver,
         :logger   => new_instance_logger(index)
       )
+      extend_instance(instance, provisioner)
+    end
+
+    def extend_suite(suite, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then suite.dup.extend(Suite::Cheflike)
+      when /^puppet_/ then suite.dup.extend(Suite::Puppetlike)
+      else suite.dup
+      end
+    end
+
+    def extend_platform(platform, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then platform.dup.extend(Platform::Cheflike)
+      else platform.dup
+      end
+    end
+
+    def extend_instance(instance, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then instance.extend(Instance::Cheflike)
+      when /^puppet_/ then instance.extend(Instance::Puppetlike)
+      else instance
+      end
     end
 
     def actor_registry(instance)

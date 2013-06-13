@@ -79,26 +79,6 @@ module Kitchen
       "<#{name}>"
     end
 
-    # Returns a combined run_list starting with the platform's run_list
-    # followed by the suite's run_list.
-    #
-    # @return [Array] combined run_list from suite and platform
-    def run_list
-      Array(platform.run_list) + Array(suite.run_list)
-    end
-
-    # Returns a merged hash of Chef node attributes with values from the
-    # suite overriding values from the platform.
-    #
-    # @return [Hash] merged hash of Chef node attributes
-    def attributes
-      platform.attributes.rmerge(suite.attributes)
-    end
-
-    def dna
-      attributes.rmerge({ :run_list => run_list })
-    end
-
     # Creates this instance.
     #
     # @see Driver::Base#create
@@ -197,6 +177,39 @@ module Kitchen
 
     def last_action
       state_file.read[:last_action]
+    end
+
+    # Extra instance methods used for accessing Puppet data such as a combined
+    # run list, node attributes, etc.
+    module Cheflike
+
+      # Returns a combined run_list starting with the platform's run_list
+      # followed by the suite's run_list.
+      #
+      # @return [Array] combined run_list from suite and platform
+      def run_list
+        Array(platform.run_list) + Array(suite.run_list)
+      end
+
+      # Returns a merged hash of Chef node attributes with values from the
+      # suite overriding values from the platform.
+      #
+      # @return [Hash] merged hash of Chef node attributes
+      def attributes
+        platform.attributes.rmerge(suite.attributes)
+      end
+
+      def dna
+        attributes.rmerge({ :run_list => run_list })
+      end
+    end
+
+    # Extra instances methods used for accessing Puppet data such as a run,
+    # node attributes, etc.
+    module Puppetlike
+
+      def manifest
+      end
     end
 
     private

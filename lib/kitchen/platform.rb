@@ -28,29 +28,39 @@ module Kitchen
     # @return [String] logical name of this platform
     attr_reader :name
 
-    # @return [Array] Array of Chef run_list items
-    attr_reader :run_list
-
-    # @return [Hash] Hash of Chef node attributes
-    attr_reader :attributes
-
     # Constructs a new platform.
     #
     # @param [Hash] options configuration for a new platform
     # @option options [String] :name logical name of this platform
     #   (**Required**)
-    # @option options [Array<String>] :run_list Array of Chef run_list
-    #   items
-    # @option options [Hash] :attributes Hash of Chef node attributes
     def initialize(options = {})
+      options = options.dup
       validate_options(options)
 
-      @name = options[:name]
-      @run_list = Array(options[:run_list])
-      @attributes = options[:attributes] || Hash.new
+      @name = options.delete(:name)
+      @data = options.reject do |key, value|
+        [:driver_config, :driver_plugin, :provisioner].include?(key)
+      end
+    end
+
+    # Extra platform methods used for accessing Chef data such as a run list,
+    # node attributes, etc.
+    module Cheflike
+
+      # @return [Array] Array of Chef run_list items
+      def run_list
+        Array(data[:run_list])
+      end
+
+      # @return [Hash] Hash of Chef node attributes
+      def attributes
+        data[:attributes] || Hash.new
+      end
     end
 
     private
+
+    attr_reader :data
 
     def validate_options(opts)
       [:name].each do |k|
