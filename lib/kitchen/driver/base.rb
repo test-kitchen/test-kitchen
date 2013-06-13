@@ -22,9 +22,7 @@ module Kitchen
 
   module Driver
 
-    # Base class for a driver. A driver is responsible for carrying out the
-    # lifecycle activities of an instance, such as creating, converging, and
-    # destroying an instance.
+    # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base

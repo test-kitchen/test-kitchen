@@ -20,6 +20,11 @@ require 'thor/util'
 
 module Kitchen
 
+  # A provisioner is responsible for generating the commands necessary to
+  # install set up and use a configuration management tool such as Chef and
+  # Puppet.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Provisioner
 
     # Returns an instance of a provisioner given a plugin type string.

@@ -20,9 +20,7 @@ module Kitchen
 
   module Provisioner
 
-    # Base class for a provisioner. A provisioner is responsible for generating
-    # the commands necessary to install set up and use a configuration
-    # management tool such as Chef and Puppet.
+    # Base class for a provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base

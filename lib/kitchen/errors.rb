@@ -18,6 +18,9 @@
 
 module Kitchen
 
+  # All Kitchen errors and exceptions.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Error
 
     def self.formatted_trace(exception)

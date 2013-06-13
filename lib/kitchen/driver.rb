@@ -20,6 +20,10 @@ require 'thor/util'
 
 module Kitchen
 
+  # A driver is responsible for carrying out the lifecycle activities of an
+  # instance, such as creating, converging, and destroying an instance.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Driver
 
     # Returns an instance of a driver given a plugin type string.

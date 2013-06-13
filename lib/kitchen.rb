@@ -46,6 +46,9 @@ require 'kitchen/ssh'
 require 'kitchen/suite'
 require 'kitchen/version'
 
+# Test Kitchen base module.
+#
+# @author Fletcher Nichol <fnichol@nichol.ca>
 module Kitchen
 
   class << self
