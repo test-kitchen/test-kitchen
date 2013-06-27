@@ -178,7 +178,7 @@ module Kitchen
 
       cb_path = File.join(tmpdir, cb_name)
       glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*," +
-        "attributes,files,libraries,providers,recipes,resources,templates}")
+        "attributes,files,libraries,definitions,providers,recipes,resources,templates}")
 
       FileUtils.mkdir_p(cb_path)
       FileUtils.cp_r(glob, cb_path)
