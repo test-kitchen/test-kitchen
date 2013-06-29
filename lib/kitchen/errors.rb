@@ -18,6 +18,7 @@
 
 module Kitchen
 
+  # Namespace for kitchen exceptions. Exception classes go here.
   module Error
 
     def self.formatted_trace(exception)

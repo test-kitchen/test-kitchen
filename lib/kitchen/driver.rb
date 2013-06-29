@@ -19,7 +19,8 @@
 require 'thor/util'
 
 module Kitchen
-
+  # Namespace for kitchen drivers. Drivers are responsible for
+  # managing the instance's lifecycle.
   module Driver
 
     # Returns an instance of a driver given a plugin type string.

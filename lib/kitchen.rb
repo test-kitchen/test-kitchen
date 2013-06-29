@@ -44,6 +44,8 @@ require 'kitchen/state_file'
 require 'kitchen/suite'
 require 'kitchen/version'
 
+# Let's start cookin'!
+# Kitchen is the toplevel module for test-kitchen.
 module Kitchen
 
   class << self
