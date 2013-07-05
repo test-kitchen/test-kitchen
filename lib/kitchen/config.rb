@@ -94,8 +94,8 @@ module Kitchen
 
     def new_suite(hash)
       path_hash = {
-        :data_bags_path => calculate_path("data_bags", hash[:name]),
-        :roles_path     => calculate_path("roles", hash[:name]),
+        :data_bags_path => calculate_path("data_bags", hash[:name], hash[:data_bags_path]),
+        :roles_path     => calculate_path("roles", hash[:name], hash[:roles_path]),
       }
 
       Suite.new(hash.rmerge(path_hash))
@@ -194,12 +194,15 @@ module Kitchen
       default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
     end
 
-    def calculate_path(path, suite_name)
+    def calculate_path(path, suite_name, local_path)
+      custom_path     = File.join(kitchen_root, local_path) if local_path
       suite_path      = File.join(test_base_path, suite_name, path)
       common_path     = File.join(test_base_path, path)
       top_level_path  = File.join(Dir.pwd, path)
 
-      if File.directory?(suite_path)
+      if custom_path and File.directory?(custom_path)
+        custom_path
+      elsif File.directory?(suite_path)
         suite_path
       elsif File.directory?(common_path)
         common_path
