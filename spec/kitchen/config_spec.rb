@@ -114,7 +114,8 @@ describe Kitchen::Config do
     end
 
     it "returns a suite with a custom data_bags_path set" do
-      stub_data!({ :suites => [{ :name => 'one', :run_list => [], :data_bags_path => 'shared/data_bags' }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [], 
+                                 :data_bags_path => 'shared/data_bags' }] })
       config.kitchen_root = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/shared/data_bags"
       config.suites.first.data_bags_path.must_equal "/tmp/base/shared/data_bags"
@@ -140,7 +141,8 @@ describe Kitchen::Config do
     end
 
     it "returns a suite with a custom roles_path set" do
-      stub_data!({ :suites => [{ :name => 'one', :run_list => [], :roles_path => 'shared/roles' }] })
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [], 
+                                 :roles_path => 'shared/roles' }] })
       config.kitchen_root = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/shared/roles"
       config.suites.first.roles_path.must_equal "/tmp/base/shared/roles"
