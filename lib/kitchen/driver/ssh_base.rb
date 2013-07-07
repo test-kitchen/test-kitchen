@@ -118,6 +118,8 @@ module Kitchen
           }
 
           if [ ! -d "/opt/chef" ] || should_update_chef ; then
+            PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+            export PATH
             echo "-----> Installing Chef Omnibus (#{flag})"
             if command -v wget >/dev/null ; then
               wget #{url} -O - | #{cmd('bash')} #{version}
