@@ -70,6 +70,12 @@ module Kitchen
         SSH.new(*build_ssh_args(state)).login_command
       end
 
+      def ssh(ssh_args, command)
+        Kitchen::SSH.new(*ssh_args) do |conn|
+          run_remote(command, conn)
+        end
+      end
+
       protected
 
       def new_provisioner
