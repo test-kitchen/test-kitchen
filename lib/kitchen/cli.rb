@@ -326,9 +326,9 @@ module Kitchen
 
     def display_instance(instance)
       [
-        set_color(instance.name, :on_black),
-        set_color(instance.driver.name, :on_black),
-        set_color(format_provisioner(instance.driver[:provisioner]), :on_black),
+        set_color(instance.name, :white, :on_black),
+        set_color(instance.driver.name, :white, :on_black),
+        set_color(format_provisioner(instance.driver[:provisioner]), :white, :on_black),
         format_last_action(instance.last_action)
       ]
     end

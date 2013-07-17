@@ -102,7 +102,7 @@ describe Kitchen::Config do
       cheflike_suite(config.suites.first).data_bags_path.must_be_nil
     end
 
-    it "retuns a suite with a common data_bags_path set" do
+    it "returns a suite with a common data_bags_path set" do
       stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/data_bags"
@@ -111,13 +111,23 @@ describe Kitchen::Config do
         must_equal "/tmp/base/data_bags"
     end
 
-    it "retuns a suite with a suite-specific data_bags_path set" do
+    it "returns a suite with a suite-specific data_bags_path set" do
       stub_data!({ :suites => [{ :name => 'cool', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/cool/data_bags"
 
       cheflike_suite(config.suites.first).data_bags_path.
         must_equal "/tmp/base/cool/data_bags"
+    end
+
+    it "returns a suite with a custom data_bags_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :data_bags_path => 'shared/data_bags' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/data_bags"
+
+      cheflike_suite(config.suites.first).data_bags_path.
+        must_equal "/tmp/base/shared/data_bags"
     end
 
     it "returns a suite with nil for roles_path by default" do
@@ -142,6 +152,16 @@ describe Kitchen::Config do
 
       cheflike_suite(config.suites.first).roles_path.
         must_equal "/tmp/base/mysuite/roles"
+    end
+
+    it "returns a suite with a custom roles_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :roles_path => 'shared/roles' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/roles"
+
+      cheflike_suite(config.suites.first).roles_path.
+        must_equal "/tmp/base/shared/roles"
     end
   end
 
