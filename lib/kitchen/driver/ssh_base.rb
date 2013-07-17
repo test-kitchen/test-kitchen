@@ -201,12 +201,12 @@ module Kitchen
         exit_code
       end
 
-      def wait_for_sshd(hostname)
-        logger << "." until test_ssh(hostname)
+      def wait_for_sshd(ssh_args)
+        logger << "." until test_ssh(ssh_args)
       end
 
-      def test_ssh(hostname)
-        socket = TCPSocket.new(hostname, config[:port])
+      def test_ssh(ssh_args)
+        socket = TCPSocket.new(ssh_args[0], ssh_args[2][:port])
         IO.select([socket], nil, nil, 5)
       rescue SocketError, Errno::ECONNREFUSED,
         Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
