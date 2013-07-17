@@ -47,33 +47,12 @@ module Kitchen
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
         create_kitchen_yaml
-
-        rakedoc = <<-RAKE.gsub(/^ {10}/, '')
-
-          begin
-            require 'kitchen/rake_tasks'
-            Kitchen::RakeTasks.new
-          rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
-          end
-        RAKE
-        append_to_file("Rakefile", rakedoc) if init_rakefile?
-
-        thordoc = <<-THOR.gsub(/^ {10}/, '')
-
-          begin
-            require 'kitchen/thor_tasks'
-            Kitchen::ThorTasks.new
-          rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
-          end
-        THOR
-        append_to_file("Thorfile", thordoc) if init_thorfile?
-
+        prepare_rakefile if init_rakefile?
+        prepare_thorfile if init_thorfile?
         empty_directory "test/integration/default" if init_test_dir?
         append_to_gitignore(".kitchen/")
         append_to_gitignore(".kitchen.local.yml")
-        prepare_gemfile if File.exists?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
+        prepare_gemfile if init_gemfile?
         add_drivers
 
         if @display_bundle_msg
@@ -98,6 +77,11 @@ module Kitchen
         })
       end
 
+      def init_gemfile?
+        File.exists?(File.join(destination_root, "Gemfile")) ||
+          options[:create_gemfile]
+      end
+
       def init_rakefile?
         File.exists?(File.join(destination_root, "Rakefile")) &&
           not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
@@ -110,6 +94,32 @@ module Kitchen
 
       def init_test_dir?
         Dir.glob("test/integration/*").select { |d| File.directory?(d) }.empty?
+      end
+
+      def prepare_rakefile
+        rakedoc = <<-RAKE.gsub(/^ {10}/, '')
+
+          begin
+            require 'kitchen/rake_tasks'
+            Kitchen::RakeTasks.new
+          rescue LoadError
+            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+          end
+        RAKE
+        append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
+      end
+
+      def prepare_thorfile
+        thordoc = <<-THOR.gsub(/^ {10}/, '')
+
+          begin
+            require 'kitchen/thor_tasks'
+            Kitchen::ThorTasks.new
+          rescue LoadError
+            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+          end
+        THOR
+        append_to_file(File.join(destination_root, "Thorfile"), thordoc)
       end
 
       def append_to_gitignore(line)
