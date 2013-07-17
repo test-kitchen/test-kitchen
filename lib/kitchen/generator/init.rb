@@ -73,7 +73,7 @@ module Kitchen
         empty_directory "test/integration/default" if init_test_dir?
         append_to_gitignore(".kitchen/")
         append_to_gitignore(".kitchen.local.yml")
-        prepare_gemfile if File.exists?("Gemfile") || options[:create_gemfile]
+        prepare_gemfile if File.exists?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
         add_drivers
 
         if @display_bundle_msg
@@ -99,12 +99,12 @@ module Kitchen
       end
 
       def init_rakefile?
-        File.exists?("Rakefile") &&
+        File.exists?(File.join(destination_root, "Rakefile")) &&
           not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
       end
 
       def init_thorfile?
-        File.exists?("Thorfile") &&
+        File.exists?(File.join(destination_root, "Thorfile")) &&
           not_in_file?("Thorfile", %r{require 'kitchen/thor_tasks'})
       end
 
@@ -113,9 +113,9 @@ module Kitchen
       end
 
       def append_to_gitignore(line)
-        create_file(".gitignore") unless File.exists?(".gitignore")
+        create_file(".gitignore") unless File.exists?(File.join(destination_root, ".gitignore"))
 
-        if IO.readlines(".gitignore").grep(%r{^#{line}}).empty?
+        if IO.readlines(File.join(destination_root, ".gitignore")).grep(%r{^#{line}}).empty?
           append_to_file(".gitignore", "#{line}\n")
         end
       end
@@ -126,7 +126,7 @@ module Kitchen
       end
 
       def create_gemfile_if_missing
-        unless File.exists?("Gemfile")
+        unless File.exists?(File.join(destination_root, "Gemfile"))
           create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
         end
       end
@@ -144,7 +144,7 @@ module Kitchen
         display_warning = false
 
         Array(options[:driver]).each do |driver_gem|
-          if File.exists?("Gemfile") || options[:create_gemfile]
+          if File.exists?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
             add_driver_to_gemfile(driver_gem)
           else
             install_gem(driver_gem)
@@ -167,7 +167,7 @@ module Kitchen
       end
 
       def not_in_file?(filename, regexp)
-        IO.readlines(filename).grep(regexp).empty?
+        IO.readlines(File.join(destination_root, filename)).grep(regexp).empty?
       end
 
       def unbundlerize
