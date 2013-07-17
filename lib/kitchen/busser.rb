@@ -104,8 +104,14 @@ module Kitchen
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     def validate_options(suite_name)
-      raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
-      raise UserError, "Suite name invalid: 'helper' is a reserved directory name." if suite_name == 'helper'
+      if suite_name.nil?
+        raise ClientError, "Busser#new requires a suite_name"
+      end
+
+      if suite_name == 'helper'
+        raise UserError,
+          "Suite name invalid: 'helper' is a reserved directory name."
+      end
     end
 
     def plugins
