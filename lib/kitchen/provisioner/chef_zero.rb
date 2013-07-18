@@ -38,11 +38,12 @@ module Kitchen
         ruby_bin = "/opt/chef/embedded/bin"
 
         <<-PREPARE.gsub(/^ {10}/, '')
+          bash -c '
           if [ ! -f "#{ruby_bin}/chef-zero" ] ; then
             echo "-----> Installing chef-zero and knife-essentials gems"
             #{sudo("#{ruby_bin}/gem")} install \
               chef-zero knife-essentials --no-ri --no-rdoc
-          fi
+          fi'
         PREPARE
       end
 
