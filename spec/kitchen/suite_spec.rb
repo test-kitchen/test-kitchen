@@ -31,39 +31,45 @@ describe Kitchen::Suite do
     proc { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
   end
 
-  it "raises an ArgumentError if run_list is missing" do
-    opts.delete(:run_list)
-    proc { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
-  end
+  describe 'Cheflike' do
 
-  it "returns an empty Hash given no attributes" do
-    suite.attributes.must_equal Hash.new
-  end
+    let(:suite) { Kitchen::Suite.new(opts).extend(Kitchen::Suite::Cheflike) }
 
-  it "returns an empty Array given no excludes" do
-    suite.excludes.must_equal Array.new
-  end
+    it "returns an empty Hash given no attributes" do
+      suite.attributes.must_equal Hash.new
+    end
 
-  it "returns nil given no data_bags_path" do
-    suite.data_bags_path.must_be_nil
-  end
+    it "returns an empty Array given no excludes" do
+      suite.excludes.must_equal Array.new
+    end
 
-  it "returns nil given no roles_path" do
-    suite.roles_path.must_be_nil
-  end
+    it "returns nil given no data_bags_path" do
+      suite.data_bags_path.must_be_nil
+    end
 
-  it "returns nil given no encrypted_data_bag_secret_key_path" do
-    suite.encrypted_data_bag_secret_key_path.must_be_nil
-  end
+    it "returns nil given no roles_path" do
+      suite.roles_path.must_be_nil
+    end
 
-  it "returns attributes from constructor" do
-    opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
-      :roles_path => 'town', :encrypted_data_bag_secret_key_path => 'secret' })
-    suite.name.must_equal 'suitezy'
-    suite.run_list.must_equal ['doowah']
-    suite.attributes.must_equal({ :a => 'b' })
-    suite.data_bags_path.must_equal 'crazy'
-    suite.roles_path.must_equal 'town'
-    suite.encrypted_data_bag_secret_key_path.must_equal 'secret'
+    it "returns nil given no nodes_path" do
+      suite.nodes_path.must_be_nil
+    end
+
+    it "returns nil given no encrypted_data_bag_secret_key_path" do
+      suite.encrypted_data_bag_secret_key_path.must_be_nil
+    end
+
+    it "returns attributes from constructor" do
+      opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
+        :roles_path => 'town', :nodes_path => 'woowoo',
+        :encrypted_data_bag_secret_key_path => 'secret' })
+      suite.name.must_equal 'suitezy'
+      suite.run_list.must_equal ['doowah']
+      suite.attributes.must_equal({ :a => 'b' })
+      suite.data_bags_path.must_equal 'crazy'
+      suite.roles_path.must_equal 'town'
+      suite.nodes_path.must_equal 'woowoo'
+      suite.encrypted_data_bag_secret_key_path.must_equal 'secret'
+    end
   end
 end

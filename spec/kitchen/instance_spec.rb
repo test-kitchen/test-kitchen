@@ -98,65 +98,72 @@ describe Kitchen::Instance do
     end
   end
 
-  describe "#run_list" do
+  describe 'Cheflike' do
 
-    def combo(suite_list, platform_list)
-      opts[:suite] = Kitchen::Suite.new(
-        :name => 'suite', :run_list => suite_list
-      )
-      opts[:platform] = Kitchen::Platform.new(
-        :name => 'platform', :run_list => platform_list
-      )
-      Kitchen::Instance.new(opts)
+    describe "#run_list" do
+
+      def combo(suite_list, platform_list)
+        opts[:suite] = Kitchen::Suite.new(
+          :name => 'suite', :run_list => suite_list
+        ).extend(Kitchen::Suite::Cheflike)
+        opts[:platform] = Kitchen::Platform.new(
+          :name => 'platform', :run_list => platform_list
+        ).extend(Kitchen::Platform::Cheflike)
+        Kitchen::Instance.new(opts).extend(Kitchen::Instance::Cheflike)
+      end
+
+      it "combines the platform then suite run_lists" do
+        combo(%w{s1 s2}, %w{p1 p2}).run_list.must_equal %w{p1 p2 s1 s2}
+      end
+
+      it "uses the suite run_list only when platform run_list is empty" do
+        combo(%w{sa sb}, nil).run_list.must_equal %w{sa sb}
+      end
+
+      it "returns an emtpy Array if both run_lists are empty" do
+        combo([], nil).run_list.must_equal []
+      end
     end
 
-    it "combines the platform then suite run_lists" do
-      combo(%w{s1 s2}, %w{p1 p2}).run_list.must_equal %w{p1 p2 s1 s2}
+    describe "#attributes" do
+
+      def combo(suite_attrs, platform_attrs)
+        opts[:suite] = Kitchen::Suite.new(
+          :name => 'suite', :run_list => [], :attributes => suite_attrs
+        ).extend(Kitchen::Suite::Cheflike)
+        opts[:platform] = Kitchen::Platform.new(
+          :name => 'platform', :attributes => platform_attrs
+        ).extend(Kitchen::Platform::Cheflike)
+        Kitchen::Instance.new(opts).extend(Kitchen::Instance::Cheflike)
+      end
+
+      it "merges suite and platform hashes together" do
+        combo(
+          { :suite => { :s1 => 'sv1' } },
+          { :suite => { :p1 => 'pv1' }, :platform => 'pp' }
+        ).attributes.must_equal({
+            :suite => { :s1 => 'sv1', :p1 => 'pv1' },
+            :platform => 'pp'
+          })
+      end
+
+      it "merges suite values over platform values" do
+        combo(
+          { :common => { :c1 => 'xxx' } },
+          { :common => { :c1 => 'cv1', :c2 => 'cv2' } },
+        ).attributes.must_equal({
+            :common => { :c1 => 'xxx', :c2 => 'cv2' }
+          })
+      end
     end
 
-    it "uses the suite run_list only when platform run_list is empty" do
-      combo(%w{sa sb}, nil).run_list.must_equal %w{sa sb}
+    it "#dna combines attributes with the run_list" do
+      instance.extend(Kitchen::Instance::Cheflike)
+      instance.platform.extend(Kitchen::Platform::Cheflike)
+      instance.suite.extend(Kitchen::Suite::Cheflike)
+
+      instance.dna.must_equal({ :s => 'ss', :p => 'pp',
+        :run_list => ['platform_list', 'suite_list'] })
     end
-
-    it "returns an emtpy Array if both run_lists are empty" do
-      combo([], nil).run_list.must_equal []
-    end
-  end
-
-  describe "#attributes" do
-
-    def combo(suite_attrs, platform_attrs)
-      opts[:suite] = Kitchen::Suite.new(
-        :name => 'suite', :run_list => [], :attributes => suite_attrs
-      )
-      opts[:platform] = Kitchen::Platform.new(
-        :name => 'platform', :attributes => platform_attrs
-      )
-      Kitchen::Instance.new(opts)
-    end
-
-    it "merges suite and platform hashes together" do
-      combo(
-        { :suite => { :s1 => 'sv1' } },
-        { :suite => { :p1 => 'pv1' }, :platform => 'pp' }
-      ).attributes.must_equal({
-          :suite => { :s1 => 'sv1', :p1 => 'pv1' },
-          :platform => 'pp'
-        })
-    end
-
-    it "merges suite values over platform values" do
-      combo(
-        { :common => { :c1 => 'xxx' } },
-        { :common => { :c1 => 'cv1', :c2 => 'cv2' } },
-      ).attributes.must_equal({
-          :common => { :c1 => 'xxx', :c2 => 'cv2' }
-        })
-    end
-  end
-
-  it "#dna combines attributes with the run_list" do
-    instance.dna.must_equal({ :s => 'ss', :p => 'pp',
-      :run_list => ['platform_list', 'suite_list'] })
   end
 end

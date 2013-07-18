@@ -31,18 +31,25 @@ describe Kitchen::Platform do
     proc { Kitchen::Platform.new(opts) }.must_raise Kitchen::ClientError
   end
 
-  it "returns an empty Array given no run_list" do
-    platform.run_list.must_equal []
-  end
+  describe 'Cheflike' do
 
-  it "returns an empty Hash given no attributes" do
-    platform.attributes.must_equal Hash.new
-  end
+    let(:platform) do
+      Kitchen::Platform.new(opts).extend(Kitchen::Platform::Cheflike)
+    end
 
-  it "returns attributes from constructor" do
-    opts.merge!({ :run_list => ['a', 'b'], :attributes => { :c => 'd' } })
-    platform.name.must_equal 'plata'
-    platform.run_list.must_equal ['a', 'b']
-    platform.attributes.must_equal({ :c => 'd' })
+    it "returns an empty Array given no run_list" do
+      platform.run_list.must_equal []
+    end
+
+    it "returns an empty Hash given no attributes" do
+      platform.attributes.must_equal Hash.new
+    end
+
+    it "returns attributes from constructor" do
+      opts.merge!({ :run_list => ['a', 'b'], :attributes => { :c => 'd' } })
+      platform.name.must_equal 'plata'
+      platform.run_list.must_equal ['a', 'b']
+      platform.attributes.must_equal({ :c => 'd' })
+    end
   end
 end

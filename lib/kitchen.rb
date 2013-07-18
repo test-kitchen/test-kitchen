@@ -26,8 +26,9 @@ require 'kitchen/logging'
 require 'kitchen/shell_out'
 require 'kitchen/util'
 
+require 'kitchen/provisioner'
+require 'kitchen/provisioner/base'
 require 'kitchen/busser'
-require 'kitchen/chef_data_uploader'
 require 'kitchen/color'
 require 'kitchen/collection'
 require 'kitchen/config'
@@ -41,11 +42,13 @@ require 'kitchen/manager'
 require 'kitchen/metadata_chopper'
 require 'kitchen/platform'
 require 'kitchen/state_file'
+require 'kitchen/ssh'
 require 'kitchen/suite'
 require 'kitchen/version'
 
-# Let's start cookin'!
-# Kitchen is the toplevel module for test-kitchen.
+# Test Kitchen base module.
+#
+# @author Fletcher Nichol <fnichol@nichol.ca>
 module Kitchen
 
   class << self

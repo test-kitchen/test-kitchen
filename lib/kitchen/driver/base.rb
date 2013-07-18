@@ -22,23 +22,7 @@ module Kitchen
 
   module Driver
 
-    # Value object to track a shell command that will be passed to Kernel.exec
-    # for execution.
-    #
-    # @author Fletcher Nichol <fnichol@nichol.ca>
-    class LoginCommand
-
-      attr_reader :cmd_array, :options
-
-      def initialize(cmd_array, options = {})
-        @cmd_array = cmd_array
-        @options = options
-      end
-    end
-
-    # Base class for a driver. A driver is responsible for carrying out the
-    # lifecycle activities of an instance, such as creating, converging, and
-    # destroying an instance.
+    # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
@@ -60,6 +44,13 @@ module Kitchen
         Array(self.class.validations).each do |tuple|
           tuple.last.call(tuple.first, config[tuple.first])
         end
+      end
+
+      # Returns the name of this driver, suitable for display in a CLI.
+      #
+      # @return [String] name of this driver
+      def name
+        self.class.name.split('::').last
       end
 
       # Provides hash-like access to configuration keys.
