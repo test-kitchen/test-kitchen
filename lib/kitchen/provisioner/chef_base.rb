@@ -154,7 +154,7 @@ module Kitchen
         elsif File.exists?(metadata_rb)
           cp_this_cookbook
         else
-          FileUtils.rmtree
+          FileUtils.rmtree(tmpdir)
           fatal("Berksfile, Cheffile, cookbooks/, or metadata.rb" +
             " must exist in #{kitchen_root}")
           raise UserError, "Cookbooks could not be found"
