@@ -30,7 +30,7 @@ module Kitchen
       include ShellOut
       include Logging
 
-      attr_writer :instance
+      attr_accessor :instance
 
       class << self
         attr_reader :serial_actions
@@ -58,7 +58,9 @@ module Kitchen
       # @param attr [Object] configuration key
       # @return [Object] value at configuration key
       def [](attr)
-        config[attr]
+        proc_or_val = config[attr]
+
+        proc_or_val.respond_to?(:call) ? proc_or_val.call(self) : proc_or_val
       end
 
       # Creates an instance.
@@ -112,7 +114,7 @@ module Kitchen
 
       protected
 
-      attr_reader :config, :instance
+      attr_reader :config
 
       ACTION_METHODS = %w{create converge setup verify destroy}.
         map(&:to_sym).freeze
@@ -171,8 +173,8 @@ module Kitchen
         end
       end
 
-      def self.default_config(attr, value)
-        defaults[attr] = value
+      def self.default_config(attr, value = nil, &block)
+        defaults[attr] = block_given? ? block : value
       end
 
       def self.validations
