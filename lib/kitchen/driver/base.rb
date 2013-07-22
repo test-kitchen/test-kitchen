@@ -45,7 +45,7 @@ module Kitchen
 
       def validate_config!
         Array(self.class.validations).each do |tuple|
-          tuple.last.call(tuple.first, config[tuple.first])
+          tuple.last.call(tuple.first, config[tuple.first], self)
         end
       end
 
@@ -186,9 +186,10 @@ module Kitchen
         @validations = [] if @validations.nil?
         if ! block_given?
           klass = self
-          block = lambda do |attr, value|
+          block = lambda do |attr, value, driver|
             if value.nil? || value.to_s.empty?
-              raise UserError, "#{klass}#config[:#{attr}] cannot be blank"
+              attribute = "#{klass}#{driver.instance.to_str}#config[:#{attr}]"
+              raise UserError, "#{attribute} cannot be blank"
             end
           end
         end
