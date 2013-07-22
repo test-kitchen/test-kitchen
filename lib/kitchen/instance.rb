@@ -67,6 +67,7 @@ module Kitchen
       @logger = logger.is_a?(Proc) ? logger.call(name) : logger
 
       @driver.instance = self
+      @driver.validate_config!
       setup_driver_mutex
     end
 

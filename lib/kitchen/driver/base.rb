@@ -41,6 +41,9 @@ module Kitchen
         self.class.defaults.each do |attr, value|
           @config[attr] = value unless @config[attr]
         end
+      end
+
+      def validate_config!
         Array(self.class.validations).each do |tuple|
           tuple.last.call(tuple.first, config[tuple.first])
         end
