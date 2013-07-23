@@ -1,3 +1,14 @@
+## 0.6.0 / 2013-07-23
+
+### Bug fixes
+
+* Pull request [#8][]: Use private ip if the public ip is `nil`. ([@dissonanz][])
+
+### Improvements
+
+* Pull request [#9][]: Match access and secret key env vars in example kitchen config with CLI tools' env vars. ([@juliandunn][])
+
+
 ## 0.5.1 / 2013-05-23
 
 ### New features
@@ -22,7 +33,10 @@
 [#2]: https://github.com/opscode/kitchen-ec2/issues/2
 [#5]: https://github.com/opscode/kitchen-ec2/issues/5
 [#7]: https://github.com/opscode/kitchen-ec2/issues/7
+[#8]: https://github.com/opscode/kitchen-ec2/issues/8
+[#9]: https://github.com/opscode/kitchen-ec2/issues/9
 [@dissonanz]: https://github.com/dissonanz
 [@fnichol]: https://github.com/fnichol
 [@halcyonCorsair]: https://github.com/halcyonCorsair
+[@juliandunn]: https://github.com/juliandunn
 [@mattray]: https://github.com/mattray
