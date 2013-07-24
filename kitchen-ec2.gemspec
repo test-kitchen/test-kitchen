@@ -6,6 +6,7 @@ require 'kitchen/driver/ec2_version.rb'
 Gem::Specification.new do |gem|
   gem.name          = "kitchen-ec2"
   gem.version       = Kitchen::Driver::EC2_VERSION
+  gem.license       = 'Apache 2.0'
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
   gem.description   = "Kitchen::Driver::Ec2 - A Test Kitchen Driver for Ec2"
