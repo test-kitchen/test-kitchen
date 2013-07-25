@@ -1,3 +1,10 @@
+## 1.0.0.beta.2 / 2013-07-24
+
+### Bug fixes
+
+* Fix backwards compatability regression in `SSHBase#wait_for_sshd`. ([@fnichol][])
+
+
 ## 1.0.0.beta.1 / 2013-07-23
 
 ### New features
