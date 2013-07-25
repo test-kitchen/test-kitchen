@@ -122,8 +122,8 @@ module Kitchen
         raise ActionFailed, ex.message
       end
 
-      def wait_for_sshd(*ssh_args)
-        SSH.new(*ssh_args).wait
+      def wait_for_sshd(hostname, username = nil, options = {})
+        SSH.new(hostname, username, options).wait
       end
     end
   end
