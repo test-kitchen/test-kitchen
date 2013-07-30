@@ -24,7 +24,7 @@ and run the `bundle` command to install:
 
 This will expose the `test-kitchen` CLI. Run `bundle exec kitchen init` to get started:
 
-    $ kitchen init
+    $ bundle exec kitchen init
 
 You will be prompted with a series of questions. In this guide, we
 will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant).
