@@ -28,6 +28,8 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Busser
 
+    attr_reader :test_root
+
     # Constructs a new Busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
@@ -35,11 +37,12 @@ module Kitchen
     # @param [Hash] opts optional configuration
     # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
-    def initialize(suite_name, opts = { :use_sudo => true })
+    def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
+      @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
       @suite_name = suite_name
-      @use_sudo = opts[:use_sudo]
+      @use_sudo = opts.fetch(:use_sudo, true)
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -169,10 +172,6 @@ module Kitchen
 
     def busser_gem
       "busser"
-    end
-
-    def test_root
-      DEFAULT_TEST_ROOT
     end
   end
 end

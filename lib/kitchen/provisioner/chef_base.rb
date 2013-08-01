@@ -279,7 +279,7 @@ module Kitchen
         end
 
         Kitchen.mutex.synchronize do
-          env = Librarian::Chef::Environment.new
+          env = Librarian::Chef::Environment.new(:project_path => kitchen_root)
           env.config_db.local["path"] = tmpbooks_dir
           Librarian::Action::Resolve.new(env).run
           Librarian::Action::Install.new(env).run
