@@ -86,7 +86,7 @@ module Kitchen
     end
 
     def wait
-      logger.log("Waiting for #{hostname}:#{port}...") until test_ssh
+      logger.info("Waiting for #{hostname}:#{port}...") until test_ssh
     end
 
     def login_command
