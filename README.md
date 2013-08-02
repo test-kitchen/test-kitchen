@@ -7,54 +7,36 @@ A convergence integration test harness for configuration management systems.
 
 # Getting started
 
-
 Project Setup
 -------------
 
-In your `Gemfile`, add `test-kitchen` as a
-dependency:
-
-```ruby
-gem 'test-kitchen', '~> 1.0.0.alpha'
-```
-
-and run the `bundle` command to install:
-
-    $ bundle install
-
-This will expose the `test-kitchen` CLI. Run `bundle exec kitchen init` to get started:
-
-    $ kitchen init
-
-You will be prompted with a series of questions. In this guide, we
-will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant).
+Install the `test-kitchen` gem. `--pre` is necessary because Test Kitchen 1.0.0 has not been released yet.
 
 ```text
-$ bundle exec kitchen init
-      create  .kitchen.yml
-      append  Rakefile
-      create  test/integration/default
-      append  .gitignore
-      append  .gitignore
-      Add a Driver plugin to your Gemfile?
-      (y/n)> y
-      Enter gem name, `list', or `skip'>
-      kitchen-vagrant
-      append  Gemfile
-      You must run `bundle install' to fetch any new gems.
+$ gem install test-kitchen --pre
 ```
 
-Run the `bundle` command again to install the new vagrant driver:
+This will expose the `test-kitchen` CLI. Run `kitchen init` to get started:
 
-    $ bundle install
+```text
+$ kitchen init
+      create  .kitchen.yml
+```
+In this guide, we
+will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant),
+so install that:
+
+```text
+$ gem install kitchen-vagrant
+```
 
 Open up the `.kitchen.yml` file created in the root of your
-repository.
+repository and modify it if you wish.
 
 Now, it is time to get testing. Use the `--parallel` option to run
 your tests in parallel. Trust us, it's faster!
 
-    $ bundle exec kitchen test
+    $ kitchen test
 
 ### Helpful Switches
 
