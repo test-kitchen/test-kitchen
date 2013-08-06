@@ -28,8 +28,6 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Busser
 
-    attr_reader :test_root
-
     # Constructs a new Busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
@@ -105,6 +103,8 @@ module Kitchen
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
     DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
+
+    attr_reader :test_root
 
     def validate_options(suite_name)
       if suite_name.nil?
