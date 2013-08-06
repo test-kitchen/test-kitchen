@@ -181,7 +181,7 @@ module Kitchen
       end
 
       def unbundlerize
-        keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
+        keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w[RUBYOPT]
 
         keys.each { |key| ENV["__#{key}"] = ENV[key] ; ENV.delete(key) }
         yield
