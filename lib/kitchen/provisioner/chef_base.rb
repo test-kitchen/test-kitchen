@@ -237,7 +237,7 @@ module Kitchen
             " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
         cb_path = File.join(tmpbooks_dir, cb_name)
-        glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*," +
+        glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*,definitions," +
           "attributes,files,libraries,providers,recipes,resources,templates}")
 
         FileUtils.mkdir_p(cb_path)
