@@ -40,9 +40,6 @@ module Kitchen
     # Default provisioner to use
     DEFAULT_PROVISIONER = "chef_solo".freeze
 
-    # Default base path which may contain `data_bags/` directories
-    DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
-
     # Creates a new configuration.
     #
     # @param [Hash] options configuration
@@ -54,7 +51,7 @@ module Kitchen
     def initialize(options = {})
       @loader         = options[:loader] || Kitchen::Loader::YAML.new
       @kitchen_root   = options[:kitchen_root] || Dir.pwd
-      @test_base_path = options[:test_base_path] || DEFAULT_TEST_BASE_PATH
+      @test_base_path = options[:test_base_path] || default_test_base_path
       @log_level      = options[:log_level] || Kitchen::DEFAULT_LOG_LEVEL
       @supervised     = options[:supervised]
     end
@@ -257,6 +254,10 @@ module Kitchen
       data.select do |key, value|
         [:driver_plugin, :driver_config, :provisioner].include?(key)
       end
+    end
+
+    def default_test_base_path
+      File.join(kitchen_root, 'test/integration')
     end
   end
 end
