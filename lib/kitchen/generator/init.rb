@@ -180,12 +180,8 @@ module Kitchen
         IO.readlines(File.join(destination_root, filename)).grep(regexp).empty?
       end
 
-      def unbundlerize
-        keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
-
-        keys.each { |key| ENV["__#{key}"] = ENV[key] ; ENV.delete(key) }
-        yield
-        keys.each { |key| ENV[key] = ENV.delete("__#{key}") }
+      def unbundlerize(&block)
+        Bundler.with_clean_env(&block)
       end
     end
   end
