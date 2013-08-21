@@ -93,43 +93,75 @@ describe Kitchen::Config do
       config.suites.must_equal []
     end
 
-    it "returns a suite with nil for data_bags_path by default" do
-      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
-      config.suites.first.data_bags_path.must_be_nil
+    def cheflike_suite(suite)
+      suite.extend(Kitchen::Suite::Cheflike)
     end
 
-    it "retuns a suite with a common data_bags_path set" do
+    it "returns a suite with nil for data_bags_path by default" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
+      cheflike_suite(config.suites.first).data_bags_path.must_be_nil
+    end
+
+    it "returns a suite with a common data_bags_path set" do
       stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/data_bags"
 
-      config.suites.first.data_bags_path.must_equal "/tmp/base/data_bags"
+      cheflike_suite(config.suites.first).data_bags_path.
+        must_equal "/tmp/base/data_bags"
     end
 
-    it "retuns a suite with a suite-specific data_bags_path set" do
+    it "returns a suite with a suite-specific data_bags_path set" do
       stub_data!({ :suites => [{ :name => 'cool', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/cool/data_bags"
-      config.suites.first.data_bags_path.must_equal "/tmp/base/cool/data_bags"
+
+      cheflike_suite(config.suites.first).data_bags_path.
+        must_equal "/tmp/base/cool/data_bags"
+    end
+
+    it "returns a suite with a custom data_bags_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :data_bags_path => 'shared/data_bags' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/data_bags"
+
+      cheflike_suite(config.suites.first).data_bags_path.
+        must_equal "/tmp/base/shared/data_bags"
     end
 
     it "returns a suite with nil for roles_path by default" do
       stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
-      config.suites.first.roles_path.must_be_nil
+
+      cheflike_suite(config.suites.first).roles_path.must_be_nil
     end
 
     it "returns a suite with a common roles_path set" do
       stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/roles"
-      config.suites.first.roles_path.must_equal "/tmp/base/roles"
+
+      cheflike_suite(config.suites.first).roles_path.
+        must_equal "/tmp/base/roles"
     end
 
     it "returns a suite with a suite-specific roles_path set" do
       stub_data!({ :suites => [{ :name => 'mysuite', :run_list => [] }] })
       config.test_base_path = "/tmp/base"
       FileUtils.mkdir_p "/tmp/base/mysuite/roles"
-      config.suites.first.roles_path.must_equal "/tmp/base/mysuite/roles"
+
+      cheflike_suite(config.suites.first).roles_path.
+        must_equal "/tmp/base/mysuite/roles"
+    end
+
+    it "returns a suite with a custom roles_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :roles_path => 'shared/roles' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/roles"
+
+      cheflike_suite(config.suites.first).roles_path.
+        must_equal "/tmp/base/shared/roles"
     end
   end
 

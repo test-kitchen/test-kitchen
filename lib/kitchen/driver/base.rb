@@ -22,23 +22,7 @@ module Kitchen
 
   module Driver
 
-    # Value object to track a shell command that will be passed to Kernel.exec
-    # for execution.
-    #
-    # @author Fletcher Nichol <fnichol@nichol.ca>
-    class LoginCommand
-
-      attr_reader :cmd_array, :options
-
-      def initialize(cmd_array, options = {})
-        @cmd_array = cmd_array
-        @options = options
-      end
-    end
-
-    # Base class for a driver. A driver is responsible for carrying out the
-    # lifecycle activities of an instance, such as creating, converging, and
-    # destroying an instance.
+    # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
@@ -46,20 +30,30 @@ module Kitchen
       include ShellOut
       include Logging
 
-      attr_writer :instance
+      attr_accessor :instance
 
       class << self
         attr_reader :serial_actions
       end
 
       def initialize(config = {})
-        @config = config
+        @config = LazyDriverHash.new(config, self)
         self.class.defaults.each do |attr, value|
           @config[attr] = value unless @config[attr]
         end
+      end
+
+      def validate_config!
         Array(self.class.validations).each do |tuple|
-          tuple.last.call(tuple.first, config[tuple.first])
+          tuple.last.call(tuple.first, config[tuple.first], self)
         end
+      end
+
+      # Returns the name of this driver, suitable for display in a CLI.
+      #
+      # @return [String] name of this driver
+      def name
+        self.class.name.split('::').last
       end
 
       # Provides hash-like access to configuration keys.
@@ -121,7 +115,7 @@ module Kitchen
 
       protected
 
-      attr_reader :config, :instance
+      attr_reader :config
 
       ACTION_METHODS = %w{create converge setup verify destroy}.
         map(&:to_sym).freeze
@@ -159,10 +153,11 @@ module Kitchen
       end
 
       def busser
+        test_root = File.join(config[:kitchen_root], 'test/integration')
         @busser ||= begin
           raise ClientError, "Instance must be set for Driver" if instance.nil?
 
-          Busser.new(instance.suite.name)
+          Busser.new(instance.suite.name, :test_root => test_root)
         end
       end
 
@@ -180,8 +175,8 @@ module Kitchen
         end
       end
 
-      def self.default_config(attr, value)
-        defaults[attr] = value
+      def self.default_config(attr, value = nil, &block)
+        defaults[attr] = block_given? ? block : value
       end
 
       def self.validations
@@ -192,9 +187,10 @@ module Kitchen
         @validations = [] if @validations.nil?
         if ! block_given?
           klass = self
-          block = lambda do |attr, value|
+          block = lambda do |attr, value, driver|
             if value.nil? || value.to_s.empty?
-              raise UserError, "#{klass}#config[:#{attr}] cannot be blank"
+              attribute = "#{klass}#{driver.instance.to_str}#config[:#{attr}]"
+              raise UserError, "#{attribute} cannot be blank"
             end
           end
         end
@@ -210,6 +206,28 @@ module Kitchen
 
         @serial_actions ||= []
         @serial_actions += methods
+      end
+
+      # A modifed Hash object that may contain procs as a value which must be
+      # executed in the context of a Driver object.
+      #
+      # @author Fletcher Nichol <fnichol@nichol.ca>
+      class LazyDriverHash < SimpleDelegator
+
+        def initialize(obj, driver)
+          @driver = driver
+          super(obj)
+        end
+
+        def [](key)
+          proc_or_val = __getobj__[key]
+
+          if proc_or_val.respond_to?(:call)
+            proc_or_val.call(@driver)
+          else
+            proc_or_val
+          end
+        end
       end
     end
   end

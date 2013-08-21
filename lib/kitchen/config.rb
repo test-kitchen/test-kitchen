@@ -37,8 +37,8 @@ module Kitchen
     # Default driver plugin to use
     DEFAULT_DRIVER_PLUGIN = "dummy".freeze
 
-    # Default base path which may contain `data_bags/` directories
-    DEFAULT_TEST_BASE_PATH = File.join(Dir.pwd, 'test/integration').freeze
+    # Default provisioner to use
+    DEFAULT_PROVISIONER = "chef_solo".freeze
 
     # Creates a new configuration.
     #
@@ -51,7 +51,7 @@ module Kitchen
     def initialize(options = {})
       @loader         = options[:loader] || Kitchen::Loader::YAML.new
       @kitchen_root   = options[:kitchen_root] || Dir.pwd
-      @test_base_path = options[:test_base_path] || DEFAULT_TEST_BASE_PATH
+      @test_base_path = options[:test_base_path] || default_test_base_path
       @log_level      = options[:log_level] || Kitchen::DEFAULT_LOG_LEVEL
       @supervised     = options[:supervised]
     end
@@ -94,8 +94,9 @@ module Kitchen
 
     def new_suite(hash)
       path_hash = {
-        :data_bags_path => calculate_path("data_bags", hash[:name]),
-        :roles_path     => calculate_path("roles", hash[:name]),
+        :data_bags_path => calculate_path("data_bags", hash[:name], hash[:data_bags_path]),
+        :roles_path     => calculate_path("roles", hash[:name], hash[:roles_path]),
+        :nodes_path     => calculate_path("nodes", hash[:name], hash[:nodes_path]),
       }
 
       Suite.new(hash.rmerge(path_hash))
@@ -108,6 +109,7 @@ module Kitchen
     def new_driver(hash)
       hash[:driver_config] ||= Hash.new
       hash[:driver_config][:kitchen_root] = kitchen_root
+      hash[:driver_config][:provisioner] = hash[:provisioner]
 
       Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
     end
@@ -126,13 +128,38 @@ module Kitchen
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
       driver = new_driver(merge_driver_hash(platform_hash))
+      provisioner = driver[:provisioner]
 
-      Instance.new(
-        :suite    => suite,
-        :platform => platform,
+      instance = Instance.new(
+        :suite    => extend_suite(suite, provisioner),
+        :platform => extend_platform(platform, provisioner),
         :driver   => driver,
         :logger   => new_instance_logger(index)
       )
+      extend_instance(instance, provisioner)
+    end
+
+    def extend_suite(suite, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then suite.dup.extend(Suite::Cheflike)
+      when /^puppet_/ then suite.dup.extend(Suite::Puppetlike)
+      else suite.dup
+      end
+    end
+
+    def extend_platform(platform, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then platform.dup.extend(Platform::Cheflike)
+      else platform.dup
+      end
+    end
+
+    def extend_instance(instance, provisioner)
+      case provisioner.to_s.downcase
+      when /^chef_/ then instance.extend(Instance::Cheflike)
+      when /^puppet_/ then instance.extend(Instance::Puppetlike)
+      else instance
+      end
     end
 
     def actor_registry(instance)
@@ -171,7 +198,9 @@ module Kitchen
     def platform_driver_hash(platform_name)
       h = data[:platforms].find { |p| p[:name] == platform_name } || Hash.new
 
-      h.select { |key, value| [:driver_plugin, :driver_config].include?(key) }
+      h.select do |key, value|
+        [:driver_plugin, :driver_config, :provisioner].include?(key)
+      end
     end
 
     def new_instance_logger(index)
@@ -194,12 +223,15 @@ module Kitchen
       default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
     end
 
-    def calculate_path(path, suite_name)
+    def calculate_path(path, suite_name, local_path)
+      custom_path     = File.join(kitchen_root, local_path) if local_path
       suite_path      = File.join(test_base_path, suite_name, path)
       common_path     = File.join(test_base_path, path)
       top_level_path  = File.join(Dir.pwd, path)
 
-      if File.directory?(suite_path)
+      if custom_path and File.directory?(custom_path)
+        custom_path
+      elsif File.directory?(suite_path)
         suite_path
       elsif File.directory?(common_path)
         common_path
@@ -211,13 +243,21 @@ module Kitchen
     end
 
     def default_driver_hash
-      { :driver_plugin => DEFAULT_DRIVER_PLUGIN, :driver_config => {} }
+      {
+        :driver_plugin  => DEFAULT_DRIVER_PLUGIN,
+        :driver_config  => {},
+        :provisioner    => DEFAULT_PROVISIONER
+      }
     end
 
     def common_driver_hash
       data.select do |key, value|
-        [:driver_plugin, :driver_config].include?(key)
+        [:driver_plugin, :driver_config, :provisioner].include?(key)
       end
+    end
+
+    def default_test_base_path
+      File.join(kitchen_root, 'test/integration')
     end
   end
 end

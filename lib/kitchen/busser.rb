@@ -35,11 +35,12 @@ module Kitchen
     # @param [Hash] opts optional configuration
     # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
-    def initialize(suite_name, opts = { :use_sudo => true })
+    def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
+      @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
       @suite_name = suite_name
-      @use_sudo = opts[:use_sudo]
+      @use_sudo = opts.fetch(:use_sudo, true)
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -80,7 +81,8 @@ module Kitchen
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           bash -c '
           #{sudo}#{busser_bin} suite cleanup
-          #{local_suite_files.map { |f| stream_file(f, remote_file(f)) }.join}'
+          #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
+          #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
         INSTALL_CMD
       end
     end
@@ -102,8 +104,17 @@ module Kitchen
     DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
+    attr_reader :test_root
+
     def validate_options(suite_name)
-      raise ClientError, "Busser#new requires a suite_name" if suite_name.nil?
+      if suite_name.nil?
+        raise ClientError, "Busser#new requires a suite_name"
+      end
+
+      if suite_name == 'helper'
+        raise UserError,
+          "Suite name invalid: 'helper' is a reserved directory name."
+      end
     end
 
     def plugins
@@ -118,8 +129,12 @@ module Kitchen
       end
     end
 
-    def remote_file(file)
-      local_prefix = File.join(test_root, @suite_name)
+    def helper_files
+      Dir.glob(File.join(test_root, "helpers", "*/**/*"))
+    end
+
+    def remote_file(file, dir)
+      local_prefix = File.join(test_root, dir)
       "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
@@ -157,10 +172,6 @@ module Kitchen
 
     def busser_gem
       "busser"
-    end
-
-    def test_root
-      DEFAULT_TEST_ROOT
     end
   end
 end

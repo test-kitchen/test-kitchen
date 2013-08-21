@@ -1,3 +1,46 @@
+## 1.0.0.beta.2 / 2013-07-24
+
+### Bug fixes
+
+* Fix backwards compatability regression in `SSHBase#wait_for_sshd`. ([@fnichol][])
+
+
+## 1.0.0.beta.1 / 2013-07-23
+
+### New features
+
+* Pull request [#128][]: [Breaking] Introduce Provisioners to support chef-client (chef-zero), puppet-apply, and puppet-agent. ([@fnichol][])
+* Pull request [#128][]: Add `chef_zero` provisioner type as an alternative to the iplicit default `chef_solo` provisioner. ([@fnichol][])
+* Pull request [#171][]: Support computed default values for Driver authors (see pull request for light documentation). ([@fnichol][])
+* Pull request [#161][], issue [#129][]: Allow custom paths for roles, data\_bags, and nodes by setting `roles_path`, `data_bags_path`, and `nodes_path`. ([@gondoi][])
+* Pull request [#134][]: Add cross suite helpers. ([@rteabeault][])
+
+### Bug fixes
+
+* Pull request [#122][]: Adding missing sudo calls to busser. ([@adamhjk][])
+* Pull request [#154][], issue [#163][]: Set a more sane default PATH for installing Chef. ([@jtimberman][])
+* Issue [#153][]: Assign Celluloid.logger to Kitchen.logger which won't open a file. ([@fnichol][])
+* Pull request [#155][], issue [#154][]: Setting :on_black when your default terminal text color is black results in unreadable (black on black) text. Or: The NSA censors your VM names when using a terminal with a light background. ([@mconigliaro][])
+* Pull request [#140][]: Make `kitchen init` generator safe to run when given an explicit `:destination_root`. ([@reset][])
+* Pull request [#170][]: Add asterisk to wait_for_sshd argument. ([@saketoba][])
+* Pull request [#136][]: Fixes bundler ref for 1.0. ([@patcon][])
+* Pull request [#142][], issue [#137][]: Require a safe\_yaml release with correct permissions. ([@josephholsten][])
+
+### Improvements
+
+* Pull request [#128][]: Add Driver and Provisioner columns to `kitchen list` output. ([@fnichol][])
+* Pull request [#124][], issue [#132][]: Aggressively filter "non-cookbook" files before uploading to instances. ([@fnichol][])
+* Pull request [#128][]: Suite run_list is no longer required. ([@fnichol][])
+* Pull request [#123][]: Swap cookbook resolution strategy from shell outs to using Ruby APIs. ([@fnichol][])
+* Pull request [#128][]: SSH and SCP commands share a single connection when transfering Chef artifacts to an instance (via the new `Kitchen::SSH` class). ([@fnichol][])
+* Pull request [#128][]: Add more helpful output logging (info and debug) when creating and uploading the sandbox directory of Chef artifacts. ([@fnichol][])
+* Issue [#97][]: Remove red as a candidate instance color. ([@fnichol][])
+* Fix ANSI color codes for bright colors. ([@fnichol][])
+* Pull request [#172][]: [Breaking] Update signature of Driver.required_config block. ([@fnichol][])
+* Pull request [#152][], issue [#151][]: Update the bucket name for Opscode's Bento Boxes. ([@jtimberman][])
+* Pull request [#131][]: Use ssh_args for test_ssh. ([@jonsmorrow][])
+
+
 ## 1.0.0.alpha.7 / 2013-05-23
 
 ### New features
@@ -139,6 +182,7 @@ The initial release.
 [#84]: https://github.com/opscode/test-kitchen/issues/84
 [#90]: https://github.com/opscode/test-kitchen/issues/90
 [#92]: https://github.com/opscode/test-kitchen/issues/92
+[#97]: https://github.com/opscode/test-kitchen/issues/97
 [#98]: https://github.com/opscode/test-kitchen/issues/98
 [#99]: https://github.com/opscode/test-kitchen/issues/99
 [#102]: https://github.com/opscode/test-kitchen/issues/102
@@ -152,17 +196,46 @@ The initial release.
 [#116]: https://github.com/opscode/test-kitchen/issues/116
 [#119]: https://github.com/opscode/test-kitchen/issues/119
 [#120]: https://github.com/opscode/test-kitchen/issues/120
+[#122]: https://github.com/opscode/test-kitchen/issues/122
+[#123]: https://github.com/opscode/test-kitchen/issues/123
+[#124]: https://github.com/opscode/test-kitchen/issues/124
+[#128]: https://github.com/opscode/test-kitchen/issues/128
+[#129]: https://github.com/opscode/test-kitchen/issues/129
+[#131]: https://github.com/opscode/test-kitchen/issues/131
+[#132]: https://github.com/opscode/test-kitchen/issues/132
+[#134]: https://github.com/opscode/test-kitchen/issues/134
+[#136]: https://github.com/opscode/test-kitchen/issues/136
+[#137]: https://github.com/opscode/test-kitchen/issues/137
+[#140]: https://github.com/opscode/test-kitchen/issues/140
+[#142]: https://github.com/opscode/test-kitchen/issues/142
+[#151]: https://github.com/opscode/test-kitchen/issues/151
+[#152]: https://github.com/opscode/test-kitchen/issues/152
+[#153]: https://github.com/opscode/test-kitchen/issues/153
+[#154]: https://github.com/opscode/test-kitchen/issues/154
+[#155]: https://github.com/opscode/test-kitchen/issues/155
+[#161]: https://github.com/opscode/test-kitchen/issues/161
+[#163]: https://github.com/opscode/test-kitchen/issues/163
+[#170]: https://github.com/opscode/test-kitchen/issues/170
+[#171]: https://github.com/opscode/test-kitchen/issues/171
+[#172]: https://github.com/opscode/test-kitchen/issues/172
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arunthampi]: https://github.com/arunthampi
 [@bryanwb]: https://github.com/bryanwb
 [@calavera]: https://github.com/calavera
 [@fnichol]: https://github.com/fnichol
+[@gondoi]: https://github.com/gondoi
 [@grahamc]: https://github.com/grahamc
+[@jonsmorrow]: https://github.com/jonsmorrow
+[@josephholsten]: https://github.com/josephholsten
 [@jtimberman]: https://github.com/jtimberman
 [@manul]: https://github.com/manul
 [@mattray]: https://github.com/mattray
+[@mconigliaro]: https://github.com/mconigliaro
+[@patcon]: https://github.com/patcon
 [@reset]: https://github.com/reset
+[@rteabeault]: https://github.com/rteabeault
+[@saketoba]: https://github.com/saketoba
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
 [@stevendanna]: https://github.com/stevendanna

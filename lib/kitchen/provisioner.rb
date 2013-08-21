@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,33 +20,31 @@ require 'thor/util'
 
 module Kitchen
 
-  # A driver is responsible for carrying out the lifecycle activities of an
-  # instance, such as creating, converging, and destroying an instance.
+  # A provisioner is responsible for generating the commands necessary to
+  # install set up and use a configuration management tool such as Chef and
+  # Puppet.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
-  module Driver
+  module Provisioner
 
-    # Returns an instance of a driver given a plugin type string.
+    # Returns an instance of a provisioner given a plugin type string.
     #
-    # @param plugin [String] a driver plugin type, which will be constantized
-    # @return [Driver::Base] a driver instance
-    # @raise [ClientError] if a driver instance could not be created
-    # @raise [UserError] if the driver's dependencies could not be met
-    def self.for_plugin(plugin, config)
-      first_load = require("kitchen/driver/#{plugin}")
+    # @param plugin [String] a provisioner plugin type, to be constantized
+    # @return [Provisioner::Base] a driver instance
+    # @raise [ClientError] if a provisioner instance could not be created
+    def self.for_plugin(plugin, instance, config)
+      require("kitchen/provisioner/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
       klass = self.const_get(str_const)
-      object = klass.new(config)
-      object.verify_dependencies if first_load
-      object
+      klass.new(instance, config)
     rescue UserError
       raise
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' driver from the load path." +
-          " Please ensure that your driver is installed as a gem or included" +
-          " in your Gemfile if using Bundler."
+        "Could not load the '#{plugin}' provisioner from the load path." +
+          " Please ensure that your provisioner is installed as a gem or" +
+          " included in your Gemfile if using Bundler."
     end
   end
 end

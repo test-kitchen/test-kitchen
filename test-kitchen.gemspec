@@ -26,7 +26,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'net-ssh'
   gem.add_dependency 'net-scp'
   gem.add_dependency 'mixlib-shellout'
-  gem.add_dependency 'safe_yaml'
+  # pending resolution of https://github.com/dtao/safe_yaml/issues/43
+  gem.add_dependency 'safe_yaml', '= 0.9.3'
 
   gem.add_development_dependency 'bundler', '~> 1.3'
   gem.add_development_dependency 'rake'
