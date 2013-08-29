@@ -1,3 +1,14 @@
+## 0.7.0 / 2013-08-29
+
+### Bug fixes
+
+* Pull request #13: #wait_for_ssh takes 2 arguments. (@dysinger)
+
+### Improvements
+
+* Support computed defaults for a select list of pre-determined platforms (see readme for quick example). ([@fnichol][])~
+
+
 ## 0.6.0 / 2013-07-23
 
 ### Bug fixes
