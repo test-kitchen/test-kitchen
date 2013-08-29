@@ -51,9 +51,13 @@ module Kitchen
     desc "list [(all|<REGEX>)]", "List all instances"
     method_option :bare, :aliases => "-b", :type => :boolean,
       :desc => "List the name of each instance only, one per line"
+    method_option :debug, :aliases => "-d", :type => :boolean,
+      :desc => "Show computed driver configuration for each instance"
     def list(*args)
       result = parse_subcommand(args.first)
-      if options[:bare]
+      if options[:debug]
+        Array(result).each { |i| debug_instance(i) }
+      elsif options[:bare]
         say Array(result).map { |i| i.name }.join("\n")
       else
         list_table(result)
@@ -331,6 +335,22 @@ module Kitchen
         color_pad(format_provisioner(instance.driver[:provisioner])),
         format_last_action(instance.last_action)
       ]
+    end
+
+    def debug_instance(instance)
+      say "--------"
+      say "Instance: #{instance.name}"
+      say "Driver: #{instance.driver.name}"
+      say "Driver Config:"
+      instance.driver.config_keys.sort.each do |key|
+        say "    #{key}: #{instance.driver[key]}"
+      end
+      if instance.kind_of?(Instance::Cheflike)
+        say "Chef Config:"
+        say "    attributes: #{instance.attributes.inspect}"
+        say "    run_list: #{instance.run_list.inspect}"
+      end
+      say ""
     end
 
     def color_pad(string)

@@ -64,6 +64,13 @@ module Kitchen
         config[attr]
       end
 
+      # Returns an array of configuration keys.
+      #
+      # @return [Array] array of configuration keys
+      def config_keys
+        config.keys
+      end
+
       # Creates an instance.
       #
       # @param state [Hash] mutable instance and driver state
