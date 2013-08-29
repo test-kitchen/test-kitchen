@@ -2,7 +2,7 @@
 
 ### Bug fixes
 
-* Pull request #13: #wait_for_ssh takes 2 arguments. (@dysinger)
+* Pull request [#13][]: #wait_for_ssh takes 2 arguments. ([@dysinger][])
 
 ### Improvements
 
@@ -46,7 +46,9 @@
 [#7]: https://github.com/opscode/kitchen-ec2/issues/7
 [#8]: https://github.com/opscode/kitchen-ec2/issues/8
 [#9]: https://github.com/opscode/kitchen-ec2/issues/9
+[#13]: https://github.com/opscode/kitchen-ec2/issues/13
 [@dissonanz]: https://github.com/dissonanz
+[@dysinger]: https://github.com/dysinger
 [@fnichol]: https://github.com/fnichol
 [@halcyonCorsair]: https://github.com/halcyonCorsair
 [@juliandunn]: https://github.com/juliandunn
