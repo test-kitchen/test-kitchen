@@ -123,7 +123,7 @@ module Kitchen
       end
 
       def wait_for_sshd(hostname, username = nil, options = {})
-        SSH.new(hostname, username, options).wait
+        SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
       end
     end
   end
