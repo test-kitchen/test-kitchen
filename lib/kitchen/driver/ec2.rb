@@ -49,7 +49,7 @@ module Kitchen
         info("EC2 instance <#{state[:server_id]}> created.")
         server.wait_for { print "."; ready? } ; print "(server ready)"
         state[:hostname] = server.public_ip_address || server.private_ip_address
-        wait_for_sshd(state[:hostname])      ; print "(ssh ready)\n"
+        wait_for_sshd(state[:hostname], config[:username]) ; print "(ssh ready)\n"
         debug("ec2:create '#{state[:hostname]}'")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
