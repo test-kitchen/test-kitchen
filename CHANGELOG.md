@@ -1,3 +1,22 @@
+## 1.0.0.beta.3 / 2013-08-29
+
+### Bug fixes
+
+* Pull request [#157][]: Include definitions directory when uploading the cookbooks. ([@jasonroelofs][])
+* Pull request [#178][]: Fix SSH#wait's logger call to #info. ([@ryansouza][])
+* Pull request [#188][]: Truthy default_configs can now be overridden. ([@thommay][])
+
+### Improvements
+
+* Allow Test Kitchen to be used as a library; CWD is not enough. ([@portertech][])
+* Add `kitchen list --debug` to display all merged & calculated config. ([@fnichol][])
+* Add retry logic to Kitchen:SSH when initiating a connection. ([@fnichol][])
+* Pull request [#147][]: Allow chef omnibus install.sh url to be configurable. ([@jrwesolo][])
+* Pull request [#187][]: Add support for log file in chef solo. ([@arangamani][])
+* Pull request [#179][]: Remove bundler references from README. ([@juliandunn][])
+* Compute default test_base_path in Config based on kitchen_root. ([@fnichol][])
+
+
 ## 1.0.0.beta.2 / 2013-07-24
 
 ### Bug fixes
@@ -208,33 +227,45 @@ The initial release.
 [#137]: https://github.com/opscode/test-kitchen/issues/137
 [#140]: https://github.com/opscode/test-kitchen/issues/140
 [#142]: https://github.com/opscode/test-kitchen/issues/142
+[#147]: https://github.com/opscode/test-kitchen/issues/147
 [#151]: https://github.com/opscode/test-kitchen/issues/151
 [#152]: https://github.com/opscode/test-kitchen/issues/152
 [#153]: https://github.com/opscode/test-kitchen/issues/153
 [#154]: https://github.com/opscode/test-kitchen/issues/154
 [#155]: https://github.com/opscode/test-kitchen/issues/155
+[#157]: https://github.com/opscode/test-kitchen/issues/157
 [#161]: https://github.com/opscode/test-kitchen/issues/161
 [#163]: https://github.com/opscode/test-kitchen/issues/163
 [#170]: https://github.com/opscode/test-kitchen/issues/170
 [#171]: https://github.com/opscode/test-kitchen/issues/171
 [#172]: https://github.com/opscode/test-kitchen/issues/172
+[#178]: https://github.com/opscode/test-kitchen/issues/178
+[#179]: https://github.com/opscode/test-kitchen/issues/179
+[#187]: https://github.com/opscode/test-kitchen/issues/187
+[#188]: https://github.com/opscode/test-kitchen/issues/188
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
+[@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
 [@bryanwb]: https://github.com/bryanwb
 [@calavera]: https://github.com/calavera
 [@fnichol]: https://github.com/fnichol
 [@gondoi]: https://github.com/gondoi
 [@grahamc]: https://github.com/grahamc
+[@jasonroelofs]: https://github.com/jasonroelofs
 [@jonsmorrow]: https://github.com/jonsmorrow
 [@josephholsten]: https://github.com/josephholsten
+[@jrwesolo]: https://github.com/jrwesolo
 [@jtimberman]: https://github.com/jtimberman
+[@juliandunn]: https://github.com/juliandunn
 [@manul]: https://github.com/manul
 [@mattray]: https://github.com/mattray
 [@mconigliaro]: https://github.com/mconigliaro
 [@patcon]: https://github.com/patcon
+[@portertech]: https://github.com/portertech
 [@reset]: https://github.com/reset
 [@rteabeault]: https://github.com/rteabeault
+[@ryansouza]: https://github.com/ryansouza
 [@saketoba]: https://github.com/saketoba
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
