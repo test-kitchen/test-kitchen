@@ -39,7 +39,7 @@ module Kitchen
       def initialize(config = {})
         @config = LazyDriverHash.new(config, self)
         self.class.defaults.each do |attr, value|
-          @config[attr] = value unless @config[attr]
+          @config[attr] = value unless @config.has_key?(attr)
         end
       end
 

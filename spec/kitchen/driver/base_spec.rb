@@ -30,6 +30,7 @@ module Kitchen
 
       default_config :beans, "kidney"
       default_config :tunables, { 'flimflam' => 'positate' }
+      default_config :edible, true
     end
 
     class ComputedDefaults < Base
@@ -88,12 +89,15 @@ describe Kitchen::Driver::Base do
     it "uses default config" do
       driver[:beans].must_equal "kidney"
       driver[:tunables]['flimflam'].must_equal 'positate'
+      driver[:edible].must_equal true
     end
 
     it "uses user config over default config" do
       config[:beans] = "pinto"
+      config[:edible] = false
 
       driver[:beans].must_equal "pinto"
+      driver[:edible].must_equal false
     end
   end
 
