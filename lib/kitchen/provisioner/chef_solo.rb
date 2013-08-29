@@ -58,6 +58,9 @@ module Kitchen
 				if config[:chef_https_proxy]
 					solo << %{https_proxy "#{config[:chef_https_proxy]}"}
 				end
+				if config[:chef_no_proxy]
+					solo << %{no_proxy "#{config[:chef_no_proxy]}"}
+				end
 				if instance.suite.data_bags_path
           solo << %{data_bag_path "#{home_path}/data_bags"}
         end
