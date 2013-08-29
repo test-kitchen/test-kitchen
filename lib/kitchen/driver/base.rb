@@ -235,6 +235,12 @@ module Kitchen
             proc_or_val
           end
         end
+
+        def to_hash
+          hash = Hash.new
+          __getobj__.keys.each { |key| hash[key] = self[key] }
+          hash
+        end
       end
     end
   end

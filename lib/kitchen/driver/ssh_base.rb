@@ -85,7 +85,7 @@ module Kitchen
       end
 
       def build_ssh_args(state)
-        combined = config.merge(state)
+        combined = config.to_hash.merge(state)
 
         opts = Hash.new
         opts[:user_known_hosts_file] = "/dev/null"
