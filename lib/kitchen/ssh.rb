@@ -105,9 +105,28 @@ module Kitchen
     attr_reader :hostname, :username, :options, :logger
 
     def session
-      @session ||= begin
+      @session ||= establish_connection
+    end
+
+    def establish_connection
+      rescue_exceptions = [
+        Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+        Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+        Net::SSH::Disconnect
+      ]
+      retries = 3
+
+      begin
         logger.debug("[SSH] opening connection to #{self}")
         Net::SSH.start(hostname, username, options)
+      rescue *rescue_exceptions => e
+        if (retries -= 1) > 0
+          logger.info("[SSH] connection failed, retrying (#{e.inspect})")
+          retry
+        else
+          logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+          raise
+        end
       end
     end
 
