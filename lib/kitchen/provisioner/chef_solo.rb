@@ -36,6 +36,7 @@ module Kitchen
           sudo('chef-solo'),
           "--config #{home_path}/solo.rb",
           "--json-attributes #{home_path}/dna.json",
+          config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
           "--log_level #{config[:log_level]}"
         ].join(" ")
       end
