@@ -1,0 +1,81 @@
+{
+  "regions": {
+    "ap-northeast-1": {
+      "ubuntu-10.04": "ami-8326b382",
+      "ubuntu-12.04": "ami-bb9a08ba",
+      "ubuntu-12.10": "ami-4556c544",
+      "ubuntu-13.04": "ami-97099a96",
+      "centos-6.4": "ami-9ffa709e",
+      "debian-7.1.0": "ami-f1f064f0"
+    },
+    "ap-southeast-1": {
+      "ubuntu-10.04": "ami-34713866",
+      "ubuntu-12.04": "ami-881c57da",
+      "ubuntu-12.10": "ami-3ce0a86e",
+      "ubuntu-13.04": "ami-4af5bd18",
+      "centos-6.4": "ami-46f5bb14",
+      "debian-7.1.0": "ami-fe8ac3ac"
+    },
+    "ap-southeast-2": {
+      "ubuntu-10.04": "ami-2f009315",
+      "ubuntu-12.04": "ami-cb26b4f1",
+      "ubuntu-12.10": "ami-1703912d",
+      "ubuntu-13.04": "ami-8f32a0b5",
+      "centos-6.4": "ami-9352c1a9",
+      "debian-7.1.0": "ami-4e099a74"
+    },
+    "eu-west-1": {
+      "ubuntu-10.04": "ami-bbadb0cf",
+      "ubuntu-12.04": "ami-d3b5aea7",
+      "ubuntu-12.10": "ami-6b62791f",
+      "ubuntu-13.04": "ami-6fd4cf1b",
+      "centos-6.4": "ami-75190b01",
+      "debian-7.1.0": "ami-954559e1"
+    },
+    "sa-east-1": {
+      "ubuntu-10.04": "ami-962c898b",
+      "ubuntu-12.04": "ami-c905a1d4",
+      "ubuntu-12.10": "ami-e759fdfa",
+      "ubuntu-13.04": "ami-4b2b8f56",
+      "centos-6.4": "ami-a665c0bb",
+      "debian-7.1.0": "ami-b03590ad"
+    },
+    "us-east-1": {
+      "ubuntu-10.04": "ami-1ab3ce73",
+      "ubuntu-12.04": "ami-2f115c46",
+      "ubuntu-12.10": "ami-4d5b1824",
+      "ubuntu-13.04": "ami-a73371ce",
+      "centos-6.4": "ami-bf5021d6",
+      "debian-7.1.0": "ami-50d9a439"
+    },
+    "us-west-1": {
+      "ubuntu-10.04": "ami-848ba2c1",
+      "ubuntu-12.04": "ami-eaf0daaf",
+      "ubuntu-12.10": "ami-02220847",
+      "ubuntu-13.04": "ami-fe052fbb",
+      "centos-6.4": "ami-5d456c18",
+      "debian-7.1.0": "ami-1a9bb25f"
+    },
+    "us-west-2": {
+      "ubuntu-10.04": "ami-f19407c1",
+      "ubuntu-12.04": "ami-e6f36fd6",
+      "ubuntu-12.10": "ami-0c069b3c",
+      "ubuntu-13.04": "ami-4ade427a",
+      "centos-6.4": "ami-b3bf2f83",
+      "debian-7.1.0": "ami-158a1925"
+    }
+  },
+  "usernames": {
+    "ubuntu-10.04": "ubuntu",
+    "ubuntu-12.04": "ubuntu",
+    "ubuntu-12.10": "ubuntu",
+    "ubuntu-13.04": "ubuntu",
+    "centos-6.4": "root",
+    "debian-7.1.0": "admin"
+  },
+  "references": {
+    "ubuntu": "http://uec-images.ubuntu.com/query/",
+    "debian": "https://wiki.debian.org/Cloud/AmazonEC2Image",
+    "centos": "http://wiki.centos.org/Cloud/AWS"
+  }
+}

@@ -18,6 +18,46 @@ will need access to an [AWS][aws_site] account.
 
 Please read the [Driver usage][driver_usage] page for more details.
 
+## <a name="default-config"></a> Default Configuration
+
+This driver can determine AMI and username login for a select number of
+platforms in each region. Currently, the following platform names are
+supported:
+
+```ruby
+---
+platforms:
+- name: ubuntu-10.04
+- name: ubuntu-12.04
+- name: ubuntu-12.10
+- name: ubuntu-13.04
+- name: centos-6.4
+- name: debian-7.1.0
+```
+
+This will effectively generate a configuration similar to:
+
+```ruby
+---
+platforms:
+- name: ubuntu-10.04
+  driver_config:
+    image_id: ami-1ab3ce73
+    username: ubuntu
+- name: ubuntu-12.04
+  driver_config:
+    image_id: ami-2f115c46
+    username: ubuntu
+# ...
+- name: centos-6.4
+  driver_config:
+    image_id: ami-bf5021d6
+    username: root
+# ...
+```
+
+For specific default values, please consult [amis.json][amis_json].
+
 ## <a name="config"></a> Configuration
 
 ### <a name="config-az"></a> availability\_zone
@@ -30,19 +70,22 @@ The default is `"us-east-1b"`.
 
 **Required** The AWS [access key id][credentials_docs] to use.
 
-The default is unset, or `nil`.
+The default will be read from the `AWS_ACCESS_KEY` environment variable if set,
+or `nil` otherwise.
 
 ### <a name="config-aws-secret-access-key"></a> aws\_secret\_access\_key
 
 **Required** The AWS [secret access key][credentials_docs] to use.
 
-The default is unset, or `nil`.
+The default will be read from the `AWS_SECRET_KEY` environment variable if set,
+or `nil` otherwise.
 
 ### <a name="config-aws-ssh-key-id"></a> aws\_ssh\_key\_id
 
 **Required** The EC2 [SSH key id][key_id_docs] to use.
 
-The default is unset, or `nil`.
+The default will be read from the `AWS_SSH_KEY_ID` environment variable if set,
+or `nil` otherwise.
 
 ### <a name="config-flavor-id"></a> flavor\_id
 
@@ -61,7 +104,9 @@ The default is `["default"]`.
 
 **Required** The EC2 [AMI id][ami_docs] to use.
 
-The default is unset, or `nil`.
+The default will be determined by the `aws_region` chosen and the Platform
+name, if a default exists (see [amis.json][ami_json]). If a default cannot be
+computed, then the default is `nil`.
 
 ### <a name="config-port"></a> port
 
@@ -120,7 +165,9 @@ The default is `{ "created-by" => "test-kitchen" }`.
 
 The SSH username that will be used to communicate with the instance.
 
-The default is `"root"`.
+The default will be determined by the Platform name, if a default exists (see
+[amis.json][amis_json]). If a default cannot be computed, then the default is
+`"root"`.
 
 ## <a name="example"></a> Example
 
@@ -214,6 +261,7 @@ Apache 2.0 (see [LICENSE][license])
 [driver_usage]:     http://docs.kitchen-ci.org/drivers/usage
 [chef_omnibus_dl]:  http://www.opscode.com/chef/install/
 
+[amis_json]:        https://github.com/opscode/kitchen-ec2/blob/master/data/amis.json
 [ami_docs]:         http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html
 [aws_site]:         http://aws.amazon.com/
 [credentials_docs]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SettingUp_CommandLine.html#using-credentials-access-key

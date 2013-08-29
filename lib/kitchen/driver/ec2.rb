@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'benchmark'
+require 'json'
 require 'fog'
 
 require 'kitchen'
@@ -35,7 +36,21 @@ module Kitchen
       default_config :flavor_id,          'm1.small'
       default_config :groups,             ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
-      default_config :username,           'root'
+      default_config :aws_access_key_id do |driver|
+        ENV['AWS_ACCESS_KEY']
+      end
+      default_config :aws_secret_access_key do |driver|
+        ENV['AWS_SECRET_KEY']
+      end
+      default_config :aws_ssh_key_id do |driver|
+        ENV['AWS_SSH_KEY_ID']
+      end
+      default_config :image_id do |driver|
+        driver.default_ami
+      end
+      default_config :username do |driver|
+        driver.default_username
+      end
 
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
@@ -63,6 +78,15 @@ module Kitchen
         info("EC2 instance <#{state[:server_id]}> destroyed.")
         state.delete(:server_id)
         state.delete(:hostname)
+      end
+
+      def default_ami
+        region = amis["regions"][config[:region]]
+        region && region[instance.platform.name]
+      end
+
+      def default_username
+        amis["usernames"][instance.platform.name] || "root"
       end
 
       private
@@ -99,6 +123,14 @@ module Kitchen
         debug("ec2:tags '#{config[:tags]}'")
         debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
         debug("ec2:subnet_id '#{config[:subnet_id]}'")
+      end
+
+      def amis
+        @amis ||= begin
+          json_file = File.join(File.dirname(__FILE__),
+            %w{.. .. .. data amis.json})
+          JSON.load(IO.read(json_file))
+        end
       end
     end
   end
