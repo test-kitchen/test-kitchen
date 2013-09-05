@@ -52,16 +52,16 @@ module Kitchen
         solo << %{file_cache_path "#{home_path}/cache"}
         solo << %{cookbook_path "#{home_path}/cookbooks"}
         solo << %{role_path "#{home_path}/roles"}
-				if config[:chef_http_proxy]
-					solo << %{http_proxy "#{config[:chef_http_proxy]}"}
-				end
-				if config[:chef_https_proxy]
-					solo << %{https_proxy "#{config[:chef_https_proxy]}"}
-				end
-				if config[:chef_no_proxy]
-					solo << %{no_proxy "#{config[:chef_no_proxy]}"}
-				end
-				if instance.suite.data_bags_path
+        if config[:chef_http_proxy]
+          solo << %{http_proxy "#{config[:chef_http_proxy]}"}
+        end
+        if config[:chef_https_proxy]
+          solo << %{https_proxy "#{config[:chef_https_proxy]}"}
+        end
+        if config[:chef_no_proxy]
+          solo << %{no_proxy "#{config[:chef_no_proxy]}"}
+        end
+        if instance.suite.data_bags_path
           solo << %{data_bag_path "#{home_path}/data_bags"}
         end
         if instance.suite.encrypted_data_bag_secret_key_path
