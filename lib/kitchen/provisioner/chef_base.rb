@@ -79,6 +79,7 @@ module Kitchen
 
       def create_chef_sandbox
         @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
+        File.chmod(0755, @tmpdir)
         debug("Creating local sandbox in #{tmpdir}")
 
         yield if block_given?
