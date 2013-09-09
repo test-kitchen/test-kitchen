@@ -91,6 +91,7 @@ module Kitchen
         opts[:user_known_hosts_file] = "/dev/null"
         opts[:paranoid] = false
         opts[:password] = combined[:password] if combined[:password]
+        opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
