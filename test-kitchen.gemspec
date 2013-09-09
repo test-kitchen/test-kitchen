@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 1.9.1"
 
-  gem.add_dependency 'celluloid'
+  gem.add_dependency 'celluloid', '>= 0.14.0'
   gem.add_dependency 'thor'
   gem.add_dependency 'pry'
   gem.add_dependency 'net-ssh'
