@@ -105,9 +105,9 @@ out more about instance types that can be launched as EBS-optimized instances.
 
 The default is `false`.
 
-### groups
+### security_group_ids
 
-An Array of EC [security groups][group_docs] which will be applied to the
+An Array of EC2 [security groups][group_docs] which will be applied to the
 instance.
 
 The default is `["default"]`.
@@ -193,6 +193,7 @@ driver_config:
   aws_secret_access_key: 3UK...
   aws_ssh_key_id: id_rsa-aws
   ssh_key: /path/to/id_rsa-aws
+  security_group_ids: ["sg-1a2b3c4d"]
   region: us-east-1
   availability_zone: us-east-1b
   require_chef_omnibus: true
@@ -222,6 +223,7 @@ driver_config:
   aws_secret_access_key: <%= ENV['AWS_SECRET_KEY'] %>
   aws_ssh_key_id: <%= ENV['AWS_SSH_KEY_ID'] %>
   ssh_key: <%= File.expand_path('~/.ssh/id_rsa') %>
+  security_group_ids: ["sg-1a2b3c4d"]
   region: us-east-1
   availability_zone: us-east-1b
   require_chef_omnibus: true
