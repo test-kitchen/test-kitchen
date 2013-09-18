@@ -169,7 +169,7 @@ module Kitchen
 
         all_files = Dir.glob(File.join(tmpbooks_dir, "**/*")).
           select { |fn| File.file?(fn) }
-        cookbook_files = Dir.glob(File.join(tmpbooks_dir, cookbook_files_glob)).
+        cookbook_files = Dir.glob(File.join(tmpbooks_dir, cookbook_files_glob), File::FNM_CASEFOLD).
           select { |fn| File.file?(fn) }
 
         FileUtils.rm(all_files - cookbook_files)
