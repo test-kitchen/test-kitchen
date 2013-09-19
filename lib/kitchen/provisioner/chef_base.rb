@@ -252,7 +252,7 @@ module Kitchen
         begin
           require 'berkshelf'
         rescue LoadError
-          fatal("The `berkself' gem is missing and must be installed." +
+          fatal("The `berkshelf' gem is missing and must be installed." +
             " Run `gem install berkshelf` or add the following " +
             "to your Gemfile if you are using Bundler: `gem 'berkshelf'`.")
           raise UserError, "Could not load Berkshelf"
