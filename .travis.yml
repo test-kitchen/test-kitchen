@@ -14,6 +14,8 @@ before_install:
   - gem update --system $RUBYGEMS_VERSION
   - gem --version
 
+bundler_args: --without guard
+
 matrix:
   allow_failures:
     - rvm: ruby-head
