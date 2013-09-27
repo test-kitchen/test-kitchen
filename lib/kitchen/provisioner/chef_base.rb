@@ -170,10 +170,17 @@ module Kitchen
         # Find all files and hidden files but not 'current directory' or
         # parent directory.
 
-        all_files = Dir.glob(File.join(tmpbooks_dir, "*", "*"), File::FNM_DOTMATCH).reject{|f| f =~ /(\/\.\.|\/\.\/|\/\.$)/}
-        cookbook_files = Dir.glob(File.join(tmpbooks_dir, "*", cookbook_files_glob), File::FNM_DOTMATCH).reject{|f| f =~ /(\/\.\.|\/\.\/|\/\.$)/}
+        all_files = Dir.glob(File.join(tmpbooks_dir, "*", "*"), File::FNM_DOTMATCH).reject { |f|
+          f =~ /(\/\.\.|\/\.\/|\/\.$)/
+        }
 
-        (all_files - cookbook_files).each{|f| debug("Removing: " + f) }
+        cookbook_files = Dir.glob(File.join(tmpbooks_dir, "*", cookbook_files_glob), File::FNM_DOTMATCH).reject { |f|
+          f =~ /(\/\.\.|\/\.\/|\/\.$)/
+        }
+
+        (all_files - cookbook_files).each { |f|
+          debug("Removing: " + f)
+        }
 
         FileUtils.rm_r(all_files - cookbook_files)
       end
