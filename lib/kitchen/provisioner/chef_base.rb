@@ -167,7 +167,7 @@ module Kitchen
       def filter_only_cookbook_files
         info("Removing non-cookbook files in sandbox")
 
-        all_files = Dir.glob(File.join(tmpbooks_dir, "**/*")).
+        all_files = Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
           select { |fn| File.file?(fn) }
         cookbook_files = Dir.glob(File.join(tmpbooks_dir, cookbook_files_glob)).
           select { |fn| File.file?(fn) }
