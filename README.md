@@ -22,6 +22,7 @@ This will expose the `test-kitchen` CLI. Run `kitchen init` to get started:
 $ kitchen init
       create  .kitchen.yml
 ```
+
 In this guide, we
 will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant),
 so install that:
@@ -51,24 +52,37 @@ your tests in parallel. Trust us, it's faster!
 
 ## The Kitchen YAML format
 
-Test-Kitchen reads its configuration from the .kitchen.yml
-configuration file at the root of your cookbook. It closely resembles
-the format of .travis.yml which is intentional.
+Test-Kitchen reads its configuration from the `.kitchen.yml`
+configuration file at the root of your cookbook or module. It closely resembles
+the format of `.travis.yml` which is intentional.
 
-There are 4 stanzas in .kitchen.yml, driver_plugin, driver_config,
-platforms, and suites. driver_plugin, platforms, and suites are
-currently required. driver_config can optionally be used to set values
-for all platforms defined.
+There are 5 stanzas in `.kitchen.yml`:
 
-The driver_plugin stanza is only one line long and defines which
-driver is used by test-kitchen.
+* `driver_plugin`
+* `provisioner`
+* `driver_config`
+* `platforms`
+* `suites`
 
-The platforms stanza defines individual virtual machines. Additional
-driver_config, node attributes, and run_list can be defined in this stanza
+The `driver_plugin`, `platforms`, and `suites` stanzas are currently all
+required. The `driver_config` stanza can optionally be used to set
+values for all platforms defined.
 
-The suites stanza defines sets of tests that you intend to be run on
-each platform. A run_list and node attributes can be defined for each
-suite. The run_list and node attributes will be merged with that of
+The `driver_plugin` stanza is only one line long and defines which
+driver is used by Test-Kitchen.
+
+The `provisioner` stanza is only one line long and defines which
+configuration management tool a driver should use. It defines a
+configuration value passed to the driver of `provisioner`. When
+Test-Kitchen is initialized it detects if it is in a Chef cookbook or a
+Puppet module and sets itself accordingly. Otherwise, it defaults to `chef`.
+
+The `platforms` stanza defines individual virtual machines. Additional
+`driver_config`, node attributes, and `run_list` can be defined in this stanza
+
+The `suites` stanza defines sets of tests that you intend to be run on
+each platform. A `run_list` and node attributes can be defined for each
+suite. The `run_list` and node attributes will be merged with that of
 each platform. In case of the conflict, the attributes defined on the
 suite will triumph.
 
@@ -76,6 +90,7 @@ suite will triumph.
 
 ---
 driver_plugin: vagrant
+provisioner: chef
 
 platforms:
 - name: ubuntu-12.04
