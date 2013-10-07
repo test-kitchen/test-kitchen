@@ -33,7 +33,7 @@ module Kitchen
 
       def run_command
         [
-          sudo('chef-solo'),
+          sudo('/opt/chef/bin/chef-solo'),
           "--config #{home_path}/solo.rb",
           "--json-attributes #{home_path}/dna.json",
           config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
