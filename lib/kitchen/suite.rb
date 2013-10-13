@@ -30,6 +30,9 @@ module Kitchen
     # @return [Array] Array of names of excluded platforms
     attr_reader :excludes
 
+    # @return [Hash] suite specific driver_config hash
+    attr_reader :driver_config
+
     # Constructs a new suite.
     #
     # @param [Hash] options configuration for a new suite
@@ -41,6 +44,7 @@ module Kitchen
 
       @name = options.delete(:name)
       @excludes = Array(options[:excludes])
+      @driver_config = options.delete(:driver_config) || {}
       @data = options
     end
 
