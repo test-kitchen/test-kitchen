@@ -109,6 +109,7 @@ module Kitchen
 
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
+      platform_hash[:driver_config].rmerge!(suite.driver_config)
       driver = new_driver(merge_driver_hash(platform_hash))
       provisioner = driver[:provisioner]
 
@@ -150,6 +151,7 @@ module Kitchen
 
     def platform_driver_hash(platform_name)
       h = data[:platforms].find { |p| p[:name] == platform_name } || Hash.new
+      h[:driver_config] ||= {}
 
       h.select do |key, value|
         [:driver_plugin, :driver_config, :provisioner].include?(key)
