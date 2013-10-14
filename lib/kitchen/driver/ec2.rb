@@ -67,7 +67,7 @@ module Kitchen
         info("EC2 instance <#{state[:server_id]}> created.")
         server.wait_for { print "."; ready? }
         print "(server ready)"
-        state[:hostname] = server.public_ip_address || server.private_ip_address
+        state[:hostname] = hostname(server)
         wait_for_sshd(state[:hostname], config[:username])
         print "(ssh ready)\n"
         debug("ec2:create '#{state[:hostname]}'")
@@ -137,6 +137,10 @@ module Kitchen
             %w{.. .. .. data amis.json})
           JSON.load(IO.read(json_file))
         end
+      end
+
+      def hostname(server)
+        server.dns_name || server.public_ip_address || server.private_ip_address
       end
     end
   end
