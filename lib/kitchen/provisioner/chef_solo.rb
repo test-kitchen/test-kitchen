@@ -51,7 +51,7 @@ module Kitchen
         solo = []
         solo << %{node_name "#{instance.name}"}
         solo << %{file_cache_path "#{home_path}/cache"}
-        solo << %{cookbook_path "#{home_path}/cookbooks"}
+        solo << %{cookbook_path ["#{home_path}/cookbooks","#{home_path}/site-cookbooks"]}
         solo << %{role_path "#{home_path}/roles"}
         if instance.suite.data_bags_path
           solo << %{data_bag_path "#{home_path}/data_bags"}
