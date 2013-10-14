@@ -200,6 +200,10 @@ module Kitchen
         File.join(kitchen_root, "cookbooks")
       end
 
+      def site_cookbooks_dir
+        File.join(kitchen_root, "site-cookbooks")
+      end
+
       def data_bags
         instance.suite.data_bags_path
       end
@@ -220,12 +224,23 @@ module Kitchen
         File.join(tmpdir, "cookbooks")
       end
 
+      def tmpsitebooks_dir
+        File.join(tmpdir, "cookbooks")
+      end
+
       def cp_cookbooks
         info("Preparing cookbooks from project directory")
         debug("Using cookbooks from #{cookbooks_dir}")
 
         FileUtils.mkdir_p(tmpbooks_dir)
         FileUtils.cp_r(File.join(cookbooks_dir, "."), tmpbooks_dir)
+
+        info("Preparing site-cookbooks from project directory")
+        debug("Using cookbooks from #{site_cookbooks_dir}")
+
+        FileUtils.mkdir_p(tmpsitebooks_dir)
+        FileUtils.cp_r(File.join(site_cookbooks_dir, "."), tmpsitebooks_dir)
+
         cp_this_cookbook if File.exists?(metadata_rb)
       end
 
