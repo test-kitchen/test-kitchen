@@ -35,7 +35,7 @@ module Kitchen
       end
 
       def prepare_command
-        ruby_bin = "/opt/chef/embedded/bin"
+        ruby_bin = config[:ruby_bin] ||"/opt/chef/embedded/bin"
 
         <<-PREPARE.gsub(/^ {10}/, '')
           bash -c '
@@ -48,8 +48,9 @@ module Kitchen
       end
 
       def run_command
+        ruby_bin = config[:ruby_bin] ||"/opt/chef/embedded/bin"
         [
-          sudo('/opt/chef/embedded/bin/ruby'),
+          sudo("#{ruby_bin}/ruby"),
           "#{home_path}/chef-client-zero.rb",
           "--config #{home_path}/client.rb",
           "--json-attributes #{home_path}/dna.json",
