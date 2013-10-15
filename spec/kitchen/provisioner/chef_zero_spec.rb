@@ -36,7 +36,7 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   let(:provisioner) do
-    Kitchen::Provisioner::ChefZero.new(instance,config)
+    Kitchen::Provisioner::ChefZero.new(instance, config)
   end
 
 
