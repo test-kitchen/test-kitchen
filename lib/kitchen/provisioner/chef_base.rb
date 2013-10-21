@@ -251,11 +251,13 @@ module Kitchen
 
         begin
           require 'berkshelf'
-        rescue LoadError
-          fatal("The `berkshelf' gem is missing and must be installed." +
-            " Run `gem install berkshelf` or add the following " +
-            "to your Gemfile if you are using Bundler: `gem 'berkshelf'`.")
-          raise UserError, "Could not load Berkshelf"
+        rescue LoadError => e
+          fatal("The `berkshelf' gem is missing and must be installed" +
+            " or cannot be properly activated. Run" +
+            " `gem install berkshelf` or add the following to your" +
+            " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
+          raise UserError,
+            "Could not load or activate Berkshelf (#{e.message})"
         end
 
         Kitchen.mutex.synchronize do
@@ -272,11 +274,13 @@ module Kitchen
           require 'librarian/chef/environment'
           require 'librarian/action/resolve'
           require 'librarian/action/install'
-        rescue LoadError
-          fatal("The `librarian-chef' gem is missing and must be installed." +
-            " Run `gem install librarian-chef` or add the following " +
-            "to your Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
-          raise UserError, "Could not load Librarian-Chef"
+        rescue LoadError => e
+          fatal("The `librarian-chef' gem is missing and must be installed" +
+            " or cannot be properly activated. Run" +
+            " `gem install librarian-chef` or add the following to your" +
+            " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
+          raise UserError,
+            "Could not load or activate Librarian-Chef (#{e.message})"
         end
 
         Kitchen.mutex.synchronize do
