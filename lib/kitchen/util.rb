@@ -105,6 +105,7 @@ module Kitchen
     #
     # @return [String] a string representation of useful helper functions
     def self.shell_helpers
+      # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
       <<-HELPERS
         # Check whether a command exists - returns 0 if it does, 1 if it does not
         exists() {

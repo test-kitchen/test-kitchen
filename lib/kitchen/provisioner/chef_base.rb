@@ -18,6 +18,7 @@
 
 require 'fileutils'
 require 'json'
+require 'kitchen/util'
 
 module Kitchen
 
@@ -34,32 +35,27 @@ module Kitchen
         url = config[:chef_omnibus_url] || "https://www.opscode.com/chef/install.sh"
         flag = config[:require_chef_omnibus]
         version = if flag.is_a?(String) && flag != "latest"
-          "-s -- -v #{flag.downcase}"
+          "-v #{flag.downcase}"
         else
           ""
         end
 
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL.gsub(/^ {10}/, '')
-          bash -c '
+          sh -c '
+          #{Util.shell_helpers}
+
           should_update_chef() {
             case "#{flag}" in
-              true|$(chef-solo -v | cut -d " " -f 2)) return 1 ;;
+              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
               latest|*) return 0 ;;
             esac
           }
 
           if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-            export PATH
             echo "-----> Installing Chef Omnibus (#{flag})"
-            if command -v wget >/dev/null ; then
-              wget #{url} -O - | #{sudo('bash')} #{version}
-            elif command -v curl >/dev/null ; then
-              curl -sSL #{url} | #{sudo('bash')} #{version}
-            else
-              echo ">>>>>> Neither wget nor curl found on this instance."
-              exit 16
-            fi
+            do_download #{url} /tmp/install.sh
+            #{sudo('sh')} /tmp/install.sh #{version}
           fi'
         INSTALL
       end

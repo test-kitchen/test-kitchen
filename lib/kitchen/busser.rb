@@ -55,9 +55,10 @@ module Kitchen
       @setup_cmd ||= if local_suite_files.empty?
         nil
       else
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          bash -c '
-          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null ; then
+          sh -c '
+          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null; then
             #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
           fi
           #{sudo}#{ruby_binpath}/busser setup
@@ -78,8 +79,9 @@ module Kitchen
       @sync_cmd ||= if local_suite_files.empty?
         nil
       else
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          bash -c '
+          sh -c '
           #{sudo}#{busser_bin} suite cleanup
           #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
           #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'

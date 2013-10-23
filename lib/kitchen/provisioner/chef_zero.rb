@@ -37,8 +37,9 @@ module Kitchen
       def prepare_command
         ruby_bin = "/opt/chef/embedded/bin"
 
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-PREPARE.gsub(/^ {10}/, '')
-          bash -c '
+          sh -c '
           if [ ! -f "#{ruby_bin}/chef-zero" ] ; then
             echo "-----> Installing chef-zero and knife-essentials gems"
             #{sudo("#{ruby_bin}/gem")} install \
