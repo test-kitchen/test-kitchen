@@ -40,11 +40,9 @@ module Kitchen
       super
       $stdout.sync = true
       Kitchen.logger = Kitchen.default_file_logger
-      Celluloid.logger = Kitchen.celluloid_file_logger
       @config = Kitchen::Config.new(
         :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
-        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym,
-        :supervised => false
+        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
       )
     end
 
@@ -283,8 +281,16 @@ module Kitchen
     end
 
     def run_parallel(instances, *args)
-      futures = Array(instances).map { |i| i.future.public_send(task, *args) }
-      futures.map { |i| i.value }
+      threads = Array(instances).map do |i|
+        Thread.new do
+          begin
+            i.public_send(task, *args)
+          rescue => e
+            Kitchen.logger.debug("An actor crashed due to #{e.message.inspect}")
+          end
+        end
+      end
+      threads.map { |i| i.join }
     end
 
     def parse_subcommand(arg = nil)
@@ -293,7 +299,7 @@ module Kitchen
 
     def get_all_instances
       result = if options[:parallel]
-        @config.instance_actors
+        @config.instance_threads
       else
         @config.instances
       end
@@ -307,7 +313,7 @@ module Kitchen
 
     def get_filtered_instances(regexp)
       result = if options[:parallel]
-        @config.instance_actors(/#{regexp}/)
+        @config.instance_threads(/#{regexp}/)
       else
         @config.instances.get_all(/#{regexp}/)
       end

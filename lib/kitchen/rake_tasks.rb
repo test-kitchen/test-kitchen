@@ -32,7 +32,6 @@ module Kitchen
     # @yield [self] gives itself to the block
     def initialize
       @config = Kitchen::Config.new
-      @config.supervised = false
       Kitchen.logger = Kitchen.default_file_logger
       yield self if block_given?
       define

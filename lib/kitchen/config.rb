@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'celluloid'
 require 'vendor/hash_recursive_merge'
 
 module Kitchen
@@ -30,7 +29,6 @@ module Kitchen
     attr_accessor :kitchen_root
     attr_accessor :test_base_path
     attr_accessor :log_level
-    attr_writer :supervised
     attr_writer :platforms
     attr_writer :suites
 
@@ -47,13 +45,11 @@ module Kitchen
     # @option options [String] :kitchen_root
     # @option options [String] :test_base_path
     # @option options [Symbol] :log_level
-    # @option options [TrueClass,FalseClass] :supervised
     def initialize(options = {})
       @loader         = options[:loader] || Kitchen::Loader::YAML.new
       @kitchen_root   = options[:kitchen_root] || Dir.pwd
       @test_base_path = options[:test_base_path] || default_test_base_path
       @log_level      = options[:log_level] || Kitchen::DEFAULT_LOG_LEVEL
-      @supervised     = options[:supervised]
     end
 
     # @return [Array<Platform>] all defined platforms which will be used in
@@ -76,18 +72,14 @@ module Kitchen
       @instances ||= build_instances
     end
 
-    # Returns an InstanceActor for all instance names matched by the regexp,
+    # Returns a Thread for all instance names matched by the regexp,
     # or all by default.
     #
     # @param [Regexp] a regular expression to match on instance names
-    # @return [Array<InstanceActor>] all instance actors matching the regexp
-    def instance_actors(regexp = nil)
+    # @return [Collection<Instance>] all threads of instances matching the regexp
+    def instance_threads(regexp = nil)
       result = regexp.nil? ? instances : instances.get_all(regexp)
-      Collection.new(result.map { |instance| actor_registry(instance) })
-    end
-
-    def supervised
-      @supervised.nil? ? @supervised = true : @supervised
+      Collection.new(result)
     end
 
     private
@@ -160,35 +152,6 @@ module Kitchen
       when /^puppet_/ then instance.extend(Instance::Puppetlike)
       else instance
       end
-    end
-
-    def actor_registry(instance)
-      Celluloid::Actor[actor_key(instance)] || new_instance_actor(instance)
-    end
-
-    def actor_key(instance)
-      "#{object_id}__#{instance.name}"
-    end
-
-    def new_instance_actor(instance)
-      actor_name = actor_key(instance)
-
-      actor = if supervised
-        supervisor = InstanceActor.supervise_as(actor_name, instance)
-        actor = supervisor.actors.first
-        Kitchen.logger.debug("Supervising #{actor.to_str} with #{supervisor}")
-        actor
-      else
-        Celluloid::Actor[actor_name] = InstanceActor.new(instance)
-      end
-
-      manager.link(actor)
-
-      actor
-    end
-
-    def manager
-      @manager ||= Manager.new
     end
 
     def log_root
