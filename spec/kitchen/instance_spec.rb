@@ -47,10 +47,6 @@ describe Kitchen::Instance do
 
   let(:instance) { Kitchen::Instance.new(opts) }
 
-  before do
-    Celluloid.logger = Logger.new(StringIO.new)
-  end
-
   it "raises an ArgumentError if suite is missing" do
     opts.delete(:suite)
     proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
