@@ -20,6 +20,7 @@ require 'benchmark'
 require 'erb'
 require 'ostruct'
 require 'thor'
+require 'thread'
 
 require 'kitchen'
 require 'kitchen/generator/driver_create'
@@ -298,11 +299,7 @@ module Kitchen
     end
 
     def get_all_instances
-      result = if options[:parallel]
-        @config.instance_threads
-      else
-        @config.instances
-      end
+      result = @config.instances
 
       if result.empty?
         die task, "No instances defined"
@@ -312,11 +309,7 @@ module Kitchen
     end
 
     def get_filtered_instances(regexp)
-      result = if options[:parallel]
-        @config.instance_threads(/#{regexp}/)
-      else
-        @config.instances.get_all(/#{regexp}/)
-      end
+      result = @config.instances.get_all(/#{regexp}/)
 
       if result.empty?
         die task, "No instances for regex `#{regexp}', try running `kitchen list'"

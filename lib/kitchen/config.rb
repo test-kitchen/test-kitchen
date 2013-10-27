@@ -72,16 +72,6 @@ module Kitchen
       @instances ||= build_instances
     end
 
-    # Returns a Thread for all instance names matched by the regexp,
-    # or all by default.
-    #
-    # @param [Regexp] a regular expression to match on instance names
-    # @return [Collection<Instance>] all threads of instances matching the regexp
-    def instance_threads(regexp = nil)
-      result = regexp.nil? ? instances : instances.get_all(regexp)
-      Collection.new(result)
-    end
-
     private
 
     def new_suite(hash)
