@@ -284,11 +284,7 @@ module Kitchen
     def run_parallel(instances, *args)
       threads = Array(instances).map do |i|
         Thread.new do
-          begin
-            i.public_send(task, *args)
-          rescue => e
-            Kitchen.logger.debug("An actor crashed due to #{e.message.inspect}")
-          end
+          i.public_send(task, *args)
         end
       end
       threads.map { |i| i.join }
