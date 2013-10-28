@@ -43,6 +43,7 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
+          #{sandbox_env(true)}
           if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
             echo "-----> Installing chef-zero and knife-essentials gems"
             #{sudo(gem_bin)} install \
@@ -53,6 +54,7 @@ module Kitchen
 
       def run_command
         [
+          sandbox_env,
           sudo(ruby_bin),
           "#{home_path}/chef-client-zero.rb",
           "--config #{home_path}/client.rb",
@@ -78,6 +80,21 @@ module Kitchen
       DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
 
       attr_reader :ruby_binpath
+
+      def sandbox_env(export=false)
+        env = [
+          "GEM_HOME=#{home_path}/gems",
+          "GEM_PATH=$GEM_HOME",
+          "GEM_CACHE=$GEM_HOME/cache",
+          "PATH=$PATH:$GEM_HOME/bin"
+        ]
+
+        if export
+          env << "; export GEM_HOME GEM_PATH GEM_CACHE PATH;"
+        end
+
+        env.join(" ")
+      end
 
       def prepare_chef_client_zero_rb
         source = File.join(File.dirname(__FILE__),
