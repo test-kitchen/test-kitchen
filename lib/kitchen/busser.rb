@@ -38,6 +38,8 @@ module Kitchen
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
+      @ruby_binpath = opts.fetch(:ruby_binpath, DEFAULT_RUBY_BINPATH)
+      @busser_root = opts.fetch(:busser_root, DEFAULT_BUSSER_ROOT)
       @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
@@ -58,10 +60,10 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
-          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null; then
-            #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
+          if ! #{sudo}#{gem_bin} list busser -i >/dev/null; then
+            echo "-----> Installing busser and plugins"
+            #{sudo}#{gem_bin} install busser --no-rdoc --no-ri
           fi
-          #{sudo}#{ruby_binpath}/busser setup
           #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
         INSTALL_CMD
       end
@@ -103,9 +105,11 @@ module Kitchen
     private
 
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-    DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
+    DEFAULT_BUSSER_ROOT = "/tmp/kitchen-busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
+    attr_reader :ruby_binpath
+    attr_reader :busser_root
     attr_reader :test_root
 
     def validate_options(suite_name)
@@ -164,16 +168,16 @@ module Kitchen
       @use_sudo ? "sudo -E " : ""
     end
 
-    def ruby_binpath
-      DEFAULT_RUBY_BINPATH
+    def ruby_bin
+      @ruby_bin ||= File.join(ruby_binpath, 'ruby')
+    end
+
+    def gem_bin
+      @gem_bin ||= File.join(ruby_binpath, 'gem')
     end
 
     def busser_bin
-      File.join(DEFAULT_BUSSER_ROOT, "bin/busser")
-    end
-
-    def busser_gem
-      "busser"
+      @busser_bin ||= "#{ruby_bin} #{File.join(busser_root, "gems", "bin", "busser")}"
     end
   end
 end
