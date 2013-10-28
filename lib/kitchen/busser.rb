@@ -40,7 +40,7 @@ module Kitchen
 
       @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
       @suite_name = suite_name
-      @use_sudo = opts.fetch(:use_sudo, true)
+      @use_sudo = opts.fetch(:sudo, true)
     end
 
     # Returns a command string which installs Busser, and installs all
