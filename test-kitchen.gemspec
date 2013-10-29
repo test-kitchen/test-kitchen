@@ -23,7 +23,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'mixlib-shellout', '~> 1.2'
   gem.add_dependency 'net-scp',         '~> 1.1'
   gem.add_dependency 'net-ssh',         '~> 2.7'
-  gem.add_dependency 'pry',             '~> 0.9'
   gem.add_dependency 'safe_yaml',       '~> 0.9'
   gem.add_dependency 'thor',            '~> 0.18'
 
