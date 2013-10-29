@@ -18,7 +18,6 @@
 
 require 'benchmark'
 require 'fileutils'
-require 'thread'
 require 'vendor/hash_recursive_merge'
 
 module Kitchen
