@@ -160,11 +160,10 @@ module Kitchen
       end
 
       def busser
-        test_root = File.join(config[:kitchen_root], 'test/integration')
         @busser ||= begin
           raise ClientError, "Instance must be set for Driver" if instance.nil?
 
-          Busser.new(instance.suite.name, :test_root => test_root)
+          Busser.new(instance.suite.name, config)
         end
       end
 

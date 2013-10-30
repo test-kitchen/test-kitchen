@@ -27,6 +27,11 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
 
+      def initialize(instance, config)
+        super
+        @ruby_binpath = config.fetch(:ruby_binpath, DEFAULT_RUBY_BINPATH)
+      end
+
       def create_sandbox
         create_chef_sandbox do
           prepare_chef_client_zero_rb
@@ -35,13 +40,13 @@ module Kitchen
       end
 
       def prepare_command
-        ruby_bin = "/opt/chef/embedded/bin"
-
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-PREPARE.gsub(/^ {10}/, '')
-          bash -c '
-          if [ ! -f "#{ruby_bin}/chef-zero" ] ; then
+          sh -c '
+          #{sandbox_env(true)}
+          if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
             echo "-----> Installing chef-zero and knife-essentials gems"
-            #{sudo("#{ruby_bin}/gem")} install \
+            #{sudo(gem_bin)} install \
               chef-zero knife-essentials --no-ri --no-rdoc
           fi'
         PREPARE
@@ -49,7 +54,8 @@ module Kitchen
 
       def run_command
         [
-          sudo('/opt/chef/embedded/bin/ruby'),
+          sandbox_env,
+          sudo(ruby_bin),
           "#{home_path}/chef-client-zero.rb",
           "--config #{home_path}/client.rb",
           "--json-attributes #{home_path}/dna.json",
@@ -61,7 +67,34 @@ module Kitchen
         "/tmp/kitchen-chef-zero".freeze
       end
 
+      def gem_bin
+        @gem_bin ||= File.join(ruby_binpath, 'gem')
+      end
+
+      def ruby_bin
+        @ruby_bin ||= File.join(ruby_binpath, 'ruby')
+      end
+
       private
+
+      DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
+
+      attr_reader :ruby_binpath
+
+      def sandbox_env(export=false)
+        env = [
+          "GEM_HOME=#{home_path}/gems",
+          "GEM_PATH=$GEM_HOME",
+          "GEM_CACHE=$GEM_HOME/cache",
+          "PATH=$PATH:$GEM_HOME/bin"
+        ]
+
+        if export
+          env << "; export GEM_HOME GEM_PATH GEM_CACHE PATH;"
+        end
+
+        env.join(" ")
+      end
 
       def prepare_chef_client_zero_rb
         source = File.join(File.dirname(__FILE__),

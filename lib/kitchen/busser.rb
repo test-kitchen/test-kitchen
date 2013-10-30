@@ -38,9 +38,11 @@ module Kitchen
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
+      @ruby_binpath = opts.fetch(:ruby_binpath, DEFAULT_RUBY_BINPATH)
+      @busser_root = opts.fetch(:busser_root, DEFAULT_BUSSER_ROOT)
       @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
       @suite_name = suite_name
-      @use_sudo = opts.fetch(:use_sudo, true)
+      @use_sudo = opts.fetch(:sudo, true)
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -55,12 +57,14 @@ module Kitchen
       @setup_cmd ||= if local_suite_files.empty?
         nil
       else
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          bash -c '
-          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null ; then
-            #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
+          sh -c '
+          #{sandbox_env(true)}
+          if ! #{sudo}#{gem_bin} list busser -i >/dev/null; then
+            echo "-----> Installing busser and plugins"
+            #{sudo}#{gem_bin} install busser --no-rdoc --no-ri
           fi
-          #{sudo}#{ruby_binpath}/busser setup
           #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
         INSTALL_CMD
       end
@@ -78,8 +82,10 @@ module Kitchen
       @sync_cmd ||= if local_suite_files.empty?
         nil
       else
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          bash -c '
+          sh -c '
+          #{sandbox_env(true)}
           #{sudo}#{busser_bin} suite cleanup
           #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
           #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
@@ -95,15 +101,17 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{busser_bin} test"
+      @run_cmd ||= local_suite_files.empty? ? nil : "#{sandbox_env} #{sudo}#{busser_bin} test"
     end
 
     private
 
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-    DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
+    DEFAULT_BUSSER_ROOT = "/tmp/kitchen-busser".freeze
     DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
+    attr_reader :ruby_binpath
+    attr_reader :busser_root
     attr_reader :test_root
 
     def validate_options(suite_name)
@@ -135,7 +143,7 @@ module Kitchen
 
     def remote_file(file, dir)
       local_prefix = File.join(test_root, dir)
-      "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{sandbox_env} #{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
@@ -162,16 +170,32 @@ module Kitchen
       @use_sudo ? "sudo -E " : ""
     end
 
-    def ruby_binpath
-      DEFAULT_RUBY_BINPATH
+    def ruby_bin
+      @ruby_bin ||= File.join(ruby_binpath, 'ruby')
+    end
+
+    def gem_bin
+      @gem_bin ||= File.join(ruby_binpath, 'gem')
     end
 
     def busser_bin
-      File.join(DEFAULT_BUSSER_ROOT, "bin/busser")
+      @busser_bin ||= "#{ruby_bin} #{File.join(busser_root, "gems", "bin", "busser")}"
     end
 
-    def busser_gem
-      "busser"
+    def sandbox_env(export=false)
+      env = [
+        "BUSSER_ROOT=#{busser_root}",
+        "GEM_HOME=#{busser_root}/gems",
+        "GEM_PATH=$GEM_HOME",
+        "GEM_CACHE=$GEM_HOME/cache",
+        "PATH=$PATH:$GEM_HOME/bin"
+      ]
+
+      if export
+        env << "; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE PATH;"
+      end
+
+      env.join(" ")
     end
   end
 end
