@@ -21,15 +21,15 @@ require 'rubygems'
 require 'chef'
 require 'chef/application/client'
 require 'chef_zero/server'
-require 'chef_fs/chef_fs_data_store'
-require 'chef_fs/config'
+require 'chef/chef_fs/chef_fs_data_store'
+require 'chef/chef_fs/config'
 require 'tmpdir'
 
 client = Chef::Application::Client.new
 client.reconfigure
 
-data_store = ChefFS::ChefFSDataStore.new(
-  ChefFS::Config.new(Chef::Config).local_fs
+data_store = Chef::ChefFS::ChefFSDataStore.new(
+  Chef::ChefFS::Config.new(Chef::Config).local_fs
 )
 
 server_opts = {
