@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'net-ssh',         '~> 2.7'
   gem.add_dependency 'safe_yaml',       '~> 0.9'
   gem.add_dependency 'thor',            '~> 0.18'
+  gem.add_dependency 'buff-ignore',     '~> 1.1'
 
   gem.add_development_dependency 'bundler',   '~> 1.3'
   gem.add_development_dependency 'rake'

@@ -16,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'buff/ignore'
 require 'fileutils'
+require 'pathname'
 require 'json'
 
 module Kitchen
@@ -160,6 +162,20 @@ module Kitchen
             " must exist in #{kitchen_root}")
           raise UserError, "Cookbooks could not be found"
         end
+
+        remove_ignored_files
+      end
+
+      def remove_ignored_files
+        cookbooks_in_tmpdir do |cookbook_path|
+          chefignore = File.join(cookbook_path, "chefignore")
+          if File.exist? chefignore
+            ignores = Buff::Ignore::IgnoreFile.new(chefignore)
+            cookbook_files = Dir.glob(File.join(cookbook_path, "**/*"), File::FNM_DOTMATCH).
+              select { |fn| File.file?(fn) && fn != '.' && fn != '..' }
+            cookbook_files.each {|file| FileUtils.rm(file) if ignores.ignored?(file)}
+          end
+        end
       end
 
       def berksfile
@@ -216,8 +232,8 @@ module Kitchen
             " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
         cb_path = File.join(tmpbooks_dir, cb_name)
-        glob = Dir.glob("#{kitchen_root}/{metadata.rb,README.*,definitions," +
-          "attributes,files,libraries,providers,recipes,resources,templates}")
+
+        glob = Dir.glob("#{kitchen_root}/**")
 
         FileUtils.mkdir_p(cb_path)
         FileUtils.cp_r(glob, cb_path)
@@ -266,6 +282,14 @@ module Kitchen
           env.config_db.local["path"] = tmpbooks_dir
           Librarian::Action::Resolve.new(env).run
           Librarian::Action::Install.new(env).run
+        end
+      end
+
+      private
+
+      def cookbooks_in_tmpdir
+        Dir.glob(File.join(tmpbooks_dir, "*/")).each do |cookbook_path|
+          yield cookbook_path if block_given?
         end
       end
     end
