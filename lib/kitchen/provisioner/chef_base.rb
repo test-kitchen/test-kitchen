@@ -173,7 +173,7 @@ module Kitchen
             ignores = Buff::Ignore::IgnoreFile.new(chefignore)
             cookbook_files = Dir.glob(File.join(cookbook_path, "**/*"), File::FNM_DOTMATCH).
               select { |fn| File.file?(fn) && fn != '.' && fn != '..' }
-            cookbook_files.each {|file| FileUtils.rm(file) if ignores.ignored?(file)}
+            cookbook_files.each { |file| FileUtils.rm(file) if ignores.ignored?(file) }
           end
         end
       end
