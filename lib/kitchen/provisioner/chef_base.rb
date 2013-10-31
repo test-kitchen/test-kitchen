@@ -156,28 +156,6 @@ module Kitchen
             " must exist in #{kitchen_root}")
           raise UserError, "Cookbooks could not be found"
         end
-
-        filter_only_cookbook_files
-      end
-
-      def filter_only_cookbook_files
-        info("Removing non-cookbook files in sandbox")
-
-        all_files = Dir.glob(File.join(tmpbooks_dir, "**/*")).
-          select { |fn| File.file?(fn) }
-        cookbook_files = Dir.glob(File.join(tmpbooks_dir, cookbook_files_glob)).
-          select { |fn| File.file?(fn) }
-
-        FileUtils.rm(all_files - cookbook_files)
-      end
-
-      def cookbook_files_glob
-        files = %w{README.* metadata.{json,rb}
-          attributes/**/* definitions/**/* files/**/* libraries/**/*
-          providers/**/* recipes/**/* resources/**/* templates/**/*
-        }
-
-        "*/{#{files.join(',')}}"
       end
 
       def berksfile
