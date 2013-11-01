@@ -56,6 +56,12 @@ module Kitchen
         if instance.suite.data_bags_path
           solo << %{data_bag_path "#{home_path}/data_bags"}
         end
+        if instance.suite.environments_path
+          solo << %{environment_path "#{home_path}/environments"}
+        end
+        if instance.suite.environment
+          solo << %{environment "#{instance.suite.environment}"}
+        end
         if instance.suite.encrypted_data_bag_secret_key_path
           secret = "#{home_path}/encrypted_data_bag_secret"
           solo << %{encrypted_data_bag_secret "#{secret}"}
