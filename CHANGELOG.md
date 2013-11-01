@@ -1,3 +1,29 @@
+## 1.0.0.beta.4 / 2013-01-11
+
+### Bug fixes
+
+* Change permissions on the Chef sandbox to world readable and writable (0755) ([@fnichol][])
+* Minor typographical and documentation errors ([@gmiranda23][])
+* Improve error message when Berkshelf/Librarian is not present ([@fnichol][])
+* Ensure busser respects the `sudo` driver configuration ([@schisamo][])
+
+### Improvements
+
+* Pull request [#235][]: Add Chef Solo environment support ([@ekrupnik][])
+* Pull request [#231][]: Use chefignore to determine which files to copy ([@rteabeault][])
+* Pull request [#222][]: Remove dependency on Celluloid and use pure Ruby threads ([@sethvargo][])
+* Pull request [#218][]: Add support for `site-cookbooks` ([@hollow][])
+* Pull request [#217][]: Add support for specific driver configs ([@hollow][])
+* Pull request [#206][]: Add pessismestic locks on all gem requirements ([@sethvargo][])
+* Pull request [#193][]: Allow users to configure ssh forwarding ([@fnordfish][])
+* Pull request [#192][]: Add chef config has and proxy information ([@scotthain][])
+* Pull request [#94][]: Support passing multiple instance names ([@sethvargo][])
+* Drop hard dependency on `pry` gem for `kitchen console` ([@fnichol][])
+* Remove bash-specific code in favor of pure sh for non-standard Unix devices ([@schisamo][])
+* Make remote RUBY_BIN configurable ([@schisamo][])
+* Ensure busser and Chef Zero are executed in their own the sandboxes ([@schisamo][])
+
+
 ## 1.0.0.beta.3 / 2013-08-29
 
 ### Bug fixes
@@ -201,6 +227,7 @@ The initial release.
 [#84]: https://github.com/opscode/test-kitchen/issues/84
 [#90]: https://github.com/opscode/test-kitchen/issues/90
 [#92]: https://github.com/opscode/test-kitchen/issues/92
+[#94]: https://github.com/opscode/test-kitchen/issues/94
 [#97]: https://github.com/opscode/test-kitchen/issues/97
 [#98]: https://github.com/opscode/test-kitchen/issues/98
 [#99]: https://github.com/opscode/test-kitchen/issues/99
@@ -243,15 +270,27 @@ The initial release.
 [#179]: https://github.com/opscode/test-kitchen/issues/179
 [#187]: https://github.com/opscode/test-kitchen/issues/187
 [#188]: https://github.com/opscode/test-kitchen/issues/188
+[#192]: https://github.com/opscode/test-kitchen/issues/192
+[#193]: https://github.com/opscode/test-kitchen/issues/193
+[#206]: https://github.com/opscode/test-kitchen/issues/206
+[#217]: https://github.com/opscode/test-kitchen/issues/217
+[#218]: https://github.com/opscode/test-kitchen/issues/218
+[#222]: https://github.com/opscode/test-kitchen/issues/222
+[#231]: https://github.com/opscode/test-kitchen/issues/231
+[#235]: https://github.com/opscode/test-kitchen/issues/235
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
 [@bryanwb]: https://github.com/bryanwb
 [@calavera]: https://github.com/calavera
+[@ekrupnik]: https://github.com/ekrupnik
 [@fnichol]: https://github.com/fnichol
+[@fnordfish]: https://github.com/fnordfish
+[@gmiranda23]: https://github.com/gmiranda23
 [@gondoi]: https://github.com/gondoi
 [@grahamc]: https://github.com/grahamc
+[@hollow]: https://github.com/hollow
 [@jasonroelofs]: https://github.com/jasonroelofs
 [@jonsmorrow]: https://github.com/jonsmorrow
 [@josephholsten]: https://github.com/josephholsten
@@ -267,6 +306,8 @@ The initial release.
 [@rteabeault]: https://github.com/rteabeault
 [@ryansouza]: https://github.com/ryansouza
 [@saketoba]: https://github.com/saketoba
+[@schisamo]: https://github.com/schisamo
+[@scotthain]: https://github.com/scotthain
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
 [@stevendanna]: https://github.com/stevendanna
