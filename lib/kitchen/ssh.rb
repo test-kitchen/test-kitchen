@@ -58,6 +58,24 @@ module Kitchen
       end
     end
 
+    def download!(remote, local, options = {}, &progress)
+      if progress.nil?
+        progress = lambda { |ch, name, sent, total|
+          if sent == total
+            logger.info("Downloaded #{name} (#{total} bytes)")
+          end
+        }
+      end
+
+      session.scp.download!(remote, local, options, &progress)
+    end
+
+    def download_path!(remote, local, options = {}, &progress)
+      options = { :recursive => true }.merge(options)
+
+      download!(remote, local, options, &progress)
+    end
+
     def upload!(local, remote, options = {}, &progress)
       if progress.nil?
         progress = lambda { |ch, name, sent, total|

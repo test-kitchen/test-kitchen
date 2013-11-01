@@ -59,6 +59,7 @@ module Kitchen
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(busser_sync_cmd, conn)
           run_remote(busser_run_cmd, conn)
+          download_path(config[:download_results], "results", conn) if config[:download_results]
         end
       end
 
@@ -115,6 +116,14 @@ module Kitchen
         return if command.nil?
 
         connection.exec(env_cmd(command))
+      rescue SSHFailed, Net::SSH::Exception => ex
+        raise ActionFailed, ex.message
+      end
+
+      def download_path(remote, local, connection)
+        return if remote.nil?
+
+        connection.download_path!(remote, local)
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
       end
