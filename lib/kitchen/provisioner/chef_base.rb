@@ -163,21 +163,31 @@ module Kitchen
       def filter_only_cookbook_files
         info("Removing non-cookbook files in sandbox")
 
-        all_files = Dir.glob(File.join(tmpbooks_dir, "**/*")).
-          select { |fn| File.file?(fn) }
-        cookbook_files = Dir.glob(File.join(tmpbooks_dir, cookbook_files_glob)).
-          select { |fn| File.file?(fn) }
+        # Find all files and hidden files but not 'current directory' or
+        # parent directory.
 
-        FileUtils.rm(all_files - cookbook_files)
+        all_files = Dir.glob(File.join(tmpbooks_dir, "*", "*"), File::FNM_DOTMATCH).reject { |f|
+          f =~ /(\/\.\.|\/\.\/|\/\.$)/
+        }
+
+        cookbook_files = Dir.glob(File.join(tmpbooks_dir, "*", cookbook_files_glob), File::FNM_DOTMATCH).reject { |f|
+          f =~ /(\/\.\.|\/\.\/|\/\.$)/
+        }
+
+        (all_files - cookbook_files).each { |f|
+          debug("Removing: " + f)
+        }
+
+        FileUtils.rm_r(all_files - cookbook_files)
       end
 
       def cookbook_files_glob
         files = %w{README.* metadata.{json,rb}
-          attributes/**/* definitions/**/* files/**/* libraries/**/*
-          providers/**/* recipes/**/* resources/**/* templates/**/*
+          attributes definitions files libraries providers
+          recipes resources templates
         }
 
-        "*/{#{files.join(',')}}"
+        "{#{files.join(",")}}"
       end
 
       def berksfile
