@@ -55,6 +55,14 @@ describe Kitchen::Suite do
       suite.nodes_path.must_be_nil
     end
 
+    it "returns nil given no environments_path" do
+      suite.environments_path.must_be_nil
+    end
+
+    it "returns nil given no environment" do
+      suite.environment.must_be_nil
+    end
+
     it "returns nil given no encrypted_data_bag_secret_key_path" do
       suite.encrypted_data_bag_secret_key_path.must_be_nil
     end
@@ -62,6 +70,7 @@ describe Kitchen::Suite do
     it "returns attributes from constructor" do
       opts.merge!({ :attributes => { :a => 'b' }, :data_bags_path => 'crazy',
         :roles_path => 'town', :nodes_path => 'woowoo',
+        :environments_path => 'yoyo', :environment => 'dingdong',
         :encrypted_data_bag_secret_key_path => 'secret' })
       suite.name.must_equal 'suitezy'
       suite.run_list.must_equal ['doowah']
@@ -69,6 +78,8 @@ describe Kitchen::Suite do
       suite.data_bags_path.must_equal 'crazy'
       suite.roles_path.must_equal 'town'
       suite.nodes_path.must_equal 'woowoo'
+      suite.environments_path.must_equal 'yoyo'
+      suite.environment.must_equal 'dingdong'
       suite.encrypted_data_bag_secret_key_path.must_equal 'secret'
     end
   end
