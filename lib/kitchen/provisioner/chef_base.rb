@@ -83,6 +83,7 @@ module Kitchen
         prepare_data_bags
         prepare_roles
         prepare_nodes
+        prepare_environments
         prepare_secret
         prepare_cache
         prepare_cookbooks
@@ -126,6 +127,17 @@ module Kitchen
         tmpnodes_dir = File.join(tmpdir, "nodes")
         FileUtils.mkdir_p(tmpnodes_dir)
         FileUtils.cp_r(Dir.glob("#{nodes}/*"), tmpnodes_dir)
+      end
+
+      def prepare_environments
+        return unless environments
+
+        info("Preparing environments")
+        debug("Using environments from #{environments}")
+
+        tmpenvs_dir = File.join(tmpdir, "environments")
+        FileUtils.mkdir_p(tmpenvs_dir)
+        FileUtils.cp_r(Dir.glob("#{environments}/*"), tmpenvs_dir)
       end
 
       def prepare_secret
@@ -206,6 +218,10 @@ module Kitchen
 
       def nodes
         instance.suite.nodes_path
+      end
+
+      def environments
+        instance.suite.environments_path
       end
 
       def secret

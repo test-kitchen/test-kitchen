@@ -81,6 +81,19 @@ module Kitchen
       def nodes_path
         data[:nodes_path]
       end
+
+      # @return [String] local path to the suite's environments, or nil if one does
+      #   not exist
+      def environments_path
+        data[:environments_path]
+      end
+
+      # @return [String] the suite's environment, or nil if one does
+      #   not exist
+      def environment
+        data[:environment]
+      end
+
     end
 
     # Extra suite methods used for accessing Puppet data such as a manifest.
