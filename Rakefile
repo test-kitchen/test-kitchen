@@ -30,6 +30,7 @@ unless RUBY_ENGINE == 'jruby'
 
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
+    cane.abc_max = 20
     cane.abc_exclude = %w(
       Kitchen::RakeTasks#define
       Kitchen::ThorTasks#define
