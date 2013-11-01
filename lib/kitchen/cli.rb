@@ -105,7 +105,7 @@ module Kitchen
         ensure_initialized
         destroy_mode = options[:destroy].to_sym
         @task = :test
-        results = parse_subcommand(args.first)
+        results = parse_subcommand(args.join('|'))
 
         if options[:parallel]
           run_parallel(results, destroy_mode)
