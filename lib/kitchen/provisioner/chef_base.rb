@@ -267,7 +267,7 @@ module Kitchen
       end
 
       def resolve_with_berkshelf
-        info("Resolving cookbook dependencies with Berkshelf")
+        info("Resolving cookbook dependencies with Berkshelf...")
         debug("Using Berksfile from #{berksfile}")
 
         begin
@@ -282,8 +282,10 @@ module Kitchen
         end
 
         Kitchen.mutex.synchronize do
-          Berkshelf::Berksfile.from_file(berksfile).
-            install(:path => tmpbooks_dir)
+          Berkshelf.ui.mute do
+            Berkshelf::Berksfile.from_file(berksfile).
+              install(:path => tmpbooks_dir)
+          end
         end
       end
 

@@ -62,7 +62,7 @@ module Kitchen
       if progress.nil?
         progress = lambda { |ch, name, sent, total|
           if sent == total
-            logger.info("Uploaded #{name} (#{total} bytes)")
+            logger.debug("Uploaded #{name} (#{total} bytes)")
           end
         }
       end
