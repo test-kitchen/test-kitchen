@@ -63,10 +63,10 @@ module Kitchen
       cmd = "sudo -E #{cmd}" if use_sudo
       subject = "[#{options[:log_subject] || "local"} command]"
 
-      info("#{subject} BEGIN (#{display_cmd(cmd)})") unless quiet
+      debug("#{subject} BEGIN (#{display_cmd(cmd)})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
       sh.run_command
-      info("#{subject} END #{Util.duration(sh.execution_time)}") unless quiet
+      debug("#{subject} END #{Util.duration(sh.execution_time)}")
       sh.error!
       sh.stdout
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
