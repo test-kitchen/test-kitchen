@@ -37,8 +37,6 @@ module Kitchen
     #   sudo
     # @option options [String] :log_subject used in the output or log header
     #   for clarity and context. Default is "local".
-    # @option options [TrueClass, FalseClass] :quiet whether or not to echo
-    #   logging commands. Default is false.
     # @option options [String] :cwd the directory to chdir to before running
     #   the command
     # @option options [Hash] :environment a Hash of environment variables to
@@ -59,7 +57,6 @@ module Kitchen
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
       use_sudo = options[:use_sudo].nil? ? false : options[:use_sudo]
-      quiet = options[:quiet]
       cmd = "sudo -E #{cmd}" if use_sudo
       subject = "[#{options[:log_subject] || "local"} command]"
 
@@ -87,7 +84,7 @@ module Kitchen
 
     def shell_opts(options)
       filtered_opts = options.reject do |key, value|
-        [:use_sudo, :log_subject, :quiet].include?(key)
+        [:use_sudo, :log_subject].include?(key)
       end
       { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)
     end
