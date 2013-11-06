@@ -25,6 +25,15 @@ require 'chef_fs/chef_fs_data_store'
 require 'chef_fs/config'
 require 'tmpdir'
 
+# Bust out of our self-imposed sandbox before running chef-client so
+# gems installed via gem_package land in Chef's GEM_HOME.
+#
+# https://github.com/opscode/test-kitchen/issues/240
+#
+ENV['GEM_HOME'] = nil
+ENV['GEM_PATH'] = nil
+ENV['GEM_CACHE'] = nil
+
 client = Chef::Application::Client.new
 client.reconfigure
 
