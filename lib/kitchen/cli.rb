@@ -100,7 +100,7 @@ module Kitchen
       end
 
       update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
+      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         ensure_initialized
         destroy_mode = options[:destroy].to_sym
@@ -113,7 +113,7 @@ module Kitchen
           run_serial(results, destroy_mode)
         end
       end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      logger.debug "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
@@ -268,13 +268,13 @@ module Kitchen
 
     def exec_action(action)
       update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
+      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         @task = action
         results = parse_subcommand(args.first)
         options[:parallel] ? run_parallel(results) : run_serial(results)
       end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      logger.debug "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     def run_serial(instances, *args)

@@ -37,8 +37,6 @@ module Kitchen
     #   sudo
     # @option options [String] :log_subject used in the output or log header
     #   for clarity and context. Default is "local".
-    # @option options [TrueClass, FalseClass] :quiet whether or not to echo
-    #   logging commands. Default is false.
     # @option options [String] :cwd the directory to chdir to before running
     #   the command
     # @option options [Hash] :environment a Hash of environment variables to
@@ -59,14 +57,13 @@ module Kitchen
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
       use_sudo = options[:use_sudo].nil? ? false : options[:use_sudo]
-      quiet = options[:quiet]
       cmd = "sudo -E #{cmd}" if use_sudo
       subject = "[#{options[:log_subject] || "local"} command]"
 
-      info("#{subject} BEGIN (#{display_cmd(cmd)})") unless quiet
+      debug("#{subject} BEGIN (#{display_cmd(cmd)})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
       sh.run_command
-      info("#{subject} END #{Util.duration(sh.execution_time)}") unless quiet
+      debug("#{subject} END #{Util.duration(sh.execution_time)}")
       sh.error!
       sh.stdout
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
