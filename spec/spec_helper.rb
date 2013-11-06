@@ -31,6 +31,7 @@ SimpleCov.start 'gem'
 require 'fakefs/safe'
 require 'minitest/autorun'
 require 'mocha/setup'
+require 'tempfile'
 
 # enable yaml symbol parsing if code is executing under guard
 if ENV['GUARD_NOTIFY']

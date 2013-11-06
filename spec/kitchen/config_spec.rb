@@ -130,6 +130,17 @@ describe Kitchen::Config do
         must_equal "/tmp/base/shared/data_bags"
     end
 
+    it "returns a suite with an absolute data_bags_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :data_bags_path => '/shared/data_bags' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/shared/data_bags"
+      FileUtils.mkdir_p "/tmp/base/shared/data_bags"
+
+      cheflike_suite(config.suites.first).data_bags_path.
+        must_equal "/shared/data_bags"
+    end
+
     it "returns a suite with nil for roles_path by default" do
       stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
 
