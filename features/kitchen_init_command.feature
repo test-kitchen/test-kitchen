@@ -14,6 +14,7 @@ Feature: Add Test Kitchen support to an existing project
 
   Scenario: Running init with default values
     Given a sandboxed GEM_HOME directory named "kitchen-init"
+    And I have a git repository
     When I run `kitchen init`
     Then the exit status should be 0
     And a directory named ".kitchen" should exist
@@ -72,6 +73,11 @@ Feature: Add Test Kitchen support to an existing project
       puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
     end
     """
+
+  Scenario: Running without git doesn't make a .gitignore
+    When I successfully run `kitchen init`
+    Then the exit status should be 0
+    And a file named ".gitignore" should not exist
 
   Scenario: Running with a Thorfile file appends Kitchen tasks
     Given an empty file named "Gemfile"
