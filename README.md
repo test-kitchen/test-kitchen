@@ -47,7 +47,18 @@ your tests in parallel. Trust us, it's faster!
    - `always`: Regardless of the success or failure of the build,
      destroy the machine.
  - `--log-level=debug|info|warn|error|fatal` - Set the log-level of
-     the entire stack, including the chef-solo run. 
+     the entire stack, including the chef-solo run.
+
+You can also specify these switches in the `settings` has in your YAML:
+
+```yaml
+settings:
+  parallel: true
+  destroy: never
+```
+
+Options specified via the CLI still take precedence over options specified
+in the config.
 
 ## The Kitchen YAML format
 

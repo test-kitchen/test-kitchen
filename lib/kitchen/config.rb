@@ -72,6 +72,11 @@ module Kitchen
       @instances ||= build_instances
     end
 
+    # Constant/global settings defined in the YAML
+    def settings
+      data[:settings] || {}
+    end
+
     private
 
     def new_suite(hash)
