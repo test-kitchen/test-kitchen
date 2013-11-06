@@ -103,11 +103,11 @@ module Kitchen
       logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         ensure_initialized
-        destroy_mode = options[:destroy].to_sym
+        destroy_mode = value_for(options[:destroy]).to_sym
         @task = :test
         results = parse_subcommand(args.join('|'))
 
-        if options[:parallel]
+        if value_for(:parallel)
           run_parallel(results, destroy_mode)
         else
           run_serial(results, destroy_mode)
@@ -405,6 +405,16 @@ module Kitchen
           ].join
         },
       ]
+    end
+
+    # Try finding the value for a given option by searching the CLI options,
+    # then the global config.
+    def value_for(key)
+      if options.has_key?(key)
+        options[key]
+      else
+        @config.settings[key]
+      end
     end
   end
 end
