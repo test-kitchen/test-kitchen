@@ -102,14 +102,21 @@ module Kitchen
     end
 
     def build_instances
-      results = []
-      filtered_instances = suites.product(platforms).delete_if do |arr|
-        arr[0].excludes.include?(arr[1].name)
+      filtered = suites.product(platforms).select do |suite, platform|
+        if !suite.includes.empty?
+          suite.includes.include?(platform.name)
+        elsif !suite.excludes.empty?
+          !suite.excludes.include?(platform.name)
+        else
+          true
+        end
       end
-      filtered_instances.each_with_index do |arr, index|
-        results << new_instance(arr[0], arr[1], index)
+
+      instances = filtered.map.with_index do |(suite, platform), index|
+        new_instance(suite, platform, index)
       end
-      Collection.new(results)
+
+      Collection.new(instances)
     end
 
     def new_instance(suite, platform, index)

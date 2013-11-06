@@ -43,6 +43,10 @@ describe Kitchen::Suite do
       suite.excludes.must_equal Array.new
     end
 
+    it "returns an empty Array given no includes" do
+      suite.includes.must_equal Array.new
+    end
+
     it "returns nil given no data_bags_path" do
       suite.data_bags_path.must_be_nil
     end

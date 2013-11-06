@@ -30,6 +30,9 @@ module Kitchen
     # @return [Array] Array of names of excluded platforms
     attr_reader :excludes
 
+    # @return [Array] Array of names of only included platforms
+    attr_reader :includes
+
     # @return [Hash] suite specific driver_config hash
     attr_reader :driver_config
 
@@ -38,12 +41,15 @@ module Kitchen
     # @param [Hash] options configuration for a new suite
     # @option options [String] :name logical name of this suit (**Required**)
     # @option options [String] :excludes Array of names of excluded platforms
+    # @option options [String] :includes Array of names of only included
+    #   platforms
     def initialize(options = {})
       options = options.dup
       validate_options(options)
 
       @name = options.delete(:name)
       @excludes = Array(options[:excludes])
+      @includes = Array(options[:includes])
       @driver_config = options.delete(:driver_config) || {}
       @data = options
     end
