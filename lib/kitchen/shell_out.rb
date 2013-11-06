@@ -84,7 +84,7 @@ module Kitchen
 
     def shell_opts(options)
       filtered_opts = options.reject do |key, value|
-        [:use_sudo, :log_subject].include?(key)
+        [:use_sudo, :log_subject, :quiet].include?(key)
       end
       { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)
     end
