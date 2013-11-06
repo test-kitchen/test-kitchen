@@ -74,3 +74,10 @@ else
 end
 
 task :default => [:test, :quality]
+
+# Update the documentation on GitHub
+task :update_docs do
+  raise "You need to update the docs! (and fix this Rake task too)"
+end
+
+task :release => [:update_docs, :release]
