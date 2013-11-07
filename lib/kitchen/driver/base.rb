@@ -104,11 +104,11 @@ module Kitchen
       # Returns the shell command that will log into an instance.
       #
       # @param state [Hash] mutable instance and driver state
-      # @return [LoginCommand] an object containing the array of command line
+      # @return [sshCommand] an object containing the array of command line
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
-      def login_command(state)
-        raise ActionFailed, "Remote login is not supported in this driver."
+      def ssh_command(state)
+        raise ActionFailed, "Remote ssh is not supported in this driver."
       end
 
       # Performs whatever tests that may be required to ensure that this driver

@@ -66,8 +66,8 @@ module Kitchen
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
-      def login_command(state)
-        SSH.new(*build_ssh_args(state)).login_command
+      def ssh_command(state)
+        SSH.new(*build_ssh_args(state)).ssh_command
       end
 
       def ssh(ssh_args, command)
