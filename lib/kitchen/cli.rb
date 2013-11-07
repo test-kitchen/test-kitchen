@@ -116,10 +116,10 @@ module Kitchen
       logger.debug "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
-    desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
+    desc "ssh (['REGEX']|[INSTANCE])", "Log in to one instance"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
-    def login(regexp)
+    def ssh(regexp)
       update_config!
       results = get_filtered_instances(regexp)
       if results.size > 1
@@ -128,7 +128,7 @@ module Kitchen
       end
       instance = results.pop
 
-      instance.login
+      instance.ssh
     end
 
     desc "version", "Print Kitchen's version information"

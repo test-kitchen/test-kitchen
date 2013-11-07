@@ -164,14 +164,14 @@ module Kitchen
     #
     # **Note** This method calls exec and will not return.
     #
-    # @see Driver::LoginCommand
-    # @see Driver::Base#login_command
-    def login
-      login_command = driver.login_command(state_file.read)
-      command, *args = login_command.cmd_array
-      options = login_command.options
+    # @see Driver::sshCommand
+    # @see Driver::Base#ssh_command
+    def ssh
+      ssh_command = driver.ssh_command(state_file.read)
+      command, *args = ssh_command.cmd_array
+      options = ssh_command.options
 
-      debug("Login command: #{command} #{args.join(' ')} (Options: #{options})")
+      debug("ssh command: #{command} #{args.join(' ')} (Options: #{options})")
       Kernel.exec(command, *args, options)
     end
 

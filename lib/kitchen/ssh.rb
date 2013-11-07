@@ -22,7 +22,7 @@ require 'net/scp'
 require 'socket'
 
 require 'kitchen/errors'
-require 'kitchen/login_command'
+require 'kitchen/ssh_command'
 
 module Kitchen
 
@@ -89,7 +89,7 @@ module Kitchen
       logger.info("Waiting for #{hostname}:#{port}...") until test_ssh
     end
 
-    def login_command
+    def ssh_command
       args  = %W{ -o UserKnownHostsFile=/dev/null }
       args += %W{ -o StrictHostKeyChecking=no }
       args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
