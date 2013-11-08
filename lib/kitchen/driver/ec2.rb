@@ -34,6 +34,7 @@ module Kitchen
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
+      default_config :ebs_optimized,      false
       default_config :groups,             ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :aws_access_key_id do |driver|
@@ -114,6 +115,7 @@ module Kitchen
           :groups             => config[:groups],
           :tags               => config[:tags],
           :flavor_id          => config[:flavor_id],
+          :ebs_optimized      => config[:ebs_optimized],
           :image_id           => config[:image_id],
           :key_name           => config[:aws_ssh_key_id],
           :subnet_id          => config[:subnet_id],
@@ -124,6 +126,7 @@ module Kitchen
         debug("ec2:region '#{config[:region]}'")
         debug("ec2:availability_zone '#{config[:availability_zone]}'")
         debug("ec2:flavor_id '#{config[:flavor_id]}'")
+        debug("ec2:ebs_optimized '#{config[:ebs_optimized]}'")
         debug("ec2:image_id '#{config[:image_id]}'")
         debug("ec2:groups '#{config[:groups]}'")
         debug("ec2:tags '#{config[:tags]}'")

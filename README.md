@@ -97,6 +97,14 @@ The EC2 [instance type][instance_docs] (also known as size) to use.
 
 The default is `"m1.small"`.
 
+### ebs\_optimized
+
+Option to launch EC2 instance with optimize EBS volume. See
+[Amazon EC2 Instance Types](http://aws.amazon.com/ec2/instance-types/) to find
+out more about instance types that can be launched as EBS-optimized instances.
+
+The default is `false`.
+
 ### groups
 
 An Array of EC [security groups][group_docs] which will be applied to the
