@@ -99,7 +99,7 @@ The default is `"m1.small"`.
 
 ### ebs\_optimized
 
-Option to launch EC2 instance with optimize EBS volume. See
+Option to launch EC2 instance with optimized EBS volume. See
 [Amazon EC2 Instance Types](http://aws.amazon.com/ec2/instance-types/) to find
 out more about instance types that can be launched as EBS-optimized instances.
 
