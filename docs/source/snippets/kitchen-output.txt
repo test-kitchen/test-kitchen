@@ -1,0 +1,15 @@
+<div class="body">$ kitchen test --parallel
+<span class="blue">-----> Creating &lt;create-ubuntu-1210&gt;...</span>
+<span class="yellow">-----> Creating &lt;append-ubuntu-1210&gt;...</span>
+<span class="magenta">-----> Creating &lt;unique-ubuntu-1210&gt;...</span>
+<span class="blue">-----> Converging &lt;options-ubuntu-1210&gt;...</span>
+<span class="yellow">-----> Converging &lt;options-ubuntu-1210&gt;...</span>
+<span class="magenta">-----> Converging &lt;options-ubuntu-1210&gt;...</span></div>
+
+<div class="body">$ kitchen list
+<span class="yellow">Instance                       Driver   Provisioner  Last Action</span>
+append-ubuntu-1210             Vagrant  Chef Solo    <span class="red">&lt;Not Created&gt;</span>
+append-existing-ubuntu-1210    Vagrant  Chef Solo    <span class="red">&lt;Not Created&gt;</span>
+create-ubuntu-1210             Vagrant  Chef Solo    <span class="cyan">Created</span>
+options-ubuntu-1210            Vagrant  Chef Solo    <span class="cyan">Created</span>
+</div>

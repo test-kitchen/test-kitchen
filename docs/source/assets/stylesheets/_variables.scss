@@ -1,0 +1,24 @@
+/* Colors */
+$primary-blue: #30394f;
+$primary-red: #ff434c;
+$primary-lightblue: #6aceeb;
+$primary-gray: #ede8df;
+$primary-white: #fffbed;
+
+$background-color: $primary-white;
+
+/* Fonts */
+@include font-face('Varela Round', font-files('VarelaRound-Regular.ttf'));
+
+/* Rounded Corners */
+$radius: 2px;
+
+/* Widths */
+$max-width: 68em;
+
+/* Helpful mixins */
+@mixin mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}

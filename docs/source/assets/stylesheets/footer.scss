@@ -1,0 +1,11 @@
+footer {
+  background: $primary-red;
+  color: lighten($primary-red, 30%);
+  padding: 25px 0;
+
+  a, a:visited, a:hover, a:active {
+    border-bottom: 1px dotted #fff;
+    color: inherit;
+    text-decoration: none;
+  }
+}

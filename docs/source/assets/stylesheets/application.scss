@@ -1,0 +1,73 @@
+@import 'compass';
+@import 'compass/css3';
+@import 'compass/css3/user-interface';
+@import 'compass/reset';
+
+@import '_variables';
+@import '_syntax';
+@import '_terminal';
+@import 'docs';
+@import 'footer';
+@import 'header';
+@import 'index';
+
+body {
+  background: $primary-white;
+  font-family: 'Varela Round', 'Helvetica Neue', sans-serif;
+  font-size: 1em;
+
+  @include mobile {
+    font-size: 0.9em;
+  }
+}
+
+.container {
+  padding: 0 20px;
+  margin: 0 auto;
+  max-width: $max-width;
+}
+
+.wrapper {
+  @include clearfix;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Varela Round', 'Helvetica Neue', sans-serif;
+  font-weight: 100;
+  line-height: 1.5;
+}
+
+h3 {
+  font-size: 3em;
+  font-weight: 700;
+
+  @include mobile { font-size: 2em; }
+}
+
+h4 {
+  color: #666;
+  font-size: 1.75em;
+  font-weight: 400;
+  @include mobile { font-size: 1.25em }
+}
+
+p {
+  line-height: 1.5;
+  padding: 0.75em 0;
+}
+
+a, a:visited {
+  color: $primary-red;
+  @include transition-property(color);
+  @include transition-duration(0.25s);
+  text-decoration: none;
+}
+
+a:hover, a:active {
+  color: darken($primary-red, 20%);
+  text-decoration: none;
+}
+
+::selection {
+  background: lighten($primary-red, 25%);
+}

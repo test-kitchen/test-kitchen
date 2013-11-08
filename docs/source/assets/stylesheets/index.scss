@@ -1,0 +1,56 @@
+body.index {
+  .callout {
+    @include background-image(linear-gradient($primary-red, darken($primary-red, 10%)));
+    border-top: 1px solid darken($primary-red, 20%);
+    @include box-shadow(
+      darken($primary-red, 10%) 0 -1px 0 0 inset,
+      $primary-white 0 1px 0 0
+    );
+    margin-bottom: -100px;
+
+    h2 {
+      color: #f7f7f7;
+      font-size: 4.5em;
+      line-height: 1.2em;
+      padding: 50px 0;
+      text-align: center;
+      text-shadow: 0 2px 2px darken($primary-red, 20%);
+
+      @include mobile {
+        font-size: 2em;
+        line-height: 1.4em;
+      }
+    }
+
+    .terminal {
+      position: relative;
+      margin: 0 auto;
+      max-width: 960px;
+      z-index: 10;
+    }
+  }
+
+  section {
+    padding: 40px 0;
+  }
+
+  section.overview {
+    background: inherit;
+    border-top: 1px solid $primary-gray;
+    @include box-shadow(0 -5px 0 5px white, 0 -6px 0 6px darken($primary-red, 17%));
+    margin-top: -100px;
+    padding-top: 150px;
+  }
+
+  section.usage {
+    background: $primary-gray;
+
+    h3 {
+      text-align: center;
+    }
+  }
+
+  section.marketing {
+    background: $primary-lightblue;
+  }
+}

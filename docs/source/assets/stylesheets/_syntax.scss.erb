@@ -1,0 +1,17 @@
+code {
+  font-family: monospace;
+  font-size: 130%;
+}
+
+pre.highlight {
+  background: lighten($primary-red, 35%);
+  border: 1px solid lighten($primary-red, 30%);
+  @include border-radius($radius);
+  font-family: monospace;
+  font-size: 115%;
+  line-height: 125%;
+  overflow: auto;
+  padding: 1.0em;
+}
+
+<%= Rouge::Themes::Github.render(scope: '.highlight') %>

@@ -1,0 +1,35 @@
+.docs {
+  .content {
+    background: #fff;
+    border: 1px solid $primary-gray;
+    @include border-radius($radius);
+    margin-bottom: 2em;
+    padding: 25px;
+  }
+
+  .left {
+    float: left;
+    width: 25%;
+
+    @include mobile {
+      float: none;
+      width: 100%
+    }
+
+    ul {
+      li {
+        margin: 0.5em 0;
+      }
+    }
+  }
+
+  .right {
+    float: left;
+    width: 75%;
+
+    @include mobile {
+      float: none;
+      width: 100%
+    }
+  }
+}
