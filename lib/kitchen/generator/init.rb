@@ -50,8 +50,10 @@ module Kitchen
         prepare_rakefile if init_rakefile?
         prepare_thorfile if init_thorfile?
         empty_directory "test/integration/default" if init_test_dir?
-        append_to_gitignore(".kitchen/")
-        append_to_gitignore(".kitchen.local.yml")
+        if init_git?
+          append_to_gitignore(".kitchen/")
+          append_to_gitignore(".kitchen.local.yml")
+        end
         prepare_gemfile if init_gemfile?
         add_drivers
 
@@ -94,6 +96,10 @@ module Kitchen
 
       def init_test_dir?
         Dir.glob("test/integration/*").select { |d| File.directory?(d) }.empty?
+      end
+
+      def init_git?
+        File.directory?(File.join(destination_root, '.git'))
       end
 
       def prepare_rakefile
