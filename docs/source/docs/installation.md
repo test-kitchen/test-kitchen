@@ -2,8 +2,8 @@
 title: Installing Test Kitchen
 ---
 
-# Installing Test Kitchen
-
+Installing Test Kitchen
+=======================
 Test Kitchen is distributed as a Ruby gem. To get started, install the gem from Rubygems:
 
 ```text

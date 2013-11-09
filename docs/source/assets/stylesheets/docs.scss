@@ -5,6 +5,45 @@
     @include border-radius($radius);
     margin-bottom: 2em;
     padding: 25px;
+
+    h1 {
+      border-bottom: 1px solid $primary-gray;
+      font-size: 2em;
+      margin: 0 -25px 1em -25px;
+      padding: 0 0 0.7em 0;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin: 1.5em 0 0.17em 0;
+
+      &:before {
+        content: ":: ";
+        float: left;
+        letter-spacing: 7px;
+        margin-top: -1px;
+      }
+    }
+
+    h3 {
+      font-size: 1.25em;
+      font-weight: 300;
+      margin: 0.1em 0;
+    }
+
+    h4 {
+      border-bottom: 1px solid $primary-gray;
+      font-size: 1.1em;
+      margin-top: 1em;
+    }
+
+    ul {
+      line-height: 1.5em;
+      list-style-type: disc;
+      margin-left: 20px;
+      padding: 0.75em 0;
+    }
   }
 
   .left {

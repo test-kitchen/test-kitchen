@@ -68,6 +68,14 @@ a:hover, a:active {
   text-decoration: none;
 }
 
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
+}
+
 ::selection {
   background: lighten($primary-red, 25%);
 }
