@@ -50,6 +50,7 @@ body.index {
     background: $primary-gray;
 
     h3 {
+      color: darken($primary-gray, 25%);
       margin-bottom: 1em;
       text-align: center;
     }
@@ -67,7 +68,6 @@ body.index {
       color: darken($primary-lightblue, 25%);
       margin-bottom: 0.5em;
       text-align: center;
-      text-shadow: 1px 1px 0 lighten($primary-lightblue, 15%);
     }
 
     ul.logos {
