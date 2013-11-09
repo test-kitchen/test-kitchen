@@ -113,7 +113,7 @@ module Kitchen
           run_serial(results, destroy_mode)
         end
       end
-      logger.debug "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
@@ -274,7 +274,7 @@ module Kitchen
         results = parse_subcommand(args.first)
         options[:parallel] ? run_parallel(results) : run_serial(results)
       end
-      logger.debug "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
     def run_serial(instances, *args)
