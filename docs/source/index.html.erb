@@ -38,36 +38,42 @@ Compiling Cookbooks...</span></div>
     <p>Test Kitchen abstracts machine creation to drivers, such as kitchen-vagrant, kitchen-ec2, and kitchen-docker.</p>
 
     <h4>YAML-based configuration</h4>
+    <p>Section here on why YAML is awesome...</p>
   </div>
 </section>
 
 <section class="usage">
   <div class="container">
     <h3>Usage &amp; Installation</h3>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Test Kitchen is distributed as a Ruby gem. To get started, install the gem from RubyGems:</p>
+    <% code('text') do %>$ gem install test-kitchen<% end %>
+
+    <p>Test Kitchen includes a command line utility "<code>kitchen</code>". Bootstrap your cookbook using the <code>kitchen init</code> command from inside your Chef cookbook:</p>
+    <% code 'text' do %>$ kitchen init
+      create  .kitchen.yml
+      create  test/integration/default
+         run  gem install kitchen-vagrant from "."<% end %>
+
+    <p>By default, Test Kitchen will use the Vagrant driver. For more information on Test Kitchen drivers, please see the <a href="/docs/drivers">Test Kitchen Driver documentation</a>.</p>
+
+    <p>Examine the <code>.kitchen.yml</code> file created in the root of your Chef cookbook. This file defines the driver configuration, platforms, and test suites to execute.</p>
+    <% code 'yaml' do %>driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: true
+
+platforms:
+  - name: ubuntu-12.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[bacon::default]<% end %>
+
+    <p>See the <a href="/docs/configuration">Configuration</a> section for more information on the <code>.kitchen.yml</code> and other configuration options. For now, we can just use the default values</p>
+
+    <p>Finally, run the <code>kitchen test</code> command to run Test Kitchen:</p>
+
+    <% code 'text' do %>$ kitchen test<% end %>
   </div>
 </section>
 

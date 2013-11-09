@@ -48,6 +48,11 @@ body.index {
     h3 {
       text-align: center;
     }
+
+    pre.highlight {
+      background: lighten($primary-gray, 7%);
+      border: 1px solid darken($primary-gray, 5%);
+    }
   }
 
   section.marketing {
