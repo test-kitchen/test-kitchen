@@ -27,6 +27,10 @@ body.index {
       margin: 0 auto;
       max-width: 960px;
       z-index: 10;
+
+      @include mobile {
+        font-size: 80%;
+      }
     }
   }
 
