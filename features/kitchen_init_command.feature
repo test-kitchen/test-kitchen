@@ -109,7 +109,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file ".kitchen.yml" should contain:
     """
     suites:
-    - name: default
-      run_list: ["recipe[ntp]"]
-      attributes: {}
+      - name: default
+        run_list:
+          - recipe[ntp::default]
+        attributes:
+          ntp:
+            config: value
     """
