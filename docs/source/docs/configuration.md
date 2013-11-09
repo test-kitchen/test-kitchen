@@ -106,3 +106,15 @@ $ KITCHEN_YAML=/custom/path.yml kitchen test
 ```
 
 Please note, this file's configuration content is still merged with the `.kitchen.local.yml` if it exists.
+
+
+Global Configuration
+--------------------
+Test Kitchen also reads a `.kitchen/config.yml` file at the root of your home directory if one is present. This is a great place to specify personal configuration settings that are common to all projects (similar to a global `.gitignore` or `chefignore`):
+
+```yaml
+# ~/.kitchen/config.yml
+
+settings:
+  parallel: true
+```
