@@ -75,9 +75,27 @@ end
 
 task :default => [:test, :quality]
 
-# Update the documentation on GitHub
-task :update_docs do
-  raise "You need to update the docs! (and fix this Rake task too)"
+namespace :doc do
+  desc 'Run the documentation server'
+  task :server do
+    Dir.chdir('docs') do
+      sh 'bundle exec middleman server'
+    end
+  end
+
+  desc 'Update the documentation on GitHub'
+  task :push do
+    FileUtils.rm_rf('docs/build')
+
+    Dir.chdir('docs') do
+      sh 'bundle exec middleman build --clean'
+    end
+
+    sh 'git checkout --orphan gh-pages'
+    sh 'git rm -rf .'
+    FileUtils.mv(Dir.glob('.build/*'), '.')
+    FileUtils.rm_rf('.build')
+  end
 end
 
-task :release => [:update_docs, :release]
+# task :release => [:update_docs, :release]

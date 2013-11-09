@@ -6,10 +6,12 @@
 @import '_variables';
 @import '_syntax';
 @import '_terminal';
-@import 'docs';
-@import 'footer';
-@import 'header';
-@import 'index';
+
+@import '_header';
+@import '_footer';
+
+@import '_docs';
+@import '_index';
 
 body {
   background: $primary-white;
