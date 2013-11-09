@@ -154,7 +154,7 @@ module Kitchen
           return 0
         }
 
-        # do_curl URL FILENAME
+        # do_perl URL FILENAME
         do_perl() {
           echo "trying perl..."
           perl -e "use LWP::Simple; getprint($ARGV[0]);" "$1" > "$2"
@@ -168,7 +168,7 @@ module Kitchen
           return 0
         }
 
-        # do_curl URL FILENAME
+        # do_python URL FILENAME
         do_python() {
           echo "trying python..."
           python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2"
