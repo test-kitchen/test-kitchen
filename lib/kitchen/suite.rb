@@ -74,6 +74,12 @@ module Kitchen
         data[:data_bags_path]
       end
 
+      # @return [String] local path to the suite's data, or nil if no data
+      #   dir set
+      def data_path
+        data[:data_path]
+      end
+
       # @return [String] local path to the suite's encrypted data bag secret
       #   key path, or nil if one does not exist
       def encrypted_data_bag_secret_key_path
