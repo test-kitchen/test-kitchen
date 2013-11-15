@@ -40,8 +40,8 @@ your tests in parallel. Trust us, it's faster!
 
 ### Helpful Switches
 
- - `--destroy=always|passed|never`
-   - `passed` (default): destroy the machine after a successful test
+ - `--destroy=always|passing|never`
+   - `passing` (default): destroy the machine after a successful test
      run (which implies passing tests.)
    - `never`: Never clean up builds, even if they pass or fail.
    - `always`: Regardless of the success or failure of the build,
