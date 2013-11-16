@@ -39,7 +39,6 @@ class ChefClientZero
 
   def run
     create_chef_zero_server
-    create_validation_pem
     run_chef_client
   end
 
@@ -66,14 +65,6 @@ class ChefClientZero
 
   def kitchen_path
     ENV['KITCHEN_HOME_PATH']
-  end
-
-  def create_validation_pem
-    FileUtils.mkdir_p(kitchen_path)
-
-    File.open(File.join(kitchen_path, "validation.pem"), "wb") do |f|
-      f.write(@server.gen_key_pair.first)
-    end
   end
 
   def run_chef_client

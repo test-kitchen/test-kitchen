@@ -35,11 +35,14 @@ module Kitchen
       def create_sandbox
         create_chef_sandbox do
           prepare_chef_client_zero_rb
+          prepare_validation_pem
           prepare_client_rb
         end
       end
 
       def prepare_command
+        return if local_mode_supported?
+
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         #
         # * we are installing latest chef in order to get chef-zero and
@@ -56,15 +59,21 @@ module Kitchen
       end
 
       def run_command
-        [
-          "cd #{home_path};",
-          sandbox_env,
-          sudo(ruby_bin),
-          "#{home_path}/chef-client-zero.rb",
+        args = [
           "--config #{home_path}/client.rb",
           "--json-attributes #{home_path}/dna.json",
           "--log_level #{config[:log_level]}"
-        ].join(" ")
+        ]
+
+        if local_mode_supported?
+          ["#{sudo('chef-client')} -z"].concat(args).join(" ")
+        else
+          ["cd #{home_path};",
+            sandbox_env,
+            sudo(ruby_bin),
+            "#{home_path}/chef-client-zero.rb"
+          ].concat(args).join(" ")
+        end
       end
 
       def home_path
@@ -107,6 +116,12 @@ module Kitchen
         FileUtils.cp(source, File.join(tmpdir, "chef-client-zero.rb"))
       end
 
+      def prepare_validation_pem
+        source = File.join(File.dirname(__FILE__),
+          %w{.. .. .. support dummy-validation.pem})
+        FileUtils.cp(source, File.join(tmpdir, "validation.pem"))
+      end
+
       def prepare_client_rb
         client = []
         client << %{node_name "#{instance.name}"}
@@ -126,6 +141,24 @@ module Kitchen
 
         File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
           file.write(client.join("\n"))
+        end
+      end
+
+      # Determines whether or not local mode (a.k.a chef zero mode) is
+      # supported in the version of Chef as determined by inspecting the
+      # require_chef_omnibus config variable.
+      #
+      # The only way this method returns false is if require_chef_omnibus has
+      # an explicit version set to less than 11.8.0, when chef zero mode was
+      # introduced. Otherwise a modern Chef installation is assumed.
+      def local_mode_supported?
+        version = config[:require_chef_omnibus]
+
+        case version
+        when nil, true, "latest"
+          true
+        else
+          Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
         end
       end
     end
