@@ -63,7 +63,7 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w{data_bags roles environments cookbooks}.
+        dirs = %w{data_bags roles environments cookbooks data}.
           map { |dir| File.join(home_path, dir) }.join(" ")
         "#{sudo('rm')} -rf #{dirs}"
       end
