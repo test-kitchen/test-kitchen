@@ -21,8 +21,16 @@ require 'rubygems'
 require 'chef'
 require 'chef/application/client'
 require 'chef_zero/server'
-require 'chef_fs/chef_fs_data_store'
-require 'chef_fs/config'
+
+begin
+  # chef_fs is now in core chef >= 11.8
+  require 'chef/chef_fs/chef_fs_data_store'
+  require 'chef/chef_fs/config'
+rescue LoadError
+  # backwards compatibility with chef-essentials gem
+  require 'chef_fs/chef_fs_data_store'
+  require 'chef_fs/config'
+end
 require 'tmpdir'
 
 # Bust out of our self-imposed sandbox before running chef-client so
@@ -37,9 +45,17 @@ ENV['GEM_CACHE'] = nil
 client = Chef::Application::Client.new
 client.reconfigure
 
-data_store = ChefFS::ChefFSDataStore.new(
-  ChefFS::Config.new(Chef::Config).local_fs
-)
+if Chef.const_defined?('ChefFS')
+  # chef_fs is now in core chef >= 11.8
+  data_store = Chef::ChefFS::ChefFSDataStore.new(
+    Chef::ChefFS::Config.new(Chef::Config).local_fs
+  )
+else
+  # backwards compatibility with chef-essentials gem
+  data_store = ChefFS::ChefFSDataStore.new(
+    ChefFS::Config.new(Chef::Config).local_fs
+  )
+end
 
 server_opts = {
   :host => "127.0.0.1",
