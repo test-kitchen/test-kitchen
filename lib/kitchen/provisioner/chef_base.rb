@@ -63,7 +63,6 @@ module Kitchen
       end
 
       def init_command
-        "#{sudo('rm')} -rf #{home_path}"
       end
 
       def cleanup_sandbox
