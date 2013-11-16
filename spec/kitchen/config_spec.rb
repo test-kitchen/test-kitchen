@@ -174,6 +174,50 @@ describe Kitchen::Config do
       cheflike_suite(config.suites.first).roles_path.
         must_equal "/tmp/base/shared/roles"
     end
+
+    it "returns a suite with nil for data_path by default" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
+      cheflike_suite(config.suites.first).data_path.must_be_nil
+    end
+
+    it "returns a suite with a common data_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
+      config.test_base_path = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/data"
+
+      cheflike_suite(config.suites.first).data_path.
+        must_equal "/tmp/base/data"
+    end
+
+    it "returns a suite with a suite-specific data_path set" do
+      stub_data!({ :suites => [{ :name => 'cool', :run_list => [] }] })
+      config.test_base_path = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/cool/data"
+
+      cheflike_suite(config.suites.first).data_path.
+        must_equal "/tmp/base/cool/data"
+    end
+
+    it "returns a suite with a custom data_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :data_path => 'shared/data' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/data"
+
+      cheflike_suite(config.suites.first).data_path.
+        must_equal "/tmp/base/shared/data"
+    end
+
+    it "returns a suite with an absolute data_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :data_path => '/shared/data' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/shared/data"
+      FileUtils.mkdir_p "/tmp/base/shared/data"
+
+      cheflike_suite(config.suites.first).data_path.
+        must_equal "/shared/data"
+    end
   end
 
   describe "#instances" do

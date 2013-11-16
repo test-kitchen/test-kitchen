@@ -91,6 +91,7 @@ module Kitchen
         prepare_secret
         prepare_cache
         prepare_cookbooks
+        prepare_data
         tmpdir
       end
 
@@ -98,6 +99,17 @@ module Kitchen
         File.open(File.join(tmpdir, "dna.json"), "wb") do |file|
           file.write(instance.dna.to_json)
         end
+      end
+
+      def prepare_data
+        return unless data
+
+        info("Preparing data")
+        debug("Using data from #{data}")
+
+        tmpdata_dir = File.join(tmpdir, "data")
+        FileUtils.mkdir_p(tmpdata_dir)
+        FileUtils.cp_r(Dir.glob("#{data}/*"), tmpdata_dir)
       end
 
       def prepare_data_bags
@@ -218,6 +230,10 @@ module Kitchen
 
       def nodes
         instance.suite.nodes_path
+      end
+
+      def data
+        instance.suite.data_path
       end
 
       def environments
