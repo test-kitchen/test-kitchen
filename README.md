@@ -23,7 +23,7 @@ $ kitchen init
       create  .kitchen.yml
 ```
 In this guide, we
-will be using the [kitchen vagrant driver](https://github.com/opscode/kitchen-vagrant),
+will be using the [kitchen vagrant driver](https://github.com/test-kitchen/kitchen-vagrant),
 so install that:
 
 ```text
@@ -132,4 +132,4 @@ via freenode/IRC (#chef-hacking),
 Twitter ([@fnichol](https://twitter.com/fnichol)),
 or Email ([fnichol@nichol.ca](mailto:fnichol@nichol.ca)).
 
-For everyone else, watch [this space](https://github.com/opscode/test-kitchen).
+For everyone else, watch [this space](https://github.com/test-kitchen/test-kitchen).
