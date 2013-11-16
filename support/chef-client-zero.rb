@@ -18,51 +18,67 @@
 # limitations under the License.
 
 require 'rubygems'
-require 'chef'
-require 'chef/application/client'
+require 'chef/config'
 require 'chef_zero/server'
-require 'chef_fs/chef_fs_data_store'
-require 'chef_fs/config'
-require 'tmpdir'
+require 'chef/chef_fs/chef_fs_data_store'
+require 'chef/chef_fs/config'
+require 'fileutils'
 
 # Bust out of our self-imposed sandbox before running chef-client so
 # gems installed via gem_package land in Chef's GEM_HOME.
 #
 # https://github.com/opscode/test-kitchen/issues/240
 #
-ENV['GEM_HOME'] = nil
-ENV['GEM_PATH'] = nil
-ENV['GEM_CACHE'] = nil
+ENV['GEM_HOME'] = ENV['GEM_PATH'] = ENV['GEM_CACHE'] = nil
 
-client = Chef::Application::Client.new
-client.reconfigure
+class ChefClientZero
 
-data_store = ChefFS::ChefFSDataStore.new(
-  ChefFS::Config.new(Chef::Config).local_fs
-)
-
-server_opts = {
-  :host => "127.0.0.1",
-  :port => 8889,
-  :generate_real_keys => false,
-  :data_store => data_store
-}
-
-Chef::Log.info("Starting Chef Zero server in background")
-server = ChefZero::Server.new(server_opts)
-server.start_background
-at_exit do
-  Chef::Log.info("Shutting down Chef Zero server")
-  server.stop
-end
-
-Dir.mktmpdir do |tmpdir|
-  File.open(File.join(tmpdir, "validation.pem"), "wb") do |f|
-    f.write(server.gen_key_pair.first)
+  def self.start
+    new.run
   end
-  Chef::Config[:validation_key] = File.join(tmpdir, "validation.pem")
-  Chef::Config[:client_key] = File.join(tmpdir, "client.pem")
-  Chef::Config[:chef_server_url] = server.url
-  client.setup_application
-  client.run_application
+
+  def run
+    create_chef_zero_server
+    create_validation_pem
+    run_chef_client
+  end
+
+  private
+
+  def create_chef_zero_server
+    Chef::Config.chef_repo_path = Chef::Config.find_chef_repo_path(Dir.pwd)
+
+    chef_fs = Chef::ChefFS::Config.new.local_fs
+    chef_fs.write_pretty_json = true
+
+    @server = ChefZero::Server.new(
+      :generate_real_keys => false,
+      :data_store => Chef::ChefFS::ChefFSDataStore.new(chef_fs)
+    )
+    puts "-----> Starting Chef Zero server in #{chef_fs.fs_description}"
+    @server.start_background
+
+    at_exit do
+      puts "-----> Shutting down Chef Zero server"
+      @server.stop
+    end
+  end
+
+  def kitchen_path
+    ENV['KITCHEN_HOME_PATH']
+  end
+
+  def create_validation_pem
+    FileUtils.mkdir_p(kitchen_path)
+
+    File.open(File.join(kitchen_path, "validation.pem"), "wb") do |f|
+      f.write(@server.gen_key_pair.first)
+    end
+  end
+
+  def run_chef_client
+    system("chef-client", *ARGV)
+  end
 end
+
+ChefClientZero.start

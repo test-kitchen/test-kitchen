@@ -41,19 +41,23 @@ module Kitchen
 
       def prepare_command
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
+        #
+        # * we are installing latest chef in order to get chef-zero and
+        #   Chef::ChefFS only. The version of Chef that gets run will be
+        #   the installed omnibus package. Yep, this is funky :)
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
           #{sandbox_env(true)}
           if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
-            echo "-----> Installing chef-zero and knife-essentials gems"
-            #{sudo(gem_bin)} install \
-              chef-zero knife-essentials --no-ri --no-rdoc
+            echo "-----> Installing chef zero dependencies"
+            #{sudo(gem_bin)} install chef --no-ri --no-rdoc --conservative
           fi'
         PREPARE
       end
 
       def run_command
         [
+          "cd #{home_path};",
           sandbox_env,
           sudo(ruby_bin),
           "#{home_path}/chef-client-zero.rb",
@@ -86,7 +90,8 @@ module Kitchen
           "GEM_HOME=#{home_path}/gems",
           "GEM_PATH=$GEM_HOME",
           "GEM_CACHE=$GEM_HOME/cache",
-          "PATH=$PATH:$GEM_HOME/bin"
+          "PATH=$PATH:$GEM_HOME/bin",
+          "KITCHEN_HOME_PATH=#{home_path}"
         ]
 
         if export
@@ -111,6 +116,9 @@ module Kitchen
         client << %{client_path "#{home_path}/clients"}
         client << %{role_path "#{home_path}/roles"}
         client << %{data_bag_path "#{home_path}/data_bags"}
+        client << %{validation_key "#{home_path}/validation.pem"}
+        client << %{client_key "#{home_path}/client.pem"}
+        client << %{chef_server_url "http://127.0.0.1:8889"}
         if instance.suite.encrypted_data_bag_secret_key_path
           secret = "#{home_path}/encrypted_data_bag_secret"
           client << %{encrypted_data_bag_secret "#{secret}"}
