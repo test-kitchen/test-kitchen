@@ -37,11 +37,12 @@ module Kitchen
 
       def converge(state)
         provisioner = new_provisioner
+        sandbox_dirs = Dir.glob("#{provisioner.create_sandbox}/*")
 
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(provisioner.install_command, conn)
           run_remote(provisioner.init_command, conn)
-          transfer_path(provisioner.create_sandbox, provisioner.home_path, conn)
+          transfer_path(sandbox_dirs, provisioner.home_path, conn)
           run_remote(provisioner.prepare_command, conn)
           run_remote(provisioner.run_command, conn)
         end
@@ -120,10 +121,10 @@ module Kitchen
         raise ActionFailed, ex.message
       end
 
-      def transfer_path(local, remote, connection)
-        return if local.nil?
+      def transfer_path(locals, remote, connection)
+        return if locals.nil? || Array(locals).empty?
 
-        connection.upload_path!(local, remote)
+        locals.each { |local| connection.upload_path!(local, remote) }
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
       end

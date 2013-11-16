@@ -63,7 +63,9 @@ module Kitchen
       end
 
       def init_command
-        "#{sudo('rm')} -rf #{home_path}"
+        dirs = %w{data_bags roles environments cookbooks}.
+          map { |dir| File.join(home_path, dir) }.join(" ")
+        "#{sudo('rm')} -rf #{dirs}"
       end
 
       def cleanup_sandbox
