@@ -31,7 +31,18 @@ module Kitchen
         @instance = instance
         @config = config
         @logger = instance.logger
+        verify_dependencies
       end
+
+      # Performs whatever tests that may be required to ensure that
+      # this provisioner will be able to function in the current
+      # environment. This may involve checking for the presence of
+      # certain directories, software installed, etc.
+      #
+      # @raise [UserError] if the provisioner will not be able to
+      # perform or if a documented dependency is missing from the
+      # system
+      def verify_dependencies ; end
 
       def install_command ; end
 
