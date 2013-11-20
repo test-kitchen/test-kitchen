@@ -33,7 +33,10 @@ module Kitchen
     # @param [String] suite_name name of suite on which to operate
     #   (**Required**)
     # @param [Hash] opts optional configuration
-    # @option opts [TrueClass, FalseClass] :use_sudo whether or not to invoke
+    # @option opts [String] :kitchen_root local path to the root of the project
+    # @option opts [String] :instance_ruby_bindir path to the directory
+    #   containing the Ruby binary on the remote instance
+    # @option opts [TrueClass, FalseClass] :sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
@@ -41,6 +44,7 @@ module Kitchen
       @test_root = File.join(opts.fetch(:kitchen_root, Dir.pwd), "test/integration")
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
+      @ruby_bindir = opts.fetch(:instance_ruby_bindir, DEFAULT_RUBY_BINDIR)
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -58,10 +62,10 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
-          if ! #{sudo}#{ruby_binpath}/gem list busser -i >/dev/null; then
-            #{sudo}#{ruby_binpath}/gem install #{busser_gem} --no-rdoc --no-ri
+          if ! #{sudo}#{ruby_bindir}/gem list busser -i >/dev/null; then
+            #{sudo}#{ruby_bindir}/gem install #{busser_gem} --no-rdoc --no-ri
           fi
-          #{sudo}#{ruby_binpath}/busser setup
+          #{sudo}#{ruby_bindir}/busser setup
           #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
         INSTALL_CMD
       end
@@ -102,10 +106,11 @@ module Kitchen
 
     private
 
-    DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
+    DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
     DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
 
     attr_reader :test_root
+    attr_reader :ruby_bindir
 
     def validate_options(suite_name)
       if suite_name.nil?
@@ -161,10 +166,6 @@ module Kitchen
 
     def sudo
       @use_sudo ? "sudo -E " : ""
-    end
-
-    def ruby_binpath
-      DEFAULT_RUBY_BINPATH
     end
 
     def busser_bin
