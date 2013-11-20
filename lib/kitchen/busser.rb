@@ -120,8 +120,8 @@ module Kitchen
     end
 
     def plugins
-      Dir.glob(File.join(test_root, @suite_name, "*")).select { |d|
-        File.directory?(d) && File.basename(d) != "data_bags"
+      Dir.glob(File.join(test_root, @suite_name, "*")).reject { |d|
+        ! File.directory?(d) || non_suite_dirs.include?(File.basename(d))
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
@@ -174,6 +174,10 @@ module Kitchen
 
     def busser_gem
       "busser"
+    end
+
+    def non_suite_dirs
+      %w{data data_bags environments nodes roles}
     end
   end
 end
