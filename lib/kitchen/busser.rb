@@ -111,7 +111,7 @@ module Kitchen
     private
 
     DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
-    DEFAULT_ROOT_PATH = "/opt/busser".freeze
+    DEFAULT_ROOT_PATH = "/tmp/busser".freeze
 
     attr_reader :test_root
     attr_reader :ruby_bindir
