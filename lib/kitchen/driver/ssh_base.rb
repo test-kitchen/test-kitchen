@@ -104,11 +104,7 @@ module Kitchen
         env = "env"
         env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
         env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
-
-        additional_paths = []
-        additional_paths << config[:ruby_binpath] if config[:ruby_binpath]
-        additional_paths << config[:path] if config[:path]
-        env << " PATH=$PATH:#{additional_paths.join(':')}" if additional_paths.any?
+        env << " PATH=#{config[:path]}" if config[:path]
 
         env == "env" ? cmd : "#{env} #{cmd}"
       end
