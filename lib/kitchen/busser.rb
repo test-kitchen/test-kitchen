@@ -38,7 +38,7 @@ module Kitchen
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
-      @test_root = opts.fetch(:test_root, DEFAULT_TEST_ROOT)
+      @test_root = File.join(opts.fetch(:kitchen_root, Dir.pwd), "test/integration")
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
     end
@@ -104,7 +104,6 @@ module Kitchen
 
     DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
     DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
-    DEFAULT_TEST_ROOT = File.join(Dir.pwd, "test/integration").freeze
 
     attr_reader :test_root
 
