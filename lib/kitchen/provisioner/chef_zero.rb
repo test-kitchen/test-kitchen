@@ -50,7 +50,6 @@ module Kitchen
         #   the installed omnibus package. Yep, this is funky :)
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
-          #{sandbox_env(true)}
           if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
             echo "-----> Installing chef zero dependencies"
             #{sudo(gem_bin)} install chef --no-ri --no-rdoc --conservative
@@ -69,7 +68,6 @@ module Kitchen
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
           ["cd #{home_path};",
-            sandbox_env,
             sudo(ruby_bin),
             "#{home_path}/chef-client-zero.rb"
           ].concat(args).join(" ")
@@ -93,22 +91,6 @@ module Kitchen
       DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
 
       attr_reader :ruby_binpath
-
-      def sandbox_env(export=false)
-        env = [
-          "GEM_HOME=#{home_path}/gems",
-          "GEM_PATH=$GEM_HOME",
-          "GEM_CACHE=$GEM_HOME/cache",
-          "PATH=$PATH:$GEM_HOME/bin",
-          "KITCHEN_HOME_PATH=#{home_path}"
-        ]
-
-        if export
-          env << "; export GEM_HOME GEM_PATH GEM_CACHE PATH;"
-        end
-
-        env.join(" ")
-      end
 
       def prepare_chef_client_zero_rb
         source = File.join(File.dirname(__FILE__),

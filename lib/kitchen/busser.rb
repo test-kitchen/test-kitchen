@@ -60,7 +60,6 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
-          #{sandbox_env(true)}
           if ! #{sudo}#{gem_bin} list busser -i >/dev/null; then
             echo "-----> Installing busser and plugins"
             #{sudo}#{gem_bin} install busser --no-rdoc --no-ri
@@ -85,7 +84,6 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
-          #{sandbox_env(true)}
           #{sudo}#{busser_bin} suite cleanup
           #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
           #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
@@ -101,7 +99,7 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= local_suite_files.empty? ? nil : "#{sandbox_env} #{sudo}#{busser_bin} test"
+      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{busser_bin} test"
     end
 
     private
@@ -143,7 +141,7 @@ module Kitchen
 
     def remote_file(file, dir)
       local_prefix = File.join(test_root, dir)
-      "$(#{sandbox_env} #{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
@@ -180,22 +178,6 @@ module Kitchen
 
     def busser_bin
       @busser_bin ||= "#{ruby_bin} #{File.join(busser_root, "gems", "bin", "busser")}"
-    end
-
-    def sandbox_env(export=false)
-      env = [
-        "BUSSER_ROOT=#{busser_root}",
-        "GEM_HOME=#{busser_root}/gems",
-        "GEM_PATH=$GEM_HOME",
-        "GEM_CACHE=$GEM_HOME/cache",
-        "PATH=$PATH:$GEM_HOME/bin"
-      ]
-
-      if export
-        env << "; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE PATH;"
-      end
-
-      env.join(" ")
     end
   end
 end
