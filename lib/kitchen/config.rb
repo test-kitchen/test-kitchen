@@ -81,16 +81,16 @@ module Kitchen
 
     def new_suite(hash)
       path_hash = {
+        :data_path      => calculate_path(
+          "data", hash[:name], hash[:data_path]),
         :data_bags_path => calculate_path(
           "data_bags", hash[:name], hash[:data_bags_path]),
         :environments_path  => calculate_path(
           "environments", hash[:name], hash[:environments_path]),
-        :roles_path     => calculate_path(
-          "roles", hash[:name], hash[:roles_path]),
         :nodes_path     => calculate_path(
           "nodes", hash[:name], hash[:nodes_path]),
-        :data_path      => calculate_path(
-          "data", hash[:name], hash[:data_path]),
+        :roles_path     => calculate_path(
+          "roles", hash[:name], hash[:roles_path]),
       }
 
       Suite.new(hash.rmerge(path_hash))
