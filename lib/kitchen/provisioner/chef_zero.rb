@@ -27,11 +27,6 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
 
-      def initialize(instance, config)
-        super
-        @ruby_binpath = config.fetch(:ruby_binpath, DEFAULT_RUBY_BINPATH)
-      end
-
       def create_sandbox
         create_chef_sandbox do
           prepare_chef_client_zero_rb
@@ -43,6 +38,8 @@ module Kitchen
       def prepare_command
         return if local_mode_supported?
 
+        ruby_bin = "/opt/chef/embedded/bin"
+
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         #
         # * we are installing latest chef in order to get chef-zero and
@@ -50,9 +47,9 @@ module Kitchen
         #   the installed omnibus package. Yep, this is funky :)
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
-          if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
+          if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
             echo "-----> Installing chef zero dependencies"
-            #{sudo(gem_bin)} install chef --no-ri --no-rdoc --conservative
+            #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
           fi'
         PREPARE
       end
@@ -68,7 +65,7 @@ module Kitchen
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
           ["cd #{home_path};",
-            sudo(ruby_bin),
+            sudo('/opt/chef/embedded/bin/ruby'),
             "#{home_path}/chef-client-zero.rb"
           ].concat(args).join(" ")
         end
@@ -78,19 +75,7 @@ module Kitchen
         "/tmp/kitchen-chef-zero".freeze
       end
 
-      def gem_bin
-        @gem_bin ||= File.join(ruby_binpath, 'gem')
-      end
-
-      def ruby_bin
-        @ruby_bin ||= File.join(ruby_binpath, 'ruby')
-      end
-
       private
-
-      DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-
-      attr_reader :ruby_binpath
 
       def prepare_chef_client_zero_rb
         source = File.join(File.dirname(__FILE__),
