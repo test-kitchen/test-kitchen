@@ -45,6 +45,8 @@ module Kitchen
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
       @ruby_bindir = opts.fetch(:instance_ruby_bindir, DEFAULT_RUBY_BINDIR)
+      @root_path = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
+      @busser_bin = File.join(@root_path, "bin/busser")
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -62,10 +64,12 @@ module Kitchen
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
+          #{busser_setup_env}
           if ! #{sudo}#{ruby_bindir}/gem list busser -i >/dev/null; then
             #{sudo}#{ruby_bindir}/gem install #{busser_gem} --no-rdoc --no-ri
           fi
-          #{sudo}#{ruby_bindir}/busser setup
+          gem_bindir=`#{ruby_bindir}/ruby -rrubygems -e "puts Gem.bindir"`
+          #{sudo}${gem_bindir}/busser setup
           #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
         INSTALL_CMD
       end
@@ -107,10 +111,12 @@ module Kitchen
     private
 
     DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
-    DEFAULT_BUSSER_ROOT = "/opt/busser".freeze
+    DEFAULT_ROOT_PATH = "/opt/busser".freeze
 
     attr_reader :test_root
     attr_reader :ruby_bindir
+    attr_reader :root_path
+    attr_reader :busser_bin
 
     def validate_options(suite_name)
       if suite_name.nil?
@@ -168,16 +174,22 @@ module Kitchen
       @use_sudo ? "sudo -E " : ""
     end
 
-    def busser_bin
-      File.join(DEFAULT_BUSSER_ROOT, "bin/busser")
-    end
-
     def busser_gem
       "busser"
     end
 
     def non_suite_dirs
       %w{data data_bags environments nodes roles}
+    end
+
+    def busser_setup_env
+      [
+        %{BUSSER_ROOT="#{root_path}"},
+        %{GEM_HOME="#{root_path}/gems"},
+        %{GEM_PATH="#{root_path}/gems:`#{ruby_bindir}/gem env gempath`"},
+        %{GEM_CACHE="#{root_path}/gems/cache"},
+        %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE;}
+      ].join(" ")
     end
   end
 end
