@@ -218,6 +218,50 @@ describe Kitchen::Config do
       cheflike_suite(config.suites.first).data_path.
         must_equal "/shared/data"
     end
+
+    it "returns a suite with nil for environments_path by default" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
+      cheflike_suite(config.suites.first).environments_path.must_be_nil
+    end
+
+    it "returns a suite with a common environments_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [] }] })
+      config.test_base_path = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/environments"
+
+      cheflike_suite(config.suites.first).environments_path.
+        must_equal "/tmp/base/environments"
+    end
+
+    it "returns a suite with a suite-specific environments_path set" do
+      stub_data!({ :suites => [{ :name => 'cool', :run_list => [] }] })
+      config.test_base_path = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/cool/environments"
+
+      cheflike_suite(config.suites.first).environments_path.
+        must_equal "/tmp/base/cool/environments"
+    end
+
+    it "returns a suite with a custom environments_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :environments_path => 'shared/environments' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/tmp/base/shared/environments"
+
+      cheflike_suite(config.suites.first).environments_path.
+        must_equal "/tmp/base/shared/environments"
+    end
+
+    it "returns a suite with an absolute environments_path set" do
+      stub_data!({ :suites => [{ :name => 'one', :run_list => [],
+        :environments_path => '/shared/environments' }] })
+      config.kitchen_root = "/tmp/base"
+      FileUtils.mkdir_p "/shared/environments"
+      FileUtils.mkdir_p "/tmp/base/shared/environments"
+
+      cheflike_suite(config.suites.first).environments_path.
+        must_equal "/shared/environments"
+    end
   end
 
   describe "#instances" do
