@@ -127,7 +127,7 @@ module Kitchen
 
     def local_suite_files
       Dir.glob(File.join(test_root, @suite_name, "*/**/*")).reject do |f|
-        f["data_bags"] || File.directory?(f)
+        f[/(data|data_bags|environments|nodes|roles)/] || File.directory?(f)
       end
     end
 
