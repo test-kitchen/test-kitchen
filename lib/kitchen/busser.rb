@@ -46,6 +46,7 @@ module Kitchen
       @use_sudo = opts.fetch(:sudo, true)
       @ruby_bindir = opts.fetch(:instance_ruby_bindir, DEFAULT_RUBY_BINDIR)
       @root_path = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
+      @version_string = opts.fetch(:version, "busser")
       @busser_bin = File.join(@root_path, "bin/busser")
     end
 
@@ -66,7 +67,7 @@ module Kitchen
           sh -c '
           #{busser_setup_env}
           if ! #{sudo}#{ruby_bindir}/gem list busser -i >/dev/null; then
-            #{sudo}#{ruby_bindir}/gem install #{busser_gem} --no-rdoc --no-ri
+            #{sudo}#{ruby_bindir}/gem install #{gem_install_args}
           fi
           gem_bindir=`#{ruby_bindir}/ruby -rrubygems -e "puts Gem.bindir"`
           #{sudo}${gem_bindir}/busser setup
@@ -116,6 +117,7 @@ module Kitchen
     attr_reader :test_root
     attr_reader :ruby_bindir
     attr_reader :root_path
+    attr_reader :version_string
     attr_reader :busser_bin
 
     def validate_options(suite_name)
@@ -190,6 +192,16 @@ module Kitchen
         %{GEM_CACHE="#{root_path}/gems/cache"},
         %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE;}
       ].join(" ")
+    end
+
+    def gem_install_args
+      gem, version = version_string.split("@")
+      gem, version = "busser", gem if gem =~ /^\d+\.\d+\.\d+/
+
+      args = gem
+      args += " --version #{version}" if version
+      args += " --no-rdoc --no-ri"
+      args
     end
   end
 end
