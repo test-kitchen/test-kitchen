@@ -71,10 +71,6 @@ module Kitchen
         end
       end
 
-      def home_path
-        "/tmp/kitchen-chef-zero".freeze
-      end
-
       private
 
       def prepare_chef_client_zero_rb

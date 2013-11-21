@@ -41,10 +41,6 @@ module Kitchen
         ].join(" ")
       end
 
-      def home_path
-        "/tmp/kitchen-chef-solo".freeze
-      end
-
       private
 
       def prepare_solo_rb

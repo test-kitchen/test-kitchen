@@ -45,7 +45,9 @@ module Kitchen
 
       def cleanup_sandbox ; end
 
-      def home_path ; end
+      def home_path
+        "/tmp/kitchen".freeze
+      end
 
       protected
 
