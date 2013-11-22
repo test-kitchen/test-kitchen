@@ -538,5 +538,44 @@ module Kitchen
         end
       end
     end
+
+    describe "legacy chef paths from suite" do
+
+      LEGACY_CHEF_PATHS = [:data_path, :data_bags_path, :environments_path,
+        :nodes_path, :roles_path]
+
+      LEGACY_CHEF_PATHS.each do |key|
+
+        it "moves #{key} into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :suites => [
+              {
+                :name => "sweet",
+                key => "mypath"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            key => "mypath"
+          })
+        end
+
+        it "merges provisioner into data_path if provisioner exists" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                key => "mypath",
+                :provisioner => "chefy",
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            key => "mypath"
+          })
+        end
+      end
+    end
   end
 end

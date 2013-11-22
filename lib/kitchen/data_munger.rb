@@ -29,6 +29,7 @@ module Kitchen
     def initialize(data)
       @data = data
       convert_legacy_driver_format!
+      convert_legacy_chef_paths_format!
     end
 
     def driver_data_for(suite, platform)
@@ -91,6 +92,22 @@ module Kitchen
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
+      end
+    end
+
+    def convert_legacy_chef_paths_format!
+      data.fetch(:suites, []).each do |suite|
+        %w{data data_bags environments nodes roles}.each do |key|
+          convert_legacy_chef_paths_format_at!(suite, "#{key}_path".to_sym)
+        end
+      end
+    end
+
+    def convert_legacy_chef_paths_format_at!(root, key)
+      if root.has_key?(key)
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
       end
     end
   end
