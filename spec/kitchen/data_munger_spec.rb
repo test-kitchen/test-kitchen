@@ -288,7 +288,7 @@ module Kitchen
           })
         end
 
-        it "ignores driver_plugin if driver exists" do
+        it "merges driver into driver_plugin if driver exists" do
           DataMunger.new({
             :driver_plugin => "starship",
             :driver => "zappa"
@@ -309,14 +309,33 @@ module Kitchen
           })
         end
 
-        it "ignores driver_config if driver exists" do
+        it "merges driver into driver_config if driver with name exists" do
           DataMunger.new({
             :driver_config => {
-              :eh => "na"
+              :eh => "yep"
             },
             :driver => "zappa"
           }).driver("suite", "platform").must_equal({
-            :name => "zappa"
+            :name => "zappa",
+            :eh => "yep"
+          })
+        end
+
+        it "merges driver into driver_config if driver exists" do
+          DataMunger.new({
+            :driver_plugin => "imold",
+            :driver_config => {
+              :eh => "yep",
+              :color => "pink"
+            },
+            :driver => {
+              :name => "zappa",
+              :color => "black"
+            }
+          }).driver("suite", "platform").must_equal({
+            :name => "zappa",
+            :eh => "yep",
+            :color => "black"
           })
         end
 

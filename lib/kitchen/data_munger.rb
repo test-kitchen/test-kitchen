@@ -81,16 +81,16 @@ module Kitchen
     end
 
     def convert_legacy_driver_format_at!(root)
-      if !root.has_key?(:driver)
-        if root[:driver_config]
-          root[:driver] = root.fetch(:driver, Hash.new).
-            rmerge(root.delete(:driver_config))
-        end
+      if root[:driver_config]
+        ddata = root.fetch(:driver, Hash.new)
+        ddata = { :name => ddata } if ddata.is_a?(String)
+        root[:driver] = root.delete(:driver_config).rmerge(ddata)
+      end
 
-        if root[:driver_plugin]
-          root[:driver] = root.fetch(:driver, Hash.new).
-            rmerge({ :name => root.delete(:driver_plugin) })
-        end
+      if root[:driver_plugin]
+        ddata = root.fetch(:driver, Hash.new)
+        ddata = { :name => ddata } if ddata.is_a?(String)
+        root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
       end
     end
   end
