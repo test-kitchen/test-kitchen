@@ -278,6 +278,171 @@ module Kitchen
       end
     end
 
+    describe "primary Chef data" do
+
+      describe "in a suite" do
+
+        it "moves attributes into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => { :one => "two" }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "two" }
+          })
+        end
+
+        it "moves run_list into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => ["one", "two"]
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+
+        it "merge provisioner into attributes if provisioner exists" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => { :one => "two" },
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "two" }
+          })
+        end
+
+        it "merge provisioner into run_list if provisioner exists" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => ["one", "two"],
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+      end
+
+      describe "in a platform" do
+
+        it "moves attributes into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => { :one => "two" }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "two" }
+          })
+        end
+
+        it "moves run_list into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :run_list => ["one", "two"]
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+
+        it "merge provisioner into attributes if provisioner exists" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => { :one => "two" },
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "two" }
+          })
+        end
+
+        it "merge provisioner into run_list if provisioner exists" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :run_list => ["one", "two"],
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+      end
+
+      describe "in a suite and platform" do
+
+        it "merges suite attributes into platform attributes" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => {
+                  :color => "blue",
+                  :deep => { :platform => "much" }
+                }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => {
+                  :color => "pink",
+                  :deep => { :suite => "wow" }
+                }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => {
+              :color => "pink",
+              :deep => {
+                :suite => "wow",
+                :platform => "much"
+              }
+            }
+          })
+        end
+      end
+    end
+
     describe "legacy driver_config and driver_plugin" do
 
       describe "from a single source" do

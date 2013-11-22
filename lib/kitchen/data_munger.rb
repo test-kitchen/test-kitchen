@@ -23,6 +23,9 @@ module Kitchen
   # Class to handle recursive merging of configuration between platforms,
   # suites, and common data.
   #
+  # This object will mutate the data Hash passed into its constructor and so
+  # should not be reused or shared across threads.
+  #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class DataMunger
 
@@ -30,6 +33,7 @@ module Kitchen
       @data = data
       convert_legacy_driver_format!
       convert_legacy_chef_paths_format!
+      move_chef_data_to_provisioner!
     end
 
     def driver_data_for(suite, platform)
@@ -71,6 +75,26 @@ module Kitchen
       end
     end
 
+    def move_chef_data_to_provisioner!
+      data.fetch(:suites, []).each do |suite|
+        move_chef_data_to_provisioner_at!(suite, :attributes)
+        move_chef_data_to_provisioner_at!(suite, :run_list)
+      end
+
+      data.fetch(:platforms, []).each do |platform|
+        move_chef_data_to_provisioner_at!(platform, :attributes)
+        move_chef_data_to_provisioner_at!(platform, :run_list)
+      end
+    end
+
+    def move_chef_data_to_provisioner_at!(root, key)
+      if root.has_key?(key)
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
+      end
+    end
+
     def convert_legacy_driver_format!
       convert_legacy_driver_format_at!(data)
       data.fetch(:platforms, []).each do |platform|
@@ -98,16 +122,8 @@ module Kitchen
     def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
         %w{data data_bags environments nodes roles}.each do |key|
-          convert_legacy_chef_paths_format_at!(suite, "#{key}_path".to_sym)
+          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
         end
-      end
-    end
-
-    def convert_legacy_chef_paths_format_at!(root, key)
-      if root.has_key?(key)
-        pdata = root.fetch(:provisioner, Hash.new)
-        pdata = { :name => pdata } if pdata.is_a?(String)
-        root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
       end
     end
   end
