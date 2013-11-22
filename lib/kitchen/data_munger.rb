@@ -41,6 +41,17 @@ module Kitchen
       cdata.rmerge(pdata.rmerge(sdata))
     end
 
+    def provisioner(suite, platform)
+      cdata = data.fetch(:provisioner, Hash.new)
+      cdata = { :name => cdata } if cdata.is_a?(String)
+      pdata = platform_data(platform).fetch(:provisioner, Hash.new)
+      pdata = { :name => pdata } if pdata.is_a?(String)
+      sdata = suite_data(suite).fetch(:provisioner, Hash.new)
+      sdata = { :name => sdata } if sdata.is_a?(String)
+
+      cdata.rmerge(pdata.rmerge(sdata))
+    end
+
     private
 
     attr_reader :data
