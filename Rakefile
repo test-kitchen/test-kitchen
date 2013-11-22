@@ -64,6 +64,10 @@ unless RUBY_ENGINE == 'jruby'
       # allow vertical alignment of `let(:foo) { block }` blocks
       style.spaces_before_lbrace 1, level: :off
     end
+    task.file_set('spec/kitchen/data_munger_spec.rb', 'tests') do |style|
+      # allow data formatting in DataMunger
+      style.indentation_spaces 2, level: :off
+    end
   end
 
   desc "Run all quality tasks"
