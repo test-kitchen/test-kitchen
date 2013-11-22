@@ -67,6 +67,8 @@ unless RUBY_ENGINE == 'jruby'
     task.file_set('spec/kitchen/data_munger_spec.rb', 'tests') do |style|
       # allow data formatting in DataMunger
       style.indentation_spaces 2, level: :off
+      # allow far larger spec file to cover all data input cases as possible
+      style.max_code_lines_in_class 600, level: :off
     end
   end
 

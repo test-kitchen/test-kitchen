@@ -28,6 +28,7 @@ module Kitchen
 
     def initialize(data)
       @data = data
+      convert_legacy_driver_format!
     end
 
     def driver(suite, platform)
@@ -66,6 +67,30 @@ module Kitchen
     def suite_data(name)
       data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
         suite.fetch(:name, nil) == name
+      end
+    end
+
+    def convert_legacy_driver_format!
+      convert_legacy_driver_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_driver_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_driver_format_at!(suite)
+      end
+    end
+
+    def convert_legacy_driver_format_at!(root)
+      if !root.has_key?(:driver)
+        if root[:driver_config]
+          root[:driver] = root.fetch(:driver, Hash.new).
+            rmerge(root.delete(:driver_config))
+        end
+
+        if root[:driver_plugin]
+          root[:driver] = root.fetch(:driver, Hash.new).
+            rmerge({ :name => root.delete(:driver_plugin) })
+        end
       end
     end
   end

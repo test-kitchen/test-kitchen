@@ -275,5 +275,247 @@ module Kitchen
         end
       end
     end
+
+    describe "legacy driver_config and driver_plugin" do
+
+      describe "from a single source" do
+
+        it "returns common driver name" do
+          DataMunger.new({
+            :driver_plugin => "starship"
+          }).driver("suite", "platform").must_equal({
+            :name => "starship"
+          })
+        end
+
+        it "ignores driver_plugin if driver exists" do
+          DataMunger.new({
+            :driver_plugin => "starship",
+            :driver => "zappa"
+          }).driver("suite", "platform").must_equal({
+            :name => "zappa"
+          })
+        end
+
+        it "returns common driver config" do
+          DataMunger.new({
+            :driver_plugin => "starship",
+            :driver_config => {
+              :speed => 42
+            }
+          }).driver("suite", "platform").must_equal({
+            :name => "starship",
+            :speed => 42
+          })
+        end
+
+        it "ignores driver_config if driver exists" do
+          DataMunger.new({
+            :driver_config => {
+              :eh => "na"
+            },
+            :driver => "zappa"
+          }).driver("suite", "platform").must_equal({
+            :name => "zappa"
+          })
+        end
+
+        it "returns platform driver name" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :driver_plugin => "flip"
+              }
+            ]
+          }).driver("suite", "plat").must_equal({
+            :name => "flip"
+          })
+        end
+
+        it "returns platform config containing driver hash" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :driver_plugin => "flip",
+                :driver_config => {
+                  :flop => "yep"
+                }
+              }
+            ]
+          }).driver("suite", "plat").must_equal({
+            :name => "flip",
+            :flop => "yep"
+          })
+        end
+
+        it "returns suite driver name" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :driver_plugin => "waz"
+              }
+            ]
+          }).driver("sweet", "platform").must_equal({
+            :name => "waz"
+          })
+        end
+
+        it "returns suite config containing driver hash" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :driver_plugin => "waz",
+                :driver_config => {
+                  :up => "nope"
+                }
+              }
+            ]
+          }).driver("sweet", "platform").must_equal({
+            :name => "waz",
+            :up => "nope"
+          })
+        end
+      end
+
+      describe "from multiple sources" do
+
+        it "suite into platform into common" do
+          DataMunger.new({
+            :driver_plugin => "commony",
+            :driver_config => {
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :platforms => [
+              {
+                :name => "plat",
+                :driver_plugin => "platformy",
+                :driver_config => {
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :driver_plugin => "suitey",
+                :driver_config => {
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).driver("sweet", "plat").must_equal({
+            :name => "suitey",
+            :color => "purple",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :platform => "stuff",
+              :suite => "things"
+            }
+          })
+        end
+
+        it "platform into common" do
+          DataMunger.new({
+            :driver_plugin => "commony",
+            :driver_config => {
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :platforms => [
+              {
+                :name => "plat",
+                :driver_plugin => "platformy",
+                :driver_config => {
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ]
+          }).driver("sweet", "plat").must_equal({
+            :name => "platformy",
+            :color => "purple",
+            :fruit => ["banana"],
+            :deep => {
+              :common => "junk",
+              :platform => "stuff"
+            }
+          })
+        end
+
+        it "suite into common" do
+          DataMunger.new({
+            :driver_plugin => "commony",
+            :driver_config => {
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :suites => [
+              {
+                :name => "sweet",
+                :driver_plugin => "suitey",
+                :driver_config => {
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).driver("sweet", "plat").must_equal({
+            :name => "suitey",
+            :color => "purple",
+            :fruit => ["apple", "pear"],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :suite => "things"
+            }
+          })
+        end
+
+        it "suite into platform" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :driver_plugin => "platformy",
+                :driver_config => {
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :driver_plugin => "suitey",
+                :driver_config => {
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).driver("sweet", "plat").must_equal({
+            :name => "suitey",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :platform => "stuff",
+              :suite => "things"
+            }
+          })
+        end
+      end
+    end
   end
 end
