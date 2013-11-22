@@ -31,51 +31,41 @@ module Kitchen
     end
 
     def driver(suite, platform)
-      cdata = data.fetch(:driver, Hash.new)
-      cdata = { :name => cdata } if cdata.is_a?(String)
-      pdata = platform_data(platform).fetch(:driver, Hash.new)
-      pdata = { :name => pdata } if pdata.is_a?(String)
-      sdata = suite_data(suite).fetch(:driver, Hash.new)
-      sdata = { :name => sdata } if sdata.is_a?(String)
-
-      cdata.rmerge(pdata.rmerge(sdata))
+      merged_data_for(:driver, suite, platform)
     end
 
     def provisioner(suite, platform)
-      cdata = data.fetch(:provisioner, Hash.new)
-      cdata = { :name => cdata } if cdata.is_a?(String)
-      pdata = platform_data(platform).fetch(:provisioner, Hash.new)
-      pdata = { :name => pdata } if pdata.is_a?(String)
-      sdata = suite_data(suite).fetch(:provisioner, Hash.new)
-      sdata = { :name => sdata } if sdata.is_a?(String)
-
-      cdata.rmerge(pdata.rmerge(sdata))
+      merged_data_for(:provisioner, suite, platform)
     end
 
     def busser(suite, platform)
-      cdata = data.fetch(:busser, Hash.new)
-      cdata = { :version => cdata } if cdata.is_a?(String)
-      pdata = platform_data(platform, :version).fetch(:busser, Hash.new)
-      pdata = { :version => pdata } if pdata.is_a?(String)
-      sdata = suite_data(suite, :version).fetch(:busser, Hash.new)
-      sdata = { :version => sdata } if sdata.is_a?(String)
-
-      cdata.rmerge(pdata.rmerge(sdata))
+      merged_data_for(:busser, suite, platform, :version)
     end
 
     private
 
     attr_reader :data
 
-    def platform_data(name, default_key = :name)
+    def merged_data_for(key, suite, platform, default_key = :name)
+      cdata = data.fetch(key, Hash.new)
+      cdata = { default_key => cdata } if cdata.is_a?(String)
+      pdata = platform_data(platform).fetch(key, Hash.new)
+      pdata = { default_key => pdata } if pdata.is_a?(String)
+      sdata = suite_data(suite).fetch(key, Hash.new)
+      sdata = { default_key => sdata } if sdata.is_a?(String)
+
+      cdata.rmerge(pdata.rmerge(sdata))
+    end
+
+    def platform_data(name)
       data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
-        platform.fetch(default_key, nil) == name
+        platform.fetch(:name, nil) == name
       end
     end
 
-    def suite_data(name, default_key = :name)
+    def suite_data(name)
       data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
-        suite.fetch(default_key, nil) == name
+        suite.fetch(:name, nil) == name
       end
     end
   end
