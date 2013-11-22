@@ -301,8 +301,12 @@ module Kitchen
 
         Kitchen.mutex.synchronize do
           Berkshelf.ui.mute do
-            Berkshelf::Berksfile.from_file(berksfile).
-              install(:path => tmpbooks_dir)
+            berksfile_object = Berkshelf::Berksfile.from_file(berksfile)
+            if berksfile_object.respond_to?(:vendor)
+              berksfile_object.vendor(tmpbooks_dir)
+            else
+              berksfile_object.install(:path => tmpbooks_dir)
+            end
           end
         end
       end
