@@ -31,15 +31,15 @@ module Kitchen
       convert_legacy_driver_format!
     end
 
-    def driver(suite, platform)
+    def driver_data_for(suite, platform)
       merged_data_for(:driver, suite, platform)
     end
 
-    def provisioner(suite, platform)
+    def provisioner_data_for(suite, platform)
       merged_data_for(:provisioner, suite, platform)
     end
 
-    def busser(suite, platform)
+    def busser_data_for(suite, platform)
       merged_data_for(:busser, suite, platform, :version)
     end
 

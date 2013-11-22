@@ -38,13 +38,14 @@ module Kitchen
 
           it "returns empty hash if no common #{key} hash is provided" do
             DataMunger.new({
-            }).public_send(key, "suite", "platform").must_equal({})
+            }).public_send("#{key}_data_for", "suite", "platform").must_equal({
+            })
           end
 
           it "returns common #{key} name" do
             DataMunger.new({
               key => "starship"
-            }).public_send(key, "suite", "platform").must_equal({
+            }).public_send("#{key}_data_for", "suite", "platform").must_equal({
               default_key => "starship"
             })
           end
@@ -55,7 +56,7 @@ module Kitchen
                 default_key => "starship",
                 :speed => 42
               }
-            }).public_send(key, "suite", "platform").must_equal({
+            }).public_send("#{key}_data_for", "suite", "platform").must_equal({
               default_key => "starship",
               :speed => 42
             })
@@ -66,7 +67,7 @@ module Kitchen
               :platforms => [
                 { :name => "plat" }
               ]
-            }).public_send(key, "suite", "plat").must_equal({})
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "returns platform #{key} name" do
@@ -77,7 +78,7 @@ module Kitchen
                   key => "flip"
                 }
               ]
-            }).public_send(key, "suite", "plat").must_equal({
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({
               default_key => "flip"
             })
           end
@@ -93,7 +94,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "suite", "plat").must_equal({
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({
               default_key => "flip",
               :flop => "yep"
             })
@@ -104,7 +105,8 @@ module Kitchen
               :suites => [
                 { :name => "sweet" }
               ]
-            }).public_send(key, "sweet", "platform").must_equal({})
+            }).public_send("#{key}_data_for", "sweet", "platform").must_equal({
+            })
           end
 
           it "returns suite #{key} name" do
@@ -115,7 +117,7 @@ module Kitchen
                   key => "waz"
                 }
               ]
-            }).public_send(key, "sweet", "platform").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "platform").must_equal({
               default_key => "waz"
             })
           end
@@ -131,7 +133,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "sweet", "platform").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "platform").must_equal({
               default_key => "waz",
               :up => "nope"
             })
@@ -168,7 +170,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "sweet", "plat").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "plat").must_equal({
               default_key => "suitey",
               :color => "purple",
               :fruit => ["banana"],
@@ -199,7 +201,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "sweet", "plat").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "plat").must_equal({
               default_key => "platformy",
               :color => "purple",
               :fruit => ["banana"],
@@ -228,7 +230,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "sweet", "plat").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "plat").must_equal({
               default_key => "suitey",
               :color => "purple",
               :fruit => ["apple", "pear"],
@@ -262,7 +264,7 @@ module Kitchen
                   }
                 }
               ]
-            }).public_send(key, "sweet", "plat").must_equal({
+            }).public_send("#{key}_data_for", "sweet", "plat").must_equal({
               default_key => "suitey",
               :fruit => ["banana"],
               :vehicle => "car",
@@ -283,7 +285,7 @@ module Kitchen
         it "returns common driver name" do
           DataMunger.new({
             :driver_plugin => "starship"
-          }).driver("suite", "platform").must_equal({
+          }).driver_data_for("suite", "platform").must_equal({
             :name => "starship"
           })
         end
@@ -292,7 +294,7 @@ module Kitchen
           DataMunger.new({
             :driver_plugin => "starship",
             :driver => "zappa"
-          }).driver("suite", "platform").must_equal({
+          }).driver_data_for("suite", "platform").must_equal({
             :name => "zappa"
           })
         end
@@ -303,7 +305,7 @@ module Kitchen
             :driver_config => {
               :speed => 42
             }
-          }).driver("suite", "platform").must_equal({
+          }).driver_data_for("suite", "platform").must_equal({
             :name => "starship",
             :speed => 42
           })
@@ -315,7 +317,7 @@ module Kitchen
               :eh => "yep"
             },
             :driver => "zappa"
-          }).driver("suite", "platform").must_equal({
+          }).driver_data_for("suite", "platform").must_equal({
             :name => "zappa",
             :eh => "yep"
           })
@@ -332,7 +334,7 @@ module Kitchen
               :name => "zappa",
               :color => "black"
             }
-          }).driver("suite", "platform").must_equal({
+          }).driver_data_for("suite", "platform").must_equal({
             :name => "zappa",
             :eh => "yep",
             :color => "black"
@@ -347,7 +349,7 @@ module Kitchen
                 :driver_plugin => "flip"
               }
             ]
-          }).driver("suite", "plat").must_equal({
+          }).driver_data_for("suite", "plat").must_equal({
             :name => "flip"
           })
         end
@@ -363,7 +365,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("suite", "plat").must_equal({
+          }).driver_data_for("suite", "plat").must_equal({
             :name => "flip",
             :flop => "yep"
           })
@@ -377,7 +379,7 @@ module Kitchen
                 :driver_plugin => "waz"
               }
             ]
-          }).driver("sweet", "platform").must_equal({
+          }).driver_data_for("sweet", "platform").must_equal({
             :name => "waz"
           })
         end
@@ -393,7 +395,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("sweet", "platform").must_equal({
+          }).driver_data_for("sweet", "platform").must_equal({
             :name => "waz",
             :up => "nope"
           })
@@ -430,7 +432,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("sweet", "plat").must_equal({
+          }).driver_data_for("sweet", "plat").must_equal({
             :name => "suitey",
             :color => "purple",
             :fruit => ["banana"],
@@ -461,7 +463,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("sweet", "plat").must_equal({
+          }).driver_data_for("sweet", "plat").must_equal({
             :name => "platformy",
             :color => "purple",
             :fruit => ["banana"],
@@ -490,7 +492,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("sweet", "plat").must_equal({
+          }).driver_data_for("sweet", "plat").must_equal({
             :name => "suitey",
             :color => "purple",
             :fruit => ["apple", "pear"],
@@ -524,7 +526,7 @@ module Kitchen
                 }
               }
             ]
-          }).driver("sweet", "plat").must_equal({
+          }).driver_data_for("sweet", "plat").must_equal({
             :name => "suitey",
             :fruit => ["banana"],
             :vehicle => "car",
