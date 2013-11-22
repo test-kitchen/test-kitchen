@@ -24,7 +24,7 @@ if RUBY_VERSION <= "1.9.3"
   require 'yaml'
   YAML::ENGINE.yamler = 'psych'
 end
-require 'safe_yaml'
+require 'safe_yaml/load'
 
 module Kitchen
 
@@ -188,7 +188,7 @@ module Kitchen
       def parse_yaml_string(string, file_name)
         return Hash.new if string.nil? || string.empty?
 
-        result = ::YAML.safe_load(string) || Hash.new
+        result = SafeYAML.load(string) || Hash.new
         unless result.is_a?(Hash)
           raise UserError, "Error parsing #{file_name} as YAML " +
             "(Result of parse was not a Hash, but was a #{result.class}).\n" +

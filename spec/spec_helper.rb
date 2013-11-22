@@ -35,18 +35,6 @@ require 'minitest/autorun'
 require 'mocha/setup'
 require 'tempfile'
 
-# enable yaml symbol parsing if code is executing under guard
-if ENV['GUARD_NOTIFY']
-  if RUBY_VERSION <= "1.9.3"
-    # ensure that Psych and not Syck is used for Ruby 1.9.2
-    require 'yaml'
-    YAML::ENGINE.yamler = 'psych'
-  end
-  require 'safe_yaml'
-  YAML.enable_symbol_parsing!
-  SafeYAML::OPTIONS[:suppress_warnings] = true
-end
-
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO
   def self.read(*args)
