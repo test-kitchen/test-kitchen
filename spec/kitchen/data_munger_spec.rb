@@ -507,5 +507,247 @@ module Kitchen
         end
       end
     end
+
+    describe "#busser" do
+
+      describe "from single source" do
+
+        it "returns empty hash if no common busser hash is provided" do
+          DataMunger.new({}).busser("suite", "platform").must_equal({})
+        end
+
+        it "returns common busser version" do
+          DataMunger.new({
+            :busser => "starship"
+          }).busser("suite", "platform").must_equal({
+            :version => "starship"
+          })
+        end
+
+        it "returns common busser config" do
+          DataMunger.new({
+            :busser => {
+              :version => "starship",
+              :speed => 42
+            }
+          }).busser("suite", "platform").must_equal({
+            :version => "starship",
+            :speed => 42
+          })
+        end
+
+        it "returns empty hash if platform config doesn't have busser hash" do
+          DataMunger.new({
+            :platforms => [
+              { :version => "plat" }
+            ]
+          }).busser("suite", "plat").must_equal({})
+        end
+
+        it "returns platform busser version" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :version => "plat",
+                :busser => "flip"
+              }
+            ]
+          }).busser("suite", "plat").must_equal({
+            :version => "flip"
+          })
+        end
+
+        it "returns platform config containing busser hash" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :version => "plat",
+                :busser => {
+                  :version => "flip",
+                  :flop => "yep"
+                }
+              }
+            ]
+          }).busser("suite", "plat").must_equal({
+            :version => "flip",
+            :flop => "yep"
+          })
+        end
+
+        it "returns empty hash if suite config doesn't have busser hash" do
+          DataMunger.new({
+            :suites => [
+              { :version => "sweet" }
+            ]
+          }).busser("sweet", "platform").must_equal({})
+        end
+
+        it "returns suite busser version" do
+          DataMunger.new({
+            :suites => [
+              {
+                :version => "sweet",
+                :busser => "waz"
+              }
+            ]
+          }).busser("sweet", "platform").must_equal({
+            :version => "waz"
+          })
+        end
+
+        it "returns suite config containing busser hash" do
+          DataMunger.new({
+            :suites => [
+              {
+                :version => "sweet",
+                :busser => {
+                  :version => "waz",
+                  :up => "nope"
+                }
+              }
+            ]
+          }).busser("sweet", "platform").must_equal({
+            :version => "waz",
+            :up => "nope"
+          })
+        end
+      end
+
+      describe "from multiple sources merging" do
+
+        it "suite into platform into common" do
+          DataMunger.new({
+            :busser => {
+              :version => "commony",
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :platforms => [
+              {
+                :version => "plat",
+                :busser => {
+                  :version => "platformy",
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ],
+            :suites => [
+              {
+                :version => "sweet",
+                :busser => {
+                  :version => "suitey",
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).busser("sweet", "plat").must_equal({
+            :version => "suitey",
+            :color => "purple",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :platform => "stuff",
+              :suite => "things"
+            }
+          })
+        end
+
+        it "platform into common" do
+          DataMunger.new({
+            :busser => {
+              :version => "commony",
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :platforms => [
+              {
+                :version => "plat",
+                :busser => {
+                  :version => "platformy",
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ]
+          }).busser("sweet", "plat").must_equal({
+            :version => "platformy",
+            :color => "purple",
+            :fruit => ["banana"],
+            :deep => {
+              :common => "junk",
+              :platform => "stuff"
+            }
+          })
+        end
+
+        it "suite into common" do
+          DataMunger.new({
+            :busser => {
+              :version => "commony",
+              :color => "purple",
+              :fruit => ["apple", "pear"],
+              :deep => { :common => "junk" }
+            },
+            :suites => [
+              {
+                :version => "sweet",
+                :busser => {
+                  :version => "suitey",
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).busser("sweet", "plat").must_equal({
+            :version => "suitey",
+            :color => "purple",
+            :fruit => ["apple", "pear"],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :suite => "things"
+            }
+          })
+        end
+
+        it "suite into platform" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :version => "plat",
+                :busser => {
+                  :version => "platformy",
+                  :fruit => ["banana"],
+                  :deep => { :platform => "stuff" }
+                }
+              }
+            ],
+            :suites => [
+              {
+                :version => "sweet",
+                :busser => {
+                  :version => "suitey",
+                  :vehicle => "car",
+                  :deep => { :suite => "things" }
+                }
+              }
+            ]
+          }).busser("sweet", "plat").must_equal({
+            :version => "suitey",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :platform => "stuff",
+              :suite => "things"
+            }
+          })
+        end
+      end
+    end
   end
 end

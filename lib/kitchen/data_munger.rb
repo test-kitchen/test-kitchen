@@ -52,19 +52,30 @@ module Kitchen
       cdata.rmerge(pdata.rmerge(sdata))
     end
 
+    def busser(suite, platform)
+      cdata = data.fetch(:busser, Hash.new)
+      cdata = { :version => cdata } if cdata.is_a?(String)
+      pdata = platform_data(platform, :version).fetch(:busser, Hash.new)
+      pdata = { :version => pdata } if pdata.is_a?(String)
+      sdata = suite_data(suite, :version).fetch(:busser, Hash.new)
+      sdata = { :version => sdata } if sdata.is_a?(String)
+
+      cdata.rmerge(pdata.rmerge(sdata))
+    end
+
     private
 
     attr_reader :data
 
-    def platform_data(name)
+    def platform_data(name, default_key = :name)
       data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
-        platform.fetch(:name, nil) == name
+        platform.fetch(default_key, nil) == name
       end
     end
 
-    def suite_data(name)
+    def suite_data(name, default_key = :name)
       data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
-        suite.fetch(:name, nil) == name
+        suite.fetch(default_key, nil) == name
       end
     end
   end
