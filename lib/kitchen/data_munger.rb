@@ -32,8 +32,11 @@ module Kitchen
 
     def driver(suite, platform)
       cdata = data.fetch(:driver, Hash.new)
+      cdata = { :name => cdata } if cdata.is_a?(String)
       pdata = platform_data(platform).fetch(:driver, Hash.new)
+      pdata = { :name => pdata } if pdata.is_a?(String)
       sdata = suite_data(suite).fetch(:driver, Hash.new)
+      sdata = { :name => sdata } if sdata.is_a?(String)
 
       cdata.rmerge(pdata.rmerge(sdata))
     end

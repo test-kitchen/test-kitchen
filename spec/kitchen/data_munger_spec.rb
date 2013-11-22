@@ -28,6 +28,18 @@ module Kitchen
 
       describe "from single source" do
 
+        it "returns empty hash if no common driver hash is provided" do
+          DataMunger.new({}).driver("suite", "platform").must_equal({})
+        end
+
+        it "returns common driver name" do
+          DataMunger.new({
+            :driver => "starship"
+          }).driver("suite", "platform").must_equal({
+            :name => "starship"
+          })
+        end
+
         it "returns common driver config" do
           DataMunger.new({
             :driver => {
@@ -40,8 +52,25 @@ module Kitchen
           })
         end
 
-        it "returns empty hash if no common driver hash is provided" do
-          DataMunger.new({}).driver("suite", "platform").must_equal({})
+        it "returns empty hash if platform config doesn't have driver hash" do
+          DataMunger.new({
+            :platforms => [
+              { :name => "plat" }
+            ]
+          }).driver("suite", "plat").must_equal({})
+        end
+
+        it "returns platform driver name" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :driver => "flip"
+              }
+            ]
+          }).driver("suite", "plat").must_equal({
+            :name => "flip"
+          })
         end
 
         it "returns platform config containing driver hash" do
@@ -61,12 +90,25 @@ module Kitchen
           })
         end
 
-        it "returns empty hash if platform config doesn't have driver hash" do
+        it "returns empty hash if suite config doesn't have driver hash" do
           DataMunger.new({
-            :platforms => [
-              { :name => "plat" }
+            :suites => [
+              { :name => "sweet" }
             ]
-          }).driver("suite", "plat").must_equal({})
+          }).driver("sweet", "platform").must_equal({})
+        end
+
+        it "returns suite driver name" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :driver => "waz"
+              }
+            ]
+          }).driver("sweet", "platform").must_equal({
+            :name => "waz"
+          })
         end
 
         it "returns suite config containing driver hash" do
@@ -84,14 +126,6 @@ module Kitchen
             :name => "waz",
             :up => "nope"
           })
-        end
-
-        it "returns empty hash if suite config doesn't have driver hash" do
-          DataMunger.new({
-            :suites => [
-              { :name => "sweet" }
-            ]
-          }).driver("sweet", "platform").must_equal({})
         end
       end
 
