@@ -24,6 +24,68 @@ module Kitchen
 
   describe DataMunger do
 
+    describe "#platform_data" do
+
+      it "returns an array of platform data" do
+        DataMunger.new({
+          :platforms => [
+            {
+              :name => "one",
+              :stuff => "junk"
+            },
+            {
+              :name => "two",
+              :misc => "things"
+            }
+          ]
+        }).platform_data.must_equal([
+            {
+              :name => "one",
+              :stuff => "junk"
+            },
+            {
+              :name => "two",
+              :misc => "things"
+            }
+        ])
+      end
+
+      it "returns an empty array if platforms is not defined" do
+        DataMunger.new({}).platform_data.must_equal([])
+      end
+    end
+
+    describe "#suite_data" do
+
+      it "returns an array of suite data" do
+        DataMunger.new({
+          :suites => [
+            {
+              :name => "one",
+              :stuff => "junk"
+            },
+            {
+              :name => "two",
+              :misc => "things"
+            }
+          ]
+        }).suite_data.must_equal([
+            {
+              :name => "one",
+              :stuff => "junk"
+            },
+            {
+              :name => "two",
+              :misc => "things"
+            }
+        ])
+      end
+
+      it "returns an empty array if suites is not defined" do
+        DataMunger.new({}).suite_data.must_equal([])
+      end
+    end
+
     DATA_KEYS = {
       :driver => :name,
       :provisioner => :name,
@@ -466,6 +528,240 @@ module Kitchen
       end
     end
 
+    describe "kitchen config" do
+
+      [:kitchen_root, :test_base_path].each do |key|
+
+        describe "for #{key}" do
+
+          describe "for #driver_data_for" do
+
+            it "is returned when provided" do
+              DataMunger.new({
+                :driver => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).driver_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "is returned when provided in user data" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "datvalue"
+                },
+                :driver => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).driver_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "provided value beats user data value" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "ilose"
+                },
+                :driver => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).driver_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "rejects any value in driver data" do
+              DataMunger.new({
+                :driver => {
+                  :name => "chefy",
+                  key => "imevil"
+                },
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).driver_data_for("sweet", "plat").must_equal({
+                :name => "chefy"
+              })
+            end
+          end
+
+          describe "for #provisioner_data_for" do
+
+            it "is returned when provided" do
+              DataMunger.new({
+                :provisioner => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).provisioner_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "is returned when provided in user data" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "datvalue"
+                },
+                :provisioner => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).provisioner_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "provided value beats user data value" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "ilose"
+                },
+                :provisioner => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).provisioner_data_for("sweet", "plat").must_equal({
+                :name => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "rejects any value in provisioner data" do
+              DataMunger.new({
+                :provisioner => {
+                  :name => "chefy",
+                  key => "imevil"
+                },
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).provisioner_data_for("sweet", "plat").must_equal({
+                :name => "chefy"
+              })
+            end
+          end
+
+          describe "for #busser_data_for" do
+
+            it "is returned when provided" do
+              DataMunger.new({
+                :busser => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).busser_data_for("sweet", "plat").must_equal({
+                :version => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "is returned when provided in user data" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "datvalue"
+                },
+                :busser => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).busser_data_for("sweet", "plat").must_equal({
+                :version => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "provided value beats user data value" do
+              DataMunger.new({
+                :kitchen => {
+                  key => "ilose"
+                },
+                :busser => "chefy",
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }, {
+                key => "datvalue"
+              }).busser_data_for("sweet", "plat").must_equal({
+                :version => "chefy",
+                key => "datvalue"
+              })
+            end
+
+            it "rejects any value in busser data" do
+              DataMunger.new({
+                :busser => {
+                  :version => "chefy",
+                  key => "imevil"
+                },
+                :platforms => [
+                  { :name => "plat" }
+                ],
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              }).busser_data_for("sweet", "plat").must_equal({
+                :version => "chefy"
+              })
+            end
+          end
+        end
+      end
+    end
+
     describe "legacy driver_config and driver_plugin" do
 
       describe "from a single source" do
@@ -876,7 +1172,6 @@ module Kitchen
             :require_chef_omnibus => "it's probably fine"
           })
         end
-
       end
     end
   end

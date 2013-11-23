@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,51 +29,77 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class DataMunger
 
-    def initialize(data)
+    def initialize(data, kitchen_config = {})
       @data = data
+      @kitchen_config = kitchen_config
       convert_legacy_driver_format!
       convert_legacy_chef_paths_format!
       convert_legacy_require_chef_omnibus_format!
       move_chef_data_to_provisioner!
     end
 
+    def platform_data
+      data.fetch(:platforms, [])
+    end
+
+    def suite_data
+      data.fetch(:suites, [])
+    end
+
     def driver_data_for(suite, platform)
-      merged_data_for(:driver, suite, platform)
+      merged_data_for(:driver, suite, platform).tap do |ddata|
+        set_kitchen_config_at!(ddata, :kitchen_root)
+        set_kitchen_config_at!(ddata, :test_base_path)
+      end
     end
 
     def provisioner_data_for(suite, platform)
-      merged_data_for(:provisioner, suite, platform)
+      merged_data_for(:provisioner, suite, platform).tap do |pdata|
+        set_kitchen_config_at!(pdata, :kitchen_root)
+        set_kitchen_config_at!(pdata, :test_base_path)
+      end
     end
 
     def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version)
+      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
+        set_kitchen_config_at!(bdata, :kitchen_root)
+        set_kitchen_config_at!(bdata, :test_base_path)
+      end
     end
 
     private
 
-    attr_reader :data
+    attr_reader :data, :kitchen_config
 
     def merged_data_for(key, suite, platform, default_key = :name)
       cdata = data.fetch(key, Hash.new)
       cdata = { default_key => cdata } if cdata.is_a?(String)
-      pdata = platform_data(platform).fetch(key, Hash.new)
+      pdata = platform_data_for(platform).fetch(key, Hash.new)
       pdata = { default_key => pdata } if pdata.is_a?(String)
-      sdata = suite_data(suite).fetch(key, Hash.new)
+      sdata = suite_data_for(suite).fetch(key, Hash.new)
       sdata = { default_key => sdata } if sdata.is_a?(String)
 
       cdata.rmerge(pdata.rmerge(sdata))
     end
 
-    def platform_data(name)
+    def platform_data_for(name)
       data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
         platform.fetch(:name, nil) == name
       end
     end
 
-    def suite_data(name)
+    def suite_data_for(name)
       data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
         suite.fetch(:name, nil) == name
       end
+    end
+
+    def set_kitchen_config_at!(root, key)
+      kdata = data.fetch(:kitchen, Hash.new)
+
+      root.delete(key) if root.has_key?(key)
+      root[key] = kdata.fetch(key) if kdata.has_key?(key)
+      root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
     end
 
     def move_chef_data_to_provisioner!
@@ -107,13 +133,13 @@ module Kitchen
     end
 
     def convert_legacy_driver_format_at!(root)
-      if root[:driver_config]
+      if root.has_key?(:driver_config)
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = root.delete(:driver_config).rmerge(ddata)
       end
 
-      if root[:driver_plugin]
+      if root.has_key?(:driver_plugin)
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
