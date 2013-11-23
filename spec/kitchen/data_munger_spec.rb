@@ -765,5 +765,119 @@ module Kitchen
         end
       end
     end
+
+    describe "legacy require_chef_omnibus from driver" do
+
+      describe "from a single source" do
+
+        it "common driver value moves into provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :driver => {
+              :name => "starship",
+              :require_chef_omnibus => "it's probably fine"
+            }
+          }).provisioner_data_for("suite", "platform").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+        it "common driver value loses to existing provisioner value" do
+          DataMunger.new({
+            :provisioner => {
+              :name => "chefy",
+              :require_chef_omnibus => "it's probably fine"
+            },
+            :driver => {
+              :name => "starship",
+              :require_chef_omnibus => "dragons"
+            }
+          }).provisioner_data_for("suite", "platform").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+        it "suite driver value moves into provisioner" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :provisioner => "chefy",
+                :driver => {
+                  :name => "starship",
+                  :require_chef_omnibus => "it's probably fine"
+                }
+              }
+            ],
+          }).provisioner_data_for("sweet", "platform").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+        it "suite driver value loses to existing provisioner value" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :provisioner => {
+                  :name => "chefy",
+                  :require_chef_omnibus => "it's probably fine"
+                },
+                :driver => {
+                  :name => "starship",
+                  :require_chef_omnibus => "dragons"
+                }
+              }
+            ]
+          }).provisioner_data_for("sweet", "platform").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+        it "platform driver value moves into provisioner" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :provisioner => "chefy",
+                :driver => {
+                  :name => "starship",
+                  :require_chef_omnibus => "it's probably fine"
+                }
+              }
+            ],
+          }).provisioner_data_for("suite", "plat").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+        it "platform driver value loses to existing provisioner value" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :provisioner => {
+                  :name => "chefy",
+                  :require_chef_omnibus => "it's probably fine"
+                },
+                :driver => {
+                  :name => "starship",
+                  :require_chef_omnibus => "dragons"
+                }
+              }
+            ]
+          }).provisioner_data_for("suite", "plat").must_equal({
+            :name => "chefy",
+            :require_chef_omnibus => "it's probably fine"
+          })
+        end
+
+      end
+    end
   end
 end

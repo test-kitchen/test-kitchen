@@ -33,6 +33,7 @@ module Kitchen
       @data = data
       convert_legacy_driver_format!
       convert_legacy_chef_paths_format!
+      convert_legacy_require_chef_omnibus_format!
       move_chef_data_to_provisioner!
     end
 
@@ -124,6 +125,28 @@ module Kitchen
         %w{data data_bags environments nodes roles}.each do |key|
           move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
         end
+      end
+    end
+
+    def convert_legacy_require_chef_omnibus_format!
+      convert_legacy_require_chef_omnibus_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_require_chef_omnibus_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_require_chef_omnibus_format_at!(suite)
+      end
+    end
+
+    def convert_legacy_require_chef_omnibus_format_at!(root)
+      key = :require_chef_omnibus
+      ddata = root.fetch(:driver, Hash.new)
+
+      if ddata.is_a?(Hash) && ddata.has_key?(key)
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] =
+          { key => root.fetch(:driver).delete(key) }.rmerge(pdata)
       end
     end
   end
