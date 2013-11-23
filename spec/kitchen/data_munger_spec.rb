@@ -440,6 +440,29 @@ module Kitchen
             }
           })
         end
+
+        it "concats suite run_list to platform run_list" do
+          skip "need to deal with array concatenation"
+
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :run_list => ["one", "two"]
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => ["three", "four"]
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two", "three", "four"]
+          })
+        end
       end
     end
 
