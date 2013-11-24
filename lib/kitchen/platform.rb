@@ -34,37 +34,8 @@ module Kitchen
     # @option options [String] :name logical name of this platform
     #   (**Required**)
     def initialize(options = {})
-      options = options.dup
-      validate_options(options)
-
-      @name = options.delete(:name)
-      @data = options.reject do |key, value|
-        [:driver_config, :driver_plugin, :provisioner].include?(key)
-      end
-    end
-
-    # Extra platform methods used for accessing Chef data such as a run list,
-    # node attributes, etc.
-    module Cheflike
-
-      # @return [Array] Array of Chef run_list items
-      def run_list
-        Array(data[:run_list])
-      end
-
-      # @return [Hash] Hash of Chef node attributes
-      def attributes
-        data[:attributes] || Hash.new
-      end
-    end
-
-    private
-
-    attr_reader :data
-
-    def validate_options(opts)
-      [:name].each do |k|
-        raise ClientError, "Platform#new requires option :#{k}" if opts[k].nil?
+      @name = options.fetch(:name) do
+        raise ClientError, "Platform#new requires option :name"
       end
     end
   end
