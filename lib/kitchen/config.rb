@@ -128,17 +128,17 @@ module Kitchen
 
     def new_instance(suite, platform, index)
       platform_hash = platform_driver_hash(platform.name)
-      platform_hash[:driver_config].rmerge!(suite.driver_config)
+      platform_hash[:driver_config].rmerge!(Hash.new) # tmp
       driver = new_driver(merge_driver_hash(platform_hash))
       provisioner = driver[:provisioner]
 
       instance = Instance.new(
-        :suite    => extend_suite(suite, provisioner),
-        :platform => extend_platform(platform, provisioner),
+        :suite    => suite,
+        :platform => platform,
         :driver   => driver,
         :logger   => new_instance_logger(index)
       )
-      extend_instance(instance, provisioner)
+      instance
     end
 
     def extend_suite(suite, provisioner)
