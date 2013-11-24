@@ -103,7 +103,7 @@ module Kitchen
       logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         ensure_initialized
-        destroy_mode = value_for(options[:destroy]).to_sym
+        destroy_mode = value_for(:destroy).to_sym
         @task = :test
         results = parse_subcommand(args.join('|'))
 
