@@ -25,6 +25,7 @@ require 'kitchen/config'
 require 'kitchen/driver'
 require 'kitchen/instance'
 require 'kitchen/platform'
+require 'kitchen/provisioner'
 require 'kitchen/suite'
 require 'kitchen/util'
 
@@ -45,22 +46,88 @@ end
 describe Kitchen::Config do
 
   let(:loader)  { Kitchen::DummyLoader.new }
-  let(:config)  { Kitchen::Config.new(:loader => loader) }
+  let(:config)  { Kitchen::Config.new(opts) }
 
-  before do
-    FakeFS.activate!
-    FileUtils.mkdir_p("/tmp")
+  let(:opts) do
+    { :loader => loader, :kitchen_root => "/tmp/that/place",
+      :log_root => "/tmp/logs", :test_base_path => "/testing/yo",
+      :log_level => :debug }
   end
 
-  after do
-    FakeFS.deactivate!
-    FakeFS::FileSystem.clear
+  describe "#loader" do
+
+    it "returns its loader" do
+      config.loader.must_equal loader
+    end
+
+    it "creates a Kitchen::Loader::YAML loader by default" do
+      opts.delete(:loader)
+
+      config.loader.must_be_kind_of Kitchen::Loader::YAML
+    end
+  end
+
+  describe "#kitchen_root" do
+
+    it "returns its kitchen root" do
+      config.kitchen_root.must_equal "/tmp/that/place"
+    end
+
+    it "uses Dir.pwd by default" do
+      opts.delete(:kitchen_root)
+
+      config.kitchen_root.must_equal Dir.pwd
+    end
+  end
+
+  describe "#log_root" do
+
+    it "returns its log root" do
+      config.log_root.must_equal "/tmp/logs"
+    end
+
+    it "calculates a default log root using kitchen_root" do
+      opts.delete(:log_root)
+
+      config.log_root.must_equal "/tmp/that/place/.kitchen/logs"
+    end
+  end
+
+  describe "#test_base_path" do
+
+    it "returns its base test path" do
+      config.test_base_path.must_equal "/testing/yo"
+    end
+
+    it "calculates a default base using kitchen_root" do
+      opts.delete(:test_base_path)
+
+      config.test_base_path.must_equal "/tmp/that/place/test/integration"
+    end
+  end
+
+  describe "#log_level" do
+
+    it "returns its log level" do
+      config.log_level.must_equal :debug
+    end
+
+    it "uses :info by default" do
+      opts.delete(:log_level)
+
+      config.log_level.must_equal :info
+    end
   end
 
   describe "#platforms" do
 
-    it "returns platforms loaded from a kitchen.yml" do
-      stub_data!({ :platforms => [{ :name => 'one' }, { :name => 'two' }] })
+    it "returns an array of platforms" do
+      stub_data!({
+        :platforms => [
+          { :name => 'one' },
+          { :name => 'two' }
+        ]
+      })
 
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
@@ -76,11 +143,13 @@ describe Kitchen::Config do
 
   describe "#suites" do
 
-    it "returns suites loaded from a kitchen.yml" do
-      stub_data!({ :suites => [
-        { :name => 'one', :run_list => [] },
-        { :name => 'two', :run_list => [] },
-      ] })
+    it "returns an array of suites" do
+      stub_data!({
+        :suites => [
+          { :name => 'one' },
+          { :name => 'two' }
+        ]
+      })
 
       config.suites.size.must_equal 2
       config.suites[0].name.must_equal 'one'
@@ -96,66 +165,29 @@ describe Kitchen::Config do
 
   describe "#instances" do
 
-    it "returns instances loaded from a kitchen.yml" do
+    it "returns an empty Array if no suites and platforms are given" do
+      stub_data!({})
+
+      config.instances.must_equal []
+    end
+
+    it "returns an array of instances" do
+      skip "much more needed here"
+
       stub_data!({
         :platforms => [
-          { :name => 'p1' },
-          { :name => 'p2' },
+          { :name => "p1" },
+          { :name => "p2" }
         ],
         :suites => [
-          { :name => 's1', :run_list => [] },
-          { :name => 's2', :run_list => [] },
-          { :name => 's3', :run_list => [], :excludes => ['p1'] }
+          { :name => 's1' },
+          { :name => 's2' }
         ]
       })
-      config.instances.size.must_equal 5
-      instance_names = config.instances.map { |i| i.name }
-      instance_names.must_equal %w{s1-p1 s1-p2 s2-p1 s2-p2 s3-p2}
-    end
 
-    it "returns an instance containing a driver instance" do
-      stub_data!({
-        :platforms => [{ :name => 'platform', :driver_plugin => 'dummy' }],
-        :suites => [{ :name => 'suite', :run_list => [] }]
-      })
-      config.instances.first.driver.must_be_instance_of Kitchen::Driver::Dummy
-    end
-
-    it "returns an instance with a driver initialized with kitchen_root" do
-      config.kitchen_root = "/tmp"
-      stub_data!({
-        :platforms => [{ :name => 'platform', :driver_plugin => 'dummy' }],
-        :suites => [{ :name => 'suite', :run_list => [] }]
-      })
-      config.instances.first.driver[:kitchen_root].must_equal "/tmp"
-    end
-
-    it "returns an instance with a driver initialized with passed in config" do
-      stub_data!({
-        :platforms => [
-          { :name => 'platform', :driver_plugin => 'dummy',
-            :driver_config => { :foo => 'bar' }
-          }
-        ],
-        :suites => [{ :name => 'suite', :run_list => [] }]
-      })
-      config.instances.first.driver[:foo].must_equal "bar"
+      config.instances
     end
   end
-
-  describe "#log_level" do
-
-    it "returns a default log_level of info" do
-      config.log_level.must_equal :info
-    end
-
-    it "returns an overridden log_level" do
-      config.log_level = :error
-      config.log_level.must_equal :error
-    end
-  end
-
-  private
 
   def stub_data!(hash)
     loader.data = hash

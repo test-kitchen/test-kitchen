@@ -179,6 +179,11 @@ describe Kitchen::Instance do
       opts.delete(:driver)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
+
+    it "sets Driver#instance to itself" do
+      # it's mind-bottling
+      instance.driver.instance.must_equal instance
+    end
   end
 
   describe "#logger" do
@@ -207,6 +212,11 @@ describe Kitchen::Instance do
     it "raises an ArgumentError if missing" do
       opts.delete(:provisioner)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+    end
+
+    it "sets Provisioner#instance to itself" do
+      # it's mind-bottling
+      instance.provisioner.instance.must_equal instance
     end
   end
 

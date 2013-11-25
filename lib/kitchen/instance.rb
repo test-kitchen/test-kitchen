@@ -88,6 +88,7 @@ module Kitchen
       @state_file = options.fetch(:state_file) { |k| missing_key!(k) }
 
       setup_driver
+      setup_provisioner
     end
 
     def to_str
@@ -215,6 +216,10 @@ module Kitchen
           self.class.mutexes[driver.class] = Mutex.new
         end
       end
+    end
+
+    def setup_provisioner
+      @provisioner.instance = self
     end
 
     def transition_to(desired)

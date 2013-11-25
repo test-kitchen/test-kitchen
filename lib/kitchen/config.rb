@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'vendor/hash_recursive_merge'
-
 module Kitchen
 
   # Base configuration class for Kitchen. This class exposes configuration such
@@ -26,44 +24,44 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
 
-    attr_accessor :kitchen_root
-    attr_accessor :test_base_path
-    attr_accessor :log_level
-    attr_writer :platforms
-    attr_writer :suites
-
-    # Default driver plugin to use
-    DEFAULT_DRIVER_PLUGIN = "dummy".freeze
-
-    # Default provisioner to use
-    DEFAULT_PROVISIONER = "chef_solo".freeze
+    attr_reader :kitchen_root
+    attr_reader :log_root
+    attr_reader :test_base_path
+    attr_reader :loader
+    attr_reader :log_level
 
     # Creates a new configuration.
     #
     # @param [Hash] options configuration
     # @option options [#read] :loader
     # @option options [String] :kitchen_root
+    # @option options [String] :log_root
     # @option options [String] :test_base_path
     # @option options [Symbol] :log_level
     def initialize(options = {})
-      @loader         = options[:loader] || Kitchen::Loader::YAML.new
-      @kitchen_root   = options[:kitchen_root] || Dir.pwd
-      @test_base_path = options[:test_base_path] || default_test_base_path
-      @log_level      = options[:log_level] || Kitchen::DEFAULT_LOG_LEVEL
+      @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
+      @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
+      @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
+      @log_root       = options.fetch(:log_root) do
+        File.join(@kitchen_root, Kitchen::DEFAULT_LOG_DIR)
+      end
+      @test_base_path = options.fetch(:test_base_path) do
+        File.join(@kitchen_root, Kitchen::DEFAULT_TEST_DIR)
+      end
     end
 
     # @return [Array<Platform>] all defined platforms which will be used in
     #   convergence integration
     def platforms
       @platforms ||= Collection.new(
-        Array(data[:platforms]).map { |hash| new_platform(hash) })
+        data.platform_data.map { |pdata| Platform.new(pdata) })
     end
 
     # @return [Array<Suite>] all defined suites which will be used in
     #   convergence integration
     def suites
       @suites ||= Collection.new(
-        Array(data[:suites]).map { |hash| new_suite(hash) })
+        data.suite_data.map { |sdata| Suite.new(sdata) })
     end
 
     # @return [Array<Instance>] all instances, resulting from all platform and
@@ -72,40 +70,25 @@ module Kitchen
       @instances ||= build_instances
     end
 
-    # Constant/global settings defined in the YAML
-    def settings
-      data[:settings] || {}
-    end
-
     private
 
-    def new_suite(hash)
-      path_hash = {
-        :data_path      => calculate_path(
-          "data", hash[:name], hash[:data_path]),
-        :data_bags_path => calculate_path(
-          "data_bags", hash[:name], hash[:data_bags_path]),
-        :environments_path  => calculate_path(
-          "environments", hash[:name], hash[:environments_path]),
-        :nodes_path     => calculate_path(
-          "nodes", hash[:name], hash[:nodes_path]),
-        :roles_path     => calculate_path(
-          "roles", hash[:name], hash[:roles_path]),
+    def kitchen_config
+      @kitchen_config ||= {
+        :kitchen_root => @kitchen_root,
+        :test_base_path => @test_base_path,
+        :defaults => {
+          :driver => Driver::DEFAULT_PLUGIN,
+          :provisioner => Driver::DEFAULT_PLUGIN
+        }
       }
-
-      Suite.new(hash.rmerge(path_hash))
     end
 
-    def new_platform(hash)
-      Platform.new(hash)
+    def data
+      @data ||= DataMunger.new(loader.read, kitchen_config)
     end
 
-    def new_driver(hash)
-      hash[:driver_config] ||= Hash.new
-      hash[:driver_config][:kitchen_root] = kitchen_root
-      hash[:driver_config][:provisioner] = hash[:provisioner]
-
-      Driver.for_plugin(hash[:driver_plugin], hash[:driver_config])
+    def instance_name(suite, platform)
+      Instance.name_for(suite, platform)
     end
 
     def build_instances
@@ -127,109 +110,45 @@ module Kitchen
     end
 
     def new_instance(suite, platform, index)
-      platform_hash = platform_driver_hash(platform.name)
-      platform_hash[:driver_config].rmerge!(Hash.new) # tmp
-      driver = new_driver(merge_driver_hash(platform_hash))
-      provisioner = Provisioner.for_plugin("dummy", {})
-      state_file = StateFile.new(kitchen_root, Instance.name_for(suite, platform))
-      busser = Busser.new(suite.name, {})
-
-      instance = Instance.new(
-        :suite    => suite,
+      Instance.new(
+        :suite => suite,
         :platform => platform,
-        :driver   => driver,
-        :provisioner   => provisioner,
-        :logger   => new_instance_logger(index),
-        :state_file => state_file,
-        :busser => busser
+        :driver => new_driver(suite, platform),
+        :provisioner => new_provisioner(suite, platform),
+        :busser => new_busser(suite, platform),
+        :state_file => new_state_file(suite, platform),
+        :logger => new_logger(suite, platform, index)
       )
-      instance
     end
 
-    def extend_suite(suite, provisioner)
-      case provisioner.to_s.downcase
-      when /^chef_/ then suite.dup.extend(Suite::Cheflike)
-      when /^puppet_/ then suite.dup.extend(Suite::Puppetlike)
-      else suite.dup
-      end
+    def new_driver(suite, platform)
+      ddata = data.driver_data_for(suite, platform)
+      Driver.for_plugin(ddata[:name], ddata)
     end
 
-    def extend_platform(platform, provisioner)
-      case provisioner.to_s.downcase
-      when /^chef_/ then platform.dup.extend(Platform::Cheflike)
-      else platform.dup
-      end
+    def new_provisioner(suite, platform)
+      pdata = data.provisioner_data_for(suite, platform)
+      Provisioner.for_plugin(pdata[:name], pdata)
     end
 
-    def extend_instance(instance, provisioner)
-      case provisioner.to_s.downcase
-      when /^chef_/ then instance.extend(Instance::Cheflike)
-      when /^puppet_/ then instance.extend(Instance::Puppetlike)
-      else instance
-      end
+    def new_busser(suite, platform)
+      bdata = data.busser_data_for(suite, platform)
+      Busser.new(suite.name, bdata)
     end
 
-    def log_root
-      File.expand_path(File.join(kitchen_root, ".kitchen", "logs"))
+    def new_state_file(suite, platform)
+      StateFile.new(kitchen_root, instance_name(suite, platform))
     end
 
-    def platform_driver_hash(platform_name)
-      h = data[:platforms].find { |p| p[:name] == platform_name } || Hash.new
-      h[:driver_config] ||= {}
-
-      h.select do |key, value|
-        [:driver_plugin, :driver_config, :provisioner].include?(key)
-      end
-    end
-
-    def new_instance_logger(index)
-      level = Util.to_logger_level(self.log_level)
-      color = Color::COLORS[index % Color::COLORS.size].to_sym
-
-      lambda do |name|
-        logfile = File.join(log_root, "#{name}.log")
-
-        Logger.new(:stdout => STDOUT, :color => color, :logdev => logfile,
-          :level => level, :progname => name)
-      end
-    end
-
-    def data
-      @data ||= @loader.read
-    end
-
-    def merge_driver_hash(driver_hash)
-      default_driver_hash.rmerge(common_driver_hash.rmerge(driver_hash))
-    end
-
-    def calculate_path(path, suite_name, local_path)
-      possibles = [].tap do |a|
-        a.push(local_path) if local_path
-        a.push(File.join(kitchen_root, local_path)) if local_path
-        a.push(File.join(test_base_path, suite_name, path))
-        a.push(File.join(test_base_path, path))
-        a.push(File.join(Dir.pwd, path))
-      end.compact
-
-      possibles.find { |path| File.directory?(path) }
-    end
-
-    def default_driver_hash
-      {
-        :driver_plugin  => DEFAULT_DRIVER_PLUGIN,
-        :driver_config  => {},
-        :provisioner    => DEFAULT_PROVISIONER
-      }
-    end
-
-    def common_driver_hash
-      data.select do |key, value|
-        [:driver_plugin, :driver_config, :provisioner].include?(key)
-      end
-    end
-
-    def default_test_base_path
-      File.join(kitchen_root, 'test/integration')
+    def new_logger(suite, platform, index)
+      name = instance_name(suite, platform)
+      Logger.new(
+        :stdout => STDOUT,
+        :color => Color::COLORS[index % Color::COLORS.size].to_sym,
+        :logdev => File.join(log_root, "#{name}.log"),
+        :level => Util.to_logger_level(self.log_level),
+        :progname => name
+      )
     end
   end
 end

@@ -27,6 +27,9 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Provisioner
 
+    # Default provisioner to use
+    DEFAULT_PLUGIN = "chef_solo".freeze
+
     # Returns an instance of a provisioner given a plugin type string.
     #
     # @param plugin [String] a provisioner plugin type, to be constantized

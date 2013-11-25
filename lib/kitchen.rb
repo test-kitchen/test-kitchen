@@ -31,6 +31,7 @@ require 'kitchen/busser'
 require 'kitchen/color'
 require 'kitchen/collection'
 require 'kitchen/config'
+require 'kitchen/data_munger'
 require 'kitchen/driver'
 require 'kitchen/driver/base'
 require 'kitchen/driver/proxy'
@@ -85,6 +86,10 @@ module Kitchen
 
   # Default log level verbosity
   DEFAULT_LOG_LEVEL = :info
+
+  DEFAULT_TEST_DIR = "test/integration".freeze
+
+  DEFAULT_LOG_DIR = ".kitchen/logs".freeze
 end
 
 # Initialize the base logger

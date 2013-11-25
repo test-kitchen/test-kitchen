@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'delegate'
+
 module Kitchen
 
   # A modifed Hash object that may contain procs as a value which must be

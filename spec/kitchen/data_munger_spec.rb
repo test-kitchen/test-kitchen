@@ -104,6 +104,17 @@ module Kitchen
             })
           end
 
+          it "returns kitchen config #{key} name" do
+            DataMunger.new({
+            }, {
+              :defaults => {
+                key => "thenoseknows"
+              }
+            }).public_send("#{key}_data_for", "suite", "platform").must_equal({
+              default_key => "thenoseknows"
+            })
+          end
+
           it "returns common #{key} name" do
             DataMunger.new({
               key => "starship"
