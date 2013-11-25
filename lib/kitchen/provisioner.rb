@@ -30,16 +30,15 @@ module Kitchen
     # Returns an instance of a provisioner given a plugin type string.
     #
     # @param plugin [String] a provisioner plugin type, to be constantized
+    # @param config [Hash] a configuration hash to initialize the provisioner
     # @return [Provisioner::Base] a driver instance
     # @raise [ClientError] if a provisioner instance could not be created
-    def self.for_plugin(plugin, instance, config)
+    def self.for_plugin(plugin, config)
       require("kitchen/provisioner/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
       klass = self.const_get(str_const)
-      klass.new(instance, config)
-    rescue UserError
-      raise
+      klass.new(config)
     rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' provisioner from the load path." +

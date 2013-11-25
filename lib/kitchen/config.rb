@@ -130,7 +130,7 @@ module Kitchen
       platform_hash = platform_driver_hash(platform.name)
       platform_hash[:driver_config].rmerge!(Hash.new) # tmp
       driver = new_driver(merge_driver_hash(platform_hash))
-      provisioner = driver[:provisioner]
+      provisioner = Provisioner.for_plugin("dummy", {})
       state_file = StateFile.new(kitchen_root, Instance.name_for(suite, platform))
       busser = Busser.new(suite.name, {})
 
