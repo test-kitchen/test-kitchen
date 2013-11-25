@@ -138,6 +138,7 @@ module Kitchen
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
+        :provisioner   => provisioner,
         :logger   => new_instance_logger(index),
         :state_file => state_file,
         :busser => busser

@@ -51,6 +51,11 @@ module Kitchen
     #   lifecycle actions
     attr_reader :driver
 
+    # @return [Provisioner::Base] provisioner object which will the setup
+    #   and invocation instructions for configuration management and other
+    #   automation tools
+    attr_reader :provisioner
+
     # @return [Busser] busser object for instance to manage the busser
     #   installation on this instance
     attr_reader :busser
@@ -64,6 +69,8 @@ module Kitchen
     # @option options [Suite] :suite the suite (**Required)
     # @option options [Platform] :platform the platform (**Required)
     # @option options [Driver::Base] :driver the driver (**Required)
+    # @option options [Provisioner::Base] :provisioner the provisioner
+    #   (**Required)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
@@ -74,6 +81,7 @@ module Kitchen
       @platform = options.fetch(:platform) { |k| missing_key!(k) }
       @name = self.class.name_for(@suite, @platform)
       @driver = options.fetch(:driver) { |k| missing_key!(k) }
+      @provisioner = options.fetch(:provisioner) { |k| missing_key!(k) }
       @busser = options.fetch(:busser) { |k| missing_key!(k)}
       @logger = options.fetch(:logger) { Kitchen.logger }
       @logger = logger.call(name) if logger.is_a?(Proc)

@@ -17,7 +17,6 @@
 # limitations under the License.
 
 require_relative '../spec_helper'
-require 'logger'
 require 'stringio'
 
 require 'kitchen/logging'
@@ -25,6 +24,8 @@ require 'kitchen/instance'
 require 'kitchen/driver'
 require 'kitchen/driver/dummy'
 require 'kitchen/platform'
+require 'kitchen/provisioner'
+require 'kitchen/provisioner/dummy'
 require 'kitchen/suite'
 
 class DummyStateFile
@@ -88,12 +89,14 @@ describe Kitchen::Instance do
   let(:logger_io)   { StringIO.new }
   let(:logger)      { Kitchen::Logger.new(:logdev => logger_io) }
   let(:instance)    { Kitchen::Instance.new(opts) }
+  let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
   let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
-      :busser => busser, :logger => logger, :state_file => state_file }
+      :provisioner => provisioner, :busser => busser,
+      :logger => logger, :state_file => state_file }
   end
 
   def suite(name = "suite")
@@ -192,6 +195,18 @@ describe Kitchen::Instance do
     it "invokes #call yielding the instance name if logger is a Proc" do
       opts[:logger] = lambda { |name| "i'm a logger for #{name}" }
       instance.logger.must_equal "i'm a logger for suite-platform"
+    end
+  end
+
+  describe "#provisioner" do
+
+    it "returns its provisioner" do
+      instance.provisioner.must_equal provisioner
+    end
+
+    it "raises an ArgumentError if missing" do
+      opts.delete(:provisioner)
+      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
   end
 
