@@ -62,6 +62,8 @@ module Kitchen
     # @option options [Driver::Base] :driver the driver (**Required)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
+    # @option options [StateFile] :state_file the state file object to use
+    #   when tracking instance  state
     def initialize(options = {})
       @suite = options.fetch(:suite) { |k| missing_key!(k) }
       @platform = options.fetch(:platform) { |k| missing_key!(k) }
@@ -69,6 +71,7 @@ module Kitchen
       @driver = options.fetch(:driver) { |k| missing_key!(k) }
       @logger = options.fetch(:logger) { Kitchen.logger }
       @logger = logger.call(name) if logger.is_a?(Proc)
+      @state_file = options.fetch(:state_file) { |k| missing_key!(k) }
 
       setup_driver
     end
@@ -179,6 +182,8 @@ module Kitchen
 
     private
 
+    attr_reader :state_file
+
     def missing_key!(key)
       raise ClientError, "Instance#new requires option :#{key}"
     end
@@ -265,10 +270,6 @@ module Kitchen
       else
         block.call(state)
       end
-    end
-
-    def state_file
-      @state_file ||= StateFile.new(driver[:kitchen_root], name)
     end
 
     def banner(*args)

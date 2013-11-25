@@ -27,16 +27,72 @@ require 'kitchen/driver/dummy'
 require 'kitchen/platform'
 require 'kitchen/suite'
 
+class DummyStateFile
+
+  def initialize(*args) ; end
+
+  def read
+    @_state = Hash.new unless @_state
+    @_state.dup
+  end
+
+  def write(state)
+    @_state = state.dup
+  end
+
+  def destroy
+    @_state = nil
+  end
+end
+
+class SerialDummyDriver < Kitchen::Driver::Dummy
+
+  no_parallel_for :create, :verify, :destroy
+
+  attr_reader :action_in_mutex
+
+  def track_locked(action)
+    @action_in_mutex = Hash.new unless @action_in_mutex
+    @action_in_mutex[action] = Kitchen::Instance.mutexes[self.class].locked?
+  end
+
+  def create(state)
+    track_locked(:create)
+    super
+  end
+
+  def converge(state)
+    track_locked(:converge)
+    super
+  end
+
+  def setup(state)
+    track_locked(:setup)
+    super
+  end
+
+  def verify(state)
+    track_locked(:verify)
+    super
+  end
+
+  def destroy(state)
+    track_locked(:destroy)
+    super
+  end
+end
+
 describe Kitchen::Instance do
 
-  let(:driver)    { Kitchen::Driver::Dummy.new({}) }
-  let(:logger_io) { StringIO.new }
-  let(:logger)    { ::Logger.new(logger_io) }
-  let(:instance)  { Kitchen::Instance.new(opts) }
+  let(:driver)      { Kitchen::Driver::Dummy.new({}) }
+  let(:logger_io)   { StringIO.new }
+  let(:logger)      { Kitchen::Logger.new(:logdev => logger_io) }
+  let(:instance)    { Kitchen::Instance.new(opts) }
+  let(:state_file)  { DummyStateFile.new }
 
   let(:opts) do
-    { :suite => suite, :platform => platform,
-      :driver => driver, :logger => logger }
+    { :suite => suite, :platform => platform, :driver => driver,
+      :logger => logger, :state_file => state_file }
   end
 
   def suite(name = "suite")
@@ -138,12 +194,626 @@ describe Kitchen::Instance do
     end
   end
 
+  describe "#state_file" do
+
+    it "raises an ArgumentError if missing" do
+      opts.delete(:state_file)
+      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+    end
+  end
+
   it "#name returns it name" do
     instance.name.must_equal "suite-platform"
   end
 
   it "#to_str returns a string representation with its name" do
     instance.to_str.must_equal "<suite-platform>"
+  end
+
+  it "#login executes the driver's login_command" do
+    driver.stubs(:login_command).with(Hash.new).
+      returns(Kitchen::LoginCommand.new(["echo", "hello"], {:purple => true}))
+    Kernel.expects(:exec).with("echo", "hello", {:purple => true})
+
+    instance.login
+  end
+
+  describe "performing actions" do
+
+    describe "#create" do
+
+      describe "with no state" do
+
+        it "calls Driver#create with empty state hash" do
+          driver.expects(:create).with(Hash.new)
+
+          instance.create
+        end
+
+        it "writes the state file with last_action" do
+          instance.create
+
+          state_file.read[:last_action].must_equal "create"
+        end
+
+        it "logs the action start" do
+          instance.create
+
+          logger_io.string.must_match regex_for("Creating #{instance.to_str}")
+        end
+
+        it "logs the action finish" do
+          instance.create
+
+          logger_io.string.
+            must_match regex_for("Finished creating #{instance.to_str}")
+        end
+
+      end
+
+      describe "with last_action of create" do
+
+        before { state_file.write({ :last_action => "create"}) }
+
+        it "calls Driver#create with state hash" do
+          driver.expects(:create).
+            with { |state| state[:last_action] == "create" }
+
+          instance.create
+        end
+
+        it "writes the state file with last_action" do
+          instance.create
+
+          state_file.read[:last_action].must_equal "create"
+        end
+      end
+    end
+
+    describe "#converge" do
+
+      describe "with no state" do
+
+        it "calls Driver#create and converge with empty state hash" do
+          driver.expects(:create).with(Hash.new)
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+
+          instance.converge
+        end
+
+        it "writes the state file with last_action" do
+          instance.converge
+
+          state_file.read[:last_action].must_equal "converge"
+        end
+
+        it "logs the action start" do
+          instance.converge
+
+          logger_io.string.must_match regex_for("Converging #{instance.to_str}")
+        end
+
+        it "logs the action finish" do
+          instance.converge
+
+          logger_io.string.
+            must_match regex_for("Finished converging #{instance.to_str}")
+        end
+      end
+
+      describe "with last action of create" do
+
+        before { state_file.write({ :last_action => "create"}) }
+
+        it "calls Driver#converge with state hash" do
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+
+          instance.converge
+        end
+
+        it "writes the state file with last_action" do
+          instance.converge
+
+          state_file.read[:last_action].must_equal "converge"
+        end
+      end
+
+      describe "with last action of converge" do
+
+        before { state_file.write({ :last_action => "converge"}) }
+
+        it "calls Driver#converge with state hash" do
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "converge" }
+
+          instance.converge
+        end
+
+        it "writes the state file with last_action" do
+          instance.converge
+
+          state_file.read[:last_action].must_equal "converge"
+        end
+      end
+    end
+
+    describe "#setup" do
+
+      describe "with no state" do
+
+        it "calls Driver#create, converge, and setup with empty state hash" do
+          driver.expects(:create).with(Hash.new)
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+
+          instance.setup
+        end
+
+        it "writes the state file with last_action" do
+          instance.setup
+
+          state_file.read[:last_action].must_equal "setup"
+        end
+
+        it "logs the action start" do
+          instance.setup
+
+          logger_io.string.must_match regex_for("Setting up #{instance.to_str}")
+        end
+
+        it "logs the action finish" do
+          instance.setup
+
+          logger_io.string.
+            must_match regex_for("Finished setting up #{instance.to_str}")
+        end
+      end
+
+      describe "with last action of create" do
+
+        before { state_file.write({ :last_action => "create"}) }
+
+        it "calls Driver#converge and setup with state hash" do
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+
+          instance.setup
+        end
+
+        it "writes the state file with last_action" do
+          instance.setup
+
+          state_file.read[:last_action].must_equal "setup"
+        end
+      end
+
+      describe "with last action of converge" do
+
+        before { state_file.write({ :last_action => "converge"}) }
+
+        it "calls Driver#setup with state hash" do
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+
+          instance.setup
+        end
+
+        it "writes the state file with last_action" do
+          instance.setup
+
+          state_file.read[:last_action].must_equal "setup"
+        end
+      end
+
+      describe "with last action of setup" do
+
+        before { state_file.write({ :last_action => "setup"}) }
+
+        it "calls Driver#setup with state hash" do
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "setup" }
+
+          instance.setup
+        end
+
+        it "writes the state file with last_action" do
+          instance.setup
+
+          state_file.read[:last_action].must_equal "setup"
+        end
+      end
+    end
+
+    describe "#verify" do
+
+      describe "with no state" do
+
+        it "calls Driver#create, converge, setup, and verify with empty state hash" do
+          driver.expects(:create).with(Hash.new)
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+          driver.expects(:verify).
+            with { |state| state[:last_action] == "setup" }
+
+          instance.verify
+        end
+
+        it "writes the state file with last_action" do
+          instance.verify
+
+          state_file.read[:last_action].must_equal "verify"
+        end
+
+        it "logs the action start" do
+          instance.verify
+
+          logger_io.string.must_match regex_for("Verifying #{instance.to_str}")
+        end
+
+        it "logs the action finish" do
+          instance.verify
+
+          logger_io.string.
+            must_match regex_for("Finished verifying #{instance.to_str}")
+        end
+      end
+
+      describe "with last of create" do
+
+        before { state_file.write({ :last_action => "create"}) }
+
+        it "calls Driver#converge, setup, and verify with state hash" do
+          driver.expects(:converge).
+            with { |state| state[:last_action] == "create" }
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+          driver.expects(:verify).
+            with { |state| state[:last_action] == "setup" }
+
+          instance.verify
+        end
+
+        it "writes the state file with last_action" do
+          instance.verify
+
+          state_file.read[:last_action].must_equal "verify"
+        end
+      end
+
+      describe "with last of converge" do
+
+        before { state_file.write({ :last_action => "converge"}) }
+
+        it "calls Driver#setup, and verify with state hash" do
+          driver.expects(:setup).
+            with { |state| state[:last_action] == "converge" }
+          driver.expects(:verify).
+            with { |state| state[:last_action] == "setup" }
+
+          instance.verify
+        end
+
+        it "writes the state file with last_action" do
+          instance.verify
+
+          state_file.read[:last_action].must_equal "verify"
+        end
+      end
+
+      describe "with last of setup" do
+
+        before { state_file.write({ :last_action => "setup"}) }
+
+        it "calls Driver#verify with state hash" do
+          driver.expects(:verify).
+            with { |state| state[:last_action] == "setup" }
+
+          instance.verify
+        end
+
+        it "writes the state file with last_action" do
+          instance.verify
+
+          state_file.read[:last_action].must_equal "verify"
+        end
+      end
+
+      describe "with last of verify" do
+
+        before { state_file.write({ :last_action => "verify"}) }
+
+        it "calls Driver#verify with state hash" do
+          driver.expects(:verify).
+            with { |state| state[:last_action] == "verify" }
+
+          instance.verify
+        end
+
+        it "writes the state file with last_action" do
+          instance.verify
+
+          state_file.read[:last_action].must_equal "verify"
+        end
+      end
+    end
+
+    describe "#destroy" do
+
+      describe "with no state" do
+
+        it "calls Driver#destroy with empty state hash" do
+          driver.expects(:destroy).with(Hash.new)
+
+          instance.destroy
+        end
+
+        it "destroys the state file" do
+          state_file.expects(:destroy)
+
+          instance.destroy
+        end
+
+        it "logs the action start" do
+          instance.destroy
+
+          logger_io.string.
+            must_match regex_for("Destroying #{instance.to_str}")
+        end
+
+        it "logs the create finish" do
+          instance.destroy
+
+          logger_io.string.
+            must_match regex_for("Finished destroying #{instance.to_str}")
+        end
+      end
+
+      [:create, :converge, :setup, :verify].each do |action|
+
+        describe "with last_action of #{action}" do
+
+          before { state_file.write({ :last_action => action}) }
+
+          it "calls Driver#create with state hash" do
+            driver.expects(:destroy).
+              with { |state| state[:last_action] == action }
+
+            instance.destroy
+          end
+
+          it "destroys the state file" do
+            state_file.expects(:destroy)
+
+            instance.destroy
+          end
+        end
+      end
+    end
+
+    describe "#test" do
+
+      describe "with no state" do
+
+        it "calls Driver#destroy, create, converge, setup, verify, destroy" do
+          driver.expects(:destroy)
+          driver.expects(:create)
+          driver.expects(:converge)
+          driver.expects(:setup)
+          driver.expects(:verify)
+          driver.expects(:destroy)
+
+          instance.test
+        end
+
+        it "logs the action start" do
+          instance.test
+
+          logger_io.string.must_match regex_for("Testing #{instance.to_str}")
+        end
+
+        it "logs the action finish" do
+          instance.test
+
+          logger_io.string.
+            must_match regex_for("Finished testing #{instance.to_str}")
+        end
+      end
+
+      [:create, :converge, :setup, :verify].each do |action|
+
+        describe "with last action of #{action}" do
+
+          before { state_file.write({ :last_action => action}) }
+
+          it "calls Driver#destroy, create, converge, setup, verify, destroy" do
+            driver.expects(:destroy)
+            driver.expects(:create)
+            driver.expects(:converge)
+            driver.expects(:setup)
+            driver.expects(:verify)
+            driver.expects(:destroy)
+
+            instance.test
+          end
+        end
+      end
+
+      describe "with destroy mode of never" do
+
+        it "calls Driver#destroy, create, converge, setup, verify" do
+          driver.expects(:destroy).once
+          driver.expects(:create)
+          driver.expects(:converge)
+          driver.expects(:setup)
+          driver.expects(:verify)
+
+          instance.test(:never)
+        end
+      end
+
+      describe "with destroy mode of always" do
+
+        it "calls Driver#destroy at even when action fails" do
+          driver.stubs(:converge).raises(Kitchen::ActionFailed)
+
+          driver.expects(:destroy)
+          driver.expects(:create)
+          driver.expects(:converge)
+          driver.expects(:destroy)
+
+          instance.test(:always)
+        end
+      end
+
+      describe "with destroy mode of passing" do
+
+        it "doesn't call Driver#destroy at when action fails" do
+          skip "figure this one out"
+          driver.stubs(:create).raises(Kitchen::ActionFailed, "death")
+
+          driver.expects(:destroy)
+          driver.expects(:create)
+
+          instance.test(:passing)
+        end
+      end
+    end
+
+    [:create, :converge, :setup, :verify, :test].each do |action|
+
+      describe "#{action} on driver crash with ActionFailed" do
+
+        before do
+          driver.stubs(:create).raises(Kitchen::ActionFailed, "death")
+        end
+
+        it "write the state file with last action" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+          end
+
+          state_file.read[:last_action].must_be_nil
+        end
+
+        it "raises an InstanceFailure" do
+          proc { instance.public_send(action) }.
+            must_raise Kitchen::InstanceFailure
+        end
+
+        it "populates the InstanceFailure message" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+            e.message.must_match regex_for(
+              "Create failed on instance #{instance.to_str}")
+          end
+        end
+
+        it "logs the failure" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+          end
+
+          logger_io.string.must_match regex_for(
+            "Create failed on instance #{instance.to_str}")
+        end
+      end
+
+      describe "on driver crash with unexpected exception class" do
+
+        before do
+          driver.stubs(:create).raises(RuntimeError, "watwat")
+        end
+
+        it "write the state file with last action" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+          end
+
+          state_file.read[:last_action].must_be_nil
+        end
+
+        it "raises an ActionFailed" do
+          proc { instance.public_send(action) }.
+            must_raise Kitchen::ActionFailed
+        end
+
+        it "populates the ActionFailed message" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+            e.message.must_match regex_for(
+              "Failed to complete #create action: [watwat]")
+          end
+        end
+
+        it "logs the failure" do
+          begin
+            instance.public_send(action)
+          rescue Kitchen::Error => e
+          end
+
+          logger_io.string.must_match regex_for(
+            "Create failed on instance #{instance.to_str}")
+        end
+      end
+    end
+
+    describe "crashes preserve last action for desired verify action" do
+
+      before do
+        driver.stubs(:verify).raises(Kitchen::ActionFailed, "death")
+      end
+
+      [:create, :converge, :setup].each do |action|
+
+        it "for last state #{action}" do
+          state_file.write({ :last_action => action.to_s })
+          begin
+            instance.verify
+          rescue Kitchen::Error => e
+          end
+
+          state_file.read[:last_action].must_equal "setup"
+        end
+      end
+
+      it "for last state verify" do
+        state_file.write({ :last_action => "verify" })
+        begin
+          instance.verify
+        rescue Kitchen::Error => e
+        end
+
+        state_file.read[:last_action].must_equal "verify"
+      end
+    end
+
+    describe "on drivers with serial actions" do
+
+      let(:driver) { SerialDummyDriver.new({}) }
+
+      it "runs in a synchronized block for serial actions" do
+        instance.test
+
+        driver.action_in_mutex[:create].must_equal true
+        driver.action_in_mutex[:converge].must_equal false
+        driver.action_in_mutex[:setup].must_equal false
+        driver.action_in_mutex[:verify].must_equal true
+        driver.action_in_mutex[:destroy].must_equal true
+      end
+    end
   end
 
   describe Kitchen::Instance::FSM do
@@ -236,5 +906,9 @@ describe Kitchen::Instance do
         fsm.actions(:verify, :setup).must_equal [:setup]
       end
     end
+  end
+
+  def regex_for(string)
+    Regexp.new(Regexp.escape(string))
   end
 end

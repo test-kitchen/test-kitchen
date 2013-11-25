@@ -131,12 +131,14 @@ module Kitchen
       platform_hash[:driver_config].rmerge!(Hash.new) # tmp
       driver = new_driver(merge_driver_hash(platform_hash))
       provisioner = driver[:provisioner]
+      state_file = StateFile.new(kitchen_root, Instance.name_for(suite, platform))
 
       instance = Instance.new(
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
-        :logger   => new_instance_logger(index)
+        :logger   => new_instance_logger(index),
+        :state_file => state_file
       )
       instance
     end
