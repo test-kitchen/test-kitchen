@@ -18,6 +18,8 @@
 
 require 'thor/util'
 
+require 'kitchen/lazy_hash'
+
 module Kitchen
 
   module Driver
@@ -37,7 +39,7 @@ module Kitchen
       end
 
       def initialize(config = {})
-        @config = LazyDriverHash.new(config, self)
+        @config = LazyHash.new(config, self)
         self.class.defaults.each do |attr, value|
           @config[attr] = value unless @config.has_key?(attr)
         end
@@ -211,34 +213,6 @@ module Kitchen
 
         @serial_actions ||= []
         @serial_actions += methods
-      end
-
-      # A modifed Hash object that may contain procs as a value which must be
-      # executed in the context of a Driver object.
-      #
-      # @author Fletcher Nichol <fnichol@nichol.ca>
-      class LazyDriverHash < SimpleDelegator
-
-        def initialize(obj, driver)
-          @driver = driver
-          super(obj)
-        end
-
-        def [](key)
-          proc_or_val = __getobj__[key]
-
-          if proc_or_val.respond_to?(:call)
-            proc_or_val.call(@driver)
-          else
-            proc_or_val
-          end
-        end
-
-        def to_hash
-          hash = Hash.new
-          __getobj__.keys.each { |key| hash[key] = self[key] }
-          hash
-        end
       end
     end
   end
