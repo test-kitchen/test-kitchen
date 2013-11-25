@@ -20,6 +20,7 @@ require 'buff/ignore'
 require 'fileutils'
 require 'pathname'
 require 'json'
+
 require 'kitchen/util'
 
 module Kitchen
@@ -64,7 +65,7 @@ module Kitchen
 
       def init_command
         dirs = %w{cookbooks data data_bags environments roles}.
-          map { |dir| File.join(home_path, dir) }.join(" ")
+          map { |dir| File.join(config[:root_path], dir) }.join(" ")
         "#{sudo('rm')} -rf #{dirs}"
       end
 
@@ -76,6 +77,8 @@ module Kitchen
       end
 
       protected
+
+      attr_reader :tmpdir
 
       def create_chef_sandbox
         @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
@@ -181,7 +184,7 @@ module Kitchen
         else
           FileUtils.rmtree(tmpdir)
           fatal("Berksfile, Cheffile, cookbooks/, or metadata.rb" +
-            " must exist in #{kitchen_root}")
+            " must exist in #{config[:kitchen_root]}")
           raise UserError, "Cookbooks could not be found"
         end
 
@@ -201,23 +204,23 @@ module Kitchen
       end
 
       def berksfile
-        File.join(kitchen_root, "Berksfile")
+        File.join(config[:kitchen_root], "Berksfile")
       end
 
       def cheffile
-        File.join(kitchen_root, "Cheffile")
+        File.join(config[:kitchen_root], "Cheffile")
       end
 
       def metadata_rb
-        File.join(kitchen_root, "metadata.rb")
+        File.join(config[:kitchen_root], "metadata.rb")
       end
 
       def cookbooks_dir
-        File.join(kitchen_root, "cookbooks")
+        File.join(config[:kitchen_root], "cookbooks")
       end
 
       def site_cookbooks_dir
-        File.join(kitchen_root, "site-cookbooks")
+        File.join(config[:kitchen_root], "site-cookbooks")
       end
 
       def data_bags
@@ -278,7 +281,7 @@ module Kitchen
 
         cb_path = File.join(tmpbooks_dir, cb_name)
 
-        glob = Dir.glob("#{kitchen_root}/**")
+        glob = Dir.glob("#{config[:kitchen_root]}/**")
 
         FileUtils.mkdir_p(cb_path)
         FileUtils.cp_r(glob, cb_path)
@@ -325,7 +328,8 @@ module Kitchen
         end
 
         Kitchen.mutex.synchronize do
-          env = Librarian::Chef::Environment.new(:project_path => kitchen_root)
+          env = Librarian::Chef::Environment.new(
+            :project_path => config[:kitchen_root])
           env.config_db.local["path"] = tmpbooks_dir
           Librarian::Action::Resolve.new(env).run
           Librarian::Action::Install.new(env).run

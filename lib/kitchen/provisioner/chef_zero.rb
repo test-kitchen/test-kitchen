@@ -56,17 +56,17 @@ module Kitchen
 
       def run_command
         args = [
-          "--config #{home_path}/client.rb",
-          "--json-attributes #{home_path}/dna.json",
+          "--config #{config[:root_path]}/client.rb",
+          "--json-attributes #{config[:root_path]}/dna.json",
           "--log_level #{config[:log_level]}"
         ]
 
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
-          ["cd #{home_path};",
+          ["cd #{config[:root_path]};",
             sudo('/opt/chef/embedded/bin/ruby'),
-            "#{home_path}/chef-client-zero.rb"
+            "#{config[:root_path]}/chef-client-zero.rb"
           ].concat(args).join(" ")
         end
       end
@@ -88,17 +88,17 @@ module Kitchen
       def prepare_client_rb
         client = []
         client << %{node_name "#{instance.name}"}
-        client << %{file_cache_path "#{home_path}/cache"}
-        client << %{cookbook_path "#{home_path}/cookbooks"}
-        client << %{node_path "#{home_path}/nodes"}
-        client << %{client_path "#{home_path}/clients"}
-        client << %{role_path "#{home_path}/roles"}
-        client << %{data_bag_path "#{home_path}/data_bags"}
-        client << %{validation_key "#{home_path}/validation.pem"}
-        client << %{client_key "#{home_path}/client.pem"}
+        client << %{file_cache_path "#{config[:root_path]}/cache"}
+        client << %{cookbook_path "#{config[:root_path]}/cookbooks"}
+        client << %{node_path "#{config[:root_path]}/nodes"}
+        client << %{client_path "#{config[:root_path]}/clients"}
+        client << %{role_path "#{config[:root_path]}/roles"}
+        client << %{data_bag_path "#{config[:root_path]}/data_bags"}
+        client << %{validation_key "#{config[:root_path]}/validation.pem"}
+        client << %{client_key "#{config[:root_path]}/client.pem"}
         client << %{chef_server_url "http://127.0.0.1:8889"}
         if instance.suite.encrypted_data_bag_secret_key_path
-          secret = "#{home_path}/encrypted_data_bag_secret"
+          secret = "#{config[:root_path]}/encrypted_data_bag_secret"
           client << %{encrypted_data_bag_secret "#{secret}"}
         end
 

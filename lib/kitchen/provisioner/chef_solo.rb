@@ -34,8 +34,8 @@ module Kitchen
       def run_command
         [
           sudo('chef-solo'),
-          "--config #{home_path}/solo.rb",
-          "--json-attributes #{home_path}/dna.json",
+          "--config #{config[:root_path]}/solo.rb",
+          "--json-attributes #{config[:root_path]}/dna.json",
           config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
           "--log_level #{config[:log_level]}"
         ].join(" ")
@@ -46,9 +46,9 @@ module Kitchen
       def prepare_solo_rb
         solo = []
         solo << %{node_name "#{instance.name}"}
-        solo << %{file_cache_path "#{home_path}/cache"}
-        solo << %{cookbook_path ["#{home_path}/cookbooks","#{home_path}/site-cookbooks"]}
-        solo << %{role_path "#{home_path}/roles"}
+        solo << %{file_cache_path "#{config[:root_path]}/cache"}
+        solo << %{cookbook_path ["#{config[:root_path]}/cookbooks","#{config[:root_path]}/site-cookbooks"]}
+        solo << %{role_path "#{config[:root_path]}/roles"}
         if config[:chef]
           if config[:chef][:http_proxy]
             solo << %{http_proxy "#{config[:chef][:http_proxy]}"}
@@ -61,16 +61,16 @@ module Kitchen
           end
         end
         if instance.suite.data_bags_path
-          solo << %{data_bag_path "#{home_path}/data_bags"}
+          solo << %{data_bag_path "#{config[:root_path]}/data_bags"}
         end
         if instance.suite.environments_path
-          solo << %{environment_path "#{home_path}/environments"}
+          solo << %{environment_path "#{config[:root_path]}/environments"}
         end
         if instance.suite.environment
           solo << %{environment "#{instance.suite.environment}"}
         end
         if instance.suite.encrypted_data_bag_secret_key_path
-          secret = "#{home_path}/encrypted_data_bag_secret"
+          secret = "#{config[:root_path]}/encrypted_data_bag_secret"
           solo << %{encrypted_data_bag_secret "#{secret}"}
         end
 

@@ -42,7 +42,7 @@ module Kitchen
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(provisioner.install_command, conn)
           run_remote(provisioner.init_command, conn)
-          transfer_path(sandbox_dirs, provisioner.home_path, conn)
+          transfer_path(sandbox_dirs, provisioner[:root_path], conn)
           run_remote(provisioner.prepare_command, conn)
           run_remote(provisioner.run_command, conn)
         end
