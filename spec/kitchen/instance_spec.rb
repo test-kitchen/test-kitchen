@@ -89,10 +89,11 @@ describe Kitchen::Instance do
   let(:logger)      { Kitchen::Logger.new(:logdev => logger_io) }
   let(:instance)    { Kitchen::Instance.new(opts) }
   let(:state_file)  { DummyStateFile.new }
+  let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
-      :logger => logger, :state_file => state_file }
+      :busser => busser, :logger => logger, :state_file => state_file }
   end
 
   def suite(name = "suite")
@@ -191,6 +192,18 @@ describe Kitchen::Instance do
     it "invokes #call yielding the instance name if logger is a Proc" do
       opts[:logger] = lambda { |name| "i'm a logger for #{name}" }
       instance.logger.must_equal "i'm a logger for suite-platform"
+    end
+  end
+
+  describe "#busser" do
+
+    it "returns its busser" do
+      instance.busser.must_equal busser
+    end
+
+    it "raises and ArgumentError if missing" do
+      opts.delete(:busser)
+      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
   end
 

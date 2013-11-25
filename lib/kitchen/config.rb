@@ -132,13 +132,15 @@ module Kitchen
       driver = new_driver(merge_driver_hash(platform_hash))
       provisioner = driver[:provisioner]
       state_file = StateFile.new(kitchen_root, Instance.name_for(suite, platform))
+      busser = Busser.new(suite.name, {})
 
       instance = Instance.new(
         :suite    => suite,
         :platform => platform,
         :driver   => driver,
         :logger   => new_instance_logger(index),
-        :state_file => state_file
+        :state_file => state_file,
+        :busser => busser
       )
       instance
     end

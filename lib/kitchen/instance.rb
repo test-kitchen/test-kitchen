@@ -51,6 +51,10 @@ module Kitchen
     #   lifecycle actions
     attr_reader :driver
 
+    # @return [Busser] busser object for instance to manage the busser
+    #   installation on this instance
+    attr_reader :busser
+
     # @return [Logger] the logger for this instance
     attr_reader :logger
 
@@ -60,6 +64,7 @@ module Kitchen
     # @option options [Suite] :suite the suite (**Required)
     # @option options [Platform] :platform the platform (**Required)
     # @option options [Driver::Base] :driver the driver (**Required)
+    # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
     # @option options [StateFile] :state_file the state file object to use
@@ -69,6 +74,7 @@ module Kitchen
       @platform = options.fetch(:platform) { |k| missing_key!(k) }
       @name = self.class.name_for(@suite, @platform)
       @driver = options.fetch(:driver) { |k| missing_key!(k) }
+      @busser = options.fetch(:busser) { |k| missing_key!(k)}
       @logger = options.fetch(:logger) { Kitchen.logger }
       @logger = logger.call(name) if logger.is_a?(Proc)
       @state_file = options.fetch(:state_file) { |k| missing_key!(k) }

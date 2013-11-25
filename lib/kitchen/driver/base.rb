@@ -162,8 +162,7 @@ module Kitchen
       def busser
         @busser ||= begin
           raise ClientError, "Instance must be set for Driver" if instance.nil?
-
-          Busser.new(instance.suite.name, config)
+          instance.busser
         end
       end
 
