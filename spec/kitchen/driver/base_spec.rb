@@ -33,6 +33,11 @@ module Kitchen
       default_config :edible, true
     end
 
+    class SubclassDefaults < StaticDefaults
+
+      default_config :yea, "ya"
+    end
+
     class ComputedDefaults < Base
 
       default_config :beans, "kidney"
@@ -98,6 +103,31 @@ describe Kitchen::Driver::Base do
 
       driver[:beans].must_equal "pinto"
       driver[:edible].must_equal false
+    end
+  end
+
+  describe "inherited static default config" do
+
+    let(:driver) do
+      p = Kitchen::Driver::SubclassDefaults.new(config)
+      p.instance = instance
+      p
+    end
+
+    it "contains defaults from superclass" do
+      driver[:beans].must_equal "kidney"
+      driver[:tunables]['flimflam'].must_equal 'positate'
+      driver[:edible].must_equal true
+      driver[:yea].must_equal "ya"
+    end
+
+    it "uses user config over default config" do
+      config[:beans] = "pinto"
+      config[:edible] = false
+
+      driver[:beans].must_equal "pinto"
+      driver[:edible].must_equal false
+      driver[:yea].must_equal "ya"
     end
   end
 
