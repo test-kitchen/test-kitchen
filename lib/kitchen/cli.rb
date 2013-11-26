@@ -103,7 +103,7 @@ module Kitchen
       end
 
       update_config!
-      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
+      banner "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         ensure_initialized
         destroy_mode = options[:destroy].to_sym
@@ -271,7 +271,7 @@ module Kitchen
 
     def exec_action(action)
       update_config!
-      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
+      banner "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         @task = action
         results = parse_subcommand(args.first)
