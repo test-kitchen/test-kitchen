@@ -72,16 +72,36 @@ module Kitchen
     attr_reader :data, :kitchen_config
 
     def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new)
-      ddata = { default_key => ddata } if ddata.is_a?(String)
-      cdata = data.fetch(key, Hash.new)
-      cdata = { default_key => cdata } if cdata.is_a?(String)
-      pdata = platform_data_for(platform).fetch(key, Hash.new)
-      pdata = { default_key => pdata } if pdata.is_a?(String)
-      sdata = suite_data_for(suite).fetch(key, Hash.new)
-      sdata = { default_key => sdata } if sdata.is_a?(String)
+      ddata = normalized_default_data(key, default_key)
+      cdata = normalized_common_data(key, default_key)
+      pdata = normalized_platform_data(key, default_key, platform)
+      sdata = normalized_suite_data(key, default_key, suite)
 
       ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
+    end
+
+    def normalized_default_data(key, default_key)
+      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new)
+      ddata = { default_key => ddata } if ddata.is_a?(String)
+      ddata
+    end
+
+    def normalized_common_data(key, default_key)
+      cdata = data.fetch(key, Hash.new)
+      cdata = { default_key => cdata } if cdata.is_a?(String)
+      cdata
+    end
+
+    def normalized_platform_data(key, default_key, platform)
+      pdata = platform_data_for(platform).fetch(key, Hash.new)
+      pdata = { default_key => pdata } if pdata.is_a?(String)
+      pdata
+    end
+
+    def normalized_suite_data(key, default_key, suite)
+      sdata = suite_data_for(suite).fetch(key, Hash.new)
+      sdata = { default_key => sdata } if sdata.is_a?(String)
+      sdata
     end
 
     def platform_data_for(name)
