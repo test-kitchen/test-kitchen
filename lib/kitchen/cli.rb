@@ -43,7 +43,7 @@ module Kitchen
       Kitchen.logger = Kitchen.default_file_logger
       @config = Kitchen::Config.new(
         :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
-        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
+        :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
       )
     end
 
@@ -327,7 +327,7 @@ module Kitchen
       [
         color_pad(instance.name),
         color_pad(instance.driver.name),
-        color_pad(format_provisioner(instance.driver[:provisioner])),
+        color_pad(instance.provisioner.name),
         format_last_action(instance.last_action)
       ]
     end
@@ -361,10 +361,6 @@ module Kitchen
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-    end
-
-    def format_provisioner(name)
-      name.split('_').map { |word| word.capitalize }.join(' ')
     end
 
     def update_config!
