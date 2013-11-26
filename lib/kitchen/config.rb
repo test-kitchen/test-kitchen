@@ -42,12 +42,8 @@ module Kitchen
       @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
       @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
-      @log_root       = options.fetch(:log_root) do
-        File.join(@kitchen_root, Kitchen::DEFAULT_LOG_DIR)
-      end
-      @test_base_path = options.fetch(:test_base_path) do
-        File.join(@kitchen_root, Kitchen::DEFAULT_TEST_DIR)
-      end
+      @log_root       = options.fetch(:log_root) { default_log_root }
+      @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
     end
 
     # @return [Array<Platform>] all defined platforms which will be used in
@@ -67,10 +63,18 @@ module Kitchen
     # @return [Array<Instance>] all instances, resulting from all platform and
     #   suite combinations
     def instances
-      @instances ||= build_instances
+      @instances ||= Collection.new(build_instances)
     end
 
     private
+
+    def default_log_root
+      File.join(kitchen_root, Kitchen::DEFAULT_LOG_DIR)
+    end
+
+    def default_test_base_path
+      File.join(kitchen_root, Kitchen::DEFAULT_TEST_DIR)
+    end
 
     def kitchen_config
       @kitchen_config ||= {
@@ -92,7 +96,13 @@ module Kitchen
     end
 
     def build_instances
-      filtered = suites.product(platforms).select do |suite, platform|
+      filter_instances.map.with_index do |(suite, platform), index|
+        new_instance(suite, platform, index)
+      end
+    end
+
+    def filter_instances
+      suites.product(platforms).select do |suite, platform|
         if !suite.includes.empty?
           suite.includes.include?(platform.name)
         elsif !suite.excludes.empty?
@@ -101,12 +111,6 @@ module Kitchen
           true
         end
       end
-
-      instances = filtered.map.with_index do |(suite, platform), index|
-        new_instance(suite, platform, index)
-      end
-
-      Collection.new(instances)
     end
 
     def new_instance(suite, platform, index)
