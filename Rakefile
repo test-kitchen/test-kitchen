@@ -74,7 +74,7 @@ unless RUBY_ENGINE == 'jruby'
   end
 
   desc "Run all quality tasks"
-  task :quality => [:cane, :tailor, :stats]
+  task :quality => [:cane, :stats]
 else
   desc "Run all quality tasks"
   task :quality => [:stats]
