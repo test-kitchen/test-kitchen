@@ -50,6 +50,29 @@ module Kitchen
       @busser_bin = File.join(@root_path, "bin/busser")
     end
 
+    # Returns the name of this busser, suitable for display in a CLI.
+    #
+    # @return [String] name of this busser
+    def name
+      suite_name
+    end
+
+    # Returns an array of configuration keys.
+    #
+    # @return [Array] array of configuration keys
+    def config_keys
+      [:test_root, :ruby_bindir, :root_path, :version_string,
+        :busser_bin, :use_sudo, :suite_name]
+    end
+
+    # Provides hash-like access to configuration keys.
+    #
+    # @param attr [Object] configuration key
+    # @return [Object] value at configuration key
+    def [](attr)
+      config_keys.include?(attr) ? self.send(attr) : nil
+    end
+
     # Returns a command string which installs Busser, and installs all
     # required Busser plugins for the suite.
     #
@@ -92,7 +115,7 @@ module Kitchen
         <<-INSTALL_CMD.gsub(/^ {10}/, '')
           sh -c '
           #{sudo}#{busser_bin} suite cleanup
-          #{local_suite_files.map { |f| stream_file(f, remote_file(f, @suite_name)) }.join}
+          #{local_suite_files.map { |f| stream_file(f, remote_file(f, suite_name)) }.join}
           #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
         INSTALL_CMD
       end
@@ -119,6 +142,8 @@ module Kitchen
     attr_reader :root_path
     attr_reader :version_string
     attr_reader :busser_bin
+    attr_reader :use_sudo
+    attr_reader :suite_name
 
     def validate_options(suite_name)
       if suite_name.nil?
@@ -132,13 +157,13 @@ module Kitchen
     end
 
     def plugins
-      Dir.glob(File.join(test_root, @suite_name, "*")).reject { |d|
+      Dir.glob(File.join(test_root, suite_name, "*")).reject { |d|
         ! File.directory?(d) || non_suite_dirs.include?(File.basename(d))
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
     def local_suite_files
-      Dir.glob(File.join(test_root, @suite_name, "*/**/*")).reject do |f|
+      Dir.glob(File.join(test_root, suite_name, "*/**/*")).reject do |f|
         f[/(data|data_bags|environments|nodes|roles)/] || File.directory?(f)
       end
     end
@@ -173,7 +198,7 @@ module Kitchen
     end
 
     def sudo
-      @use_sudo ? "sudo -E " : ""
+      use_sudo ? "sudo -E " : ""
     end
 
     def busser_gem

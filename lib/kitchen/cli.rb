@@ -346,6 +346,10 @@ module Kitchen
       instance.provisioner.config_keys.sort.each do |key|
         say "    #{key}: #{instance.provisioner[key].inspect}"
       end
+      say "Busser (#{instance.busser.name}):"
+      instance.busser.config_keys.sort.each do |key|
+        say "    #{key}: #{instance.busser[key].inspect}"
+      end
       say ""
     end
 
