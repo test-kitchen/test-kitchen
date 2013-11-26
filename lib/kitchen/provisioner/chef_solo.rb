@@ -27,6 +27,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefSolo < ChefBase
 
+      default_config :solo_rb, {}
+
       def create_sandbox
         create_chef_sandbox { prepare_solo_rb }
       end
@@ -44,38 +46,10 @@ module Kitchen
       private
 
       def prepare_solo_rb
-        solo = []
-        solo << %{node_name "#{instance.name}"}
-        solo << %{file_cache_path "#{config[:root_path]}/cache"}
-        solo << %{cookbook_path ["#{config[:root_path]}/cookbooks","#{config[:root_path]}/site-cookbooks"]}
-        solo << %{role_path "#{config[:root_path]}/roles"}
-        if config[:chef]
-          if config[:chef][:http_proxy]
-            solo << %{http_proxy "#{config[:chef][:http_proxy]}"}
-          end
-          if config[:chef][:https_proxy]
-            solo << %{https_proxy "#{config[:chef][:https_proxy]}"}
-          end
-          if config[:chef][:no_proxy]
-            solo << %{no_proxy "#{config[:chef][:no_proxy]}"}
-          end
-        end
-        if instance.suite.data_bags_path
-          solo << %{data_bag_path "#{config[:root_path]}/data_bags"}
-        end
-        if instance.suite.environments_path
-          solo << %{environment_path "#{config[:root_path]}/environments"}
-        end
-        if instance.suite.environment
-          solo << %{environment "#{instance.suite.environment}"}
-        end
-        if instance.suite.encrypted_data_bag_secret_key_path
-          secret = "#{config[:root_path]}/encrypted_data_bag_secret"
-          solo << %{encrypted_data_bag_secret "#{secret}"}
-        end
+        data = default_config_rb.merge(config[:solo_rb])
 
         File.open(File.join(tmpdir, "solo.rb"), "wb") do |file|
-          file.write(solo.join("\n"))
+          file.write(format_config_file(data))
         end
       end
     end

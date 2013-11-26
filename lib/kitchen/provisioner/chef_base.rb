@@ -32,10 +32,39 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
 
-      def install_command
-        return nil unless config[:require_chef_omnibus]
+      default_config :require_chef_omnibus, true
+      default_config :chef_omnibus_url, "https://www.opscode.com/chef/install.sh"
+      default_config :run_list, []
+      default_config :attributes, {}
 
-        url = config[:chef_omnibus_url] || "https://www.opscode.com/chef/install.sh"
+      default_config :data_path do |provisioner|
+        provisioner.calculate_path("data")
+      end
+
+      default_config :data_bags_path do |provisioner|
+        provisioner.calculate_path("data_bags")
+      end
+
+      default_config :environments_path do |provisioner|
+        provisioner.calculate_path("environments")
+      end
+
+      default_config :nodes_path do |provisioner|
+        provisioner.calculate_path("nodes")
+      end
+
+      default_config :roles_path do |provisioner|
+        provisioner.calculate_path("roles")
+      end
+
+      default_config :encrypted_data_bag_secret_key_path do |provisioner|
+        provisioner.calculate_path("encrypted_data_bag_secret", :file)
+      end
+
+      def install_command
+        return unless config[:require_chef_omnibus]
+
+        url = config[:chef_omnibus_url]
         flag = config[:require_chef_omnibus]
         version = if flag.is_a?(String) && flag != "latest"
           "-v #{flag.downcase}"
@@ -76,9 +105,49 @@ module Kitchen
         FileUtils.rmtree(tmpdir)
       end
 
+      def calculate_path(path, type = :directory)
+        base = config[:test_base_path]
+        candidates = []
+        candidates << File.join(base, instance.suite.name, path)
+        candidates << File.join(base, path)
+        candidates << File.join(Dir.pwd, path)
+
+        candidates.find do |c|
+          type == :directory ? File.directory?(c) : File.file?(c)
+        end
+      end
+
       protected
 
       attr_reader :tmpdir
+
+      def format_config_file(data)
+        data.each.map { |attr, value|
+          [attr, (value.is_a?(Array) ? value.to_s : %{"#{value}"})].join(" ")
+        }.join("\n")
+      end
+
+      def default_config_rb
+        root = config[:root_path]
+
+        {
+          :node_name        => instance.name,
+          :checksum_path    => "#{root}/checksums",
+          :file_cache_path  => "#{root}/cache",
+          :file_backup_path => "#{root}/backup",
+          :cookbook_path    => ["#{root}/cookbooks", "#{root}/site-cookbooks"],
+          :data_bag_path    => "#{root}/data_bags",
+          :environment_path => "#{root}/environments",
+          :node_path        => "#{root}/nodes",
+          :role_path        => "#{root}/roles",
+          :client_path      => "#{root}/clients",
+          :user_path        => "#{root}/users",
+          :validation_key   => "#{root}/validation.pem",
+          :client_key       => "#{root}/client.pem",
+          :chef_server_url  => "http://127.0.0.1:8889",
+          :encrypted_data_bag_secret => "#{root}/encrypted_data_bag_secret",
+        }
+      end
 
       def create_chef_sandbox
         @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
@@ -87,20 +156,22 @@ module Kitchen
 
         yield if block_given?
         prepare_json
-        prepare_data_bags
-        prepare_roles
-        prepare_nodes
-        prepare_environments
-        prepare_secret
         prepare_cache
         prepare_cookbooks
         prepare_data
+        prepare_data_bags
+        prepare_environments
+        prepare_nodes
+        prepare_roles
+        prepare_secret
         tmpdir
       end
 
       def prepare_json
+        dna = config[:attributes].merge({ :run_list => config[:run_list] })
+
         File.open(File.join(tmpdir, "dna.json"), "wb") do |file|
-          file.write(instance.dna.to_json)
+          file.write(dna.to_json)
         end
       end
 
@@ -224,27 +295,27 @@ module Kitchen
       end
 
       def data_bags
-        instance.suite.data_bags_path
+        config[:data_bags_path]
       end
 
       def roles
-        instance.suite.roles_path
+        config[:roles_path]
       end
 
       def nodes
-        instance.suite.nodes_path
+        config[:nodes_path]
       end
 
       def data
-        instance.suite.data_path
+        config[:data_path]
       end
 
       def environments
-        instance.suite.environments_path
+        config[:environments_path]
       end
 
       def secret
-        instance.suite.encrypted_data_bag_secret_key_path
+        config[:encrypted_data_bag_secret_key_path]
       end
 
       def tmpbooks_dir

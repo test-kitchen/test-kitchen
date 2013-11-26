@@ -27,6 +27,9 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
 
+      default_config :client_rb, {}
+      default_config :ruby_bindir, "/opt/chef/embedded/bin"
+
       def create_sandbox
         create_chef_sandbox do
           prepare_chef_client_zero_rb
@@ -38,7 +41,7 @@ module Kitchen
       def prepare_command
         return if local_mode_supported?
 
-        ruby_bin = "/opt/chef/embedded/bin"
+        ruby_bin = config[:ruby_bindir]
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         #
@@ -65,7 +68,7 @@ module Kitchen
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
           ["cd #{config[:root_path]};",
-            sudo('/opt/chef/embedded/bin/ruby'),
+            sudo("#{config[:ruby_bindir]}/ruby"),
             "#{config[:root_path]}/chef-client-zero.rb"
           ].concat(args).join(" ")
         end
@@ -74,6 +77,8 @@ module Kitchen
       private
 
       def prepare_chef_client_zero_rb
+        return if local_mode_supported?
+
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support chef-client-zero.rb})
         FileUtils.cp(source, File.join(tmpdir, "chef-client-zero.rb"))
@@ -86,24 +91,10 @@ module Kitchen
       end
 
       def prepare_client_rb
-        client = []
-        client << %{node_name "#{instance.name}"}
-        client << %{file_cache_path "#{config[:root_path]}/cache"}
-        client << %{cookbook_path "#{config[:root_path]}/cookbooks"}
-        client << %{node_path "#{config[:root_path]}/nodes"}
-        client << %{client_path "#{config[:root_path]}/clients"}
-        client << %{role_path "#{config[:root_path]}/roles"}
-        client << %{data_bag_path "#{config[:root_path]}/data_bags"}
-        client << %{validation_key "#{config[:root_path]}/validation.pem"}
-        client << %{client_key "#{config[:root_path]}/client.pem"}
-        client << %{chef_server_url "http://127.0.0.1:8889"}
-        if instance.suite.encrypted_data_bag_secret_key_path
-          secret = "#{config[:root_path]}/encrypted_data_bag_secret"
-          client << %{encrypted_data_bag_secret "#{secret}"}
-        end
+        data = default_config_rb.merge(config[:client_rb])
 
         File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
-          file.write(client.join("\n"))
+          file.write(format_config_file(data))
         end
       end
 
