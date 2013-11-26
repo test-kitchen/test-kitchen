@@ -52,7 +52,10 @@ module Kitchen
       :desc => "List the name of each instance only, one per line"
     method_option :debug, :aliases => "-d", :type => :boolean,
       :desc => "Show computed driver configuration for each instance"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
+      update_config!
       result = parse_subcommand(args.first)
       if options[:debug]
         Array(result).each { |i| debug_instance(i) }
