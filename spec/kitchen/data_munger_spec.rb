@@ -385,6 +385,23 @@ module Kitchen
           })
         end
 
+        it "maintains run_list in provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :suites => [
+              {
+                :name => "sweet",
+                :provisioner => {
+                  :run_list => ["one", "two"]
+                }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+
         it "merge provisioner into attributes if provisioner exists" do
           DataMunger.new({
             :suites => [
@@ -440,6 +457,23 @@ module Kitchen
               {
                 :name => "plat",
                 :run_list => ["one", "two"]
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two"]
+          })
+        end
+
+        it "maintains run_list in provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :provisioner => {
+                  :run_list => ["one", "two"]
+                }
               }
             ]
           }).provisioner_data_for("sweet", "plat").must_equal({
@@ -515,8 +549,6 @@ module Kitchen
         end
 
         it "concats suite run_list to platform run_list" do
-          skip "need to deal with array concatenation"
-
           DataMunger.new({
             :provisioner => "chefy",
             :platforms => [
@@ -532,6 +564,90 @@ module Kitchen
               }
             ]
           }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two", "three", "four"]
+          })
+        end
+
+        it "concats suite run_list in provisioner to platform run_list" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :run_list => ["one", "two"]
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :provisioner => {
+                  :run_list => ["three", "four"]
+                }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two", "three", "four"]
+          })
+        end
+
+        it "concats suite run_list to platform run_list in provisioner" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :provisioner => {
+                  :run_list => ["one", "two"]
+                }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => ["three", "four"]
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => ["one", "two", "three", "four"]
+          })
+        end
+
+        it "does not corrupt run_list data for multiple suite/platform pairs" do
+          munger = DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "p1"
+              },
+              {
+                :name => "p2",
+                :run_list => ["one", "two"]
+              }
+            ],
+            :suites => [
+              {
+                :name => "s1",
+                :run_list => ["alpha", "beta"]
+              },
+              {
+                :name => "s2",
+                :provisioner => {
+                  :run_list => ["three", "four"]
+                }
+              }
+            ]
+          })
+
+          # call munger for other data to cause any necessary internal
+          # data mutation
+          munger.provisioner_data_for("s1", "p1")
+          munger.provisioner_data_for("s1", "p2")
+          munger.provisioner_data_for("s2", "p1")
+
+          munger.provisioner_data_for("s2", "p2").must_equal({
             :name => "chefy",
             :run_list => ["one", "two", "three", "four"]
           })

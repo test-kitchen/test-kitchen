@@ -63,6 +63,7 @@ module Kitchen
         set_kitchen_config_at!(pdata, :kitchen_root)
         set_kitchen_config_at!(pdata, :test_base_path)
         set_kitchen_config_at!(pdata, :log_level)
+        combine_arrays!(pdata, :run_list, :platform, :suite)
       end
     end
 
@@ -73,6 +74,13 @@ module Kitchen
     private
 
     attr_reader :data, :kitchen_config
+
+    def combine_arrays!(root, key, *namespaces)
+      if root.has_key?(key)
+        root[key] = namespaces.
+          map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
+      end
+    end
 
     def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
@@ -157,27 +165,33 @@ module Kitchen
       end
     end
 
+    def namespace_array!(root, key, bucket)
+      root[key] = { bucket => root.fetch(key) } if root.has_key?(key)
+    end
+
     def normalized_common_data(key, default_key)
-      cdata = data.fetch(key, Hash.new)
+      cdata = data.fetch(key, Hash.new).dup
       cdata = { default_key => cdata } if cdata.is_a?(String)
       cdata
     end
 
     def normalized_default_data(key, default_key)
-      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new)
+      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new).dup
       ddata = { default_key => ddata } if ddata.is_a?(String)
       ddata
     end
 
     def normalized_platform_data(key, default_key, platform)
-      pdata = platform_data_for(platform).fetch(key, Hash.new)
+      pdata = platform_data_for(platform).fetch(key, Hash.new).dup
       pdata = { default_key => pdata } if pdata.is_a?(String)
+      namespace_array!(pdata, :run_list, :platform)
       pdata
     end
 
     def normalized_suite_data(key, default_key, suite)
-      sdata = suite_data_for(suite).fetch(key, Hash.new)
+      sdata = suite_data_for(suite).fetch(key, Hash.new).dup
       sdata = { default_key => sdata } if sdata.is_a?(String)
+      namespace_array!(sdata, :run_list, :suite)
       sdata
     end
 
