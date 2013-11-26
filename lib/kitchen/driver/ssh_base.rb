@@ -36,7 +36,7 @@ module Kitchen
       end
 
       def converge(state)
-        provisioner = new_provisioner
+        provisioner = instance.provisioner
         sandbox_dirs = Dir.glob("#{provisioner.create_sandbox}/*")
 
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
@@ -78,12 +78,6 @@ module Kitchen
       end
 
       protected
-
-      def new_provisioner
-        combined = config.dup
-        combined[:log_level] = Util.from_logger_level(logger.level)
-        Provisioner.for_plugin(combined[:provisioner], instance, combined)
-      end
 
       def build_ssh_args(state)
         combined = config.to_hash.merge(state)
