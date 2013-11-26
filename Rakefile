@@ -35,6 +35,7 @@ unless RUBY_ENGINE == 'jruby'
       Kitchen::RakeTasks#define
       Kitchen::ThorTasks#define
       Kitchen::CLI#pry_prompts
+      Kitchen::CLI#debug_instance
       Kitchen::Instance#synchronize_or_call
       Kitchen::Driver::SSHBase#converge
     )
