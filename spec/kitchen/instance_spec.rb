@@ -196,11 +196,6 @@ describe Kitchen::Instance do
       opts.delete(:logger)
       instance.logger.must_equal Kitchen.logger
     end
-
-    it "invokes #call yielding the instance name if logger is a Proc" do
-      opts[:logger] = lambda { |name| "i'm a logger for #{name}" }
-      instance.logger.must_equal "i'm a logger for suite-platform"
-    end
   end
 
   describe "#provisioner" do

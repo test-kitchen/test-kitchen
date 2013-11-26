@@ -75,17 +75,19 @@ module Kitchen
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
     # @option options [StateFile] :state_file the state file object to use
-    #   when tracking instance  state
+    #   when tracking instance  state (**Required**)
+    # @raise [ClientError] if one or more required options are omitted
     def initialize(options = {})
-      @suite = options.fetch(:suite) { |k| missing_key!(k) }
-      @platform = options.fetch(:platform) { |k| missing_key!(k) }
-      @name = self.class.name_for(@suite, @platform)
-      @driver = options.fetch(:driver) { |k| missing_key!(k) }
-      @provisioner = options.fetch(:provisioner) { |k| missing_key!(k) }
-      @busser = options.fetch(:busser) { |k| missing_key!(k)}
-      @logger = options.fetch(:logger) { Kitchen.logger }
-      @logger = logger.call(name) if logger.is_a?(Proc)
-      @state_file = options.fetch(:state_file) { |k| missing_key!(k) }
+      validate_options(options)
+
+      @suite        = options.fetch(:suite)
+      @platform     = options.fetch(:platform)
+      @name         = self.class.name_for(@suite, @platform)
+      @driver       = options.fetch(:driver)
+      @provisioner  = options.fetch(:provisioner)
+      @busser       = options.fetch(:busser)
+      @logger       = options.fetch(:logger) { Kitchen.logger }
+      @state_file   = options.fetch(:state_file)
 
       setup_driver
       setup_provisioner
@@ -199,8 +201,13 @@ module Kitchen
 
     attr_reader :state_file
 
-    def missing_key!(key)
-      raise ClientError, "Instance#new requires option :#{key}"
+    def validate_options(options)
+      [:suite, :platform, :driver, :provisioner, :busser, :state_file
+      ].each do |k|
+        if !options.has_key?(k)
+          raise ClientError, "Instance#new requires option :#{k}"
+        end
+      end
     end
 
     def setup_driver
