@@ -46,6 +46,12 @@ module Kitchen
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
     end
 
+    # @return [Array<Instance>] all instances, resulting from all platform and
+    #   suite combinations
+    def instances
+      @instances ||= Collection.new(build_instances)
+    end
+
     # @return [Array<Platform>] all defined platforms which will be used in
     #   convergence integration
     def platforms
@@ -60,13 +66,17 @@ module Kitchen
         data.suite_data.map { |sdata| Suite.new(sdata) })
     end
 
-    # @return [Array<Instance>] all instances, resulting from all platform and
-    #   suite combinations
-    def instances
-      @instances ||= Collection.new(build_instances)
+    private
+
+    def build_instances
+      filter_instances.map.with_index do |(suite, platform), index|
+        new_instance(suite, platform, index)
+      end
     end
 
-    private
+    def data
+      @data ||= DataMunger.new(loader.read, kitchen_config)
+    end
 
     def default_log_root
       File.join(kitchen_root, Kitchen::DEFAULT_LOG_DIR)
@@ -74,31 +84,6 @@ module Kitchen
 
     def default_test_base_path
       File.join(kitchen_root, Kitchen::DEFAULT_TEST_DIR)
-    end
-
-    def kitchen_config
-      @kitchen_config ||= {
-        :kitchen_root => @kitchen_root,
-        :test_base_path => @test_base_path,
-        :defaults => {
-          :driver => Driver::DEFAULT_PLUGIN,
-          :provisioner => Driver::DEFAULT_PLUGIN
-        }
-      }
-    end
-
-    def data
-      @data ||= DataMunger.new(loader.read, kitchen_config)
-    end
-
-    def instance_name(suite, platform)
-      Instance.name_for(suite, platform)
-    end
-
-    def build_instances
-      filter_instances.map.with_index do |(suite, platform), index|
-        new_instance(suite, platform, index)
-      end
     end
 
     def filter_instances
@@ -113,26 +98,19 @@ module Kitchen
       end
     end
 
-    def new_instance(suite, platform, index)
-      Instance.new(
-        :suite => suite,
-        :platform => platform,
-        :driver => new_driver(suite, platform),
-        :provisioner => new_provisioner(suite, platform),
-        :busser => new_busser(suite, platform),
-        :state_file => new_state_file(suite, platform),
-        :logger => new_logger(suite, platform, index)
-      )
+    def instance_name(suite, platform)
+      Instance.name_for(suite, platform)
     end
 
-    def new_driver(suite, platform)
-      ddata = data.driver_data_for(suite, platform)
-      Driver.for_plugin(ddata[:name], ddata)
-    end
-
-    def new_provisioner(suite, platform)
-      pdata = data.provisioner_data_for(suite, platform)
-      Provisioner.for_plugin(pdata[:name], pdata)
+    def kitchen_config
+      @kitchen_config ||= {
+        :defaults => {
+          :driver       => Driver::DEFAULT_PLUGIN,
+          :provisioner  => Driver::DEFAULT_PLUGIN
+        },
+        :kitchen_root   => @kitchen_root,
+        :test_base_path => @test_base_path
+      }
     end
 
     def new_busser(suite, platform)
@@ -140,19 +118,41 @@ module Kitchen
       Busser.new(suite.name, bdata)
     end
 
-    def new_state_file(suite, platform)
-      StateFile.new(kitchen_root, instance_name(suite, platform))
+    def new_driver(suite, platform)
+      ddata = data.driver_data_for(suite, platform)
+      Driver.for_plugin(ddata[:name], ddata)
+    end
+
+    def new_instance(suite, platform, index)
+      Instance.new(
+        :busser       => new_busser(suite, platform),
+        :driver       => new_driver(suite, platform),
+        :logger       => new_logger(suite, platform, index),
+        :suite        => suite,
+        :platform     => platform,
+        :provisioner  => new_provisioner(suite, platform),
+        :state_file   => new_state_file(suite, platform)
+      )
     end
 
     def new_logger(suite, platform, index)
       name = instance_name(suite, platform)
       Logger.new(
-        :stdout => STDOUT,
-        :color => Color::COLORS[index % Color::COLORS.size].to_sym,
-        :logdev => File.join(log_root, "#{name}.log"),
-        :level => Util.to_logger_level(self.log_level),
+        :stdout   => STDOUT,
+        :color    => Color::COLORS[index % Color::COLORS.size].to_sym,
+        :logdev   => File.join(log_root, "#{name}.log"),
+        :level    => Util.to_logger_level(self.log_level),
         :progname => name
       )
+    end
+
+    def new_provisioner(suite, platform)
+      pdata = data.provisioner_data_for(suite, platform)
+      Provisioner.for_plugin(pdata[:name], pdata)
+    end
+
+    def new_state_file(suite, platform)
+      StateFile.new(kitchen_root, instance_name(suite, platform))
     end
   end
 end
