@@ -213,7 +213,7 @@ module Kitchen
       [
         %{BUSSER_ROOT="#{root_path}"},
         %{GEM_HOME="#{root_path}/gems"},
-        %{GEM_PATH="#{root_path}/gems:`#{ruby_bindir}/gem env gempath`"},
+        %{GEM_PATH="#{root_path}/gems"},
         %{GEM_CACHE="#{root_path}/gems/cache"},
         %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE;}
       ].join(" ")
