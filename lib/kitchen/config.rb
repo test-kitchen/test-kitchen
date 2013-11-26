@@ -28,7 +28,7 @@ module Kitchen
     attr_reader :log_root
     attr_reader :test_base_path
     attr_reader :loader
-    attr_reader :log_level
+    attr_accessor :log_level
 
     # Creates a new configuration.
     #
@@ -106,10 +106,11 @@ module Kitchen
       @kitchen_config ||= {
         :defaults => {
           :driver       => Driver::DEFAULT_PLUGIN,
-          :provisioner  => Driver::DEFAULT_PLUGIN
+          :provisioner  => Provisioner::DEFAULT_PLUGIN
         },
-        :kitchen_root   => @kitchen_root,
-        :test_base_path => @test_base_path
+        :kitchen_root   => kitchen_root,
+        :test_base_path => test_base_path,
+        :log_level      => log_level,
       }
     end
 

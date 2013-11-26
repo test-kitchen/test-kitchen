@@ -338,15 +338,13 @@ module Kitchen
     def debug_instance(instance)
       say "--------"
       say "Instance: #{instance.name}"
-      say "Driver: #{instance.driver.name}"
-      say "Driver Config:"
+      say "Driver (#{instance.driver.name}):"
       instance.driver.config_keys.sort.each do |key|
-        say "    #{key}: #{instance.driver[key]}"
+        say "    #{key}: #{instance.driver[key].inspect}"
       end
-      if instance.kind_of?(Instance::Cheflike)
-        say "Chef Config:"
-        say "    attributes: #{instance.attributes.inspect}"
-        say "    run_list: #{instance.run_list.inspect}"
+      say "Provisioner (#{instance.provisioner.name}):"
+      instance.provisioner.config_keys.sort.each do |key|
+        say "    #{key}: #{instance.provisioner[key].inspect}"
       end
       say ""
     end
