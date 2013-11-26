@@ -38,12 +38,11 @@ module Kitchen
       move_chef_data_to_provisioner!
     end
 
-    def platform_data
-      data.fetch(:platforms, [])
-    end
-
-    def suite_data
-      data.fetch(:suites, [])
+    def busser_data_for(suite, platform)
+      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
+        set_kitchen_config_at!(bdata, :kitchen_root)
+        set_kitchen_config_at!(bdata, :test_base_path)
+      end
     end
 
     def driver_data_for(suite, platform)
@@ -53,6 +52,10 @@ module Kitchen
       end
     end
 
+    def platform_data
+      data.fetch(:platforms, [])
+    end
+
     def provisioner_data_for(suite, platform)
       merged_data_for(:provisioner, suite, platform).tap do |pdata|
         set_kitchen_config_at!(pdata, :kitchen_root)
@@ -60,87 +63,19 @@ module Kitchen
       end
     end
 
-    def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
-        set_kitchen_config_at!(bdata, :kitchen_root)
-        set_kitchen_config_at!(bdata, :test_base_path)
-      end
+    def suite_data
+      data.fetch(:suites, [])
     end
 
     private
 
     attr_reader :data, :kitchen_config
 
-    def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = normalized_default_data(key, default_key)
-      cdata = normalized_common_data(key, default_key)
-      pdata = normalized_platform_data(key, default_key, platform)
-      sdata = normalized_suite_data(key, default_key, suite)
-
-      ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
-    end
-
-    def normalized_default_data(key, default_key)
-      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new)
-      ddata = { default_key => ddata } if ddata.is_a?(String)
-      ddata
-    end
-
-    def normalized_common_data(key, default_key)
-      cdata = data.fetch(key, Hash.new)
-      cdata = { default_key => cdata } if cdata.is_a?(String)
-      cdata
-    end
-
-    def normalized_platform_data(key, default_key, platform)
-      pdata = platform_data_for(platform).fetch(key, Hash.new)
-      pdata = { default_key => pdata } if pdata.is_a?(String)
-      pdata
-    end
-
-    def normalized_suite_data(key, default_key, suite)
-      sdata = suite_data_for(suite).fetch(key, Hash.new)
-      sdata = { default_key => sdata } if sdata.is_a?(String)
-      sdata
-    end
-
-    def platform_data_for(name)
-      data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
-        platform.fetch(:name, nil) == name
-      end
-    end
-
-    def suite_data_for(name)
-      data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
-        suite.fetch(:name, nil) == name
-      end
-    end
-
-    def set_kitchen_config_at!(root, key)
-      kdata = data.fetch(:kitchen, Hash.new)
-
-      root.delete(key) if root.has_key?(key)
-      root[key] = kdata.fetch(key) if kdata.has_key?(key)
-      root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
-    end
-
-    def move_chef_data_to_provisioner!
+    def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
-        move_chef_data_to_provisioner_at!(suite, :attributes)
-        move_chef_data_to_provisioner_at!(suite, :run_list)
-      end
-
-      data.fetch(:platforms, []).each do |platform|
-        move_chef_data_to_provisioner_at!(platform, :attributes)
-        move_chef_data_to_provisioner_at!(platform, :run_list)
-      end
-    end
-
-    def move_chef_data_to_provisioner_at!(root, key)
-      if root.has_key?(key)
-        pdata = root.fetch(:provisioner, Hash.new)
-        pdata = { :name => pdata } if pdata.is_a?(String)
-        root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
+        %w{data data_bags environments nodes roles}.each do |key|
+          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
+        end
       end
     end
 
@@ -168,14 +103,6 @@ module Kitchen
       end
     end
 
-    def convert_legacy_chef_paths_format!
-      data.fetch(:suites, []).each do |suite|
-        %w{data data_bags environments nodes roles}.each do |key|
-          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
-        end
-      end
-    end
-
     def convert_legacy_require_chef_omnibus_format!
       convert_legacy_require_chef_omnibus_format_at!(data)
       data.fetch(:platforms, []).each do |platform|
@@ -195,6 +122,79 @@ module Kitchen
         pdata = { :name => pdata } if pdata.is_a?(String)
         root[:provisioner] =
           { key => root.fetch(:driver).delete(key) }.rmerge(pdata)
+      end
+    end
+
+    def merged_data_for(key, suite, platform, default_key = :name)
+      ddata = normalized_default_data(key, default_key)
+      cdata = normalized_common_data(key, default_key)
+      pdata = normalized_platform_data(key, default_key, platform)
+      sdata = normalized_suite_data(key, default_key, suite)
+
+      ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
+    end
+
+    def move_chef_data_to_provisioner!
+      data.fetch(:suites, []).each do |suite|
+        move_chef_data_to_provisioner_at!(suite, :attributes)
+        move_chef_data_to_provisioner_at!(suite, :run_list)
+      end
+
+      data.fetch(:platforms, []).each do |platform|
+        move_chef_data_to_provisioner_at!(platform, :attributes)
+        move_chef_data_to_provisioner_at!(platform, :run_list)
+      end
+    end
+
+    def move_chef_data_to_provisioner_at!(root, key)
+      if root.has_key?(key)
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
+      end
+    end
+
+    def normalized_common_data(key, default_key)
+      cdata = data.fetch(key, Hash.new)
+      cdata = { default_key => cdata } if cdata.is_a?(String)
+      cdata
+    end
+
+    def normalized_default_data(key, default_key)
+      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new)
+      ddata = { default_key => ddata } if ddata.is_a?(String)
+      ddata
+    end
+
+    def normalized_platform_data(key, default_key, platform)
+      pdata = platform_data_for(platform).fetch(key, Hash.new)
+      pdata = { default_key => pdata } if pdata.is_a?(String)
+      pdata
+    end
+
+    def normalized_suite_data(key, default_key, suite)
+      sdata = suite_data_for(suite).fetch(key, Hash.new)
+      sdata = { default_key => sdata } if sdata.is_a?(String)
+      sdata
+    end
+
+    def platform_data_for(name)
+      data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
+        platform.fetch(:name, nil) == name
+      end
+    end
+
+    def set_kitchen_config_at!(root, key)
+      kdata = data.fetch(:kitchen, Hash.new)
+
+      root.delete(key) if root.has_key?(key)
+      root[key] = kdata.fetch(key) if kdata.has_key?(key)
+      root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
+    end
+
+    def suite_data_for(name)
+      data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
+        suite.fetch(:name, nil) == name
       end
     end
   end
