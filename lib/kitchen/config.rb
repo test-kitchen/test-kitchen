@@ -115,12 +115,12 @@ module Kitchen
     end
 
     def new_busser(suite, platform)
-      bdata = data.busser_data_for(suite, platform)
+      bdata = data.busser_data_for(suite.name, platform.name)
       Busser.new(suite.name, bdata)
     end
 
     def new_driver(suite, platform)
-      ddata = data.driver_data_for(suite, platform)
+      ddata = data.driver_data_for(suite.name, platform.name)
       Driver.for_plugin(ddata[:name], ddata)
     end
 
@@ -148,7 +148,7 @@ module Kitchen
     end
 
     def new_provisioner(suite, platform)
-      pdata = data.provisioner_data_for(suite, platform)
+      pdata = data.provisioner_data_for(suite.name, platform.name)
       Provisioner.for_plugin(pdata[:name], pdata)
     end
 
