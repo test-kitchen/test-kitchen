@@ -42,6 +42,7 @@ module Kitchen
       merged_data_for(:busser, suite, platform, :version).tap do |bdata|
         set_kitchen_config_at!(bdata, :kitchen_root)
         set_kitchen_config_at!(bdata, :test_base_path)
+        set_kitchen_config_at!(bdata, :log_level)
       end
     end
 
@@ -49,6 +50,7 @@ module Kitchen
       merged_data_for(:driver, suite, platform).tap do |ddata|
         set_kitchen_config_at!(ddata, :kitchen_root)
         set_kitchen_config_at!(ddata, :test_base_path)
+        set_kitchen_config_at!(ddata, :log_level)
       end
     end
 
@@ -60,6 +62,7 @@ module Kitchen
       merged_data_for(:provisioner, suite, platform).tap do |pdata|
         set_kitchen_config_at!(pdata, :kitchen_root)
         set_kitchen_config_at!(pdata, :test_base_path)
+        set_kitchen_config_at!(pdata, :log_level)
       end
     end
 

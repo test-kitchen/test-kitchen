@@ -541,7 +541,7 @@ module Kitchen
 
     describe "kitchen config" do
 
-      [:kitchen_root, :test_base_path].each do |key|
+      [:kitchen_root, :test_base_path, :log_level].each do |key|
 
         describe "for #{key}" do
 
