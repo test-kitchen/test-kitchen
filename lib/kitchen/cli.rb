@@ -43,7 +43,7 @@ module Kitchen
       Kitchen.logger = Kitchen.default_file_logger
       @config = Kitchen::Config.new(
         :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
-        :log_level  => ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
+        :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
       )
     end
 
@@ -52,7 +52,10 @@ module Kitchen
       :desc => "List the name of each instance only, one per line"
     method_option :debug, :aliases => "-d", :type => :boolean,
       :desc => "Show computed driver configuration for each instance"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
+      update_config!
       result = parse_subcommand(args.first)
       if options[:debug]
         Array(result).each { |i| debug_instance(i) }
@@ -100,14 +103,14 @@ module Kitchen
       end
 
       update_config!
-      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
+      banner "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         ensure_initialized
-        destroy_mode = value_for(:destroy).to_sym
+        destroy_mode = options[:destroy].to_sym
         @task = :test
         results = parse_subcommand(args.join('|'))
 
-        if value_for(:parallel)
+        if options[:parallel]
           run_parallel(results, destroy_mode)
         else
           run_serial(results, destroy_mode)
@@ -268,7 +271,7 @@ module Kitchen
 
     def exec_action(action)
       update_config!
-      logger.debug "Starting Kitchen (v#{Kitchen::VERSION})"
+      banner "Starting Kitchen (v#{Kitchen::VERSION})"
       elapsed = Benchmark.measure do
         @task = action
         results = parse_subcommand(args.first)
@@ -327,7 +330,7 @@ module Kitchen
       [
         color_pad(instance.name),
         color_pad(instance.driver.name),
-        color_pad(format_provisioner(instance.driver[:provisioner])),
+        color_pad(instance.provisioner.name),
         format_last_action(instance.last_action)
       ]
     end
@@ -335,15 +338,17 @@ module Kitchen
     def debug_instance(instance)
       say "--------"
       say "Instance: #{instance.name}"
-      say "Driver: #{instance.driver.name}"
-      say "Driver Config:"
+      say "Driver (#{instance.driver.name}):"
       instance.driver.config_keys.sort.each do |key|
-        say "    #{key}: #{instance.driver[key]}"
+        say "    #{key}: #{instance.driver[key].inspect}"
       end
-      if instance.kind_of?(Instance::Cheflike)
-        say "Chef Config:"
-        say "    attributes: #{instance.attributes.inspect}"
-        say "    run_list: #{instance.run_list.inspect}"
+      say "Provisioner (#{instance.provisioner.name}):"
+      instance.provisioner.config_keys.sort.each do |key|
+        say "    #{key}: #{instance.provisioner[key].inspect}"
+      end
+      say "Busser (#{instance.busser.name}):"
+      instance.busser.config_keys.sort.each do |key|
+        say "    #{key}: #{instance.busser[key].inspect}"
       end
       say ""
     end
@@ -361,10 +366,6 @@ module Kitchen
       when nil then set_color("<Not Created>", :red)
       else set_color("<Unknown>", :white)
       end
-    end
-
-    def format_provisioner(name)
-      name.split('_').map { |word| word.capitalize }.join(' ')
     end
 
     def update_config!
@@ -405,16 +406,6 @@ module Kitchen
           ].join
         },
       ]
-    end
-
-    # Try finding the value for a given option by searching the CLI options,
-    # then the global config.
-    def value_for(key)
-      if options.has_key?(key)
-        options[key]
-      else
-        @config.settings[key]
-      end
     end
   end
 end

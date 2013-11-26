@@ -36,13 +36,13 @@ module Kitchen
       end
 
       def converge(state)
-        provisioner = new_provisioner
+        provisioner = instance.provisioner
         sandbox_dirs = Dir.glob("#{provisioner.create_sandbox}/*")
 
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(provisioner.install_command, conn)
           run_remote(provisioner.init_command, conn)
-          transfer_path(sandbox_dirs, provisioner.home_path, conn)
+          transfer_path(sandbox_dirs, provisioner[:root_path], conn)
           run_remote(provisioner.prepare_command, conn)
           run_remote(provisioner.run_command, conn)
         end
@@ -79,12 +79,6 @@ module Kitchen
 
       protected
 
-      def new_provisioner
-        combined = config.dup
-        combined[:log_level] = Util.from_logger_level(logger.level)
-        Provisioner.for_plugin(combined[:provisioner], instance, combined)
-      end
-
       def build_ssh_args(state)
         combined = config.to_hash.merge(state)
 
@@ -104,11 +98,6 @@ module Kitchen
         env = "env"
         env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
         env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
-
-        additional_paths = []
-        additional_paths << config[:ruby_binpath] if config[:ruby_binpath]
-        additional_paths << config[:path] if config[:path]
-        env << " PATH=$PATH:#{additional_paths.join(':')}" if additional_paths.any?
 
         env == "env" ? cmd : "#{env} #{cmd}"
       end

@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,27 +16,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'delegate'
+
 module Kitchen
 
-  # A target operating system environment in which convergence integration
-  # will take place. This may represent a specific operating system, version,
-  # and machine architecture.
+  # A modifed Hash object that may contain procs as a value which must be
+  # executed in the context of another object.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
-  class Platform
+  class LazyHash < SimpleDelegator
 
-    # @return [String] logical name of this platform
-    attr_reader :name
+    def initialize(obj, context)
+      @context = context
+      super(obj)
+    end
 
-    # Constructs a new platform.
-    #
-    # @param [Hash] options configuration for a new platform
-    # @option options [String] :name logical name of this platform
-    #   (**Required**)
-    def initialize(options = {})
-      @name = options.fetch(:name) do
-        raise ClientError, "Platform#new requires option :name"
+    def [](key)
+      proc_or_val = __getobj__[key]
+
+      if proc_or_val.respond_to?(:call)
+        proc_or_val.call(@context)
+      else
+        proc_or_val
       end
+    end
+
+    def to_hash
+      hash = Hash.new
+      __getobj__.keys.each { |key| hash[key] = self[key] }
+      hash
     end
   end
 end

@@ -26,9 +26,13 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Driver
 
+    # Default driver plugin to use
+    DEFAULT_PLUGIN = "dummy".freeze
+
     # Returns an instance of a driver given a plugin type string.
     #
     # @param plugin [String] a driver plugin type, which will be constantized
+    # @param config [Hash] a configuration hash to initialize the driver
     # @return [Driver::Base] a driver instance
     # @raise [ClientError] if a driver instance could not be created
     # @raise [UserError] if the driver's dependencies could not be met

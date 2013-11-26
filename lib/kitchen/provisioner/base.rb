@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/lazy_hash'
+
 module Kitchen
 
   module Provisioner
@@ -27,10 +29,35 @@ module Kitchen
 
       include Logging
 
-      def initialize(instance, config)
-        @instance = instance
-        @config = config
-        @logger = instance.logger
+      attr_accessor :instance
+
+      def initialize(config = {})
+        @config = LazyHash.new(config, self)
+        self.class.defaults.each do |attr, value|
+          @config[attr] = value unless @config.has_key?(attr)
+        end
+      end
+
+      # Returns the name of this driver, suitable for display in a CLI.
+      #
+      # @return [String] name of this driver
+      def name
+        self.class.name.split('::').last
+      end
+
+      # Provides hash-like access to configuration keys.
+      #
+      # @param attr [Object] configuration key
+      # @return [Object] value at configuration key
+      def [](attr)
+        config[attr]
+      end
+
+      # Returns an array of configuration keys.
+      #
+      # @return [Array] array of configuration keys
+      def config_keys
+        config.keys
       end
 
       def install_command ; end
@@ -45,19 +72,38 @@ module Kitchen
 
       def cleanup_sandbox ; end
 
-      def home_path ; end
-
       protected
 
-      attr_reader :instance, :logger, :config, :tmpdir
+      attr_reader :config
+
+      def logger
+        instance ? instance.logger : Kitchen.logger
+      end
 
       def sudo(script)
         config[:sudo] ? "sudo -E #{script}" : script
       end
 
-      def kitchen_root
-        config[:kitchen_root]
+      def self.defaults
+        @defaults ||= Hash.new.merge(super_defaults)
       end
+
+      def self.super_defaults
+        klass = self.superclass
+
+        if klass.respond_to?(:defaults)
+          klass.defaults
+        else
+          Hash.new
+        end
+      end
+
+      def self.default_config(attr, value = nil, &block)
+        defaults[attr] = block_given? ? block : value
+      end
+
+      default_config :root_path, "/tmp/kitchen"
+      default_config :sudo, true
     end
   end
 end

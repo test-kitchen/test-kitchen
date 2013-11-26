@@ -27,10 +27,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
 
-      def initialize(instance, config)
-        super
-        @ruby_binpath = config.fetch(:ruby_binpath, DEFAULT_RUBY_BINPATH)
-      end
+      default_config :client_rb, {}
+      default_config :ruby_bindir, "/opt/chef/embedded/bin"
 
       def create_sandbox
         create_chef_sandbox do
@@ -43,6 +41,8 @@ module Kitchen
       def prepare_command
         return if local_mode_supported?
 
+        ruby_bin = config[:ruby_bindir]
+
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         #
         # * we are installing latest chef in order to get chef-zero and
@@ -50,67 +50,38 @@ module Kitchen
         #   the installed omnibus package. Yep, this is funky :)
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
-          #{sandbox_env(true)}
-          if ! #{sudo(gem_bin)} list chef-zero -i >/dev/null; then
+          #{chef_client_zero_env(:export)}
+          if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
+            echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
-            #{sudo(gem_bin)} install chef --no-ri --no-rdoc --conservative
+            #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
           fi'
         PREPARE
       end
 
       def run_command
         args = [
-          "--config #{home_path}/client.rb",
-          "--json-attributes #{home_path}/dna.json",
+          "--config #{config[:root_path]}/client.rb",
+          "--json-attributes #{config[:root_path]}/dna.json",
           "--log_level #{config[:log_level]}"
         ]
 
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
-          ["cd #{home_path};",
-            sandbox_env,
-            sudo(ruby_bin),
-            "#{home_path}/chef-client-zero.rb"
+          [
+            chef_client_zero_env,
+            sudo("#{config[:ruby_bindir]}/ruby"),
+            "#{config[:root_path]}/chef-client-zero.rb"
           ].concat(args).join(" ")
         end
       end
 
-      def home_path
-        "/tmp/kitchen-chef-zero".freeze
-      end
-
-      def gem_bin
-        @gem_bin ||= File.join(ruby_binpath, 'gem')
-      end
-
-      def ruby_bin
-        @ruby_bin ||= File.join(ruby_binpath, 'ruby')
-      end
-
       private
 
-      DEFAULT_RUBY_BINPATH = "/opt/chef/embedded/bin".freeze
-
-      attr_reader :ruby_binpath
-
-      def sandbox_env(export=false)
-        env = [
-          "GEM_HOME=#{home_path}/gems",
-          "GEM_PATH=$GEM_HOME",
-          "GEM_CACHE=$GEM_HOME/cache",
-          "PATH=$PATH:$GEM_HOME/bin",
-          "KITCHEN_HOME_PATH=#{home_path}"
-        ]
-
-        if export
-          env << "; export GEM_HOME GEM_PATH GEM_CACHE PATH;"
-        end
-
-        env.join(" ")
-      end
-
       def prepare_chef_client_zero_rb
+        return if local_mode_supported?
+
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support chef-client-zero.rb})
         FileUtils.cp(source, File.join(tmpdir, "chef-client-zero.rb"))
@@ -123,25 +94,24 @@ module Kitchen
       end
 
       def prepare_client_rb
-        client = []
-        client << %{node_name "#{instance.name}"}
-        client << %{file_cache_path "#{home_path}/cache"}
-        client << %{cookbook_path "#{home_path}/cookbooks"}
-        client << %{node_path "#{home_path}/nodes"}
-        client << %{client_path "#{home_path}/clients"}
-        client << %{role_path "#{home_path}/roles"}
-        client << %{data_bag_path "#{home_path}/data_bags"}
-        client << %{validation_key "#{home_path}/validation.pem"}
-        client << %{client_key "#{home_path}/client.pem"}
-        client << %{chef_server_url "http://127.0.0.1:8889"}
-        if instance.suite.encrypted_data_bag_secret_key_path
-          secret = "#{home_path}/encrypted_data_bag_secret"
-          client << %{encrypted_data_bag_secret "#{secret}"}
-        end
+        data = default_config_rb.merge(config[:client_rb])
 
         File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
-          file.write(client.join("\n"))
+          file.write(format_config_file(data))
         end
+      end
+
+      def chef_client_zero_env(extra = nil)
+        args = [
+          %{CHEF_REPO_PATH="#{config[:root_path]}"},
+          %{GEM_HOME="#{config[:root_path]}/chef-client-zero-gems"},
+          %{GEM_PATH="#{config[:root_path]}/chef-client-zero-gems"},
+          %{GEM_CACHE="#{config[:root_path]}/chef-client-zero-gems/cache"}
+        ]
+        if extra == :export
+          args << %{; export CHEF_REPO_PATH GEM_HOME GEM_PATH GEM_CACHE;}
+        end
+        args.join(" ")
       end
 
       # Determines whether or not local mode (a.k.a chef zero mode) is

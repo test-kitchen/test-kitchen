@@ -18,7 +18,6 @@
 
 require 'benchmark'
 require 'fileutils'
-require 'vendor/hash_recursive_merge'
 
 module Kitchen
 
@@ -33,6 +32,10 @@ module Kitchen
 
     class << self
       attr_accessor :mutexes
+
+      def name_for(suite, platform)
+        "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+      end
     end
 
     # @return [Suite] the test suite configuration
@@ -41,9 +44,21 @@ module Kitchen
     # @return [Platform] the target platform configuration
     attr_reader :platform
 
+    # @return [String] name of this instance
+    attr_reader :name
+
     # @return [Driver::Base] driver object which will manage this instance's
     #   lifecycle actions
     attr_reader :driver
+
+    # @return [Provisioner::Base] provisioner object which will the setup
+    #   and invocation instructions for configuration management and other
+    #   automation tools
+    attr_reader :provisioner
+
+    # @return [Busser] busser object for instance to manage the busser
+    #   installation on this instance
+    attr_reader :busser
 
     # @return [Logger] the logger for this instance
     attr_reader :logger
@@ -51,28 +66,31 @@ module Kitchen
     # Creates a new instance, given a suite and a platform.
     #
     # @param [Hash] options configuration for a new suite
-    # @option options [Suite] :suite the suite
-    # @option options [Platform] :platform the platform
-    # @option options [Driver::Base] :driver the driver
+    # @option options [Suite] :suite the suite (**Required)
+    # @option options [Platform] :platform the platform (**Required)
+    # @option options [Driver::Base] :driver the driver (**Required)
+    # @option options [Provisioner::Base] :provisioner the provisioner
+    #   (**Required)
+    # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
+    #   (default: Kitchen.logger)
+    # @option options [StateFile] :state_file the state file object to use
+    #   when tracking instance  state (**Required**)
+    # @raise [ClientError] if one or more required options are omitted
     def initialize(options = {})
-      options = { :logger => Kitchen.logger }.merge(options)
       validate_options(options)
-      logger = options[:logger]
 
-      @suite = options[:suite]
-      @platform = options[:platform]
-      @driver = options[:driver]
-      @logger = logger.is_a?(Proc) ? logger.call(name) : logger
+      @suite        = options.fetch(:suite)
+      @platform     = options.fetch(:platform)
+      @name         = self.class.name_for(@suite, @platform)
+      @driver       = options.fetch(:driver)
+      @provisioner  = options.fetch(:provisioner)
+      @busser       = options.fetch(:busser)
+      @logger       = options.fetch(:logger) { Kitchen.logger }
+      @state_file   = options.fetch(:state_file)
 
-      @driver.instance = self
-      @driver.validate_config!
-      setup_driver_mutex
-    end
-
-    # @return [String] name of this instance
-    def name
-      "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+      setup_driver
+      setup_provisioner
     end
 
     def to_str
@@ -179,45 +197,22 @@ module Kitchen
       state_file.read[:last_action]
     end
 
-    # Extra instance methods used for accessing Puppet data such as a combined
-    # run list, node attributes, etc.
-    module Cheflike
-
-      # Returns a combined run_list starting with the platform's run_list
-      # followed by the suite's run_list.
-      #
-      # @return [Array] combined run_list from suite and platform
-      def run_list
-        Array(platform.run_list) + Array(suite.run_list)
-      end
-
-      # Returns a merged hash of Chef node attributes with values from the
-      # suite overriding values from the platform.
-      #
-      # @return [Hash] merged hash of Chef node attributes
-      def attributes
-        platform.attributes.rmerge(suite.attributes)
-      end
-
-      def dna
-        attributes.rmerge({ :run_list => run_list })
-      end
-    end
-
-    # Extra instances methods used for accessing Puppet data such as a run,
-    # node attributes, etc.
-    module Puppetlike
-
-      def manifest
-      end
-    end
-
     private
 
-    def validate_options(opts)
-      [:suite, :platform, :driver, :logger].each do |k|
-        raise ClientError, "Instance#new requires option :#{k}" if opts[k].nil?
+    attr_reader :state_file
+
+    def validate_options(options)
+      [:suite, :platform, :driver, :provisioner, :busser, :state_file].each do |k|
+        if !options.has_key?(k)
+          raise ClientError, "Instance#new requires option :#{k}"
+        end
       end
+    end
+
+    def setup_driver
+      @driver.instance = self
+      @driver.validate_config!
+      setup_driver_mutex
     end
 
     def setup_driver_mutex
@@ -227,6 +222,10 @@ module Kitchen
           self.class.mutexes[driver.class] = Mutex.new
         end
       end
+    end
+
+    def setup_provisioner
+      @provisioner.instance = self
     end
 
     def transition_to(desired)
@@ -296,10 +295,6 @@ module Kitchen
       else
         block.call(state)
       end
-    end
-
-    def state_file
-      @state_file ||= StateFile.new(driver[:kitchen_root], name)
     end
 
     def banner(*args)
