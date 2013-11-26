@@ -50,7 +50,9 @@ module Kitchen
         #   the installed omnibus package. Yep, this is funky :)
         <<-PREPARE.gsub(/^ {10}/, '')
           sh -c '
+          #{chef_client_zero_env(:export)}
           if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
+            echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
             #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
           fi'
@@ -67,7 +69,8 @@ module Kitchen
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else
-          ["cd #{config[:root_path]};",
+          [
+            chef_client_zero_env,
             sudo("#{config[:ruby_bindir]}/ruby"),
             "#{config[:root_path]}/chef-client-zero.rb"
           ].concat(args).join(" ")
@@ -96,6 +99,19 @@ module Kitchen
         File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
+      end
+
+      def chef_client_zero_env(extra = nil)
+        args = [
+          %{CHEF_REPO_PATH="#{config[:root_path]}"},
+          %{GEM_HOME="#{config[:root_path]}/chef-client-zero-gems"},
+          %{GEM_PATH="#{config[:root_path]}/chef-client-zero-gems"},
+          %{GEM_CACHE="#{config[:root_path]}/chef-client-zero-gems/cache"}
+        ]
+        if extra == :export
+          args << %{; export CHEF_REPO_PATH GEM_HOME GEM_PATH GEM_CACHE;}
+        end
+        args.join(" ")
       end
 
       # Determines whether or not local mode (a.k.a chef zero mode) is

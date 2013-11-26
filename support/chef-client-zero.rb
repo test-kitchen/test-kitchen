@@ -45,7 +45,7 @@ class ChefClientZero
   private
 
   def create_chef_zero_server
-    Chef::Config.chef_repo_path = Chef::Config.find_chef_repo_path(Dir.pwd)
+    Chef::Config.chef_repo_path = Chef::Config.find_chef_repo_path(repo_path)
 
     chef_fs = Chef::ChefFS::Config.new.local_fs
     chef_fs.write_pretty_json = true
@@ -63,8 +63,8 @@ class ChefClientZero
     end
   end
 
-  def kitchen_path
-    ENV['KITCHEN_HOME_PATH']
+  def repo_path
+    ENV.fetch('CHEF_REPO_PATH', Dir.pwd)
   end
 
   def run_chef_client
