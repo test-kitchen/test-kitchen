@@ -102,8 +102,8 @@ module Kitchen
         defaults[attr] = block_given? ? block : value
       end
 
-      default_config :root_path,  "/tmp/kitchen"
-      default_config :sudo,       true
+      default_config :root_path, "/tmp/kitchen"
+      default_config :sudo, true
     end
   end
 end
