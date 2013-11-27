@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'buff/ignore'
 require 'fileutils'
 require 'pathname'
 require 'json'
@@ -36,6 +35,9 @@ module Kitchen
       default_config :chef_omnibus_url, "https://www.opscode.com/chef/install.sh"
       default_config :run_list, []
       default_config :attributes, {}
+      default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
+        attributes/**/* definitions/**/* files/**/* libraries/**/*
+        providers/**/* recipes/**/* resources/**/* templates/**/*].join(",")
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
@@ -259,19 +261,24 @@ module Kitchen
           raise UserError, "Cookbooks could not be found"
         end
 
-        remove_ignored_files
+        filter_only_cookbook_files
       end
 
-      def remove_ignored_files
-        cookbooks_in_tmpdir do |cookbook_path|
-          chefignore = File.join(cookbook_path, "chefignore")
-          if File.exist? chefignore
-            ignores = Buff::Ignore::IgnoreFile.new(chefignore)
-            cookbook_files = Dir.glob(File.join(cookbook_path, "**/*"), File::FNM_DOTMATCH).
-              select { |fn| File.file?(fn) && fn != '.' && fn != '..' }
-            cookbook_files.each { |file| FileUtils.rm(file) if ignores.ignored?(file) }
-          end
-        end
+      def filter_only_cookbook_files
+        info("Removing non-cookbook files in sandbox")
+        FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
+      end
+
+      def all_files_in_cookbooks
+        Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
+          select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
+      end
+
+      def only_cookbook_files
+        glob = File.join(tmpbooks_dir, "*", "{#{config[:cookbook_files_glob]}}")
+
+        Dir.glob(glob, File::FNM_DOTMATCH).
+          select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
       end
 
       def berksfile
@@ -404,14 +411,6 @@ module Kitchen
           env.config_db.local["path"] = tmpbooks_dir
           Librarian::Action::Resolve.new(env).run
           Librarian::Action::Install.new(env).run
-        end
-      end
-
-      private
-
-      def cookbooks_in_tmpdir
-        Dir.glob(File.join(tmpbooks_dir, "*/")).each do |cookbook_path|
-          yield cookbook_path if block_given?
         end
       end
     end
