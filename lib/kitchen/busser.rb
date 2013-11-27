@@ -41,7 +41,10 @@ module Kitchen
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
-      @test_root = File.join(opts.fetch(:kitchen_root, Dir.pwd), "test/integration")
+      kitchen_root = opts.fetch(:kitchen_root) { Dir.pwd }
+      test_base_path = opts.fetch(:test_base_path, Kitchen::DEFAULT_TEST_DIR)
+
+      @test_base_path = File.expand_path(test_base_path, kitchen_root)
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
       @ruby_bindir = opts.fetch(:instance_ruby_bindir, DEFAULT_RUBY_BINDIR)
@@ -61,7 +64,7 @@ module Kitchen
     #
     # @return [Array] array of configuration keys
     def config_keys
-      [:test_root, :ruby_bindir, :root_path, :version_string,
+      [:test_base_path, :ruby_bindir, :root_path, :version_string,
         :busser_bin, :use_sudo, :suite_name]
     end
 
@@ -137,7 +140,7 @@ module Kitchen
     DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
     DEFAULT_ROOT_PATH = "/tmp/busser".freeze
 
-    attr_reader :test_root
+    attr_reader :test_base_path
     attr_reader :ruby_bindir
     attr_reader :root_path
     attr_reader :version_string
@@ -157,23 +160,23 @@ module Kitchen
     end
 
     def plugins
-      Dir.glob(File.join(test_root, suite_name, "*")).reject { |d|
+      Dir.glob(File.join(test_base_path, suite_name, "*")).reject { |d|
         ! File.directory?(d) || non_suite_dirs.include?(File.basename(d))
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
     def local_suite_files
-      Dir.glob(File.join(test_root, suite_name, "*/**/*")).reject do |f|
+      Dir.glob(File.join(test_base_path, suite_name, "*/**/*")).reject do |f|
         f[/(data|data_bags|environments|nodes|roles)/] || File.directory?(f)
       end
     end
 
     def helper_files
-      Dir.glob(File.join(test_root, "helpers", "*/**/*"))
+      Dir.glob(File.join(test_base_path, "helpers", "*/**/*"))
     end
 
     def remote_file(file, dir)
-      local_prefix = File.join(test_root, dir)
+      local_prefix = File.join(test_base_path, dir)
       "$(#{sudo}#{busser_bin} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
