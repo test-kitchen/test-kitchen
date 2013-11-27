@@ -205,8 +205,8 @@ module Kitchen
       kdata = data.fetch(:kitchen, Hash.new)
 
       root.delete(key) if root.has_key?(key)
-      root[key] = kdata.fetch(key) if kdata.has_key?(key)
       root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
+      root[key] = kdata.fetch(key) if kdata.has_key?(key)
     end
 
     def suite_data_for(name)

@@ -698,10 +698,10 @@ module Kitchen
               })
             end
 
-            it "provided value beats user data value" do
+            it "user data value beats provided value" do
               DataMunger.new({
                 :kitchen => {
-                  key => "ilose"
+                  key => "datvalue"
                 },
                 :driver => "chefy",
                 :platforms => [
@@ -711,7 +711,7 @@ module Kitchen
                   { :name => "sweet" }
                 ]
               }, {
-                key => "datvalue"
+                key => "ilose"
               }).driver_data_for("sweet", "plat").must_equal({
                 :name => "chefy",
                 key => "datvalue"
@@ -773,10 +773,10 @@ module Kitchen
               })
             end
 
-            it "provided value beats user data value" do
+            it "user data value beats provided value" do
               DataMunger.new({
                 :kitchen => {
-                  key => "ilose"
+                  key => "datvalue"
                 },
                 :provisioner => "chefy",
                 :platforms => [
@@ -786,7 +786,7 @@ module Kitchen
                   { :name => "sweet" }
                 ]
               }, {
-                key => "datvalue"
+                key => "ilose"
               }).provisioner_data_for("sweet", "plat").must_equal({
                 :name => "chefy",
                 key => "datvalue"
@@ -848,10 +848,10 @@ module Kitchen
               })
             end
 
-            it "provided value beats user data value" do
+            it "user data value beats provided value" do
               DataMunger.new({
                 :kitchen => {
-                  key => "ilose"
+                  key => "datvalue"
                 },
                 :busser => "chefy",
                 :platforms => [
@@ -861,7 +861,7 @@ module Kitchen
                   { :name => "sweet" }
                 ]
               }, {
-                key => "datvalue"
+                key => "ilose"
               }).busser_data_for("sweet", "plat").must_equal({
                 :version => "chefy",
                 key => "datvalue"
