@@ -65,6 +65,11 @@ module Kitchen
         provisioner.calculate_path("encrypted_data_bag_secret", :file)
       end
 
+      def instance=(instance)
+        @instance = instance
+        expand_paths!
+      end
+
       def install_command
         return unless config[:require_chef_omnibus]
 
@@ -124,6 +129,15 @@ module Kitchen
       protected
 
       attr_reader :tmpdir
+
+      def expand_paths!
+        paths = %w{test_base data data_bags environments nodes roles}
+        paths.map{ |p| "#{p}_path".to_sym }.each do |key|
+          unless config[key].nil?
+            config[key] = File.expand_path(config[key], config[:kitchen_root])
+          end
+        end
+      end
 
       def format_config_file(data)
         data.each.map { |attr, value|
