@@ -20,6 +20,8 @@ require 'fileutils'
 require 'pathname'
 require 'json'
 
+require 'kitchen/provisioner/chef/berkshelf'
+require 'kitchen/provisioner/chef/librarian'
 require 'kitchen/util'
 
 module Kitchen
@@ -366,51 +368,14 @@ module Kitchen
       end
 
       def resolve_with_berkshelf
-        info("Resolving cookbook dependencies with Berkshelf...")
-        debug("Using Berksfile from #{berksfile}")
-
-        begin
-          require 'berkshelf'
-        rescue LoadError => e
-          fatal("The `berkshelf' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install berkshelf` or add the following to your" +
-            " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
-          raise UserError,
-            "Could not load or activate Berkshelf (#{e.message})"
-        end
-
         Kitchen.mutex.synchronize do
-          Berkshelf.ui.mute do
-            Berkshelf::Berksfile.from_file(berksfile).
-              install(:path => tmpbooks_dir)
-          end
+          Chef::Berkshelf.new(berksfile, tmpbooks_dir, logger).resolve
         end
       end
 
       def resolve_with_librarian
-        info("Resolving cookbook dependencies with Librarian-Chef")
-        debug("Using Cheffile from #{cheffile}")
-
-        begin
-          require 'librarian/chef/environment'
-          require 'librarian/action/resolve'
-          require 'librarian/action/install'
-        rescue LoadError => e
-          fatal("The `librarian-chef' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install librarian-chef` or add the following to your" +
-            " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
-          raise UserError,
-            "Could not load or activate Librarian-Chef (#{e.message})"
-        end
-
         Kitchen.mutex.synchronize do
-          env = Librarian::Chef::Environment.new(
-            :project_path => config[:kitchen_root])
-          env.config_db.local["path"] = tmpbooks_dir
-          Librarian::Action::Resolve.new(env).run
-          Librarian::Action::Install.new(env).run
+          Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
         end
       end
     end
