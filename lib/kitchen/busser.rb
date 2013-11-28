@@ -88,17 +88,17 @@ module Kitchen
       @setup_cmd ||= if local_suite_files.empty?
         nil
       else
+        setup_cmd  = []
+        setup_cmd << busser_setup_env
+        setup_cmd << "if ! #{sudo}#{ruby_bindir}/gem list busser -i >/dev/null"
+        setup_cmd << "then #{sudo}#{ruby_bindir}/gem install #{gem_install_args}"
+        setup_cmd << "fi"
+        setup_cmd << "gem_bindir=`#{ruby_bindir}/ruby -rrubygems -e \"puts Gem.bindir\"`"
+        setup_cmd << "#{sudo}${gem_bindir}/busser setup"
+        setup_cmd << "#{sudo}#{busser_bin} plugin install #{plugins.join(' ')}"
+
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          sh -c '
-          #{busser_setup_env}
-          if ! #{sudo}#{ruby_bindir}/gem list busser -i >/dev/null; then
-            #{sudo}#{ruby_bindir}/gem install #{gem_install_args}
-          fi
-          gem_bindir=`#{ruby_bindir}/ruby -rrubygems -e "puts Gem.bindir"`
-          #{sudo}${gem_bindir}/busser setup
-          #{sudo}#{busser_bin} plugin install #{plugins.join(' ')}'
-        INSTALL_CMD
+        "sh -c '#{setup_cmd.join('; ')}'"
       end
     end
 
@@ -114,13 +114,14 @@ module Kitchen
       @sync_cmd ||= if local_suite_files.empty?
         nil
       else
+        sync_cmd  = []
+        sync_cmd << busser_setup_env
+        sync_cmd << "#{sudo}#{busser_bin} suite cleanup"
+        sync_cmd << "#{local_suite_files.map { |f| stream_file(f, remote_file(f, suite_name)) }.join}"
+        sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}"
+
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL_CMD.gsub(/^ {10}/, '')
-          sh -c '
-          #{sudo}#{busser_bin} suite cleanup
-          #{local_suite_files.map { |f| stream_file(f, remote_file(f, suite_name)) }.join}
-          #{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}'
-        INSTALL_CMD
+        "sh -c '#{sync_cmd.join('; ')}'"
       end
     end
 
@@ -132,7 +133,16 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= local_suite_files.empty? ? nil : "#{sudo}#{busser_bin} test"
+      @run_cmd ||= if local_suite_files.empty?
+        nil
+      else
+        run_cmd  = []
+        run_cmd << busser_setup_env
+        run_cmd << "#{sudo}#{busser_bin} test"
+
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
+        "sh -c '#{run_cmd.join('; ')}'"
+      end
     end
 
     private
@@ -192,12 +202,10 @@ module Kitchen
         "--perms=#{perms}"
       ].join(" ")
 
-      <<-STREAMFILE.gsub(/^ {8}/, '')
-        echo "Uploading #{remote_path} (mode=#{perms})"
-        #{sudo}cat <<"__EOFSTREAM__" | #{sudo}#{stream_cmd}
-        #{Base64.encode64(local_file)}
-        __EOFSTREAM__
-      STREAMFILE
+      stream_file_cmd  = []
+      stream_file_cmd << "echo \"Uploading #{remote_path} (mode=#{perms})\""
+      stream_file_cmd << "echo \"#{Base64.encode64(local_file).gsub("\n", '')}\" | #{sudo}#{stream_cmd}"
+      stream_file_cmd.join('; ')
     end
 
     def sudo
@@ -218,7 +226,7 @@ module Kitchen
         %{GEM_HOME="#{root_path}/gems"},
         %{GEM_PATH="#{root_path}/gems"},
         %{GEM_CACHE="#{root_path}/gems/cache"},
-        %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE;}
+        %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
       ].join(" ")
     end
 
