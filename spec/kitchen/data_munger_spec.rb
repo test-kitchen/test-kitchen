@@ -432,7 +432,7 @@ module Kitchen
           })
         end
 
-        it "converts a nil run_list into an empty Array" do
+        it "drops nil run_list" do
           DataMunger.new({
             :suites => [
               {
@@ -442,8 +442,21 @@ module Kitchen
               }
             ]
           }).provisioner_data_for("sweet", "plat").must_equal({
-            :name => "chefy",
-            :run_list => []
+            :name => "chefy"
+          })
+        end
+
+        it "drops nil attributes" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => nil,
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy"
           })
         end
       end
@@ -527,7 +540,7 @@ module Kitchen
           })
         end
 
-        it "converts a nil run_list into an empty Array" do
+        it "drops nil run_list" do
           DataMunger.new({
             :platforms => [
               {
@@ -537,8 +550,21 @@ module Kitchen
               }
             ]
           }).provisioner_data_for("sweet", "plat").must_equal({
-            :name => "chefy",
-            :run_list => []
+            :name => "chefy"
+          })
+        end
+
+        it "drops nil attributes" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => nil,
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy"
           })
         end
       end
