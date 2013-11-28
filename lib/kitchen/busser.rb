@@ -65,7 +65,7 @@ module Kitchen
     # @return [Array] array of configuration keys
     def config_keys
       [:test_base_path, :ruby_bindir, :root_path, :version_string,
-        :busser_bin, :use_sudo, :suite_name]
+        :busser_bin, :sudo, :suite_name]
     end
 
     # Provides hash-like access to configuration keys.
