@@ -37,6 +37,12 @@ module Kitchen
           Gemfile
         D
 
+      class_option :provisioner, :type => :string, :aliases => "-P",
+        :default => "chef_solo",
+        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+          The default Kitchen Provisioner to use
+        D
+
       class_option :create_gemfile, :type => :boolean, :default => false,
         :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
           Whether or not to create a Gemfile if one does not exist.
@@ -75,6 +81,7 @@ module Kitchen
 
         template("kitchen.yml.erb", ".kitchen.yml", {
           :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
+          :provisioner => options[:provisioner],
           :run_list => Array(run_list)
         })
       end

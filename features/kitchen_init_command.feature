@@ -112,6 +112,17 @@ Feature: Add Test Kitchen support to an existing project
     When I successfully run `kitchen init --no-driver`
     Then the file ".kitchen.yml" should contain "driver: dummy"
 
+  Scenario: Running init without a provisioner sets the default provisioner
+    to chef_solo in .kitchen.yml
+    Given an empty file named "Gemfile"
+    When I successfully run `kitchen init --no-driver`
+    Then the file ".kitchen.yml" should contain "provisioner: chef_solo"
+
+  Scenario: Running init with a provisioner sets the provisioner in .kitchen.yml
+    Given an empty file named "Gemfile"
+    When I successfully run `kitchen init --no-driver --provisioner=chef_zero`
+    Then the file ".kitchen.yml" should contain "provisioner: chef_zero"
+
   Scenario: Running with a Rakefile file appends Kitchen tasks
     Given an empty file named "Gemfile"
     And an empty file named "Rakefile"
@@ -162,6 +173,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     ---
     driver: vagrant
+    provisioner: chef_solo
 
     platforms:
       - name: ubuntu-12.04
