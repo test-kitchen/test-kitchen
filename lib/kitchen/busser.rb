@@ -50,7 +50,7 @@ module Kitchen
       @ruby_bindir = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @root_path = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @version_string = opts.fetch(:version, "busser")
-      @busser_bin = File.join(@root_path, "bin/busser")
+      @busser_bin = opts.fetch(:busser_bin, File.join(@root_path, "bin/busser"))
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
