@@ -104,6 +104,12 @@ module Kitchen
             })
           end
 
+          it "drops common #{key} if hash is nil" do
+            DataMunger.new({
+              key => nil
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+          end
+
           it "returns kitchen config #{key} name" do
             DataMunger.new({
             }, {
@@ -139,6 +145,17 @@ module Kitchen
             DataMunger.new({
               :platforms => [
                 { :name => "plat" }
+              ]
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+          end
+
+          it "drops platform #{key} if hash is nil" do
+            DataMunger.new({
+              :platforms => [
+                {
+                  :name => "plat",
+                  key => nil
+                }
               ]
             }).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
@@ -180,6 +197,17 @@ module Kitchen
               ]
             }).public_send("#{key}_data_for", "sweet", "platform").must_equal({
             })
+          end
+
+          it "drops suite #{key} hash is nil" do
+            DataMunger.new({
+              :suites => [
+                {
+                  :name => "suite",
+                  key => nil
+                }
+              ]
+            }).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "returns suite #{key} name" do

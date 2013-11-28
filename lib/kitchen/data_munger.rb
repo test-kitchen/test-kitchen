@@ -173,7 +173,8 @@ module Kitchen
     end
 
     def normalized_common_data(key, default_key)
-      cdata = data.fetch(key, Hash.new).dup
+      cdata = data.fetch(key, Hash.new)
+      cdata = cdata.nil? ? Hash.new : cdata.dup
       cdata = { default_key => cdata } if cdata.is_a?(String)
       cdata
     end
@@ -185,14 +186,16 @@ module Kitchen
     end
 
     def normalized_platform_data(key, default_key, platform)
-      pdata = platform_data_for(platform).fetch(key, Hash.new).dup
+      pdata = platform_data_for(platform).fetch(key, Hash.new)
+      pdata = pdata.nil? ? Hash.new : pdata.dup
       pdata = { default_key => pdata } if pdata.is_a?(String)
       namespace_array!(pdata, :run_list, :platform)
       pdata
     end
 
     def normalized_suite_data(key, default_key, suite)
-      sdata = suite_data_for(suite).fetch(key, Hash.new).dup
+      sdata = suite_data_for(suite).fetch(key, Hash.new)
+      sdata = sdata.nil? ? Hash.new : sdata.dup
       sdata = { default_key => sdata } if sdata.is_a?(String)
       namespace_array!(sdata, :run_list, :suite)
       sdata
