@@ -271,10 +271,7 @@ module Kitchen
         elsif File.exists?(metadata_rb)
           cp_this_cookbook
         else
-          FileUtils.rmtree(tmpdir)
-          fatal("Berksfile, Cheffile, cookbooks/, or metadata.rb" +
-            " must exist in #{config[:kitchen_root]}")
-          raise UserError, "Cookbooks could not be found"
+          make_fake_cookbook
         end
 
         filter_only_cookbook_files
@@ -379,6 +376,17 @@ module Kitchen
 
         FileUtils.mkdir_p(cb_path)
         FileUtils.cp_r(glob, cb_path)
+      end
+
+      def make_fake_cookbook
+        info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " +
+          "so Chef will run with effectively no cookbooks. Is this intended?")
+        name = File.basename(config[:kitchen_root])
+        fake_cb = File.join(tmpbooks_dir, name)
+        FileUtils.mkdir_p(fake_cb)
+        File.open(File.join(fake_cb, "metadata.rb"), "wb") do |file|
+          file.write(%{name "#{name}\n"})
+        end
       end
 
       def resolve_with_berkshelf
