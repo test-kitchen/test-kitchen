@@ -158,12 +158,19 @@ Feature: Add Test Kitchen support to an existing project
     support "centos"
     """
     When I successfully run `kitchen init`
-    Then the file ".kitchen.yml" should contain:
+    Then the file ".kitchen.yml" should contain exactly:
     """
+    ---
+    driver: vagrant
+
+    platforms:
+      - name: ubuntu-12.04
+      - name: centos-6.4
+
     suites:
       - name: default
         run_list:
           - recipe[ntp::default]
         attributes:
-          kitchen: is_fun
+
     """
