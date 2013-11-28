@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['fnichol@nichol.ca']
   gem.description   = %q{A Chef convergence integration test harness}
   gem.summary       = gem.description
-  gem.homepage      = 'https://github.com/opscode/test-kitchen'
+  gem.homepage      = 'https://github.com/test-kitchen/test-kitchen'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = %w(kitchen)
