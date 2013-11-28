@@ -1,3 +1,52 @@
+## 1.0.0.rc.1 / 2013-11-28
+
+### Changes
+
+* Busser now installs into /tmp/busser by default on instances. (@fnichol)
+* Test Kitchen now works out of /tmp/kitchen for all providers by default. (@fnichol)
+* Remove Chef Omnibus `GEM_PATH` inclusion in Busser `GEM_PATH`. This fully isolates Busser and its runner plugins to a `GEM_HOME` and `GEM_PATH` in `<busser_root_path>/gems`. (@fnichol)
+* Add --provisioner to `kitchen init` to override default, chef\_solo. (@fnichol)
+
+### Bug fixes
+
+* Issue #240, issue #242, pull request #258: Fix Busser and Chef Zero sandboxing so that each tool is completely isolated from the Omnibus packages gems and each other. (@fnichol, @schisamo)
+
+### New features
+
+* Beef up Provisioners so that they resemble Drivers with user, default, inherited, and computed configuration..
+* Use `chef-client -z` (local mode) with ChefZero Provisioner for Chef versions >= 11.8.0. Support older versions of Chef with a best-effort fallback shim to use chef-zero. (@fnichol)
+* `kitchen list --debug` mode greatly improved showing rendered configuration for each Instance's Driver, Provisioner, and Busser configuration. (@fnichol)
+* Pull request #249: Add a data\_path which will be sync'd to the instance in the same manner as roles and data bags. (@oferrigni)
+* Test Kitchen no longer requires a cookbook to run; kitchen init anywhere! (@fnichol)
+* All settings in solo.rb (for ChefSolo) and client.rb (for ChefZero) can be modified or added with a `solo_rb:` or `client_rb:` block inside a `provisioner:` block. (@fnichol)
+* Add :ruby_bindr in a busser config block to set Busser's alternative remote path to Ruby. (@fnichol)
+* Busser install root can be configured and is relocatable, defaults to /tmp/busser. (@fnichol)
+* Test Kitchen root can be configured and is relocatable, defaults to /tmp/kitchen. (@fnichol)
+* Support installing a specific version of Busser. (@fnichol)
+
+### Improvements
+
+* Greatly simplify default .kitchen.yml. (@fnichol, @sethvargo)
+* Massive internal refactoring data manipulation logic. Data code now lives in Kitchen::DataMunger and was properly TDD'ed from the ground up with a full test suite. (@fnichol)
+* `require_chef_ommnibus` will default to `true` for all Chef provisioners and so can be omitted from .kitchen.yml files in most cases. (@fnichol)
+* Pull request #262: Use a configurable glob pattern to select Chef cookbook files. (@fnichol)
+* Pull request #141: Do not create a gitignore if there is no git repo. (@sethvargo)
+* Improve `kitchen init` smarts for detecting gems already in Gemfile. (@fnichol)
+* Expand all Chef-related local paths in Provisioner::ChefBase. (@fnichol)
+* Issue #227: Handle absolute paths. (@sethvargo)
+* Cope with nil values for run\_list and attributes entries in .kitchen.yml. (@fnichol)
+* Allow for nil values for `provisioner:`, `driver:`, & `busser:`. (@fnichol)
+* Pull request #253: Fix TravisCI badges. (@arangamani)
+* Pull request #254: Update references to test-kitchen org. (@josephholsten)
+* Pull request #256: Changed 'passed' to 'passing' in the Destroy options documentation. (@scarolan)
+* Pull request #259: Fix inconsistent date in CHANGELOG. (@ryansouza)
+* Extract Berkshelf & Librarian-Chef resolver code to classes. (@fnichol)
+* Full spec coverage for Suite. (@fnichol)
+* Full spec coverage for Platform. (@fnichol)
+* Full spec coverage for Instance. (@fnichol)
+* Full spec coverage for Kitchen::Provisioner.for\_plugin (@fnichol)
+
+
 ## 1.0.0.beta.4 / 2013-11-01
 
 ### Bug fixes
