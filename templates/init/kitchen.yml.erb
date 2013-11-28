@@ -1,6 +1,5 @@
-driver_plugin: <%= config[:driver_plugin] %>
-driver_config:
-  require_chef_omnibus: true
+---
+driver: <%= config[:driver_plugin] %>
 
 platforms:
   - name: ubuntu-12.04
@@ -13,5 +12,4 @@ suites:
       - <%= recipe %>
 <% end -%>
     attributes:
-      <%= config[:cookbook_name] %>:
-        config: value
+      kitchen: is_fun

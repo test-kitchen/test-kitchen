@@ -21,7 +21,7 @@ Feature: Add Test Kitchen support to an existing project
     And a directory named "test/integration/default" should exist
     And the file ".gitignore" should contain ".kitchen/"
     And the file ".gitignore" should contain ".kitchen.local.yml"
-    And the file ".kitchen.yml" should contain "driver_plugin: vagrant"
+    And the file ".kitchen.yml" should contain "driver: vagrant"
     And a file named "Gemfile" should not exist
     And a file named "Rakefile" should not exist
     And a file named "Thorfile" should not exist
@@ -52,13 +52,13 @@ Feature: Add Test Kitchen support to an existing project
     first driver given
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
-    Then the file ".kitchen.yml" should contain "driver_plugin: bluebox"
+    Then the file ".kitchen.yml" should contain "driver: bluebox"
 
   Scenario: Running init with no drivers sets the plugin_driver to the
     dummy driver
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
-    Then the file ".kitchen.yml" should contain "driver_plugin: dummy"
+    Then the file ".kitchen.yml" should contain "driver: dummy"
 
   Scenario: Running with a Rakefile file appends Kitchen tasks
     Given an empty file named "Gemfile"
@@ -93,7 +93,7 @@ Feature: Add Test Kitchen support to an existing project
     end
     """
 
-  Scenario: Running init with a the name attribute metadata.rb sets a run list
+  Scenario: Running init with a name in metadata.rb sets a run list
     Given an empty file named "Gemfile"
     Given a file named "metadata.rb" with:
     """
@@ -113,6 +113,5 @@ Feature: Add Test Kitchen support to an existing project
         run_list:
           - recipe[ntp::default]
         attributes:
-          ntp:
-            config: value
+          kitchen: is_fun
     """

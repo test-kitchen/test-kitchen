@@ -74,7 +74,6 @@ module Kitchen
         driver_plugin = Array(options[:driver]).first || 'dummy'
 
         template("kitchen.yml.erb", ".kitchen.yml", {
-          :cookbook_name => cookbook_name,
           :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
           :run_list => Array(run_list)
         })
