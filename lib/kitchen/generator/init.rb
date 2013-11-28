@@ -148,9 +148,8 @@ module Kitchen
       end
 
       def add_gem_to_gemfile
-        if not_in_file?("Gemfile", %r{gem 'test-kitchen'})
-          append_to_file("Gemfile",
-            %{gem 'test-kitchen', :group => :integration\n})
+        if not_in_file?("Gemfile", %r{gem ('|")test-kitchen('|")})
+          append_to_file("Gemfile", %{gem 'test-kitchen'\n})
           @display_bundle_msg = true
         end
       end
@@ -169,9 +168,8 @@ module Kitchen
       end
 
       def add_driver_to_gemfile(driver_gem)
-        if not_in_file?("Gemfile", %r{gem '#{driver_gem}'})
-          append_to_file("Gemfile",
-            %{gem '#{driver_gem}', :group => :integration\n})
+        if not_in_file?("Gemfile", %r{gem ('|")#{driver_gem}('|")})
+          append_to_file("Gemfile", %{gem '#{driver_gem}'\n})
           @display_bundle_msg = true
         end
       end

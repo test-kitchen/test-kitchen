@@ -35,11 +35,63 @@ Feature: Add Test Kitchen support to an existing project
     And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with an existing Gemfile appends to the Gemfile
-    Given an empty file named "Gemfile"
+    Given a file named "Gemfile" with:
+    """
+    source "https://rubygems.org"
+
+
+    """
     When I successfully run `kitchen init`
-    And the file "Gemfile" should contain "gem 'test-kitchen'"
-    And the file "Gemfile" should contain "gem 'kitchen-vagrant'"
+    Then the file "Gemfile" should contain exactly:
+    """
+    source "https://rubygems.org"
+
+    gem 'test-kitchen'
+    gem 'kitchen-vagrant'
+
+    """
     And the output should contain "You must run `bundle install'"
+
+  Scenario: Running init with a Gemfile containing test-kitchen does not
+    re-append
+    Given a file named "Gemfile" with:
+    """
+    source "https://rubygems.org"
+
+    gem "test-kitchen"
+
+    """
+    When I successfully run `kitchen init`
+    Then the file "Gemfile" should contain exactly:
+    """
+    source "https://rubygems.org"
+
+    gem "test-kitchen"
+    gem 'kitchen-vagrant'
+
+    """
+    And the output should contain "You must run `bundle install'"
+
+  Scenario: Running init with a Gemfile containing the driver gem does not
+    re-append
+    Given a file named "Gemfile" with:
+    """
+    source "https://rubygems.org"
+
+    gem "test-kitchen"
+    gem "kitchen-ec2"
+
+    """
+    When I successfully run `kitchen init --driver=kitchen-ec2`
+    Then the file "Gemfile" should contain exactly:
+    """
+    source "https://rubygems.org"
+
+    gem "test-kitchen"
+    gem "kitchen-ec2"
+
+    """
+    And the output should not contain "You must run `bundle install'"
 
   Scenario: Running init with multiple drivers appends to the Gemfile
     Given an empty file named "Gemfile"
