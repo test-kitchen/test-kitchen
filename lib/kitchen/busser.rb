@@ -203,8 +203,8 @@ module Kitchen
       ].join(" ")
 
       stream_file_cmd  = []
-      stream_file_cmd << "echo \"Uploading #{remote_path} (mode=#{perms})\""
-      stream_file_cmd << "echo \"#{Base64.encode64(local_file).gsub("\n", '')}\" | #{sudo}#{stream_cmd}"
+      stream_file_cmd << %{echo "Uploading #{remote_path} (mode=#{perms})"}
+      stream_file_cmd << %{echo "#{Base64.encode64(local_file).gsub("\n", '')}" | #{sudo}#{stream_cmd}}
       stream_file_cmd.join('; ')
     end
 
