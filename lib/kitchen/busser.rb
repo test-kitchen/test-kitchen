@@ -47,7 +47,7 @@ module Kitchen
       @test_base_path = File.expand_path(test_base_path, kitchen_root)
       @suite_name = suite_name
       @use_sudo = opts.fetch(:sudo, true)
-      @ruby_bindir = opts.fetch(:instance_ruby_bindir, DEFAULT_RUBY_BINDIR)
+      @ruby_bindir = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @root_path = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @version_string = opts.fetch(:version, "busser")
       @busser_bin = File.join(@root_path, "bin/busser")
