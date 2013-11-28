@@ -78,7 +78,8 @@ module Kitchen
     def combine_arrays!(root, key, *namespaces)
       if root.has_key?(key)
         root[key] = namespaces.
-          map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
+          map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
+          compact
       end
     end
 

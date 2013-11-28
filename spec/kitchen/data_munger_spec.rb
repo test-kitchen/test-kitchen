@@ -431,6 +431,21 @@ module Kitchen
             :run_list => ["one", "two"]
           })
         end
+
+        it "converts a nil run_list into an empty Array" do
+          DataMunger.new({
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => nil,
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => []
+          })
+        end
       end
 
       describe "in a platform" do
@@ -509,6 +524,21 @@ module Kitchen
           }).provisioner_data_for("sweet", "plat").must_equal({
             :name => "chefy",
             :run_list => ["one", "two"]
+          })
+        end
+
+        it "converts a nil run_list into an empty Array" do
+          DataMunger.new({
+            :platforms => [
+              {
+                :name => "plat",
+                :run_list => nil,
+                :provisioner => "chefy"
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => []
           })
         end
       end
@@ -612,6 +642,29 @@ module Kitchen
           }).provisioner_data_for("sweet", "plat").must_equal({
             :name => "chefy",
             :run_list => ["one", "two", "three", "four"]
+          })
+        end
+
+        it "concats to nil run_lists into an empty Array" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :platforms => [
+              {
+                :name => "plat",
+                :provisioner => {
+                  :run_list => nil
+                }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :run_list => nil
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :run_list => []
           })
         end
 
