@@ -55,3 +55,8 @@ Feature: Listing Test Kitchen instances
     When I run `kitchen list freebsd --bare`
     Then the exit status should not be 0
     And the output should contain "No instances for regex `freebsd', try running `kitchen list'"
+
+  Scenario: Listing instances with a bad regular expression
+    When I run `kitchen list *centos* --bare`
+    Then the exit status should not be 0
+    And the output should contain "Invalid Ruby regular expression"
