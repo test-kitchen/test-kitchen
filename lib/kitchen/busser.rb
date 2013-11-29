@@ -152,13 +152,6 @@ module Kitchen
     DEFAULT_ROOT_PATH = "/tmp/busser".freeze
 
     attr_reader :config
-    attr_reader :test_base_path
-    attr_reader :ruby_bindir
-    attr_reader :root_path
-    attr_reader :version_string
-    attr_reader :busser_bin
-    attr_reader :use_sudo
-    attr_reader :suite_name
 
     def validate_options(suite_name)
       if suite_name.nil?
@@ -214,10 +207,6 @@ module Kitchen
 
     def sudo
       config[:sudo] ? "sudo -E " : ""
-    end
-
-    def busser_gem
-      "busser"
     end
 
     def non_suite_dirs
