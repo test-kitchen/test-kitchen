@@ -62,6 +62,28 @@ module Kitchen
         Util.symbolized_hash(combined_hash)
       end
 
+      # Returns a Hash of configuration and other useful diagnostic information.
+      #
+      # @return [Hash] a diagnostic hash
+      def diagnose
+        result = Hash.new
+        result[:proces_erb] = @process_erb
+        result[:process_local] = @process_local
+        result[:process_global] = @process_global
+        if File.exists?(global_config_file)
+          result[:global_config] =
+            { :filename => global_config_file, :raw_data => global_yaml }
+        end
+        result[:project_config] =
+          { :filename => config_file, :raw_data => yaml }
+        if File.exists?(local_config_file)
+          result[:local_config] =
+            { :filename => local_config_file, :raw_data => local_yaml }
+        end
+        result[:combined_config] = { :raw_data => combined_hash }
+        result
+      end
+
       protected
 
       def default_config_file

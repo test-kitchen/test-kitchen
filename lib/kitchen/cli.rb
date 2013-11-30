@@ -41,8 +41,9 @@ module Kitchen
       super
       $stdout.sync = true
       Kitchen.logger = Kitchen.default_file_logger
+      @loader = Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML'])
       @config = Kitchen::Config.new(
-        :loader     => Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML']),
+        :loader     => @loader,
         :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
       )
     end
@@ -51,19 +52,48 @@ module Kitchen
     method_option :bare, :aliases => "-b", :type => :boolean,
       :desc => "List the name of each instance only, one per line"
     method_option :debug, :aliases => "-d", :type => :boolean,
-      :desc => "Show computed driver configuration for each instance"
+      :desc => "[Deprecated] Please use `kitchen diagnose'"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
       update_config!
       result = parse_subcommand(args.first)
       if options[:debug]
-        Array(result).each { |i| debug_instance(i) }
+        die task, "The --debug flag on the list subcommand is deprecated, " +
+          "please use `kitchen diagnose'."
       elsif options[:bare]
         say Array(result).map { |i| i.name }.join("\n")
       else
         list_table(result)
       end
+    end
+
+    desc "diganose [(all|<REGEX>)]", "Show computed diagnostic configuration"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
+    method_option :loader, :type => :boolean,
+      :desc => "Include data loader diagnostics"
+    method_option :instances, :type => :boolean, :default => true,
+      :desc => "Include instances diagnostics"
+    method_option :all, :type => :boolean,
+      :desc => "Include all diagnostics"
+    def diagnose(*args)
+      update_config!
+
+      loader = if options[:all] || options[:loader]
+        @loader
+      else
+        nil
+      end
+      instances = if options[:all] || options[:instances]
+        parse_subcommand(args.first)
+      else
+        []
+      end
+
+      require 'yaml'
+      Kitchen::Diagnostic.new(:loader => loader, :instances => instances).
+        read.to_yaml.each_line { |line| say(line) }
     end
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
@@ -339,24 +369,6 @@ module Kitchen
         color_pad(instance.provisioner.name),
         format_last_action(instance.last_action)
       ]
-    end
-
-    def debug_instance(instance)
-      say "--------"
-      say "Instance: #{instance.name}"
-      say "Driver (#{instance.driver.name}):"
-      instance.driver.config_keys.sort.each do |key|
-        say "    #{key}: #{instance.driver[key].inspect}"
-      end
-      say "Provisioner (#{instance.provisioner.name}):"
-      instance.provisioner.config_keys.sort.each do |key|
-        say "    #{key}: #{instance.provisioner[key].inspect}"
-      end
-      say "Busser (#{instance.busser.name}):"
-      instance.busser.config_keys.sort.each do |key|
-        say "    #{key}: #{instance.busser[key].inspect}"
-      end
-      say ""
     end
 
     def color_pad(string)

@@ -193,6 +193,18 @@ module Kitchen
       Kernel.exec(command, *args, options)
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information.
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose
+      result = Hash.new
+      [:state_file, :driver, :provisioner, :busser].each do |sym|
+        obj = send(sym)
+        result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
+      end
+      result
+    end
+
     def last_action
       state_file.read[:last_action]
     end

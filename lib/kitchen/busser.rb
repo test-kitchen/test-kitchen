@@ -77,6 +77,15 @@ module Kitchen
       config[attr]
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information.
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose
+      result = Hash.new
+      config_keys.sort.each { |k| result[k] = config[k] }
+      result
+    end
+
     # Returns a command string which installs Busser, and installs all
     # required Busser plugins for the suite.
     #

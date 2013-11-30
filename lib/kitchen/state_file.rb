@@ -67,6 +67,16 @@ module Kitchen
       FileUtils.rm_f(file_name) if File.exists?(file_name)
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information.
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose
+      raw = read
+      result = Hash.new
+      raw.keys.sort.each { |k| result[k] = raw[k] }
+      result
+    end
+
     private
 
     attr_reader :file_name

@@ -72,6 +72,15 @@ module Kitchen
 
       def cleanup_sandbox ; end
 
+      # Returns a Hash of configuration and other useful diagnostic information.
+      #
+      # @return [Hash] a diagnostic hash
+      def diagnose
+        result = Hash.new
+        config_keys.sort.each { |k| result[k] = config[k] }
+        result
+      end
+
       protected
 
       attr_reader :config
