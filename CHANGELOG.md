@@ -1,3 +1,27 @@
+## 1.0.0.rc.2 / 2013-11-30
+
+### Changes
+
+* Generate a more explict form for driver & provisioner in `kitchen init`. ([@fnichol][])
+* Set `Busser[:sudo]` to `false` by default. ([@fnichol][])
+
+### Bug fixes
+
+* Properly handle `encrypted_data_bag_secret_key_path` under a suite. ([@fnichol][])
+* Pull request [#265][]: Busser Fixes for Greybeard UNIX. ([@schisamo][])
+* Pull request [#265][]: Busser config key name is `sudo` not `use_sudo`. ([@schisamo][])
+
+### New features
+
+* Add diagnostic facility to Test Kitchen, usable with `kitchen diagnose`. ([@fnichol][])
+
+### Improvements
+
+* Pull request [#266][]: Generate more a helpful error when supplying an invalid Regexp with CLI. ([@fnichol][])
+* Improve logging of file transfers to instances in converge action. ([@fnichol][])
+* Add feature test coverage for `kitchen list` subcommand. ([@fnichol][])
+
+
 ## 1.0.0.rc.1 / 2013-11-28
 
 ### Changes
@@ -338,6 +362,8 @@ The initial release.
 [#258]: https://github.com/opscode/test-kitchen/issues/258
 [#259]: https://github.com/opscode/test-kitchen/issues/259
 [#262]: https://github.com/opscode/test-kitchen/issues/262
+[#265]: https://github.com/opscode/test-kitchen/issues/265
+[#266]: https://github.com/opscode/test-kitchen/issues/266
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
