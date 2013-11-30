@@ -21,7 +21,11 @@ Feature: Add Test Kitchen support to an existing project
     And a directory named "test/integration/default" should exist
     And the file ".gitignore" should contain ".kitchen/"
     And the file ".gitignore" should contain ".kitchen.local.yml"
-    And the file ".kitchen.yml" should contain "driver: vagrant"
+    And the file ".kitchen.yml" should contain:
+    """
+    driver:
+      name: vagrant
+    """
     And a file named "Gemfile" should not exist
     And a file named "Rakefile" should not exist
     And a file named "Thorfile" should not exist
@@ -104,24 +108,40 @@ Feature: Add Test Kitchen support to an existing project
     first driver given
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
-    Then the file ".kitchen.yml" should contain "driver: bluebox"
+    Then the file ".kitchen.yml" should contain:
+    """
+    driver:
+      name: bluebox
+    """
 
   Scenario: Running init with no drivers sets the plugin_driver to the
     dummy driver
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
-    Then the file ".kitchen.yml" should contain "driver: dummy"
+    Then the file ".kitchen.yml" should contain:
+    """
+    driver:
+      name: dummy
+    """
 
   Scenario: Running init without a provisioner sets the default provisioner
     to chef_solo in .kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
-    Then the file ".kitchen.yml" should contain "provisioner: chef_solo"
+    Then the file ".kitchen.yml" should contain:
+    """
+    provisioner:
+      name: chef_solo
+    """
 
   Scenario: Running init with a provisioner sets the provisioner in .kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver --provisioner=chef_zero`
-    Then the file ".kitchen.yml" should contain "provisioner: chef_zero"
+    Then the file ".kitchen.yml" should contain:
+    """
+    provisioner:
+      name: chef_zero
+    """
 
   Scenario: Running with a Rakefile file appends Kitchen tasks
     Given an empty file named "Gemfile"
@@ -172,8 +192,11 @@ Feature: Add Test Kitchen support to an existing project
     Then the file ".kitchen.yml" should contain exactly:
     """
     ---
-    driver: vagrant
-    provisioner: chef_solo
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
 
     platforms:
       - name: ubuntu-12.04

@@ -1,6 +1,9 @@
 ---
-driver: <%= config[:driver_plugin] %>
-provisioner: <%= config[:provisioner] %>
+driver:
+  name: <%= config[:driver_plugin] %>
+
+provisioner:
+  name: <%= config[:provisioner] %>
 
 platforms:
   - name: ubuntu-12.04
