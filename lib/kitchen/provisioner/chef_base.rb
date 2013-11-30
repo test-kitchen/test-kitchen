@@ -171,6 +171,7 @@ module Kitchen
       def create_chef_sandbox
         @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
         File.chmod(0755, @tmpdir)
+        info("Preparing files for transfer")
         debug("Creating local sandbox in #{tmpdir}")
 
         yield if block_given?
@@ -279,7 +280,7 @@ module Kitchen
       end
 
       def filter_only_cookbook_files
-        info("Removing non-cookbook files in sandbox")
+        info("Removing non-cookbook files before transfer")
         FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
       end
 
