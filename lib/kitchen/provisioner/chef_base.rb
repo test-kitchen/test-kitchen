@@ -62,7 +62,7 @@ module Kitchen
       end
 
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
-        provisioner.calculate_path("encrypted_data_bag_secret", :file)
+        provisioner.calculate_path("encrypted_data_bag_secret_key", :file)
       end
 
       def instance=(instance)
@@ -131,7 +131,8 @@ module Kitchen
       attr_reader :tmpdir
 
       def expand_paths!
-        paths = %w{test_base data data_bags environments nodes roles}
+        paths = %w{test_base data data_bags encrypted_data_bag_secret_key
+          environments nodes roles}
         paths.map{ |p| "#{p}_path".to_sym }.each do |key|
           unless config[key].nil?
             config[key] = File.expand_path(config[key], config[:kitchen_root])

@@ -85,8 +85,9 @@ module Kitchen
 
     def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
-        %w{data data_bags environments nodes roles}.each do |key|
-          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
+        %w{data data_bags encrypted_data_bag_secret_key
+          environments nodes roles}.each do |key|
+            move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
         end
       end
     end
