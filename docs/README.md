@@ -81,7 +81,6 @@ next:
   url: installing-kitchen
   text: "Installing KitchenCI"
 ---
-\~~~
 ~~~~~~~
 
 ...will yield this output: 
