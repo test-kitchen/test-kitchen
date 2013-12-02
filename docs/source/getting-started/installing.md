@@ -40,7 +40,7 @@ Successfully installed test-kitchen-1.0.0
 Now if the version of Test Kitchen is important to you, then you can add a `-v <version_string>` to the end of the `gem install` command. Alternatively if you prefer living on the edge, adding a `--pre` to the install command will give you the latest alpha/beta/release candiate release. Note that these releases may not be as stable but your courage and feedback is greatly appreciated.
 
 || Pro-Tip
-|| If you are familiar with and use [Bundler](http://bundler.io) then you can safely add `gem "test-kitchen"` to your project's **Gemfile**. Just don't forget to `bundle install`.</p>
+|| If you are familiar with and use [Bundler](http://bundler.io) then you can safely add `gem "test-kitchen"` to your project's **Gemfile**. Just don't forget to `bundle install`.
 
 Now let's verify that Test Kitchen is installed. To save on typing, the tool's main command is `kitchen`. So to get the currently installed version we type:
 
