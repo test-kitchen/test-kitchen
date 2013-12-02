@@ -8,7 +8,7 @@ next:
   url: "adding-feature"
 ---
 
-News of the amazing Git cookbook starts to spread to all corners of your workplace. Now a colleague has expressed interest in running the cookbook on a fleet of older Ubuntu 10.04 systems. No problem, they should be good to go, right? Just to be sure let's add explicit testing for this platform.
+News of the amazing Git cookbook starts to spread to all corners of your workplace. Now a colleague has expressed interest in running the cookbook on a fleet of older Ubuntu 10.04 systems.  You mention that 2009 called, and it wants its iPhone 3 and Three Wolf Moon t-shirt back, but they just look at you blankly.  You muse over whether your not inconsiderable talents are wasted in this job, and then press on.  No problem, they should be good to go, right? Just to be sure let's add explicit testing for this platform.
 
 Open `.kitchen.yml` in your editor and add a `ubuntu-10.04` entry to the platforms list:
 
