@@ -1,0 +1,54 @@
+/*
+    CSS modifications for the /getting-started page(s) 
+*/
+
+#githubs {
+  display: block;
+  h2 {
+    display: inline;
+  };
+  a {
+    display: inline;
+    /*float: right;*/
+    height: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    transition:all .5s ease-in; 
+      -o-transition:all .5s ease-in; 
+      -moz-transition:all .5s ease-in; 
+      -webkit-transition:all .5s ease-in;
+  };
+  a:hover {
+    text-decoration: none;
+    font-size: 150%;
+    color: #42484d;
+    transition:all .5s ease-in; 
+      -o-transition:all .5s ease-in; 
+      -moz-transition:all .5s ease-in; 
+      -webkit-transition:all .5s ease-in;
+  }
+}
+
+#suggestions {
+  margin-bottom: 50px;
+  .btn {
+    width: 100%;
+  }
+}
+
+.protip {
+  display: block;
+}
+
+table {
+  @extend .well;
+  @extend .table;
+  @extend .protip;
+  tr:nth-child(1) {
+    background-color: #e4e4e4;
+    td:nth-child(1):after {
+      visibility: visible;
+      content: ">";
+    };
+  };
+}

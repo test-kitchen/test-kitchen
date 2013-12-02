@@ -1,0 +1,21 @@
+%html{ lang: "en" }
+  %head
+    %meta{ charset: "utf-8" }
+    %meta{ "http-equiv" => "X-UA-Compatible", "content" => "IE=edge" }
+    %title= "kitchen-docs preview server"
+    %meta{ name: "description", content: "Test Kitchen" } 
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1.0" } 
+    %meta{ "http-equiv" => "refresh", "content" => "0; url=/getting-started/" }
+
+    = stylesheet_link_tag "kitchen"
+    = stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700"
+    = stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans"
+    = stylesheet_link_tag "http://fonts.googleapis.com/css?family=Inconsolata"
+
+  %body
+
+    = yield
+
+  = javascript_include_tag "vendor/modernizr-2.6.2.min"
+  = javascript_include_tag "all"
+

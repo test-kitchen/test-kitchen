@@ -1,0 +1,11 @@
+/* Theme Overrides */
+$font-size-base: 16px;
+$line-height-base: 1.5; // 24/16
+$font-family-monospace: 'Inconsolata', Monaco, Menlo, Consolas, "Courier New", monospace;
+$brand-primary: #f1505a;
+$link-color: #f1505a;
+
+/* CSS Sources */
+@import "bootstrap";
+@import "pages/getting-started";
+@import "code-highlighting";
