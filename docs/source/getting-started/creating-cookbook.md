@@ -22,7 +22,7 @@ $ cd git-cookbook
 
 Note that the directory doesn't matter to Test Kitchen so feel free to call this directory `git`, `chef-git`, `chef-git-cookbook`, or `fuzzypants_git`.
 
-Next we need a [metadata.rb](http://docs.opscode.com/config_rb_metadata.html) file so that various Chef-aware tooling can understand our cookbook. Test Kitchen is no different and there are minimally only 2 things that Test Kitchen cares about: cookbook **name** and cookbook **version** attributes. Use your favorite text editor and create a file called `metadata.rb` with the following:
+Next we need a [metadata.rb](http://docs.opscode.com/config_rb_metadata.html) file so that various Chef-aware tooling can understand our cookbook. Test Kitchen is one such tool.  All it relaly cares about are the **name** and **version** attributes of the cookbook. Use your favorite text editor and create a file called `metadata.rb` with the following:
 
 
 ~~~ruby
@@ -71,12 +71,12 @@ A few directories were created but these are only a convenience--you don't stric
 
 You can see that you have a `.gitignore` file in your project's root which will tell Git to never commit a directory called `.kitchen` and something called `.kitchen.local.yml`. Don't worry about these for now, just some housekeeping details.
 
-Finally, a gem call `kitchen-vagrant` was installed. By itself Test Kitchen can't do very much. It needs one or more **Drivers** which are responsible for managing the virtual machines we need for testing. At present there are many different Test Kitchen Drivers but we're going to stick with the [Kitchen Vagrant Driver](https://github.com/opscode/kitchen-vagrant) for now.
+Finally, a gem called `kitchen-vagrant` was installed. By itself Test Kitchen can't do very much. It needs one or more **Drivers** which are responsible for managing the virtual machines we need for testing. At present there are many different Test Kitchen Drivers but we're going to stick with the [Kitchen Vagrant Driver](https://github.com/opscode/kitchen-vagrant) for now.
 
 || Pro-Tip
 || The Kitchen Vagrant Driver is the default driver chosen when you omit `--driver-kitchen-vagrant` from the command. After a few projects, feel free to simply `kitchen init`.
 
-Let's turn our attention to the `.kitchen.yml` file for a minute. While Test Kitchen may have created the initial file automatically, it's expected that you read and edit this file. After all, you know what you want to test... right? Opening this file in your editor of choice we see something like the following:
+Let's turn our attention to the `.kitchen.yml` file for a minute. While Test Kitchen may have created the initial file automatically, it's expected that you will read and edit this file. After all, you know what you want to test... right? Opening this file in your editor of choice we see something like the following:
 
 ~~~yaml
 ---
@@ -99,12 +99,12 @@ suites:
 
 Very briefly we can cover the 4 main sections you're likely to find in a `.kitchen.yml` file:
 
-* `driver`: This is the default configuration passed to each Driver instance you can set things like credentials, ssh usernames, sudo requirements, etc. Each Driver is reponsible for requiring and using the configuration here.
-* `driver.name`: This tells Test Kitchen that we want to use the `kitchen-vagrant` driver by default unless otherwise specified.
+* `driver`: This is where we configure the behaviour of the Kitchen Driver - the component that is responsible for creating a machine that we'll use to test our cookbook.  Here we set up basics like credentials, ssh usernames, sudo requirements, etc. Each Driver is reponsible for requiring and using the configuration here. Under this section we have `driver.name`: This tells Test Kitchen that we want to use the `kitchen-vagrant` driver by default unless otherwise specified.
+* `provisioner`: This tells Test Kitchen how to run Chef, to apply the code in our cookbook to the machine under test.  The default and simplest approach is to use `chef-solo`, but other options are available, and ultimately Test Kitchen doesn't care how the infrastructure is built - it could theoretically be with Puppet, Ansible, or Perl for all it cares.
 * `platforms`: This is a list of operation systems on which we want to run our code. Note that the operation system's version, architecture, cloud environment, etc. might be relavent to what Test Kitchen considers a **Platform**.
-* `suites`: This is a list of Chef run-list and node attribute setups that we want run on each **Platform** above. For example, we might want to test the MySQL client cookbook code seperately from the server cookbook code for maximum isolation.
+* `suites`: This section defines what we want to test.  It includes the Chef run-list and any node attribute setups that we want run on each **Platform** above. For example, we might want to test the MySQL client cookbook code seperately from the server cookbook code for maximum isolation.
 
-Let's say for argument's sake that we only care about running our Chef cookbook on Ubuntu 12.04 distributions. In that case, edit the `.kitchen.yml` file so that the list of `platforms` has only one entry like so:
+Let's say for argument's sake that we only care about running our Chef cookbook on Ubuntu 12.04 distributions. In that case, we can edit the `.kitchen.yml` file so that the list of `platforms` has only one entry like so:
 
 ~~~yaml
 ---
