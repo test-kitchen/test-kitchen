@@ -73,7 +73,7 @@ To highlight a block of code, start and finish the block with three or more tild
 
 For example, this code: 
 
-~~~~~
+~~~~~~~
 ~~~yaml
 ---
 title: "KitchenCI Overview"
@@ -82,18 +82,18 @@ next:
   text: "Installing KitchenCI"
 ---
 ~~~
-~~~~~
+~~~~~~~
 
 ...will yield this output: 
 
-~~~yaml
+~~~~yaml
 ---
 title: "KitchenCI Overview"
 next:
   url: installing-kitchen
   text: "Installing KitchenCI"
 ---
-~~~
+~~~~
 
 See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#fenced-code-blocks) for more information.
 
