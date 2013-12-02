@@ -4,7 +4,7 @@ title: Running Kitchen Test
 
 Now it's time to introduce to the **test** meta-action which helps you automate all the previous actions so far into one command. Recall that we currently have our instance in a "verified" state. With this in mind, let's run `kitchen test`:
 
-```
+~~~
 $ kitchen test default-ubuntu-1204
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Cleaning up any prior instances of <default-ubuntu-1204>
@@ -126,7 +126,7 @@ ok 1 git binary is found in PATH
        Finished destroying <default-ubuntu-1204> (0m3.05s).
        Finished testing <default-ubuntu-1204> (1m53.31s).
 -----> Kitchen is finished. (1m53.58s)
-```
+~~~
 
 There's only one remaining action left that needs a mention: the **Destroy Action** which... destroys the instance. With this in mind, here's what Test Kitchen is doing in the **Test Action**:
 
@@ -145,10 +145,10 @@ A few details with regards to test:
 
 Finally, let's check the status of the instance:
 
-```
+~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
-```
+~~~
 
 Back to square one.

@@ -1,5 +1,9 @@
 ---
 guide:
+  -
+    url: "getting-started"
+    name: "Getting Started"
+    hide: true
   - 
     url: "introduction"
     name: "Introduction"

@@ -6,7 +6,7 @@ News of the amazing Git cookbook starts to spread to all corners of your workpla
 
 Open `.kitchen.yml` in your editor and add a `ubuntu-10.04` entry to the platforms list:
 
-```yaml
+~~~yaml
 ---
 driver_plugin: vagrant
 driver_config:
@@ -21,21 +21,21 @@ suites:
 - name: default
   run_list: ["recipe[git]"]
   attributes: {}
-```
+~~~
 
 And run `kitchen list` to confirm the introduction of our latest instance:
 
-```
+~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
 default-ubuntu-1004  Vagrant  Chef Solo    <Not Created>
 default-centos-64    Vagrant  Chef Solo    <Not Created>
-```
+~~~
 
 Now we'll run the **test** subcommand and go grab a coffee:
 
-```
+~~~
 $ kitchen test 10
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Cleaning up any prior instances of <default-ubuntu-1004>
@@ -152,11 +152,11 @@ HTTP request sent, awaiting response...        200 OK
 >>>>>> Class: Kitchen::ActionFailed
 >>>>>> Message: SSH exited (1) for command: [sudo -E chef-solo --config /tmp/kitchen-chef-solo/solo.rb --json-attributes /tmp/kitchen-chef-solo/dna.json  --log_level info]
 >>>>>> ----------------------
-```
+~~~
 
 Oh noes! Argh, why!? Let's login to the instance and see if we can figure out what the correct package is:
 
-```
+~~~
 $ kitchen login 10
 Linux default-ubuntu-1004 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux
 Ubuntu 10.04.4 LTS
@@ -187,11 +187,11 @@ git-gui - fast, scalable, distributed revision control system (GUI)
 git-svn - fast, scalable, distributed revision control system (svn interoperability)
 gitweb - fast, scalable, distributed revision control system (web interface)
 vagrant@default-ubuntu-1004:~$ exit
-```
+~~~
 
 Okay, it looks like we want to install the `git-core` package for this release of Ubuntu. Let's fix this up back in the default recipe. Open up `recipes/default.rb` and edit to something like:
 
-```ruby
+~~~ruby
 if node['platform'] == "ubuntu" && node['platform_version'].to_f <= 10.04
   package "git-core"
 else
@@ -199,11 +199,11 @@ else
 end
 
 log "Well, that was too easy"
-```
+~~~
 
 This may not be pretty but let's verify that it works first on Ubuntu 10.04:
 
-```
+~~~
 > kitchen verify 10
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Converging <default-ubuntu-1004>
@@ -266,11 +266,11 @@ Fetching: busser-0.4.1.gem (100%)
        ok 1 git binary is found in PATH
        Finished verifying <default-ubuntu-1004> (0m1.02s).
 -----> Kitchen is finished. (0m25.98s)
-```
+~~~
 
 Back to green, good. Let's verify that the other two instances are still good. We'll use a Ruby regular expression to glob the two other instances into one Test Kitchen command:
 
-```
+~~~
 $ kitchen verify '(12|64)'
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Creating <default-ubuntu-1204>
@@ -477,11 +477,11 @@ Fetching: busser-0.4.1.gem (100%)
 -----> Kitchen is finished. (5m8.38s)
 $ echo $?
 0
-```
+~~~
 
 We've successfully verified all three instances, so let's shut them down.
 
-```
+~~~
 $ kitchen destroy
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Destroying <default-ubuntu-1204>
@@ -506,13 +506,13 @@ $ kitchen destroy
        Vagrant instance <default-centos-64> destroyed.
        Finished destroying <default-centos-64> (0m3.10s).
 -----> Kitchen is finished. (0m10.27s)
-```
+~~~
 
 And finally commit our code updates:
 
-```
+~~~
 $ git add .kitchen.yml recipes/default.rb
 > git commit -m "Add support for Ubuntu 10.04."
 [master 99073a6] Add support for Ubuntu 10.04.
  2 files changed, 6 insertions(+), 1 deletion(-)
-```
+~~~

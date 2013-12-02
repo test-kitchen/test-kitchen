@@ -10,16 +10,14 @@ Now if you **are** interested in writing some tests, Test Kitchen has several op
 
 To keep things simple we're going to use the `busser-bats` runner plugin which uses the [Bash Automated Testing System](https://github.com/sstephenson/bats) also known as **bats**.
 
-<div class="well">
-  <h4><span class="glyphicon glyphicon-pushpin"></span> Pro-Tip</h4>
-  <p>Something about shell code and platform portability</p>
-</div>
+|| Pro-Tip
+|| Something about shell code and platform portability
 
 We need to put our test files in a specifc location, so let's create the directory:
 
-```
+~~~
 $ mkdir -p test/integration/default/bats
-```
+~~~
 
 It looks long and dense, but each directory has some meaning to Test Kitchen and the Busser helper:
 
@@ -29,13 +27,13 @@ It looks long and dense, but each directory has some meaning to Test Kitchen and
 
 Okay, long directories are long. Let's write a test. Create a new file called `test/integration/default/bats/git_installed.bats` with the following:
 
-```sh
+~~~sh
 #!/usr/bin/env bats
 
 @test "git binary is found in PATH" {
   run which git
   [ "$status" -eq 0 ]
 }
-```
+~~~
 
 Can you guess what this does even if you haven't seen a bats test before? If not, then take a look at bats' [README](https://github.com/sstephenson/bats). Otherwise your new friends in the [#chef](http://webchat.freenode.net/?channel=chef) IRC chatroom should be able to help.

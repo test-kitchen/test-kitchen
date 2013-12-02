@@ -4,7 +4,7 @@ title: Adding a Platform
 
 Now that we are masters of the Ubuntu platform, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-6.4` line to your platforms list so that it resembles:
 
-```yaml
+~~~yaml
 ---
 driver_plugin: vagrant
 driver_config:
@@ -18,16 +18,16 @@ suites:
 - name: default
   run_list: ["recipe[git]"]
   attributes: {}
-```
+~~~
 
 Now let's check the status of our instances:
 
-```
+~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
 default-centos-64    Vagrant  Chef Solo    <Not Created>
-```
+~~~
 
 We're going to use two shortcuts here in the next command:
 
@@ -36,7 +36,7 @@ We're going to use two shortcuts here in the next command:
 
 Let's see how CentOS runs our cookbook:
 
-```
+~~~
 $ kitchen verify 64
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Creating <default-centos-64>
@@ -139,11 +139,11 @@ Fetching: busser-0.4.1.gem (100%)
        ok 1 git binary is found in PATH
        Finished verifying <default-centos-64> (0m1.11s).
 -----> Kitchen is finished. (3m43.47s)
-```
+~~~
 
 Nice! We've verified that our cookbook works on Ubuntu 12.04 and CentOS 6.4. Since the CentOS instance will hang out for no good reason, let's kill it for now:
 
-```
+~~~
 $ kitchen destroy
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Destroying <default-ubuntu-1204>
@@ -156,7 +156,7 @@ $ kitchen destroy
        Vagrant instance <default-centos-64> destroyed.
        Finished destroying <default-centos-64> (0m3.09s).
 -----> Kitchen is finished. (0m3.39s)
-```
+~~~
 
 Interesting. Test Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
 
@@ -164,18 +164,18 @@ Interesting. Test Kitchen tried to destroy both instances, one that was created 
 
 Let's make sure everything has been destroyed:
 
-```
+~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
 default-centos-64    Vagrant  Chef Solo    <Not Created>
-```
+~~~
 
 There's no production code change so far but we did modify the `.kitchen.yml` file, so let's commit that:
 
-```
+~~~
 $ git add .kitchen.yml
 > git commit -m "Add support for CentOS 6.4."
 [master 528ac72] Add support for CentOS 6.4.
  1 file changed, 1 insertion(+)
-```
+~~~

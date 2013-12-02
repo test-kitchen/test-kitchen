@@ -4,7 +4,7 @@ title: Running Kitchen Verify
 
 Now to put our test to the test. For this we'll use the **verify** subcommand:
 
-```
+~~~
 $ kitchen verify default-ubuntu-1204
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Setting up <default-ubuntu-1204>
@@ -33,7 +33,7 @@ ok 1 git binary is found in PATH
 -----> Kitchen is finished. (0m10.89s)
 $ echo $?
 0
-```
+~~~
 
 > **All right!**
 
@@ -45,36 +45,36 @@ A few things of note from the output above:
 
 Let's check the status of our instance again:
 
-```
+~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  Chef Solo    Verified
-```
+~~~
 
 Quick, commit!
 
-```
+~~~
 $ git add test/integration/default/bats/git_installed.bats
 $ git commit -m "Add bats test for default suite."
 [master 85a73f1] Add bats test for default suite.
  1 file changed, 6 insertions(+)
  create mode 100644 test/integration/default/bats/git_installed.bats
-```
+~~~
 
 So what would a failing test look like? Let's see. Open `test/integration/default/bats/git_installed.bats` in your editor of choice and edit the test so that we're looking for the `gittt` command:
 
-```sh
+~~~sh
 #!/usr/bin/env bats
 
 @test "gittt binary is found in PATH" {
   run which gittt
   [ "$status" -eq 0 ]
 }
-```
+~~~
 
 And re-run the **verify** subcommand:
 
-```
+~~~
 $ kitchen verify default-ubuntu-1204
 -----> Starting Kitchen (v1.0.0.beta.3)
 -----> Verifying <default-ubuntu-1204>
@@ -93,13 +93,13 @@ Command [/opt/busser/vendor/bats/bin/bats /opt/busser/suites/bats] exit code was
 >>>>>> ----------------------
 $ echo $?
 10
-```
+~~~
 
 Not quite as pretty and happy looking. Thanks to our well-crafted test case name our bats test is telling us what is up: "not ok 1 gittt binary is found in PATH". Yep, not a surprise. Also note that the exit code is no longer **0** but is **10**.
 
 A quick revert back to our clean code gets us back to green:
 
-```
+~~~
 $ git checkout test/integration/default/bats/git_installed.bats
 $ kitchen verify default-ubuntu-1204
 -----> Starting Kitchen (v1.0.0.beta.3)
@@ -111,6 +111,6 @@ Uploading /opt/busser/suites/bats/git_installed.bats (mode=0644)
 ok 1 git binary is found in PATH
        Finished verifying <default-ubuntu-1204> (0m1.08s).
 -----> Kitchen is finished. (0m1.38s)
-```
+~~~
 
 It's worth pointing out that Test Kitchen is freshly uploading all your tests files for **every** invocation of the **Verify Action**. Another example of Test Kitchen optimizing for **freshness of code and configuration over speed**.

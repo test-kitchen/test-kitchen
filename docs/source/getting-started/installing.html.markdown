@@ -21,7 +21,7 @@ I know, it sounds like a lot of work but don't depair. We're going to follow the
 
 Installing Test Kitchen from RubyGems goes like this:
 
-```
+~~~
 $ gem install test-kitchen
 Fetching: timers-1.1.0.gem (100%)
 Successfully installed timers-1.1.0
@@ -48,18 +48,18 @@ Successfully installed safe_yaml-0.9.7
 Fetching: test-kitchen-1.0.0.beta.3.gem (100%)
 Successfully installed test-kitchen-1.0.0.beta.3
 12 gems installed
-```
+~~~
 
 Now if the version of Test Kitchen is important to you, then you can add a `-v <version_string>` to the end of the `gem install` command. Alternatively if you prefer living on the edge, adding a `--pre` to the install command will give you the latest alpha/beta/release candiate release. Note that these releases may not be as stable but your courage and feedback is greatly appreciated.
 
-<div class="well">
-  <h4><span class="glyphicon glyphicon-pushpin"></span> Pro-Tip</h4>
-  <p>If you are familiar with and use <a href="http://bundler.io/">Bundler</a> then you can safely add <code>gem "test-kitchen"</code> to your project's <strong>Gemfile</strong>. Just don't forget to <code>bundle install</code>.</p>
-</div>
+
+|| *Pro-Tip*
+|| If you are familiar with and use <a href="http://bundler.io/">Bundler</a> then you can safely add `gem "test-kitchen"` to your project's *Gemfile*. Just don't forget to `bundle install`.
+
 
 Now let's verify that Test Kitchen is installed. To save on typing, the tool's main command is `kitchen`. So to get the currently installed version we type:
 
-```
+~~~
 $ kitchen version
 Test Kitchen version 1.0.0.beta.3
-```
+~~~
