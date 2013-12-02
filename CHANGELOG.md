@@ -1,3 +1,10 @@
+## 1.0.0 / 2013-12-01
+
+### Bug fixes
+
+* Ensure Kitchen::Busser can stream multiple files (split with ;). ([@fnichol][])
+
+
 ## 1.0.0.rc.2 / 2013-11-30
 
 ### Changes
