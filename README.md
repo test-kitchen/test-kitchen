@@ -1,135 +1,123 @@
 # Test Kitchen
 
+[![Gem Version](https://badge.fury.io/rb/test-kitchen.png)](http://badge.fury.io/rb/test-kitchen)
 [![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.png?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
 [![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
+[![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.png)](https://gemnasium.com/test-kitchen/test-kitchen)
 
-A convergence integration test harness for configuration management systems.
+|             |                                               |
+|-------------|-----------------------------------------------|
+| Website     | http://kitchen.ci                             |
+| Source Code | https://github.com/test-kitchen/test-kitchen  |
+| IRC         | [#kitchenci][irc] channel on Freenode         |
+| Twitter     | [@opskitchen][twitter]                        |
 
-# Getting started
+> **Test Kitchen is an integration tool for developing and testing
+> infrastructure code and software on target platforms.**
 
-Project Setup
--------------
+## Getting Started Guide
 
-Install the `test-kitchen` gem. `--pre` is necessary because Test Kitchen 1.0.0 has not been released yet.
+To learn how to install and setup Test Kitchen for developing infrastructure
+code, check out the [Getting Started Guide][guide].
 
-```text
-$ gem install test-kitchen --pre
+If you want to get going super fast, then try the Quick Start next...
+
+## Quick Start
+
+Test Kitchen is a RubyGem and can be installed with:
+
+```
+$ gem install test-kitchen
 ```
 
-This will expose the `test-kitchen` CLI. Run `kitchen init` to get started:
+If you use Bundler, you can add `gem "test-kitchen"` to your Gemfile and make
+sure to run `bundle install`.
 
-```text
+Next add support to your library, Chef cookbook, or empty project with `kitchen
+init`:
+
+```
 $ kitchen init
-      create  .kitchen.yml
-```
-In this guide, we
-will be using the [kitchen vagrant driver](https://github.com/test-kitchen/kitchen-vagrant),
-so install that:
-
-```text
-$ gem install kitchen-vagrant
 ```
 
-Open up the `.kitchen.yml` file created in the root of your
-repository and modify it if you wish.
+A `.kitchen.yml` will be created in your project base directory. This file
+describes your testing confiuration; what you want to test and on which target
+platforms. Each of these suite and platform combinations are called instances.
+By default your instances will be converged with Chef Solo and run in Vagrant
+virtual machines.
 
-Now, it is time to get testing. Use the `--parallel` option to run
-your tests in parallel. Trust us, it's faster!
+Get a listing of your instances with:
 
-    $ kitchen test
-
-### Helpful Switches
-
- - `--destroy=always|passing|never`
-   - `passing` (default): destroy the machine after a successful test
-     run (which implies passing tests.)
-   - `never`: Never clean up builds, even if they pass or fail.
-   - `always`: Regardless of the success or failure of the build,
-     destroy the machine.
- - `--log-level=debug|info|warn|error|fatal` - Set the log-level of
-     the entire stack, including the chef-solo run.
-
-You can also specify these switches in the `settings` has in your YAML:
-
-```yaml
-settings:
-  parallel: true
-  destroy: never
+```
+$ kitchen list
 ```
 
-Options specified via the CLI still take precedence over options specified
-in the config.
+Run Chef on an instance, in this case `default-ubuntu-1204`, with:
 
-## The Kitchen YAML format
-
-Test-Kitchen reads its configuration from the .kitchen.yml
-configuration file at the root of your cookbook. It closely resembles
-the format of .travis.yml which is intentional.
-
-There are 4 stanzas in .kitchen.yml, driver_plugin, driver_config,
-platforms, and suites. driver_plugin, platforms, and suites are
-currently required. driver_config can optionally be used to set values
-for all platforms defined.
-
-The driver_plugin stanza is only one line long and defines which
-driver is used by test-kitchen.
-
-The platforms stanza defines individual virtual machines. Additional
-driver_config, node attributes, and run_list can be defined in this stanza
-
-The suites stanza defines sets of tests that you intend to be run on
-each platform. A run_list and node attributes can be defined for each
-suite. The run_list and node attributes will be merged with that of
-each platform. In case of the conflict, the attributes defined on the
-suite will triumph.
-
-```yaml
-
----
-driver_plugin: vagrant
-
-platforms:
-- name: ubuntu-12.04
-  driver_config:
-    box: opscode-ubuntu-12.04
-    box_url: https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box
-
-- name: centos-6.3
-  driver_config:
-    box: opscode-centos-6.3
-    box_url: https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.3.box
-  run_list:
-  - recipe[yum::epel]
-
-suites:
-- name: stock_system_and_user
-  run_list:
-  - recipe[user::data_bag]
-  - recipe[rvm::system]
-  - recipe[rvm::user]
-  attributes:
-    users:
-    - wigglebottom
-    rvm:
-      user_installs:
-      - user: wigglebottom
-        default_ruby: 1.8.7
+```
+$ kitchen converge default-ubuntu-1204
 ```
 
-## Overriding .kitchen.yaml with .kitchen.&lt;driver&gt;.local.yml
+Destroy all instances with:
 
-TODO
+```
+$ kitchen destroy
+```
 
-## A Note
+You can clone a Chef cookbook project that contains Test Kitchen support and
+run through all the instances in serial by running:
 
-This project is currently in rapid development which means frequent releases,
-potential for massive refactorings (that could be API breaking), and minimal
-to no documentation. This will change as the project transitions to be used in
-production environments.
+```
+$ kitchen test
+```
 
-Despite the warnings above, if you are still interested, please get in touch
-via freenode/IRC (#chef-hacking),
-Twitter ([@fnichol](https://twitter.com/fnichol)),
-or Email ([fnichol@nichol.ca](mailto:fnichol@nichol.ca)).
+There is help included with the `kitchen help` subcommand which will list all
+subcommands and their usage:
 
-For everyone else, watch [this space](https://github.com/test-kitchen/test-kitchen).
+```
+$ kitchen help test
+```
+
+## Documentation
+
+Documentation is being added on the Test Kitchen [website][website]. Please
+read and contribute to improve them!
+
+## Versioning
+
+Test Kitchen aims to adhere to [Semantic Versioning 2.0.0][semver].
+
+## Development
+
+* Source hosted at [GitHub][repo]
+* Report issues/questions/feature requests on [GitHub Issues][issues]
+
+Pull requests are very welcome! Make sure your patches are well tested.
+Ideally create a topic branch for every separate change you make. For
+example:
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+## Authors
+
+Created and maintained by [Fletcher Nichol][fnichol] (<fnichol@nichol.ca>) and
+a growing community of [contributors][contributors].
+
+## License
+
+Apache License, Version 2.0 (see [LICENSE][license])
+
+[contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
+[fnichol]: https://github.com/fnichol
+[guide]: https://github.com/test-kitchen/kitchen-docs
+[irc]: http://webchat.freenode.net/?channels=kitchenci
+[issues]: https://github.com/test-kitchen/test-kitchen/issues
+[license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
+[repo]: https://github.com/test-kitchen/test-kitchen
+[semver]: http://semver.org/
+[twitter]: https://twitter.com/opskitchen
+[website]: http://kitchen.ci
