@@ -21,6 +21,10 @@ The introduction of configuration management or infrastructure automation tools 
 
 Test Kitchen takes the automation to the next level, and allows you to automate the testing process, to verify that your infrastructure code has done the right thing.  And more than that, it's designed specifically to make it easy to plug that testing process into your continuous integration workflow, so that as people collaborate on improving your infrastructure code, everyone gets rapid feedback on the impact of the work in progress.
 
-## Getting Started
+## A High Level Overview
+
+We're going to use Test Kitchen to help us write a simple Chef cookbook, complete with tests that verify that the cookbook does what it's supposed to do.  Test Kitchen comes at the process of software development that embraces the idea that writing the tests *first*, watching them fail, and then writing the code to make them pass is a great way to go.  Also known as *red, green, refactor*, it's a great way to write quality software.  By the end of this guide, you'll be familiar with this approach.
+
+## Pre-requisites
 
 This is the quick start guide for Test Kitchen.  It doesn't assume any great familiarity with Chef or Ruby, and takes you through the process of writing a Chef cookbook, with automated testing as standard.  Once you've finished this guide you'll be in good shape to start writing more cookbooks, or contributing to others in the community.  Ready to dive in? Great, let's go!
