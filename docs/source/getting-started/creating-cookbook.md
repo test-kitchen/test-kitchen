@@ -74,7 +74,7 @@ You can see that you have a `.gitignore` file in your project's root which will 
 Finally, a gem call `kitchen-vagrant` was installed. By itself Test Kitchen can't do very much. It needs one or more **Drivers** which are responsible for managing the virtual machines we need for testing. At present there are many different Test Kitchen Drivers but we're going to stick with the [Kitchen Vagrant Driver](https://github.com/opscode/kitchen-vagrant) for now.
 
 || Pro-Tip
-|| The Kitchen Vagrant Driver is the default driver chosen when you omit `--driver-kitchen-vagrant` from the command. After a few projects, feel free to simply `kitchen init`.
+|| The Kitchen Vagrant Driver is the default driver chosen when you omit `--driver=kitchen-vagrant` from the command. After a few projects, feel free to simply `kitchen init`.
 
 Let's turn our attention to the `.kitchen.yml` file for a minute. While Test Kitchen may have created the initial file automatically, it's expected that you read and edit this file. After all, you know what you want to test... right? Opening this file in your editor of choice we see something like the following:
 
