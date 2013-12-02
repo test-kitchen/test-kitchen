@@ -17,7 +17,7 @@ Now if you **are** interested in writing some tests, Test Kitchen has several op
 To keep things simple we're going to use the `busser-bats` runner plugin which uses the [Bash Automated Testing System](https://github.com/sstephenson/bats) also known as **bats**.
 
 || Pro-Tip
-|| Something about shell code and platform portability
+|| Testing using shell scripts is a great first start, but once you get to testing multiple platforms, you soon find that you're needing to invest some time in handling the differences between distributions and behaviours.  That might indicate to you that you should consider a testing tool that handles that hard work for you.  We'll see more about this shortly.
 
 We need to put our test files in a specifc location, so let's create the directory:
 
