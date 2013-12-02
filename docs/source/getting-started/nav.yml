@@ -50,6 +50,15 @@ guide:
     url: "writing-server-test"
     name: "Writing a Server Test"
   - 
+    url: "writing-failing-recipe"
+    name: "Writing a Failing Recipe"
+  - 
     url: "adding-dependency"
     name: "Adding a Dependency"
+  - 
+    url: "backfilling-platforms"
+    name: "Backfilling Platforms"
+  - 
+    url: "next-steps"
+    name: "Next Steps"
 ---

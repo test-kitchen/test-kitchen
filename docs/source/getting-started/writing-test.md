@@ -1,5 +1,8 @@
 ---
 title: Writing a Test
+next:
+  text: "Running Kitchen Verify"
+  url: "running-verify"
 ---
 
 Being able to manually verify the Chef run is great but it would be even better if we had an executable test that would fail if our assumptions were ever proven to be false. Remember how we manually verified that Git was installed in the previous section? Seems like a pretty decent first test to me!
@@ -21,7 +24,7 @@ $ mkdir -p test/integration/default/bats
 
 It looks long and dense, but each directory has some meaning to Test Kitchen and the Busser helper:
 
-* `test/integration`: Test Kitchen will look for tests to run under this directory. It allows you to put unit or other tests in `test/unit`, `spec`, `acceptance`, or wherever without mixing them up.
+* `test/integration`: Test Kitchen will look for tests to run under this directory. It allows you to put unit or other tests in `test/unit`, `spec`, `acceptance`, or wherever without mixing them up. This is configurable, if desired.
 * `default`: This corresponds exactly to the **Suite** name we set up in the `.kitchen.yml` file. If we had a suite called `"server-only"`, then you would put tests for the server only suite under `test/integration/server-only`.
 * `bats`: This tells Test Kitchen (and Busser) which Busser runner plugin needs to be installed on the remote instance. In other words the `bats` directory name will cause Busser to install `busser-bats` from RubyGems.
 

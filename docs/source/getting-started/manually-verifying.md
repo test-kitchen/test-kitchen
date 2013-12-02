@@ -1,8 +1,8 @@
 ---
 title: "Manually Verifying"
 next:
-  text: ""
-  url: ""
+  text: "Writing a Test"
+  url: "writing-test"
 ---
 
 If you're a skeptical person then you might be asking:
@@ -18,7 +18,7 @@ $ kitchen login default-ubuntu-1204
 Welcome to Ubuntu 12.04.2 LTS (GNU/Linux 3.5.0-23-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com/
-Last login: Thu Oct 17 06:30:27 2013 from 10.0.2.2
+Last login: Sat Nov 30 21:56:59 2013 from 10.0.2.2
 vagrant@default-ubuntu-1204:~$
 ~~~
 
