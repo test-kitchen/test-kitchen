@@ -5,9 +5,6 @@ guide:
     name: "Getting Started"
     hide: true
   - 
-    url: "introduction"
-    name: "Introduction"
-  - 
     url: "installing"
     name: "Installing Test Kitchen"
   - 
