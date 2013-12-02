@@ -1,8 +1,8 @@
-- @nav = sitemap.find_resource_by_path("getting-started/nav.yml") # TODO: I'd rather find this resource by a relative path -ch
+- @nav = sitemap.find_resource_by_path("docs/getting-started/nav.yml") # TODO: I'd rather find this resource by a relative path -ch
 - @nav_index = @nav.data.guide.index { |i| i.url == File.basename(current_page.url) } * 1.0
 - @progress = (@nav_index / @nav.data.guide.size) * 100
 - @filename = File.basename(current_page.source_file)
-- @forkthedocs = "http://github.com/heavywater/kitchen-docs/edit/master/source/getting-started/#{@filename}" # TODO: move getting-started content into /source/docs subdirectory and remove static reference to /source/getting-started/
+- @forkthedocs = "http://github.com/test-kitchen/kitchen-docs/edit/master/source/docs/getting-started/#{@filename}" # TODO: move getting-started content into /source/docs subdirectory and remove static reference to /source/getting-started/
 
 %html{ lang: "en" }
   %head
