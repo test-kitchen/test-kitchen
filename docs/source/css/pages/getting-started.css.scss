@@ -41,9 +41,9 @@
 }
 
 table {
+  @extend .protip;
   @extend .well;
   @extend .table;
-  @extend .protip;
   tr:nth-child(1) {
     background-color: #e4e4e4;
     td:nth-child(1):after {
@@ -52,3 +52,7 @@ table {
     };
   };
 }
+
+.table > tbody > tr > td {
+  border-top: 0px;
+};
