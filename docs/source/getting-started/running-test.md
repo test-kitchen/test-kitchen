@@ -1,5 +1,8 @@
 ---
 title: Running Kitchen Test
+prev:
+  text: "Running Kitchen Verify"
+  url: "running-verify"
 next:
   text: "Adding a Platform"
   url: "adding-platform"

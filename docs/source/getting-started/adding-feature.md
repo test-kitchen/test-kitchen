@@ -1,5 +1,8 @@
 ---
 title: Adding a New Feature
+prev:
+  text: "Fixing Converge"
+  url: "fixing-converge"
 next:
   text: "Adding a Suite"
   url: "adding-suite"

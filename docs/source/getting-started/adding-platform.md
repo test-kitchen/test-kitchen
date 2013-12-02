@@ -1,5 +1,8 @@
 ---
 title: Adding a Platform
+prev:
+  text: "Running Kitchen Test"
+  url: "running-test"
 next:
   text: "Fixing Converge"
   url: "fixing-converge"

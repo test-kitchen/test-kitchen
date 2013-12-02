@@ -1,5 +1,8 @@
 ---
 title: Writing a Failing Recipe
+prev:
+  text: "Writing a Server Test"
+  url: "writing-server-test"
 next:
   text: "Adding a Dependency"
   url: "adding-dependency"

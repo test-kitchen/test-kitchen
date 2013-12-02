@@ -1,5 +1,8 @@
 ---
 title: "Getting Help"
+prev:
+  text: "Installing Test Kitchen"
+  url: "installing"
 next:
   text: "Creating a Cookbook"
   url: "creating-cookbook"

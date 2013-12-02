@@ -1,5 +1,8 @@
 ---
 title: Adding a Dependency
+prev:
+  text: "Writing a Failing Recipe"
+  url: "writing-failing-recipe"
 next:
   text: "Backfilling Platforms"
   url: "backfilling-platforms"

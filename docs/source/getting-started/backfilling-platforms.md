@@ -1,5 +1,8 @@
 ---
 title: Backfilling Platforms
+prev:
+  text: "Adding a Dependency"
+  url: "adding-dependency"
 next:
   text: "Next Steps"
   url: "next-steps"

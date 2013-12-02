@@ -1,5 +1,8 @@
 ---
 title: Running Kitchen Verify
+prev:
+  text: "Running Kitchen Test"
+  url: "running-test"
 next:
   text: "Running Kitchen Test"
   url: "running-test"

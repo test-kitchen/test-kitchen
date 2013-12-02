@@ -1,5 +1,8 @@
 ---
 title: Adding a Suite
+prev:
+  text: "Adding a New Feature"
+  url: "adding-feature"
 next:
   text: "Writing a Server Test"
   url: "writing-server-test"

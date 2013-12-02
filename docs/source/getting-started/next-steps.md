@@ -1,5 +1,8 @@
 ---
 title: Next Steps
+prev:
+  text: "Backfilling Platforms"
+  url: "backfilling-platforms"
 ---
 
 This concludes the getting started guide for Test Kitchen. Hopefully you are now more comfortable with Test Kitchen's basic usage, fundamental concepts, and a feel for a testing workflow.

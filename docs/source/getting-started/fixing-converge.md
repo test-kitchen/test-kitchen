@@ -1,5 +1,8 @@
 ---
 title: Fixing Converge
+prev:
+  text: "Adding a Platform"
+  url: "adding-platform"
 next:
   text: "Add a New Feature"
   url: "adding-feature"

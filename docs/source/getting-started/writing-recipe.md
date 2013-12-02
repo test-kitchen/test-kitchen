@@ -1,5 +1,8 @@
 ---
 title: "Writing a Recipe"
+prev:
+  text: "Creating a Cookbook"
+  url: "creating-cookbook"
 next:
   text: "Running Kitchen Converge"
   url: "running-converge"

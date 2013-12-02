@@ -1,5 +1,8 @@
 ---
 title: Writing a Test
+prev:
+  text: "Manually Verifying"
+  url: "manually-verifying"
 next:
   text: "Running Kitchen Verify"
   url: "running-verify"

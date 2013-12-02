@@ -1,5 +1,8 @@
 ---
 title: "Running Kitchen Converge"
+prev:
+  text: "Writing a Recipe"
+  url: "writing-recipe"
 next:
   text: "Manually verifying"
   url: "manually-verifying"

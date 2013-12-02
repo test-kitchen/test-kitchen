@@ -1,5 +1,8 @@
 ---
 title: "Creating a Cookbook"
+prev:
+  text: "Getting Help"
+  url: "getting-help"
 next:
   text: "Writing a Recipe"
   url: "writing-recipe"

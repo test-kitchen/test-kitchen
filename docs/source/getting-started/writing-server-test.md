@@ -1,5 +1,8 @@
 ---
 title: Writing a Server Test
+prev:
+  text: "Add a Suite"
+  url: "adding-suite"
 next:
   text: "Writing a Failing Recipe"
   url: "writing-failing-recipe"
