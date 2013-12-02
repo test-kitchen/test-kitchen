@@ -22,7 +22,7 @@ $ cd git-cookbook
 
 Note that the directory doesn't matter to Test Kitchen so feel free to call this directory `git`, `chef-git`, `chef-git-cookbook`, or `fuzzypants_git`.
 
-Next we need a [metadata.rb](http://docs.opscode.com/config_rb_metadata.html) file so that various Chef-aware tooling can understand our cookbook. Test Kitchen is one such tool.  All it relaly cares about are the **name** and **version** attributes of the cookbook. Use your favorite text editor and create a file called `metadata.rb` with the following:
+Next we need a [metadata.rb](http://docs.opscode.com/config_rb_metadata.html) file so that various Chef-aware tooling can understand our cookbook. Test Kitchen is one such tool.  All it really cares about are the **name** and **version** attributes of the cookbook. Use your favorite text editor and create a file called `metadata.rb` with the following:
 
 
 ~~~ruby
