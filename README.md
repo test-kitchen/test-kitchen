@@ -10,7 +10,7 @@
 | Website     | http://kitchen.ci                             |
 | Source Code | https://github.com/test-kitchen/test-kitchen  |
 | IRC         | [#kitchenci][irc] channel on Freenode         |
-| Twitter     | [@opskitchen][twitter]                        |
+| Twitter     | [@kitchenci][twitter]                         |
 
 > **Test Kitchen is an integration tool for developing and testing
 > infrastructure code and software on target platforms.**
@@ -119,5 +119,5 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
 [semver]: http://semver.org/
-[twitter]: https://twitter.com/opskitchen
+[twitter]: https://twitter.com/kitchenci
 [website]: http://kitchen.ci
