@@ -17,7 +17,7 @@ Commands:
   kitchen converge [(all|<REGEX>)] [opts]  # Converge one or more instances
   kitchen create [(all|<REGEX>)] [opts]    # Create one or more instances
   kitchen destroy [(all|<REGEX>)] [opts]   # Destroy one or more instances
-  kitchen diganose [(all|<REGEX>)]         # Show computed diagnostic configuration
+  kitchen diagnose [(all|<REGEX>)]         # Show computed diagnostic configuration
   kitchen driver                           # Driver subcommands
   kitchen driver create [NAME]             # Create a new Kitchen Driver gem project
   kitchen driver discover                  # Discover Test Kitchen drivers published on RubyGems
