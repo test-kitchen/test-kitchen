@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.license       = 'Apache 2.0'
   gem.authors       = ['Fletcher Nichol']
   gem.email         = ['fnichol@nichol.ca']
-  gem.description   = %q{A convergence integration test harness for configuration management systems.}
+  gem.description   = %q{Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.}
   gem.summary       = gem.description
   gem.homepage      = 'https://github.com/test-kitchen/test-kitchen'
 
