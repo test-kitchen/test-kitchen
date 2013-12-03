@@ -60,7 +60,7 @@ Chef Client finished, 2 resources updated
 
 To quote our Chef run, that **was** too easy. If you are a Chef user then part of the output above should look familiar to you. Here's what happened at a high level:
 
-* Chef was installed on the instance by performing an [Omnibus pacakge installation](http://www.opscode.com/chef/install/)
+* Chef was installed on the instance by performing an [Omnibus package installation](http://www.opscode.com/chef/install/)
 * Your Git cookbook files and a minimal Chef Solo configuration were built and uploaded to the instance
 * A Chef run was initiated using the run-list and node attributes specified in the `.kitchen.yml` file
 
