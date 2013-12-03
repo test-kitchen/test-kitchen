@@ -8,12 +8,12 @@
 |             |                                               |
 |-------------|-----------------------------------------------|
 | Website     | http://kitchen.ci                             |
-| Source Code | https://github.com/test-kitchen/test-kitchen  |
+| Source Code | http://kitchen.ci/docs/getting-started/       |
 | IRC         | [#kitchenci][irc] channel on Freenode         |
 | Twitter     | [@kitchenci][twitter]                         |
 
 > **Test Kitchen is an integration tool for developing and testing
-> infrastructure code and software on target platforms.**
+> infrastructure code and software on isolated target platforms.**
 
 ## Getting Started Guide
 
@@ -113,7 +113,7 @@ Apache License, Version 2.0 (see [LICENSE][license])
 
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
 [fnichol]: https://github.com/fnichol
-[guide]: https://github.com/test-kitchen/kitchen-docs
+[guide]: http://kitchen.ci/docs/getting-started/
 [irc]: http://webchat.freenode.net/?channels=kitchenci
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
