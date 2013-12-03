@@ -68,7 +68,7 @@ module Kitchen
       end
     end
 
-    desc "diganose [(all|<REGEX>)]", "Show computed diagnostic configuration"
+    desc "diagnose [(all|<REGEX>)]", "Show computed diagnostic configuration"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :loader, :type => :boolean,
