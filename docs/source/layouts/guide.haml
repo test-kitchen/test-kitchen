@@ -1,6 +1,7 @@
 - @nav = sitemap.find_resource_by_path("docs/getting-started/nav.yml") # TODO: I'd rather find this resource by a relative path -ch
-- @nav_index = @nav.data.guide.index { |i| i.url == File.basename(current_page.url) } * 1.0
-- @progress = (@nav_index / @nav.data.guide.size) * 100
+- @root_path = @nav.data.root_path
+- @nav_index = @nav.data.guide.index { |i| File.expand_path(i.url, @root_path) == current_page.url.sub(%r{/$}, '') }
+- @progress = ((@nav_index || 0).to_f / @nav.data.guide.size) * 100
 - @filename = File.basename(current_page.source_file)
 - @forkthedocs = "http://github.com/test-kitchen/kitchen-docs/edit/master/source/docs/getting-started/#{@filename}" # TODO: move getting-started content into /source/docs subdirectory and remove static reference to /source/getting-started/
 
@@ -54,7 +55,7 @@
 
               %div.col-md-5.pull-right
                 - if current_resource.data.next
-                  %a.button.btn.btn-primary{ href: current_resource.data.next.url }
+                  %a.button.btn.btn-primary{ href: @root_path + current_resource.data.next.url }
                     = current_resource.data.next.text
                     %i.glyphicon.glyphicon-circle-arrow-right
 
@@ -64,7 +65,7 @@
             - @nav.data.guide.each do |section|
               - unless section.hide?
                 %li
-                  %a{ href: section.url }= section.name
+                  %a{ href: @root_path + section.url }= section.name
 
   = javascript_include_tag "vendor/modernizr-2.6.2.min"
   = javascript_include_tag "all"
