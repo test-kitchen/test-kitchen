@@ -1,5 +1,8 @@
 ---
 title: "Installing Test Kitchen"
+prev:
+  text: "Introduction"
+  url: ""
 next:
   text: "Getting Help"
   url: "getting-help"
