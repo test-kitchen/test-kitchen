@@ -73,15 +73,14 @@ To highlight a block of code, start and finish the block with three or more tild
 
 For example, this code: 
 
-~~~~~~~
-~~~yaml
----
-title: "KitchenCI Overview"
-next:
-  url: installing-kitchen
-  text: "Installing KitchenCI"
----
-~~~~~~~
+    ~~~yaml
+    ---
+    title: "KitchenCI Overview"
+    next:
+      url: installing-kitchen
+      text: "Installing KitchenCI"
+    ---
+    ~~~
 
 ...will yield this output: 
 
