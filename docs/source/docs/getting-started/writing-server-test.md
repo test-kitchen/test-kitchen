@@ -8,7 +8,7 @@ next:
   url: "writing-failing-recipe"
 ---
 
-Now to write a test or two. Previously we've seen the bats testing framework in action but this isn't always a viable option. For example if you needed to verify that a package was installed and you needed to test that on Ubuntu and CentOS platforms, then what would you do? You need to bust out some platform detection in order to run a Debian or RPM-based command. Feels like Chef would help us here since it's good at that sort of thing. On the other hand there are advantages to treating our Chef run as a black box, an configuration-management implementation detail, if you will. So what to do?
+Now to write a test or two. Previously we've seen the bats testing framework in action but this isn't always a viable option. For example if you needed to verify that a package was installed and you needed to test that on Ubuntu and CentOS platforms, then what would you do? You need to bust out some platform detection in order to run a Debian or RPM-based command. Feels like Chef would help us here since it's good at that sort of thing. On the other hand there are advantages to treating our Chef run as a black box - a configuration-management implementation detail, if you will. So what to do?
 
 A nice solution to the platform-agnostic test issue exists called [Serverspec](http://serverspec.org/). It is a set of RSpec matchers that can assert things about servers like packages installed, services enabled, ports listening, etc. Let's see what this looks like for our Git Daemon tests.
 
