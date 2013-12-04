@@ -8,46 +8,21 @@ next:
   url: "adding-platform"
 ---
 
-Now that we are masters of the Ubuntu platform, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-6.4` line to your platforms list so that it resembles:
-
-~~~yaml
----
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
-
-platforms:
-- name: ubuntu-12.04
-- name: centos-6.4
-
-suites:
-- name: default
-  run_list: ["recipe[git]"]
-  attributes: {}
-~~~
-
-Now let's check the status of our instances:
+Now it's time to introduce to the **test** meta-action which helps you automate all the previous actions so far into one command. Recall that we currently have our instance in a "verified" state. With this in mind, let's run `kitchen test`:
 
 ~~~
-$ kitchen list
-Instance             Driver   Provisioner  Last Action
-default-ubuntu-1204  Vagrant  ChefSolo     <Not Created>
-default-centos-64    Vagrant  ChefSolo     <Not Created>
-~~~
-
-We're going to use two shortcuts here in the next command:
-
-* Each Test Kitchen instance has a simple state machine that tracks where it is in its lifecyle. Given its current state and the desired state, the instance is smart enough to run all actions in between current and desired. In our next example we will take an instance from not created to verified in one command.
-* Any `kitchen` subcommand that takes an instance name as an argument can take a Ruby regular expression that will be used to glob a list of instances together. This means that `kitchen test ubuntu` would run the **test** action only the ubuntu instance. Note that the **list** subcommand also takes the regex-globbing argument so feel free to experiment there. In our next example we'll select the `default-centos-64` instance with simply `64`.
-
-Let's see how CentOS runs our cookbook:
-
-~~~
-$ kitchen verify 64
+$ kitchen test default-ubuntu-1204
 -----> Starting Kitchen (v1.0.0)
------> Creating <default-centos-64>...
+-----> Cleaning up any prior instances of <default-ubuntu-1204>
+-----> Destroying <default-ubuntu-1204>...
+       [default] Forcing shutdown of VM...
+       [default] Destroying VM and associated drives...
+       Vagrant instance <default-ubuntu-1204> destroyed.
+       Finished destroying <default-ubuntu-1204> (0m3.06s).
+-----> Testing <default-ubuntu-1204>
+-----> Creating <default-ubuntu-1204>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       [default] Importing base box 'opscode-centos-6.4'...
+       [default] Importing base box 'opscode-ubuntu-12.04'...
        [default] Matching MAC address for NAT networking...
        [default] Setting the name of the VM...
        [default] Clearing any previously set forwarded ports...
@@ -59,12 +34,11 @@ $ kitchen verify 64
        [default] Running 'pre-boot' VM customizations...
        [default] Booting VM...
        [default] Waiting for machine to boot. This may take a few minutes...
-       [default] Machine booted and ready!
-       [default] Setting hostname...
+[default] Machine booted and ready!       [default] Setting hostname...
        [default] Mounting shared folders...
-       Vagrant instance <default-centos-64> created.
-       Finished creating <default-centos-64> (0m54.63s).
------> Converging <default-centos-64>...
+       Vagrant instance <default-ubuntu-1204> created.
+       Finished creating <default-ubuntu-1204> (0m46.22s).
+-----> Converging <default-ubuntu-1204>...
        Preparing files for transfer
        Preparing current project directory as a cookbook
        Removing non-cookbook files before transfer
@@ -72,97 +46,95 @@ $ kitchen verify 64
        downloading https://www.opscode.com/chef/install.sh
          to file /tmp/install.sh
        trying wget...
-       Downloading Chef  for el...
-       Installing Chef
-       warning: /tmp/tmp.4O86geCV/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
-Preparing...                #####  ########################################### [100%]
-   1:chef                          ########################################### [100%]
-       Thank you for installing Chef!
-       Transfering files to <default-centos-64>
-       [2013-11-30T22:16:45+00:00] INFO: Forking chef instance to converge...
-       Starting Chef Client, version 11.8.0
-       [2013-11-30T22:16:45+00:00] INFO: *** Chef 11.8.0 ***
-       [2013-11-30T22:16:45+00:00] INFO: Chef-client pid: 2452
-       [2013-11-30T22:16:45+00:00] INFO: Setting the run_list to ["recipe[git::default]"] from JSON
-       [2013-11-30T22:16:45+00:00] INFO: Run List is [recipe[git::default]]
-       [2013-11-30T22:16:45+00:00] INFO: Run List expands to [git::default]
-       [2013-11-30T22:16:45+00:00] INFO: Starting Chef Run for default-centos-64
-       [2013-11-30T22:16:45+00:00] INFO: Running start handlers
-       [2013-11-30T22:16:45+00:00] INFO: Start handlers complete.
-       Compiling Cookbooks...
-       Converging 2 resources
-       Recipe: git::default
-         * package[git] action install[2013-11-30T22:16:45+00:00] INFO: Processing package[git] action install (git::default line 1)
-        (up to date)
-         * log[Well, that was too easy] action write[2013-11-30T22:17:17+00:00] INFO: Processing log[Well, that was too easy] action write (git::default line 3)
-       [2013-11-30T22:17:17+00:00] INFO: Well, that was too easy
+Downloading Chef  for ubuntu...
+Installing Chef
+Selecting previously unselected package chef.
+(Reading database ... 53291 files and directories currently installed.)
+Unpacking chef (from .../tmp.CLdJIw55/chef__amd64.deb) ...
+Setting up chef (11.8.0-1.ubuntu.12.04) ...
+Thank you for installing Chef!
+       Transfering files to <default-ubuntu-1204>
+[2013-11-30T22:10:59+00:00] INFO: Forking chef instance to converge...
+Starting Chef Client, version 11.8.0
+[2013-11-30T22:10:59+00:00] INFO: *** Chef 11.8.0 ***
+[2013-11-30T22:10:59+00:00] INFO: Chef-client pid: 1192
+[2013-11-30T22:10:59+00:00] INFO: Setting the run_list to ["recipe[git::default]"] from JSON
+[2013-11-30T22:10:59+00:00] INFO: Run List is [recipe[git::default]]
+[2013-11-30T22:10:59+00:00] INFO: Run List expands to [git::default]
+[2013-11-30T22:10:59+00:00] INFO: Starting Chef Run for default-ubuntu-1204
+[2013-11-30T22:10:59+00:00] INFO: Running start handlers
+[2013-11-30T22:10:59+00:00] INFO: Start handlers complete.
+Compiling Cookbooks...
+Converging 2 resources
+Recipe: git::default
+  * package[git] action install[2013-11-30T22:10:59+00:00] INFO: Processing package[git] action install (git::default line 1)
+
+    - install version 1:1.7.9.5-1 of package git
+
+  * log[Well, that was too easy] action write[2013-11-30T22:11:24+00:00] INFO: Processing log[Well, that was too easy] action write (git::default line 3)
+[2013-11-30T22:11:24+00:00] INFO: Well, that was too easy
 
 
-       [2013-11-30T22:17:17+00:00] INFO: Chef Run complete in 31.73868597 seconds
-       [2013-11-30T22:17:17+00:00] INFO: Running report handlers
-       [2013-11-30T22:17:17+00:00] INFO: Report handlers complete
-       Chef Client finished, 1 resources updated
-       Finished converging <default-centos-64> (1m16.32s).
------> Setting up <default-centos-64>...
+[2013-11-30T22:11:24+00:00] INFO: Chef Run complete in 24.365178204 seconds
+[2013-11-30T22:11:24+00:00] INFO: Running report handlers
+[2013-11-30T22:11:24+00:00] INFO: Report handlers complete
+Chef Client finished, 2 resources updated
+       Finished converging <default-ubuntu-1204> (0m45.17s).
+-----> Setting up <default-ubuntu-1204>...
 Fetching: thor-0.18.1.gem (100%)
 Fetching: busser-0.6.0.gem (100%)
-       Successfully installed thor-0.18.1
-       Successfully installed busser-0.6.0
-       2 gems installed
+Successfully installed thor-0.18.1
+Successfully installed busser-0.6.0
+2 gems installed
 -----> Setting up Busser
        Creating BUSSER_ROOT in /tmp/busser
        Creating busser binstub
        Plugin bats installed (version 0.1.0)
 -----> Running postinstall for bats plugin
-             create  /tmp/bats20131130-2614-1jxkqra/bats
-             create  /tmp/bats20131130-2614-1jxkqra/bats.tar.gz
-       Installed Bats to /tmp/busser/vendor/bats/bin/bats
-             remove  /tmp/bats20131130-2614-1jxkqra
-       Finished setting up <default-centos-64> (0m44.50s).
------> Verifying <default-centos-64>...
+      create  /tmp/bats20131130-4164-uxjzr4/bats
+      create  /tmp/bats20131130-4164-uxjzr4/bats.tar.gz
+Installed Bats to /tmp/busser/vendor/bats/bin/bats
+      remove  /tmp/bats20131130-4164-uxjzr4
+       Finished setting up <default-ubuntu-1204> (0m4.89s).
+-----> Verifying <default-ubuntu-1204>...
        Suite path directory /tmp/busser/suites does not exist, skipping.
-       Uploading /tmp/busser/suites/bats/git_installed.bats (mode=0644)
+Uploading /tmp/busser/suites/bats/git_installed.bats (mode=0644)
 -----> Running bats test suite
  ✓ git binary is found in PATH
 
        1 test, 0 failures
-       Finished verifying <default-centos-64> (0m0.94s).
------> Kitchen is finished. (2m56.69s)
-~~~
 
-Nice! We've verified that our cookbook works on Ubuntu 12.04 and CentOS 6.4. Since the CentOS instance will hang out for no good reason, let's kill it for now:
-
-~~~
-$ kitchen destroy
------> Starting Kitchen (v1.0.0)
+       Finished verifying <default-ubuntu-1204> (0m0.98s).
 -----> Destroying <default-ubuntu-1204>...
-       Finished destroying <default-ubuntu-1204> (0m0.00s).
------> Destroying <default-centos-64>...
        [default] Forcing shutdown of VM...
        [default] Destroying VM and associated drives...
-       Vagrant instance <default-centos-64> destroyed.
-       Finished destroying <default-centos-64> (0m3.06s).
------> Kitchen is finished. (0m3.36s)
+       Vagrant instance <default-ubuntu-1204> destroyed.
+       Finished destroying <default-ubuntu-1204> (0m3.48s).
+       Finished testing <default-ubuntu-1204> (1m43.82s).
+-----> Kitchen is finished. (1m44.11s)
 ~~~
 
-Interesting. Test Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
+There's only one remaining action left that needs a mention: the **Destroy Action** which... destroys the instance. With this in mind, here's what Test Kitchen is doing in the **Test Action**:
 
-> **Any `kitchen` subcommand without an instance argument will apply to all instances.**
+1. Destroys the instance if it exists (`Cleaning up any prior instances of <default-ubuntu-1204>`)
+2. Creates the instance (`Creating <default-ubuntu-1204>`)
+3. Converges the instance (`Converging <default-ubuntu-1204>`)
+4. Sets up Busser and runner plugins on the instance (`Setting up <default-ubuntu-1204>`)
+5. Verifies the instance by running Busser tests (`Verifying <default-ubuntu-1204>`)
+6. Destroys the instance (`Destroying <default-ubuntu-1204>`)
 
-Let's make sure everything has been destroyed:
+A few details with regards to test:
+
+* Test Kitchen will abort the run on the instance at the first sign of trouble. This means that if your Chef run fails then Busser won't be installed and the instance won't be destroyed. This gives you a chance to inspect the state of the instance and fix any issues.
+* The behavior of the final destroy action can be overridden if desired. Check out the documentation for the `--destroy` flag using `kitchen help test`.
+* The primary use case in mind for this meta-action is in a Continuous Integration environment or a command for developers to run before check in or after a fresh clone. If you're using this in your test-code-verify development cycle it's going to quickly become very slow and frustrating. You're better off running the **converge** and **verify** subcommands in development and save the **test** subcommand when you need to verify the end-to-end run of your code.
+
+Finally, let's check the status of the instance:
 
 ~~~
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-ubuntu-1204  Vagrant  ChefSolo     <Not Created>
-default-centos-64    Vagrant  ChefSolo     <Not Created>
 ~~~
 
-There's no production code change so far but we did modify the `.kitchen.yml` file, so let's commit that:
-
-~~~
-$ git add .kitchen.yml
-$ git commit -m "Add support for CentOS 6.4."
-[master 386a373] Add support for CentOS 6.4.
- 1 file changed, 1 insertion(+)
-~~~
+Back to square one.
