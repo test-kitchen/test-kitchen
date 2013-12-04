@@ -27,6 +27,9 @@ module Kitchen
     # @return [String] logical name of this suite
     attr_reader :name
 
+    # @return [Boolean] Enable sudo behavior for this suite
+    attr_reader :sudo
+
     # @return [Array] Array of names of excluded platforms
     attr_reader :excludes
 
@@ -37,6 +40,7 @@ module Kitchen
     #
     # @param [Hash] options configuration for a new suite
     # @option options [String] :name logical name of this suit (**Required**)
+    # @option options [Boolean] :sudo Enable sudo beahvior for this suite
     # @option options [String] :excludes Array of names of excluded platforms
     # @option options [String] :includes Array of names of only included
     #   platforms
@@ -44,6 +48,7 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Suite#new requires option :name"
       end
+      @sudo = options.fetch(:sudo, false)
       @excludes = options.fetch(:excludes, [])
       @includes = options.fetch(:includes, [])
     end
