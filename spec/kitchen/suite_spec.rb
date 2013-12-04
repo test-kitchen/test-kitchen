@@ -39,7 +39,7 @@ describe Kitchen::Suite do
   end
 
   it "sets sudo to true" do
-    suite.sudo.is_true
+    suite.sudo.must_equal true
   end
 
   it "raises an ArgumentError if name is missing" do

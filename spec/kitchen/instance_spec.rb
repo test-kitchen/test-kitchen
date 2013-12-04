@@ -91,7 +91,7 @@ describe Kitchen::Instance do
   let(:instance)    { Kitchen::Instance.new(opts) }
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
-  let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
+  let(:busser)      { Kitchen::Busser.new(suite.name, suite.sudo, {}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
@@ -100,7 +100,7 @@ describe Kitchen::Instance do
   end
 
   def suite(name = "suite")
-    @suite ||= Kitchen::Suite.new({ :name => name })
+    @suite ||= Kitchen::Suite.new({ :name => name, :sudo => true })
   end
 
   def platform(name = "platform")
@@ -149,6 +149,10 @@ describe Kitchen::Instance do
 
     it "returns its suite" do
       instance.suite.must_equal suite
+    end
+
+    it "has sudo set" do
+      instance.suite.sudo.must_equal true
     end
 
     it "raises an ArgumentError if missing" do
@@ -219,6 +223,10 @@ describe Kitchen::Instance do
 
     it "returns its busser" do
       instance.busser.must_equal busser
+    end
+
+    it "is configured for sudo" do
+      instance.busser[:sudo].must_equal true
     end
 
     it "raises and ArgumentError if missing" do
