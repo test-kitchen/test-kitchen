@@ -11,7 +11,7 @@ next:
 So far our cookbook has no dependencies on other cookbooks to get its job done which is awesome! But let's say we require dependant cookbooks. For our example we'll be relying on the [runit](http://community.opscode.com/cookbooks/runit) cookbook to manage our Git Daemon service.
 
 
-With this solution in mind we'll Create a file called `recipes/server.rb` with the following:
+With this solution in mind we'll create a file called `recipes/server.rb` with the following:
 
 ~~~ruby
 include_recipe "git"
@@ -26,7 +26,7 @@ end
 
 Reasonably straight forward code. Here's what is going on:
 
-* We include our default Git recipe so that Git is installed. Hey we all ready solved that one, right?
+* We include our default Git recipe so that Git is installed. Hey we already solved that one, right?
 * We include the default recipe from the runit cookbook which installs runit and provides the `runit_service` resource.
 * We install the `git-daemon-run` package which gives us the `git-daemon` program, on Ubuntu 12.04 at least.
 * Finally, we declare a runit service called `git-daemon` without generating the run and log scripts (they were provided by the Ubuntu package).
