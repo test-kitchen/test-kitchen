@@ -38,7 +38,7 @@ module Kitchen
     #   containing the Ruby binary on the remote instance
     # @option opts [TrueClass, FalseClass] :sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `false`)
-    def initialize(suite_name, opts = {})
+    def initialize(suite_name, suite_sudo, opts = {})
       validate_options(suite_name)
 
       kitchen_root = opts.fetch(:kitchen_root) { Dir.pwd }
@@ -48,7 +48,7 @@ module Kitchen
       @config[:kitchen_root] = kitchen_root
       @config[:test_base_path] = File.expand_path(test_base_path, kitchen_root)
       @config[:suite_name] = suite_name
-      @config[:sudo] = opts.fetch(:sudo, false)
+      @config[:sudo] = suite_sudo
       @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")

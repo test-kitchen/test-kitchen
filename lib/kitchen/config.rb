@@ -116,7 +116,7 @@ module Kitchen
 
     def new_busser(suite, platform)
       bdata = data.busser_data_for(suite.name, platform.name)
-      Busser.new(suite.name, bdata)
+      Busser.new(suite.name, suite.sudo, bdata)
     end
 
     def new_driver(suite, platform)

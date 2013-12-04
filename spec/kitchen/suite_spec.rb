@@ -26,6 +26,7 @@ describe Kitchen::Suite do
   let(:opts) do
     {
       :name => "suitezy",
+      :sudo => true,
       :includes => ["testbuntu", "testcent"],
       :excludes => ["prodbuntu"]
     }
@@ -35,6 +36,10 @@ describe Kitchen::Suite do
 
   it "returns the name" do
     suite.name.must_equal "suitezy"
+  end
+
+  it "sets sudo to true" do
+    suite.sudo.must_equal true
   end
 
   it "raises an ArgumentError if name is missing" do
