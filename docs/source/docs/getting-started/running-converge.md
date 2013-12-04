@@ -112,7 +112,7 @@ That ran a **lot** faster didn't it? Here's what happened this time:
 || 1. I will always exit with code **0** if my operation was successful.
 || 2. I will always exit with a non-zero code if **any** part of my operation was not successful.
 || 3. Any behavior to the contrary **is a bug**.
-|| This exit code behavior is a funamental prerequisite for any tool working in a Continuous Integration (CI) environment.
+|| This exit code behavior is a fundamental prerequisite for any tool working in a Continuous Integration (CI) environment.
 
 Let's check the status of our instance:
 
