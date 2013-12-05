@@ -1,3 +1,14 @@
+## 1.1.0 / 2013-12-04
+
+### Default updates
+
+* Set `Busser[:sudo]` to `true` by default (formerly set to `false` by default). ([@fnichol][])
+
+### Improvements
+
+* Pull request [#272][]: Drive by typo fix. ([@kisoku][])
+
+
 ## 1.0.0 / 2013-12-01
 
 ### Bug fixes
@@ -371,6 +382,7 @@ The initial release.
 [#262]: https://github.com/opscode/test-kitchen/issues/262
 [#265]: https://github.com/opscode/test-kitchen/issues/265
 [#266]: https://github.com/opscode/test-kitchen/issues/266
+[#272]: https://github.com/opscode/test-kitchen/issues/272
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
@@ -390,6 +402,7 @@ The initial release.
 [@jrwesolo]: https://github.com/jrwesolo
 [@jtimberman]: https://github.com/jtimberman
 [@juliandunn]: https://github.com/juliandunn
+[@kisoku]: https://github.com/kisoku
 [@manul]: https://github.com/manul
 [@mattray]: https://github.com/mattray
 [@mconigliaro]: https://github.com/mconigliaro
