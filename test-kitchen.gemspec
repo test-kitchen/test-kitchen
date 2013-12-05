@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['fnichol@nichol.ca']
   gem.description   = %q{Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.}
   gem.summary       = gem.description
-  gem.homepage      = 'https://github.com/test-kitchen/test-kitchen'
+  gem.homepage      = 'http://kitchen.ci'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = %w(kitchen)
