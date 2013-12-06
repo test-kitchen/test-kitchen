@@ -21,6 +21,7 @@ require 'erb'
 require 'ostruct'
 require 'thor'
 require 'thread'
+require 'thread/pool'
 
 require 'kitchen'
 require 'kitchen/generator/driver_create'
@@ -103,6 +104,8 @@ module Kitchen
       )
       method_option :parallel, :aliases => "-p", :type => :boolean,
         :desc => "Perform action against all matching instances in parallel"
+      method_option :max_parallel, :aliases => "-m", :type => :numeric,
+        :desc => "Maximum number of parallel instances to use"
       method_option :log_level, :aliases => "-l",
         :desc => "Set the log level (debug, info, warn, error, fatal)"
       define_method(action) { |*args| exec_action(action) }
@@ -121,6 +124,8 @@ module Kitchen
     DESC
     method_option :parallel, :aliases => "-p", :type => :boolean,
       :desc => "Perform action against all matching instances in parallel"
+    method_option :max_parallel, :aliases => "-m", :type => :numeric,
+      :desc => "Maximum number of parallel instances to use"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :destroy, :aliases => "-d", :default => "passing",
@@ -315,12 +320,22 @@ module Kitchen
     end
 
     def run_parallel(instances, *args)
-      threads = Array(instances).map do |i|
-        Thread.new do
-          i.public_send(task, *args)
+      if options[:max_parallel] > 0
+        pool = Thread.pool(options[:max_parallel])
+        Array(instances).each do |i|
+          pool.process do
+            i.public_send(task, *args)
+          end
         end
+        pool.shutdown
+      else
+        threads = Array(instances).map do |i|
+          Thread.new do
+            i.public_send(task, *args)
+          end
+        end
+        threads.map { |i| i.join }
       end
-      threads.map { |i| i.join }
     end
 
     def parse_subcommand(arg = nil)
