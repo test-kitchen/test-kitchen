@@ -130,6 +130,138 @@ describe Kitchen::Loader::YAML do
       loader.read.must_equal({ :common => { :thekey => 'kinda' } })
     end
 
+    NORMALIZED_KEYS = {
+      "driver" => "name",
+      "provisioner" => "name",
+      "busser" => "version"
+    }
+
+    NORMALIZED_KEYS.each do |key, default_key|
+
+      describe "normalizing #{key} config hashes" do
+
+        it "merges local with #{key} string value over yaml with hash value" do
+          stub_yaml!(".kitchen.yml", {
+            key => { 'dakey' => 'ya' }
+          })
+          stub_yaml!(".kitchen.local.yml", {
+            key => 'namey'
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
+          })
+        end
+
+        it "merges local with #{key} hash value over yaml with string value" do
+          stub_yaml!(".kitchen.yml", {
+            key => 'namey'
+          })
+          stub_yaml!(".kitchen.local.yml", {
+            key => { 'dakey' => 'ya' }
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
+          })
+        end
+
+        it "merges local with #{key} nil value over yaml with hash value" do
+          stub_yaml!(".kitchen.yml", {
+            key => { 'dakey' => 'ya' }
+          })
+          stub_yaml!(".kitchen.local.yml", {
+            key => nil
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { :dakey => 'ya' }
+          })
+        end
+
+        it "merges local with #{key} hash value over yaml with nil value" do
+          stub_yaml!(".kitchen.yml", {
+            key => 'namey'
+          })
+          stub_yaml!(".kitchen.local.yml", {
+            key => nil
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey" }
+          })
+        end
+
+        it "merges global with #{key} string value over yaml with hash value" do
+          stub_yaml!(".kitchen.yml", {
+            key => { 'dakey' => 'ya' }
+          })
+          stub_global!({
+            key => 'namey'
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
+          })
+        end
+
+        it "merges global with #{key} hash value over yaml with string value" do
+          stub_yaml!(".kitchen.yml", {
+            key => 'namey'
+          })
+          stub_global!({
+            key => { 'dakey' => 'ya' }
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
+          })
+        end
+
+        it "merges global with #{key} nil value over yaml with hash value" do
+          stub_yaml!(".kitchen.yml", {
+            key => { 'dakey' => 'ya' }
+          })
+          stub_global!({
+            key => nil
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { :dakey => 'ya' }
+          })
+        end
+
+        it "merges global with #{key} hash value over yaml with nil value" do
+          stub_yaml!(".kitchen.yml", {
+            key => nil
+          })
+          stub_global!({
+            key => { 'dakey' => 'ya' }
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { :dakey => 'ya' }
+          })
+        end
+
+        it "merges global, local, over yaml with mixed hash, string, nil values" do
+          stub_yaml!(".kitchen.yml", {
+            key => nil
+          })
+          stub_yaml!(".kitchen.local.yml", {
+            key => "namey"
+          })
+          stub_global!({
+            key => { 'dakey' => 'ya' }
+          })
+
+          loader.read.must_equal({
+            key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
+          })
+        end
+      end
+    end
+
     it "handles a kitchen.local.yml with no yaml elements" do
       stub_yaml!(".kitchen.yml", {
         'a' => 'b'

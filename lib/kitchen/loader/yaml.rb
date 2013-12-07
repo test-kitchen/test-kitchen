@@ -91,8 +91,12 @@ module Kitchen
       end
 
       def combined_hash
-        y = @process_local ? yaml.rmerge(local_yaml) : yaml
-        @process_global ? y.rmerge(global_yaml) : y
+        y = if @process_local
+          normalize(yaml).rmerge(normalize(local_yaml))
+        else
+          normalize(yaml)
+        end
+        @process_global ? y.rmerge(normalize(global_yaml)) : y
       rescue NoMethodError
         raise UserError, "Error merging #{File.basename(config_file)} and" +
           "#{File.basename(local_config_file)}"
@@ -126,6 +130,30 @@ module Kitchen
 
       def global_config_file
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
+      end
+
+      def normalize(obj)
+        if obj.is_a?(Hash)
+          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v) ; h }
+        else
+          obj
+        end
+      end
+
+      def normalize_hash(hash, key, value)
+        case key
+        when "driver", "provisioner", "busser"
+          hash[key] = if value.nil?
+            Hash.new
+          elsif value.is_a?(String)
+            default_key = key == "busser" ? "version" : "name"
+            { default_key => value }
+          else
+            normalize(value)
+          end
+        else
+          hash[key] = normalize(value)
+        end
       end
 
       def parse_yaml_string(string, file_name)
