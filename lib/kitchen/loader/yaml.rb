@@ -80,7 +80,8 @@ module Kitchen
           result[:local_config] =
             { :filename => local_config_file, :raw_data => local_yaml }
         end
-        result[:combined_config] = { :raw_data => combined_hash }
+        combined = begin ; combined_hash ; rescue => e ; failure_hash(e) ; end
+        result[:combined_config] = { :raw_data => combined }
         result
       end
 
@@ -130,6 +131,16 @@ module Kitchen
 
       def global_config_file
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
+      end
+
+      def failure_hash(e)
+        {
+          :error => {
+            :exception => e.inspect,
+            :message => e.message,
+            :backtrace => e.backtrace
+          }
+        }
       end
 
       def normalize(obj)
