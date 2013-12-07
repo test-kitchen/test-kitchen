@@ -92,6 +92,7 @@ module Kitchen
     def login_command
       args  = %W{ -o UserKnownHostsFile=/dev/null }
       args += %W{ -o StrictHostKeyChecking=no }
+      args += %W{ -o IdentitiesOnly=yes } if options[:keys]
       args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
       args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} } if options.key? :forward_agent
       Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key}} }
