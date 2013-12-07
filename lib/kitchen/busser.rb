@@ -181,10 +181,15 @@ module Kitchen
     end
 
     def local_suite_files
-      glob = File.join(config[:test_base_path], config[:suite_name], "*/**/*")
+      base = File.join(config[:test_base_path], config[:suite_name])
+      glob = File.join(base, "*/**/*")
       Dir.glob(glob).reject do |f|
-        f[/(data|data_bags|environments|nodes|roles)/] || File.directory?(f)
+         is_chef_data_dir?(base, f) || File.directory?(f)
       end
+    end
+
+    def is_chef_data_dir?(base, file)
+      file =~ %r[^#{base}/(data|data_bags|environments|nodes|roles)/]
     end
 
     def helper_files
