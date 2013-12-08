@@ -29,6 +29,7 @@ module Kitchen
 
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
+      default_config :json_attributes, true
 
       def create_sandbox
         create_chef_sandbox do
@@ -62,9 +63,11 @@ module Kitchen
       def run_command
         args = [
           "--config #{config[:root_path]}/client.rb",
-          "--json-attributes #{config[:root_path]}/dna.json",
           "--log_level #{config[:log_level]}"
         ]
+        if config[:json_attributes]
+          args << "--json-attributes #{config[:root_path]}/dna.json"
+        end
 
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
