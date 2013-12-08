@@ -355,13 +355,16 @@ module Kitchen
         FileUtils.mkdir_p(tmpbooks_dir)
         FileUtils.cp_r(File.join(cookbooks_dir, "."), tmpbooks_dir)
 
+        cp_site_cookbooks if File.directory?(site_cookbooks_dir)
+        cp_this_cookbook if File.exists?(metadata_rb)
+      end
+
+      def cp_site_cookbooks
         info("Preparing site-cookbooks from project directory")
         debug("Using cookbooks from #{site_cookbooks_dir}")
 
         FileUtils.mkdir_p(tmpsitebooks_dir)
         FileUtils.cp_r(File.join(site_cookbooks_dir, "."), tmpsitebooks_dir)
-
-        cp_this_cookbook if File.exists?(metadata_rb)
       end
 
       def cp_this_cookbook
