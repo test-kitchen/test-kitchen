@@ -1,3 +1,17 @@
+## 1.1.1 / 2013-12-08
+
+### Bug fixes
+
+* Normalize driver, provisioner, & busser blocks when merging raw YAML. ([@fnichol][])
+* Issue [#276][], issue [#278][]: Ensure `Busser#local_suite_files` only rejects chef data dirs. ([@fnichol][])
+* Pull request [#275][]: Fix SSH 'Too many authentication failures' error. ([@zts][])
+* When copying `./cookbooks`, conditionally check for `./site-cookbooks`. ([@fnichol][])
+
+### Improvements
+
+* Improve `kitchen diagnose` when loader data merging fails. ([@fnichol][])
+
+
 ## 1.1.0 / 2013-12-04
 
 ### Default updates
@@ -383,6 +397,9 @@ The initial release.
 [#265]: https://github.com/opscode/test-kitchen/issues/265
 [#266]: https://github.com/opscode/test-kitchen/issues/266
 [#272]: https://github.com/opscode/test-kitchen/issues/272
+[#275]: https://github.com/opscode/test-kitchen/issues/275
+[#276]: https://github.com/opscode/test-kitchen/issues/276
+[#278]: https://github.com/opscode/test-kitchen/issues/278
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
@@ -420,3 +437,4 @@ The initial release.
 [@smith]: https://github.com/smith
 [@stevendanna]: https://github.com/stevendanna
 [@thommay]: https://github.com/thommay
+[@zts]: https://github.com/zts
