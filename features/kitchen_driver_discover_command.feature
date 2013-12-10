@@ -3,6 +3,7 @@ Feature: Search RubyGems to discover new Test Kitchen Driver gems
   As a Test Kitchen user
   I want to run a command which returns candidate Kitchen drivers
 
+  @spawn
   Scenario: Displaying help
     When I run `kitchen help driver discover`
     Then the output should contain:

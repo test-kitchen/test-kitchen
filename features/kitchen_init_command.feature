@@ -3,6 +3,7 @@ Feature: Add Test Kitchen support to an existing project
   As an operator
   I want to run a command to initialize my project
 
+  @spawn
   Scenario: Displaying help
     When I run `kitchen help init`
     Then the output should contain:
@@ -12,6 +13,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     And the exit status should be 0
 
+  @spawn
   Scenario: Running init with default values
     Given a sandboxed GEM_HOME directory named "kitchen-init"
     And I have a git repository
