@@ -264,14 +264,22 @@ module Kitchen
       end
 
       def prepare_cookbooks
-        if File.exists?(berksfile)
-          resolve_with_berkshelf
-        elsif File.exists?(cheffile)
-          resolve_with_librarian
-        elsif File.directory?(cookbooks_dir)
-          cp_cookbooks
+        # test if this is a chefrepo
+        if File.exists?(berksfile) || File.exists?(cheffile)
+          # test if librarian or berkshelf was used 
+          if File.exists?(berksfile)
+            resolve_with_berkshelf
+          elsif File.exists?(cheffile)
+            resolve_with_librarian
+          end
+          # copy additional cookbooks that might reside in site-cookbooks
+          if File.directory?(cookbooks_dir)
+            cp_cookbooks
+          end
+        # not a chefrepo so check if lone cookbook
         elsif File.exists?(metadata_rb)
           cp_this_cookbook
+        # not a cookbook so make a fake
         else
           make_fake_cookbook
         end
