@@ -266,6 +266,7 @@ module Kitchen
       def prepare_cookbooks
         # test if this is a chefrepo
         if File.exists?(berksfile) || File.exists?(cheffile)
+          debug("This is a chefrepo checking for berks and libra")
           # test if librarian or berkshelf was used 
           if File.exists?(berksfile)
             resolve_with_berkshelf
@@ -274,7 +275,12 @@ module Kitchen
           end
           # copy additional cookbooks that might reside in site-cookbooks
           if File.directory?(cookbooks_dir)
+            debug("Additional cookbooks found copying ...")
             cp_cookbooks
+          end
+          if File.directory?(site_cookbooks_dir)
+            debug("Additional site-cookbooks found copying ...")
+            cp_site_cookbooks
           end
         # not a chefrepo so check if lone cookbook
         elsif File.exists?(metadata_rb)
