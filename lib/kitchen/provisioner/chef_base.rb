@@ -267,7 +267,7 @@ module Kitchen
         # test if this is a chefrepo
         if File.exists?(berksfile) || File.exists?(cheffile)
           debug("This is a chefrepo checking for berks and libra")
-          # test if librarian or berkshelf was used 
+          # test if librarian or berkshelf was used
           if File.exists?(berksfile)
             resolve_with_berkshelf
           elsif File.exists?(cheffile)
