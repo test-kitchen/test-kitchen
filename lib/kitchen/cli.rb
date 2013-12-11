@@ -320,7 +320,7 @@ module Kitchen
     end
 
     def run_parallel(instances, *args)
-      if options[:max_parallel] > 0
+      if options[:max_parallel] && options[:max_parallel] > 0
         pool = Thread.pool(options[:max_parallel])
         Array(instances).each do |i|
           pool.process do
