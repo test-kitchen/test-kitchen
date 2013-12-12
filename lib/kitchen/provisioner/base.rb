@@ -76,9 +76,7 @@ module Kitchen
       #
       # @return [Hash] a diagnostic hash
       def diagnose
-        result = Hash.new
-        config_keys.sort.each { |k| result[k] = config[k] }
-        result
+        config_keys.sort.reduce({}) { |result, key| result[k] = config[k]; result }
       end
 
       def calculate_path(path, type = :directory)
