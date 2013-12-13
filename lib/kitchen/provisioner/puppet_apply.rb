@@ -22,7 +22,7 @@ module Kitchen
 
   module Provisioner
 
-    # Chef Solo provisioner.
+    # Puppet Apply provisioner.
     #
     # @author Chris Lundquist (<chris.lundquist@github.com>)
     class PuppetApply < Base
