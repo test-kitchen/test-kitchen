@@ -59,11 +59,11 @@ module Kitchen
 
        <<-INSTALL
         if [ ! $(which puppet) ]; then
-          #{sudo("")} wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
-          #{sudo("")} dpkg -i puppetlabs-release-precise.deb
-          #{sudo("")} apt-get update
+          #{sudo('wget')} http://apt.puppetlabs.com/puppetlabs-release-precise.deb
+          #{sudo('dpkg')} -i puppetlabs-release-precise.deb
+          #{sudo('apt-get')} update
 
-          #{sudo("")} apt-get install -y --force-yes \
+          #{sudo('apt-get')} install -y --force-yes \
           build-essential \
           pkg-config \
           libmysqlclient-dev \
@@ -72,8 +72,8 @@ module Kitchen
           libxml2-dev \
           libxml2=2.7.8.dfsg-5.1ubuntu4 # newer package has broken deps
 
-          #{sudo("")} apt-get install -y puppet=#{version} puppet-common=#{version} hiera-puppet rubygems
-          #{sudo("")} gem install bundler --no-ri --no-rdoc
+          #{sudo('apt-get')} install -y puppet=#{version} puppet-common=#{version} hiera-puppet rubygems
+          #{sudo('gem')} install bundler --no-ri --no-rdoc
         fi
         INSTALL
       end
@@ -81,7 +81,7 @@ module Kitchen
       def create_sandbox
         @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
         File.chmod(0755, tmpdir)
-        info("Preparing files for transfer")
+        info('Preparing files for transfer')
         debug("Creating local sandbox in #{tmpdir}")
 
         yield if block_given?
@@ -107,29 +107,29 @@ module Kitchen
         if hiera_config
           commands << [
             sudo('cp'), File.join(config[:root_path],'hiera.yaml'), '/etc/',
-          ].join(" ")
+          ].join(' ')
 
           commands << [
             sudo('cp'), File.join(config[:root_path],'hiera.yaml'), '/etc/puppet/',
-          ].join(" ")
+          ].join(' ')
         end
 
         if hiera_data
           commands << [
             sudo('cp -r'), File.join(config[:root_path], 'hiera'), '/var/lib/'
-          ].join(" ")
+          ].join(' ')
         end
 
-        commands.join(" && ")
+        commands.join(' && ')
       end
 
       def run_command
         [
           sudo('puppet'),
-          "apply",
-          File.join(config[:root_path], manifest),
-          "--modulepath=#{File.join(config[:root_path], "modules")}",
-          "--manifestdir=#{File.join(config[:root_path], "manifests")}"
+          'apply',
+          File.join(config[:root_path], 'manifests', manifest),
+          "--modulepath=#{File.join(config[:root_path], 'modules')}",
+          "--manifestdir=#{File.join(config[:root_path], 'manifests')}"
         ].join(" ")
       end
 
@@ -161,19 +161,19 @@ module Kitchen
       end
 
       def prepare_manifests
-        info("Preparing manifests")
+        info('Preparing manifests')
         debug("Using manifests from #{manifests}")
 
-        tmp_manifests_dir = File.join(tmpdir, "manifests")
+        tmp_manifests_dir = File.join(tmpdir, 'manifests')
         FileUtils.mkdir_p(tmp_manifests_dir)
         FileUtils.cp_r(Dir.glob("#{manifests}/*"), tmp_manifests_dir)
       end
 
       def prepare_modules
-        info("Preparing modules")
+        info('Preparing modules')
         debug("Using modules from #{modules}")
 
-        tmp_modules_dir = File.join(tmpdir, "modules")
+        tmp_modules_dir = File.join(tmpdir, 'modules')
         FileUtils.mkdir_p(tmp_modules_dir)
         FileUtils.cp_r(Dir.glob("#{modules}/*"), tmp_modules_dir)
       end
@@ -181,18 +181,18 @@ module Kitchen
       def prepare_hiera_config
         return unless hiera_config
 
-        info("Preparing hiera")
+        info('Preparing hiera')
         debug("Using hiera from #{hiera_config}")
 
-        FileUtils.cp_r(hiera_config, File.join(tmpdir, "hiera.yaml"))
+        FileUtils.cp_r(hiera_config, File.join(tmpdir, 'hiera.yaml'))
       end
 
       def prepare_hiera_data
         return unless hiera_data
-        info("Preparing hiera data")
+        info('Preparing hiera data')
         debug("Using hiera data from #{hiera_data}")
 
-        tmp_hiera_dir = File.join(tmpdir, "hiera")
+        tmp_hiera_dir = File.join(tmpdir, 'hiera')
         FileUtils.mkdir_p(tmp_hiera_dir)
         FileUtils.cp_r(Dir.glob("#{hiera_data}/*"), tmp_hiera_dir)
       end
