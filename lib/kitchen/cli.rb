@@ -71,6 +71,8 @@ module Kitchen
         "#{action} [(all|<REGEX>)] [opts]",
         "#{action.capitalize} one or more instances"
       )
+      method_option :concurrency, :aliases => "-c", :type => :numeric, :default => nil,
+        :desc => "Number of multiple actions to perform at a time"
       method_option :parallel, :aliases => "-p", :type => :boolean,
         :desc => "Perform action against all matching instances in parallel"
       method_option :log_level, :aliases => "-l",
@@ -89,6 +91,8 @@ module Kitchen
       * always: instances will always be destroyed afterwards.\n
       * never: instances will never be destroyed afterwards.
     DESC
+    method_option :concurrency, :aliases => "-c", :type => :numeric, :default => nil,
+      :desc => "Number of multiple actions to perform at a time"
     method_option :parallel, :aliases => "-p", :type => :boolean,
       :desc => "Perform action against all matching instances in parallel"
     method_option :log_level, :aliases => "-l",
@@ -110,11 +114,7 @@ module Kitchen
         @task = :test
         results = parse_subcommand(args.join('|'))
 
-        if options[:parallel]
-          run_parallel(results, destroy_mode)
-        else
-          run_serial(results, destroy_mode)
-        end
+        run(results, destroy_mode)
       end
       banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
@@ -275,19 +275,28 @@ module Kitchen
       elapsed = Benchmark.measure do
         @task = action
         results = parse_subcommand(args.first)
-        options[:parallel] ? run_parallel(results) : run_serial(results)
+        run(results)
       end
       banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
-    def run_serial(instances, *args)
-      Array(instances).map { |i| i.public_send(task, *args) }
-    end
+    def run(instances, *args)
+      concurrency = 1
+      if options[:parallel] || options[:concurrency]
+        concurrency = options[:concurrency] || instances.size
+        concurrency = instances.size if concurrency > instances.size
+      end
 
-    def run_parallel(instances, *args)
-      threads = Array(instances).map do |i|
-        Thread.new do
-          i.public_send(task, *args)
+      queue = Queue.new
+      instances.each {|i| queue << i }
+      concurrency.times { queue << nil }
+
+      threads = []
+      concurrency.times do
+        threads << Thread.new do
+          while instance = queue.pop
+            instance.public_send(task, *args)
+          end
         end
       end
       threads.map { |i| i.join }
