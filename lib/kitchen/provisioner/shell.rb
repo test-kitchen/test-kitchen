@@ -26,7 +26,9 @@ module Kitchen
     #
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
+
       attr_accessor :tmpdir
+
       default_config :file, 'bootstrap.sh'
 
       def run_command
