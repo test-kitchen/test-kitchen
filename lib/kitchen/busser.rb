@@ -128,7 +128,7 @@ module Kitchen
         sync_cmd << busser_setup_env
         sync_cmd << "#{sudo}#{config[:busser_bin]} suite cleanup"
         sync_cmd << "#{local_suite_files.map { |f| stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
-        sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join}"
+        sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         "sh -c '#{sync_cmd.join('; ')}'"
