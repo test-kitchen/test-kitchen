@@ -28,11 +28,11 @@ module Kitchen
     class Shell < Base
       attr_accessor :tmpdir
       default_config :file do |provisioner|
-        provisioner.calculate_path('bootstrap.sh')
+        provisioner.calculate_path('bootstrap.sh', :file)
       end
 
       def run_command
-        sudo(File.join(config[:root_path], config[:file]))
+        sudo(File.join(config[:root_path], 'bootstrap.sh'))
       end
 
       # XXX Not implementing this will upload '/*' to each host
