@@ -1,0 +1,85 @@
+.terminal {
+  @include border-radius(4px);
+  display: block;
+  font-size: 14px;
+  overflow: hidden;
+  width: 100%;
+
+  &.shadow {
+    @include box-shadow(0 0 50px #333);
+  }
+
+  .titlebar {
+    @include background-image(linear-gradient(rgb(232, 232, 232), rgb(174, 174, 174)));
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #000;
+    color: rgb(65, 65, 65);
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    text-indent: -25px;
+    text-shadow: 1px 1px 0 #ccc;
+
+    @mixin orb($color) {
+      @include border-radius(10px);
+      @include background-image(linear-gradient(lighten($color, 50%), $color, lighten($color, 50%)));
+      @include inline-block;
+      height: 10px;
+      float: left;
+      margin: 3px 0 0 7px;
+      width: 10px;
+      border: 1px solid darken($color, 20%);
+    }
+
+    span.orb.red { @include orb(rgb(170, 0, 0)); }
+    span.orb.yellow { @include orb(rgb(211, 158, 80)); }
+    span.orb.green { @include orb(rgb(152, 194, 102)); }
+  }
+
+  .body {
+    background: rgb(23, 44, 54);
+    color: #fff;
+    font-family: 'Monaco', 'Courier New', monospace;
+    line-height: 20px;
+    padding: 20px;
+    min-width: 600px;
+    overflow: auto;
+    white-space: pre;
+
+    &::selection {
+      background: rgb(31, 56, 66);
+    }
+
+    .black {
+      color: rgb(31, 56, 66);
+    }
+
+    .red {
+      color: rgb(190, 53, 50);
+    }
+
+    .green {
+      color: rgb(138, 152, 36);
+    }
+
+    .yellow {
+      color: rgb(169, 136, 32);
+    }
+
+    .blue {
+      color: rgb(84, 137, 206);
+    }
+
+    .magenta {
+      color: rgb(182, 57, 127);
+    }
+
+    .cyan {
+      color: rgb(97, 160, 151);
+    }
+
+    .white {
+      color: rgb(236, 232, 213);
+    }
+  }
+}

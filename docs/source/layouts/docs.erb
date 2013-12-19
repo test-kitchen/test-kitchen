@@ -1,0 +1,17 @@
+<% wrap_layout :layout do %>
+  <div class="container wrapper">
+    <nav class="left">
+      <ul>
+        <% sitemap.find_resource_by_path('docs/index.html').children.each do |page| %>
+          <li><%= link_to page.data.title, page %></li>
+        <% end %>
+      </ul>
+    </nav>
+
+    <div class="right">
+      <section class="content">
+        <%= yield %>
+      </section>
+    </div>
+  </div>
+<% end %>

@@ -81,3 +81,34 @@ else
 end
 
 task :default => [:test, :quality]
+
+namespace :doc do
+  desc 'Run the documentation server'
+  task :server do
+    Dir.chdir('docs') do
+      sh 'bundle exec middleman server'
+    end
+  end
+
+  desc 'Update the documentation on GitHub'
+  task :push do
+    sh 'rm -rf docs/build'
+    sh 'rm -rf .build'
+
+    Dir.chdir('docs') do
+      sh 'bundle exec middleman build --clean'
+    end
+
+    sh 'mv docs/build .build'
+
+    sh 'git branch -D gh-pages || true 2>&1'
+    sh 'git checkout --orphan gh-pages'
+    sh 'git rm -rf .'
+    sh 'rm *.lock'
+
+    sh 'mv .build/* .'
+    sh 'rm -rf .build'
+
+    sh 'git push --force origin gh-pages'
+  end
+end
