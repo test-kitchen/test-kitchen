@@ -27,26 +27,27 @@ module Kitchen
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
 
-      attr_accessor :tmpdir
-
-      default_config :file, 'bootstrap.sh'
-
-      def run_command
-        sudo(File.join(config[:root_path], config[:file]))
+      default_config :file do |provisioner|
+        provisioner.calculate_path("bootstrap.sh", :file)
       end
 
-      # XXX Not implementing this will upload '/*' to each host
-      # Or try, and die on resolving bad symlinks
+      def run_command
+        sudo(File.join(config[:root_path], File.basename(config[:file])))
+      end
+
       def create_sandbox
-        @tmpdir = Dir.mktmpdir
-        debug("Created local sandbox in #{tmpdir}")
+        @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
+        File.chmod(0755, @tmpdir)
+        info("Preparing files for transfer")
+        debug("Creating local sandbox in #{tmpdir}")
+
         shell_dir = File.join(tmpdir, "shell")
 
         FileUtils.mkdir_p(shell_dir)
         debug("Copying #{config[:file]} to #{shell_dir}")
         FileUtils.cp_r(config[:file], shell_dir)
 
-        @tmpdir
+        tmpdir
       end
 
       def cleanup_sandbox
@@ -54,6 +55,35 @@ module Kitchen
 
         debug("Cleaning up local sandbox in #{tmpdir}")
         FileUtils.rmtree(tmpdir)
+      end
+
+      def instance=(instance)
+        @instance = instance
+        expand_paths!
+      end
+
+      def calculate_path(path, type = :directory)
+        base = config[:test_base_path]
+        candidates = []
+        candidates << File.join(base, instance.suite.name, path)
+        candidates << File.join(base, path)
+        candidates << File.join(Dir.pwd, path)
+
+        candidates.find do |c|
+          type == :directory ? File.directory?(c) : File.file?(c)
+        end
+      end
+
+      protected
+
+      attr_reader :tmpdir
+
+      def expand_paths!
+        [:file].each do |key|
+          unless config[key].nil?
+            config[key] = File.expand_path(config[key], config[:kitchen_root])
+          end
+        end
       end
     end
   end
