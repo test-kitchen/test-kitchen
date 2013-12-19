@@ -24,7 +24,7 @@ module Kitchen
 
     # Chef Solo provisioner.
     #
-    # @author Chris Lundquist (<chris.ludnquist@github.com>)
+    # @author Chris Lundquist (<chris.lundquist@github.com>)
     class Shell < Base
       attr_accessor :tmpdir
       default_config :file, 'bootstrap.sh'
