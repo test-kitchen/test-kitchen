@@ -51,6 +51,9 @@ module Kitchen
       default_config :username do |driver|
         driver.default_username
       end
+      default_config :endpoint do |driver|
+        "https://ec2.#{driver.default_region}.amazonaws.com"
+      end
 
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
@@ -99,6 +102,7 @@ module Kitchen
           :aws_access_key_id      => config[:aws_access_key_id],
           :aws_secret_access_key  => config[:aws_secret_access_key],
           :region                 => config[:region],
+          :endpoint               => config[:endpoint],
         )
       end
 
