@@ -18,6 +18,7 @@
 
 require "logger"
 require "net/ssh"
+require "net/ssh/gateway"
 require "net/scp"
 require "socket"
 
@@ -65,6 +66,7 @@ module Kitchen
       @username = username
       @options = options.dup
       @logger = @options.delete(:logger) || ::Logger.new(STDOUT)
+      @gateway = @options.delete(:gateway)
 
       if block_given?
         yield self
@@ -175,6 +177,10 @@ module Kitchen
     # @api private
     attr_reader :logger
 
+    # @return [String] Optional ssh gateway to use as a tunnel
+    # @api private
+    attr_reader :gateway
+
     # Builds the Net::SSH session connection or returns the existing one if
     # built.
     #
@@ -182,6 +188,17 @@ module Kitchen
     # @api private
     def session
       @session ||= establish_connection
+    end
+
+    # Builds a Net::SSH:Gatway connection or returns the existing one if
+    # built.
+    #
+    # @return [Net::SSH::Gateway]
+    # @api private
+    def gateway_session
+      @gateway_session ||= if gateway
+        Net::SSH::Gateway.new(gateway, username, options.merge(:port => 22)) # Should support the gateway running on other than 22
+      end
     end
 
     # Establish a connection session to the remote host.
@@ -197,8 +214,13 @@ module Kitchen
       retries = options[:ssh_retries] || 3
 
       begin
-        logger.debug("[SSH] opening connection to #{self}")
-        Net::SSH.start(hostname, username, options)
+        if gateway
+          logger.debug("[SSH] opening connection to #{self} via #{gateway}")
+          gateway_session.ssh(hostname, username, options)
+        else
+          logger.debug("[SSH] opening connection to #{self}")
+          Net::SSH.start(hostname, username, options)
+        end
       rescue *rescue_exceptions => e
         retries -= 1
         if retries > 0
@@ -262,6 +284,7 @@ module Kitchen
     #   otherwise
     # @api private
     def test_ssh
+      return true if gateway # How to handle this?
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
     rescue *SOCKET_EXCEPTIONS
