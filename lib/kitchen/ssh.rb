@@ -18,6 +18,7 @@
 
 require 'logger'
 require 'net/ssh'
+require 'net/ssh/gateway'
 require 'net/scp'
 require 'socket'
 
@@ -42,6 +43,7 @@ module Kitchen
       @username = username
       @options = options.dup
       @logger = @options.delete(:logger) || ::Logger.new(STDOUT)
+      @gateway = @options.delete(:gateway)
 
       if block_given?
         yield self
@@ -104,10 +106,16 @@ module Kitchen
 
     private
 
-    attr_reader :hostname, :username, :options, :logger
+    attr_reader :hostname, :username, :options, :logger, :gateway
 
     def session
       @session ||= establish_connection
+    end
+
+    def gateway_session
+      @gateway_session ||= if gateway
+        Net::SSH::Gateway.new(gateway, username, options.merge(:port => 22)) # Should support the gateway running on other than 22
+      end
     end
 
     def establish_connection
@@ -119,8 +127,13 @@ module Kitchen
       retries = 3
 
       begin
-        logger.debug("[SSH] opening connection to #{self}")
-        Net::SSH.start(hostname, username, options)
+        if gateway
+          logger.debug("[SSH] opening connection to #{self} via #{gateway}")
+          gateway_session.ssh(hostname, username, options)
+        else
+          logger.debug("[SSH] opening connection to #{self}")
+          Net::SSH.start(hostname, username, options)
+        end
       rescue *rescue_exceptions => e
         if (retries -= 1) > 0
           logger.info("[SSH] connection failed, retrying (#{e.inspect})")
@@ -166,6 +179,7 @@ module Kitchen
     end
 
     def test_ssh
+      return true if gateway # How to handle this?
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
     rescue SocketError, Errno::ECONNREFUSED,
