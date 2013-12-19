@@ -27,7 +27,9 @@ module Kitchen
     # @author Chris Lundquist (<chris.lundquist@github.com>)
     class Shell < Base
       attr_accessor :tmpdir
-      default_config :file, 'bootstrap.sh'
+      default_config :file do |provisioner|
+        provisioner.calculate_path('bootstrap.sh')
+      end
 
       def run_command
         sudo(File.join(config[:root_path], config[:file]))
