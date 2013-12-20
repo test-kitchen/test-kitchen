@@ -84,19 +84,19 @@ module Kitchen
 
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support chef-client-zero.rb})
-        FileUtils.cp(source, File.join(tmpdir, "chef-client-zero.rb"))
+        FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
       def prepare_validation_pem
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support dummy-validation.pem})
-        FileUtils.cp(source, File.join(tmpdir, "validation.pem"))
+        FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
       def prepare_client_rb
         data = default_config_rb.merge(config[:client_rb])
 
-        File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
+        File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
       end
