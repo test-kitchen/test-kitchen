@@ -34,7 +34,7 @@ module Kitchen
     class ChefBase < Base
 
       default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://www.opscode.com/chef/install.sh"
+      default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
       default_config :run_list, []
       default_config :attributes, {}
       default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
