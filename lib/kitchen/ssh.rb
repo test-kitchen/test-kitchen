@@ -49,9 +49,9 @@ module Kitchen
       end
     end
 
-    def exec(cmd)
+    def exec(cmd, env = {})
       logger.debug("[SSH] #{self} (#{cmd})")
-      exit_code = exec_with_exit(cmd)
+      exit_code = exec_with_exit(cmd, env)
 
       if exit_code != 0
         raise SSHFailed, "SSH exited (#{exit_code}) for command: [#{cmd}]"
@@ -140,11 +140,22 @@ module Kitchen
       options.fetch(:port, 22)
     end
 
-    def exec_with_exit(cmd)
+    def exec_with_exit(cmd, env = {})
       exit_code = nil
       session.open_channel do |channel|
 
         channel.request_pty
+
+        # NOTE net/ssh warns:
+        #  If you are connecting to an OpenSSH server, you will
+        #  need to update the AcceptEnv setting in the sshd_config to include the
+        #  environment variables you want to send.
+        env.each do |key, value|
+          channel.env(key, value) do |ch, success|
+            logger.debug("Setting remote env #{key}=#{val}")
+            logger.error("Failed to set remote env #{key}=#{val}") unless success
+          end
+        end
 
         channel.exec(cmd) do |ch, success|
 

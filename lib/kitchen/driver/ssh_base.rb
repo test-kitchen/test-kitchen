@@ -96,18 +96,17 @@ module Kitchen
         [combined[:hostname], combined[:username], opts]
       end
 
-      def env_cmd(cmd)
-        env = "env"
-        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
-        env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
-
-        env == "env" ? cmd : "#{env} #{cmd}"
+      def env
+        [:http_proxy, :https_proxy].reduce(Hash.new) do |env, key|
+          env[key] = config[key] if config[key]
+          env
+        end
       end
 
       def run_remote(command, connection)
         return if command.nil?
 
-        connection.exec(env_cmd(command))
+        connection.exec(command, env)
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
       end
