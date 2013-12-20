@@ -108,7 +108,7 @@ That ran a **lot** faster didn't it? Here's what happened this time:
 * A Chef run is initiated and runs very quickly as we are in the desired state.
 
 || Pro-Tip
-|| A lot of time and effort has gone into ensuring that the exit code of Test Kitchen is always appropriate. Here is the Kitchen Command Guarentee:
+|| A lot of time and effort has gone into ensuring that the exit code of Test Kitchen is always appropriate. Here is the Kitchen Command Guarantee:
 || 1. I will always exit with code **0** if my operation was successful.
 || 2. I will always exit with a non-zero code if **any** part of my operation was not successful.
 || 3. Any behavior to the contrary **is a bug**.
