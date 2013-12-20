@@ -44,31 +44,32 @@ module Kitchen
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
+      expand_path_for :data_path
 
       default_config :data_bags_path do |provisioner|
         provisioner.calculate_path("data_bags")
       end
+      expand_path_for :data_bags_path
 
       default_config :environments_path do |provisioner|
         provisioner.calculate_path("environments")
       end
+      expand_path_for :environments_path
 
       default_config :nodes_path do |provisioner|
         provisioner.calculate_path("nodes")
       end
+      expand_path_for :nodes_path
 
       default_config :roles_path do |provisioner|
         provisioner.calculate_path("roles")
       end
+      expand_path_for :roles_path
 
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
         provisioner.calculate_path("encrypted_data_bag_secret_key", :file)
       end
-
-      def instance=(instance)
-        @instance = instance
-        expand_paths!
-      end
+      expand_path_for :encrypted_data_bag_secret_key_path
 
       def install_command
         return unless config[:require_chef_omnibus]
@@ -121,16 +122,6 @@ module Kitchen
       end
 
       protected
-
-      def expand_paths!
-        paths = %w{test_base data data_bags encrypted_data_bag_secret_key
-          environments nodes roles}
-        paths.map{ |p| "#{p}_path".to_sym }.each do |key|
-          unless config[key].nil?
-            config[key] = File.expand_path(config[key], config[:kitchen_root])
-          end
-        end
-      end
 
       def format_config_file(data)
         data.each.map { |attr, value|

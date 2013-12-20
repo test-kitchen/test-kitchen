@@ -38,6 +38,11 @@ module Kitchen
         end
       end
 
+      def instance=(instance)
+        @instance = instance
+        expand_paths!
+      end
+
       # Returns the name of this driver, suitable for display in a CLI.
       #
       # @return [String] name of this driver
@@ -113,6 +118,16 @@ module Kitchen
 
       attr_reader :config
 
+      def expand_paths!
+        expanded_paths = LazyHash.new(self.class.expanded_paths, self).to_hash
+
+        expanded_paths.each do |key, should_expand|
+          if should_expand && !config[key].nil?
+            config[key] = File.expand_path(config[key], config[:kitchen_root])
+          end
+        end
+      end
+
       def logger
         instance ? instance.logger : Kitchen.logger
       end
@@ -139,8 +154,28 @@ module Kitchen
         defaults[attr] = block_given? ? block : value
       end
 
+      def self.expanded_paths
+        @expanded_paths ||= Hash.new.merge(super_expanded_paths)
+      end
+
+      def self.super_expanded_paths
+        klass = self.superclass
+
+        if klass.respond_to?(:expanded_paths)
+          klass.expanded_paths
+        else
+          Hash.new
+        end
+      end
+
+      def self.expand_path_for(attr, value = true, &block)
+        expanded_paths[attr] = block_given? ? block : value
+      end
+
       default_config :root_path, "/tmp/kitchen"
       default_config :sudo, true
+
+      expand_path_for :test_base_path
     end
   end
 end
