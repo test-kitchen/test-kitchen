@@ -27,63 +27,28 @@ module Kitchen
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
 
-      default_config :file do |provisioner|
-        provisioner.calculate_path("bootstrap.sh", :file)
+      default_config :script do |provisioner|
+        provisioner.calculate_path("bootstrap.sh", :script)
+      end
+      expand_path_for :script
+
+      def create_sandbox
+        super
+        prepare_data
+        prepare_script
       end
 
       def run_command
-        sudo(File.join(config[:root_path], File.basename(config[:file])))
-      end
-
-      def create_sandbox
-        @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
-        File.chmod(0755, @tmpdir)
-        info("Preparing files for transfer")
-        debug("Creating local sandbox in #{tmpdir}")
-
-        shell_dir = File.join(tmpdir, "shell")
-
-        FileUtils.mkdir_p(shell_dir)
-        debug("Copying #{config[:file]} to #{shell_dir}")
-        FileUtils.cp_r(config[:file], shell_dir)
-
-        tmpdir
-      end
-
-      def cleanup_sandbox
-        return if tmpdir.nil?
-
-        debug("Cleaning up local sandbox in #{tmpdir}")
-        FileUtils.rmtree(tmpdir)
-      end
-
-      def instance=(instance)
-        @instance = instance
-        expand_paths!
-      end
-
-      def calculate_path(path, type = :directory)
-        base = config[:test_base_path]
-        candidates = []
-        candidates << File.join(base, instance.suite.name, path)
-        candidates << File.join(base, path)
-        candidates << File.join(Dir.pwd, path)
-
-        candidates.find do |c|
-          type == :directory ? File.directory?(c) : File.file?(c)
-        end
+        sudo(File.join(config[:root_path], File.basename(config[:script])))
       end
 
       protected
 
-      attr_reader :tmpdir
+      def prepare_script
+        info("Preparing script")
+        debug("Using script from #{config[:script]}")
 
-      def expand_paths!
-        [:file].each do |key|
-          unless config[key].nil?
-            config[key] = File.expand_path(config[key], config[:kitchen_root])
-          end
-        end
+        FileUtils.cp_r(config[:script], sandbox_path)
       end
     end
   end
