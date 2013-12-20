@@ -52,7 +52,7 @@ describe Kitchen::Loader::YAML do
     it "sets config_file from parameter, if given" do
       loader = Kitchen::Loader::YAML.new('/tmp/crazyfunkytown.file')
 
-      loader.config_file.must_equal '/tmp/crazyfunkytown.file'
+      loader.config_file.must_match %r{/tmp/crazyfunkytown.file$}
     end
   end
 
