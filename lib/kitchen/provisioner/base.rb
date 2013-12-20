@@ -65,9 +65,13 @@ module Kitchen
         config.keys
       end
 
+      def init_command ; end
+
       def install_command ; end
 
-      def init_command ; end
+      def prepare_command ; end
+
+      def run_command ; end
 
       def create_sandbox
         @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
@@ -81,10 +85,6 @@ module Kitchen
           "been created. Please run #{self.class}#create_sandox before " +
           "trying to access the path.")
       end
-
-      def prepare_command ; end
-
-      def run_command ; end
 
       def cleanup_sandbox
         return if sandbox_path.nil?
