@@ -32,10 +32,20 @@ module Kitchen
       end
       expand_path_for :script
 
+      default_config :data_path do |provisioner|
+        provisioner.calculate_path("data")
+      end
+      expand_path_for :data_path
+
       def create_sandbox
         super
         prepare_data
         prepare_script
+      end
+
+      def init_command
+        data = File.join(config[:root_path], "data")
+        "#{sudo('rm')} -rf #{data} ; mkdir -p #{config[:root_path]}"
       end
 
       def run_command
@@ -43,6 +53,17 @@ module Kitchen
       end
 
       protected
+
+      def prepare_data
+        return unless config[:data_path]
+
+        info("Preparing data")
+        debug("Using data from #{config[:data_path]}")
+
+        tmpdata_dir = File.join(sandbox_path, "data")
+        FileUtils.mkdir_p(tmpdata_dir)
+        FileUtils.cp_r(Dir.glob("#{config[:data_path]}/*"), tmpdata_dir)
+      end
 
       def prepare_script
         info("Preparing script")
