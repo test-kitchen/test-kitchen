@@ -64,7 +64,12 @@ module Kitchen
 
       def init_command ; end
 
-      def create_sandbox ; end
+      def create_sandbox
+        @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
+        File.chmod(0755, sandbox_path)
+        info("Preparing files for transfer")
+        debug("Creating local sandbox in #{sandbox_path}")
+      end
 
       def sandbox_path
         @sandbox_path || (raise ClientError, "Sandbox directory has not yet " +
@@ -76,7 +81,12 @@ module Kitchen
 
       def run_command ; end
 
-      def cleanup_sandbox ; end
+      def cleanup_sandbox
+        return if sandbox_path.nil?
+
+        debug("Cleaning up local sandbox in #{sandbox_path}")
+        FileUtils.rmtree(sandbox_path)
+      end
 
       # Returns a Hash of configuration and other useful diagnostic information.
       #

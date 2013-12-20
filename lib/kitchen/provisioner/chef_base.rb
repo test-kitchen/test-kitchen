@@ -107,13 +107,6 @@ module Kitchen
         "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
       end
 
-      def cleanup_sandbox
-        return if sandbox_path.nil?
-
-        debug("Cleaning up local sandbox in #{sandbox_path}")
-        FileUtils.rmtree(sandbox_path)
-      end
-
       def calculate_path(path, type = :directory)
         base = config[:test_base_path]
         candidates = []
@@ -124,6 +117,19 @@ module Kitchen
         candidates.find do |c|
           type == :directory ? File.directory?(c) : File.file?(c)
         end
+      end
+
+      def create_sandbox
+        super
+        prepare_json
+        prepare_cache
+        prepare_cookbooks
+        prepare_data
+        prepare_data_bags
+        prepare_environments
+        prepare_nodes
+        prepare_roles
+        prepare_secret
       end
 
       protected
@@ -164,25 +170,6 @@ module Kitchen
           :chef_server_url  => "http://127.0.0.1:8889",
           :encrypted_data_bag_secret => "#{root}/encrypted_data_bag_secret",
         }
-      end
-
-      def create_chef_sandbox
-        @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
-        File.chmod(0755, @tmpdir)
-        info("Preparing files for transfer")
-        debug("Creating local sandbox in #{tmpdir}")
-
-        yield if block_given?
-        prepare_json
-        prepare_cache
-        prepare_cookbooks
-        prepare_data
-        prepare_data_bags
-        prepare_environments
-        prepare_nodes
-        prepare_roles
-        prepare_secret
-        tmpdir
       end
 
       def prepare_json

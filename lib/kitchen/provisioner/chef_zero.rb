@@ -31,11 +31,10 @@ module Kitchen
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
 
       def create_sandbox
-        create_chef_sandbox do
-          prepare_chef_client_zero_rb
-          prepare_validation_pem
-          prepare_client_rb
-        end
+        super
+        prepare_chef_client_zero_rb
+        prepare_validation_pem
+        prepare_client_rb
       end
 
       def prepare_command

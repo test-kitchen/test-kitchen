@@ -30,7 +30,8 @@ module Kitchen
       default_config :solo_rb, {}
 
       def create_sandbox
-        create_chef_sandbox { prepare_solo_rb }
+        super
+        prepare_solo_rb
       end
 
       def run_command
