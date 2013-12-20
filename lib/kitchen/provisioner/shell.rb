@@ -22,7 +22,7 @@ module Kitchen
 
   module Provisioner
 
-    # Chef Solo provisioner.
+    # Basic shell provisioner.
     #
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
