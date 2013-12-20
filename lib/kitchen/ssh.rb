@@ -152,12 +152,15 @@ module Kitchen
         #  environment variables you want to send.
         env.each do |key, value|
           channel.env(key, value) do |ch, success|
-            logger.debug("Setting remote env #{key}=#{val}")
-            logger.error("Failed to set remote env #{key}=#{val}") unless success
+            logger.debug("Setting remote env #{key}=#{value}")
+            logger.error("Failed to set remote env #{key}=#{value}") unless success
           end
         end
 
-        channel.exec(cmd) do |ch, success|
+        env_string = env.map { |k,v| [k,v].join("=") }.join(" ")
+        env_with_cmd = [env_string, cmd].join(" ")
+
+        channel.exec(env_with_cmd) do |ch, success|
 
           channel.on_data do |ch, data|
             logger << data
