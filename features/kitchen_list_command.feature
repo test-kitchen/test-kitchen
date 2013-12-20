@@ -51,11 +51,13 @@ Feature: Listing Test Kitchen instances
 
     """
 
+  @spawn
   Scenario: Listing instances with a regular expression yielding no results
     When I run `kitchen list freebsd --bare`
     Then the exit status should not be 0
     And the output should contain "No instances for regex `freebsd', try running `kitchen list'"
 
+  @spawn
   Scenario: Listing instances with a bad regular expression
     When I run `kitchen list *centos* --bare`
     Then the exit status should not be 0

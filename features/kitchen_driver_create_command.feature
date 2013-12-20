@@ -3,6 +3,7 @@ Feature: Create a new Test Kitchen Driver project
   As a user of Test Kitchen
   I want a command to run that will give me a driver gem project scaffold
 
+  @spawn
   Scenario: Displaying help
     When I run `kitchen help driver create`
     Then the output should contain:
