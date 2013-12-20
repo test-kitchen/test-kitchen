@@ -147,17 +147,16 @@ module Kitchen
         channel.request_pty
 
         # NOTE net/ssh warns:
-        #  If you are connecting to an OpenSSH server, you will
-        #  need to update the AcceptEnv setting in the sshd_config to include the
-        #  environment variables you want to send.
-        env.each do |key, value|
-          channel.env(key, value) do |ch, success|
-            logger.debug("Setting remote env #{key}=#{value}")
-            logger.error("Failed to set remote env #{key}=#{value}") unless success
-          end
-        end
+        # If you are connecting to an OpenSSH server, you will
+        # need to update the AcceptEnv setting in the sshd_config to include the
+        # environment variables you want to send.
+        #
+        # This means that we can't use channel#env.
+        # Instead we have to stringify the environment and prepend it to the command
 
         env_string = env.map { |k,v| [k,v].join("=") }.join(" ")
+        debug("Command environment: '#{env_string}'")
+
         env_with_cmd = [env_string, cmd].join(" ")
 
         channel.exec(env_with_cmd) do |ch, success|
