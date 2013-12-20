@@ -107,18 +107,6 @@ module Kitchen
         "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
       end
 
-      def calculate_path(path, type = :directory)
-        base = config[:test_base_path]
-        candidates = []
-        candidates << File.join(base, instance.suite.name, path)
-        candidates << File.join(base, path)
-        candidates << File.join(Dir.pwd, path)
-
-        candidates.find do |c|
-          type == :directory ? File.directory?(c) : File.file?(c)
-        end
-      end
-
       def create_sandbox
         super
         prepare_json
