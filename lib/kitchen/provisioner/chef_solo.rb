@@ -30,7 +30,8 @@ module Kitchen
       default_config :solo_rb, {}
 
       def create_sandbox
-        create_chef_sandbox { prepare_solo_rb }
+        super
+        prepare_solo_rb
       end
 
       def run_command
@@ -48,7 +49,7 @@ module Kitchen
       def prepare_solo_rb
         data = default_config_rb.merge(config[:solo_rb])
 
-        File.open(File.join(tmpdir, "solo.rb"), "wb") do |file|
+        File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
       end

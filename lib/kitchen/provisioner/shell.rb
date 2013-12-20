@@ -22,36 +22,54 @@ module Kitchen
 
   module Provisioner
 
-    # Chef Solo provisioner.
+    # Basic shell provisioner.
     #
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
-      attr_accessor :tmpdir
-      default_config :file, 'bootstrap.sh'
+
+      default_config :script do |provisioner|
+        provisioner.calculate_path("bootstrap.sh", :script)
+      end
+      expand_path_for :script
+
+      default_config :data_path do |provisioner|
+        provisioner.calculate_path("data")
+      end
+      expand_path_for :data_path
+
+      def create_sandbox
+        super
+        prepare_data
+        prepare_script
+      end
+
+      def init_command
+        data = File.join(config[:root_path], "data")
+        "#{sudo('rm')} -rf #{data} ; mkdir -p #{config[:root_path]}"
+      end
 
       def run_command
-        sudo(File.join(config[:root_path], config[:file]))
+        sudo(File.join(config[:root_path], File.basename(config[:script])))
       end
 
-      # XXX Not implementing this will upload '/*' to each host
-      # Or try, and die on resolving bad symlinks
-      def create_sandbox
-        @tmpdir = Dir.mktmpdir
-        debug("Created local sandbox in #{tmpdir}")
-        shell_dir = File.join(tmpdir, "shell")
+      protected
 
-        FileUtils.mkdir_p(shell_dir)
-        debug("Copying #{config[:file]} to #{shell_dir}")
-        FileUtils.cp_r(config[:file], shell_dir)
+      def prepare_data
+        return unless config[:data_path]
 
-        @tmpdir
+        info("Preparing data")
+        debug("Using data from #{config[:data_path]}")
+
+        tmpdata_dir = File.join(sandbox_path, "data")
+        FileUtils.mkdir_p(tmpdata_dir)
+        FileUtils.cp_r(Dir.glob("#{config[:data_path]}/*"), tmpdata_dir)
       end
 
-      def cleanup_sandbox
-        return if tmpdir.nil?
+      def prepare_script
+        info("Preparing script")
+        debug("Using script from #{config[:script]}")
 
-        debug("Cleaning up local sandbox in #{tmpdir}")
-        FileUtils.rmtree(tmpdir)
+        FileUtils.cp_r(config[:script], sandbox_path)
       end
     end
   end
