@@ -168,11 +168,11 @@ module Kitchen
     desc "login INSTANCE|REGEXP", "Log in to one instance"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
-    def login(regexp)
+    def login(*args)
       update_config!
-      results = get_filtered_instances(regexp)
+      results = parse_subcommand(args.first)
       if results.size > 1
-        die task, "Argument `#{regexp}' returned multiple results:\n" +
+        die task, "Argument `#{args.first}' returned multiple results:\n" +
           results.map { |i| "  * #{i.name}" }.join("\n")
       end
       instance = results.pop
