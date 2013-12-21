@@ -50,7 +50,7 @@ module Kitchen
       )
     end
 
-    desc "list [(all|<REGEX>)]", "List all instances"
+    desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
     method_option :bare, :aliases => "-b", :type => :boolean,
       :desc => "List the name of each instance only, one per line"
     method_option :debug, :aliases => "-d", :type => :boolean,
@@ -70,7 +70,7 @@ module Kitchen
       end
     end
 
-    desc "diagnose [(all|<REGEX>)]", "Show computed diagnostic configuration"
+    desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :loader, :type => :boolean,
@@ -100,7 +100,7 @@ module Kitchen
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
       desc(
-        "#{action} [(all|<REGEX>)] [opts]",
+        "#{action} [INSTANCE|REGEXP|all]",
         "#{action.capitalize} one or more instances"
       )
       method_option :concurrency, :aliases => "-c",
@@ -119,7 +119,7 @@ module Kitchen
       define_method(action) { |*args| exec_action(action) }
     end
 
-    desc "test [all|<REGEX>)] [opts]", "Test one or more instances"
+    desc "test [INSTANCE|REGEXP|all]", "Test one or more instances"
     long_desc <<-DESC
       Test one or more instances
 
@@ -165,7 +165,7 @@ module Kitchen
       banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
     end
 
-    desc "login (['REGEX']|[INSTANCE])", "Log in to one instance"
+    desc "login INSTANCE|REGEXP", "Log in to one instance"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def login(regexp)
