@@ -364,12 +364,14 @@ module Kitchen
 
     def get_filtered_instances(regexp)
       result = begin
-        @config.instances.get_all(/#{regexp}/)
+        @config.instances.get(regexp) ||
+          @config.instances.get_all(/#{regexp}/)
       rescue RegexpError => e
         die task, "Invalid Ruby regular expression, " +
           "you may need to single quote the argument. " +
           "Please try again or consult http://rubular.com/ (#{e.message})"
       end
+      result = Array(result)
 
       if result.empty?
         die task, "No instances for regex `#{regexp}', try running `kitchen list'"

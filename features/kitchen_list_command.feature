@@ -13,6 +13,7 @@ Feature: Listing Test Kitchen instances
     platforms:
       - name: ubuntu-13.04
       - name: centos-6.4
+      - name: centos-6.4-with-small-mem
 
     suites:
       - name: foobar
@@ -31,6 +32,7 @@ Feature: Listing Test Kitchen instances
     """
     foobar-ubuntu-1304
     foobar-centos-64
+    foobar-centos-64-with-small-mem
 
     """
 
@@ -62,3 +64,20 @@ Feature: Listing Test Kitchen instances
     When I run `kitchen list *centos* --bare`
     Then the exit status should not be 0
     And the output should contain "Invalid Ruby regular expression"
+
+  Scenario: Listing a full instance name returns an exact match, not fuzzy matches
+    When I successfully run `kitchen list  foobar-centos-64 --bare`
+    Then the output should contain exactly:
+    """
+    foobar-centos-64
+
+    """
+
+  Scenario: Listing a full instance with regex returns all regex matches
+    When I successfully run `kitchen list  'foobar-centos-64.*' --bare`
+    Then the output should contain exactly:
+    """
+    foobar-centos-64
+    foobar-centos-64-with-small-mem
+
+    """
