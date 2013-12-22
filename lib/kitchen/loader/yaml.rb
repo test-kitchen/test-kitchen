@@ -67,21 +67,13 @@ module Kitchen
       # @return [Hash] a diagnostic hash
       def diagnose
         result = Hash.new
-        result[:proces_erb] = @process_erb
+        result[:process_erb] = @process_erb
         result[:process_local] = @process_local
         result[:process_global] = @process_global
-        if File.exists?(global_config_file)
-          result[:global_config] =
-            { :filename => global_config_file, :raw_data => global_yaml }
-        end
-        result[:project_config] =
-          { :filename => config_file, :raw_data => yaml }
-        if File.exists?(local_config_file)
-          result[:local_config] =
-            { :filename => local_config_file, :raw_data => local_yaml }
-        end
-        combined = begin ; combined_hash ; rescue => e ; failure_hash(e) ; end
-        result[:combined_config] = { :raw_data => combined }
+        result[:global_config] = diagnose_component(:global_yaml, global_config_file)
+        result[:project_config] = diagnose_component(:yaml, config_file)
+        result[:local_config] = diagnose_component(:local_yaml, local_config_file)
+        result[:combined_config] = diagnose_component(:combined_hash)
         result
       end
 
@@ -98,9 +90,6 @@ module Kitchen
           normalize(yaml)
         end
         @process_global ? y.rmerge(normalize(global_yaml)) : y
-      rescue NoMethodError
-        raise UserError, "Error merging #{File.basename(config_file)} and" +
-          "#{File.basename(local_config_file)}"
       end
 
       def yaml
@@ -118,7 +107,16 @@ module Kitchen
       def yaml_string(file)
         string = read_file(file)
 
-        @process_erb ? ERB.new(string).result : string
+        @process_erb ? process_erb(string, file) : string
+      end
+
+      def process_erb(string, file)
+        ERB.new(string).result
+      rescue => e
+        raise UserError, "Error parsing ERB content in #{file} " +
+          "(#{e.class}: #{e.message}).\n" +
+          "Please run `kitchen diagnose --no-instances --loader' to help " +
+          "debug your issue."
       end
 
       def read_file(file)
@@ -133,14 +131,28 @@ module Kitchen
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
       end
 
-      def failure_hash(e)
-        {
+      def diagnose_component(component, file = nil)
+        return if file && !File.exists?(file)
+
+        hash = begin
+          send(component)
+        rescue => e
+          failure_hash(e, file)
+        end
+
+        { :filename => file, :raw_data => hash }
+      end
+
+      def failure_hash(e, file = nil)
+        result = {
           :error => {
             :exception => e.inspect,
             :message => e.message,
             :backtrace => e.backtrace
           }
         }
+        result[:error][:raw_file] = IO.read(file) unless file.nil?
+        result
       end
 
       def normalize(obj)
@@ -170,9 +182,18 @@ module Kitchen
       def parse_yaml_string(string, file_name)
         return Hash.new if string.nil? || string.empty?
 
-        ::YAML.safe_load(string) || Hash.new
+        result = ::YAML.safe_load(string) || Hash.new
+        unless result.is_a?(Hash)
+          raise UserError, "Error parsing #{file_name} as YAML " +
+            "(Result of parse was not a Hash, but was a #{result.class}).\n" +
+            "Please run `kitchen diagnose --no-instances --loader' to help " +
+            "debug your issue."
+        end
+        result
       rescue SyntaxError, Psych::SyntaxError
-        raise UserError, "Error parsing #{file_name}"
+        raise UserError, "Error parsing #{file_name} as YAML.\n" +
+          "Please run `kitchen diagnose --no-instances --loader' to help " +
+          "debug your issue."
       end
     end
   end
