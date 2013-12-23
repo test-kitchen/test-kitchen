@@ -92,6 +92,7 @@ module Kitchen
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
+        opts[:gateway] = combined[:ssh_gateway] if combined[:ssh_gateway]
 
         [combined[:hostname], combined[:username], opts]
       end
@@ -123,7 +124,7 @@ module Kitchen
       end
 
       def wait_for_sshd(hostname, username = nil, options = {})
-        SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
+        SSH.new(*build_ssh_args(options.merge(:hostname => hostname))).wait
       end
     end
   end
