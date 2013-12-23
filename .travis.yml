@@ -3,11 +3,13 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
+  - 2.1.0-preview2
   - jruby-19mode
   - ruby-head
 
 env:
-  - RUBYGEMS_VERSION=2.0.3
+  - RUBYGEMS_VERSION=2.1.11
+  - RUBYGEMS_VERSION=2.0.14
   - RUBYGEMS_VERSION=1.8.25
 
 before_install:
@@ -22,4 +24,6 @@ matrix:
     - rvm: jruby-19mode
   exclude:
     - rvm: 2.0.0
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: 2.1.0-preview2
       env: RUBYGEMS_VERSION=1.8.25
