@@ -29,7 +29,7 @@ module Kitchen
 
       def call
         require 'pry'
-        Pry.start(@config, :prompt => pry_prompts)
+        Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
       rescue LoadError => e
         warn %{Make sure you have the pry gem installed. You can install it with:}
         warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
@@ -38,21 +38,13 @@ module Kitchen
 
       protected
 
-      def pry_prompts
-        [
-          proc { |target_self, nest_level, pry|
-            ["[#{pry.input_array.size}] ",
-              "kc(#{Pry.view_clip(target_self.class)})",
-              "#{":#{nest_level}" unless nest_level.zero?}> "
-            ].join
-          },
-          proc { |target_self, nest_level, pry|
-            ["[#{pry.input_array.size}] ",
-              "kc(#{Pry.view_clip(target_self.class)})",
-              "#{":#{nest_level}" unless nest_level.zero?}* "
-            ].join
-          },
-        ]
+      def prompt(char)
+        proc { |target_self, nest_level, pry|
+          ["[#{pry.input_array.size}] ",
+            "kc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}#{char} "
+          ].join
+        }
       end
     end
   end
