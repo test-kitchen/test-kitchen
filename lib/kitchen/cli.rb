@@ -162,14 +162,7 @@ module Kitchen
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def login(*args)
       update_config!
-      results = parse_subcommand(args.first)
-      if results.size > 1
-        die task, "Argument `#{args.first}' returned multiple results:\n" +
-          results.map { |i| "  * #{i.name}" }.join("\n")
-      end
-      instance = results.pop
-
-      instance.login
+      perform("login", "login", args)
     end
 
     desc "version", "Print Kitchen's version information"
