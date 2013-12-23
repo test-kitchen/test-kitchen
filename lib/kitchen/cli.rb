@@ -16,11 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'benchmark'
-require 'erb'
-require 'ostruct'
 require 'thor'
-require 'thread'
 
 require 'kitchen'
 require 'kitchen/generator/driver_create'
@@ -52,7 +48,6 @@ module Kitchen
       end
     end
 
-    include Thor::Actions
     include Logging
     include PerformCommand
 
@@ -239,75 +234,8 @@ module Kitchen
 
     private
 
-    attr_reader :task
-
     def logger
       Kitchen.logger
-    end
-
-    def exec_action(action)
-      update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
-      elapsed = Benchmark.measure do
-        @task = action
-        results = parse_subcommand(args.first)
-        run(results)
-      end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
-    end
-
-    def run(instances, *args)
-      concurrency = 1
-      if options[:concurrency]
-        concurrency = options[:concurrency] || instances.size
-        concurrency = instances.size if concurrency > instances.size
-      end
-
-      queue = Queue.new
-      instances.each {|i| queue << i }
-      concurrency.times { queue << nil }
-
-      threads = []
-      concurrency.times do
-        threads << Thread.new do
-          while instance = queue.pop
-            instance.public_send(task, *args)
-          end
-        end
-      end
-      threads.map { |i| i.join }
-    end
-
-    def parse_subcommand(arg = nil)
-      arg == "all" ? get_all_instances : get_filtered_instances(arg)
-    end
-
-    def get_all_instances
-      result = @config.instances
-
-      if result.empty?
-        die task, "No instances defined"
-      else
-        result
-      end
-    end
-
-    def get_filtered_instances(regexp)
-      result = begin
-        @config.instances.get(regexp) ||
-          @config.instances.get_all(/#{regexp}/)
-      rescue RegexpError => e
-        die task, "Invalid Ruby regular expression, " +
-          "you may need to single quote the argument. " +
-          "Please try again or consult http://rubular.com/ (#{e.message})"
-      end
-      result = Array(result)
-
-      if result.empty?
-        die task, "No instances for regex `#{regexp}', try running `kitchen list'"
-      else
-        result
-      end
     end
 
     def update_config!
@@ -326,12 +254,6 @@ module Kitchen
         options.delete(:parallel)
         options.freeze
       end
-    end
-
-    def die(task, msg)
-      error "\n#{msg}\n\n"
-      help(task)
-      exit 1
     end
 
     def ensure_initialized

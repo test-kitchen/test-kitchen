@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/actions'
 require 'thread'
 
 module Kitchen
@@ -29,7 +28,6 @@ module Kitchen
     class Base
 
       include Logging
-      include ::Thor::Actions
 
       def initialize(cmd_args, cmd_options, options = {})
         @args = cmd_args
