@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+gem 'minitest'
+
 require 'simplecov'
 SimpleCov.adapters.define 'gem' do
   command_name 'Specs'
