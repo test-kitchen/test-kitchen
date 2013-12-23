@@ -340,17 +340,14 @@ describe Kitchen::Loader::YAML do
         "Error parsing /tmp/.kitchen.yml"))
     end
 
-    if RUBY_VERSION >= "1.9.3"
-      it "raises a UserError if kitchen.yml is a commented out YAML document" do
-        FileUtils.mkdir_p "/tmp"
-        # this is not technically valid YAML and worse yet returns a
-        # Psych::Paser under ruby 1.9.3 and greater
-        File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '#---\n' }
+    it "raises a UserError if kitchen.yml is a commented out YAML document" do
+      FileUtils.mkdir_p "/tmp"
+      # this is not technically valid YAML and worse yet returns a Psych::Paser
+      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '#---\n' }
 
-        err = proc { loader.read }.must_raise Kitchen::UserError
-        err.message.must_match Regexp.new(Regexp.escape(
-          "Error parsing /tmp/.kitchen.yml"))
-      end
+      err = proc { loader.read }.must_raise Kitchen::UserError
+      err.message.must_match Regexp.new(Regexp.escape(
+        "Error parsing /tmp/.kitchen.yml"))
     end
 
     it "raises a UserError if kitchen.local.yml cannot be parsed" do

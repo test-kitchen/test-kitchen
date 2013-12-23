@@ -85,12 +85,6 @@ module Kitchen
 
       protected
 
-      YAML_ERRORS = if RUBY_VERSION >= "1.9.3"
-        [SyntaxError, Psych::SyntaxError]
-      else
-        [SyntaxError]
-      end
-
       def default_config_file
         File.join(Dir.pwd, '.kitchen.yml')
       end
@@ -202,7 +196,7 @@ module Kitchen
             "debug your issue."
         end
         result
-      rescue *YAML_ERRORS
+      rescue SyntaxError, Psych::SyntaxError
         raise UserError, "Error parsing #{file_name} as YAML.\n" +
           "Please run `kitchen diagnose --no-instances --loader' to help " +
           "debug your issue."
