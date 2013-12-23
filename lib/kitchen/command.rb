@@ -28,21 +28,22 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
 
-      protected
-
-      attr_reader :args, :options, :help, :config, :shell
-
       include Logging
       include ::Thor::Actions
 
       def initialize(cmd_args, cmd_options, options = {})
         @args = cmd_args
         @options = cmd_options
+        @action = options.fetch(:action, nil)
         @help = options.fetch(:help, lambda { "No help provided" })
         @config = options.fetch(:config, nil)
         @loader = options.fetch(:loader, nil)
         @shell = options.fetch(:shell)
       end
+
+      protected
+
+      attr_reader :args, :options, :help, :config, :shell, :action
 
       def die(msg)
         error "\n#{msg}\n\n"

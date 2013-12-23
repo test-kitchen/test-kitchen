@@ -94,7 +94,10 @@ module Kitchen
         DESC
       method_option :log_level, :aliases => "-l",
         :desc => "Set the log level (debug, info, warn, error, fatal)"
-      define_method(action) { |*args| exec_action(action) }
+      define_method(action) do |*args|
+        update_config!
+        perform(action, "action", args)
+      end
     end
 
     desc "test [INSTANCE|REGEXP|all]", "Test one or more instances"
@@ -249,6 +252,7 @@ module Kitchen
       require "kitchen/command/#{command}"
 
       command_options = {
+        :action => task,
         :help => lambda { help(task) },
         :config => @config,
         :shell => shell
