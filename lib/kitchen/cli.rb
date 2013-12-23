@@ -16,11 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'benchmark'
-require 'erb'
-require 'ostruct'
 require 'thor'
-require 'thread'
 
 require 'kitchen'
 require 'kitchen/generator/driver_create'
@@ -33,8 +29,27 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class CLI < Thor
 
-    include Thor::Actions
+    # Common module to load and invoke a CLI-implementation agnostic command.
+    module PerformCommand
+
+      def perform(task, command, args = nil, additional_options = {})
+        require "kitchen/command/#{command}"
+
+        command_options = {
+          :action => task,
+          :help => lambda { help(task) },
+          :config => @config,
+          :shell => shell
+        }.merge(additional_options)
+
+        str_const = Thor::Util.camel_case(command)
+        klass = ::Kitchen::Command.const_get(str_const)
+        klass.new(args, options, command_options).call
+      end
+    end
+
     include Logging
+    include PerformCommand
 
     MAX_CONCURRENCY = 9999
 
@@ -59,15 +74,7 @@ module Kitchen
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
       update_config!
-      result = parse_subcommand(args.first)
-      if options[:debug]
-        die task, "The --debug flag on the list subcommand is deprecated, " +
-          "please use `kitchen diagnose'."
-      elsif options[:bare]
-        say Array(result).map { |i| i.name }.join("\n")
-      else
-        list_table(result)
-      end
+      perform("list", "list", args)
     end
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
@@ -81,21 +88,7 @@ module Kitchen
       :desc => "Include all diagnostics"
     def diagnose(*args)
       update_config!
-
-      loader = if options[:all] || options[:loader]
-        @loader
-      else
-        nil
-      end
-      instances = if options[:all] || options[:instances]
-        parse_subcommand(args.first)
-      else
-        []
-      end
-
-      require 'yaml'
-      Kitchen::Diagnostic.new(:loader => loader, :instances => instances).
-        read.to_yaml.each_line { |line| say(line) }
+      perform("diagnose", "diagnose", args, :loader => @loader)
     end
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
@@ -116,7 +109,10 @@ module Kitchen
         DESC
       method_option :log_level, :aliases => "-l",
         :desc => "Set the log level (debug, info, warn, error, fatal)"
-      define_method(action) { |*args| exec_action(action) }
+      define_method(action) do |*args|
+        update_config!
+        perform(action, "action", args)
+      end
     end
 
     desc "test [INSTANCE|REGEXP|all]", "Test one or more instances"
@@ -148,21 +144,9 @@ module Kitchen
     method_option :auto_init, :type => :boolean, :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
     def test(*args)
-      if ! %w{passing always never}.include?(options[:destroy])
-        raise ArgumentError, "Destroy mode must be passing, always, or never."
-      end
-
       update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
-      elapsed = Benchmark.measure do
-        ensure_initialized
-        destroy_mode = options[:destroy].to_sym
-        @task = :test
-        results = parse_subcommand(args.join('|'))
-
-        run(results, destroy_mode)
-      end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      ensure_initialized
+      perform("test", "test", args)
     end
 
     desc "login INSTANCE|REGEXP", "Log in to one instance"
@@ -170,53 +154,23 @@ module Kitchen
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def login(*args)
       update_config!
-      results = parse_subcommand(args.first)
-      if results.size > 1
-        die task, "Argument `#{args.first}' returned multiple results:\n" +
-          results.map { |i| "  * #{i.name}" }.join("\n")
-      end
-      instance = results.pop
-
-      instance.login
+      perform("login", "login", args)
     end
 
     desc "version", "Print Kitchen's version information"
     def version
-      say "Test Kitchen version #{Kitchen::VERSION}"
+      puts "Test Kitchen version #{Kitchen::VERSION}"
     end
     map %w(-v --version) => :version
 
     desc "sink", "Show the Kitchen sink!", :hide => true
     def sink
-      say [
-        "",
-        "                    ___              ",
-        "                   ' _ '.            ",
-        "                 / /` `\\ \\         ",
-        "                 | |   [__]          ",
-        "                 | |    {{           ",
-        "                 | |    }}           ",
-        "              _  | |  _ {{           ",
-        "  ___________<_>_| |_<_>}}________   ",
-        "      .=======^=(___)=^={{====.      ",
-        "     / .----------------}}---. \\    ",
-        "    / /                 {{    \\ \\  ",
-        "   / /                  }}     \\ \\ ",
-        "  (  '========================='  )  ",
-        "   '-----------------------------'   ",
-        "                                     ",  # necessary newline
-        ""
-      ].map(&:rstrip).join("\n")
+      perform("sink", "sink")
     end
 
     desc "console", "Kitchen Console!"
     def console
-      require 'pry'
-      Pry.start(@config, :prompt => pry_prompts)
-    rescue LoadError => e
-      warn %{Make sure you have the pry gem installed. You can install it with:}
-      warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
-      exit 1
+      perform("console", "console")
     end
 
     register Kitchen::Generator::Init, "init",
@@ -233,6 +187,8 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Driver < Thor
+
+      include PerformCommand
 
       register Kitchen::Generator::DriverCreate, "create",
         "create [NAME]", "Create a new Kitchen Driver gem project"
@@ -254,42 +210,11 @@ module Kitchen
         relevant drivers will be returned.
       D
       def discover
-        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
-        specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
-        specs = specs.unshift(["Gem Name", "Latest Stable Release"])
-        print_table(specs, :indent => 4)
+        perform("discover", "driver_discover", args)
       end
 
       def self.basename
         super + " driver"
-      end
-
-      private
-
-      def fetch_gem_specs
-        require 'rubygems/spec_fetcher'
-        SafeYAML::OPTIONS[:suppress_warnings] = true
-        req = Gem::Requirement.default
-        dep = Gem::Deprecate.skip_during do
-          Gem::Dependency.new(/kitchen-/i, req)
-        end
-        fetcher = Gem::SpecFetcher.fetcher
-
-        specs = if fetcher.respond_to?(:find_matching)
-          fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        else
-          fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        end
-      end
-
-      def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        specs = fetcher.find_matching(dep, false, false, false)
-        specs.map { |t| t.first }.map { |t| t[0, 2] }
-      end
-
-      def fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        specs = fetcher.spec_for_dependency(dep, false)
-        specs.first.map { |t| [t.first.name, t.first.version] }
       end
     end
 
@@ -309,108 +234,8 @@ module Kitchen
 
     private
 
-    attr_reader :task
-
     def logger
       Kitchen.logger
-    end
-
-    def exec_action(action)
-      update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
-      elapsed = Benchmark.measure do
-        @task = action
-        results = parse_subcommand(args.first)
-        run(results)
-      end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
-    end
-
-    def run(instances, *args)
-      concurrency = 1
-      if options[:concurrency]
-        concurrency = options[:concurrency] || instances.size
-        concurrency = instances.size if concurrency > instances.size
-      end
-
-      queue = Queue.new
-      instances.each {|i| queue << i }
-      concurrency.times { queue << nil }
-
-      threads = []
-      concurrency.times do
-        threads << Thread.new do
-          while instance = queue.pop
-            instance.public_send(task, *args)
-          end
-        end
-      end
-      threads.map { |i| i.join }
-    end
-
-    def parse_subcommand(arg = nil)
-      arg == "all" ? get_all_instances : get_filtered_instances(arg)
-    end
-
-    def get_all_instances
-      result = @config.instances
-
-      if result.empty?
-        die task, "No instances defined"
-      else
-        result
-      end
-    end
-
-    def get_filtered_instances(regexp)
-      result = begin
-        @config.instances.get(regexp) ||
-          @config.instances.get_all(/#{regexp}/)
-      rescue RegexpError => e
-        die task, "Invalid Ruby regular expression, " +
-          "you may need to single quote the argument. " +
-          "Please try again or consult http://rubular.com/ (#{e.message})"
-      end
-      result = Array(result)
-
-      if result.empty?
-        die task, "No instances for regex `#{regexp}', try running `kitchen list'"
-      else
-        result
-      end
-    end
-
-    def list_table(result)
-      table = [
-        [set_color("Instance", :green), set_color("Driver", :green),
-          set_color("Provisioner", :green), set_color("Last Action", :green)]
-      ]
-      table += Array(result).map { |i| display_instance(i) }
-      print_table(table)
-    end
-
-    def display_instance(instance)
-      [
-        color_pad(instance.name),
-        color_pad(instance.driver.name),
-        color_pad(instance.provisioner.name),
-        format_last_action(instance.last_action)
-      ]
-    end
-
-    def color_pad(string)
-      string + set_color("", :white)
-    end
-
-    def format_last_action(last_action)
-      case last_action
-      when 'create' then set_color("Created", :cyan)
-      when 'converge' then set_color("Converged", :magenta)
-      when 'setup' then set_color("Set Up", :blue)
-      when 'verify' then set_color("Verified", :yellow)
-      when nil then set_color("<Not Created>", :red)
-      else set_color("<Unknown>", :white)
-      end
     end
 
     def update_config!
@@ -431,12 +256,6 @@ module Kitchen
       end
     end
 
-    def die(task, msg)
-      error "\n#{msg}\n\n"
-      help(task)
-      exit 1
-    end
-
     def ensure_initialized
       yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
 
@@ -444,23 +263,6 @@ module Kitchen
         banner "Invoking init as '#{yaml}' file is missing"
         invoke "init"
       end
-    end
-
-    def pry_prompts
-      [
-        proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
-            "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}> "
-          ].join
-        },
-        proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
-            "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}* "
-          ].join
-        },
-      ]
     end
   end
 end
