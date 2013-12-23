@@ -30,22 +30,7 @@ unless RUBY_ENGINE == 'jruby'
 
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
-    cane.abc_max = 20
-    cane.abc_exclude = %w(
-      Kitchen::RakeTasks#define
-      Kitchen::ThorTasks#define
-      Kitchen::CLI#pry_prompts
-      Kitchen::CLI#debug_instance
-      Kitchen::Instance#synchronize_or_call
-      Kitchen::Driver::SSHBase#converge
-    )
-    cane.style_exclude = %w(
-      lib/vendor/hash_recursive_merge.rb
-    )
-    cane.doc_exclude = %w(
-      lib/vendor/hash_recursive_merge.rb
-    )
-    cane.style_measure = 160
+    cane.canefile = './.cane'
   end
 
   Tailor::RakeTask.new do |task|
