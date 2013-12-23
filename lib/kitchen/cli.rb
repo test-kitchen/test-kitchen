@@ -73,21 +73,7 @@ module Kitchen
       :desc => "Include all diagnostics"
     def diagnose(*args)
       update_config!
-
-      loader = if options[:all] || options[:loader]
-        @loader
-      else
-        nil
-      end
-      instances = if options[:all] || options[:instances]
-        parse_subcommand(args.first)
-      else
-        []
-      end
-
-      require 'yaml'
-      Kitchen::Diagnostic.new(:loader => loader, :instances => instances).
-        read.to_yaml.each_line { |line| say(line) }
+      perform("diagnose", "diagnose", args, :loader => @loader)
     end
 
     [:create, :converge, :setup, :verify, :destroy].each do |action|
@@ -271,14 +257,15 @@ module Kitchen
 
     private
 
-    def perform(task, command, args = nil)
+    def perform(task, command, args = nil, additional_options = {})
       require "kitchen/command/#{command}"
 
       command_options = {
         :help => lambda { help(task) },
         :config => @config,
         :shell => shell
-      }
+      }.merge(additional_options)
+
       str_const = Thor::Util.camel_case(command)
       klass = ::Kitchen::Command.const_get(str_const)
       klass.new(args, options, command_options).call
