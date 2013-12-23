@@ -16,6 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if RUBY_VERSION <= "1.9.3"
+  # ensure that Psych and not Syck is used for Ruby 1.9.2
+  require 'yaml'
+  YAML::ENGINE.yamler = 'psych'
+end
 require 'safe_yaml'
 
 module Kitchen
