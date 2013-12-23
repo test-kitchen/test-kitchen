@@ -59,15 +59,7 @@ module Kitchen
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
       update_config!
-      result = parse_subcommand(args.first)
-      if options[:debug]
-        die task, "The --debug flag on the list subcommand is deprecated, " +
-          "please use `kitchen diagnose'."
-      elsif options[:bare]
-        say Array(result).map { |i| i.name }.join("\n")
-      else
-        list_table(result)
-      end
+      perform("list", "list", args)
     end
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
@@ -309,6 +301,19 @@ module Kitchen
 
     private
 
+    def perform(task, command, args = nil)
+      require "kitchen/command/#{command}"
+
+      command_options = {
+        :help => lambda { help(task) },
+        :config => @config,
+        :shell => shell
+      }
+      str_const = Thor::Util.camel_case(command)
+      klass = ::Kitchen::Command.const_get(str_const)
+      klass.new(args, options, command_options).call
+    end
+
     attr_reader :task
 
     def logger
@@ -377,39 +382,6 @@ module Kitchen
         die task, "No instances for regex `#{regexp}', try running `kitchen list'"
       else
         result
-      end
-    end
-
-    def list_table(result)
-      table = [
-        [set_color("Instance", :green), set_color("Driver", :green),
-          set_color("Provisioner", :green), set_color("Last Action", :green)]
-      ]
-      table += Array(result).map { |i| display_instance(i) }
-      print_table(table)
-    end
-
-    def display_instance(instance)
-      [
-        color_pad(instance.name),
-        color_pad(instance.driver.name),
-        color_pad(instance.provisioner.name),
-        format_last_action(instance.last_action)
-      ]
-    end
-
-    def color_pad(string)
-      string + set_color("", :white)
-    end
-
-    def format_last_action(last_action)
-      case last_action
-      when 'create' then set_color("Created", :cyan)
-      when 'converge' then set_color("Converged", :magenta)
-      when 'setup' then set_color("Set Up", :blue)
-      when 'verify' then set_color("Verified", :yellow)
-      when nil then set_color("<Not Created>", :red)
-      else set_color("<Unknown>", :white)
       end
     end
 
