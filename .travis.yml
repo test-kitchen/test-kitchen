@@ -1,11 +1,12 @@
 language: ruby
 
 rvm:
-  - 1.9.3
-  - 2.0.0
   - 2.1.0-preview2
-  - jruby-19mode
+  - 2.0.0
+  - 1.9.3
+  - 1.9.2
   - ruby-head
+  - jruby-19mode
 
 env:
   - RUBYGEMS_VERSION=2.1.11
