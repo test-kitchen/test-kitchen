@@ -203,12 +203,7 @@ module Kitchen
 
     desc "console", "Kitchen Console!"
     def console
-      require 'pry'
-      Pry.start(@config, :prompt => pry_prompts)
-    rescue LoadError => e
-      warn %{Make sure you have the pry gem installed. You can install it with:}
-      warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
-      exit 1
+      perform("console", "console")
     end
 
     register Kitchen::Generator::Init, "init",
@@ -416,23 +411,6 @@ module Kitchen
         banner "Invoking init as '#{yaml}' file is missing"
         invoke "init"
       end
-    end
-
-    def pry_prompts
-      [
-        proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
-            "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}> "
-          ].join
-        },
-        proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
-            "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}* "
-          ].join
-        },
-      ]
     end
   end
 end
