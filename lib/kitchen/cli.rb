@@ -33,8 +33,28 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class CLI < Thor
 
+    # Common module to load and invoke a CLI-implementation agnostic command.
+    module PerformCommand
+
+      def perform(task, command, args = nil, additional_options = {})
+        require "kitchen/command/#{command}"
+
+        command_options = {
+          :action => task,
+          :help => lambda { help(task) },
+          :config => @config,
+          :shell => shell
+        }.merge(additional_options)
+
+        str_const = Thor::Util.camel_case(command)
+        klass = ::Kitchen::Command.const_get(str_const)
+        klass.new(args, options, command_options).call
+      end
+    end
+
     include Thor::Actions
     include Logging
+    include PerformCommand
 
     MAX_CONCURRENCY = 9999
 
@@ -173,6 +193,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Driver < Thor
 
+      include PerformCommand
+
       register Kitchen::Generator::DriverCreate, "create",
         "create [NAME]", "Create a new Kitchen Driver gem project"
       long_desc <<-D, :for => "create"
@@ -193,42 +215,11 @@ module Kitchen
         relevant drivers will be returned.
       D
       def discover
-        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
-        specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
-        specs = specs.unshift(["Gem Name", "Latest Stable Release"])
-        print_table(specs, :indent => 4)
+        perform("discover", "driver_discover", args)
       end
 
       def self.basename
         super + " driver"
-      end
-
-      private
-
-      def fetch_gem_specs
-        require 'rubygems/spec_fetcher'
-        SafeYAML::OPTIONS[:suppress_warnings] = true
-        req = Gem::Requirement.default
-        dep = Gem::Deprecate.skip_during do
-          Gem::Dependency.new(/kitchen-/i, req)
-        end
-        fetcher = Gem::SpecFetcher.fetcher
-
-        specs = if fetcher.respond_to?(:find_matching)
-          fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        else
-          fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        end
-      end
-
-      def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
-        specs = fetcher.find_matching(dep, false, false, false)
-        specs.map { |t| t.first }.map { |t| t[0, 2] }
-      end
-
-      def fetch_gem_specs_post_rubygems_2(fetcher, dep)
-        specs = fetcher.spec_for_dependency(dep, false)
-        specs.first.map { |t| [t.first.name, t.first.version] }
       end
     end
 
@@ -247,21 +238,6 @@ module Kitchen
     end
 
     private
-
-    def perform(task, command, args = nil, additional_options = {})
-      require "kitchen/command/#{command}"
-
-      command_options = {
-        :action => task,
-        :help => lambda { help(task) },
-        :config => @config,
-        :shell => shell
-      }.merge(additional_options)
-
-      str_const = Thor::Util.camel_case(command)
-      klass = ::Kitchen::Command.const_get(str_const)
-      klass.new(args, options, command_options).call
-    end
 
     attr_reader :task
 

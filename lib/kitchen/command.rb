@@ -88,6 +88,9 @@ module Kitchen
       end
     end
 
+    # Common module to execute a Kitchen action such as create, converge, etc.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     module RunAction
 
       def run_action(action, instances, *args)
