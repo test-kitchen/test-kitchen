@@ -126,21 +126,9 @@ module Kitchen
     method_option :auto_init, :type => :boolean, :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
     def test(*args)
-      if ! %w{passing always never}.include?(options[:destroy])
-        raise ArgumentError, "Destroy mode must be passing, always, or never."
-      end
-
       update_config!
-      banner "Starting Kitchen (v#{Kitchen::VERSION})"
-      elapsed = Benchmark.measure do
-        ensure_initialized
-        destroy_mode = options[:destroy].to_sym
-        @task = :test
-        results = parse_subcommand(args.join('|'))
-
-        run(results, destroy_mode)
-      end
-      banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      ensure_initialized
+      perform("test", "test", args)
     end
 
     desc "login INSTANCE|REGEXP", "Log in to one instance"

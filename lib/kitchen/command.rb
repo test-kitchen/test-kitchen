@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'thor/actions'
+require 'thread'
 
 module Kitchen
 
@@ -86,26 +87,29 @@ module Kitchen
       end
     end
 
-    # class Base < ::Thor
+    module RunAction
 
-    #   protected
+      def run_action(action, instances, *args)
+        concurrency = 1
+        if options[:concurrency]
+          concurrency = options[:concurrency] || instances.size
+          concurrency = instances.size if concurrency > instances.size
+        end
 
-    #   include Common
-    # end
+        queue = Queue.new
+        instances.each {|i| queue << i }
+        concurrency.times { queue << nil }
 
-    # class BaseGroup < ::Thor::Group
-
-    #   protected
-
-    #   include Common
-
-    #   def self.banner
-    #     "#{basename} #{usage}"
-    #   end
-
-    #   def self.usage(string = nil)
-    #     string.nil? ? @usage : @usage = string
-    #   end
-    # end
+        threads = []
+        concurrency.times do
+          threads << Thread.new do
+            while instance = queue.pop
+              instance.public_send(action, *args)
+            end
+          end
+        end
+        threads.map { |i| i.join }
+      end
+    end
   end
 end
