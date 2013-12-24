@@ -21,7 +21,7 @@ if RUBY_VERSION <= "1.9.3"
   require 'yaml'
   YAML::ENGINE.yamler = 'psych'
 end
-require 'safe_yaml'
+require 'safe_yaml/load'
 
 module Kitchen
 
@@ -91,7 +91,7 @@ module Kitchen
     end
 
     def deserialize_string(string)
-      ::YAML.safe_load(string)
+      SafeYAML.load(string)
     rescue SyntaxError, Psych::SyntaxError => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end
