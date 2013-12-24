@@ -39,18 +39,27 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class YAML
 
-      attr_reader :config_file
-
       # Creates a new loader that can parse and load YAML files.
       #
-      # @param config_file [String] path to Kitchen config YAML file
       # @param options [Hash] configuration for a new loader
+      # @option options [String] :project_config path to the Kitchen
+      #   config YAML file (default: `./.kitchen.yml`)
+      # @option options [String] :local_config path to the Kitchen local
+      #   config YAML file (default: `./.kitchen.local.yml`)
+      # @option options [String] :local_config path to the Kitchen global
+      #   config YAML file (default: `$HOME/.kitchen/config.yml`)
       # @option options [String] :process_erb whether or not to process YAML
       #   through an ERB processor (default: `true`)
       # @option options [String] :process_local whether or not to process a
       #   local kitchen YAML file, if it exists (default: `true`)
-      def initialize(config_file = nil, options = {})
-        @config_file = File.expand_path(config_file || default_config_file)
+      def initialize(options = {})
+        @config_file =
+          File.expand_path(options[:project_config] || default_config_file)
+        @local_config_file =
+          File.expand_path(options[:local_config] || default_local_config_file)
+        @global_config_file =
+          File.expand_path(options[:global_config] || default_global_config_file)
+
         @process_erb = options.fetch(:process_erb, true)
         @process_local = options.fetch(:process_local, true)
         @process_global = options.fetch(:process_global, true)
@@ -84,6 +93,8 @@ module Kitchen
       end
 
       protected
+
+      attr_reader :config_file, :local_config_file, :global_config_file
 
       def default_config_file
         File.join(Dir.pwd, '.kitchen.yml')
@@ -129,11 +140,11 @@ module Kitchen
         File.exists?(file.to_s) ? IO.read(file) : ""
       end
 
-      def local_config_file
+      def default_local_config_file
         config_file.sub(/(#{File.extname(config_file)})$/, '.local\1')
       end
 
-      def global_config_file
+      def default_global_config_file
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
       end
 

@@ -28,7 +28,9 @@ end
 
 describe Kitchen::Loader::YAML do
 
-  let(:loader) { Kitchen::Loader::YAML.new("/tmp/.kitchen.yml") }
+  let(:loader) do
+    Kitchen::Loader::YAML.new(:project_config => "/tmp/.kitchen.yml")
+  end
 
   before do
     FakeFS.activate!
@@ -42,17 +44,64 @@ describe Kitchen::Loader::YAML do
 
   describe ".initialize" do
 
-    it "sets config_file based on Dir.pwd by default" do
+    it "sets project_config based on Dir.pwd by default" do
+      stub_file(File.join(Dir.pwd, '.kitchen.yml'), Hash.new)
       loader = Kitchen::Loader::YAML.new
 
-      loader.config_file.must_equal File.expand_path(
-        File.join(Dir.pwd, '.kitchen.yml'))
+      loader.diagnose[:project_config][:filename].
+        must_equal File.expand_path(File.join(Dir.pwd, '.kitchen.yml'))
     end
 
-    it "sets config_file from parameter, if given" do
-      loader = Kitchen::Loader::YAML.new('/tmp/crazyfunkytown.file')
+    it "sets project_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/crazyfunkytown.file')
 
-      loader.config_file.must_match %r{/tmp/crazyfunkytown.file$}
+      loader.diagnose[:project_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
+    end
+
+    it "sets local_config based on Dir.pwd by default" do
+      stub_file(File.join(Dir.pwd, '.kitchen.local.yml'), Hash.new)
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:local_config][:filename].
+        must_equal File.expand_path(File.join(Dir.pwd, '.kitchen.local.yml'))
+    end
+
+    it "sets local_config based on location of project_config by default" do
+      stub_file('/tmp/.kitchen.local.yml', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/.kitchen.yml')
+
+      loader.diagnose[:local_config][:filename].
+        must_match %r{/tmp/.kitchen.local.yml$}
+    end
+
+    it "sets local_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :local_config => '/tmp/crazyfunkytown.file')
+
+      loader.diagnose[:local_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
+    end
+
+    it "sets global_config based on ENV['HOME'] by default" do
+      stub_file(File.join(ENV['HOME'], '.kitchen/config.yml'), Hash.new)
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:global_config][:filename].must_equal File.expand_path(
+        File.join(ENV['HOME'], '.kitchen/config.yml'))
+    end
+
+    it "sets global_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :global_config => '/tmp/crazyfunkytown.file')
+
+      loader.diagnose[:global_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
     end
   end
 
@@ -405,7 +454,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips evaluating kitchen.yml through erb if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_erb => false)
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, '')
@@ -419,7 +468,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips evaluating kitchen.local.yml through erb if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_erb => false)
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.local.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, '')
@@ -434,7 +483,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips kitchen.local.yml if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_local => false)
+        :project_config => '/tmp/.kitchen.yml', :process_local => false)
       stub_yaml!(".kitchen.yml", {
         'a' => 'b'
       })
@@ -447,7 +496,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips the global config if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_global => false)
+        :project_config => '/tmp/.kitchen.yml', :process_global => false)
       stub_yaml!(".kitchen.yml", {
         'a' => 'b'
       })
@@ -476,7 +525,7 @@ describe Kitchen::Loader::YAML do
     it "contains erb processing information when false" do
       stub_yaml!(Hash.new)
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_erb => false)
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
 
       loader.diagnose[:process_erb].must_equal false
     end
@@ -490,7 +539,7 @@ describe Kitchen::Loader::YAML do
     it "contains local processing information when false" do
       stub_yaml!(Hash.new)
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_local => false)
+        :project_config => '/tmp/.kitchen.yml', :process_local => false)
 
       loader.diagnose[:process_local].must_equal false
     end
@@ -504,7 +553,7 @@ describe Kitchen::Loader::YAML do
     it "contains global processing information when false" do
       stub_yaml!(Hash.new)
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_global => false)
+        :project_config => '/tmp/.kitchen.yml', :process_global => false)
 
       loader.diagnose[:process_global].must_equal false
     end
