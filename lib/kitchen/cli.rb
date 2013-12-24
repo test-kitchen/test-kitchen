@@ -234,6 +234,10 @@ module Kitchen
 
     private
 
+    def self.exit_on_failure?
+      true
+    end
+
     def logger
       Kitchen.logger
     end
