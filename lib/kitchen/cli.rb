@@ -58,7 +58,11 @@ module Kitchen
       super
       $stdout.sync = true
       Kitchen.logger = Kitchen.default_file_logger
-      @loader = Kitchen::Loader::YAML.new(ENV['KITCHEN_YAML'])
+      @loader = Kitchen::Loader::YAML.new(
+        :project_config => ENV['KITCHEN_YAML'],
+        :local_config => ENV['KITCHEN_LOCAL_YAML'],
+        :global_config => ENV['KITCHEN_GLOBAL_YAML']
+      )
       @config = Kitchen::Config.new(
         :loader     => @loader,
         :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
