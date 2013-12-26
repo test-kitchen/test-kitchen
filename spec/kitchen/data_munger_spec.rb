@@ -460,6 +460,22 @@ module Kitchen
           })
         end
 
+        it "merge root attributes with suite attributes" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :attributes => { :one => "two", :three => "four" },
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => { :one => "2", :five => "six" }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "2", :three => "four", :five => "six" }
+          })
+        end
+
         it "drops nil run_list" do
           DataMunger.new({
             :suites => [
@@ -568,6 +584,22 @@ module Kitchen
           })
         end
 
+        it "merge root attributes with platform attributes" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :attributes => { :one => "two", :three => "four" },
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => { :one => "2", :five => "six" }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "2", :three => "four", :five => "six" }
+          })
+        end
+
         it "drops nil run_list" do
           DataMunger.new({
             :platforms => [
@@ -629,6 +661,32 @@ module Kitchen
                 :platform => "much"
               }
             }
+          })
+        end
+
+
+      it "merge root attributes with suite and platform attributes" do
+          DataMunger.new({
+            :provisioner => "chefy",
+            :attributes => { :one => "two", :three => "four" },
+            :platforms => [
+              {
+                :name => "plat",
+                :attributes => { :one => "2", :five => "six" }
+              }
+            ],
+            :suites => [
+              {
+                :name => "sweet",
+                :attributes => {
+                  :one => "dos",
+                  :deep => { :suite => "wow" }
+                }
+              }
+            ]
+          }).provisioner_data_for("sweet", "plat").must_equal({
+            :name => "chefy",
+            :attributes => { :one => "dos", :three => "four", :five => "six", :deep => { :suite => "wow" } }
           })
         end
 
