@@ -184,7 +184,7 @@ module Kitchen
 
         # do_download URL FILENAME
         do_download() {
-          PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+          PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
           export PATH
 
           echo "downloading $1"
