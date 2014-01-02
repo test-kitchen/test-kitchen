@@ -376,8 +376,8 @@ describe Kitchen::Loader::YAML do
       File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '&*%^*' }
 
       err = proc { loader.read }.must_raise Kitchen::UserError
-      err.message.must_match Regexp.new(Regexp.escape(
-        "Error parsing /tmp/.kitchen.yml"))
+      err.message.must_match Regexp.new(
+        "Error parsing ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
@@ -385,8 +385,8 @@ describe Kitchen::Loader::YAML do
       File.open("/tmp/.kitchen.yml", "wb") { |f| f.write 'uhoh' }
 
       err = proc { loader.read }.must_raise Kitchen::UserError
-      err.message.must_match Regexp.new(Regexp.escape(
-        "Error parsing /tmp/.kitchen.yml"))
+      err.message.must_match Regexp.new(
+        "Error parsing ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
     end
 
     it "handles a kitchen.yml if it is a commented out YAML document" do
@@ -426,8 +426,8 @@ describe Kitchen::Loader::YAML do
       end
 
       err = proc { loader.read }.must_raise Kitchen::UserError
-      err.message.must_match Regexp.new(Regexp.escape(
-        "Error parsing ERB content in /tmp/.kitchen.yml"))
+      err.message.must_match Regexp.new(
+        "Error parsing ERB content in ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
     end
 
     it "evaluates kitchen.local.yml through erb before loading by default" do
@@ -586,7 +586,7 @@ describe Kitchen::Loader::YAML do
 
       it "project config contains a filename" do
         loader.diagnose[:project_config][:filename].
-          must_equal "/tmp/.kitchen.yml"
+          must_match %r{/tmp/.kitchen.yml$}
       end
 
       it "project config contains raw data" do
@@ -598,7 +598,7 @@ describe Kitchen::Loader::YAML do
 
       it "local config contains a filename" do
         loader.diagnose[:local_config][:filename].
-          must_equal "/tmp/.kitchen.local.yml"
+          must_match %r{/tmp/.kitchen.local.yml$}
       end
 
       it "local config contains raw data" do
