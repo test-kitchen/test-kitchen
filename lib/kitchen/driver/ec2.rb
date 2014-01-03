@@ -37,10 +37,10 @@ module Kitchen
       default_config :groups,             ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY']
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY']
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
