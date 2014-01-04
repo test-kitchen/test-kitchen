@@ -1,106 +1,104 @@
-# <a name="title"></a> Kitchen::Ec2: A Test Kitchen Driver for Amazon EC2
+# Kitchen EC2: A Test Kitchen Driver for Amazon EC2
 
 [![Gem Version](https://badge.fury.io/rb/kitchen-ec2.png)](http://badge.fury.io/rb/kitchen-ec2)
-[![Build Status](https://travis-ci.org/opscode/kitchen-ec2.png)](https://travis-ci.org/opscode/kitchen-ec2)
-[![Code Climate](https://codeclimate.com/github/opscode/kitchen-ec2.png)](https://codeclimate.com/github/opscode/kitchen-ec2)
+[![Build Status](https://travis-ci.org/test-kitchen/kitchen-ec2.png)](https://travis-ci.org/test-kitchen/kitchen-ec2)
+[![Code Climate](https://codeclimate.com/github/test-kitchen/kitchen-ec2.png)](https://codeclimate.com/github/test-kitchen/kitchen-ec2)
 
 A Test Kitchen Driver for Amazon EC2.
 
 This driver uses the [fog gem][fog_gem] to provision and destroy EC2
 instances. Use Amazon's cloud for your infrastructure testing!
 
-## <a name="requirements"></a> Requirements
+## Requirements
 
 There are **no** external system requirements for this driver. However you
 will need access to an [AWS][aws_site] account.
 
-## <a name="installation"></a> Installation and Setup
+## Installation and Setup
 
 Please read the [Driver usage][driver_usage] page for more details.
 
-## <a name="default-config"></a> Default Configuration
+## Default Configuration
 
 This driver can determine AMI and username login for a select number of
 platforms in each region. Currently, the following platform names are
 supported:
 
 ```ruby
----
 platforms:
-- name: ubuntu-10.04
-- name: ubuntu-12.04
-- name: ubuntu-12.10
-- name: ubuntu-13.04
-- name: centos-6.4
-- name: debian-7.1.0
+  - name: ubuntu-10.04
+  - name: ubuntu-12.04
+  - name: ubuntu-12.10
+  - name: ubuntu-13.04
+  - name: centos-6.4
+  - name: debian-7.1.0
 ```
 
 This will effectively generate a configuration similar to:
 
 ```ruby
----
 platforms:
-- name: ubuntu-10.04
-  driver_config:
-    image_id: ami-1ab3ce73
-    username: ubuntu
-- name: ubuntu-12.04
-  driver_config:
-    image_id: ami-2f115c46
-    username: ubuntu
-# ...
-- name: centos-6.4
-  driver_config:
-    image_id: ami-bf5021d6
-    username: root
-# ...
+  - name: ubuntu-10.04
+    driver_config:
+      image_id: ami-1ab3ce73
+      username: ubuntu
+  - name: ubuntu-12.04
+    driver_config:
+      image_id: ami-2f115c46
+      username: ubuntu
+  # ...
+  - name: centos-6.4
+    driver_config:
+      image_id: ami-bf5021d6
+      username: root
+  # ...
 ```
 
 For specific default values, please consult [amis.json][amis_json].
 
-## <a name="config"></a> Configuration
+## Configuration
 
-### <a name="config-az"></a> availability\_zone
+### availability\_zone
 
 **Required** The AWS [availability zone][region_docs] to use.
 
 The default is `"us-east-1b"`.
 
-### <a name="config-aws-access-key-id"></a> aws\_access\_key\_id
+### aws\_access\_key\_id
 
 **Required** The AWS [access key id][credentials_docs] to use.
 
 The default will be read from the `AWS_ACCESS_KEY` environment variable if set,
 or `nil` otherwise.
 
-### <a name="config-aws-secret-access-key"></a> aws\_secret\_access\_key
+### aws\_secret\_access\_key
 
 **Required** The AWS [secret access key][credentials_docs] to use.
 
 The default will be read from the `AWS_SECRET_KEY` environment variable if set,
 or `nil` otherwise.
 
-### <a name="config-aws-ssh-key-id"></a> aws\_ssh\_key\_id
+### aws\_ssh\_key\_id
 
 **Required** The EC2 [SSH key id][key_id_docs] to use.
 
 The default will be read from the `AWS_SSH_KEY_ID` environment variable if set,
 or `nil` otherwise.
 
-### <a name="config-flavor-id"></a> flavor\_id
+### flavor\_id
 
 The EC2 [instance type][instance_docs] (also known as size) to use.
 
 The default is `"m1.small"`.
 
-### <a name="config-groups"></a> groups
+### groups
 
 An Array of EC [security groups][group_docs] which will be applied to the
 instance.
 
 The default is `["default"]`.
 
-### <a name="config-image-id"></a> image\_id
+### image\_id
 
 **Required** The EC2 [AMI id][ami_docs] to use.
 
@@ -108,19 +106,19 @@ The default will be determined by the `aws_region` chosen and the Platform
 name, if a default exists (see [amis.json][ami_json]). If a default cannot be
 computed, then the default is `nil`.
 
-### <a name="config-port"></a> port
+### port
 
 The SSH port number to be used when communicating with the instance.
 
 The default is `22`.
 
-### <a name="config-region"></a> region
+### region
 
 **Required** The AWS [region][region_docs] to use.
 
 The default is `"us-east-1"`.
 
-### <a name="config-require-chef-omnibus"></a> require\_chef\_omnibus
+### require\_chef\_omnibus
 
 Determines whether or not a Chef [Omnibus package][chef_omnibus_dl] will be
 installed. There are several different behaviors available:
@@ -136,32 +134,32 @@ installed. There are several different behaviors available:
 
 The default value is unset, or `nil`.
 
-### <a name="config-ssh-key"></a> ssh\_key
+### ssh\_key
 
 Path to the private SSH key used to connect to the instance.
 
 The default is unset, or `nil`.
 
-### <a name="config-subnet-id"></a> subnet\_id
+### subnet\_id
 
 The EC2 [subnet][subnet_docs] to use.
 
 The default is unset, or `nil`.
 
-### <a name="config-sudo"></a> sudo
+### sudo
 
 Whether or not to prefix remote system commands such as installing and
 running Chef with `sudo`.
 
 The default is `true`.
 
-### <a name="config-tags"></a> tags
+### tags
 
 The Hash of EC tag name/value pairs which will be applied to the instance.
 
 The default is `{ "created-by" => "test-kitchen" }`.
 
-### <a name="config-username"></a> username
+### username
 
 The SSH username that will be used to communicate with the instance.
 
@@ -169,13 +167,12 @@ The default will be determined by the Platform name, if a default exists (see
 [amis.json][amis_json]). If a default cannot be computed, then the default is
 `"root"`.
 
-## <a name="example"></a> Example
+## Example
 
 The following could be used in a `.kitchen.yml` or in a `.kitchen.local.yml`
 to override default configuration.
 
 ```yaml
----
 driver_plugin: ec2
 driver_config:
   aws_access_key_id: KAS...
@@ -188,14 +185,14 @@ driver_config:
   subnet_id: subnet-6d6...
 
 platforms:
-- name: ubuntu-12.04
-  driver_config:
-    image_id: ami-fd20ad94
-    username: ubuntu
-- name: centos-6.3
-  driver_config:
-    image_id: ami-ef5ff086
-    username: ec2-user
+  - name: ubuntu-12.04
+    driver_config:
+      image_id: ami-fd20ad94
+      username: ubuntu
+  - name: centos-6.3
+    driver_config:
+      image_id: ami-ef5ff086
+      username: ec2-user
 
 suites:
 # ...
@@ -205,7 +202,6 @@ Both `.kitchen.yml` and `.kitchen.local.yml` files are pre-processed through
 ERB which can help to factor out secrets and credentials. For example:
 
 ```yaml
----
 driver_plugin: ec2
 driver_config:
   aws_access_key_id: <%= ENV['AWS_ACCESS_KEY'] %>
@@ -217,20 +213,20 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: ubuntu-12.04
-  driver_config:
-    image_id: ami-fd20ad94
-    username: ubuntu
-- name: centos-6.3
-  driver_config:
-    image_id: ami-ef5ff086
-    username: ec2-user
+  - name: ubuntu-12.04
+    driver_config:
+      image_id: ami-fd20ad94
+      username: ubuntu
+  - name: centos-6.3
+    driver_config:
+      image_id: ami-ef5ff086
+      username: ec2-user
 
 suites:
 # ...
 ```
 
-## <a name="development"></a> Development
+## Development
 
 * Source hosted at [GitHub][repo]
 * Report issues/questions/feature requests on [GitHub Issues][issues]
@@ -245,11 +241,11 @@ example:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## <a name="authors"></a> Authors
+## Authors
 
 Created and maintained by [Fletcher Nichol][author] (<fnichol@nichol.ca>)
 
-## <a name="license"></a> License
+## License
 
 Apache 2.0 (see [LICENSE][license])
 
