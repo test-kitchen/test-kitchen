@@ -85,6 +85,12 @@ or `nil` otherwise.
 The default will be read from the `AWS_SSH_KEY_ID` environment variable if set,
 or `nil` otherwise.
 
+### endpoint
+
+The API endpoint for executing EC2 commands.
+
+The default is `https://ec2.#{driver.default_region}.amazonaws.com`.
+
 ### flavor\_id
 
 The EC2 [instance type][instance_docs] (also known as size) to use.
