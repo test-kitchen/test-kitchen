@@ -193,7 +193,7 @@ module Kitchen
     end
 
     def helper_files
-      Dir.glob(File.join(config[:test_base_path], "helpers", "*/**/*"))
+      Dir.glob(File.join(config[:test_base_path], "helpers", "*/**/*")).reject { |f| File.directory?(f) }
     end
 
     def remote_file(file, dir)
