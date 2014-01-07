@@ -41,16 +41,16 @@ This will effectively generate a configuration similar to:
 ---
 platforms:
   - name: ubuntu-10.04
-    driver_config:
+    driver:
       image_id: ami-1ab3ce73
       username: ubuntu
   - name: ubuntu-12.04
-    driver_config:
+    driver:
       image_id: ami-2f115c46
       username: ubuntu
   # ...
   - name: centos-6.4
-    driver_config:
+    driver:
       image_id: ami-bf5021d6
       username: root
   # ...
@@ -190,8 +190,8 @@ to override default configuration.
 
 ```yaml
 ---
-driver_plugin: ec2
-driver_config:
+driver:
+  name: ec2
   aws_access_key_id: KAS...
   aws_secret_access_key: 3UK...
   aws_ssh_key_id: id_rsa-aws
@@ -204,11 +204,11 @@ driver_config:
 
 platforms:
   - name: ubuntu-12.04
-    driver_config:
+    driver:
       image_id: ami-fd20ad94
       username: ubuntu
   - name: centos-6.3
-    driver_config:
+    driver:
       image_id: ami-ef5ff086
       username: ec2-user
 
@@ -221,8 +221,8 @@ ERB which can help to factor out secrets and credentials. For example:
 
 ```yaml
 ---
-driver_plugin: ec2
-driver_config:
+driver:
+  name: ec2
   aws_access_key_id: <%= ENV['AWS_ACCESS_KEY'] %>
   aws_secret_access_key: <%= ENV['AWS_SECRET_KEY'] %>
   aws_ssh_key_id: <%= ENV['AWS_SSH_KEY_ID'] %>
@@ -234,11 +234,11 @@ driver_config:
 
 platforms:
   - name: ubuntu-12.04
-    driver_config:
+    driver:
       image_id: ami-fd20ad94
       username: ubuntu
   - name: centos-6.3
-    driver_config:
+    driver:
       image_id: ami-ef5ff086
       username: ec2-user
 
