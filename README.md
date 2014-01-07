@@ -1,4 +1,4 @@
-# Kitchen EC2: A Test Kitchen Driver for Amazon EC2
+# <a name="title"></a> Kitchen::Ec2: A Test Kitchen Driver for Amazon EC2
 
 [![Gem Version](https://badge.fury.io/rb/kitchen-ec2.png)](http://badge.fury.io/rb/kitchen-ec2)
 [![Build Status](https://travis-ci.org/test-kitchen/kitchen-ec2.png)](https://travis-ci.org/test-kitchen/kitchen-ec2)
@@ -9,22 +9,23 @@ A Test Kitchen Driver for Amazon EC2.
 This driver uses the [fog gem][fog_gem] to provision and destroy EC2
 instances. Use Amazon's cloud for your infrastructure testing!
 
-## Requirements
+## <a name="requirements"></a> Requirements
 
 There are **no** external system requirements for this driver. However you
 will need access to an [AWS][aws_site] account.
 
-## Installation and Setup
+## <a name="installation"></a> Installation and Setup
 
 Please read the [Driver usage][driver_usage] page for more details.
 
-## Default Configuration
+## <a name="default-config"></a> Default Configuration
 
 This driver can determine AMI and username login for a select number of
 platforms in each region. Currently, the following platform names are
 supported:
 
 ```ruby
+---
 platforms:
   - name: ubuntu-10.04
   - name: ubuntu-12.04
@@ -37,6 +38,7 @@ platforms:
 This will effectively generate a configuration similar to:
 
 ```ruby
+---
 platforms:
   - name: ubuntu-10.04
     driver_config:
@@ -56,29 +58,29 @@ platforms:
 
 For specific default values, please consult [amis.json][amis_json].
 
-## Configuration
+## <a name="config"></a> Configuration
 
-### availability\_zone
+### <a name="config-az"></a> availability\_zone
 
 **Required** The AWS [availability zone][region_docs] to use.
 
 The default is `"us-east-1b"`.
 
-### aws\_access\_key\_id
+### <a name="config-aws-access-key-id"></a> aws\_access\_key\_id
 
 **Required** The AWS [access key id][credentials_docs] to use.
 
 The default will be read from the `AWS_ACCESS_KEY` environment variable if set,
 or `nil` otherwise.
 
-### aws\_secret\_access\_key
+### <a name="config-aws-secret-access-key"></a> aws\_secret\_access\_key
 
 **Required** The AWS [secret access key][credentials_docs] to use.
 
 The default will be read from the `AWS_SECRET_KEY` environment variable if set,
 or `nil` otherwise.
 
-### aws\_ssh\_key\_id
+### <a name="config-aws-ssh-key-id"></a> aws\_ssh\_key\_id
 
 **Required** The EC2 [SSH key id][key_id_docs] to use.
 
@@ -91,13 +93,13 @@ The API endpoint for executing EC2 commands.
 
 The default will be computed from the AWS region name for the instance.
 
-### flavor\_id
+### <a name="config-flavor-id"></a> flavor\_id
 
 The EC2 [instance type][instance_docs] (also known as size) to use.
 
 The default is `"m1.small"`.
 
-### ebs\_optimized
+### <a name="config-ebs-optimized"></a> ebs\_optimized
 
 Option to launch EC2 instance with optimized EBS volume. See
 [Amazon EC2 Instance Types](http://aws.amazon.com/ec2/instance-types/) to find
@@ -105,14 +107,14 @@ out more about instance types that can be launched as EBS-optimized instances.
 
 The default is `false`.
 
-### security_group_ids
+### <a name="config-security-group-ids"></a> security_group_ids
 
 An Array of EC2 [security groups][group_docs] which will be applied to the
 instance.
 
 The default is `["default"]`.
 
-### image\_id
+### <a name="config-image-id"></a> image\_id
 
 **Required** The EC2 [AMI id][ami_docs] to use.
 
@@ -120,19 +122,19 @@ The default will be determined by the `aws_region` chosen and the Platform
 name, if a default exists (see [amis.json][ami_json]). If a default cannot be
 computed, then the default is `nil`.
 
-### port
+### <a name="config-port"></a> port
 
 The SSH port number to be used when communicating with the instance.
 
 The default is `22`.
 
-### region
+### <a name="config-region"></a> region
 
 **Required** The AWS [region][region_docs] to use.
 
 The default is `"us-east-1"`.
 
-### require\_chef\_omnibus
+### <a name="config-require-chef-omnibus"></a> require\_chef\_omnibus
 
 Determines whether or not a Chef [Omnibus package][chef_omnibus_dl] will be
 installed. There are several different behaviors available:
@@ -148,32 +150,32 @@ installed. There are several different behaviors available:
 
 The default value is unset, or `nil`.
 
-### ssh\_key
+### <a name="config-ssh-key"></a> ssh\_key
 
 Path to the private SSH key used to connect to the instance.
 
 The default is unset, or `nil`.
 
-### subnet\_id
+### <a name="config-subnet-id"></a> subnet\_id
 
 The EC2 [subnet][subnet_docs] to use.
 
 The default is unset, or `nil`.
 
-### sudo
+### <a name="config-sudo"></a> sudo
 
 Whether or not to prefix remote system commands such as installing and
 running Chef with `sudo`.
 
 The default is `true`.
 
-### tags
+### <a name="config-tags"></a> tags
 
 The Hash of EC tag name/value pairs which will be applied to the instance.
 
 The default is `{ "created-by" => "test-kitchen" }`.
 
-### username
+### <a name="config-username"></a> username
 
 The SSH username that will be used to communicate with the instance.
 
@@ -181,12 +183,13 @@ The default will be determined by the Platform name, if a default exists (see
 [amis.json][amis_json]). If a default cannot be computed, then the default is
 `"root"`.
 
-## Example
+## <a name="example"></a> Example
 
 The following could be used in a `.kitchen.yml` or in a `.kitchen.local.yml`
 to override default configuration.
 
 ```yaml
+---
 driver_plugin: ec2
 driver_config:
   aws_access_key_id: KAS...
@@ -217,6 +220,7 @@ Both `.kitchen.yml` and `.kitchen.local.yml` files are pre-processed through
 ERB which can help to factor out secrets and credentials. For example:
 
 ```yaml
+---
 driver_plugin: ec2
 driver_config:
   aws_access_key_id: <%= ENV['AWS_ACCESS_KEY'] %>
@@ -242,7 +246,7 @@ suites:
 # ...
 ```
 
-## Development
+## <a name="development"></a> Development
 
 * Source hosted at [GitHub][repo]
 * Report issues/questions/feature requests on [GitHub Issues][issues]
@@ -257,11 +261,11 @@ example:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## Authors
+## <a name="authors"></a> Authors
 
 Created and maintained by [Fletcher Nichol][author] (<fnichol@nichol.ca>)
 
-## License
+## <a name="license"></a> License
 
 Apache 2.0 (see [LICENSE][license])
 
