@@ -89,7 +89,7 @@ or `nil` otherwise.
 
 The API endpoint for executing EC2 commands.
 
-The default is `https://ec2.#{driver.default_region}.amazonaws.com`.
+The default will be computed from the AWS region name for the instance.
 
 ### flavor\_id
 
