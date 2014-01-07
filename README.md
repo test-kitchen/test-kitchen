@@ -134,22 +134,6 @@ The default is `22`.
 
 The default is `"us-east-1"`.
 
-### <a name="config-require-chef-omnibus"></a> require\_chef\_omnibus
-
-Determines whether or not a Chef [Omnibus package][chef_omnibus_dl] will be
-installed. There are several different behaviors available:
-
-* `true` - the latest release will be installed. Subsequent converges
-  will skip re-installing if chef is present.
-* `latest` - the latest release will be installed. Subsequent converges
-  will always re-install even if chef is present.
-* `<VERSION_STRING>` (ex: `10.24.0`) - the desired version string will
-  be passed the the install.sh script. Subsequent converges will skip if
-  the installed version and the desired version match.
-* `false` or `nil` - no chef is installed.
-
-The default value is unset, or `nil`.
-
 ### <a name="config-ssh-key"></a> ssh\_key
 
 Path to the private SSH key used to connect to the instance.
@@ -161,13 +145,6 @@ The default is unset, or `nil`.
 The EC2 [subnet][subnet_docs] to use.
 
 The default is unset, or `nil`.
-
-### <a name="config-sudo"></a> sudo
-
-Whether or not to prefix remote system commands such as installing and
-running Chef with `sudo`.
-
-The default is `true`.
 
 ### <a name="config-tags"></a> tags
 
