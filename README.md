@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/test-kitchen/kitchen-ec2.png)](https://travis-ci.org/test-kitchen/kitchen-ec2)
 [![Code Climate](https://codeclimate.com/github/test-kitchen/kitchen-ec2.png)](https://codeclimate.com/github/test-kitchen/kitchen-ec2)
 
-A Test Kitchen Driver for Amazon EC2.
+A [Test Kitchen][kitchenci] Driver for Amazon EC2.
 
 This driver uses the [fog gem][fog_gem] to provision and destroy EC2
 instances. Use Amazon's cloud for your infrastructure testing!
@@ -248,13 +248,13 @@ Apache 2.0 (see [LICENSE][license])
 
 
 [author]:           https://github.com/fnichol
-[issues]:           https://github.com/opscode/kitchen-ec2/issues
-[license]:          https://github.com/opscode/kitchen-ec2/blob/master/LICENSE
-[repo]:             https://github.com/opscode/kitchen-ec2
+[issues]:           https://github.com/test-kitchen/kitchen-ec2/issues
+[license]:          https://github.com/test-kitchen/kitchen-ec2/blob/master/LICENSE
+[repo]:             https://github.com/test-kitchen/kitchen-ec2
 [driver_usage]:     http://docs.kitchen-ci.org/drivers/usage
-[chef_omnibus_dl]:  http://www.opscode.com/chef/install/
+[chef_omnibus_dl]:  http://www.getchef.com/chef/install/
 
-[amis_json]:        https://github.com/opscode/kitchen-ec2/blob/master/data/amis.json
+[amis_json]:        https://github.com/test-kitchen/kitchen-ec2/blob/master/data/amis.json
 [ami_docs]:         http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html
 [aws_site]:         http://aws.amazon.com/
 [credentials_docs]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SettingUp_CommandLine.html#using-credentials-access-key
@@ -262,5 +262,6 @@ Apache 2.0 (see [LICENSE][license])
 [group_docs]:       http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html
 [instance_docs]:    http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
 [key_id_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verifying-your-key-pair.html
+[kitchenci]:        http://kitchen.ci/
 [region_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 [subnet_docs]:      http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
