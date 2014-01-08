@@ -68,7 +68,7 @@ module Kitchen
             "you may need to single quote the argument. " +
             "Please try again or consult http://rubular.com/ (#{e.message})"
         end
-        result = Array(result)
+        result = Array(result[result.index(regex)]) if result.include?(regexp)
 
         if result.empty?
           die "No instances for regex `#{regexp}', try running `kitchen list'"
