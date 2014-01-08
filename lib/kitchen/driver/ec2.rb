@@ -53,7 +53,7 @@ module Kitchen
         driver.default_username
       end
       default_config :endpoint do |driver|
-        "https://ec2.#{driver[:region]}.amazonaws.com"
+        "https://ec2.#{driver[:region]}.amazonaws.com/"
       end
 
       required_config :aws_access_key_id
