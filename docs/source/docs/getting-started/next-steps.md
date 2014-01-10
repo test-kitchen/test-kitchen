@@ -9,7 +9,7 @@ This concludes the getting started guide for Test Kitchen. Hopefully you are now
 
 From here, there are a few resources that can help you along your infrastructure testing journey:
 
-* Jump in the [#kitchenci](http://webchat.freenode.net/?channels=kitchenci) IRC channel on Freenode as a question
+* Jump in the [#kitchenci](http://webchat.freenode.net/?channels=kitchenci) IRC channel on Freenode as a question or check out the [IRC transcript](https://botbot.me/freenode/kitchenci/) thanks to [BotBot.me](https://botbot.me/)
 * Send a tweet to [@kitchenci](https://twitter.com/kitchenci) or follow the [#kitchenci](https://twitter.com/search?q=%23kitchenci&src=typd) Twitter hash tag
 * Check out the Test Kitchen [core code](https://github.com/test-kitchen/test-kitchen) on GitHub
 * Submit an [issue, feature, or pull request](https://github.com/test-kitchen/test-kitchen/issues) on the Issue tracker
