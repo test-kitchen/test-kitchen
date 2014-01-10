@@ -66,6 +66,11 @@ module Kitchen
       end
       expand_path_for :roles_path
 
+      default_config :clients_path do |provisioner|
+        provisioner.calculate_path("clients")
+      end
+      expand_path_for :clients_path
+
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
         provisioner.calculate_path("encrypted_data_bag_secret_key", :file)
       end
@@ -103,7 +108,7 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w{cookbooks data data_bags environments roles}.
+        dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
         "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
       end
@@ -118,6 +123,7 @@ module Kitchen
         prepare_environments
         prepare_nodes
         prepare_roles
+        prepare_clients
         prepare_secret
       end
 
@@ -190,6 +196,17 @@ module Kitchen
         tmproles_dir = File.join(sandbox_path, "roles")
         FileUtils.mkdir_p(tmproles_dir)
         FileUtils.cp_r(Dir.glob("#{roles}/*"), tmproles_dir)
+      end
+
+      def prepare_clients
+        return unless clients
+
+        info("Preparing clients")
+        debug("Using roles from #{clients}")
+
+        tmpclients_dir = File.join(sandbox_path, "clients")
+        FileUtils.mkdir_p(tmpclients_dir)
+        FileUtils.cp_r(Dir.glob("#{clients}/*"), tmpclients_dir)
       end
 
       def prepare_nodes
@@ -286,6 +303,10 @@ module Kitchen
 
       def roles
         config[:roles_path]
+      end
+
+      def clients
+        config[:clients_path]
       end
 
       def nodes
