@@ -9,7 +9,7 @@
 |-------------|-----------------------------------------------|
 | Website     | http://kitchen.ci                             |
 | Source Code | http://kitchen.ci/docs/getting-started/       |
-| IRC         | [#kitchenci][irc] channel on Freenode         |
+| IRC         | [#kitchenci][irc] channel on Freenode, [transcript][irc_log] thanks to [BotBot.me][botbotme] |
 | Twitter     | [@kitchenci][twitter]                         |
 
 > **Test Kitchen is an integration tool for developing and testing
@@ -111,10 +111,12 @@ a growing community of [contributors][contributors].
 
 Apache License, Version 2.0 (see [LICENSE][license])
 
+[botbotme]: https://botbot.me/
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
 [fnichol]: https://github.com/fnichol
 [guide]: http://kitchen.ci/docs/getting-started/
 [irc]: http://webchat.freenode.net/?channels=kitchenci
+[irc_log]: https://botbot.me/freenode/kitchenci/
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
