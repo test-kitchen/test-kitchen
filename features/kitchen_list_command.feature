@@ -73,6 +73,27 @@ Feature: Listing Test Kitchen instances
 
     """
 
+  Scenario: Listing a full instance name returns an exact match, not fuzzy matches at start
+    Given a file named ".kitchen.yml" with:
+    """
+    ---
+    driver: dummy
+    provisioner: chef_solo
+
+    platforms:
+      - name: ubuntu-12.04
+
+    suites:
+      - name: gdb01-master
+      - name: logdb01-master
+    """
+    When I successfully run `kitchen list gdb01-master-ubuntu-1204 --bare`
+    Then the output should contain exactly:
+    """
+    gdb01-master-ubuntu-1204
+
+    """
+
   Scenario: Listing a full instance with regex returns all regex matches
     When I successfully run `kitchen list  'foobar-centos-64.*' --bare`
     Then the output should contain exactly:
