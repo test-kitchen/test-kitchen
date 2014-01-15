@@ -4,7 +4,9 @@ guard 'minitest' do
   watch(%r|^spec/spec_helper\.rb|)    { "spec" }
 end
 
-guard 'cucumber' do
+cucumber_cli = '--no-profile --color --format progress --strict'
+cucumber_cli += ' --tags ~@spawn' if RUBY_PLATFORM =~ /mswin|mingw|windows/
+guard 'cucumber', cli: cucumber_cli do
   watch(%r{^features/.+\.feature$})
   watch(%r{^features/support/.+$})          { 'features' }
   watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }

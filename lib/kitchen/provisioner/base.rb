@@ -38,6 +38,11 @@ module Kitchen
         end
       end
 
+      def instance=(instance)
+        @instance = instance
+        expand_paths!
+      end
+
       # Returns the name of this driver, suitable for display in a CLI.
       #
       # @return [String] name of this driver
@@ -60,17 +65,33 @@ module Kitchen
         config.keys
       end
 
-      def install_command ; end
-
       def init_command ; end
 
-      def create_sandbox ; end
+      def install_command ; end
 
       def prepare_command ; end
 
       def run_command ; end
 
-      def cleanup_sandbox ; end
+      def create_sandbox
+        @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
+        File.chmod(0755, sandbox_path)
+        info("Preparing files for transfer")
+        debug("Creating local sandbox in #{sandbox_path}")
+      end
+
+      def sandbox_path
+        @sandbox_path || (raise ClientError, "Sandbox directory has not yet " +
+          "been created. Please run #{self.class}#create_sandox before " +
+          "trying to access the path.")
+      end
+
+      def cleanup_sandbox
+        return if sandbox_path.nil?
+
+        debug("Cleaning up local sandbox in #{sandbox_path}")
+        FileUtils.rmtree(sandbox_path)
+      end
 
       # Returns a Hash of configuration and other useful diagnostic information.
       #
@@ -91,9 +112,31 @@ module Kitchen
         end
       end
 
+      def calculate_path(path, type = :directory)
+        base = config[:test_base_path]
+        candidates = []
+        candidates << File.join(base, instance.suite.name, path)
+        candidates << File.join(base, path)
+        candidates << File.join(Dir.pwd, path)
+
+        candidates.find do |c|
+          type == :directory ? File.directory?(c) : File.file?(c)
+        end
+      end
+
       protected
 
       attr_reader :config
+
+      def expand_paths!
+        expanded_paths = LazyHash.new(self.class.expanded_paths, self).to_hash
+
+        expanded_paths.each do |key, should_expand|
+          if should_expand && !config[key].nil?
+            config[key] = File.expand_path(config[key], config[:kitchen_root])
+          end
+        end
+      end
 
       def logger
         instance ? instance.logger : Kitchen.logger
@@ -121,8 +164,28 @@ module Kitchen
         defaults[attr] = block_given? ? block : value
       end
 
+      def self.expanded_paths
+        @expanded_paths ||= Hash.new.merge(super_expanded_paths)
+      end
+
+      def self.super_expanded_paths
+        klass = self.superclass
+
+        if klass.respond_to?(:expanded_paths)
+          klass.expanded_paths
+        else
+          Hash.new
+        end
+      end
+
+      def self.expand_path_for(attr, value = true, &block)
+        expanded_paths[attr] = block_given? ? block : value
+      end
+
       default_config :root_path, "/tmp/kitchen"
       default_config :sudo, true
+
+      expand_path_for :test_base_path
     end
   end
 end

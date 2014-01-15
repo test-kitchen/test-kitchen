@@ -16,42 +16,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/chef_base'
+require 'kitchen/command'
+require 'kitchen/diagnostic'
+
+require 'yaml'
 
 module Kitchen
 
-  module Provisioner
+  module Command
 
-    # Chef Solo provisioner.
+    # Command to log into to instance.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class ChefSolo < ChefBase
+    class Diagnose < Kitchen::Command::Base
 
-      default_config :solo_rb, {}
-
-      def create_sandbox
-        super
-        prepare_solo_rb
-      end
-
-      def run_command
-        [
-          sudo('chef-solo'),
-          "--config #{config[:root_path]}/solo.rb",
-          "--json-attributes #{config[:root_path]}/dna.json",
-          config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
-          "--log_level #{config[:log_level]}"
-        ].join(" ")
-      end
-
-      private
-
-      def prepare_solo_rb
-        data = default_config_rb.merge(config[:solo_rb])
-
-        File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
-          file.write(format_config_file(data))
+      def call
+        loader = if options[:all] || options[:loader]
+          @loader
+        else
+          nil
         end
+
+        instances = if options[:all] || options[:instances]
+          parse_subcommand(args.first)
+        else
+          []
+        end
+
+        puts Kitchen::Diagnostic.new(
+          :loader => loader, :instances => instances).read.to_yaml
       end
     end
   end

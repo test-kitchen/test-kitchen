@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,28 +16,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-gem 'minitest'
+require 'kitchen/command'
 
-require 'simplecov'
-SimpleCov.adapters.define 'gem' do
-  command_name 'Specs'
+module Kitchen
 
-  add_filter '.gem/'
-  add_filter '/spec/'
-  add_filter '/lib/vendor/'
+  module Command
 
-  add_group 'Libraries', '/lib/'
-end
-SimpleCov.start 'gem'
+    # Command to log into to instance.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class Login < Kitchen::Command::Base
 
-require 'fakefs/safe'
-require 'minitest/autorun'
-require 'mocha/setup'
-require 'tempfile'
+      def call
+        results = parse_subcommand(args.first)
+        if results.size > 1
+          die "Argument `#{args.first}' returned multiple results:\n" +
+            results.map { |i| "  * #{i.name}" }.join("\n")
+        end
+        instance = results.pop
 
-# Nasty hack to redefine IO.read in terms of File#read for fakefs
-class IO
-  def self.read(*args)
-    File.open(args[0], "rb") { |f| f.read(args[1]) }
+        instance.login
+      end
+    end
   end
 end

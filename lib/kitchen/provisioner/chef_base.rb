@@ -34,7 +34,7 @@ module Kitchen
     class ChefBase < Base
 
       default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://www.opscode.com/chef/install.sh"
+      default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
       default_config :run_list, []
       default_config :attributes, {}
       default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
@@ -44,31 +44,37 @@ module Kitchen
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
+      expand_path_for :data_path
 
       default_config :data_bags_path do |provisioner|
         provisioner.calculate_path("data_bags")
       end
+      expand_path_for :data_bags_path
 
       default_config :environments_path do |provisioner|
         provisioner.calculate_path("environments")
       end
+      expand_path_for :environments_path
 
       default_config :nodes_path do |provisioner|
         provisioner.calculate_path("nodes")
       end
+      expand_path_for :nodes_path
 
       default_config :roles_path do |provisioner|
         provisioner.calculate_path("roles")
       end
+      expand_path_for :roles_path
+
+      default_config :clients_path do |provisioner|
+        provisioner.calculate_path("clients")
+      end
+      expand_path_for :clients_path
 
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
         provisioner.calculate_path("encrypted_data_bag_secret_key", :file)
       end
-
-      def instance=(instance)
-        @instance = instance
-        expand_paths!
-      end
+      expand_path_for :encrypted_data_bag_secret_key_path
 
       def install_command
         return unless config[:require_chef_omnibus]
@@ -102,31 +108,26 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w{cookbooks data data_bags environments roles}.
+        dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
         "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
       end
 
-      def cleanup_sandbox
-        return if tmpdir.nil?
-
-        debug("Cleaning up local sandbox in #{tmpdir}")
-        FileUtils.rmtree(tmpdir)
+      def create_sandbox
+        super
+        prepare_json
+        prepare_cache
+        prepare_cookbooks
+        prepare_data
+        prepare_data_bags
+        prepare_environments
+        prepare_nodes
+        prepare_roles
+        prepare_clients
+        prepare_secret
       end
 
       protected
-
-      attr_reader :tmpdir
-
-      def expand_paths!
-        paths = %w{test_base data data_bags encrypted_data_bag_secret_key
-          environments nodes roles}
-        paths.map{ |p| "#{p}_path".to_sym }.each do |key|
-          unless config[key].nil?
-            config[key] = File.expand_path(config[key], config[:kitchen_root])
-          end
-        end
-      end
 
       def format_config_file(data)
         data.each.map { |attr, value|
@@ -156,29 +157,10 @@ module Kitchen
         }
       end
 
-      def create_chef_sandbox
-        @tmpdir = Dir.mktmpdir("#{instance.name}-sandbox-")
-        File.chmod(0755, @tmpdir)
-        info("Preparing files for transfer")
-        debug("Creating local sandbox in #{tmpdir}")
-
-        yield if block_given?
-        prepare_json
-        prepare_cache
-        prepare_cookbooks
-        prepare_data
-        prepare_data_bags
-        prepare_environments
-        prepare_nodes
-        prepare_roles
-        prepare_secret
-        tmpdir
-      end
-
       def prepare_json
         dna = config[:attributes].merge({ :run_list => config[:run_list] })
 
-        File.open(File.join(tmpdir, "dna.json"), "wb") do |file|
+        File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
           file.write(dna.to_json)
         end
       end
@@ -189,7 +171,7 @@ module Kitchen
         info("Preparing data")
         debug("Using data from #{data}")
 
-        tmpdata_dir = File.join(tmpdir, "data")
+        tmpdata_dir = File.join(sandbox_path, "data")
         FileUtils.mkdir_p(tmpdata_dir)
         FileUtils.cp_r(Dir.glob("#{data}/*"), tmpdata_dir)
       end
@@ -200,7 +182,7 @@ module Kitchen
         info("Preparing data bags")
         debug("Using data bags from #{data_bags}")
 
-        tmpbags_dir = File.join(tmpdir, "data_bags")
+        tmpbags_dir = File.join(sandbox_path, "data_bags")
         FileUtils.mkdir_p(tmpbags_dir)
         FileUtils.cp_r(Dir.glob("#{data_bags}/*"), tmpbags_dir)
       end
@@ -211,9 +193,20 @@ module Kitchen
         info("Preparing roles")
         debug("Using roles from #{roles}")
 
-        tmproles_dir = File.join(tmpdir, "roles")
+        tmproles_dir = File.join(sandbox_path, "roles")
         FileUtils.mkdir_p(tmproles_dir)
         FileUtils.cp_r(Dir.glob("#{roles}/*"), tmproles_dir)
+      end
+
+      def prepare_clients
+        return unless clients
+
+        info("Preparing clients")
+        debug("Using roles from #{clients}")
+
+        tmpclients_dir = File.join(sandbox_path, "clients")
+        FileUtils.mkdir_p(tmpclients_dir)
+        FileUtils.cp_r(Dir.glob("#{clients}/*"), tmpclients_dir)
       end
 
       def prepare_nodes
@@ -222,7 +215,7 @@ module Kitchen
         info("Preparing nodes")
         debug("Using nodes from #{nodes}")
 
-        tmpnodes_dir = File.join(tmpdir, "nodes")
+        tmpnodes_dir = File.join(sandbox_path, "nodes")
         FileUtils.mkdir_p(tmpnodes_dir)
         FileUtils.cp_r(Dir.glob("#{nodes}/*"), tmpnodes_dir)
       end
@@ -233,7 +226,7 @@ module Kitchen
         info("Preparing environments")
         debug("Using environments from #{environments}")
 
-        tmpenvs_dir = File.join(tmpdir, "environments")
+        tmpenvs_dir = File.join(sandbox_path, "environments")
         FileUtils.mkdir_p(tmpenvs_dir)
         FileUtils.cp_r(Dir.glob("#{environments}/*"), tmpenvs_dir)
       end
@@ -244,11 +237,11 @@ module Kitchen
         info("Preparing encrypted data bag secret")
         debug("Using secret from #{secret}")
 
-        FileUtils.cp_r(secret, File.join(tmpdir, "encrypted_data_bag_secret"))
+        FileUtils.cp_r(secret, File.join(sandbox_path, "encrypted_data_bag_secret"))
       end
 
       def prepare_cache
-        FileUtils.mkdir_p(File.join(tmpdir, "cache"))
+        FileUtils.mkdir_p(File.join(sandbox_path, "cache"))
       end
 
       def prepare_cookbooks
@@ -312,6 +305,10 @@ module Kitchen
         config[:roles_path]
       end
 
+      def clients
+        config[:clients_path]
+      end
+
       def nodes
         config[:nodes_path]
       end
@@ -329,11 +326,11 @@ module Kitchen
       end
 
       def tmpbooks_dir
-        File.join(tmpdir, "cookbooks")
+        File.join(sandbox_path, "cookbooks")
       end
 
       def tmpsitebooks_dir
-        File.join(tmpdir, "cookbooks")
+        File.join(sandbox_path, "cookbooks")
       end
 
       def cp_cookbooks
