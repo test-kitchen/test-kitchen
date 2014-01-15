@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/chef_base'
+require 'kitchen/provisioner/base'
 
 module Kitchen
 
