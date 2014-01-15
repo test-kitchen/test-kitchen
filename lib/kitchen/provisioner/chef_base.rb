@@ -33,6 +33,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
 
+      default_config :pre_install_command, nil
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
       default_config :run_list, []
@@ -77,34 +78,37 @@ module Kitchen
       expand_path_for :encrypted_data_bag_secret_key_path
 
       def install_command
-        return unless config[:require_chef_omnibus]
+        command = ''
+        command << "#{config[:pre_install_command]}\n" if config[:pre_install_command]
+        if config[:require_chef_omnibus]
+          url = config[:chef_omnibus_url]
+          flag = config[:require_chef_omnibus]
+          version = if flag.is_a?(String) && flag != "latest"
+            "-v #{flag.downcase}"
+          else
+            ""
+          end
 
-        url = config[:chef_omnibus_url]
-        flag = config[:require_chef_omnibus]
-        version = if flag.is_a?(String) && flag != "latest"
-          "-v #{flag.downcase}"
-        else
-          ""
+          # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
+          command << <<-INSTALL.gsub(/^ {12}/, '')
+            sh -c '
+            #{Util.shell_helpers}
+
+            should_update_chef() {
+              case "#{flag}" in
+                true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
+                latest|*) return 0 ;;
+              esac
+            }
+
+            if [ ! -d "/opt/chef" ] || should_update_chef ; then
+              echo "-----> Installing Chef Omnibus (#{flag})"
+              do_download #{url} /tmp/install.sh
+              #{sudo('sh')} /tmp/install.sh #{version}
+            fi'
+          INSTALL
         end
-
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL.gsub(/^ {10}/, '')
-          sh -c '
-          #{Util.shell_helpers}
-
-          should_update_chef() {
-            case "#{flag}" in
-              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
-              latest|*) return 0 ;;
-            esac
-          }
-
-          if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo "-----> Installing Chef Omnibus (#{flag})"
-            do_download #{url} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{version}
-          fi'
-        INSTALL
+        command
       end
 
       def init_command

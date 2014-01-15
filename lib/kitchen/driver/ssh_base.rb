@@ -105,7 +105,7 @@ module Kitchen
       end
 
       def run_remote(command, connection)
-        return if command.nil?
+        return if command.nil? or command.empty?
 
         connection.exec(env_cmd(command))
       rescue SSHFailed, Net::SSH::Exception => ex
