@@ -81,30 +81,20 @@ module Kitchen
 
         url = config[:chef_omnibus_url]
         flag = config[:require_chef_omnibus]
+        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
+        shell = sudo('sh')
+        shell_helpers = Util.shell_helpers
         version = if flag.is_a?(String) && flag != "latest"
           "-v #{flag.downcase}"
         else
           ""
         end
 
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL.gsub(/^ {10}/, '')
-          sh -c '
-          #{Util.shell_helpers}
+        template_path = Kitchen.source_root.join("templates", "chef_install.sh.erb")
+        template = File.read(template_path)
 
-          should_update_chef() {
-            case "#{flag}" in
-              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
-              latest|*) return 0 ;;
-            esac
-          }
-
-          if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo "-----> Installing Chef Omnibus (#{flag})"
-            do_download #{url} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{version}
-          fi'
-        INSTALL
+        command = ERB.new(template).result(binding)
+        command
       end
 
       def init_command
