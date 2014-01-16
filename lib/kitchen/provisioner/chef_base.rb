@@ -35,6 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
+      default_config :install_script_path, Kitchen.source_root.join("templates", "chef_install.sh.erb")
       default_config :run_list, []
       default_config :attributes, {}
       default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
@@ -90,7 +91,7 @@ module Kitchen
           ""
         end
 
-        template_path = Kitchen.source_root.join("templates", "chef_install.sh.erb")
+        template_path = config[:install_script_path]
         template = File.read(template_path)
 
         command = ERB.new(template).result(binding)
