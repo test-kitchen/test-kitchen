@@ -104,4 +104,11 @@ describe Kitchen::Util do
       Kitchen::Util.duration(48033).must_equal "(800m33.00s)"
     end
   end
+
+  describe ".shell_helpers" do
+    it "should have some expected content" do
+      Kitchen::Util.shell_helpers.must_match /do_perl/
+      Kitchen::Util.shell_helpers.must_match /do_python/
+    end
+  end
 end
