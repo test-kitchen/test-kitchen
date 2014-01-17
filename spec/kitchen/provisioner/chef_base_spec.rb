@@ -43,6 +43,7 @@ describe Kitchen::Provisioner::ChefBase do
     it "should do things to install chef" do
       command = provisioner.install_command
       command.must_match /Installing Chef/i
+      command.must_match /#{Regexp.escape("https://www.getchef.com/chef/install.sh")}/
       command.must_match /do_perl/ # Make sure we have our helpers
     end
   end
