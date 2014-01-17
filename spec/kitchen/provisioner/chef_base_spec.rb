@@ -29,14 +29,14 @@ describe Kitchen::Provisioner::ChefBase do
   let(:instance) do
     stub(:name   => "chefinator",
          :logger => instance_logger,
-         :suite => Kitchen::Suite.new(:name => "awesome")
+         :suite  => Kitchen::Suite.new(:name => "awesome")
         )
   end
 
   let(:provisioner) do
-    p = Kitchen::Provisioner::ChefBase.new(config)
-    p.instance = instance
-    p
+    chef_base = Kitchen::Provisioner::ChefBase.new(config)
+    chef_base.instance = instance
+    chef_base
   end
 
   describe ".install_command" do
