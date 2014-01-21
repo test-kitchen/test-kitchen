@@ -54,7 +54,7 @@ module Kitchen
       #   local kitchen YAML file, if it exists (default: `true`)
       def initialize(options = {})
         @config_file =
-          File.expand_path(options[:project_config] || default_config_file)
+          File.expand_path(options[:project_config] || find_config_file)
         @local_config_file =
           File.expand_path(options[:local_config] || default_local_config_file)
         @global_config_file =
@@ -96,8 +96,12 @@ module Kitchen
 
       attr_reader :config_file, :local_config_file, :global_config_file
 
-      def default_config_file
-        File.join(Dir.pwd, '.kitchen.yml')
+      def find_config_file
+        Pathname.new(Dir.pwd).ascend do |dir|
+          path = File.expand_path(".kitchen.yml", dir)
+          return path if File.exists?(path)
+        end
+        File.expand_path('.kitchen.yml', Dir.pwd)
       end
 
       def combined_hash

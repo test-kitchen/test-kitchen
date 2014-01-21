@@ -52,6 +52,17 @@ describe Kitchen::Loader::YAML do
         must_equal File.expand_path(File.join(Dir.pwd, '.kitchen.yml'))
     end
 
+    it "sets project_config by ascending from Dir.pwd until .kitchen.yml is found, by default" do
+      stub_file(File.join(Dir.pwd, '.kitchen.yml'), Hash.new)
+      loader = Kitchen::Loader::YAML.new
+      stub_dir(File.join(Dir.pwd, 'foo'))
+
+      Dir.chdir('foo') do
+        loader.diagnose[:project_config][:filename].
+          must_equal File.expand_path(File.join(Dir.pwd, '..', '.kitchen.yml'))
+      end
+    end
+
     it "sets project_config from parameter, if given" do
       stub_file('/tmp/crazyfunkytown.file', Hash.new)
       loader = Kitchen::Loader::YAML.new(
@@ -750,6 +761,10 @@ describe Kitchen::Loader::YAML do
   def stub_file(path, hash)
     FileUtils.mkdir_p(File.dirname(path))
     File.open(path, "wb") { |f| f.write(hash.to_yaml) }
+  end
+
+  def stub_dir(path)
+    FileUtils.mkdir_p(path)
   end
 
   def stub_yaml!(name = ".kitchen.yml", hash)
