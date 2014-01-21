@@ -95,7 +95,7 @@ module Kitchen
       perform("diagnose", "diagnose", args, :loader => @loader)
     end
 
-    [:create, :converge, :setup, :verify, :destroy].each do |action|
+    [:create, :converge, :setup, :verify, :destroy, :start].each do |action|
       desc(
         "#{action} [INSTANCE|REGEXP|all]",
         "#{action.capitalize} one or more instances"

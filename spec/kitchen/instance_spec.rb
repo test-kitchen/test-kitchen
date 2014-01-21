@@ -720,6 +720,29 @@ describe Kitchen::Instance do
       end
     end
 
+    describe "#start" do
+
+      it "calls Driver#start" do
+        driver.expects(:start).with(Hash.new)
+
+        instance.start
+      end
+
+      it "logs the action start" do
+        instance.start
+
+        logger_io.string.must_match regex_for("Starting #{instance.to_str}")
+      end
+
+      it "logs the action finish" do
+        instance.start
+
+        logger_io.string.
+          must_match regex_for("Finished starting #{instance.to_str}")
+      end
+
+    end
+
     [:create, :converge, :setup, :verify, :test].each do |action|
 
       describe "#{action} on driver crash with ActionFailed" do

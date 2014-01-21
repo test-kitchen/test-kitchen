@@ -205,6 +205,10 @@ module Kitchen
       result
     end
 
+    def start
+      perform_action(:start, "Starting")
+    end
+
     def last_action
       state_file.read[:last_action]
     end
@@ -289,6 +293,10 @@ module Kitchen
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{self.name}.log for more details",
         e.backtrace)
+    rescue NotImplementedError => e
+      log_failure(what, e)
+      raise ActionFailed,
+        "#{driver.class.name} does not support '#{what}' action"
     rescue Exception => e
       log_failure(what, e)
       raise ActionFailed,
