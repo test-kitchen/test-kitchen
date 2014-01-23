@@ -67,9 +67,21 @@ module Kitchen
 
       def prepare_script
         info("Preparing script")
-        debug("Using script from #{config[:script]}")
 
-        FileUtils.cp_r(config[:script], sandbox_path)
+        if config[:script]
+          debug("Using script from #{config[:script]}")
+          FileUtils.cp_r(config[:script], sandbox_path)
+        else
+          config[:script] = File.join(sandbox_path, "bootstrap.sh")
+          info("#{File.basename(config[:script])} not found " +
+            "so Kitchen will run a stubbed script. Is this intended?")
+          File.open(config[:script], "wb") do |file|
+            file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
+          end
+        end
+
+        FileUtils.chmod(0755,
+          File.join(sandbox_path, File.basename(config[:script])))
       end
     end
   end
