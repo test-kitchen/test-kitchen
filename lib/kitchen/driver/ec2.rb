@@ -43,6 +43,9 @@ module Kitchen
       default_config :aws_secret_access_key do |driver|
         ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
       end
+      default_config :aws_session_token do |driver|
+        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+      end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
       end
@@ -102,6 +105,7 @@ module Kitchen
           :provider               => :aws,
           :aws_access_key_id      => config[:aws_access_key_id],
           :aws_secret_access_key  => config[:aws_secret_access_key],
+          :aws_session_token      => config[:aws_session_token],
           :region                 => config[:region],
           :endpoint               => config[:endpoint],
         )
