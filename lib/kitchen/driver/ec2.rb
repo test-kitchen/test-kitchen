@@ -19,7 +19,6 @@
 require 'benchmark'
 require 'json'
 require 'fog'
-
 require 'kitchen'
 
 module Kitchen
@@ -59,6 +58,8 @@ module Kitchen
         "https://ec2.#{driver[:region]}.amazonaws.com/"
       end
 
+      default_config :interface, nil
+
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
       required_config :aws_ssh_key_id
@@ -69,11 +70,11 @@ module Kitchen
         state[:server_id] = server.id
 
         info("EC2 instance <#{state[:server_id]}> created.")
-        server.wait_for { print "."; ready? }
-        print "(server ready)"
+        server.wait_for { print '.'; ready? }
+        print '(server ready)'
         state[:hostname] = hostname(server)
         wait_for_sshd(state[:hostname], config[:username])
-        print "(ssh ready)\n"
+        print '(ssh ready)\n'
         debug("ec2:create '#{state[:hostname]}'")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
@@ -90,12 +91,12 @@ module Kitchen
       end
 
       def default_ami
-        region = amis["regions"][config[:region]]
+        region = amis['regions'][config[:region]]
         region && region[instance.platform.name]
       end
 
       def default_username
-        amis["usernames"][instance.platform.name] || "root"
+        amis['usernames'][instance.platform.name] || 'root'
       end
 
       private
@@ -146,8 +147,23 @@ module Kitchen
         end
       end
 
+      def interface_types
+        {
+          'dns' => 'dns_name',
+          'public' => 'public_ip_address',
+          'private' => 'private_ip_address'
+        }
+      end
+
       def hostname(server)
-        server.dns_name || server.public_ip_address || server.private_ip_address
+        if config[:interface]
+          method = interface_types.fetch(config[:interface]) do
+            raise Kitchen::UserError, 'Invalid interface'
+          end
+          server.send(method)
+        else
+          server.dns_name || server.public_ip_address || server.private_ip_address
+        end
       end
     end
   end

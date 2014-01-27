@@ -90,7 +90,7 @@ Tailor.config do |config|
     style.indentation_spaces 2, level: :error
     style.max_code_lines_in_class 300, level: :error
     style.max_code_lines_in_method 30, level: :error
-    style.max_line_length 80, level: :error
+    style.max_line_length 100, level: :error
     style.spaces_after_comma 1, level: :off
     style.spaces_after_lbrace 1, level: :error
     style.spaces_after_lbracket 0, level: :error

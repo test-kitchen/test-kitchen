@@ -5,4 +5,5 @@ gemspec
 
 group :test do
   gem 'rake'
+  gem 'pry'
 end
