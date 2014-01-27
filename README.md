@@ -128,6 +128,17 @@ The SSH port number to be used when communicating with the instance.
 
 The default is `22`.
 
+### < name="interface"></a> interface
+
+The place from which to derive the hostname for communicating with the instance.  May be `dns`, `public` or `private`.  If this is unset, the driver will derive the hostname by failing back in the following order:
+
+1. DNS Name
+2. Public IP Address
+3. Private IP Address
+
+The default is unset.
+
+
 ### <a name="config-region"></a> region
 
 **Required** The AWS [region][region_docs] to use.
