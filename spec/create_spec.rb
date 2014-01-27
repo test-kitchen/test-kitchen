@@ -12,19 +12,19 @@ describe Kitchen::Driver::Ec2 do
     end
 
     let(:server) do
-      double(:id => "123", 
-             :wait_for => nil, 
-             :dns_name => "server.example.com", 
-             :private_ip_address => '172.13.16.11', 
+      double(:id => "123",
+             :wait_for => nil,
+             :dns_name => "server.example.com",
+             :private_ip_address => '172.13.16.11',
              :public_ip_address => '213.225.123.134')
     end
 
     let(:instance) do
-      Kitchen::Instance.new(:platform => double(:name => "centos-6.4"), 
-                            :suite => double(:name => "default"), 
-                            :driver => driver, 
-                            :provisioner => Kitchen::Provisioner::Dummy.new({}), 
-                            :busser => double("busser"), 
+      Kitchen::Instance.new(:platform => double(:name => "centos-6.4"),
+                            :suite => double(:name => "default"),
+                            :driver => driver,
+                            :provisioner => Kitchen::Provisioner::Dummy.new({}),
+                            :busser => double("busser"),
                             :state_file => double("state_file"))
     end
 
@@ -43,19 +43,19 @@ describe Kitchen::Driver::Ec2 do
     it 'derives hostname from DNS when specified in the .kitchen.yml' do
       config[:interface] = 'dns'
       driver.create(state)
-      expect(state[:hostname]).to eql("server.example.com")
+      expect(state[:hostname]).to eql('server.example.com')
     end
 
     it 'derives hostname from public interface when specified in the .kitchen.yml' do
       config[:interface] = 'public'
       driver.create(state)
-      expect(state[:hostname]).to eql("213.225.123.134")
+      expect(state[:hostname]).to eql('213.225.123.134')
     end
 
     it 'derives hostname from private interface when specified in the .kitchen.yml' do
       config[:interface] = 'private'
       driver.create(state)
-      expect(state[:hostname]).to eql("172.13.16.11")
+      expect(state[:hostname]).to eql('172.13.16.11')
     end
 
     it 'throws a nice exception if the config is bogus' do
@@ -68,10 +68,10 @@ describe Kitchen::Driver::Ec2 do
   context 'Interface is derived automatically' do
 
     let(:server) do
-      double(:id => "123", 
-             :wait_for => nil, 
-             :dns_name => nil, 
-             :private_ip_address => nil, 
+      double(:id => "123",
+             :wait_for => nil,
+             :dns_name => nil,
+             :private_ip_address => nil,
              :public_ip_address => nil)
     end
 
