@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'test-kitchen', '~> 1.0'
   gem.add_dependency 'fog'
 
+  gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'cane'
   gem.add_development_dependency 'tailor'
   gem.add_development_dependency 'countloc'
