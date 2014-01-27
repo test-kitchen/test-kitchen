@@ -19,7 +19,7 @@
 require 'benchmark'
 require 'json'
 require 'fog'
-
+require 'pry'
 require 'kitchen'
 
 module Kitchen
@@ -58,6 +58,8 @@ module Kitchen
       default_config :endpoint do |driver|
         "https://ec2.#{driver[:region]}.amazonaws.com/"
       end
+
+      default_config :interface, nil
 
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
@@ -147,7 +149,16 @@ module Kitchen
       end
 
       def hostname(server)
-        server.dns_name || server.public_ip_address || server.private_ip_address
+        derive_from_interface(server)
+      end
+
+      def derive_from_interface(server)
+         if config[:interface]
+           interface_type = {'dns' => 'dns_name', 'public' => 'public_ip_address', 'private' => 'private_ip_address'}
+           server.send(interface_type.fetch(config[:interface]) { raise Kitchen::UserError, "Invalid interface" })
+         else
+           server.dns_name || server.public_ip_address || server.private_ip_address
+         end
       end
     end
   end
