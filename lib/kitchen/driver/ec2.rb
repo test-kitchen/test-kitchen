@@ -19,7 +19,6 @@
 require 'benchmark'
 require 'json'
 require 'fog'
-require 'pry'
 require 'kitchen'
 
 module Kitchen
