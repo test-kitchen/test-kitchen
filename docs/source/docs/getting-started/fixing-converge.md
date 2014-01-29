@@ -1,8 +1,8 @@
 ---
 title: Fixing Converge
 prev:
-  text: "Adding a Platform"
-  url: "adding-platform"
+  text: "Dynamic Configuration"
+  url: "dynamic-configuration"
 next:
   text: "Add a New Feature"
   url: "adding-feature"

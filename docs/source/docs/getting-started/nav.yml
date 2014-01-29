@@ -35,6 +35,9 @@ guide:
     url: "adding-platform"
     name: "Adding a Platform"
   -
+    url: "dynamic-configuration"
+    name: "Dynamic Configuration"
+  -
     url: "fixing-converge"
     name: "Fixing Converge"
   -
