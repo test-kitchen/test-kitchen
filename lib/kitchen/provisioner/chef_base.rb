@@ -366,7 +366,7 @@ module Kitchen
         info("Preparing cookbooks from project directory")
         debug("Using cookbooks from #{cookbooks_dir}")
 
-        FileUtils.mkdir_p(tmpbooks_dir)
+        FileUtils.mkdir_p(tmpbooks_dir) unless File.exist?(tmpbooks_dir)
         FileUtils.cp_r(File.join(cookbooks_dir, "."), tmpbooks_dir)
 
         cp_site_cookbooks if File.directory?(site_cookbooks_dir)
@@ -377,7 +377,7 @@ module Kitchen
         info("Preparing site-cookbooks from project directory")
         debug("Using cookbooks from #{site_cookbooks_dir}")
 
-        FileUtils.mkdir_p(tmpsitebooks_dir)
+        FileUtils.mkdir_p(tmpsitebooks_dir) unless File.exist?(tmpsitebooks_dir)
         FileUtils.cp_r(File.join(site_cookbooks_dir, "."), tmpsitebooks_dir)
       end
 
