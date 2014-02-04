@@ -16,42 +16,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/chef_base'
+require 'kitchen/command'
+
+require 'benchmark'
 
 module Kitchen
 
-  module Provisioner
+  module Command
 
-    # Chef Solo provisioner.
+    # Command to test one or more instances.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class ChefSolo < ChefBase
+    class Test < Kitchen::Command::Base
 
-      default_config :solo_rb, {}
+      include RunAction
 
-      def create_sandbox
-        super
-        prepare_solo_rb
-      end
-
-      def run_command
-        [
-          sudo('chef-solo'),
-          "--config #{config[:root_path]}/solo.rb",
-          "--json-attributes #{config[:root_path]}/dna.json",
-          config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
-          "--log_level #{config[:log_level]}"
-        ].join(" ")
-      end
-
-      private
-
-      def prepare_solo_rb
-        data = default_config_rb.merge(config[:solo_rb])
-
-        File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
-          file.write(format_config_file(data))
+      def call
+        if ! %w{passing always never}.include?(options[:destroy])
+          raise ArgumentError, "Destroy mode must be passing, always, or never."
         end
+
+        banner "Starting Kitchen (v#{Kitchen::VERSION})"
+        elapsed = Benchmark.measure do
+          destroy_mode = options[:destroy].to_sym
+          results = parse_subcommand(args.join('|'))
+
+          run_action(:test, results, destroy_mode)
+        end
+        banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
       end
     end
   end

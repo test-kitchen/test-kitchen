@@ -16,42 +16,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/chef_base'
+require 'kitchen/command'
 
 module Kitchen
 
-  module Provisioner
+  module Command
 
-    # Chef Solo provisioner.
+    # Command to launch a Pry-based Kitchen console..
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class ChefSolo < ChefBase
+    class Console < Kitchen::Command::Base
 
-      default_config :solo_rb, {}
-
-      def create_sandbox
-        super
-        prepare_solo_rb
+      def call
+        require 'pry'
+        Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
+      rescue LoadError => e
+        warn %{Make sure you have the pry gem installed. You can install it with:}
+        warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
+        exit 1
       end
 
-      def run_command
-        [
-          sudo('chef-solo'),
-          "--config #{config[:root_path]}/solo.rb",
-          "--json-attributes #{config[:root_path]}/dna.json",
-          config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
-          "--log_level #{config[:log_level]}"
-        ].join(" ")
-      end
+      protected
 
-      private
-
-      def prepare_solo_rb
-        data = default_config_rb.merge(config[:solo_rb])
-
-        File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
-          file.write(format_config_file(data))
-        end
+      def prompt(char)
+        proc { |target_self, nest_level, pry|
+          ["[#{pry.input_array.size}] ",
+            "kc(#{Pry.view_clip(target_self.class)})",
+            "#{":#{nest_level}" unless nest_level.zero?}#{char} "
+          ].join
+        }
       end
     end
   end
