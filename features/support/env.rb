@@ -1,10 +1,35 @@
 # Set up the environment for testing
 require 'aruba/cucumber'
+require 'aruba/in_process'
+require 'aruba/spawn_process'
 require 'kitchen'
+require 'kitchen/cli'
+
+class ArubaHelper
+  def initialize(argv, stdin=STDIN, stdout=STDOUT, stderr=STDERR, kernel=Kernel)
+    @argv, @stdin, @stdout, @stderr, @kernel = argv, stdin, stdout, stderr, kernel
+  end
+
+  def execute!
+    $stdout = @stdout
+    $stdin = @stdin
+
+    kitchen_cli = Kitchen::CLI
+    kitchen_cli.start(@argv)
+    @kernel.exit(0)
+  end
+end
 
 Before do
   @aruba_timeout_seconds = 15
   @cleanup_dirs = []
+
+  Aruba::InProcess.main_class = ArubaHelper
+  Aruba.process = Aruba::InProcess
+end
+
+Before('@spawn') do
+  Aruba.process = Aruba::SpawnProcess
 end
 
 After do |s|

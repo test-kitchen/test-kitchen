@@ -29,13 +29,13 @@ module Kitchen
 
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
+      default_config :json_attributes, true
 
       def create_sandbox
-        create_chef_sandbox do
-          prepare_chef_client_zero_rb
-          prepare_validation_pem
-          prepare_client_rb
-        end
+        super
+        prepare_chef_client_zero_rb
+        prepare_validation_pem
+        prepare_client_rb
       end
 
       def prepare_command
@@ -62,9 +62,11 @@ module Kitchen
       def run_command
         args = [
           "--config #{config[:root_path]}/client.rb",
-          "--json-attributes #{config[:root_path]}/dna.json",
           "--log_level #{config[:log_level]}"
         ]
+        if config[:json_attributes]
+          args << "--json-attributes #{config[:root_path]}/dna.json"
+        end
 
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
@@ -84,19 +86,19 @@ module Kitchen
 
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support chef-client-zero.rb})
-        FileUtils.cp(source, File.join(tmpdir, "chef-client-zero.rb"))
+        FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
       def prepare_validation_pem
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support dummy-validation.pem})
-        FileUtils.cp(source, File.join(tmpdir, "validation.pem"))
+        FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
       def prepare_client_rb
         data = default_config_rb.merge(config[:client_rb])
 
-        File.open(File.join(tmpdir, "client.rb"), "wb") do |file|
+        File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
       end

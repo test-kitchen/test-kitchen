@@ -28,7 +28,9 @@ end
 
 describe Kitchen::Loader::YAML do
 
-  let(:loader) { Kitchen::Loader::YAML.new("/tmp/.kitchen.yml") }
+  let(:loader) do
+    Kitchen::Loader::YAML.new(:project_config => "/tmp/.kitchen.yml")
+  end
 
   before do
     FakeFS.activate!
@@ -42,17 +44,64 @@ describe Kitchen::Loader::YAML do
 
   describe ".initialize" do
 
-    it "sets config_file based on Dir.pwd by default" do
+    it "sets project_config based on Dir.pwd by default" do
+      stub_file(File.join(Dir.pwd, '.kitchen.yml'), Hash.new)
       loader = Kitchen::Loader::YAML.new
 
-      loader.config_file.must_equal File.expand_path(
-        File.join(Dir.pwd, '.kitchen.yml'))
+      loader.diagnose[:project_config][:filename].
+        must_equal File.expand_path(File.join(Dir.pwd, '.kitchen.yml'))
     end
 
-    it "sets config_file from parameter, if given" do
-      loader = Kitchen::Loader::YAML.new('/tmp/crazyfunkytown.file')
+    it "sets project_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/crazyfunkytown.file')
 
-      loader.config_file.must_equal '/tmp/crazyfunkytown.file'
+      loader.diagnose[:project_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
+    end
+
+    it "sets local_config based on Dir.pwd by default" do
+      stub_file(File.join(Dir.pwd, '.kitchen.local.yml'), Hash.new)
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:local_config][:filename].
+        must_equal File.expand_path(File.join(Dir.pwd, '.kitchen.local.yml'))
+    end
+
+    it "sets local_config based on location of project_config by default" do
+      stub_file('/tmp/.kitchen.local.yml', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/.kitchen.yml')
+
+      loader.diagnose[:local_config][:filename].
+        must_match %r{/tmp/.kitchen.local.yml$}
+    end
+
+    it "sets local_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :local_config => '/tmp/crazyfunkytown.file')
+
+      loader.diagnose[:local_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
+    end
+
+    it "sets global_config based on ENV['HOME'] by default" do
+      stub_file(File.join(ENV['HOME'], '.kitchen/config.yml'), Hash.new)
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:global_config][:filename].must_equal File.expand_path(
+        File.join(ENV['HOME'], '.kitchen/config.yml'))
+    end
+
+    it "sets global_config from parameter, if given" do
+      stub_file('/tmp/crazyfunkytown.file', Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :global_config => '/tmp/crazyfunkytown.file')
+
+      loader.diagnose[:global_config][:filename].
+        must_match %r{/tmp/crazyfunkytown.file$}
     end
   end
 
@@ -326,14 +375,25 @@ describe Kitchen::Loader::YAML do
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '&*%^*' }
 
-      proc { loader.read }.must_raise Kitchen::UserError
+      err = proc { loader.read }.must_raise Kitchen::UserError
+      err.message.must_match Regexp.new(
+        "Error parsing ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") { |f| f.write 'uhoh' }
 
-      proc { loader.read }.must_raise Kitchen::UserError
+      err = proc { loader.read }.must_raise Kitchen::UserError
+      err.message.must_match Regexp.new(
+        "Error parsing ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
+    end
+
+    it "handles a kitchen.yml if it is a commented out YAML document" do
+      FileUtils.mkdir_p "/tmp"
+      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '#---\n' }
+
+      loader.read.must_equal(Hash.new)
     end
 
     it "raises a UserError if kitchen.local.yml cannot be parsed" do
@@ -354,6 +414,20 @@ describe Kitchen::Loader::YAML do
       end
 
       loader.read.must_equal({ :name => "ahhchoo" })
+    end
+
+    it "raises a UserError if there is an ERB processing error" do
+      FileUtils.mkdir_p "/tmp"
+      File.open("/tmp/.kitchen.yml", "wb") do |f|
+        f.write <<-'YAML'.gsub(/^ {10}/, '')
+          ---
+          <%= poop %>: yep
+        YAML
+      end
+
+      err = proc { loader.read }.must_raise Kitchen::UserError
+      err.message.must_match Regexp.new(
+        "Error parsing ERB content in ([a-zA-Z]:)?\/tmp\/\.kitchen\.yml")
     end
 
     it "evaluates kitchen.local.yml through erb before loading by default" do
@@ -377,7 +451,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips evaluating kitchen.yml through erb if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_erb => false)
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, '')
@@ -391,7 +465,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips evaluating kitchen.local.yml through erb if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_erb => false)
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.local.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, '')
@@ -406,7 +480,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips kitchen.local.yml if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_local => false)
+        :project_config => '/tmp/.kitchen.yml', :process_local => false)
       stub_yaml!(".kitchen.yml", {
         'a' => 'b'
       })
@@ -419,7 +493,7 @@ describe Kitchen::Loader::YAML do
 
     it "skips the global config if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        '/tmp/.kitchen.yml', :process_global => false)
+        :project_config => '/tmp/.kitchen.yml', :process_global => false)
       stub_yaml!(".kitchen.yml", {
         'a' => 'b'
       })
@@ -428,6 +502,246 @@ describe Kitchen::Loader::YAML do
       })
 
       loader.read.must_equal({ :a => 'b' })
+    end
+  end
+
+  describe "#diagnose" do
+
+    it "returns a Hash" do
+      stub_yaml!(Hash.new)
+
+      loader.diagnose.must_be_kind_of(Hash)
+    end
+
+    it "contains erb processing information when true" do
+      stub_yaml!(Hash.new)
+
+      loader.diagnose[:process_erb].must_equal true
+    end
+
+    it "contains erb processing information when false" do
+      stub_yaml!(Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/.kitchen.yml', :process_erb => false)
+
+      loader.diagnose[:process_erb].must_equal false
+    end
+
+    it "contains local processing information when true" do
+      stub_yaml!(Hash.new)
+
+      loader.diagnose[:process_local].must_equal true
+    end
+
+    it "contains local processing information when false" do
+      stub_yaml!(Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/.kitchen.yml', :process_local => false)
+
+      loader.diagnose[:process_local].must_equal false
+    end
+
+    it "contains global processing information when true" do
+      stub_yaml!(Hash.new)
+
+      loader.diagnose[:process_global].must_equal true
+    end
+
+    it "contains global processing information when false" do
+      stub_yaml!(Hash.new)
+      loader = Kitchen::Loader::YAML.new(
+        :project_config => '/tmp/.kitchen.yml', :process_global => false)
+
+      loader.diagnose[:process_global].must_equal false
+    end
+
+    describe "for yaml files" do
+
+      before do
+        stub_yaml!(".kitchen.yml", {
+          "from_project" => "project",
+          "common" => { "p" => "pretty" }
+        })
+        stub_yaml!(".kitchen.local.yml", {
+          "from_local" => "local",
+          "common" => { "l" => "looky" }
+        })
+        stub_global!({
+          "from_global" => "global",
+          "common" => { "g" => "goody" }
+        })
+      end
+
+      it "global config contains a filename" do
+        loader.diagnose[:global_config][:filename].
+          must_equal File.join(ENV["HOME"], ".kitchen/config.yml")
+      end
+
+      it "global config contains raw data" do
+        loader.diagnose[:global_config][:raw_data].must_equal({
+          "from_global" => "global",
+          "common" => { "g" => "goody" }
+        })
+      end
+
+      it "project config contains a filename" do
+        loader.diagnose[:project_config][:filename].
+          must_match %r{/tmp/.kitchen.yml$}
+      end
+
+      it "project config contains raw data" do
+        loader.diagnose[:project_config][:raw_data].must_equal({
+          "from_project" => "project",
+          "common" => { "p" => "pretty" }
+        })
+      end
+
+      it "local config contains a filename" do
+        loader.diagnose[:local_config][:filename].
+          must_match %r{/tmp/.kitchen.local.yml$}
+      end
+
+      it "local config contains raw data" do
+        loader.diagnose[:local_config][:raw_data].must_equal({
+          "from_local" => "local",
+          "common" => { "l" => "looky" }
+        })
+      end
+
+      it "combined config contains a nil filename" do
+        loader.diagnose[:combined_config][:filename].
+          must_equal nil
+      end
+
+      it "combined config contains raw data" do
+        loader.diagnose[:combined_config][:raw_data].must_equal({
+          "from_global" => "global",
+          "from_project" => "project",
+          "from_local" => "local",
+          "common" => {
+            "g" => "goody",
+            "p" => "pretty",
+            "l" => "looky"
+          }
+        })
+      end
+
+      describe "for global on error" do
+
+        before do
+          FileUtils.mkdir_p(File.join(ENV["HOME"], ".kitchen"))
+          File.open(File.join(ENV["HOME"], ".kitchen/config.yml"), "wb") do |f|
+            f.write '&*%^*'
+          end
+        end
+
+        it "uses an error hash with the raw file contents" do
+          loader.diagnose[:global_config][:raw_data][:error][:raw_file].
+            must_equal "&*%^*"
+        end
+
+        it "uses an error hash with the exception" do
+          loader.diagnose[:global_config][:raw_data][:error][:exception].
+            must_match %r{Kitchen::UserError}
+        end
+
+        it "uses an error hash with the exception message" do
+          loader.diagnose[:global_config][:raw_data][:error][:message].
+            must_match %r{Error parsing}
+        end
+
+        it "uses an error hash with the exception backtrace" do
+          loader.diagnose[:global_config][:raw_data][:error][:backtrace].
+            must_be_kind_of Array
+        end
+      end
+
+      describe "for project on error" do
+
+        before do
+          File.open("/tmp/.kitchen.yml", "wb") do |f|
+            f.write '&*%^*'
+          end
+        end
+
+        it "uses an error hash with the raw file contents" do
+          loader.diagnose[:project_config][:raw_data][:error][:raw_file].
+            must_equal "&*%^*"
+        end
+
+        it "uses an error hash with the exception" do
+          loader.diagnose[:project_config][:raw_data][:error][:exception].
+            must_match %r{Kitchen::UserError}
+        end
+
+        it "uses an error hash with the exception message" do
+          loader.diagnose[:project_config][:raw_data][:error][:message].
+            must_match %r{Error parsing}
+        end
+
+        it "uses an error hash with the exception backtrace" do
+          loader.diagnose[:project_config][:raw_data][:error][:backtrace].
+            must_be_kind_of Array
+        end
+      end
+
+      describe "for local on error" do
+
+        before do
+          File.open("/tmp/.kitchen.local.yml", "wb") do |f|
+            f.write '&*%^*'
+          end
+        end
+
+        it "uses an error hash with the raw file contents" do
+          loader.diagnose[:local_config][:raw_data][:error][:raw_file].
+            must_equal "&*%^*"
+        end
+
+        it "uses an error hash with the exception" do
+          loader.diagnose[:local_config][:raw_data][:error][:exception].
+            must_match %r{Kitchen::UserError}
+        end
+
+        it "uses an error hash with the exception message" do
+          loader.diagnose[:local_config][:raw_data][:error][:message].
+            must_match %r{Error parsing}
+        end
+
+        it "uses an error hash with the exception backtrace" do
+          loader.diagnose[:local_config][:raw_data][:error][:backtrace].
+            must_be_kind_of Array
+        end
+      end
+
+      describe "for combined on error" do
+
+        before do
+          File.open("/tmp/.kitchen.yml", "wb") do |f|
+            f.write '&*%^*'
+          end
+        end
+
+        it "uses an error hash with nil raw file contents" do
+          loader.diagnose[:combined_config][:raw_data][:error][:raw_file].
+            must_equal nil
+        end
+
+        it "uses an error hash with the exception" do
+          loader.diagnose[:combined_config][:raw_data][:error][:exception].
+            must_match %r{Kitchen::UserError}
+        end
+
+        it "uses an error hash with the exception message" do
+          loader.diagnose[:combined_config][:raw_data][:error][:message].
+            must_match %r{Error parsing}
+        end
+
+        it "uses an error hash with the exception backtrace" do
+          loader.diagnose[:combined_config][:raw_data][:error][:backtrace].
+            must_be_kind_of Array
+        end
+      end
     end
   end
 
