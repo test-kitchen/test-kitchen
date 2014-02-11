@@ -68,8 +68,7 @@ class ChefClientZero
   end
 
   def run_chef_client
-    system("chef-client", *ARGV)
-    fail if $? != 0
+    system("chef-client", *ARGV) || exit(1)
   end
 end
 
