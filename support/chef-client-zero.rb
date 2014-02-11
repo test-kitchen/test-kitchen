@@ -68,7 +68,7 @@ class ChefClientZero
   end
 
   def run_chef_client
-    system("chef-client", *ARGV)
+    system("chef-client", *ARGV) || exit(1)
   end
 end
 
