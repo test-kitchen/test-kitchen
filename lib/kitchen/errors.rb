@@ -122,7 +122,8 @@ module Kitchen
 
   def self.handle_error(e)
     stderr_log(Error.formatted_exception(e))
-    stderr_log("Please see .kitchen/logs/kitchen.log for more details\n")
+    stderr_log("Please see .kitchen/logs/kitchen.log for more details")
+    stderr_log("Also try running `kitchen diagnose --all` for configuration\n")
     file_log(:error, Error.formatted_trace(e))
   end
 end
