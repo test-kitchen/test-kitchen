@@ -9,9 +9,9 @@ Gem::Specification.new do |gem|
   gem.license       = 'Apache 2.0'
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
-  gem.description   = "Kitchen::Driver::Ec2 - A Test Kitchen Driver for Ec2"
+  gem.description   = "A Test Kitchen Driver for Amazon EC2"
   gem.summary       = gem.description
-  gem.homepage      = "https://github.com/opscode/kitchen-ec2/"
+  gem.homepage      = "http://kitchen.ci/"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = []

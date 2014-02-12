@@ -1,3 +1,23 @@
+## 0.8.0 / 2014-02-11
+
+### Bug fixes
+
+* Pull request [#29][], pull request [#28][]: Relax Test Kitchen dependency to allow versions 1.0 and up. ([@coderanger][], [@someara][])
+
+## New features
+
+* Pull request [#29][]: Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` fallback environment variable support. ([@coderanger][])
+* Pull request [#27][], pull request [#31][]: Make EC2 endpoint configurable for services implementing the AWS APIs. ([@bozinsky][], [@spheromak][])
+* Pull request [#34][]: Support AWS session tokens for use with IAM roles. ([@coderanger][])
+* Pull request [#22][]: Add ebs_optimized attribute. ([@tiwilliam][])
+
+### Improvements
+
+* Pull request [#20][], pull request [#21][], issue [#14][]: Add configurability around whether to use DNS name, public or private IP addresses when connecting to instances. ([@matheeeny][], [@Atalanta][], [@fnichol][])
+* Pull request [#15][]: In VPC groups must be specified by setting :security_group_ids rather than :groups. ([@eherot][])
+* Pull request [#23][]: README updates for badges. ([@sethvargo][], [@arangamani][])
+
+
 ## 0.7.0 / 2013-08-29
 
 ### Bug fixes
@@ -47,9 +67,30 @@
 [#8]: https://github.com/opscode/kitchen-ec2/issues/8
 [#9]: https://github.com/opscode/kitchen-ec2/issues/9
 [#13]: https://github.com/opscode/kitchen-ec2/issues/13
+[#14]: https://github.com/opscode/kitchen-ec2/issues/14
+[#15]: https://github.com/opscode/kitchen-ec2/issues/15
+[#20]: https://github.com/opscode/kitchen-ec2/issues/20
+[#21]: https://github.com/opscode/kitchen-ec2/issues/21
+[#22]: https://github.com/opscode/kitchen-ec2/issues/22
+[#23]: https://github.com/opscode/kitchen-ec2/issues/23
+[#27]: https://github.com/opscode/kitchen-ec2/issues/27
+[#28]: https://github.com/opscode/kitchen-ec2/issues/28
+[#29]: https://github.com/opscode/kitchen-ec2/issues/29
+[#31]: https://github.com/opscode/kitchen-ec2/issues/31
+[#34]: https://github.com/opscode/kitchen-ec2/issues/34
+[@Atalanta]: https://github.com/Atalanta
+[@arangamani]: https://github.com/arangamani
+[@bozinsky]: https://github.com/bozinsky
+[@coderanger]: https://github.com/coderanger
 [@dissonanz]: https://github.com/dissonanz
 [@dysinger]: https://github.com/dysinger
+[@eherot]: https://github.com/eherot
 [@fnichol]: https://github.com/fnichol
 [@halcyonCorsair]: https://github.com/halcyonCorsair
 [@juliandunn]: https://github.com/juliandunn
+[@matheeeny]: https://github.com/matheeeny
 [@mattray]: https://github.com/mattray
+[@sethvargo]: https://github.com/sethvargo
+[@someara]: https://github.com/someara
+[@spheromak]: https://github.com/spheromak
+[@tiwilliam]: https://github.com/tiwilliam
