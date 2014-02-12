@@ -31,20 +31,42 @@ module Kitchen
     class Diagnose < Kitchen::Command::Base
 
       def call
-        loader = if options[:all] || options[:loader]
-          @loader
-        else
-          nil
-        end
+        instances = record_failure { load_instances }
 
-        instances = if options[:all] || options[:instances]
+        loader = record_failure { load_loader }
+
+        puts Kitchen::Diagnostic.new(
+          :loader => loader, :instances => instances).read.to_yaml
+      end
+
+      private
+
+      def load_instances
+        if options[:all] || options[:instances]
           parse_subcommand(args.first)
         else
           []
         end
+      end
 
-        puts Kitchen::Diagnostic.new(
-          :loader => loader, :instances => instances).read.to_yaml
+      def load_loader
+        if options[:all] || options[:loader]
+          @loader
+        else
+          nil
+        end
+      end
+
+      def record_failure
+        yield
+      rescue => e
+        {
+          :error => {
+            :exception => e.inspect,
+            :message => e.message,
+            :backtrace => e.backtrace
+          }
+        }
       end
     end
   end
