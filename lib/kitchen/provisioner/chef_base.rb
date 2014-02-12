@@ -129,6 +129,16 @@ module Kitchen
 
       protected
 
+      def load_needed_dependencies!
+        if File.exists?(berksfile)
+          debug("Berksfile found at #{berksfile}, loading Berkshelf")
+          Chef::Berkshelf.load!(logger)
+        elsif File.exists?(cheffile)
+          debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
+          Chef::Librarian.load!(logger)
+        end
+      end
+
       def format_config_file(data)
         data.each.map { |attr, value|
           [attr, (value.is_a?(Array) ? value.to_s : %{"#{value}"})].join(" ")

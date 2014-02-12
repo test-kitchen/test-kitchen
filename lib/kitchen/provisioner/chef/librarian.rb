@@ -33,17 +33,21 @@ module Kitchen
 
         include Logging
 
+
         def initialize(cheffile, path, logger = Kitchen.logger)
           @cheffile   = cheffile
           @path       = path
           @logger     = logger
         end
 
-        def resolve
-          info("Resolving cookbook dependencies with Librarian-Chef")
-          debug("Using Cheffile from #{cheffile}")
+        def self.load!(logger = Kitchen.logger)
+          load_librarian!(logger)
+        end
 
-          load_librarian!
+        def resolve
+          version = ::Librarian::Chef::VERSION
+          info("Resolving cookbook dependencies with Librarian-Chef #{version}...")
+          debug("Using Cheffile from #{cheffile}")
 
           env = ::Librarian::Chef::Environment.new(
             :project_path => File.dirname(cheffile))
@@ -54,12 +58,19 @@ module Kitchen
 
         attr_reader :cheffile, :path, :logger
 
-        def load_librarian!
-          require 'librarian/chef/environment'
+        def self.load_librarian!(logger)
+          first_load = require 'librarian/chef/environment'
           require 'librarian/action/resolve'
           require 'librarian/action/install'
+
+          version = ::Librarian::Chef::VERSION
+          if first_load
+            logger.debug("Librarian-Chef #{version} library loaded")
+          else
+            logger.debug("Librarian-Chef #{version} previously loaded")
+          end
         rescue LoadError => e
-          fatal("The `librarian-chef' gem is missing and must be installed" +
+          logger.fatal("The `librarian-chef' gem is missing and must be installed" +
             " or cannot be properly activated. Run" +
             " `gem install librarian-chef` or add the following to your" +
             " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")

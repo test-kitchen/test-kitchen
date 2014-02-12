@@ -50,12 +50,24 @@ module Kitchen
     end
 
     def prepare_loader
-      result[:loader] = loader.diagnose if loader
+      if error_hash?(loader)
+        result[:loader] = loader
+      else
+        result[:loader] = loader.diagnose if loader
+      end
     end
 
     def prepare_instances
       result[:instances] = Hash.new
-      Array(instances).each { |i| result[:instances][i.name] = i.diagnose }
+      if error_hash?(instances)
+        result[:instances][:error] = instances[:error]
+      else
+        Array(instances).each { |i| result[:instances][i.name] = i.diagnose }
+      end
+    end
+
+    def error_hash?(obj)
+      obj.is_a?(Hash) && obj.has_key?(:error)
     end
   end
 end
