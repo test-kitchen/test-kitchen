@@ -31,7 +31,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'aruba',     '~> 0.5'
   gem.add_development_dependency 'fakefs',    '~> 0.4'
-  gem.add_development_dependency 'minitest',  '~> 5'
+  gem.add_development_dependency 'minitest',  '~> 5.1.0'
   gem.add_development_dependency 'mocha',     '~> 0.14'
 
   gem.add_development_dependency 'cane',      '~> 2.6'
