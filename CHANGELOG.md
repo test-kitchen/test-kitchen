@@ -1,3 +1,14 @@
+## 1.2.1 / 2014-02-12
+
+### Bug fixes
+
+* Issue [#357][], pull request [#358][]: Load needed (dynamic) dependencies for provisioners at creation time to prevent any native or dynamic code being loaded in a non-main thread (an issue on Mac with MRI Ruby 1.9/2.0). ([@fnichol][])
+
+### Improvements
+
+* Pull request [#358][]: Output the loaded version of Berkshelf or Librarian-Chef when converging to better help troubleshooting issues. ([@fnichol][])
+
+
 ## 1.2.0 / 2014-02-11
 
 ### Upstream changes
@@ -459,6 +470,8 @@ The initial release.
 [#316]: https://github.com/opscode/test-kitchen/issues/316
 [#318]: https://github.com/opscode/test-kitchen/issues/318
 [#353]: https://github.com/opscode/test-kitchen/issues/353
+[#357]: https://github.com/opscode/test-kitchen/issues/357
+[#358]: https://github.com/opscode/test-kitchen/issues/358
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
