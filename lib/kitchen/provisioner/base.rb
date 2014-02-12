@@ -41,6 +41,7 @@ module Kitchen
       def instance=(instance)
         @instance = instance
         expand_paths!
+        load_needed_dependencies!
       end
 
       # Returns the name of this driver, suitable for display in a CLI.
@@ -127,6 +128,8 @@ module Kitchen
           end
         end
       end
+
+      def load_needed_dependencies! ; end
 
       def logger
         instance ? instance.logger : Kitchen.logger

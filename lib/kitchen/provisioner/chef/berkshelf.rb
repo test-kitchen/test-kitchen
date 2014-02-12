@@ -39,11 +39,14 @@ module Kitchen
           @logger     = logger
         end
 
-        def resolve
-          info("Resolving cookbook dependencies with Berkshelf...")
-          debug("Using Berksfile from #{berksfile}")
+        def self.load!(logger = Kitchen.logger)
+          load_berkshelf!(logger)
+        end
 
-          load_berkshelf!
+        def resolve
+          version = ::Berkshelf::VERSION
+          info("Resolving cookbook dependencies with Berkshelf #{version}...")
+          debug("Using Berksfile from #{berksfile}")
 
           ::Berkshelf.ui.mute do
             if ::Berkshelf::Berksfile.method_defined?(:vendor)
@@ -60,10 +63,17 @@ module Kitchen
 
         attr_reader :berksfile, :path, :logger
 
-        def load_berkshelf!
-          require 'berkshelf'
+        def self.load_berkshelf!(logger)
+          first_load = require 'berkshelf'
+
+          version = ::Berkshelf::VERSION
+          if first_load
+            logger.debug("Berkshelf #{version} library loaded")
+          else
+            logger.debug("Berkshelf #{version} previously loaded")
+          end
         rescue LoadError => e
-          fatal("The `berkshelf' gem is missing and must be installed" +
+          logger.fatal("The `berkshelf' gem is missing and must be installed" +
             " or cannot be properly activated. Run" +
             " `gem install berkshelf` or add the following to your" +
             " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
