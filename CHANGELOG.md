@@ -1,3 +1,39 @@
+## 1.2.0 / 2014-02-11
+
+### Upstream changes
+
+* Pull request [#288][]: Update omnibus URL to getchef.com. ([@juliandunn][])
+
+### Bug fixes
+
+* Pull request [#353][]: Ensure that a chef-client failure returns non-zero exit code for chef-client-zero.rb shim script. ([@kamalim][])
+* Pull request [#318][]: Upload chef clients data. ([@jtimberman][])
+* Issue [#282][], issue [#316][]: [CLI] Match a specific instance before trying to find with a regexp. ([@fnichol][])
+* Issue [#305][]: Ensure that `kitchen help` exits non-zero on failure. ([@fnichol][])
+* Pull request [#296][]: Fixing error when using more than one helper. ([@jschneiderhan][])
+* Pull request [#313][]: Allow files in subdirectories in "helpers" directory. ([@mthssdrbrg][])
+* Pull request [#309][]: Add `/opt/local/bin` to instance path when installing Chef Omnibus package. Smartmachines need this otherwise curl can't find certificates. ([@someara][])
+* Pull request [#283][], pull request [#287][], pull request [#310][]: Fix failing minitest test on Windows. ([@rarenerd][])
+* Fix testing regressions for Ruby 1.9.2 around YAML parsing. ([@fnichol][])
+
+### New features
+
+* Pull request [#286][]: **Experimental** Basic shell provisioner, first non-Chef addition! Still considered experimental, that is subject to change between releases until APIs stabilize. ([@ChrisLundquist][])
+* Pull request [#293][], pull request [#277][], issue [#176][]: Add `--concurrency` option to specify number of multiple actions to perform at a time. ([@ryotarai][], [@bkw][])
+* Support `--concurrency` without value, defaulting to all instances and begin to deprecate `--parallel` flag. ([@fnichol][])
+* Pull request [#306][], issue [#304][]: Add local & global file locations with environment variables (`KITCHEN_LOCAL_YAML` and `KITCHEN_GLOBAL_YAML`). ([@fnichol][])
+* Pull request [#298][]: Base provisioner refactoring to start accommodating other provisioners. For more details, see [#298][]. ([@fnichol][])
+
+### Improvements
+
+* Pull request [#280][]: Add `json_attributes: true` config option to ChefZero provisioner. This option allows a user to invoke chef-client without passing the generated JSON file in the `--json-attributes` option. ([@fnichol][])
+* Make `kitchen login` work without args if there is only one instance (thank goodness). ([@fnichol][])
+* Issue [#285][]: Greatly improved error recovery & reporting in Kitchen::Loader::YAML. ([@fnichol][])
+* Pull request [#303][]: Use SafeYAML.load to avoid YAML monkeypatch in safe_yaml. This will leave YAML loading in Test Kitchen as implementation detail and avoid polluting other Ruby objects. ([@fnichol][])
+* Pull request [#302][]: CLI refactoring to remove logic from cli.rb. ([@fnichol][])
+* Add Ruby 2.1.0 to TravisCI testing matrix. ([@fnichol][])
+
+
 ## 1.1.1 / 2013-12-08
 
 ### Bug fixes
@@ -372,6 +408,7 @@ The initial release.
 [#170]: https://github.com/opscode/test-kitchen/issues/170
 [#171]: https://github.com/opscode/test-kitchen/issues/171
 [#172]: https://github.com/opscode/test-kitchen/issues/172
+[#176]: https://github.com/opscode/test-kitchen/issues/176
 [#178]: https://github.com/opscode/test-kitchen/issues/178
 [#179]: https://github.com/opscode/test-kitchen/issues/179
 [#187]: https://github.com/opscode/test-kitchen/issues/187
@@ -399,11 +436,34 @@ The initial release.
 [#272]: https://github.com/opscode/test-kitchen/issues/272
 [#275]: https://github.com/opscode/test-kitchen/issues/275
 [#276]: https://github.com/opscode/test-kitchen/issues/276
+[#277]: https://github.com/opscode/test-kitchen/issues/277
 [#278]: https://github.com/opscode/test-kitchen/issues/278
+[#280]: https://github.com/opscode/test-kitchen/issues/280
+[#282]: https://github.com/opscode/test-kitchen/issues/282
+[#283]: https://github.com/opscode/test-kitchen/issues/283
+[#285]: https://github.com/opscode/test-kitchen/issues/285
+[#286]: https://github.com/opscode/test-kitchen/issues/286
+[#287]: https://github.com/opscode/test-kitchen/issues/287
+[#288]: https://github.com/opscode/test-kitchen/issues/288
+[#293]: https://github.com/opscode/test-kitchen/issues/293
+[#296]: https://github.com/opscode/test-kitchen/issues/296
+[#298]: https://github.com/opscode/test-kitchen/issues/298
+[#302]: https://github.com/opscode/test-kitchen/issues/302
+[#303]: https://github.com/opscode/test-kitchen/issues/303
+[#304]: https://github.com/opscode/test-kitchen/issues/304
+[#305]: https://github.com/opscode/test-kitchen/issues/305
+[#306]: https://github.com/opscode/test-kitchen/issues/306
+[#309]: https://github.com/opscode/test-kitchen/issues/309
+[#310]: https://github.com/opscode/test-kitchen/issues/310
+[#313]: https://github.com/opscode/test-kitchen/issues/313
+[#316]: https://github.com/opscode/test-kitchen/issues/316
+[#318]: https://github.com/opscode/test-kitchen/issues/318
+[#353]: https://github.com/opscode/test-kitchen/issues/353
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@adamhjk]: https://github.com/adamhjk
 [@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
+[@bkw]: https://github.com/bkw
 [@bryanwb]: https://github.com/bryanwb
 [@calavera]: https://github.com/calavera
 [@ekrupnik]: https://github.com/ekrupnik
@@ -417,24 +477,30 @@ The initial release.
 [@jonsmorrow]: https://github.com/jonsmorrow
 [@josephholsten]: https://github.com/josephholsten
 [@jrwesolo]: https://github.com/jrwesolo
+[@jschneiderhan]: https://github.com/jschneiderhan
 [@jtimberman]: https://github.com/jtimberman
 [@juliandunn]: https://github.com/juliandunn
+[@kamalim]: https://github.com/kamalim
 [@kisoku]: https://github.com/kisoku
 [@manul]: https://github.com/manul
 [@mattray]: https://github.com/mattray
 [@mconigliaro]: https://github.com/mconigliaro
+[@mthssdrbrg]: https://github.com/mthssdrbrg
 [@oferrigni]: https://github.com/oferrigni
 [@patcon]: https://github.com/patcon
 [@portertech]: https://github.com/portertech
+[@rarenerd]: https://github.com/rarenerd
 [@reset]: https://github.com/reset
 [@rteabeault]: https://github.com/rteabeault
 [@ryansouza]: https://github.com/ryansouza
+[@ryotarai]: https://github.com/ryotarai
 [@saketoba]: https://github.com/saketoba
 [@scarolan]: https://github.com/scarolan
 [@schisamo]: https://github.com/schisamo
 [@scotthain]: https://github.com/scotthain
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
+[@someara]: https://github.com/someara
 [@stevendanna]: https://github.com/stevendanna
 [@thommay]: https://github.com/thommay
 [@zts]: https://github.com/zts
