@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,28 +16,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-gem 'minitest'
+require 'kitchen/command'
 
-require 'simplecov'
-SimpleCov.adapters.define 'gem' do
-  command_name 'Specs'
+require 'benchmark'
 
-  add_filter '.gem/'
-  add_filter '/spec/'
-  add_filter '/lib/vendor/'
+module Kitchen
 
-  add_group 'Libraries', '/lib/'
-end
-SimpleCov.start 'gem'
+  module Command
 
-require 'fakefs/safe'
-require 'minitest/autorun'
-require 'mocha/setup'
-require 'tempfile'
+    # Command to run a single action one or more instances.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class Action < Kitchen::Command::Base
 
-# Nasty hack to redefine IO.read in terms of File#read for fakefs
-class IO
-  def self.read(*args)
-    File.open(args[0], "rb") { |f| f.read(args[1]) }
+      include RunAction
+
+      def call
+        banner "Starting Kitchen (v#{Kitchen::VERSION})"
+        elapsed = Benchmark.measure do
+          results = parse_subcommand(args.first)
+          run_action(action, results)
+        end
+        banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+      end
+    end
   end
 end

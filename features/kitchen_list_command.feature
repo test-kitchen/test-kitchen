@@ -13,6 +13,7 @@ Feature: Listing Test Kitchen instances
     platforms:
       - name: ubuntu-13.04
       - name: centos-6.4
+      - name: centos-6.4-with-small-mem
 
     suites:
       - name: foobar
@@ -31,6 +32,7 @@ Feature: Listing Test Kitchen instances
     """
     foobar-ubuntu-1304
     foobar-centos-64
+    foobar-centos-64-with-small-mem
 
     """
 
@@ -51,12 +53,52 @@ Feature: Listing Test Kitchen instances
 
     """
 
+  @spawn
   Scenario: Listing instances with a regular expression yielding no results
     When I run `kitchen list freebsd --bare`
     Then the exit status should not be 0
     And the output should contain "No instances for regex `freebsd', try running `kitchen list'"
 
+  @spawn
   Scenario: Listing instances with a bad regular expression
     When I run `kitchen list *centos* --bare`
     Then the exit status should not be 0
     And the output should contain "Invalid Ruby regular expression"
+
+  Scenario: Listing a full instance name returns an exact match, not fuzzy matches
+    When I successfully run `kitchen list  foobar-centos-64 --bare`
+    Then the output should contain exactly:
+    """
+    foobar-centos-64
+
+    """
+
+  Scenario: Listing a full instance name returns an exact match, not fuzzy matches at start
+    Given a file named ".kitchen.yml" with:
+    """
+    ---
+    driver: dummy
+    provisioner: chef_solo
+
+    platforms:
+      - name: ubuntu-12.04
+
+    suites:
+      - name: gdb01-master
+      - name: logdb01-master
+    """
+    When I successfully run `kitchen list gdb01-master-ubuntu-1204 --bare`
+    Then the output should contain exactly:
+    """
+    gdb01-master-ubuntu-1204
+
+    """
+
+  Scenario: Listing a full instance with regex returns all regex matches
+    When I successfully run `kitchen list  'foobar-centos-64.*' --bare`
+    Then the output should contain exactly:
+    """
+    foobar-centos-64
+    foobar-centos-64-with-small-mem
+
+    """

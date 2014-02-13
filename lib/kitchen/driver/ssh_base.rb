@@ -37,7 +37,8 @@ module Kitchen
 
       def converge(state)
         provisioner = instance.provisioner
-        sandbox_dirs = Dir.glob("#{provisioner.create_sandbox}/*")
+        provisioner.create_sandbox
+        sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
 
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(provisioner.install_command, conn)
