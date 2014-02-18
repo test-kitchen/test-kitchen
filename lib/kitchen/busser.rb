@@ -95,7 +95,7 @@ module Kitchen
     # @return [String] a command string to setup the test suite, or nil if no
     #   work needs to be performed
     def setup_cmd
-      @setup_cmd ||= if local_suite_files.empty?
+      @setup_cmd ||= if local_suite_files.empty? && all_suite_files.empty?
         nil
       else
         setup_cmd  = []
