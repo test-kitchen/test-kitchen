@@ -121,18 +121,32 @@ module Kitchen
     # @return [String] a command string to transfer all suite test files, or
     #   nil if no work needs to be performed.
     def sync_cmd
-      @sync_cmd ||= if local_suite_files.empty?
+      @sync_cmd ||= if local_suite_files.empty? && all_suite_files.empty?
         nil
       else
         sync_cmd  = []
         sync_cmd << busser_setup_env
         sync_cmd << "#{sudo}#{config[:busser_bin]} suite cleanup"
-        sync_cmd << "#{local_suite_files.map { |f| stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
-        sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
+
+        unless all_suite_files.empty?
+          sync_cmd << make_sync_cmd(all_suite_files, 'all')
+        end
+
+        unless local_suite_files.empty?
+          sync_cmd << make_sync_cmd(local_suite_files, name)
+        end
+
+        unless helper_files.empty?
+          sync_cmd << make_sync_cmd(helper_files, 'helpers')
+        end
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         "sh -c '#{sync_cmd.join('; ')}'"
       end
+    end
+
+    def make_sync_cmd(files, suite)
+      "#{files.map { |f| stream_file(f, remote_file(f, suite)) }.join("; ")}"
     end
 
     # Returns a command string which runs all Busser suite tests for the suite.
@@ -143,7 +157,7 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= if local_suite_files.empty?
+      @run_cmd ||= if local_suite_files.empty? && all_suite_files.empty?
         nil
       else
         run_cmd  = []
@@ -180,9 +194,23 @@ module Kitchen
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
+    def suite_path
+      File.join(config[:test_base_path], config[:suite_name])
+    end
+
+    def all_path
+      File.join(config[:test_base_path], 'all') # FIXME make this configurable maybe?
+    end
+
     def local_suite_files
-      base = File.join(config[:test_base_path], config[:suite_name])
-      glob = File.join(base, "*/**/*")
+      glob_test_files(suite_path, "#{suite_path}/*/**/*")
+    end
+
+    def all_suite_files
+      glob_test_files(all_path, "#{all_path}/*/**/*")
+    end
+
+    def glob_test_files(base, glob)
       Dir.glob(glob).reject do |f|
          is_chef_data_dir?(base, f) || File.directory?(f)
       end
