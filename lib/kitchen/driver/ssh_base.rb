@@ -115,7 +115,7 @@ module Kitchen
       def transfer_path(locals, remote, connection)
         return if locals.nil? || Array(locals).empty?
 
-        info("Transfering files to #{instance.to_str}")
+        info("Transferring files to #{instance.to_str}")
         locals.each { |local| connection.upload_path!(local, remote) }
         debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
