@@ -40,7 +40,7 @@ module Kitchen
     # @option options [Symbol] :log_level
     def initialize(options = {})
       @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
-      @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
+      @kitchen_root   = options.fetch(:kitchen_root) { @loader.config_root }
       @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
       @log_root       = options.fetch(:log_root) { default_log_root }
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }

@@ -55,6 +55,7 @@ module Kitchen
       def initialize(options = {})
         @config_file =
           File.expand_path(options[:project_config] || default_config_file)
+        @config_root = File.dirname(@config_file)
         @local_config_file =
           File.expand_path(options[:local_config] || default_local_config_file)
         @global_config_file =
@@ -92,12 +93,20 @@ module Kitchen
         result
       end
 
+      attr_reader :config_file, :config_root, :local_config_file, :global_config_file
+
       protected
 
-      attr_reader :config_file, :local_config_file, :global_config_file
-
       def default_config_file
-        File.join(Dir.pwd, '.kitchen.yml')
+        pwd = orig_path = Dir.pwd
+
+        while pwd != "/" do
+          qual_path = File.join(pwd, Kitchen::DEFAULT_CONFIG_FILE_NAME)
+          return qual_path if File.exist?(qual_path)
+          pwd = File.dirname(pwd)
+        end
+
+        return File.join(orig_path, Kitchen::DEFAULT_CONFIG_FILE_NAME)
       end
 
       def combined_hash
