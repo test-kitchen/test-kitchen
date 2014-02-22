@@ -90,6 +90,8 @@ module Kitchen
   DEFAULT_TEST_DIR = "test/integration".freeze
 
   DEFAULT_LOG_DIR = ".kitchen/logs".freeze
+
+  DEFAULT_CONFIG_FILE_NAME = ".kitchen.yml".freeze
 end
 
 # Initialize the base logger

@@ -32,6 +32,9 @@ require 'kitchen/util'
 module Kitchen
 
   class DummyLoader
+    def config_root
+      Dir.pwd
+    end
 
     def read
       @data || Hash.new
