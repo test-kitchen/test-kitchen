@@ -26,5 +26,3 @@ matrix:
   exclude:
     - rvm: 2.0.0
       env: RUBYGEMS_VERSION=1.8.25
-    - rvm: 2.1.0-preview2
-      env: RUBYGEMS_VERSION=1.8.25
