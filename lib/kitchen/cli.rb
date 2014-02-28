@@ -161,6 +161,16 @@ module Kitchen
       perform("login", "login", args)
     end
 
+    desc "exec INSTANCE|REGEXP", "Execute command on one instance"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
+    method_option :command, :aliases => "-c",
+      :desc => "execute via ssh"
+    def exec(*args)
+      update_config!
+      perform("exec", "exec", args)
+    end
+
     desc "version", "Print Kitchen's version information"
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
