@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
 #
-# Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) 2014, HiganWorks LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,23 +22,18 @@ module Kitchen
 
   module Command
 
-    # Command to log into to instance.
+    # Execute command on remote instance.
     #
-    # @author Fletcher Nichol <fnichol@nichol.ca>
+    # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Exec < Kitchen::Command::Base
 
       def call
         results = parse_subcommand(args.first)
-        unless options['command']
-          die "Argument error: exec subcommand must run with `-c` option\n"
-        end
-        if results.size > 1
-          die "Argument `#{args.first}' returned multiple results:\n" +
-            results.map { |i| "  * #{i.name}" }.join("\n")
-        end
-        instance = results.pop
 
-        instance.remote_exec(options['command'])
+        results.each do |instance|
+          banner "Execute command on #{instance.name}."
+          instance.remote_exec(options['command'])
+        end
       end
     end
   end

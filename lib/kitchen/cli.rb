@@ -161,7 +161,7 @@ module Kitchen
       perform("login", "login", args)
     end
 
-    desc "exec INSTANCE|REGEXP", "Execute command on one instance"
+    desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND", "Execute command on one or more instance"
     method_option :log_level, :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :command, :aliases => "-c",
