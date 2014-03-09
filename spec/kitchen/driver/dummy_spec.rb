@@ -77,7 +77,7 @@ describe Kitchen::Driver::Dummy do
 
       begin
         driver.create(state)
-      rescue Kitchen::ActionFailed => ex
+      rescue Kitchen::ActionFailed
         # If exception is anything other than Kitchen::ActionFailed, this spec
         # will fail
       end

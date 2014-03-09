@@ -731,7 +731,7 @@ describe Kitchen::Instance do
         it "write the state file with last action" do
           begin
             instance.public_send(action)
-          rescue Kitchen::Error => e
+          rescue Kitchen::Error
           end
 
           state_file.read[:last_action].must_be_nil
@@ -754,7 +754,7 @@ describe Kitchen::Instance do
         it "logs the failure" do
           begin
             instance.public_send(action)
-          rescue Kitchen::Error => e
+          rescue Kitchen::Error
           end
 
           logger_io.string.must_match regex_for(
@@ -771,7 +771,7 @@ describe Kitchen::Instance do
         it "write the state file with last action" do
           begin
             instance.public_send(action)
-          rescue Kitchen::Error => e
+          rescue Kitchen::Error
           end
 
           state_file.read[:last_action].must_be_nil
@@ -794,7 +794,7 @@ describe Kitchen::Instance do
         it "logs the failure" do
           begin
             instance.public_send(action)
-          rescue Kitchen::Error => e
+          rescue Kitchen::Error
           end
 
           logger_io.string.must_match regex_for(
@@ -815,7 +815,7 @@ describe Kitchen::Instance do
           state_file.write(:last_action => action.to_s)
           begin
             instance.verify
-          rescue Kitchen::Error => e
+          rescue Kitchen::Error
           end
 
           state_file.read[:last_action].must_equal "setup"
@@ -826,7 +826,7 @@ describe Kitchen::Instance do
         state_file.write(:last_action => "verify")
         begin
           instance.verify
-        rescue Kitchen::Error => e
+        rescue Kitchen::Error
         end
 
         state_file.read[:last_action].must_equal "verify"
