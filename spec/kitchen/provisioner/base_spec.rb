@@ -28,7 +28,7 @@ module Kitchen
     class StaticDefaults < Base
 
       default_config :rank, "captain"
-      default_config :tunables, { "foo" => "fa" }
+      default_config :tunables, "foo" => "fa"
       default_config :nice, true
     end
 

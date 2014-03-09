@@ -108,75 +108,75 @@ describe Kitchen::Loader::YAML do
   describe "#read" do
 
     it "returns a hash of kitchen.yml with symbolized keys" do
-      stub_yaml!({
+      stub_yaml!(
         'foo' => 'bar'
-      })
+      )
 
-      loader.read.must_equal({ :foo => 'bar' })
+      loader.read.must_equal(:foo => 'bar')
     end
 
     it "deep merges in kitchen.local.yml configuration with kitchen.yml" do
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'common' => { 'xx' => 1 },
         'a' => 'b'
-      })
-      stub_yaml!(".kitchen.local.yml", {
+      )
+      stub_yaml!(".kitchen.local.yml",
         'common' => { 'yy' => 2 },
         'c' => 'd'
-      })
+      )
 
-      loader.read.must_equal({
+      loader.read.must_equal(
         :a => 'b',
         :c => 'd',
         :common => { :xx => 1, :yy => 2 }
-      })
+      )
     end
 
     it "deep merges in a global config file with all other configs" do
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'common' => { 'xx' => 1 },
         'a' => 'b'
-      })
-      stub_yaml!(".kitchen.local.yml", {
+      )
+      stub_yaml!(".kitchen.local.yml",
         'common' => { 'yy' => 2 },
         'c' => 'd'
-      })
-      stub_global!({
+      )
+      stub_global!(
         'common' => { 'zz' => 3 },
         'e' => 'f'
-      })
+      )
 
-      loader.read.must_equal({
+      loader.read.must_equal(
         :a => 'b',
         :c => 'd',
         :e => 'f',
         :common => { :xx => 1, :yy => 2, :zz => 3 }
-      })
+      )
     end
 
     it "merges kitchen.local.yml over configuration in kitchen.yml" do
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'common' => { 'thekey' => 'nope' }
-      })
-      stub_yaml!(".kitchen.local.yml", {
+      )
+      stub_yaml!(".kitchen.local.yml",
         'common' => { 'thekey' => 'yep' }
-      })
+      )
 
-      loader.read.must_equal({ :common => { :thekey => 'yep' } })
+      loader.read.must_equal(:common => { :thekey => 'yep' })
     end
 
     it "merges global config over both kitchen.local.yml and kitchen.yml" do
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'common' => { 'thekey' => 'nope' }
-      })
-      stub_yaml!(".kitchen.local.yml", {
+      )
+      stub_yaml!(".kitchen.local.yml",
         'common' => { 'thekey' => 'yep' }
-      })
-      stub_global!({
+      )
+      stub_global!(
         'common' => { 'thekey' => 'kinda' }
-      })
+      )
 
-      loader.read.must_equal({ :common => { :thekey => 'kinda' } })
+      loader.read.must_equal(:common => { :thekey => 'kinda' })
     end
 
     NORMALIZED_KEYS = {
@@ -190,152 +190,152 @@ describe Kitchen::Loader::YAML do
       describe "normalizing #{key} config hashes" do
 
         it "merges local with #{key} string value over yaml with hash value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => { 'dakey' => 'ya' }
-          })
-          stub_yaml!(".kitchen.local.yml", {
+          )
+          stub_yaml!(".kitchen.local.yml",
             key => 'namey'
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges local with #{key} hash value over yaml with string value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => 'namey'
-          })
-          stub_yaml!(".kitchen.local.yml", {
+          )
+          stub_yaml!(".kitchen.local.yml",
             key => { 'dakey' => 'ya' }
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges local with #{key} nil value over yaml with hash value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => { 'dakey' => 'ya' }
-          })
-          stub_yaml!(".kitchen.local.yml", {
+          )
+          stub_yaml!(".kitchen.local.yml",
             key => nil
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges local with #{key} hash value over yaml with nil value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => 'namey'
-          })
-          stub_yaml!(".kitchen.local.yml", {
+          )
+          stub_yaml!(".kitchen.local.yml",
             key => nil
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey" }
-          })
+          )
         end
 
         it "merges global with #{key} string value over yaml with hash value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => { 'dakey' => 'ya' }
-          })
-          stub_global!({
+          )
+          stub_global!(
             key => 'namey'
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges global with #{key} hash value over yaml with string value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => 'namey'
-          })
-          stub_global!({
+          )
+          stub_global!(
             key => { 'dakey' => 'ya' }
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges global with #{key} nil value over yaml with hash value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => { 'dakey' => 'ya' }
-          })
-          stub_global!({
+          )
+          stub_global!(
             key => nil
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges global with #{key} hash value over yaml with nil value" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => nil
-          })
-          stub_global!({
+          )
+          stub_global!(
             key => { 'dakey' => 'ya' }
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { :dakey => 'ya' }
-          })
+          )
         end
 
         it "merges global, local, over yaml with mixed hash, string, nil values" do
-          stub_yaml!(".kitchen.yml", {
+          stub_yaml!(".kitchen.yml",
             key => nil
-          })
-          stub_yaml!(".kitchen.local.yml", {
+          )
+          stub_yaml!(".kitchen.local.yml",
             key => "namey"
-          })
-          stub_global!({
+          )
+          stub_global!(
             key => { 'dakey' => 'ya' }
-          })
+          )
 
-          loader.read.must_equal({
+          loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => 'ya' }
-          })
+          )
         end
       end
     end
 
     it "handles a kitchen.local.yml with no yaml elements" do
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'a' => 'b'
-      })
+      )
       stub_yaml!(".kitchen.local.yml", Hash.new)
 
-      loader.read.must_equal({ :a => 'b' })
+      loader.read.must_equal(:a => 'b')
     end
 
     it "handles a kitchen.yml with no yaml elements" do
       stub_yaml!(".kitchen.yml", Hash.new)
-      stub_yaml!(".kitchen.local.yml", {
+      stub_yaml!(".kitchen.local.yml",
         'a' => 'b'
-      })
+      )
 
-      loader.read.must_equal({ :a => 'b' })
+      loader.read.must_equal(:a => 'b')
     end
 
     it "handles a kitchen.yml with yaml elements that parse as nil" do
       stub_yaml!(".kitchen.yml", nil)
-      stub_yaml!(".kitchen.local.yml", {
+      stub_yaml!(".kitchen.local.yml",
         'a' => 'b'
-      })
+      )
 
-      loader.read.must_equal({ :a => 'b' })
+      loader.read.must_equal(:a => 'b')
     end
 
     it "raises an UserError if the config_file does not exist" do
@@ -353,7 +353,7 @@ describe Kitchen::Loader::YAML do
 
       loader.read.class.wont_equal Yamled
       loader.read.class.must_equal Hash
-      loader.read.must_equal({ :foo => 'bar' })
+      loader.read.must_equal(:foo => 'bar')
     end
 
     it "arbitrary objects aren't deserialized in kitchen.local.yml" do
@@ -368,7 +368,7 @@ describe Kitchen::Loader::YAML do
 
       loader.read.class.wont_equal Yamled
       loader.read.class.must_equal Hash
-      loader.read.must_equal({ :wakka => 'boop' })
+      loader.read.must_equal(:wakka => 'boop')
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
@@ -413,7 +413,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      loader.read.must_equal({ :name => "ahhchoo" })
+      loader.read.must_equal(:name => "ahhchoo")
     end
 
     it "raises a UserError if there is an ERB processing error" do
@@ -440,13 +440,13 @@ describe Kitchen::Loader::YAML do
           <% end %>
         YAML
       end
-      stub_yaml!(".kitchen.yml", { 'spinach' => 'salad' })
+      stub_yaml!(".kitchen.yml", 'spinach' => 'salad')
 
-      loader.read.must_equal({
+      loader.read.must_equal(
         :spinach => 'salad',
         :noodle => 'soup',
         :mushroom => 'soup'
-      })
+      )
     end
 
     it "skips evaluating kitchen.yml through erb if disabled" do
@@ -460,7 +460,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      loader.read.must_equal({ :name => '<%= "AHH".downcase %>' })
+      loader.read.must_equal(:name => '<%= "AHH".downcase %>')
     end
 
     it "skips evaluating kitchen.local.yml through erb if disabled" do
@@ -475,33 +475,33 @@ describe Kitchen::Loader::YAML do
       end
       stub_yaml!(".kitchen.yml", Hash.new)
 
-      loader.read.must_equal({ :name => '<%= "AHH".downcase %>' })
+      loader.read.must_equal(:name => '<%= "AHH".downcase %>')
     end
 
     it "skips kitchen.local.yml if disabled" do
       loader = Kitchen::Loader::YAML.new(
         :project_config => '/tmp/.kitchen.yml', :process_local => false)
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'a' => 'b'
-      })
-      stub_yaml!(".kitchen.local.yml", {
+      )
+      stub_yaml!(".kitchen.local.yml",
         'superawesomesauceadditions' => 'enabled, yo'
-      })
+      )
 
-      loader.read.must_equal({ :a => 'b' })
+      loader.read.must_equal(:a => 'b')
     end
 
     it "skips the global config if disabled" do
       loader = Kitchen::Loader::YAML.new(
         :project_config => '/tmp/.kitchen.yml', :process_global => false)
-      stub_yaml!(".kitchen.yml", {
+      stub_yaml!(".kitchen.yml",
         'a' => 'b'
-      })
-      stub_global!({
+      )
+      stub_global!(
         'superawesomesauceadditions' => 'enabled, yo'
-      })
+      )
 
-      loader.read.must_equal({ :a => 'b' })
+      loader.read.must_equal(:a => 'b')
     end
   end
 
@@ -558,18 +558,18 @@ describe Kitchen::Loader::YAML do
     describe "for yaml files" do
 
       before do
-        stub_yaml!(".kitchen.yml", {
+        stub_yaml!(".kitchen.yml",
           "from_project" => "project",
           "common" => { "p" => "pretty" }
-        })
-        stub_yaml!(".kitchen.local.yml", {
+        )
+        stub_yaml!(".kitchen.local.yml",
           "from_local" => "local",
           "common" => { "l" => "looky" }
-        })
-        stub_global!({
+        )
+        stub_global!(
           "from_global" => "global",
           "common" => { "g" => "goody" }
-        })
+        )
       end
 
       it "global config contains a filename" do
@@ -578,10 +578,10 @@ describe Kitchen::Loader::YAML do
       end
 
       it "global config contains raw data" do
-        loader.diagnose[:global_config][:raw_data].must_equal({
+        loader.diagnose[:global_config][:raw_data].must_equal(
           "from_global" => "global",
           "common" => { "g" => "goody" }
-        })
+        )
       end
 
       it "project config contains a filename" do
@@ -590,10 +590,10 @@ describe Kitchen::Loader::YAML do
       end
 
       it "project config contains raw data" do
-        loader.diagnose[:project_config][:raw_data].must_equal({
+        loader.diagnose[:project_config][:raw_data].must_equal(
           "from_project" => "project",
           "common" => { "p" => "pretty" }
-        })
+        )
       end
 
       it "local config contains a filename" do
@@ -602,10 +602,10 @@ describe Kitchen::Loader::YAML do
       end
 
       it "local config contains raw data" do
-        loader.diagnose[:local_config][:raw_data].must_equal({
+        loader.diagnose[:local_config][:raw_data].must_equal(
           "from_local" => "local",
           "common" => { "l" => "looky" }
-        })
+        )
       end
 
       it "combined config contains a nil filename" do
@@ -614,7 +614,7 @@ describe Kitchen::Loader::YAML do
       end
 
       it "combined config contains raw data" do
-        loader.diagnose[:combined_config][:raw_data].must_equal({
+        loader.diagnose[:combined_config][:raw_data].must_equal(
           "from_global" => "global",
           "from_project" => "project",
           "from_local" => "local",
@@ -623,7 +623,7 @@ describe Kitchen::Loader::YAML do
             "p" => "pretty",
             "l" => "looky"
           }
-        })
+        )
       end
 
       describe "for global on error" do

@@ -29,7 +29,7 @@ module Kitchen
     class StaticDefaults < Base
 
       default_config :beans, "kidney"
-      default_config :tunables, { 'flimflam' => 'positate' }
+      default_config :tunables, 'flimflam' => 'positate'
       default_config :edible, true
     end
 

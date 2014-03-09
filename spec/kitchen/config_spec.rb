@@ -122,12 +122,12 @@ describe Kitchen::Config do
   describe "#platforms" do
 
     it "returns an array of platforms" do
-      stub_data!({
+      stub_data!(
         :platforms => [
           { :name => 'one' },
           { :name => 'two' }
         ]
-      })
+      )
 
       config.platforms.size.must_equal 2
       config.platforms[0].name.must_equal 'one'
@@ -144,12 +144,12 @@ describe Kitchen::Config do
   describe "#suites" do
 
     it "returns an array of suites" do
-      stub_data!({
+      stub_data!(
         :suites => [
           { :name => 'one' },
           { :name => 'two' }
         ]
-      })
+      )
 
       config.suites.size.must_equal 2
       config.suites[0].name.must_equal 'one'
@@ -174,7 +174,7 @@ describe Kitchen::Config do
     it "returns an array of instances" do
       skip "much more needed here"
 
-      stub_data!({
+      stub_data!(
         :platforms => [
           { :name => "p1" },
           { :name => "p2" }
@@ -183,7 +183,7 @@ describe Kitchen::Config do
           { :name => 's1' },
           { :name => 's2' }
         ]
-      })
+      )
 
       config.instances
     end

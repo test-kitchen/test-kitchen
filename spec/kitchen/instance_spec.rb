@@ -100,11 +100,11 @@ describe Kitchen::Instance do
   end
 
   def suite(name = "suite")
-    @suite ||= Kitchen::Suite.new({ :name => name })
+    @suite ||= Kitchen::Suite.new(:name => name)
   end
 
   def platform(name = "platform")
-    @platform ||= Kitchen::Platform.new({ :name => name })
+    @platform ||= Kitchen::Platform.new(:name => name)
   end
 
   describe ".name_for" do
@@ -245,8 +245,8 @@ describe Kitchen::Instance do
 
   it "#login executes the driver's login_command" do
     driver.stubs(:login_command).with(Hash.new).
-      returns(Kitchen::LoginCommand.new(["echo", "hello"], {:purple => true}))
-    Kernel.expects(:exec).with("echo", "hello", {:purple => true})
+      returns(Kitchen::LoginCommand.new(["echo", "hello"], :purple => true))
+    Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
     instance.login
   end
@@ -286,7 +286,7 @@ describe Kitchen::Instance do
 
       describe "with last_action of create" do
 
-        before { state_file.write({ :last_action => "create"}) }
+        before { state_file.write(:last_action => "create") }
 
         it "calls Driver#create with state hash" do
           driver.expects(:create).
@@ -337,7 +337,7 @@ describe Kitchen::Instance do
 
       describe "with last action of create" do
 
-        before { state_file.write({ :last_action => "create"}) }
+        before { state_file.write(:last_action => "create") }
 
         it "calls Driver#converge with state hash" do
           driver.expects(:converge).
@@ -355,7 +355,7 @@ describe Kitchen::Instance do
 
       describe "with last action of converge" do
 
-        before { state_file.write({ :last_action => "converge"}) }
+        before { state_file.write(:last_action => "converge") }
 
         it "calls Driver#converge with state hash" do
           driver.expects(:converge).
@@ -408,7 +408,7 @@ describe Kitchen::Instance do
 
       describe "with last action of create" do
 
-        before { state_file.write({ :last_action => "create"}) }
+        before { state_file.write(:last_action => "create") }
 
         it "calls Driver#converge and setup with state hash" do
           driver.expects(:converge).
@@ -428,7 +428,7 @@ describe Kitchen::Instance do
 
       describe "with last action of converge" do
 
-        before { state_file.write({ :last_action => "converge"}) }
+        before { state_file.write(:last_action => "converge") }
 
         it "calls Driver#setup with state hash" do
           driver.expects(:setup).
@@ -446,7 +446,7 @@ describe Kitchen::Instance do
 
       describe "with last action of setup" do
 
-        before { state_file.write({ :last_action => "setup"}) }
+        before { state_file.write(:last_action => "setup") }
 
         it "calls Driver#setup with state hash" do
           driver.expects(:setup).
@@ -501,7 +501,7 @@ describe Kitchen::Instance do
 
       describe "with last of create" do
 
-        before { state_file.write({ :last_action => "create"}) }
+        before { state_file.write(:last_action => "create") }
 
         it "calls Driver#converge, setup, and verify with state hash" do
           driver.expects(:converge).
@@ -523,7 +523,7 @@ describe Kitchen::Instance do
 
       describe "with last of converge" do
 
-        before { state_file.write({ :last_action => "converge"}) }
+        before { state_file.write(:last_action => "converge") }
 
         it "calls Driver#setup, and verify with state hash" do
           driver.expects(:setup).
@@ -543,7 +543,7 @@ describe Kitchen::Instance do
 
       describe "with last of setup" do
 
-        before { state_file.write({ :last_action => "setup"}) }
+        before { state_file.write(:last_action => "setup") }
 
         it "calls Driver#verify with state hash" do
           driver.expects(:verify).
@@ -561,7 +561,7 @@ describe Kitchen::Instance do
 
       describe "with last of verify" do
 
-        before { state_file.write({ :last_action => "verify"}) }
+        before { state_file.write(:last_action => "verify") }
 
         it "calls Driver#verify with state hash" do
           driver.expects(:verify).
@@ -613,7 +613,7 @@ describe Kitchen::Instance do
 
         describe "with last_action of #{action}" do
 
-          before { state_file.write({ :last_action => action}) }
+          before { state_file.write(:last_action => action) }
 
           it "calls Driver#create with state hash" do
             driver.expects(:destroy).
@@ -664,7 +664,7 @@ describe Kitchen::Instance do
 
         describe "with last action of #{action}" do
 
-          before { state_file.write({ :last_action => action}) }
+          before { state_file.write(:last_action => action) }
 
           it "calls Driver#destroy, create, converge, setup, verify, destroy" do
             driver.expects(:destroy)
@@ -812,7 +812,7 @@ describe Kitchen::Instance do
       [:create, :converge, :setup].each do |action|
 
         it "for last state #{action}" do
-          state_file.write({ :last_action => action.to_s })
+          state_file.write(:last_action => action.to_s)
           begin
             instance.verify
           rescue Kitchen::Error => e
@@ -823,7 +823,7 @@ describe Kitchen::Instance do
       end
 
       it "for last state verify" do
-        state_file.write({ :last_action => "verify" })
+        state_file.write(:last_action => "verify")
         begin
           instance.verify
         rescue Kitchen::Error => e

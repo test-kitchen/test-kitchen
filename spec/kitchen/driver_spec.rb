@@ -69,7 +69,7 @@ describe Kitchen::Driver do
     end
 
     it "returns a driver initialized with its config" do
-      driver = Kitchen::Driver.for_plugin('coolbeans', { :jelly => 'beans' })
+      driver = Kitchen::Driver.for_plugin('coolbeans', :jelly => 'beans')
 
       driver[:jelly].must_equal 'beans'
     end

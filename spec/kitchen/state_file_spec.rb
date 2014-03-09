@@ -50,10 +50,10 @@ describe Kitchen::StateFile do
     it "returns a Hash with symbolized keys from the state file" do
       stub_state_file!
 
-      state_file.read.must_equal({
+      state_file.read.must_equal(
         :cloud_id => 42,
         :flavor => 'extra_crispy'
-      })
+      )
     end
 
     it "arbitrary objects aren't deserialized from state file" do
@@ -64,7 +64,7 @@ describe Kitchen::StateFile do
 
       state_file.read.class.wont_equal YamledState
       state_file.read.class.must_equal Hash
-      state_file.read.must_equal({ :yoinks => 'zoinks' })
+      state_file.read.must_equal(:yoinks => 'zoinks')
     end
 
     it "raises a StateFileLoadError if the state file cannot be parsed" do
@@ -83,7 +83,7 @@ describe Kitchen::StateFile do
     end
 
     it "writes a state file with stringified keys" do
-      state_file.write({ :thekey => 'thyself' })
+      state_file.write(:thekey => 'thyself')
 
       IO.read(file_name).split("\n").must_include 'thekey: thyself'
     end

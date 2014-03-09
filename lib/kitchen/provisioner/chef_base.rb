@@ -168,7 +168,7 @@ module Kitchen
       end
 
       def prepare_json
-        dna = config[:attributes].merge({ :run_list => config[:run_list] })
+        dna = config[:attributes].merge(:run_list => config[:run_list])
 
         File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
           file.write(dna.to_json)
