@@ -163,7 +163,7 @@ module Kitchen
       if root.key?(key)
         pdata = root.fetch(:provisioner, Hash.new)
         pdata = { :name => pdata } if pdata.is_a?(String)
-        if ! root.fetch(key, nil).nil?
+        if !root.fetch(key, nil).nil?
           root[:provisioner] = pdata.rmerge({ key => root.delete(key) })
         end
       end

@@ -201,7 +201,7 @@ module Kitchen
 
       def self.required_config(attr, &block)
         @validations = [] if @validations.nil?
-        if ! block_given?
+        if !block_given?
           klass = self
           block = lambda do |attr, value, driver|
             if value.nil? || value.to_s.empty?
@@ -215,7 +215,7 @@ module Kitchen
 
       def self.no_parallel_for(*methods)
         Array(methods).each do |meth|
-          if ! ACTION_METHODS.include?(meth)
+          if !ACTION_METHODS.include?(meth)
             raise ClientError, "##{meth} is not a valid no_parallel_for method"
           end
         end

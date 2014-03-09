@@ -176,7 +176,7 @@ module Kitchen
     def plugins
       glob = File.join(config[:test_base_path], config[:suite_name], "*")
       Dir.glob(glob).reject { |d|
-        ! File.directory?(d) || non_suite_dirs.include?(File.basename(d))
+        !File.directory?(d) || non_suite_dirs.include?(File.basename(d))
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 

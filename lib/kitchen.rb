@@ -64,7 +64,7 @@ module Kitchen
     end
 
     def crashes?
-      ! crashes.empty?
+      !crashes.empty?
     end
 
     def default_logger
