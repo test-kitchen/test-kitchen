@@ -1285,7 +1285,7 @@ module Kitchen
               {
                 :name => "sweet",
                 key => "mypath",
-                :provisioner => "chefy",
+                :provisioner => "chefy"
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
@@ -1340,7 +1340,7 @@ module Kitchen
                   :require_chef_omnibus => "it's probably fine"
                 }
               }
-            ],
+            ]
           ).provisioner_data_for("sweet", "platform").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1379,7 +1379,7 @@ module Kitchen
                   :require_chef_omnibus => "it's probably fine"
                 }
               }
-            ],
+            ]
           ).provisioner_data_for("suite", "plat").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
