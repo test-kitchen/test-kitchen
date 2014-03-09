@@ -33,7 +33,6 @@ module Kitchen
 
         include Logging
 
-
         def initialize(cheffile, path, logger = Kitchen.logger)
           @cheffile   = cheffile
           @path       = path
