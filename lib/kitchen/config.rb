@@ -110,7 +110,7 @@ module Kitchen
         },
         :kitchen_root   => kitchen_root,
         :test_base_path => test_base_path,
-        :log_level      => log_level,
+        :log_level      => log_level
       }
     end
 

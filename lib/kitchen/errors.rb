@@ -39,7 +39,7 @@ module Kitchen
         title.center(22, "-"),
         "Class: #{exception.class}",
         "Message: #{exception.message}",
-        "".center(22, "-"),
+        "".center(22, "-")
       ]
     end
   end

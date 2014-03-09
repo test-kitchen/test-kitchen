@@ -101,7 +101,7 @@ module Kitchen
           :email => email,
           :license => options[:license],
           :license_string => license_string,
-          :year => Time.now.year,
+          :year => Time.now.year
         }
       end
 
