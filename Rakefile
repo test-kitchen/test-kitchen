@@ -1,14 +1,14 @@
 require 'bundler/gem_tasks'
-require 'rake/testtask'
-require 'cucumber'
-require 'cucumber/rake/task'
 
+require 'rake/testtask'
 Rake::TestTask.new(:unit) do |t|
   t.libs.push "lib"
   t.test_files = FileList['spec/**/*_spec.rb']
   t.verbose = true
 end
 
+require 'cucumber'
+require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:features) do |t|
   t.cucumber_opts = ['features', '-x', '--format progress']
 end
@@ -26,7 +26,6 @@ end
 
 unless RUBY_ENGINE == 'jruby'
   require 'cane/rake_task'
-
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
     cane.canefile = './.cane'
