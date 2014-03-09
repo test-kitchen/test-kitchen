@@ -30,20 +30,26 @@ module Kitchen
 
       include Thor::Actions
 
-      class_option :driver, :type => :array, :aliases => "-D",
+      class_option :driver,
+        :type => :array,
+        :aliases => "-D",
         :default => "kitchen-vagrant",
         :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
         D
 
-      class_option :provisioner, :type => :string, :aliases => "-P",
+      class_option :provisioner,
+        :type => :string,
+        :aliases => "-P",
         :default => "chef_solo",
         :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
           The default Kitchen Provisioner to use
         D
 
-      class_option :create_gemfile, :type => :boolean, :default => false,
+      class_option :create_gemfile,
+        :type => :boolean,
+        :default => false,
         :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
           Whether or not to create a Gemfile if one does not exist.
           Default: false

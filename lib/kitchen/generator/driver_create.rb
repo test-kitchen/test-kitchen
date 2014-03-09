@@ -32,7 +32,9 @@ module Kitchen
 
       argument :name, :type => :string
 
-      class_option :license, :aliases => "-l", :default => "apachev2",
+      class_option :license,
+        :aliases => "-l",
+        :default => "apachev2",
         :desc => "License type for gem (apachev2, mit, lgplv3, reserved)"
 
       def create
