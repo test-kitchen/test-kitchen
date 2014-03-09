@@ -54,7 +54,7 @@ module Kitchen
               FileUtils.rm_rf(path)
               ::Berkshelf::Berksfile.from_file(berksfile).vendor(path)
             else
-              ::Berkshelf::Berksfile.from_file(berksfile).install(path: path)
+              ::Berkshelf::Berksfile.from_file(berksfile).install(:path => path)
             end
           end
         end
