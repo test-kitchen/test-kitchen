@@ -34,10 +34,14 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'minitest',  '~> 5.3'
   gem.add_development_dependency 'mocha',     '~> 0.14'
 
-  gem.add_development_dependency 'cane',      '~> 2.6'
   gem.add_development_dependency 'countloc',  '~> 0.4'
   gem.add_development_dependency 'maruku',    '~> 0.6'
   gem.add_development_dependency 'simplecov', '~> 0.7'
-  gem.add_development_dependency 'tailor',    '~> 1.2'
   gem.add_development_dependency 'yard',      '~> 0.8'
+
+  # style and complexity libraries are tightly version pinned as newer releases
+  # may introduce new and undesireable style choices which would be immediately
+  # enforced in CI
+  gem.add_development_dependency 'cane',      '2.6.1'
+  gem.add_development_dependency 'tailor',    '1.4.0'
 end
