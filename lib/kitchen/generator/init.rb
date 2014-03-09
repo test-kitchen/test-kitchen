@@ -169,7 +169,6 @@ module Kitchen
 
       def add_drivers
         return if options[:driver].nil? || options[:driver].empty?
-        display_warning = false
 
         Array(options[:driver]).each do |driver_gem|
           if File.exists?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]

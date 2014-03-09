@@ -81,6 +81,7 @@ module Kitchen
     def env_log
       level = ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
       level = Util.to_logger_level(level) unless level.nil?
+      level
     end
   end
 

@@ -47,7 +47,7 @@ module Kitchen
         end
         fetcher = Gem::SpecFetcher.fetcher
 
-        specs = if fetcher.respond_to?(:find_matching)
+        if fetcher.respond_to?(:find_matching)
           fetch_gem_specs_pre_rubygems_2(fetcher, dep)
         else
           fetch_gem_specs_post_rubygems_2(fetcher, dep)

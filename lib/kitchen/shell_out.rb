@@ -76,7 +76,7 @@ module Kitchen
     private
 
     def display_cmd(cmd)
-      first_line, newline, rest = cmd.partition("\n")
+      first_line, newline, _ = cmd.partition("\n")
       last_char = cmd[cmd.size - 1]
 
       newline == "\n" ? "#{first_line}\\n...#{last_char}" : cmd

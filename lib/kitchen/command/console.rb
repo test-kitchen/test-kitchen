@@ -30,7 +30,7 @@ module Kitchen
       def call
         require 'pry'
         Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
-      rescue LoadError => e
+      rescue LoadError
         warn %{Make sure you have the pry gem installed. You can install it with:}
         warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
         exit 1

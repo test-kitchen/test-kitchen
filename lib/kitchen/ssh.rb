@@ -122,7 +122,8 @@ module Kitchen
         logger.debug("[SSH] opening connection to #{self}")
         Net::SSH.start(hostname, username, options)
       rescue *rescue_exceptions => e
-        if (retries -= 1) > 0
+        retries -= 1
+        if retries > 0
           logger.info("[SSH] connection failed, retrying (#{e.inspect})")
           retry
         else
