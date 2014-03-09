@@ -203,7 +203,7 @@ module Kitchen
     end
 
     def platform_data_for(name)
-      data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
+      data.fetch(:platforms, Hash.new).find(-> { Hash.new }) do |platform|
         platform.fetch(:name, nil) == name
       end
     end
@@ -217,7 +217,7 @@ module Kitchen
     end
 
     def suite_data_for(name)
-      data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
+      data.fetch(:suites, Hash.new).find(-> { Hash.new }) do |suite|
         suite.fetch(:name, nil) == name
       end
     end

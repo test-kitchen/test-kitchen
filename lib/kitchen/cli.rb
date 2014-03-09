@@ -37,7 +37,7 @@ module Kitchen
 
         command_options = {
           :action => task,
-          :help => lambda { help(task) },
+          :help => -> { help(task) },
           :config => @config,
           :shell => shell
         }.merge(additional_options)

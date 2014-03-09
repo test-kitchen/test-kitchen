@@ -33,7 +33,7 @@ module Kitchen
         @args = cmd_args
         @options = cmd_options
         @action = options.fetch(:action, nil)
-        @help = options.fetch(:help, lambda { "No help provided" })
+        @help = options.fetch(:help, -> { "No help provided" })
         @config = options.fetch(:config, nil)
         @loader = options.fetch(:loader, nil)
         @shell = options.fetch(:shell)

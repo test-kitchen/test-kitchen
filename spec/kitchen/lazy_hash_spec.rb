@@ -28,7 +28,7 @@ describe Kitchen::LazyHash do
 
   let(:hash_obj) do
     {
-      :shed_color => lambda { |c| c.color },
+      :shed_color => ->(c) { c.color },
       :barn => "locked",
       :genre => Proc.new { |c| "#{c.metal} metal"}
     }
