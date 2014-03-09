@@ -80,6 +80,7 @@ describe Kitchen::Driver::Dummy do
       rescue Kitchen::ActionFailed
         # If exception is anything other than Kitchen::ActionFailed, this spec
         # will fail
+        true
       end
     end
 

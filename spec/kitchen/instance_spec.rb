@@ -732,6 +732,7 @@ describe Kitchen::Instance do
           begin
             instance.public_send(action)
           rescue Kitchen::Error
+            true # no need to act here
           end
 
           state_file.read[:last_action].must_be_nil
@@ -755,6 +756,7 @@ describe Kitchen::Instance do
           begin
             instance.public_send(action)
           rescue Kitchen::Error
+            true # no need to act here
           end
 
           logger_io.string.must_match regex_for(
@@ -772,6 +774,7 @@ describe Kitchen::Instance do
           begin
             instance.public_send(action)
           rescue Kitchen::Error
+            true # no need to act here
           end
 
           state_file.read[:last_action].must_be_nil
@@ -795,6 +798,7 @@ describe Kitchen::Instance do
           begin
             instance.public_send(action)
           rescue Kitchen::Error
+            true # no need to act here
           end
 
           logger_io.string.must_match regex_for(
@@ -816,6 +820,7 @@ describe Kitchen::Instance do
           begin
             instance.verify
           rescue Kitchen::Error
+            true # no need to act here
           end
 
           state_file.read[:last_action].must_equal "setup"
@@ -827,6 +832,7 @@ describe Kitchen::Instance do
         begin
           instance.verify
         rescue Kitchen::Error
+          true # no need to act here
         end
 
         state_file.read[:last_action].must_equal "verify"
