@@ -86,7 +86,7 @@ describe Kitchen::Provisioner::Base do
     end
 
     it "injects config into the provisioner" do
-      provisioner[:animals].must_equal ["cats", "dogs"]
+      provisioner[:animals].must_equal %w{cats dogs}
       provisioner[:coolness].must_equal true
     end
 

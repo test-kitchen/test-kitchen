@@ -245,7 +245,7 @@ describe Kitchen::Instance do
 
   it "#login executes the driver's login_command" do
     driver.stubs(:login_command).with(Hash.new).
-      returns(Kitchen::LoginCommand.new(["echo", "hello"], :purple => true))
+      returns(Kitchen::LoginCommand.new(%w{echo hello}, :purple => true))
     Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
     instance.login

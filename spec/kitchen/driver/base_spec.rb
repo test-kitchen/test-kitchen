@@ -78,7 +78,7 @@ describe Kitchen::Driver::Base do
       config[:fruit] = %w{apples oranges}
       config[:cool_enough] = true
 
-      driver[:fruit].must_equal ['apples', 'oranges']
+      driver[:fruit].must_equal %w{apples oranges}
       driver[:cool_enough].must_equal true
     end
   end

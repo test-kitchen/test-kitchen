@@ -248,7 +248,7 @@ module Kitchen
               key => {
                 default_key => "commony",
                 :color => "purple",
-                :fruit => ["apple", "pear"],
+                :fruit => %w{apple pear},
                 :deep => { :common => "junk" }
               },
               :platforms => [
@@ -289,7 +289,7 @@ module Kitchen
               key => {
                 default_key => "commony",
                 :color => "purple",
-                :fruit => ["apple", "pear"],
+                :fruit => %w{apple pear},
                 :deep => { :common => "junk" }
               },
               :platforms => [
@@ -318,7 +318,7 @@ module Kitchen
               key => {
                 default_key => "commony",
                 :color => "purple",
-                :fruit => ["apple", "pear"],
+                :fruit => %w{apple pear},
                 :deep => { :common => "junk" }
               },
               :suites => [
@@ -334,7 +334,7 @@ module Kitchen
             ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
               default_key => "suitey",
               :color => "purple",
-              :fruit => ["apple", "pear"],
+              :fruit => %w{apple pear},
               :vehicle => "car",
               :deep => {
                 :common => "junk",
@@ -404,12 +404,12 @@ module Kitchen
             :suites => [
               {
                 :name => "sweet",
-                :run_list => ["one", "two"]
+                :run_list => %w{one two}
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -420,13 +420,13 @@ module Kitchen
               {
                 :name => "sweet",
                 :provisioner => {
-                  :run_list => ["one", "two"]
+                  :run_list => %w{one two}
                 }
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -450,13 +450,13 @@ module Kitchen
             :suites => [
               {
                 :name => "sweet",
-                :run_list => ["one", "two"],
+                :run_list => %w{one two},
                 :provisioner => "chefy"
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -512,12 +512,12 @@ module Kitchen
             :platforms => [
               {
                 :name => "plat",
-                :run_list => ["one", "two"]
+                :run_list => %w{one two}
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -528,13 +528,13 @@ module Kitchen
               {
                 :name => "plat",
                 :provisioner => {
-                  :run_list => ["one", "two"]
+                  :run_list => %w{one two}
                 }
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -558,13 +558,13 @@ module Kitchen
             :platforms => [
               {
                 :name => "plat",
-                :run_list => ["one", "two"],
+                :run_list => %w{one two},
                 :provisioner => "chefy"
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two"]
+            :run_list => %w{one two}
           )
         end
 
@@ -638,18 +638,18 @@ module Kitchen
             :platforms => [
               {
                 :name => "plat",
-                :run_list => ["one", "two"]
+                :run_list => %w{one two}
               }
             ],
             :suites => [
               {
                 :name => "sweet",
-                :run_list => ["three", "four"]
+                :run_list => %w{three four}
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two", "three", "four"]
+            :run_list => %w{one two three four}
           )
         end
 
@@ -659,20 +659,20 @@ module Kitchen
             :platforms => [
               {
                 :name => "plat",
-                :run_list => ["one", "two"]
+                :run_list => %w{one two}
               }
             ],
             :suites => [
               {
                 :name => "sweet",
                 :provisioner => {
-                  :run_list => ["three", "four"]
+                  :run_list => %w{three four}
                 }
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two", "three", "four"]
+            :run_list => %w{one two three four}
           )
         end
 
@@ -683,19 +683,19 @@ module Kitchen
               {
                 :name => "plat",
                 :provisioner => {
-                  :run_list => ["one", "two"]
+                  :run_list => %w{one two}
                 }
               }
             ],
             :suites => [
               {
                 :name => "sweet",
-                :run_list => ["three", "four"]
+                :run_list => %w{three four}
               }
             ]
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two", "three", "four"]
+            :run_list => %w{one two three four}
           )
         end
 
@@ -731,18 +731,18 @@ module Kitchen
               },
               {
                 :name => "p2",
-                :run_list => ["one", "two"]
+                :run_list => %w{one two}
               }
             ],
             :suites => [
               {
                 :name => "s1",
-                :run_list => ["alpha", "beta"]
+                :run_list => %w{alpha beta}
               },
               {
                 :name => "s2",
                 :provisioner => {
-                  :run_list => ["three", "four"]
+                  :run_list => %w{three four}
                 }
               }
             ]
@@ -756,7 +756,7 @@ module Kitchen
 
           munger.provisioner_data_for("s2", "p2").must_equal(
             :name => "chefy",
-            :run_list => ["one", "two", "three", "four"]
+            :run_list => %w{one two three four}
           )
         end
       end
@@ -1127,7 +1127,7 @@ module Kitchen
             :driver_plugin => "commony",
             :driver_config => {
               :color => "purple",
-              :fruit => ["apple", "pear"],
+              :fruit => %w{apple pear},
               :deep => { :common => "junk" }
             },
             :platforms => [
@@ -1168,7 +1168,7 @@ module Kitchen
             :driver_plugin => "commony",
             :driver_config => {
               :color => "purple",
-              :fruit => ["apple", "pear"],
+              :fruit => %w{apple pear},
               :deep => { :common => "junk" }
             },
             :platforms => [
@@ -1197,7 +1197,7 @@ module Kitchen
             :driver_plugin => "commony",
             :driver_config => {
               :color => "purple",
-              :fruit => ["apple", "pear"],
+              :fruit => %w{apple pear},
               :deep => { :common => "junk" }
             },
             :suites => [
@@ -1213,7 +1213,7 @@ module Kitchen
           ).driver_data_for("sweet", "plat").must_equal(
             :name => "suitey",
             :color => "purple",
-            :fruit => ["apple", "pear"],
+            :fruit => %w{apple pear},
             :vehicle => "car",
             :deep => {
               :common => "junk",
