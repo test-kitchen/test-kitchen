@@ -76,7 +76,7 @@ module Kitchen
     attr_reader :data, :kitchen_config
 
     def combine_arrays!(root, key, *namespaces)
-      if root.has_key?(key)
+      if root.key?(key)
         root[key] = namespaces.
           map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
           compact
@@ -103,13 +103,13 @@ module Kitchen
     end
 
     def convert_legacy_driver_format_at!(root)
-      if root.has_key?(:driver_config)
+      if root.key?(:driver_config)
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = root.delete(:driver_config).rmerge(ddata)
       end
 
-      if root.has_key?(:driver_plugin)
+      if root.key?(:driver_plugin)
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
@@ -130,7 +130,7 @@ module Kitchen
       key = :require_chef_omnibus
       ddata = root.fetch(:driver, Hash.new)
 
-      if ddata.is_a?(Hash) && ddata.has_key?(key)
+      if ddata.is_a?(Hash) && ddata.key?(key)
         pdata = root.fetch(:provisioner, Hash.new)
         pdata = { :name => pdata } if pdata.is_a?(String)
         root[:provisioner] =
@@ -160,7 +160,7 @@ module Kitchen
     end
 
     def move_chef_data_to_provisioner_at!(root, key)
-      if root.has_key?(key)
+      if root.key?(key)
         pdata = root.fetch(:provisioner, Hash.new)
         pdata = { :name => pdata } if pdata.is_a?(String)
         if ! root.fetch(key, nil).nil?
@@ -170,7 +170,7 @@ module Kitchen
     end
 
     def namespace_array!(root, key, bucket)
-      root[key] = { bucket => root.fetch(key) } if root.has_key?(key)
+      root[key] = { bucket => root.fetch(key) } if root.key?(key)
     end
 
     def normalized_common_data(key, default_key)
@@ -211,9 +211,9 @@ module Kitchen
     def set_kitchen_config_at!(root, key)
       kdata = data.fetch(:kitchen, Hash.new)
 
-      root.delete(key) if root.has_key?(key)
-      root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
-      root[key] = kdata.fetch(key) if kdata.has_key?(key)
+      root.delete(key) if root.key?(key)
+      root[key] = kitchen_config.fetch(key) if kitchen_config.key?(key)
+      root[key] = kdata.fetch(key) if kdata.key?(key)
     end
 
     def suite_data_for(name)

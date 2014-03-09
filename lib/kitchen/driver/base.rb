@@ -41,7 +41,7 @@ module Kitchen
       def initialize(config = {})
         @config = LazyHash.new(config, self)
         self.class.defaults.each do |attr, value|
-          @config[attr] = value unless @config.has_key?(attr)
+          @config[attr] = value unless @config.key?(attr)
         end
       end
 

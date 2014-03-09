@@ -215,7 +215,7 @@ module Kitchen
 
     def validate_options(options)
       [:suite, :platform, :driver, :provisioner, :busser, :state_file].each do |k|
-        if !options.has_key?(k)
+        if !options.key?(k)
           raise ClientError, "Instance#new requires option :#{k}"
         end
       end

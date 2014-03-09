@@ -67,7 +67,7 @@ module Kitchen
     end
 
     def error_hash?(obj)
-      obj.is_a?(Hash) && obj.has_key?(:error)
+      obj.is_a?(Hash) && obj.key?(:error)
     end
   end
 end
