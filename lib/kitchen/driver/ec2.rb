@@ -36,6 +36,7 @@ module Kitchen
       default_config :ebs_optimized,      false
       default_config :security_group_ids, ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
+      default_config :iam_profile_name,   nil
       default_config :aws_access_key_id do |driver|
         ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
       end
@@ -116,14 +117,15 @@ module Kitchen
         debug_server_config
 
         connection.servers.create(
-          :availability_zone  => config[:availability_zone],
-          :security_group_ids => config[:security_group_ids],
-          :tags               => config[:tags],
-          :flavor_id          => config[:flavor_id],
-          :ebs_optimized      => config[:ebs_optimized],
-          :image_id           => config[:image_id],
-          :key_name           => config[:aws_ssh_key_id],
-          :subnet_id          => config[:subnet_id],
+          :availability_zone         => config[:availability_zone],
+          :security_group_ids        => config[:security_group_ids],
+          :tags                      => config[:tags],
+          :flavor_id                 => config[:flavor_id],
+          :ebs_optimized             => config[:ebs_optimized],
+          :image_id                  => config[:image_id],
+          :key_name                  => config[:aws_ssh_key_id],
+          :subnet_id                 => config[:subnet_id],
+          :iam_instance_profile_name => config[:iam_profile_name],
         )
       end
 
@@ -137,6 +139,7 @@ module Kitchen
         debug("ec2:tags '#{config[:tags]}'")
         debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
         debug("ec2:subnet_id '#{config[:subnet_id]}'")
+        debug("ec2:iam_profile_name '#{config[:iam_profile_name]}'")
       end
 
       def amis
