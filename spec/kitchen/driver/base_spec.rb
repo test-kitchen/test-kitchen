@@ -31,16 +31,6 @@ module Kitchen
       default_config :beans, "kidney"
       default_config :tunables, 'flimflam' => 'positate'
       default_config :edible, true
-    end
-
-    class SubclassDefaults < StaticDefaults
-
-      default_config :yea, "ya"
-    end
-
-    class ComputedDefaults < Base
-
-      default_config :beans, "kidney"
       default_config :fetch_command, "curl"
       default_config :beans_url do |driver|
         "http://gim.me/#{driver[:beans]}"
@@ -51,6 +41,13 @@ module Kitchen
       default_config :fetch_url do |driver|
         "http://gim.me/beans-for/#{driver.instance.name}"
       end
+    end
+
+    class SubclassDefaults < StaticDefaults
+
+      default_config :yea, "ya"
+      default_config :fetch_command, "wget"
+      default_config :fetch_url, "http://no.beans"
     end
   end
 end
@@ -66,92 +63,94 @@ describe Kitchen::Driver::Base do
     stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
   end
 
-  describe "user config" do
+  describe "configuration" do
 
-    let(:driver) do
-      d = Kitchen::Driver::Base.new(config)
-      d.instance = instance
-      d
+    describe "provided from the outside" do
+
+      let(:driver) do
+        d = Kitchen::Driver::Base.new(config)
+        d.instance = instance
+        d
+      end
+
+      it "returns provided config" do
+        config[:fruit] = %w{apples oranges}
+        config[:cool_enough] = true
+
+        driver[:fruit].must_equal %w{apples oranges}
+        driver[:cool_enough].must_equal true
+      end
     end
 
-    it "injects config into driver" do
-      config[:fruit] = %w{apples oranges}
-      config[:cool_enough] = true
+    describe "using static default_config statements" do
 
-      driver[:fruit].must_equal %w{apples oranges}
-      driver[:cool_enough].must_equal true
-    end
-  end
+      let(:driver) do
+        d = Kitchen::Driver::StaticDefaults.new(config)
+        d.instance = instance
+        d
+      end
 
-  describe "static default config" do
+      it "uses defaults" do
+        driver[:beans].must_equal "kidney"
+        driver[:tunables]['flimflam'].must_equal 'positate'
+        driver[:edible].must_equal true
+      end
 
-    let(:driver) do
-      d = Kitchen::Driver::StaticDefaults.new(config)
-      d.instance = instance
-      d
-    end
+      it "uses provided config over default_config" do
+        config[:beans] = "pinto"
+        config[:edible] = false
 
-    it "uses default config" do
-      driver[:beans].must_equal "kidney"
-      driver[:tunables]['flimflam'].must_equal 'positate'
-      driver[:edible].must_equal true
-    end
+        driver[:beans].must_equal "pinto"
+        driver[:edible].must_equal false
+      end
 
-    it "uses user config over default config" do
-      config[:beans] = "pinto"
-      config[:edible] = false
+      it "uses other config values to compute values" do
+        driver[:beans_url].must_equal "http://gim.me/kidney"
+        driver[:command].must_equal "curl http://gim.me/kidney"
+      end
 
-      driver[:beans].must_equal "pinto"
-      driver[:edible].must_equal false
-    end
-  end
+      it "computed value blocks have access to instance object" do
+        driver[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
+      end
 
-  describe "inherited static default config" do
+      it "uses provided config over default_config for computed values" do
+        config[:command] = "echo listentome"
+        config[:beans] = "pinto"
 
-    let(:driver) do
-      p = Kitchen::Driver::SubclassDefaults.new(config)
-      p.instance = instance
-      p
-    end
-
-    it "contains defaults from superclass" do
-      driver[:beans].must_equal "kidney"
-      driver[:tunables]['flimflam'].must_equal 'positate'
-      driver[:edible].must_equal true
-      driver[:yea].must_equal "ya"
+        driver[:command].must_equal "echo listentome"
+        driver[:beans_url].must_equal "http://gim.me/pinto"
+      end
     end
 
-    it "uses user config over default config" do
-      config[:beans] = "pinto"
-      config[:edible] = false
+    describe "using inherited static default_config statements" do
 
-      driver[:beans].must_equal "pinto"
-      driver[:edible].must_equal false
-      driver[:yea].must_equal "ya"
-    end
-  end
+      let(:driver) do
+        p = Kitchen::Driver::SubclassDefaults.new(config)
+        p.instance = instance
+        p
+      end
 
-  describe "computed default config" do
+      it "contains defaults from superclass" do
+        driver[:beans].must_equal "kidney"
+        driver[:tunables]['flimflam'].must_equal 'positate'
+        driver[:edible].must_equal true
+        driver[:yea].must_equal "ya"
+      end
 
-    let(:driver) do
-      d = Kitchen::Driver::ComputedDefaults.new(config)
-      d.instance = instance
-      d
-    end
+      it "uses provided config over default config" do
+        config[:beans] = "pinto"
+        config[:edible] = false
 
-    it "uses computed config" do
-      driver[:beans_url].must_equal "http://gim.me/kidney"
-      driver[:command].must_equal "curl http://gim.me/kidney"
-    end
+        driver[:beans].must_equal "pinto"
+        driver[:edible].must_equal false
+        driver[:yea].must_equal "ya"
+        driver[:beans_url].must_equal "http://gim.me/pinto"
+      end
 
-    it "has access to instance object" do
-      driver[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
-    end
-
-    it "uses user config over default config" do
-      config[:command] = "echo listentome"
-
-      driver[:command].must_equal "echo listentome"
+      it "uses its own default_config over inherited default_config" do
+        driver[:fetch_url].must_equal "http://no.beans"
+        driver[:command].must_equal "wget http://gim.me/kidney"
+      end
     end
   end
 end
