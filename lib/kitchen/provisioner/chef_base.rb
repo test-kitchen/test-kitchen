@@ -76,6 +76,16 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
+      default_config :cookbooks_path do |provisioner|
+        provisioner.calculate_path("cookbooks")
+      end
+      expand_path_for :cookbooks_path
+
+      default_config :site_cookbooks_path do |provisioner|
+        provisioner.calculate_path("site-cookbooks")
+      end
+      expand_path_for :site_cookbooks_path
+
       def install_command
         return unless config[:require_chef_omnibus]
 
@@ -300,11 +310,11 @@ module Kitchen
       end
 
       def cookbooks_dir
-        File.join(config[:kitchen_root], "cookbooks")
+        config[:cookbooks]
       end
 
       def site_cookbooks_dir
-        File.join(config[:kitchen_root], "site-cookbooks")
+        config[:site_cookbooks]
       end
 
       def data_bags
