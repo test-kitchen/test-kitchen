@@ -310,11 +310,11 @@ module Kitchen
       end
 
       def cookbooks_dir
-        config[:cookbooks]
+        config[:cookbooks_path]
       end
 
       def site_cookbooks_dir
-        config[:site_cookbooks]
+        config[:site_cookbooks_path]
       end
 
       def data_bags
