@@ -310,11 +310,19 @@ module Kitchen
       end
 
       def cookbooks_dir
-        config[:cookbooks_path]
+        if config[:cookbooks_path]
+          File.expand_path(config[:cookbooks_path])
+        else
+          File.join(config[:kitchen_root], "cookbooks")
+        end
       end
 
       def site_cookbooks_dir
-        config[:site_cookbooks_path]
+        if config[:site_cookbooks_path]
+          File.expand_path(config[:site_cookbooks_path])
+        else
+          File.join(config[:kitchen_root], "site-cookbooks")
+        end
       end
 
       def data_bags
