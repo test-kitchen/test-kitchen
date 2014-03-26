@@ -222,6 +222,13 @@ describe Kitchen::Provisioner::Base do
     end
   end
 
+  [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
+
+    it "has a #{cmd} method" do
+      provisioner.public_send(cmd).must_be_nil
+    end
+  end
+
   describe "#sudo" do
 
     it "if :sudo is set, prepend sudo command" do
