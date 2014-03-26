@@ -15,7 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#   
+#
 # See https://github.com/neillturner/kitchen-puppet/blob/master/provisioner_options.md
 # for documentation configuration parameters with puppet_apply provisioner.  
 #
@@ -35,14 +35,14 @@ module Kitchen
       default_config :require_puppet_omnibus, false
       # TODO use something like https://github.com/fnichol/omnibus-puppet
       default_config :puppet_omnibus_url, nil
-	  default_config :puppet_omnibus_remote_path, '/opt/puppet'
+      default_config :puppet_omnibus_remote_path, '/opt/puppet'
       default_config :puppet_version, nil
-	  default_config :require_puppet_repo, true
+      default_config :require_puppet_repo, true
       default_config :puppet_apt_repo, "http://apt.puppetlabs.com/puppetlabs-release-precise.deb"
-	  default_config :puppet_yum_repo, "https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm"
-	  default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
+      default_config :puppet_yum_repo, "https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm"
+      default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
 
-	  default_config :hiera_data_remote_path, '/var/lib/hiera' 
+      default_config :hiera_data_remote_path, '/var/lib/hiera' 
       default_config :manifest, 'site.pp'
 
       default_config :manifests_path do |provisioner|
@@ -66,31 +66,31 @@ module Kitchen
       default_config :puppet_debug, false
       default_config :puppet_verbose, false
       default_config :puppet_noop, false
-	  default_config :puppet_platform, ''
+      default_config :puppet_platform, ''
       default_config :update_package_repos, true
-	  default_config :custom_facts, {}
+      default_config :custom_facts, {}
 
       def install_command
-	    return unless config[:require_puppet_omnibus] or config[:require_puppet_repo]
-		if config[:require_puppet_omnibus]
-		  info("Installing puppet using puppet omnibus")
+        return unless config[:require_puppet_omnibus] or config[:require_puppet_repo]
+        if config[:require_puppet_omnibus]
+          info("Installing puppet using puppet omnibus")
           version = if !config[:puppet_version].nil?
             "-v #{config[:puppet_version]}"
           else
             ""
-          end		  
-          <<-INSTALL		
+          end             
+          <<-INSTALL            
           if [ ! -d "#{config[:puppet_omnibus_remote_path]}" ]; then
             echo "-----> Installing Puppet Omnibus"
             curl -o /tmp/puppet_install.sh #{config[:puppet_omnibus_url]} 
             #{sudo('sh')} /tmp/puppet_install.sh #{version}
           fi
-		  #{install_busser}
+          #{install_busser}
           INSTALL
-		else
-         case puppet_platform
-         when "debian", "ubuntu"
-		  info("Installing puppet on #{puppet_platform}")
+        else
+          case puppet_platform
+          when "debian", "ubuntu"
+          info("Installing puppet on #{puppet_platform}")
           <<-INSTALL
           if [ ! $(which puppet) ]; then
             #{sudo('wget')} #{puppet_apt_repo}
@@ -100,40 +100,40 @@ module Kitchen
           fi
           #{install_busser}
           INSTALL
-		 when "redhat", "centos", "fedora"
-		  info("Installing puppet on #{puppet_platform}")
-          <<-INSTALL		
+                 when "redhat", "centos", "fedora"
+                  info("Installing puppet on #{puppet_platform}")
+          <<-INSTALL            
           if [ ! $(which puppet) ]; then
             #{sudo('rpm')} -ivh #{puppet_yum_repo}
- 		    #{update_packages_redhat_cmd}           
+                    #{update_packages_redhat_cmd}           
             #{sudo('yum')} -y install puppet#{puppet_redhat_version}
           fi
           #{install_busser}
           INSTALL
          else
-		  info("Installing puppet, will try to determine platform os")
+          info("Installing puppet, will try to determine platform os")
           <<-INSTALL
           if [ ! $(which puppet) ]; then
-		    if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then   
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then   
                #{sudo('rpm')} -ivh #{puppet_yum_repo}
- 		       #{update_packages_redhat_cmd}           
+               #{update_packages_redhat_cmd}           
                #{sudo('yum')} -y install puppet#{puppet_redhat_version}
-			else
+            else
                #{sudo('wget')} #{puppet_apt_repo}
                #{sudo('dpkg')} -i #{puppet_apt_repo_file}
                #{update_packages_debian_cmd}
                #{sudo('apt-get')} -y install puppet#{puppet_debian_version}
-            fi			
+            fi                  
           fi
           #{install_busser}
           INSTALL
-		 end 
-		end  
+         end 
+        end  
       end
-	  
-	  def install_busser
-	      <<-INSTALL
-	      # install chef omnibus so that busser works as this is needed to run tests :(
+          
+      def install_busser
+          <<-INSTALL
+          # install chef omnibus so that busser works as this is needed to run tests :(
           # TODO: work out how to install enough ruby
           # and set busser: { :ruby_bindir => '/usr/bin/ruby' } so that we dont need the
           # whole chef client
@@ -143,8 +143,8 @@ module Kitchen
             curl -o /tmp/install.sh #{chef_url} 
             #{sudo('sh')} /tmp/install.sh
           fi
-		  INSTALL
-	  end 	  
+          INSTALL
+          end     
 
         def init_command
           dirs = %w{modules manifests hiera hiera.yaml}.
@@ -192,16 +192,16 @@ module Kitchen
               sudo('cp -r'), File.join(config[:root_path], 'hiera'), '/var/lib/'
             ].join(' ')
           end
-		  
+                  
           if hiera_data and hiera_data_remote_path != '/var/lib/hiera'
             commands << [
               sudo('mkdir -p'), hiera_data_remote_path
             ].join(' ')
-			commands << [
+                        commands << [
               sudo('cp -r'), File.join(config[:root_path], 'hiera/*'), hiera_data_remote_path
             ].join(' ')
           end
-		  
+                  
           command = commands.join(' && ')
           debug(command)
           command
@@ -260,13 +260,13 @@ module Kitchen
 
         def hiera_data_remote_path
           config[:hiera_data_remote_path]
-        end		
-		
+        end             
+                
         def puppet_debian_version
           config[:puppet_version] ? "=#{config[:puppet_version]}" : nil
-		end
-		  
- 		def puppet_redhat_version
+        end
+                  
+        def puppet_redhat_version
           config[:puppet_version] ? "-#{config[:puppet_version]}" : nil
         end
 
@@ -281,18 +281,18 @@ module Kitchen
         def puppet_verbose_flag
           config[:puppet_verbose] ? '-v' : nil
         end
-		
+                
         def puppet_platform
           config[:puppet_platform].to_s.downcase
-        end		
+        end             
 
         def update_packages_debian_cmd
           config[:update_package_repos] ? "#{sudo('apt-get')} update" : nil  
         end
-		
-		def update_packages_redhat_cmd
+                
+        def update_packages_redhat_cmd
           config[:update_package_repos] ? "#{sudo('yum')} makecache" : nil
- 		end
+        end
 
         def custom_facts
           return nil if config[:custom_facts].none?
@@ -313,11 +313,11 @@ module Kitchen
         def puppet_yum_repo
           config[:puppet_yum_repo]
         end
-		
+                
         def chef_url
           config[:chef_bootstrap_url]
-        end	
-		
+        end     
+                
         def prepare_manifests
           info('Preparing manifests')
           debug("Using manifests from #{manifests}")
