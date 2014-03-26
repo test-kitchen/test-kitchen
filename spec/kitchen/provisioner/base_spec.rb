@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require_relative '../../spec_helper'
+require 'logger'
 require 'stringio'
 
 require 'kitchen'
@@ -25,21 +26,16 @@ module Kitchen
 
   module Provisioner
 
+    class Tiny < Base
+
+      default_config :cheese, "cheddar"
+    end
+
     class StaticDefaults < Base
 
-      default_config :rank, "captain"
-      default_config :tunables, "foo" => "fa"
-      default_config :nice, true
-    end
-
-    class SubclassDefaults < StaticDefaults
-
-      default_config :yea, "ya"
-    end
-
-    class ComputedDefaults < Base
-
       default_config :beans, "kidney"
+      default_config :tunables, 'flimflam' => 'positate'
+      default_config :edible, true
       default_config :fetch_command, "curl"
       default_config :beans_url do |provisioner|
         "http://gim.me/#{provisioner[:beans]}"
@@ -51,17 +47,24 @@ module Kitchen
         "http://gim.me/beans-for/#{provisioner.instance.name}"
       end
     end
+
+    class SubclassDefaults < StaticDefaults
+
+      default_config :yea, "ya"
+      default_config :fetch_command, "wget"
+      default_config :fetch_url, "http://no.beans"
+    end
   end
 end
 
 describe Kitchen::Provisioner::Base do
 
+  let(:logged_output)   { StringIO.new }
+  let(:logger)          { Logger.new(logged_output) }
   let(:config)          { Hash.new }
-  let(:logger_io)       { StringIO.new }
-  let(:instance_logger) { Kitchen::Logger.new(:logdev => logger_io) }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => instance_logger)
+    stub(:name => "coolbeans", :logger => logger)
   end
 
   let(:provisioner) do
@@ -74,21 +77,11 @@ describe Kitchen::Provisioner::Base do
     provisioner.instance.must_equal instance
   end
 
-  it "#name returns its class name as a string" do
+  it "#name returns the name of the provisioner" do
     provisioner.name.must_equal "Base"
   end
 
-  describe "user config" do
-
-    before do
-      config[:animals] = %w{cats dogs}
-      config[:coolness] = true
-    end
-
-    it "injects config into the provisioner" do
-      provisioner[:animals].must_equal %w{cats dogs}
-      provisioner[:coolness].must_equal true
-    end
+  describe "configuration" do
 
     it ":root_path defaults to /tmp/kitchen" do
       provisioner[:root_path].must_equal "/tmp/kitchen"
@@ -98,15 +91,18 @@ describe Kitchen::Provisioner::Base do
       provisioner[:sudo].must_equal true
     end
 
-    it "#config_keys returns the config keys" do
-      provisioner.config_keys.sort.
-        must_equal [:animals, :coolness, :root_path, :sudo]
+    describe "provided from the outside" do
+
+      it "returns provided config" do
+        config[:fruit] = %w{apples oranges}
+        config[:cool_enough] = true
+
+        provisioner[:fruit].must_equal %w{apples oranges}
+        provisioner[:cool_enough].must_equal true
+      end
     end
-  end
 
-  describe ".default_config" do
-
-    describe "static default config" do
+    describe "using static default_config statements" do
 
       let(:provisioner) do
         p = Kitchen::Provisioner::StaticDefaults.new(config)
@@ -114,23 +110,39 @@ describe Kitchen::Provisioner::Base do
         p
       end
 
-      it "uses default config" do
-        provisioner[:rank].must_equal "captain"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal true
+      it "uses defaults" do
+        provisioner[:beans].must_equal "kidney"
+        provisioner[:tunables]['flimflam'].must_equal 'positate'
+        provisioner[:edible].must_equal true
       end
 
-      it "uses user config over default config" do
-        config[:rank] = "commander"
-        config[:nice] = :maybe
+      it "uses provided config over default_config" do
+        config[:beans] = "pinto"
+        config[:edible] = false
 
-        provisioner[:rank].must_equal "commander"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal :maybe
+        provisioner[:beans].must_equal "pinto"
+        provisioner[:edible].must_equal false
+      end
+
+      it "uses other config values to compute values" do
+        provisioner[:beans_url].must_equal "http://gim.me/kidney"
+        provisioner[:command].must_equal "curl http://gim.me/kidney"
+      end
+
+      it "computed value blocks have access to instance object" do
+        provisioner[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
+      end
+
+      it "uses provided config over default_config for computed values" do
+        config[:command] = "echo listentome"
+        config[:beans] = "pinto"
+
+        provisioner[:command].must_equal "echo listentome"
+        provisioner[:beans_url].must_equal "http://gim.me/pinto"
       end
     end
 
-    describe "inherited static default config" do
+    describe "using inherited static default_config statements" do
 
       let(:provisioner) do
         p = Kitchen::Provisioner::SubclassDefaults.new(config)
@@ -139,56 +151,73 @@ describe Kitchen::Provisioner::Base do
       end
 
       it "contains defaults from superclass" do
-        provisioner[:rank].must_equal "captain"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal true
+        provisioner[:beans].must_equal "kidney"
+        provisioner[:tunables]['flimflam'].must_equal 'positate'
+        provisioner[:edible].must_equal true
         provisioner[:yea].must_equal "ya"
       end
 
-      it "uses user config over default config" do
-        config[:rank] = "commander"
-        config[:nice] = :maybe
+      it "uses provided config over default config" do
+        config[:beans] = "pinto"
+        config[:edible] = false
 
-        provisioner[:rank].must_equal "commander"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal :maybe
+        provisioner[:beans].must_equal "pinto"
+        provisioner[:edible].must_equal false
         provisioner[:yea].must_equal "ya"
+        provisioner[:beans_url].must_equal "http://gim.me/pinto"
+      end
+
+      it "uses its own default_config over inherited default_config" do
+        provisioner[:fetch_url].must_equal "http://no.beans"
+        provisioner[:command].must_equal "wget http://gim.me/kidney"
       end
     end
 
-    describe "computed default config" do
+    it "#config_keys returns an array of config key names" do
+      provisioner = Kitchen::Provisioner::Tiny.new(:ice_cream => "dragon")
 
-      let(:provisioner) do
-        p = Kitchen::Provisioner::ComputedDefaults.new(config)
-        p.instance = instance
-        p
-      end
+      provisioner.config_keys.sort.
+        must_equal [:cheese, :ice_cream, :root_path, :sudo]
+    end
+  end
 
-      it "uses computed config" do
-        provisioner[:beans_url].must_equal "http://gim.me/kidney"
-        provisioner[:command].must_equal "curl http://gim.me/kidney"
-      end
+  describe "#diagnose" do
 
-      it "has access to instance object" do
-        provisioner[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
-      end
+    it "returns an empty hash for no config" do
+      provisioner.diagnose.must_equal({
+        :root_path => "/tmp/kitchen", :sudo => true
+      })
+    end
 
-      it "uses user config over default config" do
-        config[:command] = "echo listentome"
+    it "returns a hash of config" do
+      config[:alpha] = "beta"
+      provisioner.diagnose.must_equal({
+        :alpha => "beta", :root_path => "/tmp/kitchen", :sudo => true
+      })
+    end
 
-        provisioner[:command].must_equal "echo listentome"
-      end
+    it "returns a hash with sorted keys" do
+      config[:zebra] = true
+      config[:elephant] = true
+
+      provisioner.diagnose.keys.
+        must_equal [:elephant, :root_path, :sudo, :zebra]
     end
   end
 
   describe "#logger" do
 
-    it "if instance is set, use its logger" do
-      provisioner.send(:logger).must_equal instance_logger
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger if defined" do
+      provisioner.send(:logger).must_equal logger
     end
 
-    it "if instance is not set, use Kitchen.logger" do
+    it "returns the default logger if instance's logger is not set" do
       provisioner.instance = nil
+      Kitchen.logger = "yep"
+
       provisioner.send(:logger).must_equal Kitchen.logger
     end
   end
