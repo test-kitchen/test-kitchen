@@ -26,6 +26,22 @@ module Kitchen
 
   module Driver
 
+    class Sneaky < Base
+
+      def method_missing(meth, *args, &block)
+        if meth.to_s.start_with?("invoke_")
+          send(meth.to_s.sub(/^invoke_/, ''), *args)
+        else
+          super
+        end
+      end
+    end
+
+    class BubbleGum < Base
+
+      default_config :cheese, "cheddar"
+    end
+
     class StaticDefaults < Base
 
       default_config :beans, "kidney"
@@ -59,19 +75,32 @@ describe Kitchen::Driver::Base do
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
+  let(:busser) do
+    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
+  end
+
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :busser => busser,
+      :to_str => "instance"
+    )
+  end
+
+  let(:driver) do
+    d = Kitchen::Driver::Sneaky.new(config)
+    d.instance = instance
+    d
+  end
+
+  it "#name returns the name of the driver" do
+    Kitchen::Driver::BubbleGum.new(config).name.must_equal "BubbleGum"
   end
 
   describe "configuration" do
 
     describe "provided from the outside" do
-
-      let(:driver) do
-        d = Kitchen::Driver::Base.new(config)
-        d.instance = instance
-        d
-      end
 
       it "returns provided config" do
         config[:fruit] = %w{apples oranges}
@@ -152,5 +181,96 @@ describe Kitchen::Driver::Base do
         driver[:command].must_equal "wget http://gim.me/kidney"
       end
     end
+
+    it "#config_keys returns an array of config key names" do
+      driver = Kitchen::Driver::BubbleGum.new(:ice_cream => "dragon")
+
+      driver.config_keys.sort.must_equal [:cheese, :ice_cream]
+    end
+  end
+
+  [:create, :converge, :setup, :verify, :destroy].each do |action|
+
+    it "has a #{action} method that takes state" do
+      state = Hash.new
+      driver.public_send(action, state).must_be_nil
+    end
+  end
+
+  it "has a login command that raises ActionFailed by default" do
+    proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
+  end
+
+  it "has a default verify dependencies method" do
+    driver.verify_dependencies.must_be_nil
+  end
+
+  it "#diagnose returns an empty hash for no config" do
+    driver.diagnose.must_equal Hash.new
+  end
+
+  it "#diagnose returns a hash of config" do
+    config[:alpha] = "beta"
+    driver.diagnose.must_equal({ :alpha => "beta" })
+  end
+
+  it "#diagnose returns a hash with sorted keys" do
+    config[:zebra] = true
+    config[:elephant] = true
+
+    driver.diagnose.keys.must_equal [:elephant, :zebra]
+  end
+
+  describe "#logger" do
+
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger if defined" do
+      driver.invoke_logger.must_equal logger
+    end
+
+    it "returns the default logger if instance's logger is not set" do
+      driver.instance = nil
+      Kitchen.logger = "yep"
+
+      driver.invoke_logger.must_equal Kitchen.logger
+    end
+  end
+
+  it "#puts calls logger.info" do
+    driver.invoke_puts "yo"
+
+    logged_output.string.must_match /I, /
+    logged_output.string.must_match /yo\n/
+  end
+
+  it "#print calls logger.info" do
+    driver.invoke_print "yo"
+
+    logged_output.string.must_match /I, /
+    logged_output.string.must_match /yo\n/
+  end
+
+  it "#busser raises an exception if instance is nil" do
+    driver.instance = nil
+
+    proc { driver.invoke_busser }.must_raise Kitchen::ClientError
+  end
+
+  it "#busser returns the instance's busser" do
+    driver.invoke_busser.must_equal busser
+  end
+
+  it "#busser_setup_cmd calls busser.setup_cmd" do
+    driver.invoke_busser_setup_cmd.must_equal "setup"
+  end
+
+  it "#busser_sync_cmd calls busser.sync_cmd" do
+    driver.invoke_busser_sync_cmd.must_equal "sync"
+  end
+
+  it "#busser_run_cmd calls busser.run_cmd" do
+    driver.invoke_busser_run_cmd.must_equal "run"
   end
 end
