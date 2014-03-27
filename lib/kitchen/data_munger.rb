@@ -151,6 +151,7 @@ module Kitchen
       data.fetch(:suites, []).each do |suite|
         move_chef_data_to_provisioner_at!(suite, :attributes)
         move_chef_data_to_provisioner_at!(suite, :run_list)
+        move_chef_data_to_provisioner_at!(suite, :node)
       end
 
       data.fetch(:platforms, []).each do |platform|
