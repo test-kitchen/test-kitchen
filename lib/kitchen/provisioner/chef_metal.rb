@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: Douglas Triggs (<doug@getchef.com>)
 #
-# Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) 2014, Chef, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +19,11 @@
 require 'kitchen/provisioner/chef_base'
 
 module Kitchen
-
   module Provisioner
-
     # Chef Metal provisioner.
     # To be fair, metal doesn't actually use a provisioner at all; what this is is
     # a window to the test configuration so that the Chef Metal driver can get to
     # the parameters it needs
-    #
-    # @author Douglas Triggs <doug@getchef.com>
     class ChefMetal < Base
 
       attr_reader :config
