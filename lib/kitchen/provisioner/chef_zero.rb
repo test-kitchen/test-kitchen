@@ -30,6 +30,7 @@ module Kitchen
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
+      default_config :chef_zero_port, "8889"
 
       def create_sandbox
         super
@@ -64,6 +65,9 @@ module Kitchen
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{config[:log_level]}"
         ]
+        if config[:chef_zero_port]
+          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
+        end
         if config[:json_attributes]
           args << "--json-attributes #{config[:root_path]}/dna.json"
         end
