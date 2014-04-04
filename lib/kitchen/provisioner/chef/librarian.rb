@@ -33,16 +33,29 @@ module Kitchen
 
         include Logging
 
+        # Creates a new cookbook resolver.
+        #
+        # @param cheffile [String] path to a Cheffile
+        # @param path [String] path in which to vendor the resulting
+        #   cookbooks
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def initialize(cheffile, path, logger = Kitchen.logger)
           @cheffile   = cheffile
           @path       = path
           @logger     = logger
         end
 
+        # Loads the library code required to use the resolver.
+        #
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def self.load!(logger = Kitchen.logger)
           load_librarian!(logger)
         end
 
+        # Performs the cookbook resolution and vendors the resulting cookbooks
+        # in the desired path.
         def resolve
           version = ::Librarian::Chef::VERSION
           info("Resolving cookbook dependencies with Librarian-Chef #{version}...")
@@ -57,6 +70,9 @@ module Kitchen
 
         attr_reader :cheffile, :path, :logger
 
+        # Load the Librarian-specific libary code.
+        #
+        # @param logger [Kitchen::Logger] the logger to use
         def self.load_librarian!(logger)
           first_load = require 'librarian/chef/environment'
           require 'librarian/action/resolve'

@@ -33,16 +33,29 @@ module Kitchen
 
         include Logging
 
+        # Creates a new cookbook resolver.
+        #
+        # @param berksfile [String] path to a Berksfile
+        # @param path [String] path in which to vendor the resulting
+        #   cookbooks
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def initialize(berksfile, path, logger = Kitchen.logger)
           @berksfile  = berksfile
           @path       = path
           @logger     = logger
         end
 
+        # Loads the library code required to use the resolver.
+        #
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def self.load!(logger = Kitchen.logger)
           load_berkshelf!(logger)
         end
 
+        # Performs the cookbook resolution and vendors the resulting cookbooks
+        # in the desired path.
         def resolve
           version = ::Berkshelf::VERSION
           info("Resolving cookbook dependencies with Berkshelf #{version}...")
@@ -63,6 +76,9 @@ module Kitchen
 
         attr_reader :berksfile, :path, :logger
 
+        # Load the Berkshelf-specific libary code.
+        #
+        # @param logger [Kitchen::Logger] the logger to use
         def self.load_berkshelf!(logger)
           first_load = require 'berkshelf'
 
