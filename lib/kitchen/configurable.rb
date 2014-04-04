@@ -68,8 +68,8 @@ module Kitchen
     # Find an appropriate path to a file or directory, based on graceful
     # fallback rules or returns nil if path cannot be determined.
     #
-    # Given an instance with suite named "server", a `test_base_path` of
-    # "/a/b", and a path segement of "roles" then following will be tried
+    # Given an instance with suite named `"server"`, a `test_base_path` of
+    # `"/a/b"`, and a path segement of `"roles"` then following will be tried
     # in order (first match that exists wins):
     #
     # 1. /a/b/server/roles
@@ -78,7 +78,7 @@ module Kitchen
     #
     # @param path [String] the base path segment to search for
     # @param opts [Hash] options
-    # @option opts [Symbol] :type either +:file+ or +:directory+ (default)
+    # @option opts [Symbol] :type either `:file` or `:directory` (default)
     # @option opts [Symbol] :base_path a custom base path to search under,
     #   default uses value from `config[:test_base_path]`
     # @return [String] path to the existing file or directory, or nil if file
@@ -169,7 +169,7 @@ module Kitchen
 
       # Sets a sane default value for a configuration attribute. These values
       # can be overridden by provided configuration or in a subclass with
-      # another +default_config+ declaration.
+      # another default_config declaration.
       #
       # @example a nil default value
       #
@@ -225,7 +225,7 @@ module Kitchen
 
       # Ensures that an attribute must have a non-nil, non-empty String value.
       # The default behavior will be to raise a user error and thereby halting
-      # further configuration processing. Good use cases for +require_config+
+      # further configuration processing. Good use cases for require_config
       # might be cloud provider credential keys and other similar data.
       #
       # @example a value that must not be nil or an empty String
