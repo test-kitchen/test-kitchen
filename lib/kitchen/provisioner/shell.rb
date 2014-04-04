@@ -28,7 +28,7 @@ module Kitchen
     class Shell < Base
 
       default_config :script do |provisioner|
-        provisioner.calculate_path("bootstrap.sh", :script)
+        provisioner.calculate_path("bootstrap.sh", :type => :file)
       end
       expand_path_for :script
 

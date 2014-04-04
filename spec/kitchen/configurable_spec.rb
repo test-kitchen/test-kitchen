@@ -372,4 +372,119 @@ describe Kitchen::Configurable do
       subject.diagnose.keys.must_equal [:elephant, :zebra]
     end
   end
+
+  describe "#calculate_path" do
+
+    let(:config) do
+      { :test_base_path => "/the/basest" }
+    end
+
+    let(:suite) do
+      stub(:name => "ultimate")
+    end
+
+    let(:instance) do
+      stub(:name => "coolbeans", :to_str => "<instance>", :suite => suite)
+    end
+
+    let(:subject) do
+      Kitchen::Thing::Tiny.new(config).finalize_config!(instance)
+    end
+
+    before do
+      FakeFS.activate!
+    end
+
+    after do
+      FakeFS.deactivate!
+      FakeFS::FileSystem.clear
+    end
+
+    describe "for directories" do
+
+      before do
+        FileUtils.mkdir_p(File.join(Dir.pwd, "winner"))
+        FileUtils.mkdir_p("/the/basest/winner")
+        FileUtils.mkdir_p("/the/basest/ultimate/winner")
+      end
+
+      it "prefers a path containing base path and suite name if it exists" do
+        subject.calculate_path("winner").
+          must_equal "/the/basest/ultimate/winner"
+      end
+
+      it "prefers a path containing base path if it exists" do
+        FileUtils.rm_rf("/the/basest/ultimate/winner")
+
+        subject.calculate_path("winner").must_equal "/the/basest/winner"
+      end
+
+      it "prefers a path in the current working directory if it exists" do
+        FileUtils.rm_rf("/the/basest/ultimate/winner")
+        FileUtils.rm_rf("/the/basest/winner")
+        pwd_dir = File.join(Dir.pwd, "winner")
+
+        subject.calculate_path("winner").must_equal pwd_dir
+      end
+
+      it "raises a UserError if test_base_path key is not set" do
+        config.delete(:test_base_path)
+
+        proc { subject.calculate_path("winner") }.must_raise Kitchen::UserError
+      end
+
+      it "uses a custom base path" do
+        FileUtils.mkdir_p("/custom/ultimate/winner")
+
+        subject.calculate_path("winner", base_path: "/custom").
+          must_equal "/custom/ultimate/winner"
+      end
+    end
+
+    describe "for files" do
+
+      before do
+        FileUtils.mkdir_p(Dir.pwd)
+        FileUtils.touch(File.join(Dir.pwd, "winner"))
+        FileUtils.mkdir_p("/the/basest")
+        FileUtils.touch(File.join("/the/basest", "winner"))
+        FileUtils.mkdir_p("/the/basest/ultimate")
+        FileUtils.touch(File.join("/the/basest/ultimate", "winner"))
+      end
+
+      it "prefers a path containing base path and suite name if it exists" do
+        subject.calculate_path("winner", type: :file).
+          must_equal "/the/basest/ultimate/winner"
+      end
+
+      it "prefers a path containing base path if it exists" do
+        FileUtils.rm_rf("/the/basest/ultimate/winner")
+
+        subject.calculate_path("winner", type: :file).
+          must_equal "/the/basest/winner"
+      end
+
+      it "prefers a path in the current working directory if it exists" do
+        FileUtils.rm_rf("/the/basest/ultimate/winner")
+        FileUtils.rm_rf("/the/basest/winner")
+        pwd_dir = File.join(Dir.pwd, "winner")
+
+        subject.calculate_path("winner", type: :file).must_equal pwd_dir
+      end
+
+      it "raises a UserError if test_base_path key is not set" do
+        config.delete(:test_base_path)
+
+        proc { subject.calculate_path("winner") }.must_raise Kitchen::UserError
+      end
+
+      it "uses a custom base path" do
+        FileUtils.mkdir_p("/custom/ultimate")
+        FileUtils.touch(File.join("/custom/ultimate", "winner"))
+
+        subject.calculate_path("winner", type: :file, base_path: "/custom").
+          must_equal "/custom/ultimate/winner"
+      end
+    end
+  end
 end

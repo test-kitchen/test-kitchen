@@ -65,6 +65,42 @@ module Kitchen
       config[attr]
     end
 
+    # Find an appropriate path to a file or directory, based on graceful
+    # fallback rules or returns nil if path cannot be determined.
+    #
+    # Given an instance with suite named "server", a +test_base_path+ of
+    # "/a/b", and a path segement of "roles" then following will be tried
+    # in order (first match that exists wins):
+    #
+    # 1. /a/b/server/roles
+    # 2. /a/b/roles
+    # 3. $PWD/roles
+    #
+    # @param path [String] the base path segment to search for
+    # @param opts [Hash] options
+    # @option opts [Symbol] :type either +:file+ or +:directory+ (default)
+    # @option opts [Symbol] :base_path a custom base path to search under,
+    #   default uses value from +config[:test_base_path]+
+    # @return [String] path to the existing file or directory, or nil if file
+    #   or directory was not found
+    # @raise [UserError] if +config[:test_base_path]+ is used and is not set
+    def calculate_path(path, opts = {})
+      type = opts.fetch(:type, :directory)
+      base = opts.fetch(:base_path) do
+        config.fetch(:test_base_path) do |key|
+          raise UserError, "#{key} is not found in #{self.to_s}"
+        end
+      end
+
+      [
+        File.join(base, instance.suite.name, path),
+        File.join(base, path),
+        File.join(Dir.pwd, path)
+      ].find do |candidate|
+        type == :directory ? File.directory?(candidate) : File.file?(candidate)
+      end
+    end
+
     # Returns an array of configuration keys.
     #
     # @return [Array] array of configuration keys
