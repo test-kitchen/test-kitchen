@@ -66,11 +66,11 @@ module Kitchen
     # Creates a new instance, given a suite and a platform.
     #
     # @param [Hash] options configuration for a new suite
-    # @option options [Suite] :suite the suite (**Required)
-    # @option options [Platform] :platform the platform (**Required)
-    # @option options [Driver::Base] :driver the driver (**Required)
+    # @option options [Suite] :suite the suite (**Required**)
+    # @option options [Platform] :platform the platform (**Required**)
+    # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
-    #   (**Required)
+    #   (**Required**)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)

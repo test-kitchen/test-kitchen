@@ -42,7 +42,7 @@ module Kitchen
     # hook point where the object may wish to perform other last minute
     # checks, validations, or configuration expansions.
     #
-    # @param [Instance] an associated instance
+    # @param instance [Instance] an associated instance
     # @return [self] itself, for use in chaining
     # @raise [ClientError] if instance parameter is nil
     def finalize_config!(instance)
@@ -68,7 +68,7 @@ module Kitchen
     # Find an appropriate path to a file or directory, based on graceful
     # fallback rules or returns nil if path cannot be determined.
     #
-    # Given an instance with suite named "server", a +test_base_path+ of
+    # Given an instance with suite named "server", a `test_base_path` of
     # "/a/b", and a path segement of "roles" then following will be tried
     # in order (first match that exists wins):
     #
@@ -80,10 +80,10 @@ module Kitchen
     # @param opts [Hash] options
     # @option opts [Symbol] :type either +:file+ or +:directory+ (default)
     # @option opts [Symbol] :base_path a custom base path to search under,
-    #   default uses value from +config[:test_base_path]+
+    #   default uses value from `config[:test_base_path]`
     # @return [String] path to the existing file or directory, or nil if file
     #   or directory was not found
-    # @raise [UserError] if +config[:test_base_path]+ is used and is not set
+    # @raise [UserError] if `config[:test_base_path]` is used and is not set
     def calculate_path(path, opts = {})
       type = opts.fetch(:type, :directory)
       base = opts.fetch(:base_path) do
@@ -127,7 +127,7 @@ module Kitchen
     # callable blocks as values that are meant to be called lazily. This
     # method is intended to be included in an object's .initialize method.
     #
-    # @param [Hash] initial provided configuration
+    # @param config [Hash] initial provided configuration
     # @api private
     def init_config(config)
       @config = LazyHash.new(config, self)

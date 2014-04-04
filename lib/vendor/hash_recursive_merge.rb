@@ -24,11 +24,15 @@ module HashRecursiveMerge
   # When both +hsh+ and +other_hash+ contains an entry with the same key,
   # it merges and returns the values from both arrays.
   #
+  # @example
+  #
   #    h1 = {"a" => 100, "b" => 200, "c" => {"c1" => 12, "c2" => 14}}
   #    h2 = {"b" => 254, "c" => {"c1" => 16, "c3" => 94}}
   #    h1.rmerge!(h2)   #=> {"a" => 100, "b" => 254, "c" => {"c1" => 16, "c2" => 14, "c3" => 94}}
   #
   # Simply using Hash#merge! would return
+  #
+  # @example
   #
   #    h1.merge!(h2)    #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
@@ -51,11 +55,15 @@ module HashRecursiveMerge
   # includes the same key, the value is merged instead replaced with
   # +other_hash+ value.
   #
+  # @example
+  #
   #    h1 = {"a" => 100, "b" => 200, "c" => {"c1" => 12, "c2" => 14}}
   #    h2 = {"b" => 254, "c" => {"c1" => 16, "c3" => 94}}
   #    h1.rmerge(h2)    #=> {"a" => 100, "b" => 254, "c" => {"c1" => 16, "c2" => 14, "c3" => 94}}
   #
   # Simply using Hash#merge would return
+  #
+  # @example
   #
   #    h1.merge(h2)     #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #

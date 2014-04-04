@@ -41,11 +41,11 @@ module Kitchen
     #   the command
     # @option options [Hash] :environment a Hash of environment variables to
     #   set before the command is run. By default, the environment will
-    #   *always* be set to 'LC_ALL' => 'C' to prevent issues with multibyte
+    #   *always* be set to `'LC_ALL' => 'C'` to prevent issues with multibyte
     #   characters in Ruby 1.8. To avoid this, use :environment => nil for
     #   *no* extra environment settings, or
-    #   :environment => {'LC_ALL'=>nil, ...} to set other environment settings
-    #   without changing the locale.
+    #   `:environment => {'LC_ALL'=>nil, ...}` to set other environment
+    #   settings without changing the locale.
     # @option options [Integer] :timeout Numeric value for the number of
     #   seconds to wait on the child process before raising an Exception.
     #   This is calculated as the total amount of time that ShellOut waited on
