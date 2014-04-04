@@ -99,8 +99,7 @@ module Kitchen
 
       protected
 
-      ACTION_METHODS = %w{create converge setup verify destroy}.
-        map(&:to_sym).freeze
+      ACTION_METHODS = [:create, :converge, :setup, :verify, :destroy].freeze
 
       def logger
         instance ? instance.logger : Kitchen.logger
