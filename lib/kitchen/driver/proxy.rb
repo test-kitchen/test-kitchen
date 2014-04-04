@@ -17,13 +17,17 @@
 # limitations under the License.
 #
 
-require 'kitchen/driver/ssh_base'
+require 'kitchen'
 
 module Kitchen
 
   module Driver
 
-    # Proxy driver for Test Kitchen.
+    # Simple driver that proxies commands through to a test instance whose
+    # lifecycle is not managed by Test Kitchen. This driver is useful for long-
+    # lived non-ephemeral test instances that are simply "reset" between test
+    # runs. Think executing against devices like network switches--this is why
+    # the driver was created.
     #
     # @author Seth Chisamore <schisamo@opscode.com>
     class Proxy < Kitchen::Driver::SSHBase
@@ -33,11 +37,13 @@ module Kitchen
 
       no_parallel_for :create, :destroy
 
+      # @see Base#create
       def create(state)
         state[:hostname] = config[:host]
         reset_instance(state)
       end
 
+      # @see Base#destroy
       def destroy(state)
         return if state[:hostname].nil?
         reset_instance(state)
@@ -46,13 +52,16 @@ module Kitchen
 
       private
 
+      # Resets the non-Kitchen managed instance using by issuing a command
+      # over SSH.
+      #
+      # @param state [Hash] the state hash
       def reset_instance(state)
         if cmd = config[:reset_command]
           info("Resetting instance state with command: #{cmd}")
           ssh(build_ssh_args(state), cmd)
         end
       end
-
     end
   end
 end
