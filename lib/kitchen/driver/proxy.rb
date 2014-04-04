@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 #
 # Author:: Seth Chisamore <schisamo@opscode.com>
 #
