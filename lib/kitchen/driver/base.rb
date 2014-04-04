@@ -33,10 +33,6 @@ module Kitchen
       include Configurable
       include Logging
 
-      class << self
-        attr_reader :serial_actions
-      end
-
       def initialize(config = {})
         init_config(config)
       end
@@ -97,6 +93,41 @@ module Kitchen
       #   documented dependency is missing from the system
       def verify_dependencies ; end
 
+      class << self
+        # @return [Array<Symbol>] an array of action method names that cannot
+        #   be run concurrently and must be run in serial via a shared mutex
+        attr_reader :serial_actions
+      end
+
+      # Registers certain driver actions that cannot be safely run concurrently
+      # in threads across multiple instances. Typically this might be used
+      # for create or destroy actions that use an underlying resource that
+      # cannot be used at the same time.
+      #
+      # A shared mutex for this driver object will be used to synchronize all
+      # registered methods.
+      #
+      # @example a single action method that cannot be run concurrently
+      #
+      #   no_parallel_for :create
+      #
+      # @example multiple action methods that cannot be run concurrently
+      #
+      #   no_parallel_for :create, :destroy
+      #
+      # @param methods [Array<Symbol>] one or more actions as symbols
+      # @raise [ClientError] if any method is not a valid action method name
+      def self.no_parallel_for(*methods)
+        Array(methods).each do |meth|
+          if !ACTION_METHODS.include?(meth)
+            raise ClientError, "##{meth} is not a valid no_parallel_for method"
+          end
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
+      end
+
       protected
 
       ACTION_METHODS = [:create, :converge, :setup, :verify, :destroy].freeze
@@ -137,16 +168,6 @@ module Kitchen
         instance.busser
       end
 
-      def self.no_parallel_for(*methods)
-        Array(methods).each do |meth|
-          if !ACTION_METHODS.include?(meth)
-            raise ClientError, "##{meth} is not a valid no_parallel_for method"
-          end
-        end
-
-        @serial_actions ||= []
-        @serial_actions += methods
-      end
     end
   end
 end

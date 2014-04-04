@@ -22,6 +22,26 @@ require 'stringio'
 
 require 'kitchen'
 
+module Kitchen
+
+  module Driver
+
+    class Speedy < Base
+    end
+
+    class Dodgy < Base
+
+      no_parallel_for :converge
+    end
+
+    class Slow < Base
+
+      no_parallel_for :create, :destroy
+      no_parallel_for :verify
+    end
+  end
+end
+
 describe Kitchen::Driver::Base do
 
   let(:logged_output) { StringIO.new }
@@ -115,5 +135,30 @@ describe Kitchen::Driver::Base do
 
   it "#busser_run_cmd calls busser.run_cmd" do
     driver.send(:busser_run_cmd).must_equal "run"
+  end
+
+  describe ".no_parallel_for" do
+
+    it "registers no serial actions when none are declared" do
+      Kitchen::Driver::Speedy.serial_actions.must_equal nil
+    end
+
+    it "registers a single serial action method" do
+      Kitchen::Driver::Dodgy.serial_actions.must_equal [:converge]
+    end
+
+    it "registers multiple serial action methods" do
+      actions = Kitchen::Driver::Slow.serial_actions
+
+      actions.must_include :create
+      actions.must_include :verify
+      actions.must_include :destroy
+    end
+
+    it "raises a ClientError if value is not an action method" do
+      proc {
+        Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
+      }.must_raise Kitchen::ClientError
+    end
   end
 end
