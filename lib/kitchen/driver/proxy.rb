@@ -38,13 +38,13 @@ module Kitchen
 
       no_parallel_for :create, :destroy
 
-      # @see Base#create
+      # (see Base#create)
       def create(state)
         state[:hostname] = config[:host]
         reset_instance(state)
       end
 
-      # @see Base#destroy
+      # (see Base#destroy)
       def destroy(state)
         return if state[:hostname].nil?
         reset_instance(state)

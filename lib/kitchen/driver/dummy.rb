@@ -33,28 +33,28 @@ module Kitchen
       default_config :sleep, 0
       default_config :random_failure, false
 
-      # @see Base#create
+      # (see Base#create)
       def create(state)
         state[:my_id] = "#{instance.name}-#{Time.now.to_i}"
         report(:create, state)
       end
 
-      # @see Base#converge
+      # (see Base#converge)
       def converge(state)
         report(:converge, state)
       end
 
-      # @see Base#setup
+      # (see Base#setup)
       def setup(state)
         report(:setup, state)
       end
 
-      # @see Base#verify
+      # (see Base#verify)
       def verify(state)
         report(:verify, state)
       end
 
-      # @see Base#destroy
+      # (see Base#destroy)
       def destroy(state)
         report(:destroy, state)
         state.delete(:my_id)

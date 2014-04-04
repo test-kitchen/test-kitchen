@@ -35,6 +35,7 @@ module Kitchen
         raise ClientError, "#{self.class}#create must be implemented"
       end
 
+      # (see Base#converge)
       def converge(state)
         provisioner = instance.provisioner
         provisioner.create_sandbox
@@ -51,12 +52,14 @@ module Kitchen
         provisioner && provisioner.cleanup_sandbox
       end
 
+      # (see Base#setup)
       def setup(state)
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(busser_setup_cmd, conn)
         end
       end
 
+      # (see Base#verify)
       def verify(state)
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(busser_sync_cmd, conn)
@@ -68,6 +71,7 @@ module Kitchen
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
+      # (see Base#login_command)
       def login_command(state)
         SSH.new(*build_ssh_args(state)).login_command
       end
