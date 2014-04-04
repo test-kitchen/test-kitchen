@@ -33,6 +33,10 @@ module Kitchen
       include Configurable
       include Logging
 
+      # Creates a new Driver object using the provided configuration data
+      # which will be merged with any default configuration.
+      #
+      # @param config [Hash] provided driver configuration
       def initialize(config = {})
         init_config(config)
       end
@@ -118,8 +122,10 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
+        action_methods = [:create, :converge, :setup, :verify, :destroy]
+
         Array(methods).each do |meth|
-          if !ACTION_METHODS.include?(meth)
+          if !action_methods.include?(meth)
             raise ClientError, "##{meth} is not a valid no_parallel_for method"
           end
         end
@@ -130,20 +136,38 @@ module Kitchen
 
       protected
 
-      ACTION_METHODS = [:create, :converge, :setup, :verify, :destroy].freeze
-
+      # Returns a suitable logger to use for output.
+      #
+      # @return [Kitchen::Logger] a logger
       def logger
         instance ? instance.logger : Kitchen.logger
       end
 
+      # Intercepts any bare #puts calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
       def puts(msg)
         info(msg)
       end
 
+      # Intercepts any bare #print calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
       def print(msg)
         info(msg)
       end
 
+      # Delegates to Kitchen::ShellOut.run_command, overriding some default
+      # options:
+      #
+      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
+      #   Driver object
+      # * `:log_subject` defaults to a String representation of the Driver's
+      #   class name
+      #
+      # @see ShellOut#run_command
       def run_command(cmd, options = {})
         base_options = {
           :use_sudo => config[:use_sudo],
@@ -152,22 +176,33 @@ module Kitchen
         super(cmd, base_options)
       end
 
+      # Delegates to `busser.setup_cmd`.
+      #
+      # @deprecated Use {#busser.setup_cmd} instead
       def busser_setup_cmd
         busser.setup_cmd
       end
 
+      # Delegates to `busser.sync_cmd`.
+      #
+      # @deprecated Use {#busser.sync_cmd} instead
       def busser_sync_cmd
         busser.sync_cmd
       end
 
+      # Delegates to `busser.run_cmd`.
+      #
+      # @deprecated Use {#busser.run_cmd} instead
       def busser_run_cmd
         busser.run_cmd
       end
 
+      # Returns the Busser object associated with the driver.
+      #
+      # @return [Busser] a busser
       def busser
         instance.busser
       end
-
     end
   end
 end
