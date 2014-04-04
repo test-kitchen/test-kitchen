@@ -125,18 +125,6 @@ describe Kitchen::Driver::Base do
     driver.send(:busser).must_equal busser
   end
 
-  it "#busser_setup_cmd calls busser.setup_cmd" do
-    driver.send(:busser_setup_cmd).must_equal "setup"
-  end
-
-  it "#busser_sync_cmd calls busser.sync_cmd" do
-    driver.send(:busser_sync_cmd).must_equal "sync"
-  end
-
-  it "#busser_run_cmd calls busser.run_cmd" do
-    driver.send(:busser_run_cmd).must_equal "run"
-  end
-
   describe ".no_parallel_for" do
 
     it "registers no serial actions when none are declared" do

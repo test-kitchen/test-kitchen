@@ -176,27 +176,6 @@ module Kitchen
         super(cmd, base_options)
       end
 
-      # Delegates to `busser.setup_cmd`.
-      #
-      # @deprecated Use {#busser.setup_cmd} instead
-      def busser_setup_cmd
-        busser.setup_cmd
-      end
-
-      # Delegates to `busser.sync_cmd`.
-      #
-      # @deprecated Use {#busser.sync_cmd} instead
-      def busser_sync_cmd
-        busser.sync_cmd
-      end
-
-      # Delegates to `busser.run_cmd`.
-      #
-      # @deprecated Use {#busser.run_cmd} instead
-      def busser_run_cmd
-        busser.run_cmd
-      end
-
       # Returns the Busser object associated with the driver.
       #
       # @return [Busser] a busser
