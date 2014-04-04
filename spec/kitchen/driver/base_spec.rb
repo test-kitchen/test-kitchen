@@ -22,41 +22,6 @@ require 'stringio'
 
 require 'kitchen'
 
-module Kitchen
-
-  module Driver
-
-    class Tiny < Base
-
-      default_config :cheese, "cheddar"
-    end
-
-    class StaticDefaults < Base
-
-      default_config :beans, "kidney"
-      default_config :tunables, 'flimflam' => 'positate'
-      default_config :edible, true
-      default_config :fetch_command, "curl"
-      default_config :beans_url do |driver|
-        "http://gim.me/#{driver[:beans]}"
-      end
-      default_config :command do |driver|
-        "#{driver[:fetch_command]} #{driver[:beans_url]}"
-      end
-      default_config :fetch_url do |driver|
-        "http://gim.me/beans-for/#{driver.instance.name}"
-      end
-    end
-
-    class SubclassDefaults < StaticDefaults
-
-      default_config :yea, "ya"
-      default_config :fetch_command, "wget"
-      default_config :fetch_url, "http://no.beans"
-    end
-  end
-end
-
 describe Kitchen::Driver::Base do
 
   let(:logged_output) { StringIO.new }
@@ -78,9 +43,7 @@ describe Kitchen::Driver::Base do
   end
 
   let(:driver) do
-    d = Kitchen::Driver::Base.new(config)
-    d.instance = instance
-    d
+    Kitchen::Driver::Base.new(config).finalize_config!(instance)
   end
 
   it "#instance returns its instance" do
@@ -89,116 +52,6 @@ describe Kitchen::Driver::Base do
 
   it "#name returns the name of the driver" do
     driver.name.must_equal "Base"
-  end
-
-  describe "configuration" do
-
-    describe "provided from the outside" do
-
-      it "returns provided config" do
-        config[:fruit] = %w{apples oranges}
-        config[:cool_enough] = true
-
-        driver[:fruit].must_equal %w{apples oranges}
-        driver[:cool_enough].must_equal true
-      end
-    end
-
-    describe "using static default_config statements" do
-
-      let(:driver) do
-        d = Kitchen::Driver::StaticDefaults.new(config)
-        d.instance = instance
-        d
-      end
-
-      it "uses defaults" do
-        driver[:beans].must_equal "kidney"
-        driver[:tunables]['flimflam'].must_equal 'positate'
-        driver[:edible].must_equal true
-      end
-
-      it "uses provided config over default_config" do
-        config[:beans] = "pinto"
-        config[:edible] = false
-
-        driver[:beans].must_equal "pinto"
-        driver[:edible].must_equal false
-      end
-
-      it "uses other config values to compute values" do
-        driver[:beans_url].must_equal "http://gim.me/kidney"
-        driver[:command].must_equal "curl http://gim.me/kidney"
-      end
-
-      it "computed value blocks have access to instance object" do
-        driver[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
-      end
-
-      it "uses provided config over default_config for computed values" do
-        config[:command] = "echo listentome"
-        config[:beans] = "pinto"
-
-        driver[:command].must_equal "echo listentome"
-        driver[:beans_url].must_equal "http://gim.me/pinto"
-      end
-    end
-
-    describe "using inherited static default_config statements" do
-
-      let(:driver) do
-        p = Kitchen::Driver::SubclassDefaults.new(config)
-        p.instance = instance
-        p
-      end
-
-      it "contains defaults from superclass" do
-        driver[:beans].must_equal "kidney"
-        driver[:tunables]['flimflam'].must_equal 'positate'
-        driver[:edible].must_equal true
-        driver[:yea].must_equal "ya"
-      end
-
-      it "uses provided config over default config" do
-        config[:beans] = "pinto"
-        config[:edible] = false
-
-        driver[:beans].must_equal "pinto"
-        driver[:edible].must_equal false
-        driver[:yea].must_equal "ya"
-        driver[:beans_url].must_equal "http://gim.me/pinto"
-      end
-
-      it "uses its own default_config over inherited default_config" do
-        driver[:fetch_url].must_equal "http://no.beans"
-        driver[:command].must_equal "wget http://gim.me/kidney"
-      end
-    end
-
-    it "#config_keys returns an array of config key names" do
-      driver = Kitchen::Driver::Tiny.new(:ice_cream => "dragon")
-
-      driver.config_keys.sort.must_equal [:cheese, :ice_cream]
-    end
-  end
-
-  describe "#diagnose" do
-
-    it "returns an empty hash for no config" do
-      driver.diagnose.must_equal Hash.new
-    end
-
-    it "returns a hash of config" do
-      config[:alpha] = "beta"
-      driver.diagnose.must_equal({ :alpha => "beta" })
-    end
-
-    it "returns a hash with sorted keys" do
-      config[:zebra] = true
-      config[:elephant] = true
-
-      driver.diagnose.keys.must_equal [:elephant, :zebra]
-    end
   end
 
   describe "#logger" do
@@ -211,7 +64,7 @@ describe Kitchen::Driver::Base do
     end
 
     it "returns the default logger if instance's logger is not set" do
-      driver.instance = nil
+      driver = Kitchen::Driver::Base.new(config)
       Kitchen.logger = "yep"
 
       driver.send(:logger).must_equal Kitchen.logger
@@ -246,12 +99,6 @@ describe Kitchen::Driver::Base do
 
   it "has a default verify dependencies method" do
     driver.verify_dependencies.must_be_nil
-  end
-
-  it "#busser raises an exception if instance is nil" do
-    driver.instance = nil
-
-    proc { driver.send(:busser) }.must_raise Kitchen::ClientError
   end
 
   it "#busser returns the instance's busser" do

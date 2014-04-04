@@ -222,8 +222,7 @@ module Kitchen
     end
 
     def setup_driver
-      @driver.instance = self
-      @driver.validate_config!
+      @driver.finalize_config!(self)
       setup_driver_mutex
     end
 
@@ -237,7 +236,7 @@ module Kitchen
     end
 
     def setup_provisioner
-      @provisioner.instance = self
+      @provisioner.finalize_config!(self)
     end
 
     def transition_to(desired)

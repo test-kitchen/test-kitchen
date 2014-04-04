@@ -34,9 +34,7 @@ describe Kitchen::Driver::Dummy do
   end
 
   let(:driver) do
-    d = Kitchen::Driver::Dummy.new(config)
-    d.instance = instance
-    d
+    Kitchen::Driver::Dummy.new(config).finalize_config!(instance)
   end
 
   describe "default_config" do

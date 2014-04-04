@@ -23,6 +23,7 @@ require 'kitchen/errors'
 require 'kitchen/logger'
 require 'kitchen/logging'
 require 'kitchen/shell_out'
+require 'kitchen/configurable'
 require 'kitchen/util'
 
 require 'kitchen/provisioner'

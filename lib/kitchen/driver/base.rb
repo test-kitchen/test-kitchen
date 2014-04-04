@@ -30,25 +30,15 @@ module Kitchen
     class Base
 
       include ShellOut
+      include Configurable
       include Logging
-
-      attr_accessor :instance
 
       class << self
         attr_reader :serial_actions
       end
 
       def initialize(config = {})
-        @config = LazyHash.new(config, self)
-        self.class.defaults.each do |attr, value|
-          @config[attr] = value unless @config.key?(attr)
-        end
-      end
-
-      def validate_config!
-        Array(self.class.validations).each do |tuple|
-          tuple.last.call(tuple.first, config[tuple.first], self)
-        end
+        init_config(config)
       end
 
       # Returns the name of this driver, suitable for display in a CLI.
@@ -56,21 +46,6 @@ module Kitchen
       # @return [String] name of this driver
       def name
         self.class.name.split('::').last
-      end
-
-      # Provides hash-like access to configuration keys.
-      #
-      # @param attr [Object] configuration key
-      # @return [Object] value at configuration key
-      def [](attr)
-        config[attr]
-      end
-
-      # Returns an array of configuration keys.
-      #
-      # @return [Array] array of configuration keys
-      def config_keys
-        config.keys
       end
 
       # Creates an instance.
@@ -122,18 +97,7 @@ module Kitchen
       #   documented dependency is missing from the system
       def verify_dependencies ; end
 
-      # Returns a Hash of configuration and other useful diagnostic information.
-      #
-      # @return [Hash] a diagnostic hash
-      def diagnose
-        result = Hash.new
-        config_keys.sort.each { |k| result[k] = config[k] }
-        result
-      end
-
       protected
-
-      attr_reader :config
 
       ACTION_METHODS = %w{create converge setup verify destroy}.
         map(&:to_sym).freeze
@@ -171,46 +135,7 @@ module Kitchen
       end
 
       def busser
-        @busser ||= begin
-          raise ClientError, "Instance must be set for Driver" if instance.nil?
-          instance.busser
-        end
-      end
-
-      def self.defaults
-        @defaults ||= Hash.new.merge(super_defaults)
-      end
-
-      def self.super_defaults
-        klass = self.superclass
-
-        if klass.respond_to?(:defaults)
-          klass.defaults
-        else
-          Hash.new
-        end
-      end
-
-      def self.default_config(attr, value = nil, &block)
-        defaults[attr] = block_given? ? block : value
-      end
-
-      def self.validations
-        @validations
-      end
-
-      def self.required_config(attr, &block)
-        @validations = [] if @validations.nil?
-        if !block_given?
-          klass = self
-          block = lambda do |attr, value, driver|
-            if value.nil? || value.to_s.empty?
-              attribute = "#{klass}#{driver.instance.to_str}#config[:#{attr}]"
-              raise UserError, "#{attribute} cannot be blank"
-            end
-          end
-        end
-        @validations << [attr, block]
+        instance.busser
       end
 
       def self.no_parallel_for(*methods)
