@@ -62,6 +62,17 @@ module Kitchen
       config[:suite_name]
     end
 
+    # Change a configure setting
+    #
+    # Currently used by metal to modify the test directory for individual nodes;
+    # will probably be removed when we have first-class node objects under suites
+    # in .kitchen.yaml
+    #
+    # @return [Object] new assigned value
+    def []=(attr, value)
+      config[attr] = value
+    end
+
     # Returns an array of configuration keys.
     #
     # @return [Array] array of configuration keys
