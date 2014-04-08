@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2012, 2013, 2014, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -97,6 +97,22 @@ module Kitchen
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
       "(%dm%.2fs)" % [minutes, seconds]
+    end
+
+    # Generates a command (or series of commands) wrapped so that it can be
+    # invoked on a remote instance or locally.
+    #
+    # This method uses the Bourne shell (/bin/sh) to maximize the chance of
+    # cross platform portability on Unixlike systems.
+    #
+    # @param [String] the command
+    # @return [String] a wrapped command string
+    def self.wrap_command(cmd)
+      cmd = "false" if cmd.nil?
+      cmd = "true" if cmd.to_s.empty?
+      cmd = cmd.sub(/\n\Z/, '') if cmd =~ /\n\Z/
+
+      "sh -c '\n#{cmd}\n'"
     end
 
     # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper

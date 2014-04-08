@@ -105,6 +105,24 @@ describe Kitchen::Util do
     end
   end
 
+  describe ".wrap_unix_command" do
+
+    it "returns the wrapped command" do
+    end
+
+    it "returns a false if command is nil" do
+      Kitchen::Util.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
+    end
+
+    it "returns a true if command string is empty" do
+      Kitchen::Util.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
+    end
+
+    it "handles a command string with a trailing newline" do
+      Kitchen::Util.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
+    end
+  end
+
   describe ".shell_helpers" do
 
     %w{

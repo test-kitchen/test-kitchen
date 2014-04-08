@@ -79,32 +79,8 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus]
 
-        url = config[:chef_omnibus_url]
-        flag = config[:require_chef_omnibus]
-        version = if flag.is_a?(String) && flag != "latest"
-          "-v #{flag.downcase}"
-        else
-          ""
-        end
-
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL.gsub(/^ {10}/, '')
-          sh -c '
-          #{Util.shell_helpers}
-
-          should_update_chef() {
-            case "#{flag}" in
-              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
-              latest|*) return 0 ;;
-            esac
-          }
-
-          if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo "-----> Installing Chef Omnibus (#{flag})"
-            do_download #{url} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{version}
-          fi'
-        INSTALL
+        lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
+        Util.wrap_command(lines.join("\n"))
       end
 
       def init_command
@@ -137,6 +113,32 @@ module Kitchen
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
         end
+      end
+
+      def chef_shell_helpers
+        IO.read(File.join(
+          File.dirname(__FILE__), %w{.. .. .. support chef_helpers.sh}
+        ))
+      end
+
+      def chef_install_function
+        version = config[:require_chef_omnibus].to_s.downcase
+        pretty_version = case version
+        when "true" then "install only if missing"
+        when "latest" then "always install latest version"
+        else version
+        end
+        install_flags = %w{latest true}.include?(version) ? "" : "-v #{version}"
+
+        <<-INSTALL.gsub(/^ {10}/, '')
+          if should_update_chef "/opt/chef" "#{version}" ; then
+            echo "-----> Installing Chef Omnibus (#{pretty_version})"
+            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
+            #{sudo('sh')} /tmp/install.sh #{install_flags}
+          else
+            echo "-----> Chef Omnibus installation detected (#{pretty_version})"
+          fi
+        INSTALL
       end
 
       def format_config_file(data)
