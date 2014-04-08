@@ -104,4 +104,23 @@ describe Kitchen::Util do
       Kitchen::Util.duration(48033).must_equal "(800m33.00s)"
     end
   end
+
+  describe ".shell_helpers" do
+
+    %w{
+      exists do_wget do_curl do_fetch do_perl do_python do_download
+    }.each do |func|
+      it "contains a #{func} shell function" do
+        Kitchen::Util.shell_helpers.must_match "#{func}() {"
+      end
+    end
+
+    it "does not contain bare single quotes" do
+      Kitchen::Util.shell_helpers.wont_match "'"
+    end
+
+    def regexify(str)
+      Regexp.new("^\s+" + Regexp.escape(str) + "$")
+    end
+  end
 end
