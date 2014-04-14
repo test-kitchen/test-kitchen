@@ -86,7 +86,9 @@ module Kitchen
       def init_command
         dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
+        lines = ["#{sudo('rm')} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+
+        Util.wrap_command(lines.join("\n"))
       end
 
       def create_sandbox
