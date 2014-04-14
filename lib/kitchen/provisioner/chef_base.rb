@@ -174,6 +174,9 @@ module Kitchen
       def prepare_json
         dna = config[:attributes].merge(:run_list => config[:run_list])
 
+        info("Preparing dna.json")
+        debug("Creating dna.json from #{dna.inspect}")
+
         File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
           file.write(dna.to_json)
         end
@@ -193,8 +196,8 @@ module Kitchen
       def prepare_data_bags
         return unless data_bags
 
-        info("Preparing data bags")
-        debug("Using data bags from #{data_bags}")
+        info("Preparing data_bags")
+        debug("Using data_bags from #{data_bags}")
 
         tmpbags_dir = File.join(sandbox_path, "data_bags")
         FileUtils.mkdir_p(tmpbags_dir)
@@ -216,7 +219,7 @@ module Kitchen
         return unless clients
 
         info("Preparing clients")
-        debug("Using roles from #{clients}")
+        debug("Using clients from #{clients}")
 
         tmpclients_dir = File.join(sandbox_path, "clients")
         FileUtils.mkdir_p(tmpclients_dir)
@@ -248,10 +251,13 @@ module Kitchen
       def prepare_secret
         return unless secret
 
-        info("Preparing encrypted data bag secret")
+        info("Preparing secret")
         debug("Using secret from #{secret}")
 
-        FileUtils.cp_r(secret, File.join(sandbox_path, "encrypted_data_bag_secret"))
+        FileUtils.cp_r(
+          secret,
+          File.join(sandbox_path, "encrypted_data_bag_secret")
+        )
       end
 
       def prepare_cache
@@ -389,7 +395,7 @@ module Kitchen
         fake_cb = File.join(tmpbooks_dir, name)
         FileUtils.mkdir_p(fake_cb)
         File.open(File.join(fake_cb, "metadata.rb"), "wb") do |file|
-          file.write(%{name "#{name}\n"})
+          file.write(%{name "#{name}"\n})
         end
       end
 
