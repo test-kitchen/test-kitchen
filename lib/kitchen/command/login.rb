@@ -33,6 +33,10 @@ module Kitchen
           die "Argument `#{args.first}' returned multiple results:\n" +
             results.map { |i| "  * #{i.name}" }.join("\n")
         end
+        if results[0].last_action == nil
+          die "Virtual machine `#{args.first}' has not been created\n" +
+            results.map { |i| "  * #{i.name}" }.join("\n")
+        end
         instance = results.pop
 
         instance.login
