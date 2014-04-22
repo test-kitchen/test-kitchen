@@ -161,6 +161,7 @@ module Kitchen
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy
           opts[:https_proxy] = config[:https_proxy] if config.key? :https_proxy
+          opts[:no_proxy] = config[:no_proxy] if config.key? :no_proxy
         end
       end
 
@@ -176,6 +177,21 @@ module Kitchen
       # @api private
       def cheffile
         File.join(config[:kitchen_root], "Cheffile")
+      end
+
+      # Generates a Hash with inherited values from the kitchen.yml configuration.
+      # These are for system options such as proxies, SSL, etc.
+      #
+      # @return [Hash] a configuration hash
+      # @api private
+      def inherited_config_rb
+        Hash.new.tap do |h|
+          h[:http_proxy] = config[:http_proxy] if config[:http_proxy]
+          h[:https_proxy] = config[:https_proxy] if config[:https_proxy]
+          h[:no_proxy] = config[:no_proxy] if config[:no_proxy]
+          h[:ftp_proxy] = config[:ftp_proxy] if config[:ftp_proxy]
+          h[:ssl_verify_mode] = config[:ssl_verify_mode].to_sym if config[:ssl_verify_mode]
+        end
       end
 
       # Generates a Hash with default values for a solo.rb or client.rb Chef
@@ -207,7 +223,7 @@ module Kitchen
           :encrypted_data_bag_secret => remote_path_join(
             root, "encrypted_data_bag_secret"
           )
-        }
+        }.merge(inherited_config_rb)
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a

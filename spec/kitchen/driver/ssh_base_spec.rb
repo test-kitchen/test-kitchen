@@ -15,7 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 require_relative "../../spec_helper"
 
 require "kitchen"
@@ -736,7 +735,6 @@ describe Kitchen::Driver::SSHBase do
       connection = mock
       transport.expects(:connection).returns(connection)
       connection.expects(:wait_until_ready)
-
       cmd
     end
   end
@@ -1110,6 +1108,37 @@ describe Kitchen::Driver::SSHBase do
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
+    end
+  end
+
+  describe "when setting environment variable for proxies" do
+    let(:config) do
+      {
+        :http_proxy => "proxy.opscode.com:80",
+        :ftp_proxy => "proxy.opscode.com:81",
+        :https_proxy => "proxy.opscode.com:82",
+        :no_proxy => "localhost,127.0.0.1"
+      }
+    end
+
+    let(:driver) do
+      Kitchen::Driver::SSHBase.new(config).finalize_config!(instance)
+    end
+
+    it "driver[:http_proxy] is correct" do
+      driver[:http_proxy].must_equal "proxy.opscode.com:80"
+    end
+
+    it "driver[:ftp_proxy] is correct" do
+      driver[:ftp_proxy].must_equal "proxy.opscode.com:81"
+    end
+
+    it "driver[:https_proxy] is correct" do
+      driver[:https_proxy].must_equal "proxy.opscode.com:82"
+    end
+
+    it "driver[:http_proxy] is correct" do
+      driver[:no_proxy].must_equal "localhost,127.0.0.1"
     end
   end
 end
