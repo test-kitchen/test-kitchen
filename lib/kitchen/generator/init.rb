@@ -183,9 +183,14 @@ module Kitchen
       end
 
       def install_gem(driver_gem)
+        SafeYAML::OPTIONS[:default_mode] = :unsafe
         unbundlerize do
           Gem::GemRunner.new.run(["install", driver_gem])
         end
+      rescue Gem::SystemExitException => e
+        raise unless e.exit_code == 0
+      ensure
+        SafeYAML::OPTIONS[:default_mode] = :safe
       end
 
       def not_in_file?(filename, regexp)
