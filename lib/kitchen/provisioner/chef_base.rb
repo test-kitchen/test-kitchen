@@ -115,7 +115,7 @@ module Kitchen
       end
 
       def gem_source_command
-        unless config[:gem_source].nil? 
+        unless config[:gem_source].nil?
           sudo_gem = sudo('/opt/chef/embedded/bin/gem')
           "#{sudo_gem} sources --add #{config[:gem_source]}"
         end
