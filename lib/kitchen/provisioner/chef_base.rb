@@ -35,6 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
+      default_config :gem_source, nil
       default_config :run_list, []
       default_config :attributes, {}
       default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
@@ -111,6 +112,13 @@ module Kitchen
         dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
         "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
+      end
+
+      def gem_source_command
+        unless config[:gem_source].nil? 
+          sudo_gem = sudo('/opt/chef/embedded/bin/gem')
+          "#{sudo_gem} sources --add #{config[:gem_source]}"
+        end
       end
 
       def create_sandbox
