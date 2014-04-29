@@ -110,6 +110,18 @@ The AWS [session token][credentials_docs] to use.
 The default will be read from the `AWS_SESSION_TOKEN` environment variable if set,
 or `nil` otherwise.
 
+### <a name="config-ebs_volume_size"></a> ebs\_volume\_size
+
+**Required** Size of ebs volume in GB.
+
+### <a name="config-ebs_delete_on_termination"></a> ebs\_delete\_on\_termination
+
+**Required** `true` if you want ebs volumes to get deleted automatically after instance is terminated, `false` otherwise
+
+### <a name="config-ebs_device_name"></a> ebs\_device\_name
+
+**Required** name of your ebs device, for example: `/dev/sda`
+
 ### endpoint
 
 The API endpoint for executing EC2 commands.
@@ -232,6 +244,9 @@ driver:
   iam_profile_name: chef-client
   ssh_timeout: 10
   ssh_retries: 5
+  ebs_volume_size: 6,
+  ebs_delete_on_termination: 'true'
+  ebs_device_name: '/dev/sda'
 
 platforms:
   - name: ubuntu-12.04
