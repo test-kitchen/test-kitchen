@@ -67,6 +67,7 @@ module Kitchen
       required_config :image_id
 
       def create(state)
+        return if state[:server_id]
         server = create_server
         state[:server_id] = server.id
 
