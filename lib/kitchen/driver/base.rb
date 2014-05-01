@@ -103,6 +103,14 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) ; end
 
+      # Starts an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @raise [ActionFailed] if the action could not be completed
+      def start(state)
+        raise NotImplementedError
+      end
+
       # Returns the shell command that will log into an instance.
       #
       # @param state [Hash] mutable instance and driver state

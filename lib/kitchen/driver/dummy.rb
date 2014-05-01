@@ -52,6 +52,10 @@ module Kitchen
         state.delete(:my_id)
       end
 
+      def start(state)
+        report(:start, state)
+      end
+
       private
 
       def report(action, state)
