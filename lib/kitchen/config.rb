@@ -66,6 +66,13 @@ module Kitchen
         data.suite_data.map { |sdata| Suite.new(sdata) })
     end
 
+    # @return [Array<Node>] all defined nodes which will be used for multihost
+    # testing
+    def nodes
+      @nodes ||= Collection.new(
+        data.node_data.map { |ndata| Node.new(ndata) })
+    end
+
     private
 
     def build_instances
@@ -132,7 +139,8 @@ module Kitchen
         :suite        => suite,
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
-        :state_file   => new_state_file(suite, platform)
+        :state_file   => new_state_file(suite, platform),
+        :nodes        => nodes
       )
     end
 
