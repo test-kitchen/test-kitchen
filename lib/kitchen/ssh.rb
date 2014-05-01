@@ -124,6 +124,7 @@ module Kitchen
       rescue *rescue_exceptions => e
         if (retries -= 1) > 0
           logger.info("[SSH] connection failed, retrying (#{e.inspect})")
+          sleep 1
           retry
         else
           logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
