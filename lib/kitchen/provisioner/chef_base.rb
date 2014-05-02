@@ -76,6 +76,7 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
+      # (see Base#install_command)
       def install_command
         return unless config[:require_chef_omnibus]
 
@@ -83,6 +84,7 @@ module Kitchen
         Util.wrap_command(lines.join("\n"))
       end
 
+      # (see Base#init_command)
       def init_command
         dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
@@ -91,6 +93,7 @@ module Kitchen
         Util.wrap_command(lines.join("\n"))
       end
 
+      # (see Base#create_sandbox)
       def create_sandbox
         super
         prepare_json
