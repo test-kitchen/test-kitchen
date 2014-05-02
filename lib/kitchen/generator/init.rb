@@ -72,12 +72,12 @@ module Kitchen
 
       private
       def find_existing_template_dir
-	config_dir = nil
+        config_dir = nil
         Pathname.new(Dir.pwd).ascend do |path|
-	  if File.exists?(File.expand_path('kitchen.yml.erb', path))
-	    config_dir = path
-	  end
-	end
+          if File.exists?(File.expand_path('kitchen.yml.erb', path))
+            config_dir = path
+          end
+        end
         config_dir
       end
 
