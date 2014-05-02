@@ -526,6 +526,13 @@ describe Kitchen::Provisioner::ChefBase do
 
           provisioner.create_sandbox
         end
+
+        it "uses Kitchen.mutex for resolving" do
+          Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+          Kitchen.mutex.expects(:synchronize)
+
+          provisioner.create_sandbox
+        end
       end
 
       describe "with a Cheffile under kitchen_root" do
