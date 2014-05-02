@@ -211,3 +211,64 @@ Feature: Add Test Kitchen support to an existing project
         attributes:
 
     """
+
+  Scenario: Running init when a template exists in a parent directory
+    Given a file named "kitchen.yml.erb" with:
+    """
+    ---
+    driver:
+      name: <%= config[:driver_plugin] %>
+
+    provisioner:
+      name: <%= config[:provisioner] %>
+      require_chef_omnibus: test
+
+    platforms:
+      - name: ubuntu-12.04
+        driver_config:
+          box: test
+          url: test
+
+    suites:
+      - name: default
+        run_list:
+    <% config[:run_list].each do |recipe| -%>
+          - <%= recipe %>
+    <% end -%>
+        attributes:
+    """
+    Given a directory named "cookbooks/ntp"
+    Given a file named "cookbooks/ntp/metadata.rb" with:
+    """
+    name              "ntp"
+    license           "Apache 2.0"
+    description       "Installs and configures ntp as a client or server"
+    version           "0.1.0"
+
+    support "ubuntu"
+    support "centos"
+    """
+    When I cd to "cookbooks/ntp"
+    When I successfully run `kitchen init`
+    Then the file ".kitchen.yml" should contain exactly:
+    """
+    ---
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
+      require_chef_omnibus: test
+
+    platforms:
+      - name: ubuntu-12.04
+        driver_config:
+          box: test
+          url: test
+
+    suites:
+      - name: default
+        run_list:
+          - recipe[ntp::default]
+        attributes:
+    """
