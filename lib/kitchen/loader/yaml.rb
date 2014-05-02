@@ -46,7 +46,7 @@ module Kitchen
       #   config YAML file (default: `./.kitchen.yml`)
       # @option options [String] :local_config path to the Kitchen local
       #   config YAML file (default: `./.kitchen.local.yml`)
-      # @option options [String] :local_config path to the Kitchen global
+      # @option options [String] :global_config path to the Kitchen global
       #   config YAML file (default: `$HOME/.kitchen/config.yml`)
       # @option options [String] :process_erb whether or not to process YAML
       #   through an ERB processor (default: `true`)
