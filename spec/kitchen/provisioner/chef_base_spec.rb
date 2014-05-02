@@ -234,7 +234,18 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     let(:provisioner) do
-      Kitchen::Provisioner::ChefBase.new(config).finalize_config!(instance)
+      Class.new(Kitchen::Provisioner::ChefBase) {
+        default_config :generic_rb, {}
+
+        def create_sandbox
+          super
+
+          data = default_config_rb.merge(config[:generic_rb])
+          File.open(File.join(sandbox_path, "generic.rb"), "wb") do |file|
+            file.write(format_config_file(data))
+          end
+        end
+      }.new(config).finalize_config!(instance)
     end
 
     describe "json file" do
@@ -606,6 +617,104 @@ describe Kitchen::Provisioner::ChefBase do
 
           logged_output.string.must_match info_line(
             "Removing non-cookbook files before transfer")
+        end
+      end
+
+      describe "Chef config files" do
+
+        let(:file) do
+          IO.read(sandbox_path("generic.rb")).lines.map { |l| l.chomp }
+        end
+
+        it "#create_sanbox creates a generic.rb" do
+          provisioner.create_sandbox
+
+          sandbox_path("generic.rb").file?.must_equal true
+        end
+
+        describe "defaults" do
+
+          before { provisioner.create_sandbox }
+
+          it "sets node_name to the instance name" do
+            file.must_include %{node_name "#{instance.name}"}
+          end
+
+          it "sets checksum_path" do
+            file.must_include %{checksum_path "/tmp/kitchen/checksums"}
+          end
+
+          it "sets file_backup_path" do
+            file.must_include %{file_backup_path "/tmp/kitchen/backup"}
+          end
+
+          it "sets cookbook_path" do
+            file.must_include %{cookbook_path } +
+              %{["/tmp/kitchen/cookbooks", "/tmp/kitchen/site-cookbooks"]}
+          end
+
+          it "sets data_bag_path" do
+            file.must_include %{data_bag_path "/tmp/kitchen/data_bags"}
+          end
+
+          it "sets environment_path" do
+            file.must_include %{environment_path "/tmp/kitchen/environments"}
+          end
+
+          it "sets node_path" do
+            file.must_include %{node_path "/tmp/kitchen/nodes"}
+          end
+
+          it "sets role_path" do
+            file.must_include %{role_path "/tmp/kitchen/roles"}
+          end
+
+          it "sets client_path" do
+            file.must_include %{client_path "/tmp/kitchen/clients"}
+          end
+
+          it "sets user_path" do
+            file.must_include %{user_path "/tmp/kitchen/users"}
+          end
+
+          it "sets validation_key" do
+            file.must_include %{validation_key "/tmp/kitchen/validation.pem"}
+          end
+
+          it "sets client_key" do
+            file.must_include %{client_key "/tmp/kitchen/client.pem"}
+          end
+
+          it "sets chef_server_url" do
+            file.must_include %{chef_server_url "http://127.0.0.1:8889"}
+          end
+
+          it "sets encrypted_data_bag_secret" do
+            file.must_include %{encrypted_data_bag_secret } +
+              %{"/tmp/kitchen/encrypted_data_bag_secret"}
+          end
+        end
+
+        it "supports overwriting defaults" do
+          config[:generic_rb] = {
+            :node_name => "eagles",
+            :user_path => "/a/b/c/u",
+            :chef_server_url => "https://whereever.io"
+          }
+          provisioner.create_sandbox
+
+          file.must_include %{node_name "eagles"}
+          file.must_include %{user_path "/a/b/c/u"}
+          file.must_include %{chef_server_url "https://whereever.io"}
+        end
+
+        it " supports adding new configuration" do
+          config[:generic_rb] = {
+            :dark_secret => "golang"
+          }
+          provisioner.create_sandbox
+
+          file.must_include %{dark_secret "golang"}
         end
       end
 
