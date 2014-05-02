@@ -99,13 +99,18 @@ module Kitchen
         prepare_json
         prepare_cache
         prepare_cookbooks
-        prepare_data
-        prepare_data_bags
-        prepare_environments
-        prepare_nodes
-        prepare_roles
-        prepare_clients
-        prepare_secret
+        prepare(:data)
+        prepare(:data_bags)
+        prepare(:environments)
+        prepare(:nodes)
+        prepare(:roles)
+        prepare(:clients)
+        prepare(
+          :secret,
+          :type => :file,
+          :dest_name => "encrypted_data_bag_secret",
+          :key_name => :encrypted_data_bag_secret_key_path
+        )
       end
 
       protected
@@ -174,6 +179,40 @@ module Kitchen
         }
       end
 
+      # Prepares a generic Chef component source directory or file for
+      # inclusion in the sandbox path. These components might includes nodes,
+      # roles, etc.
+      #
+      # @param component [Symbol,String] a component name such as `:node`
+      # @param opts [Hash] optional configuration
+      # @option opts [Symbol] :type whether the component is a directory or
+      #   file (default: `:directory`)
+      # @option opts [Symbol] :key_name the key name in the config hash from
+      #   which to pull the source path (default: `"#{component}_path"`)
+      # @option opts [String] :dest_name the destination file or directory
+      #   basename in the sandbox path (default: `component.to_s`)
+      # @api private
+      def prepare(component, opts = {})
+        opts = { :type => :directory }.merge(opts)
+        key_name = opts.fetch(:key_name, "#{component.to_s}_path")
+        src = config[key_name.to_sym]
+        return if src.nil?
+
+        info("Preparing #{component}")
+        debug("Using #{component} from #{src}")
+
+        dest = File.join(sandbox_path, opts.fetch(:dest_name, component.to_s))
+
+        case opts[:type]
+        when :directory
+          FileUtils.mkdir_p(dest)
+          FileUtils.cp_r(Dir.glob("#{src}/*"), dest)
+        when :file
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp_r(src, dest)
+        end
+      end
+
       def prepare_json
         dna = config[:attributes].merge(:run_list => config[:run_list])
 
@@ -183,84 +222,6 @@ module Kitchen
         File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
           file.write(dna.to_json)
         end
-      end
-
-      def prepare_data
-        return unless data
-
-        info("Preparing data")
-        debug("Using data from #{data}")
-
-        tmpdata_dir = File.join(sandbox_path, "data")
-        FileUtils.mkdir_p(tmpdata_dir)
-        FileUtils.cp_r(Dir.glob("#{data}/*"), tmpdata_dir)
-      end
-
-      def prepare_data_bags
-        return unless data_bags
-
-        info("Preparing data_bags")
-        debug("Using data_bags from #{data_bags}")
-
-        tmpbags_dir = File.join(sandbox_path, "data_bags")
-        FileUtils.mkdir_p(tmpbags_dir)
-        FileUtils.cp_r(Dir.glob("#{data_bags}/*"), tmpbags_dir)
-      end
-
-      def prepare_roles
-        return unless roles
-
-        info("Preparing roles")
-        debug("Using roles from #{roles}")
-
-        tmproles_dir = File.join(sandbox_path, "roles")
-        FileUtils.mkdir_p(tmproles_dir)
-        FileUtils.cp_r(Dir.glob("#{roles}/*"), tmproles_dir)
-      end
-
-      def prepare_clients
-        return unless clients
-
-        info("Preparing clients")
-        debug("Using clients from #{clients}")
-
-        tmpclients_dir = File.join(sandbox_path, "clients")
-        FileUtils.mkdir_p(tmpclients_dir)
-        FileUtils.cp_r(Dir.glob("#{clients}/*"), tmpclients_dir)
-      end
-
-      def prepare_nodes
-        return unless nodes
-
-        info("Preparing nodes")
-        debug("Using nodes from #{nodes}")
-
-        tmpnodes_dir = File.join(sandbox_path, "nodes")
-        FileUtils.mkdir_p(tmpnodes_dir)
-        FileUtils.cp_r(Dir.glob("#{nodes}/*"), tmpnodes_dir)
-      end
-
-      def prepare_environments
-        return unless environments
-
-        info("Preparing environments")
-        debug("Using environments from #{environments}")
-
-        tmpenvs_dir = File.join(sandbox_path, "environments")
-        FileUtils.mkdir_p(tmpenvs_dir)
-        FileUtils.cp_r(Dir.glob("#{environments}/*"), tmpenvs_dir)
-      end
-
-      def prepare_secret
-        return unless secret
-
-        info("Preparing secret")
-        debug("Using secret from #{secret}")
-
-        FileUtils.cp_r(
-          secret,
-          File.join(sandbox_path, "encrypted_data_bag_secret")
-        )
       end
 
       def prepare_cache
@@ -318,34 +279,6 @@ module Kitchen
 
       def site_cookbooks_dir
         File.join(config[:kitchen_root], "site-cookbooks")
-      end
-
-      def data_bags
-        config[:data_bags_path]
-      end
-
-      def roles
-        config[:roles_path]
-      end
-
-      def clients
-        config[:clients_path]
-      end
-
-      def nodes
-        config[:nodes_path]
-      end
-
-      def data
-        config[:data_path]
-      end
-
-      def environments
-        config[:environments_path]
-      end
-
-      def secret
-        config[:encrypted_data_bag_secret_key_path]
       end
 
       def tmpbooks_dir

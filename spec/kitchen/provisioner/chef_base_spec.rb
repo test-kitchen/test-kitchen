@@ -287,8 +287,8 @@ describe Kitchen::Provisioner::ChefBase do
       describe "#{thing} files" do
 
         before do
-          create_files_under("#{config[:kitchen_root]}/#{thing}")
-          config[:"#{thing}_path"] = "#{config[:kitchen_root]}/#{thing}"
+          create_files_under("#{config[:kitchen_root]}/my_#{thing}")
+          config[:"#{thing}_path"] = "#{config[:kitchen_root]}/my_#{thing}"
         end
 
         it "skips directory creation if :#{thing}_path is not set" do
@@ -300,13 +300,12 @@ describe Kitchen::Provisioner::ChefBase do
 
         it "copies tree from :#{thing}_path into sandbox" do
           provisioner.create_sandbox
-          root = "#{config[:kitchen_root]}/#{thing}"
 
-          sandbox_path("#{root}/alpha.txt").file?.must_equal true
-          IO.read(sandbox_path("#{root}/alpha.txt")).must_equal "stuff"
-          sandbox_path("#{root}/sub").directory?.must_equal true
-          sandbox_path("#{root}/sub/bravo.txt").file?.must_equal true
-          IO.read(sandbox_path("#{root}/sub/bravo.txt")).must_equal "junk"
+          sandbox_path("#{thing}/alpha.txt").file?.must_equal true
+          IO.read(sandbox_path("#{thing}/alpha.txt")).must_equal "stuff"
+          sandbox_path("#{thing}/sub").directory?.must_equal true
+          sandbox_path("#{thing}/sub/bravo.txt").file?.must_equal true
+          IO.read(sandbox_path("#{thing}/sub/bravo.txt")).must_equal "junk"
         end
 
         it "logs a message on info" do
@@ -319,7 +318,7 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using #{thing} from #{config[:kitchen_root]}/#{thing}")
+            "Using #{thing} from #{config[:kitchen_root]}/my_#{thing}")
         end
       end
     end
@@ -327,15 +326,15 @@ describe Kitchen::Provisioner::ChefBase do
     describe "secret files" do
 
       before do
-        config[:"encrypted_data_bag_secret_key_path"] =
-          "#{config[:kitchen_root]}/secret"
-        File.open("#{config[:kitchen_root]}/secret", "wb") do |file|
+        config[:encrypted_data_bag_secret_key_path] =
+          "#{config[:kitchen_root]}/my_secret"
+        File.open("#{config[:kitchen_root]}/my_secret", "wb") do |file|
           file.write("p@ss")
         end
       end
 
       it "skips file if :encrypted_data_bag_secret_key_path is not set" do
-        config[:"encrypted_data_bag_secret_key_path"] = nil
+        config[:encrypted_data_bag_secret_key_path] = nil
         provisioner.create_sandbox
 
         sandbox_path("encrypted_data_bag_secret").file?.must_equal false
@@ -358,7 +357,7 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         logged_output.string.must_match debug_line(
-          "Using secret from #{config[:kitchen_root]}/secret")
+          "Using secret from #{config[:kitchen_root]}/my_secret")
       end
     end
 
