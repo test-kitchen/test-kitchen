@@ -49,7 +49,6 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     it "sets :log_file to nil" do
-
       provisioner[:log_file].must_equal nil
     end
   end

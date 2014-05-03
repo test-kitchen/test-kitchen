@@ -30,6 +30,7 @@ module Kitchen
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
+      default_config :log_file, nil
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -68,6 +69,9 @@ module Kitchen
         ]
         if config[:json_attributes]
           args << "--json-attributes #{config[:root_path]}/dna.json"
+        end
+        if config[:log_file]
+          args << "--logfile #{config[:log_file]}"
         end
 
         Util.wrap_command([cmd, *args].join(" "))

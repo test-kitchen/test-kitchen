@@ -55,6 +55,10 @@ describe Kitchen::Provisioner::ChefZero do
     it "sets :json_attributes to true" do
       provisioner[:json_attributes].must_equal true
     end
+
+    it "sets :log_file to nil" do
+      provisioner[:log_file].must_equal nil
+    end
   end
 
   describe "#create_sandbox" do
@@ -386,6 +390,16 @@ describe Kitchen::Provisioner::ChefZero do
 
         cmd.wont_match regexify(" --json-attributes ", :partial_line)
       end
+
+      it "does not set logfile flag by default" do
+        cmd.wont_match regexify(" --logfile ", :partial_line)
+      end
+
+      it "sets logfile flag for custom value" do
+        config[:log_file] = "/a/out.log"
+
+        cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
+      end
     end
 
     describe "for old Chef versions" do
@@ -459,6 +473,16 @@ describe Kitchen::Provisioner::ChefZero do
         config[:json_attributes] = false
 
         cmd.wont_match regexify(" --json-attributes ", :partial_line)
+      end
+
+      it "does not set logfile flag by default" do
+        cmd.wont_match regexify(" --logfile ", :partial_line)
+      end
+
+      it "sets logfile flag for custom value" do
+        config[:log_file] = "/a/out.log"
+
+        cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
       end
 
       it "sets the CHEF_REPO_PATH environment variable" do
