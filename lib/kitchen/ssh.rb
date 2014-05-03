@@ -16,10 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "logger"
-require "net/ssh"
-require "net/scp"
-require "socket"
+require 'logger'
+require 'net/ssh'
+require 'net/scp'
+require 'net/ssh/proxy/command'
+require 'socket'
 
 require "kitchen/errors"
 require "kitchen/login_command"
@@ -145,6 +146,9 @@ module Kitchen
       if options.key?(:forward_agent)
         args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
       end
+      if options.key?(:proxy_command)
+        args += %W[ -o ProxyCommand=#{options[:proxy_command]} ]
+      end
       Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
       args += %W[ -p #{port} ]
       args += %W[ #{username}@#{hostname} ]
@@ -198,7 +202,11 @@ module Kitchen
 
       begin
         logger.debug("[SSH] opening connection to #{self}")
-        Net::SSH.start(hostname, username, options)
+        connect_opts = options.dup
+        if connect_opts.delete(:proxy_command)
+          connect_opts[:proxy] = Net::SSH::Proxy::Command.new(options[:proxy_command])
+        end
+        Net::SSH.start(hostname, username, connect_opts)
       rescue *rescue_exceptions => e
         retries -= 1
         if retries > 0
