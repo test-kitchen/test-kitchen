@@ -30,7 +30,6 @@ module Kitchen
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
-      default_config :log_file, nil
 
       # (see Base#create_sandbox)
       def create_sandbox

@@ -28,7 +28,6 @@ module Kitchen
     class ChefSolo < ChefBase
 
       default_config :solo_rb, {}
-      default_config :log_file, nil
 
       # (see Base#create_sandbox)
       def create_sandbox

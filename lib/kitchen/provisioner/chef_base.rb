@@ -37,6 +37,7 @@ module Kitchen
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
       default_config :run_list, []
       default_config :attributes, {}
+      default_config :log_file, nil
       default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*].join(",")

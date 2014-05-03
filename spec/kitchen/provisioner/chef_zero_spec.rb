@@ -55,10 +55,6 @@ describe Kitchen::Provisioner::ChefZero do
     it "sets :json_attributes to true" do
       provisioner[:json_attributes].must_equal true
     end
-
-    it "sets :log_file to nil" do
-      provisioner[:log_file].must_equal nil
-    end
   end
 
   describe "#create_sandbox" do

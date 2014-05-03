@@ -47,10 +47,6 @@ describe Kitchen::Provisioner::ChefSolo do
     it "sets :solo_rb to an empty Hash" do
       provisioner[:solo_rb].must_equal Hash.new
     end
-
-    it "sets :log_file to nil" do
-      provisioner[:log_file].must_equal nil
-    end
   end
 
   describe "#create_sandbox" do

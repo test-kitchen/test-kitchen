@@ -65,6 +65,10 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:attributes].must_equal Hash.new
     end
 
+    it ":log_file defaults to nil" do
+      provisioner[:log_file].must_equal nil
+    end
+
     it ":cookbook_files_glob includes recipes" do
       provisioner[:cookbook_files_glob].must_match %r{,recipes/}
     end
