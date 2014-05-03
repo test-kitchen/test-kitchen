@@ -31,6 +31,7 @@ module Kitchen
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
 
+      # (see Base#create_sandbox)
       def create_sandbox
         super
         prepare_chef_client_zero_rb
@@ -38,28 +39,29 @@ module Kitchen
         prepare_client_rb
       end
 
+      # (see Base#prepare_command)
       def prepare_command
-        return if local_mode_supported?
+        return if modern?
 
         ruby_bin = config[:ruby_bindir]
-
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        #
-        # * we are installing latest chef in order to get chef-zero and
-        #   Chef::ChefFS only. The version of Chef that gets run will be
-        #   the installed omnibus package. Yep, this is funky :)
-        <<-PREPARE.gsub(/^ {10}/, '')
-          sh -c '
+        # we are installing latest chef in order to get chef-zero and
+        # Chef::ChefFS only. The version of Chef that gets run will be
+        # the installed omnibus package. Yep, this is funky :)
+        cmd = <<-PREPARE.gsub(/^ {10}/, '')
           #{chef_client_zero_env(:export)}
           if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
             #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
-          fi'
+          fi
         PREPARE
+
+        Util.wrap_command(cmd)
       end
 
+      # (see Base#run_command)
       def run_command
+        cmd = modern? ? "#{sudo("chef-client")} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{config[:log_level]}"
@@ -68,41 +70,72 @@ module Kitchen
           args << "--json-attributes #{config[:root_path]}/dna.json"
         end
 
-        if local_mode_supported?
-          ["#{sudo('chef-client')} -z"].concat(args).join(" ")
-        else
-          [
-            chef_client_zero_env,
-            sudo("#{config[:ruby_bindir]}/ruby"),
-            "#{config[:root_path]}/chef-client-zero.rb"
-          ].concat(args).join(" ")
-        end
+        Util.wrap_command([cmd, *args].join(" "))
       end
 
       private
 
+      # Returns the command that will run a backwards compatible shim script
+      # that approximates local mode in a modern chef-client run.
+      #
+      # @return [String] the command string
+      # @api private
+      def shim_command
+        [ chef_client_zero_env,
+          sudo("#{config[:ruby_bindir]}/ruby"),
+          "#{config[:root_path]}/chef-client-zero.rb"
+        ].join(" ")
+      end
+
+      # Writes a chef-client local-mode shim script to the sandbox directory
+      # only if the desired version of Chef is old enough. The version of Chef
+      # is determined using the `config[:require_chef_omnibus]` value.
+      #
+      # @api private
       def prepare_chef_client_zero_rb
-        return if local_mode_supported?
+        return if modern?
+
+        info("Preparing chef-client-zero.rb")
+        debug("Using a vendored chef-client-zero.rb")
 
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support chef-client-zero.rb})
         FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
+      # Writes a fake (but valid) validation.pem into the sandbox directory.
+      #
+      # @api private
       def prepare_validation_pem
+        info("Preparing validation.pem")
+        debug("Using a dummy validation.pem")
+
         source = File.join(File.dirname(__FILE__),
           %w{.. .. .. support dummy-validation.pem})
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
+      # Writes a client.rb configuration file to the sandbox directory.
+      #
+      # @api private
       def prepare_client_rb
         data = default_config_rb.merge(config[:client_rb])
+
+        info("Preparing client.rb")
+        debug("Creating client.rb from #{data.inspect}")
 
         File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
       end
 
+      # Generates a string of shell environment variables needed for the
+      # chef-client-zero.rb shim script to properly function.
+      #
+      # @param extra [Symbol] whether or not the environment variables need to
+      #   be exported, using the `:export` symbol (default: `nil`)
+      # @return [String] a shell script string
+      # @api private
       def chef_client_zero_env(extra = nil)
         args = [
           %{CHEF_REPO_PATH="#{config[:root_path]}"},
@@ -123,7 +156,11 @@ module Kitchen
       # The only way this method returns false is if require_chef_omnibus has
       # an explicit version set to less than 11.8.0, when chef zero mode was
       # introduced. Otherwise a modern Chef installation is assumed.
-      def local_mode_supported?
+      #
+      # @return [true,false] whether or not the desired version of Chef
+      #   supports local mode
+      # @api private
+      def modern?
         version = config[:require_chef_omnibus]
 
         case version
