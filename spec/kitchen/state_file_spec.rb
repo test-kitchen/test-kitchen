@@ -92,16 +92,16 @@ describe Kitchen::StateFile do
   describe "#destroy" do
 
     it "executes if no file exists" do
-      File.exists?(file_name).must_equal false
+      File.exist?(file_name).must_equal false
       state_file.destroy
-      File.exists?(file_name).must_equal false
+      File.exist?(file_name).must_equal false
     end
 
     it "deletes the state file" do
       stub_state_file!
       state_file.destroy
 
-      File.exists?(file_name).must_equal false
+      File.exist?(file_name).must_equal false
     end
   end
 

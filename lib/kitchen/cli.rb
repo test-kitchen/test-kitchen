@@ -292,7 +292,7 @@ module Kitchen
     def ensure_initialized
       yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
 
-      if options[:auto_init] && !File.exists?(yaml)
+      if options[:auto_init] && !File.exist?(yaml)
         banner "Invoking init as '#{yaml}' file is missing"
         invoke "init"
       end

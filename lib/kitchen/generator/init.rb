@@ -77,7 +77,7 @@ module Kitchen
       private
 
       def create_kitchen_yaml
-        cookbook_name = if File.exists?(File.expand_path('metadata.rb'))
+        cookbook_name = if File.exist?(File.expand_path('metadata.rb'))
           MetadataChopper.extract('metadata.rb').first
         else
           nil
@@ -93,17 +93,17 @@ module Kitchen
       end
 
       def init_gemfile?
-        File.exists?(File.join(destination_root, "Gemfile")) ||
+        File.exist?(File.join(destination_root, "Gemfile")) ||
           options[:create_gemfile]
       end
 
       def init_rakefile?
-        File.exists?(File.join(destination_root, "Rakefile")) &&
+        File.exist?(File.join(destination_root, "Rakefile")) &&
           not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
       end
 
       def init_thorfile?
-        File.exists?(File.join(destination_root, "Thorfile")) &&
+        File.exist?(File.join(destination_root, "Thorfile")) &&
           not_in_file?("Thorfile", %r{require 'kitchen/thor_tasks'})
       end
 
@@ -142,7 +142,7 @@ module Kitchen
       end
 
       def append_to_gitignore(line)
-        create_file(".gitignore") unless File.exists?(File.join(destination_root, ".gitignore"))
+        create_file(".gitignore") unless File.exist?(File.join(destination_root, ".gitignore"))
 
         if IO.readlines(File.join(destination_root, ".gitignore")).grep(%r{^#{line}}).empty?
           append_to_file(".gitignore", "#{line}\n")
@@ -155,7 +155,7 @@ module Kitchen
       end
 
       def create_gemfile_if_missing
-        unless File.exists?(File.join(destination_root, "Gemfile"))
+        unless File.exist?(File.join(destination_root, "Gemfile"))
           create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
         end
       end
@@ -171,7 +171,7 @@ module Kitchen
         return if options[:driver].nil? || options[:driver].empty?
 
         Array(options[:driver]).each do |driver_gem|
-          if File.exists?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
+          if File.exist?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
             add_driver_to_gemfile(driver_gem)
           else
             install_gem(driver_gem)

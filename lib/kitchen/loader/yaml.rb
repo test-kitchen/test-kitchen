@@ -70,7 +70,7 @@ module Kitchen
       #
       # @return [Hash] merged configuration data
       def read
-        if !File.exists?(config_file)
+        if !File.exist?(config_file)
           raise UserError, "Kitchen YAML file #{config_file} does not exist."
         end
 
@@ -137,7 +137,7 @@ module Kitchen
       end
 
       def read_file(file)
-        File.exists?(file.to_s) ? IO.read(file) : ""
+        File.exist?(file.to_s) ? IO.read(file) : ""
       end
 
       def default_local_config_file
@@ -149,7 +149,7 @@ module Kitchen
       end
 
       def diagnose_component(component, file = nil)
-        return if file && !File.exists?(file)
+        return if file && !File.exist?(file)
 
         hash = begin
           send(component)

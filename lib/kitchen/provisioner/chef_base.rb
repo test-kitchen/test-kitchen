@@ -117,10 +117,10 @@ module Kitchen
       protected
 
       def load_needed_dependencies!
-        if File.exists?(berksfile)
+        if File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger)
-        elsif File.exists?(cheffile)
+        elsif File.exist?(cheffile)
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
         end
@@ -230,13 +230,13 @@ module Kitchen
       end
 
       def prepare_cookbooks
-        if File.exists?(berksfile)
+        if File.exist?(berksfile)
           resolve_with_berkshelf
-        elsif File.exists?(cheffile)
+        elsif File.exist?(cheffile)
           resolve_with_librarian
         elsif File.directory?(cookbooks_dir)
           cp_cookbooks
-        elsif File.exists?(metadata_rb)
+        elsif File.exist?(metadata_rb)
           cp_this_cookbook
         else
           make_fake_cookbook
@@ -298,7 +298,7 @@ module Kitchen
         FileUtils.cp_r(File.join(cookbooks_dir, "."), tmpbooks_dir)
 
         cp_site_cookbooks if File.directory?(site_cookbooks_dir)
-        cp_this_cookbook if File.exists?(metadata_rb)
+        cp_this_cookbook if File.exist?(metadata_rb)
       end
 
       def cp_site_cookbooks
