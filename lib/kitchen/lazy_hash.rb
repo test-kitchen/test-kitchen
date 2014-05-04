@@ -31,7 +31,7 @@ module Kitchen
   #     :symbol => true,
   #     "string" => "stuff"
   #   }
-  #   context = "any object
+  #   context = "any object"
   #   lazy = Kitchen::Hash.new(data, context)
   #
   #   lazy[:symbol] # => true
@@ -42,14 +42,14 @@ module Kitchen
   #   data = {
   #     :lambda => ->(c) { c.length },
   #     :proc => Proc.new { |c| c.reverse },
-  #     :simple => "value
+  #     :simple => "value"
   #   }
-  #   context = "any object
+  #   context = "any object"
   #   lazy = Kitchen::Hash.new(data, context)
   #
   #   lazy[:lambda] # => 10
   #   lazy.fetch(:proc) # => "tcejbo yna"
-  #   lazy[:simple] # => "value
+  #   lazy[:simple] # => "value"
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class LazyHash < SimpleDelegator
