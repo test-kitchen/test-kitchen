@@ -55,15 +55,15 @@ module Kitchen
       # (see Base#setup)
       def setup(state)
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser_setup_cmd, conn)
+          run_remote(busser.setup_cmd, conn)
         end
       end
 
       # (see Base#verify)
       def verify(state)
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser_sync_cmd, conn)
-          run_remote(busser_run_cmd, conn)
+          run_remote(busser.sync_cmd, conn)
+          run_remote(busser.run_cmd, conn)
         end
       end
 
