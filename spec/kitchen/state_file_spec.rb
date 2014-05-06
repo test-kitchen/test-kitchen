@@ -47,6 +47,12 @@ describe Kitchen::StateFile do
       state_file.read.must_equal(Hash.new)
     end
 
+    it "returns and empty hash if the file is zero length" do
+      stub_state_file!("")
+
+      state_file.read.must_equal(Hash.new)
+    end
+
     it "returns a Hash with symbolized keys from the state file" do
       stub_state_file!
 
@@ -72,6 +78,7 @@ describe Kitchen::StateFile do
 
       proc { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
+
   end
 
   describe "#write" do
