@@ -128,7 +128,7 @@ The SSH port number to be used when communicating with the instance.
 
 The default is `22`.
 
-### < name="interface"></a> interface
+### <a name="interface"></a> interface
 
 The place from which to derive the hostname for communicating with the instance.  May be `dns`, `public` or `private`.  If this is unset, the driver will derive the hostname by failing back in the following order:
 
