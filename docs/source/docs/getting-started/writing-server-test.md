@@ -124,7 +124,7 @@ Chef Client failed. 0 resources updated
 >>>>>> ----------------------
 ~~~
 
-One quick check of `kitchen list` tells us that our instance was created by not successfully converged:
+One quick check of `kitchen list` tells us that our instance was created but not successfully converged:
 
 ~~~
 $ kitchen list server-ubuntu-1204
