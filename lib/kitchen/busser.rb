@@ -53,6 +53,7 @@ module Kitchen
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
       @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
+      @config[:gem_source] = opts.fetch(:gem_source, nil)
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -244,6 +245,7 @@ module Kitchen
       args = gem
       args += " --version #{version}" if version
       args += " --no-rdoc --no-ri"
+      args += " --source #{config[:gem_source]}" if config[:gem_source]
       args
     end
   end

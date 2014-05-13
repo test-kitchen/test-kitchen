@@ -1,3 +1,5 @@
+* Added gem_source busser processing that updates the gem source used to install busser.  Working with test-kitchen without internet access but with a gem mirror requires some way of specifying the gem source for the busser gem that is installed for verify.  Add "  gem_source: <gem server url>" under busser: in .kitchen.yml to set the gem mirror location.
+
 ## 1.2.1 / 2014-02-12
 
 ### Bug fixes
