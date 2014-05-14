@@ -95,7 +95,7 @@ module Kitchen
       perform("diagnose", "diagnose", args, :loader => @loader)
     end
 
-    [:create, :converge, :setup, :verify, :destroy].each do |action|
+    def self.define_action(action)
       desc(
         "#{action} [INSTANCE|REGEXP|all]",
         "#{action.capitalize} one or more instances"
@@ -113,13 +113,21 @@ module Kitchen
         DESC
       method_option :log_level, :aliases => "-l",
         :desc => "Set the log level (debug, info, warn, error, fatal)"
+    end
+
+    def self.define_standard_action(action)
+      define_action(action)
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
       end
     end
 
-    desc "test [INSTANCE|REGEXP|all]", "Test one or more instances"
+    [:create, :converge, :setup, :verify, :destroy].each do |action|
+      define_standard_action(action)
+    end
+
+    define_action(:test)
     long_desc <<-DESC
       Test one or more instances
 
@@ -130,19 +138,6 @@ module Kitchen
       * always: instances will always be destroyed afterwards.\n
       * never: instances will never be destroyed afterwards.
     DESC
-    method_option :concurrency, :aliases => "-c",
-      :type => :numeric, :lazy_default => MAX_CONCURRENCY,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
-        Run a test against all matching instances concurrently. Only N
-        instances will run at the same time if a number is given.
-      DESC
-    method_option :parallel, :aliases => "-p", :type => :boolean,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
-        [Future DEPRECATION, use --concurrency]
-        Run a test against all matching instances concurrently.
-      DESC
-    method_option :log_level, :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :destroy, :aliases => "-d", :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
     method_option :auto_init, :type => :boolean, :default => false,
