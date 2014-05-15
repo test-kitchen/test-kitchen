@@ -123,6 +123,27 @@ describe Kitchen::Util do
     end
   end
 
+  describe ".outdent!" do
+
+    it "modifies the argument string in place, destructively" do
+      string = "yep"
+
+      Kitchen::Util.outdent!(string).object_id.must_equal string.object_id
+    end
+
+    it "returns the same string if no leading whitespace exists" do
+      string = "one\ntwo\nthree"
+
+      Kitchen::Util.outdent!(string).must_equal "one\ntwo\nthree"
+    end
+
+    it "strips same amount of leading whitespace as found on first line" do
+      string = "  one\n    two\n      three\nfour"
+
+      Kitchen::Util.outdent!(string).must_equal "one\n  two\n    three\nfour"
+    end
+  end
+
   describe ".shell_helpers" do
 
     %w{

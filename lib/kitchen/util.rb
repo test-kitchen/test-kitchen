@@ -115,6 +115,24 @@ module Kitchen
       "sh -c '\n#{cmd}\n'"
     end
 
+    # Modifes the given string to strip leading whitespace on each line, the
+    # amount which is calculated by using the first line of text.
+    #
+    # @example
+    #
+    #   string = <<-STRING
+    #     a
+    #       b
+    #   c
+    #   STRING
+    #   Util.outdent!(string) # => "a\n  b\nc\n"
+    #
+    # @param string [String] the string that will be modified
+    # @return [String] the modified string
+    def self.outdent!(string)
+      string.gsub!(/^ {#{string.index(/[^ ]/)}}/, '')
+    end
+
     # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper
     # functions. This function is usually called inline in a string that
     # will be executed remotely on a test instance.
