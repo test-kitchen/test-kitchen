@@ -39,19 +39,11 @@ module Kitchen
     end
 
     def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
-        set_kitchen_config_at!(bdata, :kitchen_root)
-        set_kitchen_config_at!(bdata, :test_base_path)
-        set_kitchen_config_at!(bdata, :log_level)
-      end
+      merged_data_for(:busser, suite, platform, :version)
     end
 
     def driver_data_for(suite, platform)
-      merged_data_for(:driver, suite, platform).tap do |ddata|
-        set_kitchen_config_at!(ddata, :kitchen_root)
-        set_kitchen_config_at!(ddata, :test_base_path)
-        set_kitchen_config_at!(ddata, :log_level)
-      end
+      merged_data_for(:driver, suite, platform)
     end
 
     def platform_data
@@ -60,15 +52,16 @@ module Kitchen
 
     def provisioner_data_for(suite, platform)
       merged_data_for(:provisioner, suite, platform).tap do |pdata|
-        set_kitchen_config_at!(pdata, :kitchen_root)
-        set_kitchen_config_at!(pdata, :test_base_path)
-        set_kitchen_config_at!(pdata, :log_level)
         combine_arrays!(pdata, :run_list, :platform, :suite)
       end
     end
 
     def suite_data
       data.fetch(:suites, [])
+    end
+
+    def profiled_chef_config
+      @profiled_chef_config ||= Cheffish.profiled_config(Chef::Config)
     end
 
     private
@@ -139,12 +132,14 @@ module Kitchen
     end
 
     def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = normalized_default_data(key, default_key)
-      cdata = normalized_common_data(key, default_key)
-      pdata = normalized_platform_data(key, default_key, platform)
-      sdata = normalized_suite_data(key, default_key, suite)
-
-      ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
+      configs = []
+      configs << normalized_suite_data(key, default_key, suite) if suite
+      configs << normalized_platform_data(key, default_key, platform) if platform
+      configs << normalized_common_data(key, default_key)
+      configs << normalized_default_data(key, default_key)
+      configs << data.fetch(kitchen, Hash.new)
+      configs << profiled_chef_config
+      Cheffish::MergedConfig.new(*configs)
     end
 
     def move_chef_data_to_provisioner!
@@ -206,14 +201,6 @@ module Kitchen
       data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
         platform.fetch(:name, nil) == name
       end
-    end
-
-    def set_kitchen_config_at!(root, key)
-      kdata = data.fetch(:kitchen, Hash.new)
-
-      root.delete(key) if root.has_key?(key)
-      root[key] = kitchen_config.fetch(key) if kitchen_config.has_key?(key)
-      root[key] = kdata.fetch(key) if kdata.has_key?(key)
     end
 
     def suite_data_for(name)

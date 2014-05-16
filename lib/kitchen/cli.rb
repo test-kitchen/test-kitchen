@@ -21,6 +21,15 @@ require 'thor'
 require 'kitchen'
 require 'kitchen/generator/driver_create'
 require 'kitchen/generator/init'
+require 'kitchen/kitchen_action_handler'
+
+require 'chef_metal/add_prefix_action_handler'
+require 'chef/provider/machine'
+require 'chef/knife'
+require 'chef/config'
+require 'chef/config_fetcher'
+require 'chef/log'
+require 'chef/application'
 
 module Kitchen
 
@@ -123,7 +132,57 @@ module Kitchen
       end
     end
 
-    [:create, :converge, :setup, :verify, :destroy].each do |action|
+    define_action(:create)
+    def create(*args)
+      update_config!
+      with_ready_machines do |machine|
+        prefixed_handler = ChefMetal::AddPrefixActionHandler.new(action_handler, "[#{machine.name}] ")
+        machine.setup_convergence(prefixed_handler)
+      end
+    end
+
+    define_action(:converge)
+    def converge(*args)
+      update_config!
+      with_ready_machines do |machine|
+        prefixed_handler = ChefMetal::AddPrefixActionHandler.new(action_handler, "[#{machine.name}] ")
+        machine.setup_convergence(prefixed_handler)
+        machine.converge(prefixed_handler)
+      end
+    end
+
+    define_action(:destroy)
+    def destroy(*args)
+      update_config!
+      parallelizer.parallelize(@config.machine_specs_and_options_by_current_driver) do |driver, specs_and_options|
+        @config.driver.delete_machines(action_handler, specs_and_options, parallelizer)
+      end.to_a
+    end
+
+    no_commands do
+      def with_ready_machines(&block)
+        parallelizer.parallelize(@config.machine_specs_and_options_by_new_driver) do |driver, specs_and_options|
+          driver.allocate_machines(action_handler, @config.machine_specs_and_options, parallelizer)
+          driver.ready_machines(action_handler, @config.machine_specs_to_options, parallelizer, &block)
+        end.to_a
+      end
+
+      def action_handler
+        @action_handler ||= KitchenActionHandler.new
+      end
+
+      def parallelizer
+        @parallelizer ||= begin
+          threads = 0
+          if options[:parallel]
+            threads = (options[:concurrency] || MAX_CONCURRENCY) - 1
+          end
+          Chef::ChefFS::Parallelizer.new(threads)
+        end
+      end
+    end
+
+    [:setup, :verify].each do |action|
       define_standard_action(action)
     end
 
@@ -267,6 +326,29 @@ module Kitchen
         options.delete(:parallel)
         options.freeze
       end
+
+      Chef::Config.config_file = Chef::Knife.locate_config_file
+      config_fetcher = Chef::ConfigFetcher.new(Chef::Config.config_file, Chef::Config.config_file_jail)
+      if Chef::Config.config_file.nil?
+        Chef::Log.warn("No config file found or specified on command line, using command line options.")
+      elsif config_fetcher.config_missing?
+        Chef::Log.warn("*****************************************")
+        Chef::Log.warn("Did not find config file: #{Chef::Config.config_file}, using command line options.")
+        Chef::Log.warn("*****************************************")
+      else
+        config_content = config_fetcher.read_config
+        config_file_path = Chef::Config.config_file
+        begin
+          Chef::Config.from_string(config_content, config_file_path)
+        rescue Exception => error
+          Chef::Log.fatal("Configuration error #{error.class}: #{error.message}")
+          filtered_trace = error.backtrace.grep(/#{Regexp.escape(config_file_path)}/)
+          filtered_trace.each {|line| Chef::Log.fatal("  " + line )}
+          Chef::Application.fatal!("Aborting due to error in '#{config_file_path}'", 2)
+        end
+      end
+
+
     end
 
     def ensure_initialized
