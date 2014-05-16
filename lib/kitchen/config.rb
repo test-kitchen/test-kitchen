@@ -66,13 +66,6 @@ module Kitchen
         data.suite_data.map { |sdata| Suite.new(sdata) })
     end
 
-    # @return [Array<Node>] all defined nodes which will be used for multihost
-    # testing
-    def nodes
-      @nodes ||= Collection.new(
-        data.node_data.map { |ndata| Node.new(ndata) })
-    end
-
     private
 
     def build_instances
@@ -131,6 +124,17 @@ module Kitchen
       Driver.for_plugin(ddata[:name], ddata)
     end
 
+    def new_nodes(suite, platform)
+      zdata = data.node_data_for(suite.name, platform.name)
+      return Collection.new(
+        data.node_data.map { |ndata|
+          if (ndata[:test_base_path] != nil)
+            ndata[:configured_test_base_path] = true
+          end
+          Node.new(zdata.merge(ndata))
+        })
+    end
+
     def new_instance(suite, platform, index)
       Instance.new(
         :busser       => new_busser(suite, platform),
@@ -140,7 +144,7 @@ module Kitchen
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
         :state_file   => new_state_file(suite, platform),
-        :nodes        => nodes
+        :nodes        => new_nodes(suite, platform)
       )
     end
 

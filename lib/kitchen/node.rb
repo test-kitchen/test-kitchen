@@ -31,11 +31,31 @@ module Kitchen
     # Constructs a new platform.
     #
     # @param [Hash] options configuration for a new node
-    # @option options [String] :name logical name of this node
-    #   (**Required**)
+    # @option options [String] :name logical name of this node (**Required**)
+    # @option options [String] :test_base_path test base path (**Required**)
+    # @option options [String] :configured_test_base_path indicates if test path was
+    #   inherited or configured directly
     def initialize(options = {})
       @name = options.fetch(:name) do
         raise ClientError, "Node#new requires option :name"
+      end
+      @test_base_path = options.fetch(:test_base_path) do
+        raise ClientError, "Node#new requires option :test_base_path"
+      end
+      @configured_test_base_path = options.fetch(:configured_test_base_path) do
+        @configured_test_base_path = false
+      end
+    end
+
+    # Returns the test_base_path (i.e., the path to the tests) for this node
+    #
+    # If specifically configured for this node, send that, otherwise append the
+    # node name to the suite-wide test path
+    def test_base_path
+      if @configured_test_base_path
+        @test_base_path
+      else
+        "#{@test_base_path}/#{@name}"
       end
     end
   end

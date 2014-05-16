@@ -43,6 +43,7 @@ require 'kitchen/platform'
 require 'kitchen/state_file'
 require 'kitchen/ssh'
 require 'kitchen/suite'
+require 'kitchen/node'
 require 'kitchen/version'
 
 # Test Kitchen base module.
