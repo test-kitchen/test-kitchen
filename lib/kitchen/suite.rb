@@ -41,11 +41,12 @@ module Kitchen
     # @option options [String] :includes Array of names of only included
     #   platforms
     def initialize(options = {})
-      @name = options.fetch(:name) do
+      if !options[:name]
         raise ClientError, "Suite#new requires option :name"
       end
-      @excludes = options.fetch(:excludes, [])
-      @includes = options.fetch(:includes, [])
+      @name = options[:name]
+      @excludes = options[:excludes] || []
+      @includes = options[:includes] || []
     end
   end
 end

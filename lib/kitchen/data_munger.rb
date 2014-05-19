@@ -23,9 +23,6 @@ module Kitchen
   # Class to handle recursive merging of configuration between platforms,
   # suites, and common data.
   #
-  # This object will mutate the data Hash passed into its constructor and so
-  # should not be reused or shared across threads.
-  #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class DataMunger
 
@@ -39,42 +36,34 @@ module Kitchen
     end
 
     def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version)
+      data_for(suite, platform)[:busser]
     end
 
-    def driver_data_for(suite, platform)
-      merged_data_for(:driver, suite, platform)
+    def data_for(suite, platform)
+      suite_data = base_data[:suites].select { |s| s[:name] == suite.name }.first
+      platform_data = base_data[:platforms].select { |p| p[:name] == platform.name }.first
+      configs = normalized_configs(suite_data, platform_data) + base_data.configs
+      Cheffish::MergedConfig.new(*configs)
     end
 
     def platform_data
-      data.fetch(:platforms, [])
+      base_data[:platforms].map { |p| data_for_platform(p) }
     end
 
     def provisioner_data_for(suite, platform)
-      merged_data_for(:provisioner, suite, platform).tap do |pdata|
-        combine_arrays!(pdata, :run_list, :platform, :suite)
-      end
+      config = data_for(suite, platform)[:provisioner]
+      config = Cheffish::MergedConfig.new(config) if !config.respond_to?(:configs)
+      config.merge_arrays :run_list, :platform, :suite
+      config
     end
 
     def suite_data
-      data.fetch(:suites, [])
-    end
-
-    def profiled_chef_config
-      @profiled_chef_config ||= Cheffish.profiled_config(Chef::Config)
+      base_data[:suites].map { |s| data_for_suite(s) }
     end
 
     private
 
     attr_reader :data, :kitchen_config
-
-    def combine_arrays!(root, key, *namespaces)
-      if root.has_key?(key)
-        root[key] = namespaces.
-          map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
-          compact
-      end
-    end
 
     def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
@@ -131,17 +120,6 @@ module Kitchen
       end
     end
 
-    def merged_data_for(key, suite, platform, default_key = :name)
-      configs = []
-      configs << normalized_suite_data(key, default_key, suite) if suite
-      configs << normalized_platform_data(key, default_key, platform) if platform
-      configs << normalized_common_data(key, default_key)
-      configs << normalized_default_data(key, default_key)
-      configs << data.fetch(kitchen, Hash.new)
-      configs << profiled_chef_config
-      Cheffish::MergedConfig.new(*configs)
-    end
-
     def move_chef_data_to_provisioner!
       data.fetch(:suites, []).each do |suite|
         move_chef_data_to_provisioner_at!(suite, :attributes)
@@ -168,45 +146,54 @@ module Kitchen
       root[key] = { bucket => root.fetch(key) } if root.has_key?(key)
     end
 
-    def normalized_common_data(key, default_key)
-      cdata = data.fetch(key, Hash.new)
-      cdata = cdata.nil? ? Hash.new : cdata.dup
-      cdata = { default_key => cdata } if cdata.is_a?(String)
-      cdata
-    end
-
-    def normalized_default_data(key, default_key)
-      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new).dup
-      ddata = { default_key => ddata } if ddata.is_a?(String)
-      ddata
-    end
-
-    def normalized_platform_data(key, default_key, platform)
-      pdata = platform_data_for(platform).fetch(key, Hash.new)
-      pdata = pdata.nil? ? Hash.new : pdata.dup
-      pdata = { default_key => pdata } if pdata.is_a?(String)
-      namespace_array!(pdata, :run_list, :platform)
-      pdata
-    end
-
-    def normalized_suite_data(key, default_key, suite)
-      sdata = suite_data_for(suite).fetch(key, Hash.new)
-      sdata = sdata.nil? ? Hash.new : sdata.dup
-      sdata = { default_key => sdata } if sdata.is_a?(String)
-      namespace_array!(sdata, :run_list, :suite)
-      sdata
-    end
-
-    def platform_data_for(name)
-      data.fetch(:platforms, Hash.new).find(lambda { Hash.new }) do |platform|
-        platform.fetch(:name, nil) == name
+    def base_data
+      @base_data ||= begin
+        configs = normalized_configs(
+          data,
+          data[:kitchen],
+          Cheffish.profiled_config(Chef::Config),
+          kitchen_config.fetch(:defaults)
+        )
+        merged = Cheffish::MergedConfig.new(*configs)
+        merged.merge_arrays :suites, :platforms, :run_list
+        merged
       end
     end
 
-    def suite_data_for(name)
-      data.fetch(:suites, Hash.new).find(lambda { Hash.new }) do |suite|
-        suite.fetch(:name, nil) == name
+    def data_for_suite(suite_data)
+      configs = normalized_configs(suite_data) + base_data.configs
+      Cheffish::MergedConfig.new(*configs)
+    end
+
+    def data_for_platform(platform_data)
+      configs = normalized_configs(platform_data) + base_data.configs
+      Cheffish::MergedConfig.new(*configs)
+    end
+
+    def normalized_configs(*configs)
+      configs = configs.select { |c| !c.nil? }
+      configs = configs.collect_concat { |c| c.respond_to?(:configs) ? c.configs : c }
+      configs.map { |c| normalize_kitchen_data(c) }
+    end
+
+    def normalize_kitchen_data(data)
+      result = data.dup
+      # driver: name
+      # driver_options: hash
+      if result[:driver] && result[:driver].respond_to?(:keys)
+        result[:driver_options] = result[:driver]
+        result[:driver] = result[:driver][:name] if result[:driver][:name]
       end
+      # busser: hash
+      if result[:busser] && result[:busser].is_a?(Hash)
+        result[:busser] = { :version => result[:busser] }
+      end
+      # provisioner: hash
+      if result[:provisioner] && result[:provisioner].is_a?(Hash)
+        result[:provisioner] = { :version => result[:provisioner] }
+      end
+      # run_list
+      result
     end
   end
 end

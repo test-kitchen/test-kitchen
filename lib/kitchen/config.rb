@@ -70,33 +70,33 @@ module Kitchen
     # @return [Hash<Driver, Hash<MachineSpec, Hash>] of driver -> machine_spec -> machine_options representing
     # all machines and machine options for their existing drivers
     def specs_and_options_by_new_driver
-      @specs_and_options_by_new_driver ||= specs_and_options_by { m[:driver_data }
+      @specs_and_options_by_new_driver ||= specs_and_options_by { |m| m[:data][:driver] }
     end
 
     # @return [Hash<Driver, Hash<MachineSpec, Hash>] of driver -> machine_spec -> machine_options representing
     # all machines and machine options for their existing drivers
     def specs_and_options_by_current_driver
-      @specs_and_options_by_new_driver ||= specs_and_options_by { m[:spec][:driver_url] }
+      @specs_and_options_by_current_driver ||= specs_and_options_by { |m| m[:spec][:driver_url] }
     end
 
     def specs_and_options_by
       by_driver = {}
       machine_specs.map do |machine_spec|
+        merged = data.data_for(machine_spec.suite, machine_spec.platform)
         {
           :spec => machine_spec,
-          :driver_data => data.driver_data_for(machine_spec.suite, machine_spec.platform)
+          :data => merged
         }
       end.group_by { |m| yield m }.each do |driver_url, driver_machine_specs|
         if !driver_url.nil?
           # Instantiate the driver from the first machine spec (in case there is auth info there)
           # Put kitchen driver config into chef config so Metal will pick it up
-          driver_data = driver_machine_specs.first[:driver_data]
-          driver = ChefMetal::driver_for_url(driver_url, driver_data)
+          driver = ChefMetal::driver_for_url(driver_url, driver_machine_specs.first[:data])
 
           by_driver[driver] ||= {}
           driver_machine_specs.each do |m|
-            driver_config = ChefMetal.config_for_url(driver_url, m[:driver_data])
-            by_driver[driver][m[:spec]] = machine_options(driver_config)
+            driver_data = ChefMetal.config_for_url(driver_url, m[:data])
+            by_driver[driver][m[:spec]] = machine_options(driver_data)
           end
         end
       end

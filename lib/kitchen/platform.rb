@@ -34,9 +34,10 @@ module Kitchen
     # @option options [String] :name logical name of this platform
     #   (**Required**)
     def initialize(options = {})
-      @name = options.fetch(:name) do
+      if !options[:name]
         raise ClientError, "Platform#new requires option :name"
       end
+      @name = options[:name]
     end
   end
 end

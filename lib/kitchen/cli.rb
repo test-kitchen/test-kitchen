@@ -154,16 +154,16 @@ module Kitchen
     define_action(:destroy)
     def destroy(*args)
       update_config!
-      parallelizer.parallelize(@config.machine_specs_and_options_by_current_driver) do |driver, specs_and_options|
+      parallelizer.parallelize(@config.specs_and_options_by_current_driver) do |driver, specs_and_options|
         @config.driver.delete_machines(action_handler, specs_and_options, parallelizer)
       end.to_a
     end
 
     no_commands do
       def with_ready_machines(&block)
-        parallelizer.parallelize(@config.machine_specs_and_options_by_new_driver) do |driver, specs_and_options|
-          driver.allocate_machines(action_handler, @config.machine_specs_and_options, parallelizer)
-          driver.ready_machines(action_handler, @config.machine_specs_to_options, parallelizer, &block)
+        parallelizer.parallelize(@config.specs_and_options_by_new_driver) do |driver, specs_and_options|
+          driver.allocate_machines(action_handler, specs_and_options, parallelizer)
+          driver.ready_machines(action_handler, specs_to_options, parallelizer, &block)
         end.to_a
       end
 
