@@ -306,7 +306,6 @@ describe Kitchen::Busser do
       end
 
       it "uses bourne shell" do
-        skip
         cmd.must_match /\Ash -c '$/
         cmd.must_match /'\Z/
       end

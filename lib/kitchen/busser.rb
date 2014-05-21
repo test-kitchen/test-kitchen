@@ -165,8 +165,17 @@ module Kitchen
     DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
     DEFAULT_ROOT_PATH = "/tmp/busser".freeze
 
+    # @return [Hash] a configuration hash
+    # @api private
     attr_reader :config
 
+    # Ensures that the object is internally consistent and otherwise raising
+    # an exception.
+    #
+    # @param suite_name [String] the suite name
+    # @raise [ClientError] if a suite name is missing
+    # @raise [UserError] if the suite name is invalid
+    # @api private
     def validate_options(suite_name)
       if suite_name.nil?
         raise ClientError, "Busser#new requires a suite_name"
@@ -178,13 +187,26 @@ module Kitchen
       end
     end
 
+    # Returns a uniquely sorted Array of Busser plugin gems that need to
+    # be installed for the related suite.
+    #
+    # @return [Array<String>] a lexically sorted, unique item array of Busser
+    #   plugin gem names
+    # @api private
     def plugins
+      non_suite_dirs = %w{data data_bags environments nodes roles}
       glob = File.join(config[:test_base_path], config[:suite_name], "*")
       Dir.glob(glob).reject { |d|
         !File.directory?(d) || non_suite_dirs.include?(File.basename(d))
       }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
     end
 
+    # Returns an Array of test suite filenames for the related suite currently
+    # residing on the local workstation. Any special provisioner-specific
+    # directories (such as a Chef roles/ directory) are excluded.
+    #
+    # @return [Array<String>] array of suite files
+    # @api private
     def local_suite_files
       base = File.join(config[:test_base_path], config[:suite_name])
       glob = File.join(base, "*/**/*")
@@ -193,19 +215,46 @@ module Kitchen
       end
     end
 
+    # Determines whether or not a local workstation file exists under a
+    # Chef-related directory.
+    #
+    # @return [truthy,falsey] whether or not a given file is some kind of
+    #   Chef-related file
+    # @api private
     def is_chef_data_dir?(base, file)
       file =~ %r[^#{base}/(data|data_bags|environments|nodes|roles)/]
     end
 
+    # Returns an Array of common helper filenames currently residing on the
+    # local workstation.
+    #
+    # @return [Array<String>] array of helper files
+    # @api private
     def helper_files
-      Dir.glob(File.join(config[:test_base_path], "helpers", "*/**/*")).reject { |f| File.directory?(f) }
+      glob = File.join(config[:test_base_path], "helpers", "*/**/*")
+      Dir.glob(glob).reject { |f| File.directory?(f) }
     end
 
+    # Returns a command string that will, once evaluated, result in the
+    # fully qualified destination path of a file on an instance.
+    #
+    # @param file [String] absolute path to the local file
+    # @param dir [String] suite directory or helper directory name
+    # @return [String] command string
+    # @api private
     def remote_file(file, dir)
       local_prefix = File.join(config[:test_base_path], dir)
-      "`#{sudo(config[:busser_bin])} suite path`/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "`#{sudo(config[:busser_bin])} suite path`/".
+        concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
+    # Returns a command string that will, once evaluated, result in the copying
+    # of a local file to a remote instance.
+    #
+    # @param local_path [String] the path to a local source file for copying
+    # @param remote_path [String] the destrination path on the remote instance
+    # @return [String] command string
+    # @api private
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
       encoded_file = Base64.encode64(local_file).gsub("\n", '')
@@ -225,14 +274,20 @@ module Kitchen
       ].join("\n").concat("\n")
     end
 
-    def sudo(script)
-      config[:sudo] ? "sudo -E #{script}" : script
+    # Conditionally prefixes a command with a sudo command.
+    #
+    # @param command [String] command to be prefixed
+    # @return [String] the command, conditionaly prefixed with sudo
+    # @api private
+    def sudo(command)
+      config[:sudo] ? "sudo -E #{command}" : command
     end
 
-    def non_suite_dirs
-      %w{data data_bags environments nodes roles}
-    end
-
+    # Returns a command string that sets appropriate environment variables for
+    # busser commands.
+    #
+    # @return [String] command string
+    # @api private
     def busser_setup_env
       [
         %{BUSSER_ROOT="#{config[:root_path]}"},
@@ -243,6 +298,11 @@ module Kitchen
       ].join(" ")
     end
 
+    # Returns arguments to a `gem install` command, suitable to install the
+    # Busser gem.
+    #
+    # @return [String] arguments string
+    # @api private
     def gem_install_args
       gem, version = config[:version].split("@")
       gem, version = "busser", gem if gem =~ /^\d+\.\d+\.\d+/
