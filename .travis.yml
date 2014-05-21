@@ -34,3 +34,6 @@ matrix:
       env: RUBYGEMS_VERSION=1.8.29
     - rvm: jruby-19mode
       env: RUBYGEMS_VERSION=1.8.29
+
+notifications:
+  irc: "chat.freenode.net#kitchenci"
