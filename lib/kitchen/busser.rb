@@ -95,21 +95,23 @@ module Kitchen
     # @return [String] a command string to setup the test suite, or nil if no
     #   work needs to be performed
     def setup_cmd
-      @setup_cmd ||= if local_suite_files.empty?
-        nil
-      else
-        setup_cmd  = []
-        setup_cmd << busser_setup_env
-        setup_cmd << "if ! #{sudo}#{config[:ruby_bindir]}/gem list busser -i >/dev/null"
-        setup_cmd << "then #{sudo}#{config[:ruby_bindir]}/gem install #{gem_install_args}"
-        setup_cmd << "fi"
-        setup_cmd << "gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e \"puts Gem.bindir\"`"
-        setup_cmd << "#{sudo}${gem_bindir}/busser setup"
-        setup_cmd << "#{sudo}#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+      return if local_suite_files.empty?
 
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        "sh -c '#{setup_cmd.join('; ')}'"
-      end
+      ruby    = "#{config[:ruby_bindir]}/ruby"
+      gem     = sudo("#{config[:ruby_bindir]}/gem")
+      busser  = sudo(config[:busser_bin])
+
+      cmd = <<-CMD.gsub(/^ {8}/, '')
+        #{busser_setup_env}
+        gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
+
+        if ! #{gem} list busser -i >/dev/null; then
+          #{gem} install #{gem_install_args}
+        fi
+        #{sudo("${gem_bindir}")}/busser setup
+        #{busser} plugin install #{plugins.join(' ')}
+      CMD
+      Util.wrap_command(cmd)
     end
 
     # Returns a command string which transfers all suite test files to the
@@ -121,18 +123,22 @@ module Kitchen
     # @return [String] a command string to transfer all suite test files, or
     #   nil if no work needs to be performed.
     def sync_cmd
-      @sync_cmd ||= if local_suite_files.empty?
-        nil
-      else
-        sync_cmd  = []
-        sync_cmd << busser_setup_env
-        sync_cmd << "#{sudo}#{config[:busser_bin]} suite cleanup"
-        sync_cmd << "#{local_suite_files.map { |f| stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
-        sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
+      return if local_suite_files.empty?
 
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        "sh -c '#{sync_cmd.join('; ')}'"
+      cmd = <<-CMD.gsub(/^ {8}/, '')
+        #{busser_setup_env}
+
+        #{sudo(config[:busser_bin])} suite cleanup
+
+      CMD
+      local_suite_files.each do |f|
+        cmd << stream_file(f, remote_file(f, config[:suite_name])).concat("\n")
       end
+      helper_files.each do |f|
+        cmd << stream_file(f, remote_file(f, "helpers")).concat("\n")
+      end
+
+      Util.wrap_command(cmd)
     end
 
     # Returns a command string which runs all Busser suite tests for the suite.
@@ -143,16 +149,15 @@ module Kitchen
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
     def run_cmd
-      @run_cmd ||= if local_suite_files.empty?
-        nil
-      else
-        run_cmd  = []
-        run_cmd << busser_setup_env
-        run_cmd << "#{sudo}#{config[:busser_bin]} test"
+      return if local_suite_files.empty?
 
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        "sh -c '#{run_cmd.join('; ')}'"
-      end
+      cmd = <<-CMD.gsub(/^ {8}/, '')
+        #{busser_setup_env}
+
+        #{sudo(config[:busser_bin])} test
+      CMD
+
+      Util.wrap_command(cmd)
     end
 
     private
@@ -198,29 +203,30 @@ module Kitchen
 
     def remote_file(file, dir)
       local_prefix = File.join(config[:test_base_path], dir)
-      "$(#{sudo}#{config[:busser_bin]} suite path)/".concat(file.sub(%r{^#{local_prefix}/}, ''))
+      "`#{sudo(config[:busser_bin])} suite path`/".concat(file.sub(%r{^#{local_prefix}/}, ''))
     end
 
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
+      encoded_file = Base64.encode64(local_file).gsub("\n", '')
       md5 = Digest::MD5.hexdigest(local_file)
       perms = sprintf("%o", File.stat(local_path).mode)[2, 4]
       stream_cmd = [
-        "#{sudo}#{config[:busser_bin]}",
+        sudo(config[:busser_bin]),
         "deserialize",
         "--destination=#{remote_path}",
         "--md5sum=#{md5}",
         "--perms=#{perms}"
       ].join(" ")
 
-      stream_file_cmd  = []
-      stream_file_cmd << %{echo "Uploading #{remote_path} (mode=#{perms})"}
-      stream_file_cmd << %{echo "#{Base64.encode64(local_file).gsub("\n", '')}" | #{sudo}#{stream_cmd}}
-      stream_file_cmd.join('; ')
+      [
+        %{echo "Uploading #{remote_path} (mode=#{perms})"},
+        %{echo "#{encoded_file}" | #{stream_cmd}}
+      ].join("\n").concat("\n")
     end
 
-    def sudo
-      config[:sudo] ? "sudo -E " : ""
+    def sudo(script)
+      config[:sudo] ? "sudo -E #{script}" : script
     end
 
     def non_suite_dirs
@@ -233,7 +239,7 @@ module Kitchen
         %{GEM_HOME="#{config[:root_path]}/gems"},
         %{GEM_PATH="#{config[:root_path]}/gems"},
         %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
-        %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
+        %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
       ].join(" ")
     end
 
