@@ -19,6 +19,7 @@
 require_relative "../spec_helper"
 require "base64"
 require "stringio"
+require "securerandom"
 
 require "kitchen/base64_stream"
 
