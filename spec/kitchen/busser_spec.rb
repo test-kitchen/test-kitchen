@@ -258,13 +258,11 @@ describe Kitchen::Busser do
         base = "#{config[:test_base_path]}/germany"
         hbase = "#{config[:test_base_path]}/helpers"
 
-        files.each do |file, md|
-          FileUtils.mkdir_p(File.dirname("#{base}/#{file}"))
-          File.open("#{base}/#{file}", "wb") { |f| f.write(md[:content]) }
+        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
         end
-        helper_files.each do |file, md|
-          FileUtils.mkdir_p(File.dirname("#{hbase}/#{file}"))
-          File.open("#{hbase}/#{file}", "wb") { |f| f.write(md[:content]) }
+        helper_files.map { |f, md| [File.join(hbase, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
         end
 
         config[:ruby_bindir] = "/r"
@@ -274,16 +272,19 @@ describe Kitchen::Busser do
         {
           "mondospec/charlie" => {
             :content => "charlie",
+            :perms => "0764",
             :base64 => "Y2hhcmxpZQ==",
             :md5 => "bf779e0933a882808585d19455cd7937"
           },
           "minispec/beta" => {
             :content => "beta",
+            :perms => "0644",
             :base64 => "YmV0YQ==",
             :md5 => "987bcab01b929eb2c07877b224215c92"
           },
           "abba/alpha" => {
             :content => "alpha",
+            :perms => "0440",
             :base64 => "YWxwaGE=",
             :md5 => "2c1743a391305fbf367df8e4f069f9f9"
           }
@@ -294,11 +295,13 @@ describe Kitchen::Busser do
         {
           "minispec/spec_helper" => {
             :content => "helping",
+            :perms => "0644",
             :base64 => "aGVscGluZw==",
             :md5 => "111c081293c11cb7c2ac6fbf841805cb"
           },
           "abba/common" => {
             :content => "yeppers",
+            :perms => "0664",
             :base64 => "eWVwcGVycw==",
             :md5 => "7c3157de4890b1abcb7a6a3695eb6dd2"
           }
@@ -342,49 +345,53 @@ describe Kitchen::Busser do
       it "logs a message for each file" do
         config[:busser_bin] = "/b/busser"
 
-        files.each do |f, _|
-          cmd.must_match regexify(
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f} (mode=0644)"}
-          )
+        files.each do |f, md|
+          cmd.must_match regexify([
+            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
+            %{(mode=#{md[:perms]})"}
+          ].join(" "))
         end
       end
 
       it "logs a message for each helper file" do
         config[:busser_bin] = "/b/busser"
 
-        helper_files.each do |f, _|
-          cmd.must_match regexify(
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f} (mode=0644)"}
-          )
+        helper_files.each do |f, md|
+          cmd.must_match regexify([
+            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
+            %{(mode=#{md[:perms]})"}
+          ].join(" "))
         end
       end
 
       it "base64 encodes each file for deserializing with busser" do
         config[:busser_bin] = "/b/busser"
 
-        files.each do |file, metadata|
-          cmd.must_match regexify(
-            [
-              %{echo "#{metadata[:base64]}" | sudo -E /b/busser deserialize},
-              %{--destination=`sudo -E /b/busser suite path`/#{file}},
-              %{--md5sum=#{metadata[:md5]} --perms=0644}
-            ].join(" ")
-          )
+        files.each do |f, md|
+          cmd.must_match regexify([
+            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
+            %{--destination=`sudo -E /b/busser suite path`/#{f}},
+            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
+          ].join(" "))
         end
       end
 
       it "base64 encodes each helper file for deserializing with busser" do
         config[:busser_bin] = "/b/busser"
 
-        helper_files.each do |file, metadata|
-          cmd.must_match regexify(
-            [
-              %{echo "#{metadata[:base64]}" | sudo -E /b/busser deserialize},
-              %{--destination=`sudo -E /b/busser suite path`/#{file}},
-              %{--md5sum=#{metadata[:md5]} --perms=0644}
-            ].join(" ")
-          )
+        helper_files.each do |f, md|
+          cmd.must_match regexify([
+            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
+            %{--destination=`sudo -E /b/busser suite path`/#{f}},
+            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
+          ].join(" "))
         end
+      end
+
+      def create_file(file, content, perms)
+        FileUtils.mkdir_p(File.dirname(file))
+        File.open(file, "wb") { |f| f.write(content) }
+        FileUtils.chmod(perms.to_i(8), file)
       end
     end
   end
