@@ -131,7 +131,11 @@ module Kitchen
           if (ndata[:test_base_path] != nil)
             ndata[:configured_test_base_path] = true
           end
-          Node.new(zdata.merge(ndata))
+          node = Node.new(zdata.merge(ndata))
+          busser_data = data.busser_data_for(suite.name, platform.name)
+          busser_data[:test_base_path] = node.test_base_path
+          node.setup_busser(suite.name, busser_data)
+          node
         })
     end
 

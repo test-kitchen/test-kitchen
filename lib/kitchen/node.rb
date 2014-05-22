@@ -27,6 +27,7 @@ module Kitchen
 
     # @return [String] logical name of this node
     attr_reader :name
+    attr_reader :busser
 
     # Constructs a new platform.
     #
@@ -45,6 +46,11 @@ module Kitchen
       @configured_test_base_path = options.fetch(:configured_test_base_path) do
         @configured_test_base_path = false
       end
+    end
+
+    # Sets up busser for given node
+    def setup_busser(name, data)
+      @busser = Busser.new(name, data)
     end
 
     # Returns the test_base_path (i.e., the path to the tests) for this node
