@@ -36,7 +36,7 @@ module Kitchen
     # Constructs a new DataMunger object.
     #
     # @param data [Hash] the incoming user data hash
-    # @param kitchen_config [Hash] the incoming Test Kitche-provided
+    # @param kitchen_config [Hash] the incoming Test Kitchen-provided
     #   configuration hash
     def initialize(data, kitchen_config = {})
       @data = data
@@ -109,7 +109,13 @@ module Kitchen
 
     private
 
-    attr_reader :data, :kitchen_config
+    # @return [Hash] the user data hash
+    # @api private
+    attr_reader :data
+
+    # @return [Hash] the Test Kitchen-provided configuration hash
+    # @api private
+    attr_reader :kitchen_config
 
     def combine_arrays!(root, key, *namespaces)
       if root.key?(key)
