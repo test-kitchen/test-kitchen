@@ -30,6 +30,8 @@ module Kitchen
   class StateFileLoadError < StandardError ; end
 
   # State persistence manager for instances between actions and invocations.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class StateFile
 
     # Constructs an new instance taking the kitchen root and instance name.
@@ -84,18 +86,33 @@ module Kitchen
 
     private
 
+    # @return [String] absolute path to the yaml state file on disk
+    # @api private
     attr_reader :file_name
 
+    # @return [String] a string representation of the yaml state file
+    # @api private
     def read_file
       IO.read(file_name)
     end
 
+    # Parses a YAML string and returns a Hash.
+    #
+    # @param string [String] a yaml document as a string
+    # @return [Hash] a hash
+    # @raise [StateFileLoadError] if the string document cannot be parsed
+    # @api private
     def deserialize_string(string)
       SafeYAML.load(string)
     rescue SyntaxError, Psych::SyntaxError => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end
 
+    # Serializes a Hash into a YAML string.
+    #
+    # @param hash [Hash] a hash
+    # @return [String] a yaml document as a string
+    # @api private
     def serialize_hash(hash)
       ::YAML.dump(hash)
     end
