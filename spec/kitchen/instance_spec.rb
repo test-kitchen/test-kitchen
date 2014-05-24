@@ -44,6 +44,10 @@ class DummyStateFile
   def destroy
     @_state = nil
   end
+
+  def diagnose
+    Hash.new
+  end
 end
 
 class SerialDummyDriver < Kitchen::Driver::Dummy
@@ -249,6 +253,55 @@ describe Kitchen::Instance do
     Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
     instance.login
+  end
+
+  describe "#diagnose" do
+
+    it "returns a hash" do
+      instance.diagnose.must_be_instance_of Hash
+    end
+
+    it "sets :state_file key to state_file's diganose info" do
+      state_file.stubs(:diagnose).returns({ :a => "b" })
+
+      instance.diagnose[:state_file].must_equal({ :a => "b" })
+    end
+
+    it "sets :state_file key to :unknown if obj can't respond to #diagnose" do
+      opts[:state_file] = Class.new(state_file.class) {
+        undef_method :diagnose
+      }.new
+
+      instance.diagnose[:state_file].must_equal :unknown
+    end
+
+    it "sets :provisioner key to provisioner's diganose info" do
+      provisioner.stubs(:diagnose).returns({ :a => "b" })
+
+      instance.diagnose[:provisioner].must_equal({ :a => "b" })
+    end
+
+    it "sets :provisioner key to :unknown if obj can't respond to #diagnose" do
+      opts[:provisioner] = Class.new(provisioner.class) {
+        undef_method :diagnose
+      }.new
+
+      instance.diagnose[:provisioner].must_equal :unknown
+    end
+
+    it "sets :busser key to busser's diganose info" do
+      busser.stubs(:diagnose).returns({ :a => "b" })
+
+      instance.diagnose[:busser].must_equal({ :a => "b" })
+    end
+
+    it "sets :busser key to :unknown if obj can't respond to #diagnose" do
+      opts[:busser] = Class.new(busser.class) {
+        undef_method :diagnose
+      }.new(suite.name, {})
+
+      instance.diagnose[:busser].must_equal :unknown
+    end
   end
 
   describe "performing actions" do
@@ -695,27 +748,29 @@ describe Kitchen::Instance do
       describe "with destroy mode of always" do
 
         it "calls Driver#destroy at even when action fails" do
-          driver.stubs(:converge).raises(Kitchen::ActionFailed)
-
           driver.expects(:destroy)
           driver.expects(:create)
-          driver.expects(:converge)
+          driver.expects(:converge).raises(Kitchen::ActionFailed)
           driver.expects(:destroy)
 
-          instance.test(:always)
+          begin
+            instance.test(:always)
+          rescue
+          end
         end
       end
 
       describe "with destroy mode of passing" do
 
         it "doesn't call Driver#destroy at when action fails" do
-          skip "figure this one out"
-          driver.stubs(:create).raises(Kitchen::ActionFailed, "death")
+          driver.stubs(:create).raises(Kitchen::ActionFailed)
 
-          driver.expects(:destroy)
-          driver.expects(:create)
+          driver.expects(:destroy).once
 
-          instance.test(:passing)
+          begin
+            instance.test(:passing)
+          rescue
+          end
         end
       end
     end
