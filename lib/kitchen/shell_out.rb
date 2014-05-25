@@ -56,11 +56,10 @@ module Kitchen
     # @raise [ShellCommandFailed] if the command fails
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
-      use_sudo = options[:use_sudo].nil? ? false : options[:use_sudo]
-      cmd = "sudo -E #{cmd}" if use_sudo
-      subject = "[#{options[:log_subject] || "local"} command]"
+      cmd = "sudo -E #{cmd}" if options.fetch(:use_sudo, false)
+      subject = "[#{options.fetch(:log_subject, "local")} command]"
 
-      debug("#{subject} BEGIN (#{display_cmd(cmd)})")
+      debug("#{subject} BEGIN (#{cmd})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
       sh.run_command
       debug("#{subject} END #{Util.duration(sh.execution_time)}")
@@ -75,13 +74,11 @@ module Kitchen
 
     private
 
-    def display_cmd(cmd)
-      first_line, newline, _ = cmd.partition("\n")
-      last_char = cmd[cmd.size - 1]
-
-      newline == "\n" ? "#{first_line}\\n...#{last_char}" : cmd
-    end
-
+    # Returns a hash of MixLib::ShellOut options for the command.
+    #
+    # @param options [Hash] a Hash of options
+    # @return [Hash] a new Hash of options, filterd and merged with defaults
+    # @api private
     def shell_opts(options)
       filtered_opts = options.reject do |key, value|
         [:use_sudo, :log_subject, :quiet].include?(key)
