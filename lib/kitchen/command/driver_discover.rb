@@ -37,7 +37,7 @@ module Kitchen
         print_table(specs, :indent => 4)
       end
 
-      protected
+      private
 
       def fetch_gem_specs
         SafeYAML::OPTIONS[:suppress_warnings] = true

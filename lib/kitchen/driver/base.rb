@@ -134,7 +134,7 @@ module Kitchen
         @serial_actions += methods
       end
 
-      protected
+      private
 
       # Returns a suitable logger to use for output.
       #

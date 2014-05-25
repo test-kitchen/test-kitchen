@@ -36,7 +36,7 @@ module Kitchen
         exit 1
       end
 
-      protected
+      private
 
       def prompt(char)
         proc { |target_self, nest_level, pry|

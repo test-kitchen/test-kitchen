@@ -82,7 +82,7 @@ module Kitchen
         end
       end
 
-      protected
+      private
 
       def build_ssh_args(state)
         combined = config.to_hash.merge(state)

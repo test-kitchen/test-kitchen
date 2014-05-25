@@ -78,7 +78,7 @@ module Kitchen
         FileUtils.rmtree(sandbox_path)
       end
 
-      protected
+      private
 
       def load_needed_dependencies! ; end
 

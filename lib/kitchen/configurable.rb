@@ -117,7 +117,7 @@ module Kitchen
       result
     end
 
-    protected
+    private
 
     # @return [LzayHash] a configuration hash
     # @api private

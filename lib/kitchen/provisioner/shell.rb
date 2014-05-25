@@ -59,7 +59,7 @@ module Kitchen
         )
       end
 
-      protected
+      private
 
       # Creates a data directory in the sandbox directory, if a data directory
       # can be found and copies in the tree.

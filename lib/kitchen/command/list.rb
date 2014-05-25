@@ -39,7 +39,7 @@ module Kitchen
         end
       end
 
-      protected
+      private
 
       def color_pad(string)
         string + set_color("", :white)

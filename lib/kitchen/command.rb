@@ -39,7 +39,7 @@ module Kitchen
         @shell = options.fetch(:shell)
       end
 
-      protected
+      private
 
       attr_reader :args, :options, :help, :config, :shell, :action
 

@@ -114,7 +114,7 @@ module Kitchen
         )
       end
 
-      protected
+      private
 
       def load_needed_dependencies!
         if File.exist?(berksfile)
