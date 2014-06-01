@@ -75,6 +75,64 @@ describe Kitchen::Provisioner::Base do
     end
   end
 
+  describe "sandbox" do
+
+    after do
+      begin
+        provisioner.cleanup_sandbox
+      rescue
+      end
+    end
+
+    it "raises ClientError if #sandbox_path is called before #create_sandbox" do
+      proc { provisioner.sandbox_path }.must_raise Kitchen::ClientError
+    end
+
+    it "#create_sandbox creates a temporary directory" do
+      provisioner.create_sandbox
+
+      File.directory?(provisioner.sandbox_path).must_equal true
+      sprintf("%o", File.stat(provisioner.sandbox_path).mode)[1, 4].
+        must_equal "0755"
+    end
+
+    it "#create_sandbox logs an info message" do
+      provisioner.create_sandbox
+
+      logged_output.string.must_match info_line("Preparing files for transfer")
+    end
+
+    it "#create_sandbox logs a debug message" do
+      provisioner.create_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Creating local sandbox in ")
+    end
+
+    it "#cleanup_sandbox deletes the sandbox directory" do
+      provisioner.create_sandbox
+      provisioner.cleanup_sandbox
+
+      File.directory?(provisioner.sandbox_path).must_equal false
+    end
+
+    it "#cleanup_sandbox logs a debug message" do
+      provisioner.create_sandbox
+      provisioner.cleanup_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Cleaning up local sandbox in ")
+    end
+
+    def info_line(msg)
+      %r{^I, .* : #{Regexp.escape(msg)}$}
+    end
+
+    def debug_line_starting_with(msg)
+      %r{^D, .* : #{Regexp.escape(msg)}}
+    end
+  end
+
   describe "#sudo" do
 
     it "if :sudo is set, prepend sudo command" do

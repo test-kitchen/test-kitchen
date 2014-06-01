@@ -33,10 +33,22 @@ module Kitchen
 
       expand_path_for :test_base_path
 
+      # Constructs a new provisioner by providing a configuration hash.
+      #
+      # @param config [Hash] initial provided configuration
       def initialize(config = {})
         init_config(config)
       end
 
+      # Performs any final configuration required for the provisioner to do its
+      # work. A reference to an Instance is required as configuration dependant
+      # data may need access through an Instance. This also acts as a hook
+      # point where the object may wish to perform other last minute checks,
+      # valiations, or configuration expansions.
+      #
+      # @param instance [Instance] an associated instance
+      # @return [self] itself, used for chaining
+      # @raise [ClientError] if instance parameter is nil
       def finalize_config!(instance)
         super
         load_needed_dependencies!
@@ -50,14 +62,58 @@ module Kitchen
         self.class.name.split('::').last
       end
 
-      def init_command ; end
+      # Generates a command string which will install and configure the
+      # provisioner software on an instance. If no work is required, then `nil`
+      # will be returned.
+      #
+      # @return [String] a command string
+      def install_command
+      end
 
-      def install_command ; end
+      # Generates a command string which will perform any data initialization
+      # or configuration required after the provisioner software is installed
+      # but before the sandbox has been transferred to the instance. If no work
+      # is required, then `nil` will be returned.
+      #
+      # @return [String] a command string
+      def init_command
+      end
 
-      def prepare_command ; end
+      # Generates a command string which will perform any commands or
+      # configuration required just before the main provisioner run command but
+      # after the sandbox has been transferred to the instance. If no work is
+      # required, then `nil` will be returned.
+      #
+      # @return [String] a command string
+      def prepare_command
+      end
 
-      def run_command ; end
+      # Generates a command string which will invoke the main provisioner
+      # command on the prepared instance. If no work is required, then `nil`
+      # will be returned.
+      #
+      # @return [String] a command string
+      def run_command
+      end
 
+      # Creates a temporary directory on the local workstation into which
+      # provisioner related files and directories can be copied or created. The
+      # contents of this directory will be copied over to the instance before
+      # invoking the provisioner's run command. After this method completes, it
+      # is expected that the contents of the sandbox is complete and ready for
+      # copy to the remote instance.
+      #
+      # **Note:** any subclasses would be well advised to call super first when
+      # overriding this method, for example:
+      #
+      # @example overriding `#create_sandbox`
+      #
+      #   class MyProvisioner < Kitchen::Provisioner::Base
+      #     def create_sandbox
+      #       super
+      #       # any further file copies, preparations, etc.
+      #     end
+      #   end
       def create_sandbox
         @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
         File.chmod(0755, sandbox_path)
@@ -65,12 +121,21 @@ module Kitchen
         debug("Creating local sandbox in #{sandbox_path}")
       end
 
+      # Returns the absolute path to the sandbox directory or raises an
+      # exception if `#create_sandbox` has not yet been called.
+      #
+      # @return [String] the absolute path to the sandbox directory
+      # @raise [ClientError] if the sandbox directory has no yet been created
+      #   by calling `#create_sandbox`
       def sandbox_path
         @sandbox_path || (raise ClientError, "Sandbox directory has not yet " +
           "been created. Please run #{self.class}#create_sandox before " +
           "trying to access the path.")
       end
 
+      # Deletes the sandbox path. Without calling this method, the sandbox path
+      # will persist after the process terminates. In other words, cleanup is
+      # explicit. This method is safe to call multiple times.
       def cleanup_sandbox
         return if sandbox_path.nil?
 
@@ -80,12 +145,41 @@ module Kitchen
 
       private
 
-      def load_needed_dependencies! ; end
+      # Loads any required third party Ruby libraries or runs any shell out
+      # commands to prepare the provisioner. This method will be called in the
+      # context of the main thread of execution and so does not necessarily
+      # have to be thread safe.
+      #
+      # **Note:** any subclasses overriding this method would be well advised
+      # to call super when overriding this method, for example:
+      #
+      # @example overriding `#load_needed_dependencies!`
+      #
+      #   class MyProvisioner < Kitchen::Provisioner::Base
+      #     def load_needed_dependencies!
+      #       super
+      #       # any further work
+      #     end
+      #   end
+      #
+      # @raise [ClientError] if any library loading fails or any of the
+      #   dependency requirements cannot be satisfied
+      # @api private
+      def load_needed_dependencies!
+      end
 
+      # @return [Logger] the instance's logger or Test Kitchen's common logger
+      #   otherwise
+      # @api private
       def logger
         instance ? instance.logger : Kitchen.logger
       end
 
+      # Conditionally prefixes a command with a sudo command.
+      #
+      # @param command [String] command to be prefixed
+      # @return [String] the command, conditionaly prefixed with sudo
+      # @api private
       def sudo(script)
         config[:sudo] ? "sudo -E #{script}" : script
       end
