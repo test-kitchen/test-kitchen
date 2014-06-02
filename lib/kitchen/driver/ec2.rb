@@ -118,6 +118,7 @@ module Kitchen
 
       def create_server
         debug_server_config
+
         connection.servers.create(
           :availability_zone         => config[:availability_zone],
           :security_group_ids        => config[:security_group_ids],
