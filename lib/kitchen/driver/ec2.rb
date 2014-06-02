@@ -77,8 +77,12 @@ module Kitchen
         state[:server_id] = server.id
 
         info("EC2 instance <#{state[:server_id]}> created.")
-        server.wait_for { print '.'; ready? }
-        server.wait_for { print '.'; !public_ip_address.nil? and (public_ip_address != '0.0.0.0') }
+        server.wait_for do
+          print '.'
+          ready? and                          # Euca instances often report ready
+            !public_ip_address.nil? and       # before they have an IP
+            (public_ip_address != '0.0.0.0')
+        end
         print '(server ready)'
         state[:hostname] = hostname(server)
         wait_for_sshd(state[:hostname], config[:username], {
