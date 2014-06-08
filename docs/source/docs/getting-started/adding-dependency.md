@@ -171,7 +171,7 @@ Successfully installed berkshelf-2.0.10
 Next we'll create the smallest `Berksfile`, using your editor of choice:
 
 ~~~ruby
-site :opscode
+source "https://api.berkshelf.com"
 
 metadata
 ~~~
