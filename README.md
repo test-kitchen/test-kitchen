@@ -87,6 +87,13 @@ or `nil` otherwise.
 The default will be read from the `AWS_SSH_KEY_ID` environment variable if set,
 or `nil` otherwise.
 
+### <a name="config-aws-session-token"></a> aws\_session\_token
+
+The AWS [session token][credentials_docs] to use.
+
+The default will be read from the `AWS_SESSION_TOKEN` environment variable if set,
+or `nil` otherwise.
+
 ### endpoint
 
 The API endpoint for executing EC2 commands.
