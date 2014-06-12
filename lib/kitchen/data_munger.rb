@@ -71,6 +71,18 @@ module Kitchen
       data.fetch(:suites, [])
     end
 
+    def node_data
+      data.fetch(:nodes, [])
+    end
+
+    def node_data_for(suite, platform)
+      merged_data_for(:node, suite, platform).tap do |ndata|
+        set_kitchen_config_at!(ndata, :kitchen_root)
+        set_kitchen_config_at!(ndata, :test_base_path)
+        set_kitchen_config_at!(ndata, :log_levels)
+      end
+    end
+
     private
 
     attr_reader :data, :kitchen_config

@@ -38,6 +38,9 @@ module Kitchen
       end
     end
 
+    # @return [Array<Node>] nodes for a multihost environment
+    attr_reader :nodes
+
     # @return [Suite] the test suite configuration
     attr_reader :suite
 
@@ -88,6 +91,7 @@ module Kitchen
       @busser       = options.fetch(:busser)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
+      @nodes        = options.fetch(:nodes) if options.has_key?(:nodes)
 
       setup_driver
       setup_provisioner

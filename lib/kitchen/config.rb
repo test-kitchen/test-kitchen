@@ -124,6 +124,21 @@ module Kitchen
       Driver.for_plugin(ddata[:name], ddata)
     end
 
+    def new_nodes(suite, platform)
+      zdata = data.node_data_for(suite.name, platform.name)
+      return Collection.new(
+        data.node_data.map { |ndata|
+          if (ndata[:test_base_path] != nil)
+            ndata[:configured_test_base_path] = true
+          end
+          node = Node.new(zdata.merge(ndata))
+          busser_data = data.busser_data_for(suite.name, platform.name)
+          busser_data[:test_base_path] = node.test_base_path
+          node.setup_busser(suite.name, busser_data)
+          node
+        })
+    end
+
     def new_instance(suite, platform, index)
       Instance.new(
         :busser       => new_busser(suite, platform),
@@ -132,7 +147,8 @@ module Kitchen
         :suite        => suite,
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
-        :state_file   => new_state_file(suite, platform)
+        :state_file   => new_state_file(suite, platform),
+        :nodes        => new_nodes(suite, platform)
       )
     end
 
