@@ -78,8 +78,8 @@ module Kitchen
         print '(server ready)'
         state[:hostname] = hostname(server)
         wait_for_sshd(state[:hostname], config[:username], {
-            :ssh_timeout => config[:ssh_timeout],
-            :ssh_retries => config[:ssh_retries]
+          :ssh_timeout => config[:ssh_timeout],
+          :ssh_retries => config[:ssh_retries]
         })
         print "(ssh ready)\n"
         debug("ec2:create '#{state[:hostname]}'")
