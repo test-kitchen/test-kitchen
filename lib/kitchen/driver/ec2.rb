@@ -77,7 +77,10 @@ module Kitchen
         server.wait_for { print '.'; ready? }
         print '(server ready)'
         state[:hostname] = hostname(server)
-        wait_for_sshd(state[:hostname], config[:username], {:ssh_timeout => config[:ssh_timeout], :ssh_retries => config[:ssh_retries]})
+        wait_for_sshd(state[:hostname], config[:username], {
+            :ssh_timeout => config[:ssh_timeout],
+            :ssh_retries => config[:ssh_retries]
+        })
         print "(ssh ready)\n"
         debug("ec2:create '#{state[:hostname]}'")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
