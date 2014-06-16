@@ -167,6 +167,25 @@ module Kitchen
     end
 
     def test_ssh
+       # Check to see if we're supposed to proxy the connection to the host
+      if options[:socks_version]
+        require 'socksify'
+
+        unless options[:socks_server]
+          raise ClientError, "Option socks_server must be set when socks_version is set!"
+        end
+
+        unless options[:socks_port]
+          raise ClientError, "Option socks_port must be set when socks_version is set!"
+        end 
+        
+        logger.debug("Using SOCKS proxy (#{options[:socks_server]}:#{options[:socks_port]})")
+
+        TCPSocket::socks_server = options[:socks_server]
+        TCPSocket::socks_port = options[:socks_port]
+        TCPSocket::socks_version = options[:socks_version]
+      end
+      
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
     rescue SocketError, Errno::ECONNREFUSED,
