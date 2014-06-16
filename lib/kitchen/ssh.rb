@@ -262,6 +262,11 @@ module Kitchen
     #   otherwise
     # @api private
     def test_ssh
+      if options[:socks_version]
+        # Using SOCKS proxy for this connection
+        setup_socks
+      end
+
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
     rescue *SOCKET_EXCEPTIONS
@@ -272,5 +277,26 @@ module Kitchen
     ensure
       socket && socket.close
     end
+  end
+
+  # Configure the TCPSocket with a socks proxy
+  #
+  # @api private
+  def setup_socks
+    unless options[:socks_server]
+      raise ClientError, "Option socks_server must be set when socks_version is set!"
+    end
+
+    unless options[:socks_port]
+      raise ClientError, "Option socks_port must be set when socks_version is set!"
+    end
+
+    logger.debug("Using SOCKS proxy (#{options[:socks_server]}:#{options[:socks_port]})")
+
+    require "socksify"
+
+    TCPSocket.socks_server = options[:socks_server]
+    TCPSocket.socks_port = options[:socks_port]
+    TCPSocket.socks_version = options[:socks_version]
   end
 end

@@ -88,6 +88,13 @@ More verbose logging (for both test-kitchen and the chef-solo/chef-zero provisio
 $ kitchen test -l debug
 ```
 
+## Using Test Kitchen from behind a SOCKS proxy
+
+You can specify the following parameters to use Test Kitchen with remote hosts (e.g. EC2) from behind a firewall:
+socks_version = The SOCKS version supported by the server (either 4 or 5)
+socks_server  = The DNS name or IP of the SOCKS server
+socks_port    = The port of the SOCKS server
+
 ## Documentation
 
 Documentation is being added on the Test Kitchen [website][website]. Please
