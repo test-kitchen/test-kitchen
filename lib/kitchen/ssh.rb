@@ -59,15 +59,41 @@ module Kitchen
     end
 
     def upload!(local, remote, options = {}, &progress)
-      if progress.nil?
-        progress = lambda { |ch, name, sent, total|
-          if sent == total
-            logger.debug("Uploaded #{name} (#{total} bytes)")
-          end
-        }
+      # Use rsync for speed if available.
+      start_time = Time.now
+      upload_done = false
+      if !@rsync_failed &&
+         File.directory?(local) && options[:recursive] &&
+         File.exists?('/usr/bin/rsync') &&
+         (!@options[:password] || File.exists?('/usr/bin/sshpass'))  # so we can specify password
+        ssh_command = "ssh #{ssh_args.join(' ')}"
+        if @options[:password]
+          ssh_command = "/usr/bin/sshpass -p \"#{@options[:password]}\" #{ssh_command}"
+        end
+        rsync_cmd = "/usr/bin/rsync -e '#{ssh_command}' -az #{local} #{username_hostname}:#{remote}"
+        @logger.debug("Running rsync command: #{rsync_cmd}")
+        if system(rsync_cmd)
+          upload_done = true
+        else
+          @logger.warn("rsync exited with status #{$?.exitstatus}, using Net::SCP instead")
+          @rsync_failed = true
+        end
       end
 
-      session.scp.upload!(local, remote, options, &progress)
+      unless upload_done
+        if progress.nil?
+          progress = lambda { |ch, name, sent, total|
+            if sent == total
+              logger.debug("Uploaded #{name} (#{total} bytes)")
+            end
+          }
+        end
+
+        session.scp.upload!(local, remote, options, &progress)
+      end
+
+      @logger.info("Time taken to upload #{local} to #{username_hostname}:#{remote}: " +
+                   "%.2f sec" % (Time.now - start_time))
     end
 
     def upload_path!(local, remote, options = {}, &progress)
@@ -90,6 +116,14 @@ module Kitchen
     end
 
     def login_command
+      LoginCommand.new(["ssh", *ssh_args, username_hostname])
+    end
+
+    private
+
+    attr_reader :hostname, :username, :options, :logger
+
+    def ssh_args
       args  = %W{ -o UserKnownHostsFile=/dev/null }
       args += %W{ -o StrictHostKeyChecking=no }
       args += %W{ -o IdentitiesOnly=yes } if options[:keys]
@@ -97,14 +131,11 @@ module Kitchen
       args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} } if options.key? :forward_agent
       Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key}} }
       args += %W{ -p #{port}}
-      args += %W{ #{username}@#{hostname}}
-
-      LoginCommand.new(["ssh", *args])
     end
 
-    private
-
-    attr_reader :hostname, :username, :options, :logger
+    def username_hostname
+      "#{username}@#{hostname}"
+    end
 
     def session
       @session ||= establish_connection
