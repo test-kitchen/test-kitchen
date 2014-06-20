@@ -98,9 +98,19 @@ module Kitchen
       #
       # @return [Hash] a diagnostic hash
       def diagnose
-        result = Hash.new
-        config_keys.sort.each { |k| result[k] = config[k] }
-        result
+        config_keys.sort.reduce({}) { |result, key| result[k] = config[k]; result }
+      end
+
+      def calculate_path(path, type = :directory)
+        base = config[:test_base_path]
+        candidates = []
+        candidates << File.join(base, instance.suite.name, path)
+        candidates << File.join(base, path)
+        candidates << File.join(Dir.pwd, path)
+
+        candidates.find do |c|
+          type == :directory ? File.directory?(c) : File.file?(c)
+        end
       end
 
       def calculate_path(path, type = :directory)
