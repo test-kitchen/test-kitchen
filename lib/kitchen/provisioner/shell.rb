@@ -49,7 +49,7 @@ module Kitchen
       end
 
       def run_command
-        sudo(File.join(config[:root_path], File.basename(config[:script])))
+        "KITCHEN_DIR=#{config[:root_path]} #{sudo(File.join(config[:root_path], File.basename(config[:script])))}"
       end
 
       protected
