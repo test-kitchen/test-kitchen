@@ -15,6 +15,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+require 'pathname'
+require 'rubygems'
+require 'rubygems/package'
+require 'rubygems/package/tar_writer'
 
 module Kitchen
 
@@ -104,7 +108,7 @@ module Kitchen
 
       def env_cmd(cmd)
         env = "env"
-        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
+        env << " http_proxy=#{config[:http_proxy]}" if config[:http_proxy]
         env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
 
         env == "env" ? cmd : "#{env} #{cmd}"
@@ -121,15 +125,50 @@ module Kitchen
       def transfer_path(locals, remote, connection)
         return if locals.nil? || Array(locals).empty?
 
-        info("Transferring files to #{instance.to_str}")
-        locals.each { |local| connection.upload_path!(local, remote) }
-        debug("Transfer complete")
+        info('Compress files before transferring')
+        pack(locals) do |file|
+          connection.upload_path!(file.path, remote)
+          filename = File.basename(file.path)
+          info("Transferring files to #{instance.to_str}")
+          run_remote("cd #{remote} && tar xvfz #{filename} > /dev/null && rm #{filename}", connection)
+        end
+        debug('Transfer complete')
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
       end
 
       def wait_for_sshd(hostname, username = nil, options = {})
         SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
+      end
+
+      def pack(locals)
+        tar_archive = Tempfile.new(['sandbox', '.tar'])
+        Gem::Package::TarWriter.new(tar_archive) do |tar|
+          locals.each do |path|
+            base_path = Pathname.new(path).parent
+            files = File.file?(path) ? Array(path) : Dir.glob("#{path}/**/*")
+            files.each do |file|
+              mode = File.stat(file).mode
+              relative_path = Pathname.new(file).relative_path_from(base_path)
+              if File.directory?(file)
+                tar.mkdir(relative_path.to_s, mode)
+              else
+                tar.add_file(relative_path.to_s, mode) do |tf|
+                  File.open(file, 'rb') { |f| tf.write f.read }
+                end
+              end
+            end
+          end
+        end
+        tar_archive.rewind
+        tgz_archive = Tempfile.new(['sandbox', '.tar.gz'])
+        gzip = Zlib::GzipWriter.new(tgz_archive)
+        gzip.write tar_archive.read
+        gzip.close
+        yield(tgz_archive)
+      ensure
+        tar_archive.unlink if tar_archive
+        tgz_archive.unlink if tgz_archive
       end
     end
   end
