@@ -24,6 +24,11 @@ module Kitchen
 
     # Chef Test Harness provisioner.
     # - Heavily ripping off the ChefZero provider
+    #   to use this - add something like this under provisioner section of your .kitchen.yml
+    #   provisioner:
+    #     name: chef_test_harness
+    #     chef_git_hash: 6b463773ffc91056146a59c7e69f14e563821604
+    #     chef_git_url: "github.com/opscode/chef"
     #
     # @author Scott Hain
     class ChefTestHarness < ChefBase
@@ -37,7 +42,6 @@ module Kitchen
 
       def create_sandbox
         super
-        prepare_chef_in_test
         prepare_chef_client_zero_rb
         prepare_validation_pem
         prepare_client_rb
@@ -45,6 +49,8 @@ module Kitchen
 
       def prepare_command
         return if local_mode_supported?
+
+        puts "In prep"
 
         ruby_bin = config[:ruby_bindir]
 
@@ -65,6 +71,15 @@ module Kitchen
       end
 
       def run_command
+        puts "In Run"
+
+        prepare_chef_test_bundle
+        <<-RUN.gsub(/^ {10}/, '')
+          sh -c '
+          touch /tmp/blajkfldsajl'
+        RUN
+        puts "After PREPRUN"
+
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{config[:log_level]}"
@@ -88,10 +103,23 @@ module Kitchen
       end
 
       def init_command
+        puts "In init"
+        dirs = %w{cookbooks data data_bags environments roles clients}.
+          map { |dir| File.join(config[:root_path], dir) }.join(" ")
+        "#{sudo('rm')} -rf #{dirs} ; mkdir -p #{config[:root_path]}"
         prepare_chef_in_test
       end
 
       private
+
+      def prepare_chef_test_bundle
+        <<-PREPRUN.gsub(/^ {10}/, '')
+          sh -c '
+          echo "------ Doing a bundle install to set our dependencies up"
+          export BUNDLE_GEMFILE=/opt/chef-test/Gemfile
+          #{sudo("/opt/chef/embedded/bin/bundle")} install --gemfile=/opt/chef-test/Gemfile
+        PREPRUN
+      end
 
       def prepare_chef_in_test
         # in which we use hash as a delimiter for sed, because damn, slashes are annoying when you have that many.
@@ -100,17 +128,14 @@ module Kitchen
           echo "------ Downloading the specified Chef Client code from Github"
           #{sudo("wget")} -O /tmp/chef.tar.gz https://#{config[:chef_git_url]}/tarball/#{config[:chef_git_hash]}
           #{sudo("mkdir")} /opt/chef-test
-          #{sudo("tar")} xf /tmp/chef.tar.gz -C /opt/chef-test/ --strip-components=1'
-          echo "------ Doing a bundle install to set our dependencies up"
-          export BUNDLE_GEMFILE=/opt/chef-test/Gemfile
-          #{sudo("/opt/chef/embedded/bin/bundle")} install --gemfile=/opt/chef-test/Gemfile
+          #{sudo("tar")} xf /tmp/chef.tar.gz -C /opt/chef-test/ --strip-components=1
           echo "------ Munging paths to piggyback on Omnibus Ruby Installation"
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/chef-apply
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/chef-client
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/chef-shell
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/chef-solo
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/knife
-          #{sudo("sed")} -i 's#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g' /opt/chef-test/bin/shef
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/chef-apply
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/chef-client
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/chef-shell
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/chef-solo
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/knife
+          #{sudo("sed")} -i "s#/usr/bin/env ruby#/opt/chef/embedded/bin ruby#g" /opt/chef-test/bin/shef
           echo "------ Laying down stubs"
 
           echo "export BUNDLE_GEMFILE=/opt/chef-test/Gemfile; /opt/chef/embedded/bin/bundle exec /opt/chef/embedded/bin/ruby /opt/chef-test/bin/chef-apply \\$@" > /tmp/chef-apply_stub.sh
@@ -150,7 +175,7 @@ module Kitchen
           #{sudo("ln -sf")} /opt/chef-test/bin/chef-solo_stub.sh /usr/bin/chef-solo
           #{sudo("ln -sf")} /opt/chef-test/bin/knife_stub.sh /usr/bin/knife
           #{sudo("ln -sf")} /opt/chef-test/bin/ohai_stub.sh /usr/bin/ohai
-          #{sudo("ln -sf")} /opt/chef-test/bin/shef_stub.sh /usr/bin/shef
+          #{sudo("ln -sf")} /opt/chef-test/bin/shef_stub.sh /usr/bin/shef'
         GITDOWNLOAD
       end
 
