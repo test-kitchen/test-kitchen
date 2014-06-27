@@ -223,6 +223,12 @@ The EC2 IAM profile name to use.
 
 The default is `nil`.
 
+### <a name="config-spot-instance"></a> price
+
+The price you bid in order to submit a spot request. An additionnal step will be required during the spot request process submission. If no price is set, it will use an on-demand instance.
+
+The default is `nil`.
+
 ## <a name="example"></a> Example
 
 The following could be used in a `.kitchen.yml` or in a `.kitchen.local.yml`
