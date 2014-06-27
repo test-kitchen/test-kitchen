@@ -108,10 +108,8 @@ module Kitchen
         # Check to see if we're pulling in a fresh new pre-release chef client for testing
         git_url = config[:chef_git_url]
         git_hash = config[:chef_git_hash]
-        if(git_url.nil? || git_hash.nil?)
-          return "sh -c '#{install_string}'"
-        else
-          install_test_string = <<-INSTALLTEST.gsub(/^ {10}/, '')
+        if((not git_url.nil?) && (not git_hash.nil?))
+          install_string << <<-INSTALLTEST.gsub(/^ {10}/, '')
             if [ ! -d /opt/chef-test ]; then
               echo "------ Downloading the specified Chef Client code from Github"
               do_download https://#{git_url}/tarball/#{git_hash} /tmp/chef.tar.gz
@@ -119,8 +117,8 @@ module Kitchen
               #{sudo("tar")} xf /tmp/chef.tar.gz -C /opt/chef-test/ --strip-components=1
             fi
 
-            echo "------ Installing gcc so we can build ffi :P"
-            if [ -f /etc/redhat-release ]; then 
+            echo "------ Installing gcc so we can build native gems"
+            if [ -f /etc/redhat-release -o -f /etc/fedora-release -o -f /etc/system-release ]; then
               #{sudo("yum")} install -y gcc
             elif [ -f /etc/debian_version ]; then 
               #{sudo("apt-get")} install -y gcc
@@ -137,10 +135,9 @@ module Kitchen
             echo "------ Installing test version of chef"
             #{sudo("/opt/chef/embedded/bin/gem")} install /opt/chef-test/chef --no-ri --no-rdoc
           INSTALLTEST
-          return "sh -c '#{install_string + install_test_string}'"
         end
 
-
+        return "sh -c '#{install_string}'"
       end
 
       def init_command
