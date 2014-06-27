@@ -74,24 +74,11 @@ module Kitchen
 
       def create(state)
         return if state[:server_id]
-        # Spot instance when a price is set
         if config[:price]
-          spot = request_spot
-          info("Spot instance <#{spot.id}> requested.")
-          info("Spot price is <#{spot.price}>.")
-          spot.wait_for { print '.'; spot.state == 'active' }
-          print '(spot active)'
-
-          server = connection.servers.get(spot.instance_id)
-          # tag assignation on the instance.
-          if config[:tags]
-            connection.create_tags(
-              spot.instance_id,
-              spot.tags
-            )
-          end
-        # On-demand instance
+          # Spot instance when a price is set
+          server = submit_spot
         else
+           # On-demand instance
           server = create_server
         end
 
@@ -233,6 +220,23 @@ module Kitchen
         else
           server.dns_name || server.public_ip_address || server.private_ip_address
         end
+      end
+
+      def submit_spot
+        spot = request_spot
+        info("Spot instance <#{spot.id}> requested.")
+        info("Spot price is <#{spot.price}>.")
+        spot.wait_for { print '.'; spot.state == 'active' }
+        print '(spot active)'
+
+        # tag assignation on the instance.
+        if config[:tags]
+          connection.create_tags(
+            spot.instance_id,
+            spot.tags
+          )
+        end
+        connection.servers.get(spot.instance_id)
       end
     end
   end
