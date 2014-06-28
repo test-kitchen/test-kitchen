@@ -88,53 +88,13 @@ module Kitchen
         end
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        install_string = <<-INSTALL.gsub(/^ {10}/, '')
-          #{Util.shell_helpers}
-
-          should_update_chef() {
-            case "#{flag}" in
-              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
-              latest|*) return 0 ;;
-            esac
-          }
-
-          if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo "-----> Installing Chef Omnibus (#{flag})"
-            do_download #{url} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{version}
-          fi
-        INSTALL
+        install_string = create_chef_install_string(url, flag, version)
 
         # Check to see if we're pulling in a fresh new pre-release chef client for testing
         git_url = config[:chef_git_url]
         git_hash = config[:chef_git_hash]
         if((not git_url.nil?) && (not git_hash.nil?))
-          install_string << <<-INSTALLTEST.gsub(/^ {10}/, '')
-            if [ ! -d /opt/chef-test ]; then
-              echo "------ Downloading the specified Chef Client code from Github"
-              do_download https://#{git_url}/tarball/#{git_hash} /tmp/chef.tar.gz
-              #{sudo("mkdir")} /opt/chef-test
-              #{sudo("tar")} xf /tmp/chef.tar.gz -C /opt/chef-test/ --strip-components=1
-            fi
-
-            echo "------ Installing gcc so we can build native gems"
-            if [ -f /etc/redhat-release -o -f /etc/fedora-release -o -f /etc/system-release ]; then
-              #{sudo("yum")} install -y gcc
-            elif [ -f /etc/debian_version ]; then 
-              #{sudo("apt-get")} install -y gcc
-            else 
-              echo "Platform not supported, sorry for the inconvenience."
-            fi
-
-            echo "------ Doing a bundle install to set our dependencies up"
-            export BUNDLE_GEMFILE=/opt/chef-test/Gemfile
-            #{sudo("/opt/chef/embedded/bin/bundle")} install --gemfile=/opt/chef-test/Gemfile
-            cd /opt/chef-test
-            echo "------ Building our chef test gem"
-            #{sudo("/opt/chef/embedded/bin/gem")} build /opt/chef-test/chef.gemspec
-            echo "------ Installing test version of chef"
-            #{sudo("/opt/chef/embedded/bin/gem")} install /opt/chef-test/chef --no-ri --no-rdoc
-          INSTALLTEST
+          install_string << create_chef_test_install_string(git_url, git_hash)
         end
 
         return "sh -c '#{install_string}'"
@@ -434,10 +394,51 @@ module Kitchen
         end
       end
 
-      def prepare_chef_in_test(git_url, git_hash)
-        <<-INSTALLTEST.gsub(/^ {10}/, '')
-          sh -c '
+      def create_chef_install_string(url, flag, version)
+        <<-INSTALL.gsub(/^ {10}/, '')
+          #{Util.shell_helpers}
 
+          should_update_chef() {
+            case "#{flag}" in
+              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
+              latest|*) return 0 ;;
+            esac
+          }
+
+          if [ ! -d "/opt/chef" ] || should_update_chef ; then
+            echo "-----> Installing Chef Omnibus (#{flag})"
+            do_download #{url} /tmp/install.sh
+            #{sudo('sh')} /tmp/install.sh #{version}
+          fi
+        INSTALL
+      end
+
+      def create_chef_test_install_string(git_url, git_hash)
+        <<-INSTALLTEST.gsub(/^ {10}/, '')
+          if [ ! -d /opt/chef-test ]; then
+            echo "------ Downloading the specified Chef Client code from Github"
+            do_download https://#{git_url}/tarball/#{git_hash} /tmp/chef.tar.gz
+            #{sudo("mkdir")} /opt/chef-test
+            #{sudo("tar")} xf /tmp/chef.tar.gz -C /opt/chef-test/ --strip-components=1
+          fi
+
+          echo "------ Installing gcc so we can build native gems"
+          if [ -f /etc/redhat-release -o -f /etc/fedora-release -o -f /etc/system-release ]; then
+            #{sudo("yum")} install -y gcc
+          elif [ -f /etc/debian_version ]; then 
+            #{sudo("apt-get")} install -y gcc
+          else 
+            echo "Platform not supported, sorry for the inconvenience."
+          fi
+
+          echo "------ Doing a bundle install to set our dependencies up"
+          export BUNDLE_GEMFILE=/opt/chef-test/Gemfile
+          #{sudo("/opt/chef/embedded/bin/bundle")} install --gemfile=/opt/chef-test/Gemfile
+          cd /opt/chef-test
+          echo "------ Building our chef test gem"
+          #{sudo("/opt/chef/embedded/bin/gem")} build /opt/chef-test/chef.gemspec
+          echo "------ Installing test version of chef"
+          #{sudo("/opt/chef/embedded/bin/gem")} install /opt/chef-test/chef --no-ri --no-rdoc
         INSTALLTEST
       end
     end
