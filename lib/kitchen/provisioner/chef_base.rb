@@ -425,9 +425,9 @@ module Kitchen
           echo "------ Installing gcc so we can build native gems"
           if [ -f /etc/redhat-release -o -f /etc/fedora-release -o -f /etc/system-release ]; then
             #{sudo("yum")} install -y gcc
-          elif [ -f /etc/debian_version ]; then 
+          elif [ -f /etc/debian_version ]; then
             #{sudo("apt-get")} install -y gcc
-          else 
+          else
             echo "Platform not supported, sorry for the inconvenience."
           fi
 
