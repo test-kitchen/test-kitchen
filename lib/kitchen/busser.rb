@@ -224,7 +224,7 @@ module Kitchen
     end
 
     def non_suite_dirs
-      %w{data data_bags environments nodes roles}
+      %w{data data_bags environments nodes roles puppet}
     end
 
     def busser_setup_env
