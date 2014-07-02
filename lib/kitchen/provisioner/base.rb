@@ -58,6 +58,13 @@ module Kitchen
       def [](attr)
         config[attr]
       end
+      
+      # Override sudo configuration
+      # 
+      # @param boolean [Boolean] 
+      def sudo=(boolean)
+        config[:sudo]=boolean
+      end
 
       # Returns an array of configuration keys.
       #
