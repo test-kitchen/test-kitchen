@@ -41,7 +41,6 @@ module Kitchen
           :config => @config,
           :shell => shell
         }.merge(additional_options)
-
         str_const = Thor::Util.camel_case(command)
         klass = ::Kitchen::Command.const_get(str_const)
         klass.new(args, options, command_options).call

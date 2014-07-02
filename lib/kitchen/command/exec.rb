@@ -32,7 +32,7 @@ module Kitchen
 
         results.each do |instance|
           banner "Execute command on #{instance.name}."
-          instance.remote_exec(options['command'])
+          instance.remote_exec(args.at(1))
         end
       end
     end
