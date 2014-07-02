@@ -69,6 +69,13 @@ module Kitchen
       # @return [String] a command string
       def install_command
       end
+      
+      # Override sudo configuration
+      # 
+      # @param boolean [Boolean] 
+      def sudo=(boolean)
+        config[:sudo]=boolean
+      end
 
       # Generates a command string which will perform any data initialization
       # or configuration required after the provisioner software is installed
