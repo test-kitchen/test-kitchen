@@ -58,9 +58,9 @@ module Kitchen
       def [](attr)
         config[attr]
       end
-      
+
       # Override sudo configuration
-      # 
+      #
       # @param boolean [Boolean] activate/deactivate sudo
       # @author Salim Afiune <salim@afiunemaya.com.mx>
       def sudo=(boolean)
