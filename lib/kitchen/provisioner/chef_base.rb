@@ -107,6 +107,71 @@ module Kitchen
         INSTALL
       end
 
+      def win_install_command
+        return unless config[:require_chef_omnibus]
+
+        # If we have the default URL for UNIX then we change it for the Windows version.
+        if config[:chef_omnibus_url].eql?("https://www.getchef.com/chef/install.sh")
+          url = "http://www.getchef.com/chef/install.msi"
+        else # else we use the one that comes from .kitchen.yml
+          url = config[:chef_omnibus_url]
+        end
+
+        flag = config[:require_chef_omnibus]
+        version = if flag.is_a?(String) && flag != "latest"
+          "#{flag.downcase}"
+        else
+          ""
+        end
+
+        # Use Powershell to give kind of Progress Status 
+        <<-INSTALL.gsub(/^ {10}/, '')
+          $chef_msi = $env:systemdrive + "\\chef.msi"
+
+          Function install_chef {
+            Write-Host "-----> Installing Chef Omnibus (#{flag})\n"
+            download_chef
+            msiexec /qn /i $chef_msi
+            Start-Sleep 1 
+            $proc_n=@(get-process -ea silentlycontinue msiexec).count
+            
+            Write-Host -NoNewline "\t[$proc_n] ["
+            while (($proc_n-1) -lt @(get-process -ea silentlycontinue msiexec).count) { 
+              Write-Host -NoNewline "#"
+              Start-Sleep 2 
+            }
+            Write-Host "]"
+            rm -r $chef_msi 
+            Write-Host "Completed!\n"
+          }
+
+          Function is_chef_installed { Test-Path /opscode/chef }
+
+          Function download_chef { (New-Object System.Net.WebClient).DownloadFile('#{url}', $chef_msi) }
+
+          Function should_update_chef {
+            $chef_version=(chef-solo -v).split(" ",2)[1]
+            switch ("#{flag}") { 
+              { 'true', $chef_version -contains $_ } { return false } 
+              'latest' { return true }
+              default { return true }
+            }
+          }
+
+          If (-Not (is_chef_installed) -or (should_update_chef)) { install_chef } 
+
+        INSTALL
+      end
+
+      def win_init_command
+        cmd = ""
+        %w{cookbooks data data_bags environments roles clients}.map do |dir| 
+          path = File.join(config[:root_path], dir) 
+          cmd += "if ( Test-Path #{path} ) { rm -r #{path} };"
+        end
+        cmd += "if (-Not (Test-Path #{config[:root_path]})) { mkdir -p #{config[:root_path]} }"
+      end
+
       def init_command
         dirs = %w{cookbooks data data_bags environments roles clients}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
