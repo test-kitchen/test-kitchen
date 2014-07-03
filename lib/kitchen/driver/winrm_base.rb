@@ -73,7 +73,7 @@ module Kitchen
       end
 
       def login_command(state)
-        WinRM.new(*build_winrm_args(state)).login_command
+        WinRM.new(*build_winrm_args(state)).login_command(vagrant_root)
       end
 
       def remote_command(state, command)
