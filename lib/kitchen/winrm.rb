@@ -36,10 +36,6 @@ module Kitchen
   class WinRM
 
     def initialize(hostname, username, options = {})
-      # @password = 'vagrant'
-      # @port = '5985'
-      # @timeout_in_seconds = 300
-      
       @hostname = hostname
       @username = username
       @options = options.dup
@@ -99,7 +95,6 @@ module Kitchen
     end
 
     def login_command(vagrant_root)
-      # Use the vagrant rdp feature. 
       LoginCommand.new("cd #{vagrant_root};vagrant rdp")
     end
 
@@ -139,14 +134,13 @@ module Kitchen
     def to_s
       "#{endpoint}@#{username}<#{options.inspect}>"
     end
-    
+
     # Uploads the given file, but only if the target file doesn't exist
     # or its MD5 checksum doens't match the host's source checksum.
     #
     # @param [String] The source file path on the host
     # @param [String] The destination file path on the guest
     def upload_file(local, remote)
-
       if should_upload_file?(local, remote)
         tmp_file_path = upload_to_temp_file(local)
         decode_temp_file(tmp_file_path, remote)
@@ -154,7 +148,7 @@ module Kitchen
         logger.debug("Up to date: #{remote}")
       end
     end
-    
+
     def endpoint
       "http://#{@hostname}:#{port}/wsman"
     end
@@ -170,10 +164,10 @@ module Kitchen
         $dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
 
         if (Test-Path $dest_file_path) {
-          $crypto_provider = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+          $crypto_prov = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
           try {
             $file = [System.IO.File]::Open($dest_file_path, [System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
-            $guest_md5 = ([System.BitConverter]::ToString($crypto_provider.ComputeHash($file))).Replace("-","").ToLower()
+            $guest_md5 = ([System.BitConverter]::ToString($crypto_prov.ComputeHash($file))).Replace("-","").ToLower()
           }
           finally {
             $file.Dispose()
@@ -238,7 +232,7 @@ module Kitchen
         }
 
         $base64_string = Get-Content $tmp_file_path
-        $bytes = [System.Convert]::FromBase64String($base64_string) 
+        $bytes = [System.Convert]::FromBase64String($base64_string)
         [System.IO.File]::WriteAllBytes($dest_file_path, $bytes)
       EOH
       raise_upload_error_if_failed(output, local, remote)
@@ -267,7 +261,7 @@ module Kitchen
       opts[:host] = hostname
       opts[:port] = port
       opts[:operation_timeout] = timeout_in_seconds
-      opts[:basic_auth_only] = true 
+      opts[:basic_auth_only] = true
 
       [endpoint, :plaintext, opts]
     end
@@ -325,5 +319,5 @@ module Kitchen
     def guest_temp_dir
       @guest_temp ||= (self.cmd('echo %TEMP%'))[:data][0][:stdout].chomp
     end
-  end # WinRM
-end 
+  end
+end
