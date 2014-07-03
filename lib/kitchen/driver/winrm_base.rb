@@ -44,12 +44,11 @@ module Kitchen
         
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
-
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(provisioner.install_command, conn)
-          # run_remote(provisioner.init_command, conn)
+          run_remote(provisioner.win_install_command, conn)
+          run_remote(provisioner.win_init_command, conn, false)
           transfer_path(sandbox_dirs, provisioner[:root_path], conn)
-          # run_remote(provisioner.prepare_command, conn)
+          run_remote(provisioner.prepare_command, conn)
           run_remote(provisioner.run_command, conn)
         end
       ensure
@@ -115,10 +114,10 @@ module Kitchen
         env == "env" ? cmd : "#{env} #{cmd}"
       end
 
-      def run_remote(command, connection)
+      def run_remote(command, connection, stdout=true)
         return if command.nil?
 
-        connection.exec(env_cmd(command))
+        stdout ? connection.exec(env_cmd(command)) : connection.powershell(env_cmd(command))
       rescue WinRMFailed, WinRM::WinRMHTTPTransportError, 
         WinRM::WinRMAuthorizationError, WinRM::WinRMWebServiceError => ex
         raise ActionFailed, ex.message

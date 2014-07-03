@@ -126,7 +126,9 @@ module Kitchen
 
       begin
         logger.debug("[WinRM] opening connection to #{self}")
-        ::WinRM::WinRMWebService.new(*build_winrm_options)
+        socket = ::WinRM::WinRMWebService.new(*build_winrm_options)
+        socket.set_timeout(timeout_in_seconds)
+        socket
       rescue *rescue_exceptions => e
         if (retries -= 1) > 0
           logger.info("[WinRM] connection failed, retrying (#{e.inspect})")
@@ -248,7 +250,7 @@ module Kitchen
     end
 
     def timeout_in_seconds
-      options.fetch(:timeout_in_seconds, 60)
+      options.fetch(:timeout_in_seconds, 1800)
     end
 
     # Creates a guest file path equivalent from a host file path
