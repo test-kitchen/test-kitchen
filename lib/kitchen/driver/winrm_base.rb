@@ -36,12 +36,11 @@ module Kitchen
       end
 
       def converge(state)
-        
         provisioner = instance.provisioner
-        
+
         # Override sudo config if NOT equals to default for Windows
         provisioner.sudo=config[:sudo] if provisioner[:sudo] != config[:sudo]
-        
+
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
@@ -98,11 +97,7 @@ module Kitchen
         opts[:password]       = combined[:password] if combined[:password]
         opts[:forward_agent]  = combined[:forward_agent] if combined.key? :forward_agent
         opts[:logger]         = logger
-        # opts[:user_known_hosts_file] = "/dev/null"
-        # opts[:paranoid]       = false
-        # opts[:keys_only] = true if combined[:ssh_key]
-        # opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
-        
+
         [combined[:hostname], combined[:username], opts]
       end
 
@@ -118,7 +113,7 @@ module Kitchen
         return if command.nil?
 
         stdout ? connection.exec(env_cmd(command)) : connection.powershell(env_cmd(command))
-      rescue WinRMFailed, WinRM::WinRMHTTPTransportError, 
+      rescue WinRMFailed, WinRM::WinRMHTTPTransportError,
         WinRM::WinRMAuthorizationError, WinRM::WinRMWebServiceError => ex
         raise ActionFailed, ex.message
       end
@@ -129,7 +124,7 @@ module Kitchen
         info("Transferring files to #{instance.to_str}")
         locals.each { |local| connection.upload!(local, remote) }
         debug("Transfer complete")
-      rescue WinRMFailed, ::WinRM::WinRMHTTPTransportError, 
+      rescue WinRMFailed, ::WinRM::WinRMHTTPTransportError,
         ::WinRM::WinRMAuthorizationError, ::WinRM::WinRMWebServiceError => ex
         raise ActionFailed, ex.message
       end
