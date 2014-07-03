@@ -41,6 +41,8 @@ module Kitchen
       #
       # If @param [:guest] exist into .kitchen.yml
       # then we use the specific protocol from the driver.
+      # 
+      # @author Salim Afiune <salim@afiunemaya.com.mx>
       plugin = "#{plugin}_#{config[:guest].tr(":","")}" unless config[:guest].nil?
 
       first_load = require("kitchen/driver/#{plugin}")

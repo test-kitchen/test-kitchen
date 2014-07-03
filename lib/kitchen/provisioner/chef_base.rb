@@ -107,6 +107,9 @@ module Kitchen
         INSTALL
       end
 
+      # Definition for chef_omnibus to install chef on Windows [via PowerShell] 
+      #
+      # @author Salim Afiune <salim@afiunemaya.com.mx>
       def win_install_command
         return unless config[:require_chef_omnibus]
 
@@ -163,6 +166,9 @@ module Kitchen
         INSTALL
       end
 
+      # Definition for Windows instances just like init_command but using PowerShell
+      #
+      # @author Salim Afiune <salim@afiunemaya.com.mx>
       def win_init_command
         cmd = ""
         %w{cookbooks data data_bags environments roles clients}.map do |dir| 

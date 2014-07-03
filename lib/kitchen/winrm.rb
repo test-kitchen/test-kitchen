@@ -18,10 +18,9 @@
 
 require 'logger'
 require 'winrm'
-# require 'net/scp'
-# require 'socket'
 
 require 'kitchen/errors'
+require 'kitchen/login_command'
 
 module Kitchen
 
@@ -99,13 +98,9 @@ module Kitchen
       logger.info("Waiting for #{hostname}:#{port}...") until test_winrm
     end
 
-    def login_command
-      raise ActionFailed, "Remote login is not supported yet."
-      
-      logger.debug("[WinRM] Login command not implemented yet")
-      # Need to see what other tool we use to login. 
-      # Thought: Something like LAUNCH RDP from XML file 
-      # => /Applications/Remote\ Desktop\ Connection.app/Contents/MacOS/Remote\ Desktop\ Connection instance.rdp
+    def login_command(vagrant_root)
+      # Use the vagrant rdp feature. 
+      LoginCommand.new("cd #{vagrant_root};vagrant rdp")
     end
 
     private
