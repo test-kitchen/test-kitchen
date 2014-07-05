@@ -31,55 +31,205 @@ module Kitchen
 
     include ::Logger::Severity
 
+    # @return [IO] the log device
     attr_reader :logdev
 
+    # Constructs a new logger.
+    #
+    # @param options [Hash] configuration for a new logger
+    # @option options [Symbol] :color color to use when when outputting
+    #   messages
+    # @option options [Integer] :level the logging severity threshold
+    #   (default: `Kitchen::DEFAULT_LOG_LEVEL`)
+    # @option options [String,IO] :logdev filepath String or IO object to be
+    #   used for logging (default: `nil`)
+    # @option options [String] :progname program name to include in log
+    #   messages (default: `"Kitchen"`)
+    # @option options [IO] :stdout a standard out IO object to use
+    #   (default: `$stdout`)
     def initialize(options = {})
       color = options[:color]
 
       @loggers = []
       @loggers << @logdev = logdev_logger(options[:logdev]) if options[:logdev]
       @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
-      @loggers << stdout_logger(STDOUT, color) if @loggers.empty?
+      @loggers << stdout_logger($stdout, color) if @loggers.empty?
 
       self.progname = options[:progname] || "Kitchen"
       self.level = options[:level] || default_log_level
     end
 
-    %w{ level progname datetime_format debug? info? error? warn? fatal?
-    }.each do |meth|
-      define_method(meth) do |*args|
-        @loggers.first.public_send(meth, *args)
+    class << self
+
+      private
+
+      # @api private
+      # @!macro delegate_to_first_logger
+      #   @method $1()
+      def delegate_to_first_logger(meth)
+        define_method(meth) { |*args| @loggers.first.public_send(meth, *args) }
+      end
+
+      # @api private
+      # @!macro delegate_to_all_loggers
+      #   @method $1()
+      def delegate_to_all_loggers(meth)
+        define_method(meth) do |*args|
+          result = nil
+          @loggers.each { |l| result = l.public_send(meth, *args) }
+          result
+        end
       end
     end
 
-    %w{ level= progname= datetime_format= add <<
-        banner debug info error warn fatal unknown close
-    }.map(&:to_sym).each do |meth|
-      define_method(meth) do |*args|
-        result = nil
-        @loggers.each { |l| result = l.public_send(meth, *args) }
-        result
-      end
-    end
+    # @return [Integer] the logging severity threshold
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#level
+    delegate_to_first_logger :level
+
+    # Sets the logging severity threshold.
+    #
+    # @param level [Integer] the logging severity threshold
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#level=
+    delegate_to_all_loggers :level=
+
+    # @return [String] program name to include in log messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#progname
+    delegate_to_first_logger :progname
+
+    # Sets the program name to include in log messages.
+    #
+    # @param progname [String] the program name to include in log messages
+    # @http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#progname=
+    delegate_to_all_loggers :progname=
+
+    # @return [String] the date format being used
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-datetime_format
+    delegate_to_first_logger :datetime_format
+
+    # Sets the date format being used.
+    #
+    # @param format [String] the date format
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-datetime_format-3D
+    delegate_to_all_loggers :datetime_format=
+
+    # Log a message if the given severity is high enough.
+    #
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-add
+    delegate_to_all_loggers :add
+
+    # Dump one or more messages to info.
+    #
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-3C-3C
+    delegate_to_all_loggers :<<
+
+    # Log a banner (high level) message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
+    delegate_to_all_loggers :banner
+
+    # Log a debug message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug
+    delegate_to_all_loggers :debug
+
+    # @return [TrueClass,FalseClass] whether or not the current severity level
+    #   allows for the printing of debug messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug-3F
+    delegate_to_first_logger :debug?
+
+    # Log an info message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
+    delegate_to_all_loggers :info
+
+    # @return [TrueClass,FalseClass] whether or not the current severity level
+    #   allows for the printing of info messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info-3F
+    delegate_to_first_logger :info?
+
+    # Log an error message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error
+    delegate_to_all_loggers :error
+
+    # @return [TrueClass,FalseClass] whether or not the current severity level
+    #   allows for the printing of error messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error-3F
+    delegate_to_first_logger :error?
+
+    # Log a warn message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn
+    delegate_to_all_loggers :warn
+
+    # @return [TrueClass,FalseClass] whether or not the current severity level
+    #   allows for the printing of warn messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn-3F
+    delegate_to_first_logger :warn?
+
+    # Log a fatal message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal
+    delegate_to_all_loggers :fatal
+
+    # @return [TrueClass,FalseClass] whether or not the current severity level
+    #   allows for the printing of fatal messages
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal-3F
+    delegate_to_first_logger :fatal?
+
+    # Log an unknown message.
+    #
+    # @param message [String] a message
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-unknown
+    delegate_to_all_loggers :unknown
+
+    # Close the logging devices.
+    #
+    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-close
+    delegate_to_all_loggers :close
 
     private
 
+    # @return [Integer] the default logger level
+    # @api private
     def default_log_level
       Util.to_logger_level(Kitchen::DEFAULT_LOG_LEVEL)
     end
 
+    # Construct a new standard out logger.
+    #
+    # @param stdout [IO] the IO object that represents stdout (or similar)
+    # @param color [Symbol] color to use when outputing messages
+    # @return [StdoutLogger] a new logger
+    # @api private
     def stdout_logger(stdout, color)
       logger = StdoutLogger.new(stdout)
       logger.formatter = proc do |severity, datetime, progname, msg|
-        Color.colorize("#{msg}\n", color)
+        Color.colorize("#{msg}", color).concat("\n")
       end
       logger
     end
 
+    # Construct a new logdev logger.
+    #
+    # @param filepath_or_logdev [String,IO] a filepath String or IO object
+    # @return [LogdevLogger] a new logger
+    # @api private
     def logdev_logger(filepath_or_logdev)
       LogdevLogger.new(resolve_logdev(filepath_or_logdev))
     end
 
+    # Return an IO object from a filepath String or the IO object itself.
+    #
+    # @param filepath_or_logdev [String,IO] a filepath String or IO object
+    # @return [IO] an IO object
+    # @api private
     def resolve_logdev(filepath_or_logdev)
       if filepath_or_logdev.is_a? String
         FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
@@ -97,16 +247,26 @@ module Kitchen
 
       alias_method :super_info, :info
 
+      # Dump one or more messages to info.
+      #
+      # @param msg [String] a message
       def <<(msg)
         msg =~ /\n/ ? msg.split("\n").each { |l| format_line(l) } : super
       end
 
+      # Log a banner message.
+      #
+      # @param msg [String] a message
       def banner(msg = nil, &block)
         super_info("-----> #{msg}", &block)
       end
 
       private
 
+      # Reformat a line if it already contains log formatting.
+      #
+      # @param line [String] a message line
+      # @api private
       def format_line(line)
         case line
         when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ''))
@@ -121,24 +281,46 @@ module Kitchen
     # output.
     class StdoutLogger < LogdevLogger
 
+      # Log a debug message
+      #
+      # @param msg [String] a message
       def debug(msg = nil, &block)
         super("D      #{msg}", &block)
       end
 
+      # Log an info message
+      #
+      # @param msg [String] a message
       def info(msg = nil, &block)
         super("       #{msg}", &block)
       end
 
+      # Log a warn message
+      #
+      # @param msg [String] a message
       def warn(msg = nil, &block)
         super("$$$$$$ #{msg}", &block)
       end
 
+      # Log an error message
+      #
+      # @param msg [String] a message
       def error(msg = nil, &block)
         super(">>>>>> #{msg}", &block)
       end
 
+      # Log a fatal message
+      #
+      # @param msg [String] a message
       def fatal(msg = nil, &block)
         super("!!!!!! #{msg}", &block)
+      end
+
+      # Log an unknown message
+      #
+      # @param msg [String] a message
+      def unknown(msg = nil, &block)
+        super("?????? #{msg}", &block)
       end
     end
   end
