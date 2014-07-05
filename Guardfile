@@ -11,3 +11,6 @@ guard 'cucumber', cli: cucumber_cli do
   watch(%r{^features/support/.+$})          { 'features' }
   watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
 end
+
+guard 'yard', port: '8808' do
+end
