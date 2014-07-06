@@ -119,73 +119,123 @@ module Kitchen
 
     # Dump one or more messages to info.
     #
+    # @param message [#to_s] the message to log
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-3C-3C
     delegate_to_all_loggers :<<
 
-    # Log a banner (high level) message.
+    # Log a message with severity of banner (high level).
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
     delegate_to_all_loggers :banner
 
-    # Log a debug message.
+    # Log a message with severity of debug.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug
     delegate_to_all_loggers :debug
 
-    # @return [TrueClass,FalseClass] whether or not the current severity level
+    # @return [true,false] whether or not the current severity level
     #   allows for the printing of debug messages
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug-3F
     delegate_to_first_logger :debug?
 
-    # Log an info message.
+    # Log a message with severity of info.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
     delegate_to_all_loggers :info
 
-    # @return [TrueClass,FalseClass] whether or not the current severity level
+    # @return [true,false] whether or not the current severity level
     #   allows for the printing of info messages
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info-3F
     delegate_to_first_logger :info?
 
-    # Log an error message.
+    # Log a message with severity of error.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error
     delegate_to_all_loggers :error
 
-    # @return [TrueClass,FalseClass] whether or not the current severity level
+    # @return [true,false] whether or not the current severity level
     #   allows for the printing of error messages
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error-3F
     delegate_to_first_logger :error?
 
-    # Log a warn message.
+    # Log a message with severity of warn.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn
     delegate_to_all_loggers :warn
 
-    # @return [TrueClass,FalseClass] whether or not the current severity level
+    # @return [true,false] whether or not the current severity level
     #   allows for the printing of warn messages
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn-3F
     delegate_to_first_logger :warn?
 
-    # Log a fatal message.
+    # Log a message with severity of fatal.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal
     delegate_to_all_loggers :fatal
 
-    # @return [TrueClass,FalseClass] whether or not the current severity level
+    # @return [true,false] whether or not the current severity level
     #   allows for the printing of fatal messages
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal-3F
     delegate_to_first_logger :fatal?
 
-    # Log an unknown message.
+    # Log a message with severity of unknown.
     #
-    # @param message [String] a message
+    # @param message_or_progname [#to_s] the message to log. In the block
+    #   form, this is the progname to use in the log message.
+    # @yield evaluates to the message to log. This is not evaluated unless the
+    #   logger’s level is sufficient to log the message. This allows you to
+    #   create potentially expensive logging messages that are only called when
+    #   the logger is configured to show them.
+    # @return [nil,true] when the given severity is not high enough (for this
+    #   particular logger), log no message, and return true
     # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-unknown
     delegate_to_all_loggers :unknown
 
