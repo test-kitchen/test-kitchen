@@ -13,4 +13,5 @@ guard 'cucumber', cli: cucumber_cli do
 end
 
 guard 'yard', port: '8808' do
+  watch(%r{lib/.+\.rb})
 end
