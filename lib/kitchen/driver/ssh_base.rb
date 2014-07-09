@@ -31,6 +31,7 @@ module Kitchen
       default_config :sudo, true
       default_config :port, 22
 
+      # (see Base#create)
       def create(state)
         raise ClientError, "#{self.class}#create must be implemented"
       end
@@ -67,6 +68,7 @@ module Kitchen
         end
       end
 
+      # (see Base#destroy)
       def destroy(state)
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
@@ -76,6 +78,12 @@ module Kitchen
         SSH.new(*build_ssh_args(state)).login_command
       end
 
+      # **(Deprecated)** Executes a remote command over SSH.
+      #
+      # @param ssh_args [Array] ssh arguments
+      # @param command [String] remote command to invoke
+      # @deprecated This method should no longer be called directly and exists
+      #   to support very old drivers. This will be removed in the future.
       def ssh(ssh_args, command)
         Kitchen::SSH.new(*ssh_args) do |conn|
           run_remote(command, conn)
@@ -84,6 +92,11 @@ module Kitchen
 
       private
 
+      # Builds arguments for constructing a `Kitchen::SSH` instance.
+      #
+      # @param state [Hash] state hash
+      # @return [Array] SSH constructor arguments
+      # @api private
       def build_ssh_args(state)
         combined = config.to_hash.merge(state)
 
@@ -100,6 +113,12 @@ module Kitchen
         [combined[:hostname], combined[:username], opts]
       end
 
+      # Adds http and https proxy environment variables to a command, if set
+      # in configuration data.
+      #
+      # @param cmd [String] command string
+      # @return [String] command string
+      # @api private
       def env_cmd(cmd)
         env = "env"
         env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
@@ -108,6 +127,12 @@ module Kitchen
         env == "env" ? cmd : "#{env} #{cmd}"
       end
 
+      # Executes a remote command over SSH.
+      #
+      # @param command [String] remove command to run
+      # @param connection [Kitchen::SSH] an SSH connection
+      # @raise [ActionFailed] if an exception occurs
+      # @api private
       def run_remote(command, connection)
         return if command.nil?
 
@@ -116,6 +141,13 @@ module Kitchen
         raise ActionFailed, ex.message
       end
 
+      # Transfers one or more local paths over SSH.
+      #
+      # @param locals [Array<String>] array of local paths
+      # @param remote [String] remote destination path
+      # @param connection [Kitchen::SSH] an SSH connection
+      # @raise [ActionFailed] if an exception occurs
+      # @api private
       def transfer_path(locals, remote, connection)
         return if locals.nil? || Array(locals).empty?
 
@@ -126,6 +158,13 @@ module Kitchen
         raise ActionFailed, ex.message
       end
 
+      # Blocks until a TCP socket is available where a remote SSH server
+      # should be listening.
+      #
+      # @param hostname [String] remote SSH server host
+      # @param username [String] SSH username (default: `nil`)
+      # @param options [Hash] configuration hash (default: `{}`)
+      # @api private
       def wait_for_sshd(hostname, username = nil, options = {})
         SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
       end
