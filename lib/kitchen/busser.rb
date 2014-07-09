@@ -114,6 +114,24 @@ module Kitchen
       Util.wrap_command(cmd)
     end
 
+    # Return a command string just like setup_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def setup_cmd_posh
+      @setup_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        setup_cmd_posh  = []
+        setup_cmd_posh << busser_setup_env_posh
+        setup_cmd_posh << "If ((gem list busser -i) -eq \"false\") {
+          gem install #{gem_install_args} }"
+        # We have to modify Busser::Setup to work with PowerShell
+        # setup_cmd_posh << "&\"$env:SYSTEMDRIVE/tmp/busser/gems/bin/busser\" setup"
+        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+        setup_cmd_posh.join('; ')
+      end
+    end
+
     # Returns a command string which transfers all suite test files to the
     # instance.
     #
@@ -141,6 +159,28 @@ module Kitchen
       Util.wrap_command(cmd)
     end
 
+    # Return a command string just like sync_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def sync_cmd_posh
+      return if local_suite_files.empty?
+
+      cmd  = <<-CMD.gsub(/^ {8}/, "")
+        #{busser_setup_env_posh}
+
+        #{config[:busser_bin]} suite cleanup
+
+      CMD
+      local_suite_files.each do |f|
+        cmd << stream_file(f, remote_file_posh(f, config[:suite_name])).concat("\n")
+      end
+      helper_files.each do |f|
+        cmd << stream_file(f, remote_file_posh(f, "helpers")).concat("\n")
+      end
+
+      cmd
+    end
+
     # Returns a command string which runs all Busser suite tests for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
@@ -158,6 +198,19 @@ module Kitchen
       CMD
 
       Util.wrap_command(cmd)
+    end
+
+    # Return a command string just like run_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def run_cmd_posh
+      return if local_suite_files.empty?
+      cmd  = <<-CMD.gsub(/^ {8}/, "")
+        #{busser_setup_env_posh}
+
+        #{config[:busser_bin]} test
+      CMD
+      cmd
     end
 
     private
@@ -248,6 +301,11 @@ module Kitchen
         concat(file.sub(%r{^#{local_prefix}/}, ""))
     end
 
+    def remote_file_posh(file, dir)
+      local_prefix = File.join(config[:test_base_path], dir)
+      "$env:BUSSER_SUITE_PATH/".
+        concat(file.sub(%r{^#{local_prefix}/}, ""))
+    end
     # Returns a command string that will, once evaluated, result in the copying
     # of a local file to a remote instance.
     #
@@ -295,6 +353,21 @@ module Kitchen
         %{GEM_PATH="#{config[:root_path]}/gems"},
         %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
         %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
+      ].join(" ")
+    end
+
+    # Return a command string just like busser_setup_env but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def busser_setup_env_posh
+      [
+        %{$env:BUSSER_ROOT="#{config[:root_path]}";},
+        %{$env:GEM_HOME="#{config[:root_path]}/gems";},
+        %{$env:GEM_PATH="#{config[:root_path]}/gems";},
+        %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
+        %{try { $env:BUSSER_SUITE_PATH=@(#{config[:busser_bin]} suite path) }},
+        %{catch { $env:BUSSER_SUITE_PATH="" };},
+        %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
       ].join(" ")
     end
 
