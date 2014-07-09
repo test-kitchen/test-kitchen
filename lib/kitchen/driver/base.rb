@@ -170,6 +170,18 @@ module Kitchen
         busser.run_cmd
       end
 
+      def busser_setup_cmd_posh
+        busser.setup_cmd_posh
+      end
+
+      def busser_sync_cmd_posh
+        busser.sync_cmd_posh
+      end
+
+      def busser_run_cmd_posh
+        busser.run_cmd_posh
+      end
+
       def busser
         @busser ||= begin
           raise ClientError, "Instance must be set for Driver" if instance.nil?

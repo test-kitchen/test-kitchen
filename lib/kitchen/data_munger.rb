@@ -43,6 +43,7 @@ module Kitchen
         set_kitchen_config_at!(bdata, :kitchen_root)
         set_kitchen_config_at!(bdata, :test_base_path)
         set_kitchen_config_at!(bdata, :log_level)
+        override_busser_guest_param!(bdata, driver_data_for(suite, platform))
       end
     end
 
@@ -74,6 +75,16 @@ module Kitchen
     private
 
     attr_reader :data, :kitchen_config
+
+    def override_busser_guest_param!(root, driver)
+      if driver.has_key?(:guest)
+        case driver.fetch(:guest)
+        when ":windows"
+          root[:sudo] = false
+          root[:busser_bin] = "busser"
+        end
+      end
+    end
 
     def combine_arrays!(root, key, *namespaces)
       if root.has_key?(key)

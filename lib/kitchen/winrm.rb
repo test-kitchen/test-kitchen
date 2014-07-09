@@ -16,8 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# WORKAROUND: Avoid seeing the errors:
+# => WARNING: Could not load IOV methods. Check your GSSAPI C library for an update
+# => WARNING: Could not load AEAD methods. Check your GSSAPI C library for an update
+# by setting $VERBOSE=nil momentarily
+if defined?(WinRM).nil?
+  verbose_bk = $VERBOSE
+  $VERBOSE = nil
+  require 'winrm'
+  $VERBOSE = verbose_bk
+end
+
 require 'logger'
-require 'winrm'
 
 require 'kitchen/errors'
 require 'kitchen/login_command'
@@ -61,10 +71,11 @@ module Kitchen
 
     def exec(command, shell = :powershell)
       logger.debug("[WinRM] #{self}, shell => #{shell}, (#{command})")
-      exit_code = execute_shell(command, shell)
-
-      if exit_code != 0
-        raise WinRMFailed, "WinRM exited (#{exit_code}) using shell [#{shell}] for command: [#{command}]"
+      exit_code, stderr = execute_shell(command, shell)
+      if exit_code != 0 || ! stderr.empty?
+        raise WinRMFailed,
+          "WinRM exited (#{exit_code}) using shell [#{shell}] for command: [#{command}]\nERROR: "+
+          human_err_msg(stderr.inspect)
       end
     end
 
@@ -104,6 +115,13 @@ module Kitchen
 
     def session
       @session ||= establish_connection
+    end
+
+    def human_err_msg(msg)
+      human = msg.inspect.split(/<S S=\\\\\\\"Error\\\\\\\">/).map!{ |a| a.gsub(/_x000D__x000A_<\/S>/,'') }
+      human.shift
+      human.pop
+      human.join("\n")
     end
 
     def establish_connection
@@ -282,12 +300,14 @@ module Kitchen
 
     def shell_with_exit(command, shell)
       exit_code = nil
+      winrm_err = []
       logger.debug("[WinRM] #{shell} executing:\n#{command}")
       output = session.send(shell, command) do |stdout, stderr|
         logger << stdout if stdout
+        winrm_err << stderr if stderr
       end
       logger.debug("Output: #{output.inspect}")
-      return output[:exitcode]
+      [output[:exitcode], winrm_err]
     end
 
     def run_shell(command, shell)

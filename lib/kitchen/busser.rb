@@ -112,6 +112,23 @@ module Kitchen
       end
     end
 
+    # Return a command string just like setup_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def setup_cmd_posh
+      @setup_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        setup_cmd_posh  = []
+        setup_cmd_posh << busser_setup_env_posh
+        setup_cmd_posh << "If ((gem list busser -i) -eq \"false\") { gem install #{gem_install_args} }"
+        # We have to modify Busser::Setup to work with PowerShell
+        # setup_cmd_posh << "&\"$env:SYSTEMDRIVE/tmp/busser/gems/bin/busser\" setup"
+        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+        setup_cmd_posh.join('; ')
+      end
+    end
+
     # Returns a command string which transfers all suite test files to the
     # instance.
     #
@@ -129,9 +146,25 @@ module Kitchen
         sync_cmd << "#{sudo}#{config[:busser_bin]} suite cleanup"
         sync_cmd << "#{local_suite_files.map { |f| stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
         sync_cmd << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
-
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         "sh -c '#{sync_cmd.join('; ')}'"
+      end
+    end
+
+    # Return a command string just like sync_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def sync_cmd_posh
+      @sync_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        sync_cmd_posh  = []
+        sync_cmd_posh << busser_setup_env_posh
+        sync_cmd_posh << "#{config[:busser_bin]} suite cleanup"
+        sync_cmd_posh << "#{local_suite_files.map { |f|
+          stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
+        sync_cmd_posh << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
+        sync_cmd_posh.join('; ')
       end
     end
 
@@ -152,6 +185,20 @@ module Kitchen
 
         # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
         "sh -c '#{run_cmd.join('; ')}'"
+      end
+    end
+
+    # Return a command string just like run_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def run_cmd_posh
+      @run_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        run_cmd_posh  = []
+        run_cmd_posh << busser_setup_env_posh
+        run_cmd_posh << "#{config[:busser_bin]} test"
+        run_cmd_posh.join('; ')
       end
     end
 
@@ -216,6 +263,7 @@ module Kitchen
       stream_file_cmd  = []
       stream_file_cmd << %{echo "Uploading #{remote_path} (mode=#{perms})"}
       stream_file_cmd << %{echo "#{Base64.encode64(local_file).gsub("\n", '')}" | #{sudo}#{stream_cmd}}
+
       stream_file_cmd.join('; ')
     end
 
@@ -234,6 +282,19 @@ module Kitchen
         %{GEM_PATH="#{config[:root_path]}/gems"},
         %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
         %{; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
+      ].join(" ")
+    end
+
+    # Return a command string just like busser_setup_env but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def busser_setup_env_posh
+      [
+        %{$env:BUSSER_ROOT="#{config[:root_path]}";},
+        %{$env:GEM_HOME="#{config[:root_path]}/gems";},
+        %{$env:GEM_PATH="#{config[:root_path]}/gems";},
+        %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
+        %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
       ].join(" ")
     end
 

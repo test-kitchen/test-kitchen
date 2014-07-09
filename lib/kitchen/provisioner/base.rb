@@ -64,7 +64,7 @@ module Kitchen
       # @param boolean [Boolean] activate/deactivate sudo
       # @author Salim Afiune <salim@afiunemaya.com.mx>
       def sudo=(boolean)
-        config[:sudo]=boolean
+        @config[:sudo]=boolean
       end
 
       # Returns an array of configuration keys.
