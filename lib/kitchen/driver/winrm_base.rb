@@ -44,8 +44,8 @@ module Kitchen
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(provisioner.win_install_command, conn)
-          run_remote(provisioner.win_init_command, conn, false)
+          run_remote(provisioner.install_command_posh, conn)
+          run_remote(provisioner.init_command_posh, conn, false)
           transfer_path(sandbox_dirs, provisioner[:root_path], conn)
           run_remote(provisioner.prepare_command, conn)
           run_remote(provisioner.run_command, conn)
@@ -56,14 +56,14 @@ module Kitchen
 
       def setup(state)
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(busser_setup_cmd, conn)
+          run_remote(busser_setup_cmd_posh, conn)
         end
       end
 
       def verify(state)
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(busser_sync_cmd, conn)
-          run_remote(busser_run_cmd, conn)
+          run_remote(busser_sync_cmd_posh, conn)
+          run_remote(busser_run_cmd_posh, conn)
         end
       end
 
