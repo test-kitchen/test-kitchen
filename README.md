@@ -62,6 +62,12 @@ For specific default values, please consult [amis.json][amis_json].
 
 ## <a name="config"></a> Configuration
 
+### <a name="config-associate-public-ip"></a> associate\_public\_ip
+
+Associate a public IP address with the instance. **Must be `true` if using VPC.**
+
+The default will be `true` if `subnet_id` is set, or `false` otherwise.
+
 ### <a name="config-az"></a> availability\_zone
 
 **Required** The AWS [availability zone][region_docs] to use.
@@ -146,7 +152,6 @@ The place from which to derive the hostname for communicating with the instance.
 3. Private IP Address
 
 The default is unset.
-
 
 ### <a name="config-region"></a> region
 
