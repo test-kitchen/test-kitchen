@@ -49,9 +49,9 @@ module Kitchen
       end
     end
 
-    def exec(cmd)
+    def exec(cmd, env = {})
       logger.debug("[SSH] #{self} (#{cmd})")
-      exit_code = exec_with_exit(cmd)
+      exit_code = exec_with_exit(cmd, env)
 
       if exit_code != 0
         raise SSHFailed, "SSH exited (#{exit_code}) for command: [#{cmd}]"
@@ -141,13 +141,26 @@ module Kitchen
       options.fetch(:port, 22)
     end
 
-    def exec_with_exit(cmd)
+    def exec_with_exit(cmd, env = {})
       exit_code = nil
       session.open_channel do |channel|
 
         channel.request_pty
 
-        channel.exec(cmd) do |ch, success|
+        # NOTE net/ssh warns:
+        # If you are connecting to an OpenSSH server, you will
+        # need to update the AcceptEnv setting in the sshd_config to include the
+        # environment variables you want to send.
+        #
+        # This means that we can't use channel#env.
+        # Instead we have to stringify the environment and prepend it to the command
+
+        env_string = env.map { |k,v| [k,v].join("=") }.join(" ")
+        debug("Command environment: '#{env_string}'")
+
+        env_with_cmd = [env_string, cmd].join(" ")
+
+        channel.exec(env_with_cmd) do |ch, success|
 
           channel.on_data do |ch, data|
             logger << data
