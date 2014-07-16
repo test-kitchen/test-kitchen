@@ -5,6 +5,8 @@
       "ubuntu-12.04": "ami-bb9a08ba",
       "ubuntu-12.10": "ami-4556c544",
       "ubuntu-13.04": "ami-97099a96",
+      "ubuntu-13.10": "ami-45f1a744",
+      "ubuntu-14.04": "ami-955c0c94",
       "centos-6.4": "ami-9ffa709e",
       "debian-7.1.0": "ami-f1f064f0"
     },
@@ -13,6 +15,8 @@
       "ubuntu-12.04": "ami-881c57da",
       "ubuntu-12.10": "ami-3ce0a86e",
       "ubuntu-13.04": "ami-4af5bd18",
+      "ubuntu-13.10": "ami-02e6b850",
+      "ubuntu-14.04": "ami-9a7c25c8",
       "centos-6.4": "ami-46f5bb14",
       "debian-7.1.0": "ami-fe8ac3ac"
     },
@@ -21,6 +25,8 @@
       "ubuntu-12.04": "ami-cb26b4f1",
       "ubuntu-12.10": "ami-1703912d",
       "ubuntu-13.04": "ami-8f32a0b5",
+      "ubuntu-13.10": "ami-e54423df",
+      "ubuntu-14.04": "ami-f3b1d6c9",
       "centos-6.4": "ami-9352c1a9",
       "debian-7.1.0": "ami-4e099a74"
     },
@@ -29,6 +35,8 @@
       "ubuntu-12.04": "ami-d3b5aea7",
       "ubuntu-12.10": "ami-6b62791f",
       "ubuntu-13.04": "ami-6fd4cf1b",
+      "ubuntu-13.10": "ami-39eb3f4e",
+      "ubuntu-14.04": "ami-c112c5b6",
       "centos-6.4": "ami-75190b01",
       "debian-7.1.0": "ami-954559e1"
     },
@@ -37,6 +45,8 @@
       "ubuntu-12.04": "ami-c905a1d4",
       "ubuntu-12.10": "ami-e759fdfa",
       "ubuntu-13.04": "ami-4b2b8f56",
+      "ubuntu-13.10": "ami-076cc21a",
+      "ubuntu-14.04": "ami-052b8518",
       "centos-6.4": "ami-a665c0bb",
       "debian-7.1.0": "ami-b03590ad"
     },
@@ -45,6 +55,8 @@
       "ubuntu-12.04": "ami-2f115c46",
       "ubuntu-12.10": "ami-4d5b1824",
       "ubuntu-13.04": "ami-a73371ce",
+      "ubuntu-13.10": "ami-a65393ce",
+      "ubuntu-14.04": "ami-4a915c22",
       "centos-6.4": "ami-bf5021d6",
       "debian-7.1.0": "ami-50d9a439"
     },
@@ -53,6 +65,8 @@
       "ubuntu-12.04": "ami-eaf0daaf",
       "ubuntu-12.10": "ami-02220847",
       "ubuntu-13.04": "ami-fe052fbb",
+      "ubuntu-13.10": "ami-bb2a2afe",
+      "ubuntu-14.04": "ami-d99a9a9c",
       "centos-6.4": "ami-5d456c18",
       "debian-7.1.0": "ami-1a9bb25f"
     },
@@ -61,6 +75,8 @@
       "ubuntu-12.04": "ami-e6f36fd6",
       "ubuntu-12.10": "ami-0c069b3c",
       "ubuntu-13.04": "ami-4ade427a",
+      "ubuntu-13.10": "ami-c18ff1f1",
+      "ubuntu-14.04": "ami-b7720b87",
       "centos-6.4": "ami-b3bf2f83",
       "debian-7.1.0": "ami-158a1925"
     }
@@ -70,6 +86,8 @@
     "ubuntu-12.04": "ubuntu",
     "ubuntu-12.10": "ubuntu",
     "ubuntu-13.04": "ubuntu",
+    "ubuntu-13.10": "ubuntu",
+    "ubuntu-14.04": "ubuntu",
     "centos-6.4": "root",
     "debian-7.1.0": "admin"
   },
