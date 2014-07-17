@@ -22,6 +22,35 @@ require "net/ssh/test"
 
 require "kitchen/ssh"
 
+# Hack to sort results in `Dir.entries` only within the yielded block, to limit
+# the "behavior pollution" to other code. This was needed for Net::SCP, as
+# recursive directory upload doesn't sort the file and directory upload
+# candidates which leads to different results based on the underlying
+# filesystem (i.e. lexically sorted, inode insertion, mtime/atime, total
+# randomness, etc.)
+#
+# See: https://github.com/net-ssh/net-scp/blob/a24948d8bd231878f2606196c693768cc78215cb/lib/net/scp/upload.rb#L52
+
+def with_sorted_dir_entries
+  Dir.class_exec do
+    class << self
+      alias_method :__entries__, :entries unless method_defined?(:__entries__)
+
+      def entries(*args)
+        send(:__entries__, *args).sort
+      end
+    end
+  end
+
+  yield
+
+  Dir.class_exec do
+    class << self
+      alias_method :entries, :__entries__
+    end
+  end
+end
+
 # Major hack-and-a-half to add basic `Channel#request_pty` support to
 # Net::SSH's testing framework. The `Net::SSH::Test::LocalPacket` does not
 # recognize the `"pty-req"` request type, so bombs out whenever this channel
@@ -331,13 +360,17 @@ describe Kitchen::SSH do
     end
 
     it "uploads a file to remote over scp" do
-      assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+      with_sorted_dir_entries do
+        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+      end
     end
 
     it "logs upload progress to debug" do
       remote_base = "/tmp/#{File.basename(@dir)}"
 
-      assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+      with_sorted_dir_entries do
+        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+      end
 
       logged_output.string.must_match debug_line(
         "[SSH] opening connection to me@foo:22<{}>"
