@@ -27,6 +27,7 @@ module Kitchen
     # @author Seth Vargo <sethvargo@gmail.com>
     class Sink < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         puts [
           "",
