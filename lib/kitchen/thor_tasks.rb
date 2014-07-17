@@ -42,8 +42,13 @@ module Kitchen
 
     private
 
+    # @return [Config] a Kitchen::Config
     attr_reader :config
 
+    # Generates a test Thor task for each instance and one to test all
+    # instances in serial.
+    #
+    # @api private
     def define
       config.instances.each do |instance|
         self.class.desc instance.name, "Run #{instance.name} test instance"
