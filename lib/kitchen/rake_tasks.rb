@@ -39,8 +39,13 @@ module Kitchen
 
     private
 
+    # @return [Config] a Kitchen::Config
     attr_reader :config
 
+    # Generates a test Rake task for each instance and one to test all
+    # instances in serial.
+    #
+    # @api private
     def define
       namespace "kitchen" do
         config.instances.each do |instance|
