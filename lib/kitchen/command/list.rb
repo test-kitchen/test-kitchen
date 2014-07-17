@@ -27,6 +27,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class List < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         result = parse_subcommand(args.first)
         if options[:debug]
@@ -41,10 +42,21 @@ module Kitchen
 
       private
 
+      # Add a trailing ansi color escape code to line up columns of colored
+      # output.
+      #
+      # @param string [String] a string
+      # @return [String]
+      # @api private
       def color_pad(string)
         string + set_color("", :white)
       end
 
+      # Generate the display rows for an instance.
+      #
+      # @param instance [Instance] an instance
+      # @return [Array<String>]
+      # @api private
       def display_instance(instance)
         [
           color_pad(instance.name),
@@ -54,6 +66,11 @@ module Kitchen
         ]
       end
 
+      # Format and color the given last action.
+      #
+      # @param [String] the last action
+      # @return [String] formated last action
+      # @api private
       def format_last_action(last_action)
         case last_action
         when 'create' then set_color("Created", :cyan)
@@ -65,6 +82,10 @@ module Kitchen
         end
       end
 
+      # Constructs a list display table and output it to the screen.
+      #
+      # @param result [Array<Instance>] an array of instances
+      # @api private
       def list_table(result)
         table = [
           [set_color("Instance", :green), set_color("Driver", :green),
@@ -74,10 +95,17 @@ module Kitchen
         print_table(table)
       end
 
+      # Outputs a formatted display table.
+      #
+      # @api private
       def print_table(*args)
         shell.print_table(*args)
       end
 
+      # Colorize a string.
+      #
+      # @return [String] a colorized string
+      # @api private
       def set_color(*args)
         shell.set_color(*args)
       end
