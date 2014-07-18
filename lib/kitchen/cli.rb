@@ -32,6 +32,15 @@ module Kitchen
     # Common module to load and invoke a CLI-implementation agnostic command.
     module PerformCommand
 
+      # Perform a CLI subcommand.
+      #
+      # @param task [String] action to take, usually corresponding to the
+      #   subcommand name
+      # @param command [String] command class to create and invoke]
+      # @param args [Array] remainder arguments from processed ARGV
+      #   (default: `nil`)
+      # @param additional_options [Hash] additional configuration needed to
+      #   set up the command class (default: `{}`)
       def perform(task, command, args = nil, additional_options = {})
         require "kitchen/command/#{command}"
 
@@ -51,6 +60,8 @@ module Kitchen
     include Logging
     include PerformCommand
 
+    # The maximum number of concurrent instances that can run--which is a bit
+    # high
     MAX_CONCURRENCY = 9999
 
     # Constructs a new instance.
@@ -242,6 +253,7 @@ module Kitchen
         perform("discover", "driver_discover", args)
       end
 
+      # @return [String] basename
       def self.basename
         super + " driver"
       end
@@ -263,14 +275,23 @@ module Kitchen
 
     private
 
+    # Ensure the any failing commands exit non-zero.
+    #
+    # @return [true] you die always on failure
+    # @api private
     def self.exit_on_failure?
       true
     end
 
+    # @return [Logger] the common logger
+    # @api private
     def logger
       Kitchen.logger
     end
 
+    # Update and finalize options for logging, concurrency, and other concerns.
+    #
+    # @api private
     def update_config!
       if options[:log_level]
         level = options[:log_level].downcase.to_sym
@@ -289,6 +310,9 @@ module Kitchen
       end
     end
 
+    # If auto_init option is active, invoke the init generator.
+    #
+    # @api private
     def ensure_initialized
       yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
 
