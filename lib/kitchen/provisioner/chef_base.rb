@@ -431,17 +431,20 @@ module Kitchen
 
       def build_gem_and_install(src_dir, install_dir)
         <<-GEMBUILD.gsub(/^ {10}/, '')
+          export chef_bin=/opt/chef/embedded/bin
+          export PATH=$chef_bin:$PATH
+          #{sudo("chown -R $USER #{src_dir}")}
+
           cd #{src_dir}
-          export PATH=/opt/chef/embedded/bin:$PATH
-          #{sudo("bundle")} install --quiet
-          #{sudo("bundle")} exec rake gem --quiet
+          bundle install --gemfile=#{src_dir}/Gemfile --quiet
+          bundle exec rake gem --quiet
 
           echo "------ Uninstalling previously installed chef gem and removing executables"
-          #{sudo("gem")} uninstall chef -qIx --no-verbose
+          #{sudo("$chef_bin/gem")} uninstall chef -Ix
 
           echo "------ Installing chef from locally built gem"
           #{sudo("rm")} -f pkg/chef-*-x86-mingw32.gem
-          #{sudo("gem")} install --local pkg/chef-*.gem -n #{install_dir}/bin --no-rdoc --no-ri
+          #{sudo("$chef_bin/gem")} install --local pkg/chef-*.gem -n #{install_dir}/bin --no-rdoc --no-ri
         GEMBUILD
       end
     end
