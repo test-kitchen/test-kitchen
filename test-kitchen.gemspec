@@ -26,6 +26,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'safe_yaml',       '~> 1.0'
   gem.add_dependency 'thor',            '~> 0.18'
 
+  gem.add_development_dependency 'pry'
+
   gem.add_development_dependency 'bundler',   '~> 1.3'
   gem.add_development_dependency 'rake'
 
