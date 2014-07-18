@@ -47,7 +47,7 @@ module Kitchen
     # @raise [ClientError] if instance parameter is nil
     def finalize_config!(instance)
       if instance.nil?
-        raise ClientError, "Instance must be provided to #{self.to_s}"
+        raise ClientError, "Instance must be provided to #{self}"
       end
 
       @instance = instance
@@ -88,7 +88,7 @@ module Kitchen
       type = opts.fetch(:type, :directory)
       base = opts.fetch(:base_path) do
         config.fetch(:test_base_path) do |key|
-          raise UserError, "#{key} is not found in #{self.to_s}"
+          raise UserError, "#{key} is not found in #{self}"
         end
       end
 

@@ -218,7 +218,7 @@ module Kitchen
       # @api private
       def prepare(component, opts = {})
         opts = { :type => :directory }.merge(opts)
-        key_name = opts.fetch(:key_name, "#{component.to_s}_path")
+        key_name = opts.fetch(:key_name, "#{component}_path")
         src = config[key_name.to_sym]
         return if src.nil?
 
