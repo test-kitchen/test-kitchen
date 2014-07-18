@@ -136,12 +136,10 @@ module Kitchen
           Function install_chef {
             Write-Host "-----> Installing Chef Omnibus (#{flag})\n"
             download_chef
-            msiexec /qn /i $chef_msi
-            Start-Sleep 10
-            $proc_n=@(get-process -ea silentlycontinue msiexec).count
+            $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
 
-            Write-Host -NoNewline "\t[$proc_n] ["
-            while (($proc_n-1) -lt @(get-process -ea silentlycontinue msiexec).count) {
+            Write-Host -NoNewline "\t[MSI] ["
+            while (-Not $proc_msi.HasExited ) {
               Write-Host -NoNewline "#"
               Start-Sleep 2
             }
