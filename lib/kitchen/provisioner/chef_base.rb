@@ -122,12 +122,14 @@ module Kitchen
 
         flag = config[:require_chef_omnibus]
         version = if flag.is_a?(String) && flag != "latest"
-          "#{flag.downcase}"
+          "v=#{flag.downcase}"
         else
           ""
         end
 
         # Use Powershell to give kind of Progress Status
+        # Note: We use SYSTEMDRIVE because if we use TEMP
+        # the installation fails.
         <<-INSTALL.gsub(/^ {10}/, '')
           $chef_msi = $env:systemdrive + "\\chef.msi"
 
@@ -135,7 +137,7 @@ module Kitchen
             Write-Host "-----> Installing Chef Omnibus (#{flag})\n"
             download_chef
             msiexec /qn /i $chef_msi
-            Start-Sleep 1
+            Start-Sleep 10
             $proc_n=@(get-process -ea silentlycontinue msiexec).count
 
             Write-Host -NoNewline "\t[$proc_n] ["
@@ -150,10 +152,14 @@ module Kitchen
 
           Function is_chef_installed { Test-Path /opscode/chef }
 
-          Function download_chef { (New-Object System.Net.WebClient).DownloadFile('#{url}', $chef_msi) }
+          Function download_chef { (New-Object System.Net.WebClient).DownloadFile('#{url}?#{version}', $chef_msi) }
 
           Function should_update_chef {
-            $chef_version=(chef-solo -v).split(" ",2)[1]
+            try {
+              $chef_version=(chef-solo -v).split(" ",2)[1]
+            } catch [Exception] {
+              $chef_version = ''
+            }
             switch ("#{flag}") {
               { 'true', $chef_version -contains $_ } { return false }
               'latest' { return true }
