@@ -55,14 +55,10 @@ Feature: Running a diagnosis command
     """
         raw_data:
           error:
-            exception: |-
-              #<Kitchen::UserError: Error parsing
     """
     And the output should contain:
     """
     instances:
       error:
-        exception: |-
-          #<Kitchen::UserError: Error parsing
     """
     And the exit status should be 0
