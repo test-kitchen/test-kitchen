@@ -180,7 +180,7 @@ describe Kitchen do
 
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           $stderr.string.must_equal output
         end
       end
@@ -188,7 +188,7 @@ describe Kitchen do
       it "logs the exception message on the common logger's error severity" do
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           logger_io.string.must_match /ERROR -- Kitchen: cannot do that$/
         end
       end
@@ -198,7 +198,7 @@ describe Kitchen do
 
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           logger_io.string.must_match /DEBUG -- Kitchen: cannot do that$/
         end
       end
@@ -236,7 +236,7 @@ describe Kitchen do
 
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           $stderr.string.must_equal output
         end
       end
@@ -244,7 +244,7 @@ describe Kitchen do
       it "logs the exception message on the common logger's error severity" do
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           logger_io.string.
             must_match /ERROR -- Kitchen: ------Exception-------$/
           logger_io.string.
@@ -259,7 +259,7 @@ describe Kitchen do
 
         begin
           go_boom
-        rescue SystemExit => e
+        rescue SystemExit
           logger_io.string.
             must_match /DEBUG -- Kitchen: ------Exception-------$/
           logger_io.string.

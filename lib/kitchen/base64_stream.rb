@@ -31,11 +31,11 @@ module Kitchen
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream
     def self.strict_encode(io_in, io_out)
-      buffer = ""
+      buffer = "" # rubocop:disable Lint/UselessAssignment
       while io_in.read(3 * 1000, buffer)
         io_out.write([buffer].pack("m0"))
       end
-      buffer = nil
+      buffer = nil # rubocop:disable Lint/UselessAssignment
     end
 
     # Decodes a Base64 input stream into an output stream. The input and ouput
@@ -45,11 +45,11 @@ module Kitchen
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream
     def self.strict_decode(io_in, io_out)
-      buffer = ""
+      buffer = "" # rubocop:disable Lint/UselessAssignment
       while io_in.read(3 * 1000, buffer)
         io_out.write(buffer.unpack("m0").first)
       end
-      buffer = nil
+      buffer = nil # rubocop:disable Lint/UselessAssignment
     end
   end
 end
