@@ -67,7 +67,7 @@ module Kitchen
       sh.stdout
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
-    rescue Exception => error
+    rescue Exception => error # rubocop:disable Lint/RescueException
       error.extend(Kitchen::Error)
       raise
     end

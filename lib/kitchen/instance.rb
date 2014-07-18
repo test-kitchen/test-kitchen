@@ -375,7 +375,7 @@ module Kitchen
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{self.name}.log for more details",
         e.backtrace)
-    rescue Exception => e
+    rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
       raise ActionFailed,
         "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
