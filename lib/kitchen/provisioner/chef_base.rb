@@ -87,24 +87,19 @@ module Kitchen
           ""
         end
 
-        # use Bourne (/bin/sh) as Bash does not exist on all Unix flavors
-        <<-INSTALL.gsub(/^ {10}/, '')
-          sh -c '
-          #{Util.shell_helpers}
+        install_string = install_with_omnibus(url, flag, version)
 
-          should_update_chef() {
-            case "#{flag}" in
-              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
-              latest|*) return 0 ;;
-            esac
-          }
+        if config[:chef_git_url] && config[:chef_git_sha]
+          git_url = config[:chef_git_url]
+          git_sha = config[:chef_git_sha]
 
-          if [ ! -d "/opt/chef" ] || should_update_chef ; then
-            echo "-----> Installing Chef Omnibus (#{flag})"
-            do_download #{url} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{version}
-          fi'
-        INSTALL
+          chef_src = "/tmp/src/chef"
+          install_dir = "/opt/chef"
+          install_string << download_chef_from_github(git_url, git_sha, chef_src)
+          install_string << build_gem_and_install(chef_src, install_dir)
+        end
+
+        return "sh -c '#{install_string}'"
       end
 
       def init_command
@@ -399,6 +394,55 @@ module Kitchen
         Kitchen.mutex.synchronize do
           Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
         end
+      end
+
+      def install_with_omnibus(url, flag, version)
+        <<-INSTALL.gsub(/^ {10}/, '')
+          #{Util.shell_helpers}
+
+          should_update_chef() {
+            case "#{flag}" in
+              true|`chef-solo -v | cut -d " " -f 2`) return 1 ;;
+              latest|*) return 0 ;;
+            esac
+          }
+
+          if [ ! -d "/opt/chef" ] || should_update_chef ; then
+            echo "-----> Installing Chef Omnibus (#{flag})"
+            do_download #{url} /tmp/install.sh
+            #{sudo('sh')} /tmp/install.sh #{version}
+          fi
+        INSTALL
+      end
+
+      def download_chef_from_github(git_url, git_sha, dest_dir)
+        <<-TARBALL.gsub(/^ {10}/, '')
+          echo "------ Downloading the specified Chef Client code from Github"
+          do_download https://#{git_url}/tarball/#{git_sha} /tmp/chef-#{git_sha}.tar.gz
+
+          if [ -d #{dest_dir} ]; then
+            #{sudo("rm")} -rf #{dest_dir}
+          fi
+
+          #{sudo("mkdir")} -p #{dest_dir}
+          #{sudo("tar")} xf /tmp/chef-#{git_sha}.tar.gz -C #{dest_dir} --strip-components=1
+        TARBALL
+      end
+
+      def build_gem_and_install(src_dir, install_dir)
+        <<-GEMBUILD.gsub(/^ {10}/, '')
+          cd #{src_dir}
+          export PATH=/opt/chef/embedded/bin:$PATH
+          #{sudo("bundle")} install --quiet
+          #{sudo("bundle")} exec rake gem --quiet
+
+          echo "------ Uninstalling previously installed chef gem and removing executables"
+          #{sudo("gem")} uninstall chef -qIx --no-verbose
+
+          echo "------ Installing chef from locally built gem"
+          #{sudo("rm")} -f pkg/chef-*-x86-mingw32.gem
+          #{sudo("gem")} install --local pkg/chef-*.gem -n #{install_dir}/bin --no-rdoc --no-ri
+        GEMBUILD
       end
     end
   end
