@@ -84,7 +84,8 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def shim_command
-        [ chef_client_zero_env,
+        [
+          chef_client_zero_env,
           sudo("#{config[:ruby_bindir]}/ruby"),
           "#{config[:root_path]}/chef-client-zero.rb"
         ].join(" ")
