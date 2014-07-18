@@ -166,7 +166,7 @@ module Kitchen
         end
 
         queue = Queue.new
-        instances.each {|i| queue << i }
+        instances.each { |i| queue << i }
         concurrency.times { queue << nil }
 
         threads = []
