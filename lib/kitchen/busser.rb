@@ -211,7 +211,7 @@ module Kitchen
       base = File.join(config[:test_base_path], config[:suite_name])
       glob = File.join(base, "*/**/*")
       Dir.glob(glob).reject do |f|
-         is_chef_data_dir?(base, f) || File.directory?(f)
+         chef_data_dir?(base, f) || File.directory?(f)
       end
     end
 
@@ -221,7 +221,7 @@ module Kitchen
     # @return [truthy,falsey] whether or not a given file is some kind of
     #   Chef-related file
     # @api private
-    def is_chef_data_dir?(base, file)
+    def chef_data_dir?(base, file)
       file =~ %r[^#{base}/(data|data_bags|environments|nodes|roles)/]
     end
 
