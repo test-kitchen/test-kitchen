@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "English"
+
 module Kitchen
 
   # All Kitchen errors and exceptions.
@@ -91,8 +93,8 @@ module Kitchen
     #
     # @param msg [String] exception message
     # @param original [::StandardError] an original exception which will be
-    #   wrapped (default: `$!`)
-    def initialize(msg, original = $!)
+    #   wrapped (default: `$ERROR_INFO`)
+    def initialize(msg, original = $ERROR_INFO)
       super(msg)
       @original = original
     end

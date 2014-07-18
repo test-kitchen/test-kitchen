@@ -2,6 +2,7 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'kitchen/version'
+require 'English'
 
 Gem::Specification.new do |gem|
   gem.name          = "test-kitchen"
@@ -13,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.summary       = gem.description
   gem.homepage      = 'http://kitchen.ci'
 
-  gem.files         = `git ls-files`.split($/)
+  gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   gem.executables   = %w(kitchen)
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']

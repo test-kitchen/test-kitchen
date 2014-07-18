@@ -22,6 +22,7 @@ require 'chef/config'
 require 'chef_zero/server'
 require 'chef/chef_fs/chef_fs_data_store'
 require 'chef/chef_fs/config'
+require 'English'
 require 'fileutils'
 
 # Bust out of our self-imposed sandbox before running chef-client so
@@ -69,7 +70,7 @@ class ChefClientZero
 
   def run_chef_client
     system("chef-client", *ARGV)
-    fail if $? != 0
+    fail if $CHILD_STATUS != 0
   end
 end
 
