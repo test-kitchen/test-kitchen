@@ -211,7 +211,7 @@ module Kitchen
       base = File.join(config[:test_base_path], config[:suite_name])
       glob = File.join(base, "*/**/*")
       Dir.glob(glob).reject do |f|
-         chef_data_dir?(base, f) || File.directory?(f)
+        chef_data_dir?(base, f) || File.directory?(f)
       end
     end
 
