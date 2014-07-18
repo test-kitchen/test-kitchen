@@ -102,7 +102,7 @@ module Kitchen
     end
 
     def wait
-      logger.info("Waiting for #{hostname}:#{port}...") until test_winrm
+      logger.info("Waiting for #{username}@#{hostname}:#{port}...") until test_winrm
     end
 
     def login_command(vagrant_root)
@@ -333,7 +333,13 @@ module Kitchen
     end
 
     def test_winrm
-      self.powershell("hostname")[:exitcode].zero?
+      begin
+        exitcode, error_msg = shell_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
+        exitcode.zero?
+      rescue => e
+        sleep 5
+        false
+      end
     end
 
     def guest_temp_dir
