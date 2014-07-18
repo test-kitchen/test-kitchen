@@ -46,8 +46,8 @@ module Kitchen
     #   empty string otherwise
     def self.escape(name)
       return "" if name.nil?
-      return "" unless ansi = ANSI[name]
-      "\e[#{ansi}m"
+      return "" unless ANSI[name]
+      "\e[#{ANSI[name]}m"
     end
 
     # Returns a colorized ansi escaped string with the given color.
