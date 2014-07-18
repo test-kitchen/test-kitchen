@@ -60,19 +60,13 @@ module Kitchen
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
         create_kitchen_yaml
-        prepare_rakefile if init_rakefile?
-        prepare_thorfile if init_thorfile?
-        empty_directory "test/integration/default" if init_test_dir?
-        if init_git?
-          append_to_gitignore(".kitchen/")
-          append_to_gitignore(".kitchen.local.yml")
-        end
-        prepare_gemfile if init_gemfile?
+        prepare_rakefile
+        prepare_thorfile
+        create_test_dir
+        prepare_gitignore
+        prepare_gemfile
         add_drivers
-
-        if @display_bundle_msg
-          say "You must run `bundle install' to fetch any new gems.", :red
-        end
+        display_bundle_message
       end
 
       private
@@ -135,6 +129,8 @@ module Kitchen
       #
       # @api private
       def prepare_rakefile
+        return unless init_rakefile?
+
         rakedoc = <<-RAKE.gsub(/^ {10}/, '')
 
           begin
@@ -151,6 +147,8 @@ module Kitchen
       #
       # @api private
       def prepare_thorfile
+        return unless init_thorfile?
+
         thordoc = <<-THOR.gsub(/^ {10}/, '')
 
           begin
@@ -163,7 +161,24 @@ module Kitchen
         append_to_file(File.join(destination_root, "Thorfile"), thordoc)
       end
 
-      # Prepares a .gitignore file.
+      # Create the default test directory
+      #
+      # @api private
+      def create_test_dir
+        empty_directory "test/integration/default" if init_test_dir?
+      end
+
+      # Prepares the .gitignore file
+      #
+      # @api private
+      def prepare_gitignore
+        return unless init_git?
+
+        append_to_gitignore(".kitchen/")
+        append_to_gitignore(".kitchen.local.yml")
+      end
+
+      # Appends a line to the .gitignore file.
       #
       # @api private
       def append_to_gitignore(line)
@@ -178,6 +193,8 @@ module Kitchen
       #
       # @api private
       def prepare_gemfile
+        return unless init_gemfile?
+
         create_gemfile_if_missing
         add_gem_to_gemfile
       end
@@ -232,6 +249,15 @@ module Kitchen
       def install_gem(driver_gem)
         unbundlerize do
           run "gem install #{driver_gem}"
+        end
+      end
+
+      # Displays a bundle warning message to the user.
+      #
+      # @api private
+      def display_bundle_message
+        if @display_bundle_msg
+          say "You must run `bundle install' to fetch any new gems.", :red
         end
       end
 
