@@ -49,7 +49,7 @@ module Kitchen
       # @return [String]
       # @api private
       def color_pad(string)
-        string + set_color("", :white)
+        string + colorize("", :white)
       end
 
       # Generate the display rows for an instance.
@@ -73,12 +73,12 @@ module Kitchen
       # @api private
       def format_last_action(last_action)
         case last_action
-        when 'create' then set_color("Created", :cyan)
-        when 'converge' then set_color("Converged", :magenta)
-        when 'setup' then set_color("Set Up", :blue)
-        when 'verify' then set_color("Verified", :yellow)
-        when nil then set_color("<Not Created>", :red)
-        else set_color("<Unknown>", :white)
+        when 'create' then colorize("Created", :cyan)
+        when 'converge' then colorize("Converged", :magenta)
+        when 'setup' then colorize("Set Up", :blue)
+        when 'verify' then colorize("Verified", :yellow)
+        when nil then colorize("<Not Created>", :red)
+        else colorize("<Unknown>", :white)
         end
       end
 
@@ -88,8 +88,8 @@ module Kitchen
       # @api private
       def list_table(result)
         table = [
-          [set_color("Instance", :green), set_color("Driver", :green),
-            set_color("Provisioner", :green), set_color("Last Action", :green)]
+          [colorize("Instance", :green), colorize("Driver", :green),
+            colorize("Provisioner", :green), colorize("Last Action", :green)]
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
@@ -106,7 +106,7 @@ module Kitchen
       #
       # @return [String] a colorized string
       # @api private
-      def set_color(*args)
+      def colorize(*args)
         shell.set_color(*args)
       end
     end
