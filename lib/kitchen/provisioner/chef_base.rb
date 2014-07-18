@@ -147,10 +147,10 @@ module Kitchen
       def chef_install_function
         version = config[:require_chef_omnibus].to_s.downcase
         pretty_version = case version
-        when "true" then "install only if missing"
-        when "latest" then "always install latest version"
-        else version
-        end
+                         when "true" then "install only if missing"
+                         when "latest" then "always install latest version"
+                         else version
+                         end
         install_flags = %w{latest true}.include?(version) ? "" : "-v #{version}"
 
         <<-INSTALL.gsub(/^ {10}/, '')
