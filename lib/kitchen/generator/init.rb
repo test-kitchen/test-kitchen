@@ -55,6 +55,7 @@ module Kitchen
           Default: false
         D
 
+      # Invoke the command.
       def init
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
@@ -76,6 +77,9 @@ module Kitchen
 
       private
 
+      # Creates the `.kitchen.yml` file.
+      #
+      # @api private
       def create_kitchen_yaml
         cookbook_name = if File.exist?(File.expand_path('metadata.rb'))
           MetadataChopper.extract('metadata.rb').first
@@ -92,29 +96,44 @@ module Kitchen
         )
       end
 
+      # @return [true,false] whether or not a Gemfile needs to be initialized
+      # @api private
       def init_gemfile?
         File.exist?(File.join(destination_root, "Gemfile")) ||
           options[:create_gemfile]
       end
 
+      # @return [true,false] whether or not a Rakefile needs to be initialized
+      # @api private
       def init_rakefile?
         File.exist?(File.join(destination_root, "Rakefile")) &&
           not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
       end
 
+      # @return [true,false] whether or not a Thorfile needs to be initialized
+      # @api private
       def init_thorfile?
         File.exist?(File.join(destination_root, "Thorfile")) &&
           not_in_file?("Thorfile", %r{require 'kitchen/thor_tasks'})
       end
 
+      # @return [true,false] whether or not a test directory needs to be
+      #   initialized
+      # @api private
       def init_test_dir?
         Dir.glob("test/integration/*").select { |d| File.directory?(d) }.empty?
       end
 
+      # @return [true,false] whether or not a `.gitignore` file needs to be
+      #   initialized
+      # @api private
       def init_git?
         File.directory?(File.join(destination_root, '.git'))
       end
 
+      # Prepares a Rakefile.
+      #
+      # @api private
       def prepare_rakefile
         rakedoc = <<-RAKE.gsub(/^ {10}/, '')
 
@@ -128,6 +147,9 @@ module Kitchen
         append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
       end
 
+      # Prepares a Thorfile.
+      #
+      # @api private
       def prepare_thorfile
         thordoc = <<-THOR.gsub(/^ {10}/, '')
 
@@ -141,6 +163,9 @@ module Kitchen
         append_to_file(File.join(destination_root, "Thorfile"), thordoc)
       end
 
+      # Prepares a .gitignore file.
+      #
+      # @api private
       def append_to_gitignore(line)
         create_file(".gitignore") unless File.exist?(File.join(destination_root, ".gitignore"))
 
@@ -149,17 +174,26 @@ module Kitchen
         end
       end
 
+      # Prepares a Gemfile.
+      #
+      # @api private
       def prepare_gemfile
         create_gemfile_if_missing
         add_gem_to_gemfile
       end
 
+      # Creates a Gemfile if missing
+      #
+      # @api private
       def create_gemfile_if_missing
         unless File.exist?(File.join(destination_root, "Gemfile"))
           create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
         end
       end
 
+      # Appends entries to a Gemfile.
+      #
+      # @api private
       def add_gem_to_gemfile
         if not_in_file?("Gemfile", %r{gem ('|")test-kitchen('|")})
           append_to_file("Gemfile", %{gem 'test-kitchen'\n})
@@ -167,6 +201,9 @@ module Kitchen
         end
       end
 
+      # Appends driver gems to a Gemfile or installs them.
+      #
+      # @api private
       def add_drivers
         return if options[:driver].nil? || options[:driver].empty?
 
@@ -179,6 +216,9 @@ module Kitchen
         end
       end
 
+      # Appends a driver gem to a Gemfile.
+      #
+      # @api private
       def add_driver_to_gemfile(driver_gem)
         if not_in_file?("Gemfile", %r{gem ('|")#{driver_gem}('|")})
           append_to_file("Gemfile", %{gem '#{driver_gem}'\n})
@@ -186,16 +226,29 @@ module Kitchen
         end
       end
 
+      # Installs a driver gem.
+      #
+      # @api private
       def install_gem(driver_gem)
         unbundlerize do
           run "gem install #{driver_gem}"
         end
       end
 
+      # Determines whether or not a pattern is found in a file.
+      #
+      # @param filename [String] filename to read
+      # @param regexp [Regexp] a regular expression
+      # @return [true,false] whether or not a pattern is found in a file
+      # @api private
       def not_in_file?(filename, regexp)
         IO.readlines(File.join(destination_root, filename)).grep(regexp).empty?
       end
 
+      # Save off any Bundler/Ruby-related environment variables so that the
+      # yielded block can run "bundler-free" (and restore at the end).
+      #
+      # @api private
       def unbundlerize
         keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w[RUBYOPT]
 
