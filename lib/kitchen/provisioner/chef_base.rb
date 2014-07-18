@@ -388,7 +388,7 @@ module Kitchen
         info("Preparing current project directory as a cookbook")
         debug("Using metadata.rb from #{metadata_rb}")
 
-        cb_name = MetadataChopper.extract(metadata_rb).first or raise(UserError,
+        cb_name = MetadataChopper.extract(metadata_rb).first || raise(UserError,
           "The metadata.rb does not define the 'name' key." +
             " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
