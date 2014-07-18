@@ -29,6 +29,18 @@ module Kitchen
 
       include Logging
 
+      # Contstructs a new Command object.
+      #
+      # @param cmd_args [Array] remainder of the arguments from processed ARGV
+      # @param cmd_options [Hash] hash of Thor options
+      # @param options [Hash] configuration options
+      # @option options [String] :action action to take, usually corresponding
+      #   to the subcommand name (default: `nil`)
+      # @option options [proc] :help a callable that displays help for the
+      #   command
+      # @option options [Config] :config a Config object (default: `nil`)
+      # @option options [Loader] :loader a Loader object (default: `nil`)
+      # @option options [String] :shell a Thor shell object
       def initialize(cmd_args, cmd_options, options = {})
         @args = cmd_args
         @options = cmd_options
@@ -41,14 +53,46 @@ module Kitchen
 
       private
 
-      attr_reader :args, :options, :help, :config, :shell, :action
+      # @return [Array] remainder of the arguments from processed ARGV
+      # @api private
+      attr_reader :args
 
+      # @return [Hash] hash of Thor options
+      # @api private
+      attr_reader :options
+
+      # @return [proc] a callable that displays help for the command
+      # @api private
+      attr_reader :help
+
+      # @return [Config] a Config object
+      # @api private
+      attr_reader :config
+
+      # @return [Thor::Shell] a Thor shell object
+      # @api private
+      attr_reader :shell
+
+      # @return [String] the action to perform
+      # @api private
+      attr_reader :action
+
+      # Emit an error message, display contextual help and then exit with a
+      # non-zero exit code.
+      #
+      # **Note** This method calls exit and will not return.
+      #
+      # @param msg [String] error message
+      # @api private
       def die(msg)
         error "\n#{msg}\n\n"
         help.call
         exit 1
       end
 
+      # @return [Array<Instance>] an array of instances
+      # @raise [SystemExit] if no instances are returned
+      # @api private
       def get_all_instances
         result = @config.instances
 
@@ -59,6 +103,13 @@ module Kitchen
         end
       end
 
+      # Return an array on instances whos name matches the regular expression.
+      #
+      # @param regexp [Regexp] a regular expression matching on instance names
+      # @return [Array<Instance>] an array of instances
+      # @raise [SystemExit] if no instances are returned or the regular
+      #   expression is invalid
+      # @api private
       def get_filtered_instances(regexp)
         result = begin
           @config.instances.get(regexp) ||
@@ -77,10 +128,19 @@ module Kitchen
         end
       end
 
+      # @return [Logger] the common logger
+      # @api private
       def logger
         Kitchen.logger
       end
 
+      # Return an array on instances whos name matches the regular expression,
+      # the full instance name, or  the `"all"` literal.
+      #
+      # @param arg [String] an instance name, a regular expression, the literal
+      #   `"all"`, or `nil`
+      # @return [Array<Instance>] an array of instances
+      # @api private
       def parse_subcommand(arg = nil)
         arg == "all" ? get_all_instances : get_filtered_instances(arg)
       end
@@ -91,6 +151,13 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     module RunAction
 
+      # Run an instance action (create, converge, setup, verify, destroy) on
+      # a collection of instances. The instance actions will take place in a
+      # seperate thread of execution which may or may not be running
+      # concurrently.
+      #
+      # @param action [String] action to perform
+      # @param instances [Array<Instance>] an array of instances
       def run_action(action, instances, *args)
         concurrency = 1
         if options[:concurrency]
