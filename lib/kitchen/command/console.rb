@@ -27,6 +27,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Console < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         require 'pry'
         Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
@@ -38,6 +39,11 @@ module Kitchen
 
       private
 
+      # Construct a custom Pry prompt proc.
+      #
+      # @param char [String] prompt character
+      # @return [proc] a prompt proc
+      # @api private
       def prompt(char)
         proc { |target_self, nest_level, pry|
           ["[#{pry.input_array.size}] ",
