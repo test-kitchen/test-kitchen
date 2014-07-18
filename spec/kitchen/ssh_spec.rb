@@ -29,7 +29,7 @@ require "kitchen/ssh"
 # filesystem (i.e. lexically sorted, inode insertion, mtime/atime, total
 # randomness, etc.)
 #
-# See: https://github.com/net-ssh/net-scp/blob/a24948d8bd231878f2606196c693768cc78215cb/lib/net/scp/upload.rb#L52
+# See: https://github.com/net-ssh/net-scp/blob/a24948/lib/net/scp/upload.rb#L52
 
 def with_sorted_dir_entries
   Dir.class_exec do

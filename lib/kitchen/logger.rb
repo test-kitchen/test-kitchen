@@ -83,44 +83,44 @@ module Kitchen
     end
 
     # @return [Integer] the logging severity threshold
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#level
+    # @see http://is.gd/Okuy5p
     delegate_to_first_logger :level
 
     # Sets the logging severity threshold.
     #
     # @param level [Integer] the logging severity threshold
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#level=
+    # @see http://is.gd/H1VBFH
     delegate_to_all_loggers :level=
 
     # @return [String] program name to include in log messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#progname
+    # @see http://is.gd/5uHGK0
     delegate_to_first_logger :progname
 
     # Sets the program name to include in log messages.
     #
     # @param progname [String] the program name to include in log messages
-    # @http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#progname=
+    # @see http://is.gd/f2U5Xj
     delegate_to_all_loggers :progname=
 
     # @return [String] the date format being used
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-datetime_format
+    # @see http://is.gd/btmFWJ
     delegate_to_first_logger :datetime_format
 
     # Sets the date format being used.
     #
     # @param format [String] the date format
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-datetime_format-3D
+    # @see http://is.gd/M36ml8
     delegate_to_all_loggers :datetime_format=
 
     # Log a message if the given severity is high enough.
     #
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-add
+    # @see http://is.gd/5opBW0
     delegate_to_all_loggers :add
 
     # Dump one or more messages to info.
     #
     # @param message [#to_s] the message to log
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-3C-3C
+    # @see http://is.gd/BCp5KV
     delegate_to_all_loggers :<<
 
     # Log a message with severity of banner (high level).
@@ -133,7 +133,7 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
+    # @see http://is.gd/pYUCYU
     delegate_to_all_loggers :banner
 
     # Log a message with severity of debug.
@@ -146,12 +146,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug
+    # @see http://is.gd/Re97Zp
     delegate_to_all_loggers :debug
 
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of debug messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-debug-3F
+    # @see http://is.gd/Iq08xB
     delegate_to_first_logger :debug?
 
     # Log a message with severity of info.
@@ -164,12 +164,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info
+    # @see http://is.gd/pYUCYU
     delegate_to_all_loggers :info
 
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of info messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-info-3F
+    # @see http://is.gd/lBtJkT
     delegate_to_first_logger :info?
 
     # Log a message with severity of error.
@@ -182,12 +182,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error
+    # @see http://is.gd/mLwYMl
     delegate_to_all_loggers :error
 
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of error messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-error-3F
+    # @see http://is.gd/QY19JL
     delegate_to_first_logger :error?
 
     # Log a message with severity of warn.
@@ -200,12 +200,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn
+    # @see http://is.gd/PX9AIS
     delegate_to_all_loggers :warn
 
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of warn messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-warn-3F
+    # @see http://is.gd/Gdr4lD
     delegate_to_first_logger :warn?
 
     # Log a message with severity of fatal.
@@ -218,12 +218,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal
+    # @see http://is.gd/5ElFPK
     delegate_to_all_loggers :fatal
 
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of fatal messages
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-fatal-3F
+    # @see http://is.gd/7PgwRl
     delegate_to_first_logger :fatal?
 
     # Log a message with severity of unknown.
@@ -236,12 +236,12 @@ module Kitchen
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
     #   particular logger), log no message, and return true
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-unknown
+    # @see http://is.gd/Y4hqpf
     delegate_to_all_loggers :unknown
 
     # Close the logging devices.
     #
-    # @see http://www.ruby-doc.org/stdlib-2.1.2/libdoc/logger/rdoc/Logger.html#method-i-close
+    # @see http://is.gd/b13cVn
     delegate_to_all_loggers :close
 
     private
