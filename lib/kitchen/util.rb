@@ -65,7 +65,7 @@ module Kitchen
       if obj.is_a?(Hash)
         obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v) ; h }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, v| a << symbolized_hash(v) ; a }
+        obj.inject([]) { |a, e| a << symbolized_hash(e) ; a }
       else
         obj
       end
@@ -82,7 +82,7 @@ module Kitchen
       if obj.is_a?(Hash)
         obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v) ; h }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, v| a << stringified_hash(v) ; a }
+        obj.inject([]) { |a, e| a << stringified_hash(e) ; a }
       else
         obj
       end
