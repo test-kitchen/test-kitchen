@@ -245,7 +245,7 @@ module Kitchen
       def required_config(attr, &block)
         if !block_given?
           klass = self
-          block = lambda do |attr, value, thing|
+          block = lambda do |_, value, thing|
             if value.nil? || value.to_s.empty?
               attribute = "#{klass}#{thing.instance.to_str}#config[:#{attr}]"
               raise UserError, "#{attribute} cannot be blank"

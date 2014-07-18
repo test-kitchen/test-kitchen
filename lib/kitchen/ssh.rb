@@ -232,15 +232,15 @@ module Kitchen
 
         channel.exec(cmd) do |ch, success|
 
-          channel.on_data do |ch, data|
+          channel.on_data do |_, data|
             logger << data
           end
 
-          channel.on_extended_data do |ch, type, data|
+          channel.on_extended_data do |_, type, data|
             logger << data
           end
 
-          channel.on_request("exit-status") do |ch, data|
+          channel.on_request("exit-status") do |_, data|
             exit_code = data.read_long
           end
         end
