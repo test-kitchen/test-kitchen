@@ -72,7 +72,7 @@ module Kitchen
         what = action.capitalize
         info("[Dummy] #{what} on instance=#{instance} with state=#{state}")
         sleep_if_set
-        random_failure_if_set(action)
+        failure_if_set(action)
         debug("[Dummy] #{what} completed (#{config[:sleep]}s).")
       end
 
@@ -83,12 +83,15 @@ module Kitchen
         sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
       end
 
-      # Simulate a random failure in an action, if set in the config.
+      # Simulate a failure in an action, if set in the config.
       #
       # @param action [Symbol] the action currently taking place
       # @api private
-      def random_failure_if_set(action)
-        if config[:random_failure] && randomly_fail?
+      def failure_if_set(action)
+        if config[:"fail_#{action}"]
+          debug("[Dummy] Failure for action ##{action}.")
+          raise ActionFailed, "Action ##{action} failed for #{instance.to_str}."
+        elsif config[:random_failure] && randomly_fail?
           debug("[Dummy] Random failure for action ##{action}.")
           raise ActionFailed, "Action ##{action} failed for #{instance.to_str}."
         end

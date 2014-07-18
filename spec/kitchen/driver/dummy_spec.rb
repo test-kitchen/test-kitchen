@@ -63,6 +63,12 @@ describe Kitchen::Driver::Dummy do
       driver.create(state)
     end
 
+    it "raises ActionFailed if :fail_create is set" do
+      config[:fail_create] = true
+
+      proc { driver.create(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -98,6 +104,12 @@ describe Kitchen::Driver::Dummy do
       driver.create(state)
     end
 
+    it "raises ActionFailed if :fail_converge is set" do
+      config[:fail_converge] = true
+
+      proc { driver.converge(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -121,6 +133,12 @@ describe Kitchen::Driver::Dummy do
       driver.setup(state)
     end
 
+    it "raises ActionFailed if :fail_setup is set" do
+      config[:fail_setup] = true
+
+      proc { driver.setup(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -142,6 +160,12 @@ describe Kitchen::Driver::Dummy do
       driver.expects(:sleep).with(12.5).returns(true)
 
       driver.verify(state)
+    end
+
+    it "raises ActionFailed if :fail_verify is set" do
+      config[:fail_verify] = true
+
+      proc { driver.verify(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
@@ -172,6 +196,12 @@ describe Kitchen::Driver::Dummy do
       driver.expects(:sleep).with(12.5).returns(true)
 
       driver.verify(state)
+    end
+
+    it "raises ActionFailed if :fail_destroy is set" do
+      config[:fail_destroy] = true
+
+      proc { driver.destroy(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
