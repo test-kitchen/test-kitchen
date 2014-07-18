@@ -31,6 +31,7 @@ module Kitchen
 
       include RunAction
 
+      # Invoke the command.
       def call
         banner "Starting Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
