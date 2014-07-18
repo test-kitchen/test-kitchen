@@ -125,9 +125,9 @@ module Kitchen
         action_methods = [:create, :converge, :setup, :verify, :destroy]
 
         Array(methods).each do |meth|
-          if !action_methods.include?(meth)
-            raise ClientError, "##{meth} is not a valid no_parallel_for method"
-          end
+          next if action_methods.include?(meth)
+
+          raise ClientError, "##{meth} is not a valid no_parallel_for method"
         end
 
         @serial_actions ||= []

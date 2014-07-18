@@ -146,9 +146,9 @@ module Kitchen
       expanded_paths = LazyHash.new(self.class.expanded_paths, self).to_hash
 
       expanded_paths.each do |key, should_expand|
-        if should_expand && !config[key].nil?
-          config[key] = File.expand_path(config[key], root_path)
-        end
+        next if !should_expand || config[key].nil?
+
+        config[key] = File.expand_path(config[key], root_path)
       end
     end
 

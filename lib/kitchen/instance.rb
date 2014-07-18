@@ -240,9 +240,9 @@ module Kitchen
       [
         :suite, :platform, :driver, :provisioner, :busser, :state_file
       ].each do |k|
-        if !options.key?(k)
-          raise ClientError, "Instance#new requires option :#{k}"
-        end
+        next if options.key?(k)
+
+        raise ClientError, "Instance#new requires option :#{k}"
       end
     end
 
