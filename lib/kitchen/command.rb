@@ -93,7 +93,7 @@ module Kitchen
       # @return [Array<Instance>] an array of instances
       # @raise [SystemExit] if no instances are returned
       # @api private
-      def get_all_instances
+      def all_instances
         result = @config.instances
 
         if result.empty?
@@ -110,7 +110,7 @@ module Kitchen
       # @raise [SystemExit] if no instances are returned or the regular
       #   expression is invalid
       # @api private
-      def get_filtered_instances(regexp)
+      def filtered_instances(regexp)
         result = begin
           @config.instances.get(regexp) ||
             @config.instances.get_all(/#{regexp}/)
@@ -142,7 +142,7 @@ module Kitchen
       # @return [Array<Instance>] an array of instances
       # @api private
       def parse_subcommand(arg = nil)
-        arg == "all" ? get_all_instances : get_filtered_instances(arg)
+        arg == "all" ? all_instances : filtered_instances(arg)
       end
     end
 
