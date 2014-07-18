@@ -37,6 +37,7 @@ module Kitchen
         :default => "apachev2",
         :desc => "License type for gem (apachev2, mit, lgplv3, reserved)"
 
+      # Invoke the command.
       def create
         self.class.source_root(Kitchen.source_root.join("templates", "driver"))
 
@@ -47,6 +48,9 @@ module Kitchen
 
       private
 
+      # Creates top-level project files.
+      #
+      # @api private
       def create_core_files
         empty_directory(target_dir)
 
@@ -62,6 +66,9 @@ module Kitchen
         create_file(File.join(target_dir, ".cane"))
       end
 
+      # Creates source code files.
+      #
+      # @api private
       def create_source_files
         empty_directory(File.join(target_dir, "lib/kitchen/driver"))
 
@@ -75,6 +82,9 @@ module Kitchen
         )
       end
 
+      # Initialize a git repository.
+      #
+      # @api private
       def initialize_git
         inside(target_dir) do
           run("git init")
@@ -82,14 +92,24 @@ module Kitchen
         end
       end
 
+      # Render an ERb template to a destination file.
+      #
+      # @param erb [String] path to an ERb file
+      # @param dest [String] destination path for the rendered template
+      # @api private
       def create_template(erb, dest)
         template(erb, File.join(target_dir, dest), config)
       end
 
+      # @return [String] the path to the gem skeleton project
+      # @api private
       def target_dir
         File.join(Dir.pwd, "kitchen-#{name}")
       end
 
+      # @return [Hash] a configuration hash which can be used by templates as
+      #   context
+      # @api private
       def config
         @config ||= {
           :name => name,
@@ -105,16 +125,24 @@ module Kitchen
         }
       end
 
+      # @return [String] a default author name taken from git configuration if
+      #   found
+      # @api private
       def author
         git_user_name = %x{git config user.name}.chomp
         git_user_name.empty? ? "TODO: Write your name" : git_user_name
       end
 
+      # @return [String] a default email address taken from git configuration
+      #   if found
+      # @api private
       def email
         git_user_email = %x{git config user.email}.chomp
         git_user_email.empty? ? "TODO: Write your email" : git_user_email
       end
 
+      # @return [String] a rendered license string for a given license
+      # @api private
       def license_string
         case options[:license]
         when "mit" then "MIT"
@@ -126,6 +154,8 @@ module Kitchen
         end
       end
 
+      # @return [String] the filename to use for the license file
+      # @api private
       def license_filename
         case options[:license]
         when "mit" then "LICENSE.txt"
@@ -136,6 +166,8 @@ module Kitchen
         end
       end
 
+      # @return [String] the license comment/preamble
+      # @api private
       def license_comment
         @license_comment ||= IO.read(File.join(target_dir, license_filename)).
           gsub(/^/, '# ').gsub(/\s+$/, '')
