@@ -27,6 +27,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Login < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         results = parse_subcommand(args.first)
         if results.size > 1
