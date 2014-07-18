@@ -125,18 +125,18 @@ Function install_chef {
 Function is_chef_installed { Test-Path /opscode/chef }
 
 Function download_chef {
-  (New-Object System.Net.WebClient).DownloadFile('#{url}?#{version}', $chef_msi)
+  (New-Object System.Net.WebClient).DownloadFile("#{url}?#{version}", $chef_msi)
 }
 
 Function should_update_chef {
   try {
     $chef_version=(chef-solo -v).split(" ",2)[1]
   } catch [Exception] {
-    $chef_version = ''
+    $chef_version = ""
   }
   switch ("#{flag}") {
-    { 'true', $chef_version -contains $_ } { return false }
-    'latest' { return true }
+    { "true", $chef_version -contains $_ } { return false }
+    "latest" { return true }
     default { return true }
   }
 }
