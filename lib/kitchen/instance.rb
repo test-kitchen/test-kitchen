@@ -469,8 +469,6 @@ module Kitchen
         end
       end
 
-      private
-
       TRANSITIONS = [:destroy, :create, :converge, :setup, :verify]
 
       # Determines the index of a state in the state lifecycle vector. Woah.
