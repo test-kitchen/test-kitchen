@@ -46,7 +46,8 @@ module Kitchen
       # @api private
       def prompt(char)
         proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
+          [
+            "[#{pry.input_array.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}#{char} "
           ].join

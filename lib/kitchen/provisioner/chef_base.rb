@@ -38,9 +38,11 @@ module Kitchen
       default_config :run_list, []
       default_config :attributes, {}
       default_config :log_file, nil
-      default_config :cookbook_files_glob, %w[README.* metadata.{json,rb}
+      default_config :cookbook_files_glob, %w[
+        README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
-        providers/**/* recipes/**/* resources/**/* templates/**/*].join(",")
+        providers/**/* recipes/**/* resources/**/* templates/**/*
+      ].join(",")
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")

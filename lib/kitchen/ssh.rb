@@ -154,6 +154,12 @@ module Kitchen
 
     private
 
+    # TCP socket exceptions
+    SOCKET_EXCEPTIONS = [
+      SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH,
+      Errno::ENETUNREACH, IOError
+    ]
+
     # @return [String] the remote hostname
     # @api private
     attr_reader :hostname
@@ -257,8 +263,7 @@ module Kitchen
     def test_ssh
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
-    rescue SocketError, Errno::ECONNREFUSED,
-      Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError
+    rescue *SOCKET_EXCEPTIONS
       sleep 2
       false
     rescue Errno::EPERM, Errno::ETIMEDOUT

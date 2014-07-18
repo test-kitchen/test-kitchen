@@ -88,8 +88,10 @@ module Kitchen
       # @api private
       def list_table(result)
         table = [
-          [colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Last Action", :green)]
+          [
+            colorize("Instance", :green), colorize("Driver", :green),
+            colorize("Provisioner", :green), colorize("Last Action", :green)
+          ]
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)

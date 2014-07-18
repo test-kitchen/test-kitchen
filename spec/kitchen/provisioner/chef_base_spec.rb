@@ -601,8 +601,10 @@ describe Kitchen::Provisioner::ChefBase do
         end
 
         it "strips extra cookbook files" do
-          extras = %w{.gitignore tmp/librarian chefignore .git/info/excludes
-            cookbooks/another/metadata.rb CONTRIBUTING.md metadata.py}
+          extras = %w{
+            .gitignore tmp/librarian chefignore .git/info/excludes
+            cookbooks/another/metadata.rb CONTRIBUTING.md metadata.py
+          }
 
           create_full_cookbook("#{kitchen_root}/cookbooks/full")
           extras.each do |file|
