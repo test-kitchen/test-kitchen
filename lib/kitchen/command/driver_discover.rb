@@ -19,7 +19,6 @@
 require 'kitchen/command'
 
 require 'rubygems/spec_fetcher'
-require 'safe_yaml'
 
 module Kitchen
 
@@ -30,6 +29,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class DriverDiscover < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
         specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
@@ -39,8 +39,12 @@ module Kitchen
 
       private
 
+      # Fetches Kitchen-related RubyGems and returns an array of name/version
+      # tuples.
+      #
+      # @return [Array<Array>] an array of name/version tuples
+      # @api private
       def fetch_gem_specs
-        SafeYAML::OPTIONS[:suppress_warnings] = true
         req = Gem::Requirement.default
         dep = Gem::Deprecate.skip_during do
           Gem::Dependency.new(/kitchen-/i, req)
@@ -54,16 +58,31 @@ module Kitchen
         end
       end
 
+      # Fetches gem specs for RubyGems 2 and later.
+      #
+      # @param fetcher [Gem::SpecFetcher] a gemspec fetcher
+      # @param dep [Gem::Dependency] a gem dependency object
+      # @return [Array<Array>] an array of name/version tuples
+      # @api private
       def fetch_gem_specs_post_rubygems_2(fetcher, dep)
         specs = fetcher.spec_for_dependency(dep, false)
         specs.first.map { |t| [t.first.name, t.first.version] }
       end
 
+      # Fetches gem specs for pre-RubyGems 2.
+      #
+      # @param fetcher [Gem::SpecFetcher] a gemspec fetcher
+      # @param dep [Gem::Dependency] a gem dependency object
+      # @return [Array<Array>] an array of name/version tuples
+      # @api private
       def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
         specs = fetcher.find_matching(dep, false, false, false)
         specs.map { |t| t.first }.map { |t| t[0, 2] }
       end
 
+      # Print out a display table.
+      #
+      # @api private
       def print_table(*args)
         shell.print_table(*args)
       end
