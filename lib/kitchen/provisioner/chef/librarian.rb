@@ -26,7 +26,7 @@ module Kitchen
     module Chef
 
       # Chef cookbook resolver that uses Librarian-Chef and a Cheffile to
-      # calculate # dependencies.
+      # calculate dependencies.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Librarian
@@ -68,11 +68,25 @@ module Kitchen
           ::Librarian::Action::Install.new(env).run
         end
 
-        attr_reader :cheffile, :path, :logger
+        private
+
+        # @return [String] path to a Cheffile
+        # @api private
+        attr_reader :cheffile
+
+        # @return [String] path in which to vendor the resulting cookbooks
+        # @api private
+        attr_reader :path
+
+        # @return [Kitchen::Logger] a logger to use for output
+        # @api private
+        attr_reader :logger
 
         # Load the Librarian-specific libary code.
         #
         # @param logger [Kitchen::Logger] the logger to use
+        # @raise [UserError] if the library couldn't be loaded
+        # @api private
         def self.load_librarian!(logger)
           first_load = require 'librarian/chef/environment'
           require 'librarian/action/resolve'
