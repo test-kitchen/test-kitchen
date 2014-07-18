@@ -259,7 +259,7 @@ module Kitchen
       local_file = IO.read(local_path)
       encoded_file = Base64.encode64(local_file).gsub("\n", '')
       md5 = Digest::MD5.hexdigest(local_file)
-      perms = sprintf("%o", File.stat(local_path).mode)[2, 4]
+      perms = format("%o", File.stat(local_path).mode)[2, 4]
       stream_cmd = [
         sudo(config[:busser_bin]),
         "deserialize",

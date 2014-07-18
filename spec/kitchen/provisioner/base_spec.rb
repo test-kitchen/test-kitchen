@@ -92,7 +92,7 @@ describe Kitchen::Provisioner::Base do
       provisioner.create_sandbox
 
       File.directory?(provisioner.sandbox_path).must_equal true
-      sprintf("%o", File.stat(provisioner.sandbox_path).mode)[1, 4].
+      format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4].
         must_equal "0755"
     end
 

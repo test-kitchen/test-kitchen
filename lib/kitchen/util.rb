@@ -96,7 +96,7 @@ module Kitchen
       total = 0 if total.nil?
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
-      "(%dm%.2fs)" % [minutes, seconds]
+      format("(%dm%.2fs)", minutes, seconds)
     end
 
     # Generates a command (or series of commands) wrapped so that it can be
