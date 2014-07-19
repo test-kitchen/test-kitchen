@@ -58,7 +58,7 @@ end
 def unbundlerize
   keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
 
-  keys.each { |key| backup_envvar(key) ; ENV.delete(key) }
+  keys.each { |key| backup_envvar(key); ENV.delete(key) }
   yield
   keys.each { |key| restore_envvar(key) }
 end
