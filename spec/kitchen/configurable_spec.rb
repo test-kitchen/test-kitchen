@@ -436,7 +436,7 @@ describe Kitchen::Configurable do
       it "uses a custom base path" do
         FileUtils.mkdir_p("/custom/ultimate/winner")
 
-        subject.calculate_path("winner", base_path: "/custom").
+        subject.calculate_path("winner", :base_path => "/custom").
           must_equal "/custom/ultimate/winner"
       end
     end
@@ -453,14 +453,14 @@ describe Kitchen::Configurable do
       end
 
       it "prefers a path containing base path and suite name if it exists" do
-        subject.calculate_path("winner", type: :file).
+        subject.calculate_path("winner", :type => :file).
           must_equal "/the/basest/ultimate/winner"
       end
 
       it "prefers a path containing base path if it exists" do
         FileUtils.rm_rf("/the/basest/ultimate/winner")
 
-        subject.calculate_path("winner", type: :file).
+        subject.calculate_path("winner", :type => :file).
           must_equal "/the/basest/winner"
       end
 
@@ -469,7 +469,7 @@ describe Kitchen::Configurable do
         FileUtils.rm_rf("/the/basest/winner")
         pwd_dir = File.join(Dir.pwd, "winner")
 
-        subject.calculate_path("winner", type: :file).must_equal pwd_dir
+        subject.calculate_path("winner", :type => :file).must_equal pwd_dir
       end
 
       it "raises a UserError if test_base_path key is not set" do
@@ -482,7 +482,7 @@ describe Kitchen::Configurable do
         FileUtils.mkdir_p("/custom/ultimate")
         FileUtils.touch(File.join("/custom/ultimate", "winner"))
 
-        subject.calculate_path("winner", type: :file, base_path: "/custom").
+        subject.calculate_path("winner", :type => :file, :base_path => "/custom").
           must_equal "/custom/ultimate/winner"
       end
     end
