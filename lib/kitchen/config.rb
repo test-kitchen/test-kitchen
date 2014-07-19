@@ -260,7 +260,7 @@ module Kitchen
         :stdout   => STDOUT,
         :color    => Color::COLORS[index % Color::COLORS.size].to_sym,
         :logdev   => File.join(log_root, "#{name}.log"),
-        :level    => Util.to_logger_level(self.log_level),
+        :level    => Util.to_logger_level(log_level),
         :progname => name
       )
     end

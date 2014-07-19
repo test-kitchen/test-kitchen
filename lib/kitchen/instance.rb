@@ -373,7 +373,7 @@ module Kitchen
     rescue ActionFailed => e
       log_failure(what, e)
       raise(InstanceFailure, failure_message(what) +
-        "  Please see .kitchen/logs/#{self.name}.log for more details",
+        "  Please see .kitchen/logs/#{name}.log for more details",
         e.backtrace)
     rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
@@ -439,7 +439,7 @@ module Kitchen
     # @return [String] a failure message
     # @api private
     def failure_message(what)
-      "#{what.capitalize} failed on instance #{self.to_str}."
+      "#{what.capitalize} failed on instance #{to_str}."
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

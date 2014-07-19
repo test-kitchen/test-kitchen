@@ -40,7 +40,7 @@ module Kitchen
       require("kitchen/provisioner/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
-      klass = self.const_get(str_const)
+      klass = const_get(str_const)
       klass.new(config)
     rescue LoadError, NameError
       raise ClientError,

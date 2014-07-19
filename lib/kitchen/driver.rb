@@ -40,7 +40,7 @@ module Kitchen
       first_load = require("kitchen/driver/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
-      klass = self.const_get(str_const)
+      klass = const_get(str_const)
       object = klass.new(config)
       object.verify_dependencies if first_load
       object

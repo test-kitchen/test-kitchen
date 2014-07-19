@@ -266,10 +266,8 @@ module Kitchen
       #   if defined in the superclass, or an empty hash otherwise
       # @api private
       def super_defaults
-        klass = self.superclass
-
-        if klass.respond_to?(:defaults)
-          klass.defaults
+        if superclass.respond_to?(:defaults)
+          superclass.defaults
         else
           Hash.new
         end
@@ -287,10 +285,8 @@ module Kitchen
       #   superclass if defined in the superclass, or an empty hash otherwise
       # @api private
       def super_expanded_paths
-        klass = self.superclass
-
-        if klass.respond_to?(:expanded_paths)
-          klass.expanded_paths
+        if superclass.respond_to?(:expanded_paths)
+          superclass.expanded_paths
         else
           Hash.new
         end
@@ -307,10 +303,8 @@ module Kitchen
       #   superclass if defined in the superclass, or an empty hash otherwise
       # @api private
       def super_validations
-        klass = self.superclass
-
-        if klass.respond_to?(:validations)
-          klass.validations
+        if superclass.respond_to?(:validations)
+          superclass.validations
         else
           Hash.new
         end
