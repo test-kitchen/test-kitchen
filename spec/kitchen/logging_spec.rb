@@ -34,7 +34,7 @@ class LoggingDummy
 
     METHODS = [:banner, :debug, :info, :warn, :error, :fatal]
 
-    attr_reader *(METHODS.map { |m| "#{m}_msg".to_sym })
+    attr_reader(*(METHODS.map { |m| "#{m}_msg".to_sym }))
 
     METHODS.each do |meth|
       define_method(meth) do |*args|
