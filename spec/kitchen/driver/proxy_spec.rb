@@ -106,7 +106,7 @@ describe Kitchen::Driver::Proxy do
       driver.destroy(state)
 
       state[:hostname].must_equal nil
-   end
+    end
 
     it "calls the reset command over ssh" do
       driver.expects(:ssh).with() do |ssh_args, cmd|
