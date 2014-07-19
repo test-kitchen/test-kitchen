@@ -39,14 +39,14 @@ module Kitchen
             }
           ]
         ).platform_data.must_equal([
-            {
-              :name => "one",
-              :stuff => "junk"
-            },
-            {
-              :name => "two",
-              :misc => "things"
-            }
+          {
+            :name => "one",
+            :stuff => "junk"
+          },
+          {
+            :name => "two",
+            :misc => "things"
+          }
         ])
       end
 
@@ -70,14 +70,14 @@ module Kitchen
             }
           ]
         ).suite_data.must_equal([
-            {
-              :name => "one",
-              :stuff => "junk"
-            },
-            {
-              :name => "two",
-              :misc => "things"
-            }
+          {
+            :name => "one",
+            :stuff => "junk"
+          },
+          {
+            :name => "two",
+            :misc => "things"
+          }
         ])
       end
 
