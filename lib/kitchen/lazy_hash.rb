@@ -77,7 +77,7 @@ module Kitchen
     end
 
     # Returns a rendered value from the hash for the given key. If the key
-    # can’t be found, there are several options: With no other arguments, it
+    # can't be found, there are several options: With no other arguments, it
     # will raise an KeyError exception; if default is given, then that will be
     # returned; if the optional code block is specified, then that will be run
     # and its result returned.

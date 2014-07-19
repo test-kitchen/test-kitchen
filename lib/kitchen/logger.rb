@@ -128,7 +128,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -141,7 +141,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -159,7 +159,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -177,7 +177,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -195,7 +195,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -213,7 +213,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
@@ -231,7 +231,7 @@ module Kitchen
     # @param message_or_progname [#to_s] the message to log. In the block
     #   form, this is the progname to use in the log message.
     # @yield evaluates to the message to log. This is not evaluated unless the
-    #   logger’s level is sufficient to log the message. This allows you to
+    #   logger's level is sufficient to log the message. This allows you to
     #   create potentially expensive logging messages that are only called when
     #   the logger is configured to show them.
     # @return [nil,true] when the given severity is not high enough (for this
