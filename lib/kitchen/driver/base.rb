@@ -100,7 +100,8 @@ module Kitchen
       #
       # @raise [UserError] if the driver will not be able to perform or if a
       #   documented dependency is missing from the system
-      def verify_dependencies ; end
+      def verify_dependencies
+      end
 
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot

@@ -27,7 +27,7 @@ module Kitchen
 
   # Exception class for any exceptions raised when reading and parsing a state
   # file from disk
-  class StateFileLoadError < StandardError ; end
+  class StateFileLoadError < StandardError; end
 
   # State persistence manager for instances between actions and invocations.
   #

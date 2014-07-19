@@ -278,7 +278,7 @@ module Kitchen
       def unbundlerize
         keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w[RUBYOPT]
 
-        keys.each { |key| ENV["__#{key}"] = ENV[key] ; ENV.delete(key) }
+        keys.each { |key| ENV["__#{key}"] = ENV[key]; ENV.delete(key) }
         yield
         keys.each { |key| ENV[key] = ENV.delete("__#{key}") }
       end

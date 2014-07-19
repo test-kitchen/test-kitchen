@@ -23,7 +23,7 @@ require 'kitchen/platform'
 
 describe Kitchen::Platform do
 
-  let(:opts) do ; { :name => 'plata' } ; end
+  let(:opts) do; { :name => 'plata' }; end
   let(:platform) { Kitchen::Platform.new(opts) }
 
   it "raises an ArgumentError if name is missing" do

@@ -102,22 +102,22 @@ module Kitchen
 
   # Base exception class for all exceptions that are caused by user input
   # errors.
-  class UserError < StandardError ; end
+  class UserError < StandardError; end
 
   # Base exception class for all exceptions that are caused by incorrect use
   # of an API.
-  class ClientError < StandardError ; end
+  class ClientError < StandardError; end
 
   # Base exception class for exceptions that are caused by external library
   # failures which may be temporary.
-  class TransientFailure < StandardError ; end
+  class TransientFailure < StandardError; end
 
   # Exception class for any exceptions raised when performing an instance
   # action.
-  class ActionFailed < TransientFailure ; end
+  class ActionFailed < TransientFailure; end
 
   # Exception class capturing what caused an instance to die.
-  class InstanceFailure < TransientFailure ; end
+  class InstanceFailure < TransientFailure; end
 
   # Yields to a code block in order to consistently emit a useful crash/error
   # message and exit appropriately. There are two primary failure conditions:

@@ -265,7 +265,7 @@ module Kitchen
       # @api private
       def normalize(obj)
         if obj.is_a?(Hash)
-          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v) ; h }
+          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v); h }
         else
           obj
         end

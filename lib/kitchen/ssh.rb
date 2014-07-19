@@ -29,7 +29,7 @@ module Kitchen
   # Wrapped exception for any internally raised SSH-related errors.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
-  class SSHFailed < TransientFailure ; end
+  class SSHFailed < TransientFailure; end
 
   # Class to help establish SSH connections, issue remote commands, and
   # transfer files between a local system and remote node.

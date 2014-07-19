@@ -63,9 +63,9 @@ module Kitchen
     # @return [Object] a converted hash with all keys as symbols
     def self.symbolized_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v) ; h }
+        obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v); h }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, e| a << symbolized_hash(e) ; a }
+        obj.inject([]) { |a, e| a << symbolized_hash(e); a }
       else
         obj
       end
@@ -80,9 +80,9 @@ module Kitchen
     # @return [Object] a converted hash with all keys as strings
     def self.stringified_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v) ; h }
+        obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v); h }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, e| a << stringified_hash(e) ; a }
+        obj.inject([]) { |a, e| a << stringified_hash(e); a }
       else
         obj
       end

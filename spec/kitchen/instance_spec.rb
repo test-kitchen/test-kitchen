@@ -30,7 +30,7 @@ require 'kitchen/suite'
 
 class DummyStateFile
 
-  def initialize(*) ; end
+  def initialize(*); end
 
   def read
     @_state = Hash.new unless @_state

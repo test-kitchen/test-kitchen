@@ -27,7 +27,7 @@ module Kitchen
   module ShellOut
 
     # Wrapped exception for any interally raised shell out commands.
-    class ShellCommandFailed < TransientFailure ; end
+    class ShellCommandFailed < TransientFailure; end
 
     # Executes a command in a subshell on the local running system.
     #
