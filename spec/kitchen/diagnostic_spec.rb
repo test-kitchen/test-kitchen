@@ -68,9 +68,8 @@ describe Kitchen::Diagnostic do
 
   it "#read returns the instances' diganose hashes if instances are present" do
     Kitchen::Diagnostic.new(:instances => instances).
-      read["instances"].must_equal({
-        "i1" => { "stuff" => "sup" }, "i2" => { "stuff" => "yo" }
-      })
+      read["instances"].
+      must_equal({ "i1" => { "stuff" => "sup" }, "i2" => { "stuff" => "yo" } })
   end
 
   it "#read returns an error hash for instances if error hash is passed in" do

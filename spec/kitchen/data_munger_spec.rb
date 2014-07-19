@@ -99,31 +99,40 @@ module Kitchen
         describe "from single source" do
 
           it "returns empty hash if no common #{key} hash is provided" do
-            DataMunger.new({
-            }).public_send("#{key}_data_for", "suite", "platform").must_equal({
-            })
+            DataMunger.new(
+              {},
+              {}
+            ).public_send("#{key}_data_for", "suite", "platform").must_equal({})
           end
 
           it "drops common #{key} if hash is nil" do
             DataMunger.new(
-              key => nil
+              {
+                key => nil
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "returns kitchen config #{key} name" do
-            DataMunger.new({
-            }, {
-              :defaults => {
-                key => "thenoseknows"
+            DataMunger.new(
+              {},
+              {
+                :defaults => {
+                  key => "thenoseknows"
+                }
               }
-            }).public_send("#{key}_data_for", "suite", "platform").must_equal(
+            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
               default_key => "thenoseknows"
             )
           end
 
           it "returns common #{key} name" do
             DataMunger.new(
-              key => "starship"
+              {
+                key => "starship"
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "platform").must_equal(
               default_key => "starship"
             )
@@ -131,10 +140,13 @@ module Kitchen
 
           it "returns common #{key} config" do
             DataMunger.new(
-              key => {
-                default_key => "starship",
-                :speed => 42
-              }
+              {
+                key => {
+                  default_key => "starship",
+                  :speed => 42
+                }
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "platform").must_equal(
               default_key => "starship",
               :speed => 42
@@ -143,31 +155,40 @@ module Kitchen
 
           it "returns empty hash if platform config doesn't have #{key} hash" do
             DataMunger.new(
-              :platforms => [
-                { :name => "plat" }
-              ]
+              {
+                :platforms => [
+                  { :name => "plat" }
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "drops platform #{key} if hash is nil" do
             DataMunger.new(
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => nil
-                }
-              ]
+              {
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => nil
+                  }
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "returns platform #{key} name" do
             DataMunger.new(
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => "flip"
-                }
-              ]
+              {
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => "flip"
+                  }
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal(
               default_key => "flip"
             )
@@ -175,15 +196,18 @@ module Kitchen
 
           it "returns platform config containing #{key} hash" do
             DataMunger.new(
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => {
-                    default_key => "flip",
-                    :flop => "yep"
+              {
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => {
+                      default_key => "flip",
+                      :flop => "yep"
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal(
               default_key => "flip",
               :flop => "yep"
@@ -192,32 +216,40 @@ module Kitchen
 
           it "returns empty hash if suite config doesn't have #{key} hash" do
             DataMunger.new(
-              :suites => [
-                { :name => "sweet" }
-              ]
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal({
-            })
+              {
+                :suites => [
+                  { :name => "sweet" }
+                ]
+              },
+              {}
+            ).public_send("#{key}_data_for", "sweet", "platform").must_equal({})
           end
 
           it "drops suite #{key} hash is nil" do
             DataMunger.new(
-              :suites => [
-                {
-                  :name => "suite",
-                  key => nil
-                }
-              ]
+              {
+                :suites => [
+                  {
+                    :name => "suite",
+                    key => nil
+                  }
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
           end
 
           it "returns suite #{key} name" do
             DataMunger.new(
-              :suites => [
-                {
-                  :name => "sweet",
-                  key => "waz"
-                }
-              ]
+              {
+                :suites => [
+                  {
+                    :name => "sweet",
+                    key => "waz"
+                  }
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
               default_key => "waz"
             )
@@ -225,15 +257,18 @@ module Kitchen
 
           it "returns suite config containing #{key} hash" do
             DataMunger.new(
-              :suites => [
-                {
-                  :name => "sweet",
-                  key => {
-                    default_key => "waz",
-                    :up => "nope"
+              {
+                :suites => [
+                  {
+                    :name => "sweet",
+                    key => {
+                      default_key => "waz",
+                      :up => "nope"
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
               default_key => "waz",
               :up => "nope"
@@ -245,32 +280,35 @@ module Kitchen
 
           it "suite into platform into common" do
             DataMunger.new(
-              key => {
-                default_key => "commony",
-                :color => "purple",
-                :fruit => %w[apple pear],
-                :deep => { :common => "junk" }
+              {
+                key => {
+                  default_key => "commony",
+                  :color => "purple",
+                  :fruit => %w[apple pear],
+                  :deep => { :common => "junk" }
+                },
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => {
+                      default_key => "platformy",
+                      :fruit => ["banana"],
+                      :deep => { :platform => "stuff" }
+                    }
+                  }
+                ],
+                :suites => [
+                  {
+                    :name => "sweet",
+                    key => {
+                      default_key => "suitey",
+                      :vehicle => "car",
+                      :deep => { :suite => "things" }
+                    }
+                  }
+                ]
               },
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => {
-                    default_key => "platformy",
-                    :fruit => ["banana"],
-                    :deep => { :platform => "stuff" }
-                  }
-                }
-              ],
-              :suites => [
-                {
-                  :name => "sweet",
-                  key => {
-                    default_key => "suitey",
-                    :vehicle => "car",
-                    :deep => { :suite => "things" }
-                  }
-                }
-              ]
+              {}
             ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
               default_key => "suitey",
               :color => "purple",
@@ -286,22 +324,25 @@ module Kitchen
 
           it "platform into common" do
             DataMunger.new(
-              key => {
-                default_key => "commony",
-                :color => "purple",
-                :fruit => %w[apple pear],
-                :deep => { :common => "junk" }
-              },
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => {
-                    default_key => "platformy",
-                    :fruit => ["banana"],
-                    :deep => { :platform => "stuff" }
+              {
+                key => {
+                  default_key => "commony",
+                  :color => "purple",
+                  :fruit => %w[apple pear],
+                  :deep => { :common => "junk" }
+                },
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => {
+                      default_key => "platformy",
+                      :fruit => ["banana"],
+                      :deep => { :platform => "stuff" }
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
               default_key => "platformy",
               :color => "purple",
@@ -315,22 +356,25 @@ module Kitchen
 
           it "suite into common" do
             DataMunger.new(
-              key => {
-                default_key => "commony",
-                :color => "purple",
-                :fruit => %w[apple pear],
-                :deep => { :common => "junk" }
-              },
-              :suites => [
-                {
-                  :name => "sweet",
-                  key => {
-                    default_key => "suitey",
-                    :vehicle => "car",
-                    :deep => { :suite => "things" }
+              {
+                key => {
+                  default_key => "commony",
+                  :color => "purple",
+                  :fruit => %w[apple pear],
+                  :deep => { :common => "junk" }
+                },
+                :suites => [
+                  {
+                    :name => "sweet",
+                    key => {
+                      default_key => "suitey",
+                      :vehicle => "car",
+                      :deep => { :suite => "things" }
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
               default_key => "suitey",
               :color => "purple",
@@ -345,26 +389,29 @@ module Kitchen
 
           it "suite into platform" do
             DataMunger.new(
-              :platforms => [
-                {
-                  :name => "plat",
-                  key => {
-                    default_key => "platformy",
-                    :fruit => ["banana"],
-                    :deep => { :platform => "stuff" }
+              {
+                :platforms => [
+                  {
+                    :name => "plat",
+                    key => {
+                      default_key => "platformy",
+                      :fruit => ["banana"],
+                      :deep => { :platform => "stuff" }
+                    }
                   }
-                }
-              ],
-              :suites => [
-                {
-                  :name => "sweet",
-                  key => {
-                    default_key => "suitey",
-                    :vehicle => "car",
-                    :deep => { :suite => "things" }
+                ],
+                :suites => [
+                  {
+                    :name => "sweet",
+                    key => {
+                      default_key => "suitey",
+                      :vehicle => "car",
+                      :deep => { :suite => "things" }
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              {}
             ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
               default_key => "suitey",
               :fruit => ["banana"],
@@ -385,13 +432,16 @@ module Kitchen
 
         it "moves attributes into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :suites => [
-              {
-                :name => "sweet",
-                :attributes => { :one => "two" }
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :suites => [
+                {
+                  :name => "sweet",
+                  :attributes => { :one => "two" }
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :attributes => { :one => "two" }
@@ -400,13 +450,16 @@ module Kitchen
 
         it "moves run_list into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => %w[one two]
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :suites => [
+                {
+                  :name => "sweet",
+                  :run_list => %w[one two]
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -415,15 +468,18 @@ module Kitchen
 
         it "maintains run_list in provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :suites => [
-              {
-                :name => "sweet",
-                :provisioner => {
-                  :run_list => %w[one two]
+            {
+              :provisioner => "chefy",
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => {
+                    :run_list => %w[one two]
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -432,13 +488,16 @@ module Kitchen
 
         it "merge provisioner into attributes if provisioner exists" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :attributes => { :one => "two" },
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :attributes => { :one => "two" },
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :attributes => { :one => "two" }
@@ -447,13 +506,16 @@ module Kitchen
 
         it "merge provisioner into run_list if provisioner exists" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => %w[one two],
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :run_list => %w[one two],
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -462,13 +524,16 @@ module Kitchen
 
         it "drops nil run_list" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => nil,
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :run_list => nil,
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy"
           )
@@ -476,13 +541,16 @@ module Kitchen
 
         it "drops nil attributes" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :attributes => nil,
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :attributes => nil,
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy"
           )
@@ -493,13 +561,16 @@ module Kitchen
 
         it "moves attributes into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :attributes => { :one => "two" }
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :attributes => { :one => "two" }
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :attributes => { :one => "two" }
@@ -508,13 +579,16 @@ module Kitchen
 
         it "moves run_list into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :run_list => %w[one two]
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :run_list => %w[one two]
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -523,15 +597,18 @@ module Kitchen
 
         it "maintains run_list in provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :provisioner => {
-                  :run_list => %w[one two]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => {
+                    :run_list => %w[one two]
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -540,13 +617,16 @@ module Kitchen
 
         it "merge provisioner into attributes if provisioner exists" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :attributes => { :one => "two" },
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :attributes => { :one => "two" },
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :attributes => { :one => "two" }
@@ -555,13 +635,16 @@ module Kitchen
 
         it "merge provisioner into run_list if provisioner exists" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :run_list => %w[one two],
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :run_list => %w[one two],
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two]
@@ -570,13 +653,16 @@ module Kitchen
 
         it "drops nil run_list" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :run_list => nil,
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :run_list => nil,
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy"
           )
@@ -584,13 +670,16 @@ module Kitchen
 
         it "drops nil attributes" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :attributes => nil,
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :attributes => nil,
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy"
           )
@@ -601,25 +690,28 @@ module Kitchen
 
         it "merges suite attributes into platform attributes" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :attributes => {
-                  :color => "blue",
-                  :deep => { :platform => "much" }
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :attributes => {
+                    :color => "blue",
+                    :deep => { :platform => "much" }
+                  }
                 }
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :attributes => {
-                  :color => "pink",
-                  :deep => { :suite => "wow" }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :attributes => {
+                    :color => "pink",
+                    :deep => { :suite => "wow" }
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :attributes => {
@@ -634,19 +726,22 @@ module Kitchen
 
         it "concats suite run_list to platform run_list" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :run_list => %w[one two]
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => %w[three four]
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :run_list => %w[one two]
+                }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :run_list => %w[three four]
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two three four]
@@ -655,21 +750,24 @@ module Kitchen
 
         it "concats suite run_list in provisioner to platform run_list" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :run_list => %w[one two]
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :provisioner => {
-                  :run_list => %w[three four]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :run_list => %w[one two]
                 }
-              }
-            ]
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => {
+                    :run_list => %w[three four]
+                  }
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two three four]
@@ -678,21 +776,24 @@ module Kitchen
 
         it "concats suite run_list to platform run_list in provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :provisioner => {
-                  :run_list => %w[one two]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => {
+                    :run_list => %w[one two]
+                  }
                 }
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => %w[three four]
-              }
-            ]
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :run_list => %w[three four]
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => %w[one two three four]
@@ -701,21 +802,24 @@ module Kitchen
 
         it "concats to nil run_lists into an empty Array" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "plat",
-                :provisioner => {
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => {
+                    :run_list => nil
+                  }
+                }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
                   :run_list => nil
                 }
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :run_list => nil
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             :run_list => []
@@ -724,28 +828,31 @@ module Kitchen
 
         it "does not corrupt run_list data for multiple suite/platform pairs" do
           munger = DataMunger.new(
-            :provisioner => "chefy",
-            :platforms => [
-              {
-                :name => "p1"
-              },
-              {
-                :name => "p2",
-                :run_list => %w[one two]
-              }
-            ],
-            :suites => [
-              {
-                :name => "s1",
-                :run_list => %w[alpha beta]
-              },
-              {
-                :name => "s2",
-                :provisioner => {
-                  :run_list => %w[three four]
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "p1"
+                },
+                {
+                  :name => "p2",
+                  :run_list => %w[one two]
                 }
-              }
-            ]
+              ],
+              :suites => [
+                {
+                  :name => "s1",
+                  :run_list => %w[alpha beta]
+                },
+                {
+                  :name => "s2",
+                  :provisioner => {
+                    :run_list => %w[three four]
+                  }
+                }
+              ]
+            },
+            {}
           )
 
           # call munger for other data to cause any necessary internal
@@ -771,17 +878,20 @@ module Kitchen
           describe "for #driver_data_for" do
 
             it "is returned when provided" do
-              DataMunger.new({
-                :driver => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "datvalue"
-              }).driver_data_for("sweet", "plat").must_equal(
+              DataMunger.new(
+                {
+                  :driver => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {
+                  key => "datvalue"
+                }
+              ).driver_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
@@ -789,16 +899,19 @@ module Kitchen
 
             it "is returned when provided in user data" do
               DataMunger.new(
-                :kitchen => {
-                  key => "datvalue"
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :driver => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :driver => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).driver_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
@@ -806,20 +919,23 @@ module Kitchen
             end
 
             it "user data value beats provided value" do
-              DataMunger.new({
-                :kitchen => {
-                  key => "datvalue"
+              DataMunger.new(
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :driver => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :driver => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "ilose"
-              }).driver_data_for("sweet", "plat").must_equal(
+                {
+                  key => "ilose"
+                }
+              ).driver_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
@@ -827,16 +943,19 @@ module Kitchen
 
             it "rejects any value in driver data" do
               DataMunger.new(
-                :driver => {
-                  :name => "chefy",
-                  key => "imevil"
+                {
+                  :driver => {
+                    :name => "chefy",
+                    key => "imevil"
+                  },
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).driver_data_for("sweet", "plat").must_equal(
                 :name => "chefy"
               )
@@ -846,17 +965,20 @@ module Kitchen
           describe "for #provisioner_data_for" do
 
             it "is returned when provided" do
-              DataMunger.new({
-                :provisioner => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "datvalue"
-              }).provisioner_data_for("sweet", "plat").must_equal(
+              DataMunger.new(
+                {
+                  :provisioner => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {
+                  key => "datvalue"
+                }
+              ).provisioner_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
@@ -864,16 +986,19 @@ module Kitchen
 
             it "is returned when provided in user data" do
               DataMunger.new(
-                :kitchen => {
-                  key => "datvalue"
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :provisioner => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :provisioner => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).provisioner_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
@@ -881,20 +1006,23 @@ module Kitchen
             end
 
             it "user data value beats provided value" do
-              DataMunger.new({
-                :kitchen => {
-                  key => "datvalue"
+              DataMunger.new(
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :provisioner => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :provisioner => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "ilose"
-              }).provisioner_data_for("sweet", "plat").must_equal(
+                {
+                  key => "ilose"
+                }
+              ).provisioner_data_for("sweet", "plat").must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
@@ -902,16 +1030,19 @@ module Kitchen
 
             it "rejects any value in provisioner data" do
               DataMunger.new(
-                :provisioner => {
-                  :name => "chefy",
-                  key => "imevil"
+                {
+                  :provisioner => {
+                    :name => "chefy",
+                    key => "imevil"
+                  },
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).provisioner_data_for("sweet", "plat").must_equal(
                 :name => "chefy"
               )
@@ -921,17 +1052,20 @@ module Kitchen
           describe "for #busser_data_for" do
 
             it "is returned when provided" do
-              DataMunger.new({
-                :busser => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "datvalue"
-              }).busser_data_for("sweet", "plat").must_equal(
+              DataMunger.new(
+                {
+                  :busser => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {
+                  key => "datvalue"
+                }
+              ).busser_data_for("sweet", "plat").must_equal(
                 :version => "chefy",
                 key => "datvalue"
               )
@@ -939,16 +1073,19 @@ module Kitchen
 
             it "is returned when provided in user data" do
               DataMunger.new(
-                :kitchen => {
-                  key => "datvalue"
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :busser => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :busser => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).busser_data_for("sweet", "plat").must_equal(
                 :version => "chefy",
                 key => "datvalue"
@@ -956,20 +1093,23 @@ module Kitchen
             end
 
             it "user data value beats provided value" do
-              DataMunger.new({
-                :kitchen => {
-                  key => "datvalue"
+              DataMunger.new(
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :busser => "chefy",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :busser => "chefy",
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
-              }, {
-                key => "ilose"
-              }).busser_data_for("sweet", "plat").must_equal(
+                {
+                  key => "ilose"
+                }
+              ).busser_data_for("sweet", "plat").must_equal(
                 :version => "chefy",
                 key => "datvalue"
               )
@@ -977,16 +1117,19 @@ module Kitchen
 
             it "rejects any value in busser data" do
               DataMunger.new(
-                :busser => {
-                  :version => "chefy",
-                  key => "imevil"
+                {
+                  :busser => {
+                    :version => "chefy",
+                    key => "imevil"
+                  },
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
                 },
-                :platforms => [
-                  { :name => "plat" }
-                ],
-                :suites => [
-                  { :name => "sweet" }
-                ]
+                {}
               ).busser_data_for("sweet", "plat").must_equal(
                 :version => "chefy"
               )
@@ -1002,7 +1145,10 @@ module Kitchen
 
         it "returns common driver name" do
           DataMunger.new(
-            :driver_plugin => "starship"
+            {
+              :driver_plugin => "starship"
+            },
+            {}
           ).driver_data_for("suite", "platform").must_equal(
             :name => "starship"
           )
@@ -1010,8 +1156,11 @@ module Kitchen
 
         it "merges driver into driver_plugin if driver exists" do
           DataMunger.new(
-            :driver_plugin => "starship",
-            :driver => "zappa"
+            {
+              :driver_plugin => "starship",
+              :driver => "zappa"
+            },
+            {}
           ).driver_data_for("suite", "platform").must_equal(
             :name => "zappa"
           )
@@ -1019,10 +1168,13 @@ module Kitchen
 
         it "returns common driver config" do
           DataMunger.new(
-            :driver_plugin => "starship",
-            :driver_config => {
-              :speed => 42
-            }
+            {
+              :driver_plugin => "starship",
+              :driver_config => {
+                :speed => 42
+              }
+            },
+            {}
           ).driver_data_for("suite", "platform").must_equal(
             :name => "starship",
             :speed => 42
@@ -1031,10 +1183,13 @@ module Kitchen
 
         it "merges driver into driver_config if driver with name exists" do
           DataMunger.new(
-            :driver_config => {
-              :eh => "yep"
+            {
+              :driver_config => {
+                :eh => "yep"
+              },
+              :driver => "zappa"
             },
-            :driver => "zappa"
+            {}
           ).driver_data_for("suite", "platform").must_equal(
             :name => "zappa",
             :eh => "yep"
@@ -1043,15 +1198,18 @@ module Kitchen
 
         it "merges driver into driver_config if driver exists" do
           DataMunger.new(
-            :driver_plugin => "imold",
-            :driver_config => {
-              :eh => "yep",
-              :color => "pink"
+            {
+              :driver_plugin => "imold",
+              :driver_config => {
+                :eh => "yep",
+                :color => "pink"
+              },
+              :driver => {
+                :name => "zappa",
+                :color => "black"
+              }
             },
-            :driver => {
-              :name => "zappa",
-              :color => "black"
-            }
+            {}
           ).driver_data_for("suite", "platform").must_equal(
             :name => "zappa",
             :eh => "yep",
@@ -1061,12 +1219,15 @@ module Kitchen
 
         it "returns platform driver name" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :driver_plugin => "flip"
-              }
-            ]
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :driver_plugin => "flip"
+                }
+              ]
+            },
+            {}
           ).driver_data_for("suite", "plat").must_equal(
             :name => "flip"
           )
@@ -1074,15 +1235,18 @@ module Kitchen
 
         it "returns platform config containing driver hash" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :driver_plugin => "flip",
-                :driver_config => {
-                  :flop => "yep"
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :driver_plugin => "flip",
+                  :driver_config => {
+                    :flop => "yep"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).driver_data_for("suite", "plat").must_equal(
             :name => "flip",
             :flop => "yep"
@@ -1091,12 +1255,15 @@ module Kitchen
 
         it "returns suite driver name" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :driver_plugin => "waz"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :driver_plugin => "waz"
+                }
+              ]
+            },
+            {}
           ).driver_data_for("sweet", "platform").must_equal(
             :name => "waz"
           )
@@ -1104,15 +1271,18 @@ module Kitchen
 
         it "returns suite config containing driver hash" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :driver_plugin => "waz",
-                :driver_config => {
-                  :up => "nope"
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :driver_plugin => "waz",
+                  :driver_config => {
+                    :up => "nope"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).driver_data_for("sweet", "platform").must_equal(
             :name => "waz",
             :up => "nope"
@@ -1124,32 +1294,35 @@ module Kitchen
 
         it "suite into platform into common" do
           DataMunger.new(
-            :driver_plugin => "commony",
-            :driver_config => {
-              :color => "purple",
-              :fruit => %w[apple pear],
-              :deep => { :common => "junk" }
+            {
+              :driver_plugin => "commony",
+              :driver_config => {
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :platforms => [
+                {
+                  :name => "plat",
+                  :driver_plugin => "platformy",
+                  :driver_config => {
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
+                }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :driver_plugin => "suitey",
+                  :driver_config => {
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
+                }
+              ]
             },
-            :platforms => [
-              {
-                :name => "plat",
-                :driver_plugin => "platformy",
-                :driver_config => {
-                  :fruit => ["banana"],
-                  :deep => { :platform => "stuff" }
-                }
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :driver_plugin => "suitey",
-                :driver_config => {
-                  :vehicle => "car",
-                  :deep => { :suite => "things" }
-                }
-              }
-            ]
+            {}
           ).driver_data_for("sweet", "plat").must_equal(
             :name => "suitey",
             :color => "purple",
@@ -1165,22 +1338,25 @@ module Kitchen
 
         it "platform into common" do
           DataMunger.new(
-            :driver_plugin => "commony",
-            :driver_config => {
-              :color => "purple",
-              :fruit => %w[apple pear],
-              :deep => { :common => "junk" }
-            },
-            :platforms => [
-              {
-                :name => "plat",
-                :driver_plugin => "platformy",
-                :driver_config => {
-                  :fruit => ["banana"],
-                  :deep => { :platform => "stuff" }
+            {
+              :driver_plugin => "commony",
+              :driver_config => {
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :platforms => [
+                {
+                  :name => "plat",
+                  :driver_plugin => "platformy",
+                  :driver_config => {
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).driver_data_for("sweet", "plat").must_equal(
             :name => "platformy",
             :color => "purple",
@@ -1194,22 +1370,25 @@ module Kitchen
 
         it "suite into common" do
           DataMunger.new(
-            :driver_plugin => "commony",
-            :driver_config => {
-              :color => "purple",
-              :fruit => %w[apple pear],
-              :deep => { :common => "junk" }
-            },
-            :suites => [
-              {
-                :name => "sweet",
-                :driver_plugin => "suitey",
-                :driver_config => {
-                  :vehicle => "car",
-                  :deep => { :suite => "things" }
+            {
+              :driver_plugin => "commony",
+              :driver_config => {
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :suites => [
+                {
+                  :name => "sweet",
+                  :driver_plugin => "suitey",
+                  :driver_config => {
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).driver_data_for("sweet", "plat").must_equal(
             :name => "suitey",
             :color => "purple",
@@ -1224,26 +1403,29 @@ module Kitchen
 
         it "suite into platform" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :driver_plugin => "platformy",
-                :driver_config => {
-                  :fruit => ["banana"],
-                  :deep => { :platform => "stuff" }
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :driver_plugin => "platformy",
+                  :driver_config => {
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
                 }
-              }
-            ],
-            :suites => [
-              {
-                :name => "sweet",
-                :driver_plugin => "suitey",
-                :driver_config => {
-                  :vehicle => "car",
-                  :deep => { :suite => "things" }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :driver_plugin => "suitey",
+                  :driver_config => {
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).driver_data_for("sweet", "plat").must_equal(
             :name => "suitey",
             :fruit => ["banana"],
@@ -1268,13 +1450,16 @@ module Kitchen
 
         it "moves #{key} into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :suites => [
-              {
-                :name => "sweet",
-                key => "mypath"
-              }
-            ]
+            {
+              :provisioner => "chefy",
+              :suites => [
+                {
+                  :name => "sweet",
+                  key => "mypath"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             key => "mypath"
@@ -1283,13 +1468,16 @@ module Kitchen
 
         it "merges provisioner into data_path if provisioner exists" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                key => "mypath",
-                :provisioner => "chefy"
-              }
-            ]
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  key => "mypath",
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "plat").must_equal(
             :name => "chefy",
             key => "mypath"
@@ -1304,11 +1492,14 @@ module Kitchen
 
         it "common driver value moves into provisioner" do
           DataMunger.new(
-            :provisioner => "chefy",
-            :driver => {
-              :name => "starship",
-              :require_chef_omnibus => "it's probably fine"
-            }
+            {
+              :provisioner => "chefy",
+              :driver => {
+                :name => "starship",
+                :require_chef_omnibus => "it's probably fine"
+              }
+            },
+            {}
           ).provisioner_data_for("suite", "platform").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1317,14 +1508,17 @@ module Kitchen
 
         it "common driver value loses to existing provisioner value" do
           DataMunger.new(
-            :provisioner => {
-              :name => "chefy",
-              :require_chef_omnibus => "it's probably fine"
+            {
+              :provisioner => {
+                :name => "chefy",
+                :require_chef_omnibus => "it's probably fine"
+              },
+              :driver => {
+                :name => "starship",
+                :require_chef_omnibus => "dragons"
+              }
             },
-            :driver => {
-              :name => "starship",
-              :require_chef_omnibus => "dragons"
-            }
+            {}
           ).provisioner_data_for("suite", "platform").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1333,16 +1527,19 @@ module Kitchen
 
         it "suite driver value moves into provisioner" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :provisioner => "chefy",
-                :driver => {
-                  :name => "starship",
-                  :require_chef_omnibus => "it's probably fine"
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :require_chef_omnibus => "it's probably fine"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "platform").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1351,19 +1548,22 @@ module Kitchen
 
         it "suite driver value loses to existing provisioner value" do
           DataMunger.new(
-            :suites => [
-              {
-                :name => "sweet",
-                :provisioner => {
-                  :name => "chefy",
-                  :require_chef_omnibus => "it's probably fine"
-                },
-                :driver => {
-                  :name => "starship",
-                  :require_chef_omnibus => "dragons"
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => {
+                    :name => "chefy",
+                    :require_chef_omnibus => "it's probably fine"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :require_chef_omnibus => "dragons"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("sweet", "platform").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1372,16 +1572,19 @@ module Kitchen
 
         it "platform driver value moves into provisioner" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :provisioner => "chefy",
-                :driver => {
-                  :name => "starship",
-                  :require_chef_omnibus => "it's probably fine"
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :require_chef_omnibus => "it's probably fine"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("suite", "plat").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
@@ -1390,19 +1593,22 @@ module Kitchen
 
         it "platform driver value loses to existing provisioner value" do
           DataMunger.new(
-            :platforms => [
-              {
-                :name => "plat",
-                :provisioner => {
-                  :name => "chefy",
-                  :require_chef_omnibus => "it's probably fine"
-                },
-                :driver => {
-                  :name => "starship",
-                  :require_chef_omnibus => "dragons"
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => {
+                    :name => "chefy",
+                    :require_chef_omnibus => "it's probably fine"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :require_chef_omnibus => "dragons"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            {}
           ).provisioner_data_for("suite", "plat").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
