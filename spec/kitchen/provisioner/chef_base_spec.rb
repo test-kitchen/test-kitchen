@@ -576,7 +576,7 @@ describe Kitchen::Provisioner::ChefBase do
 
         it "uses Librarian" do
           Kitchen::Provisioner::Chef::Librarian.stubs(:load!)
-            resolver.expects(:resolve)
+          resolver.expects(:resolve)
 
           provisioner.create_sandbox
         end
