@@ -84,7 +84,7 @@ describe Kitchen::Driver::SSHBase do
     describe "constructs an SSH object" do
 
       it "with hostname set from state" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |hostname, _username, _opts|
           hostname.must_equal "fizzy"
         }.returns(stub(:login_command => stub))
 
@@ -92,7 +92,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with username set from state" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, username, _opts|
           username.must_equal "bork"
         }.returns(stub(:login_command => stub))
 
@@ -100,7 +100,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :user_known_hosts_file option set to /dev/null" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:user_known_hosts_file].must_equal "/dev/null"
         }.returns(stub(:login_command => stub))
 
@@ -108,7 +108,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :paranoid option set to false" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:paranoid].must_equal false
         }.returns(stub(:login_command => stub))
 
@@ -116,7 +116,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :keys_only option set to falsey by default" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys_only].nil?
         }.returns(stub(:login_command => stub))
 
@@ -126,7 +126,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :keys_only option set to true if :ssh_key is set in config" do
         config[:ssh_key] = "wicked"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys_only].must_equal true
         }.returns(stub(:login_command => stub))
 
@@ -136,7 +136,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :keys_only option set to true if :ssh_key is set in state" do
         state[:ssh_key] = "wicked"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys_only].must_equal true
         }.returns(stub(:login_command => stub))
 
@@ -144,7 +144,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :keys option set to falsey by default" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys].nil?
         }.returns(stub(:login_command => stub))
 
@@ -154,7 +154,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :keys option set to an array if :ssh_key is set in config" do
         config[:ssh_key] = "wicked"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys].must_equal ["wicked"]
         }.returns(stub(:login_command => stub))
 
@@ -164,7 +164,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :keys option set to an array if :ssh_key is set in state" do
         state[:ssh_key] = "wicked"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:keys].must_equal ["wicked"]
         }.returns(stub(:login_command => stub))
 
@@ -172,7 +172,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :password option set to falsey by default" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:password].nil?
         }.returns(stub(:login_command => stub))
 
@@ -182,7 +182,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :password option set if given in config" do
         config[:password] = "psst"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:password].must_equal "psst"
         }.returns(stub(:login_command => stub))
 
@@ -192,7 +192,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :password option set if given in state" do
         config[:password] = "psst"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:password].must_equal "psst"
         }.returns(stub(:login_command => stub))
 
@@ -200,7 +200,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :forward_agent option set to falsey by default" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:forward_agent].nil?
         }.returns(stub(:login_command => stub))
 
@@ -210,7 +210,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :forward_agent option set if given in config" do
         config[:forward_agent] = "yeah?"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:forward_agent].must_equal "yeah?"
         }.returns(stub(:login_command => stub))
 
@@ -220,7 +220,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :forward_agent option set if given in state" do
         state[:forward_agent] = "yeah?"
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:forward_agent].must_equal "yeah?"
         }.returns(stub(:login_command => stub))
 
@@ -228,7 +228,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :port option set to 22 by default" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:port].must_equal 22
         }.returns(stub(:login_command => stub))
 
@@ -238,7 +238,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :port option set if customized in config" do
         config[:port] = 1234
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:port].must_equal 1234
         }.returns(stub(:login_command => stub))
 
@@ -248,7 +248,7 @@ describe Kitchen::Driver::SSHBase do
       it "with :port option set if customized in state" do
         config[:port] = 9999
 
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:port].must_equal 9999
         }.returns(stub(:login_command => stub))
 
@@ -256,7 +256,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :logger option set to driver's logger" do
-        Kitchen::SSH.expects(:new).with { |hostname, username, opts|
+        Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:logger].must_equal logger
         }.returns(stub(:login_command => stub))
 

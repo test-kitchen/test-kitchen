@@ -260,7 +260,7 @@ module Kitchen
     # @api private
     def stdout_logger(stdout, color)
       logger = StdoutLogger.new(stdout)
-      logger.formatter = proc do |severity, datetime, progname, msg|
+      logger.formatter = proc do |_severity, _datetime, _progname, msg|
         Color.colorize("#{msg}", color).concat("\n")
       end
       logger

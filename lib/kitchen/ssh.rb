@@ -94,7 +94,7 @@ module Kitchen
     # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload!(local, remote, options = {}, &progress)
       if progress.nil?
-        progress = lambda { |ch, name, sent, total|
+        progress = lambda { |_ch, name, sent, total|
           if sent == total
             logger.debug("Uploaded #{name} (#{total} bytes)")
           end
@@ -236,17 +236,17 @@ module Kitchen
 
         channel.request_pty
 
-        channel.exec(cmd) do |ch, success|
+        channel.exec(cmd) do |_ch, _success|
 
-          channel.on_data do |_, data|
+          channel.on_data do |_ch, data|
             logger << data
           end
 
-          channel.on_extended_data do |_, type, data|
+          channel.on_extended_data do |_ch, _type, data|
             logger << data
           end
 
-          channel.on_request("exit-status") do |_, data|
+          channel.on_request("exit-status") do |_ch, data|
             exit_code = data.read_long
           end
         end

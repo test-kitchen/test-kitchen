@@ -56,7 +56,7 @@ module Kitchen
 
       required_config :need_it
       required_config :a_default
-      required_config :no_nuts do |attr, value, subject|
+      required_config :no_nuts do |attr, value, _subject|
         raise UserError, "NO NUTS FOR #{attr}!" if value == "nuts"
       end
 
@@ -78,7 +78,7 @@ module Kitchen
       default_config :fetch_command, "wget"
       default_config :fetch_url, "http://no.beans"
 
-      required_config :a_default do |attr, value, subject|
+      required_config :a_default do |_attr, value, _subject|
         raise UserError, "Overriding a_default is fun" unless value == "please"
       end
 

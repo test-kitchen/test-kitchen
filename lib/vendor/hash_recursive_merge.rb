@@ -38,7 +38,7 @@ module HashRecursiveMerge
   #    h1.merge!(h2)    #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
   def rmerge!(other_hash)
-    merge!(other_hash) do |key, oldval, newval|
+    merge!(other_hash) do |_key, oldval, newval|
       oldval.class == self.class ? oldval.rmerge!(newval) : newval
     end
   end

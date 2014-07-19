@@ -80,7 +80,7 @@ module Kitchen
     # @return [Hash] a new Hash of options, filterd and merged with defaults
     # @api private
     def shell_opts(options)
-      filtered_opts = options.reject do |key, value|
+      filtered_opts = options.reject do |key, _value|
         [:use_sudo, :log_subject, :quiet].include?(key)
       end
       { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)
