@@ -33,12 +33,10 @@ module Kitchen
 
   class DummyLoader
 
+    attr_writer :data
+
     def read
       @data || Hash.new
-    end
-
-    def data=(hash)
-      @data = hash
     end
   end
 end
