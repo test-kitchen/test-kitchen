@@ -45,7 +45,7 @@ module Kitchen
       instance_eval(IO.read(metadata_file), metadata_file)
     end
 
-    def method_missing(meth, *args, &block)
+    def method_missing(meth, *args, &_block)
       self[meth] = args.first
     end
   end

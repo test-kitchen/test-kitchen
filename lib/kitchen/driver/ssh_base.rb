@@ -32,7 +32,7 @@ module Kitchen
       default_config :port, 22
 
       # (see Base#create)
-      def create(state)
+      def create(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#create must be implemented"
       end
 
@@ -69,7 +69,7 @@ module Kitchen
       end
 
       # (see Base#destroy)
-      def destroy(state)
+      def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
 

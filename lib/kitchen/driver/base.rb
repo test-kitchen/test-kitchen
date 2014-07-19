@@ -52,31 +52,36 @@ module Kitchen
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def create(state) ; end
+      def create(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Converges a running instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(state) ; end
+      def converge(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Sets up an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(state) ; end
+      def setup(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Verifies a converged instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(state) ; end
+      def verify(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(state) ; end
+      def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Returns the shell command that will log into an instance.
       #
@@ -84,7 +89,7 @@ module Kitchen
       # @return [LoginCommand] an object containing the array of command line
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
-      def login_command(state)
+      def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ActionFailed, "Remote login is not supported in this driver."
       end
 

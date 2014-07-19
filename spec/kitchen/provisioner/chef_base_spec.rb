@@ -40,7 +40,7 @@ describe Kitchen::Provisioner::ChefBase do
 
   let(:provisioner) do
     Class.new(Kitchen::Provisioner::ChefBase) {
-      def calculate_path(path, opts = {})
+      def calculate_path(path, _opts = {})
         "<calculated>/#{path}"
       end
     }.new(config).finalize_config!(instance)
