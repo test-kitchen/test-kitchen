@@ -68,7 +68,7 @@ describe Kitchen::Provisioner::ChefZero do
       FileUtils.remove_entry(@root)
       begin
         provisioner.cleanup_sandbox
-      rescue
+      rescue # rubocop:disable Lint/HandleExceptions
       end
     end
 

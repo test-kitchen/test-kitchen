@@ -80,7 +80,7 @@ describe Kitchen::Provisioner::Base do
     after do
       begin
         provisioner.cleanup_sandbox
-      rescue
+      rescue # rubocop:disable Lint/HandleExceptions
       end
     end
 

@@ -755,7 +755,7 @@ describe Kitchen::Instance do
 
           begin
             instance.test(:always)
-          rescue
+          rescue # rubocop:disable Lint/HandleExceptions
           end
         end
       end
@@ -769,7 +769,7 @@ describe Kitchen::Instance do
 
           begin
             instance.test(:passing)
-          rescue
+          rescue # rubocop:disable Lint/HandleExceptions
           end
         end
       end

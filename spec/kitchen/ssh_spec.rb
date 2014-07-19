@@ -125,7 +125,7 @@ describe Kitchen::SSH do
         it "attempts to connect 3 times" do
           begin
             ssh.exec("nope")
-          rescue
+          rescue # rubocop:disable Lint/HandleExceptions
           end
 
           logged_output.string.lines.select { |l|
@@ -136,7 +136,7 @@ describe Kitchen::SSH do
         it "logs the first 2 retry failures on info" do
           begin
             ssh.exec("nope")
-          rescue
+          rescue # rubocop:disable Lint/HandleExceptions
           end
 
           logged_output.string.lines.select { |l|
@@ -147,7 +147,7 @@ describe Kitchen::SSH do
         it "logs the last retry failures on warn" do
           begin
             ssh.exec("nope")
-          rescue
+          rescue # rubocop:disable Lint/HandleExceptions
           end
 
           logged_output.string.lines.select { |l|
@@ -222,7 +222,7 @@ describe Kitchen::SSH do
       it "logger displays command on debug" do
         begin
           assert_scripted { ssh.exec("doit") }
-        rescue
+        rescue # rubocop:disable Lint/HandleExceptions
         end
 
         logged_output.string.must_match debug_line(
@@ -233,7 +233,7 @@ describe Kitchen::SSH do
       it "logger displays establishing connection on debug" do
         begin
           assert_scripted { ssh.exec("doit") }
-        rescue
+        rescue # rubocop:disable Lint/HandleExceptions
         end
 
         logged_output.string.must_match debug_line(
@@ -244,7 +244,7 @@ describe Kitchen::SSH do
       it "logger captures stdout" do
         begin
           assert_scripted { ssh.exec("doit") }
-        rescue
+        rescue # rubocop:disable Lint/HandleExceptions
         end
 
         logged_output.string.must_match /^nope$/
@@ -253,7 +253,7 @@ describe Kitchen::SSH do
       it "logger captures stderr" do
         begin
           assert_scripted { ssh.exec("doit") }
-        rescue
+        rescue # rubocop:disable Lint/HandleExceptions
         end
 
         logged_output.string.must_match /^youdead$/

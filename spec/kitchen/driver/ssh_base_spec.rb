@@ -314,7 +314,7 @@ describe Kitchen::Driver::SSHBase do
 
       begin
         cmd
-      rescue
+      rescue # rubocop:disable Lint/HandleExceptions
       end
     end
 
