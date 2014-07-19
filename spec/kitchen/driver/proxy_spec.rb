@@ -79,7 +79,7 @@ describe Kitchen::Driver::Proxy do
     end
 
     it "calls the reset command over ssh" do
-      driver.expects(:ssh).with() do |ssh_args, cmd|
+      driver.expects(:ssh).with do |ssh_args, cmd|
         ssh_args[0].must_equal "foobnoobs.com"
         cmd.must_equal "mulligan"
       end
@@ -109,7 +109,7 @@ describe Kitchen::Driver::Proxy do
     end
 
     it "calls the reset command over ssh" do
-      driver.expects(:ssh).with() do |ssh_args, cmd|
+      driver.expects(:ssh).with do |ssh_args, cmd|
         ssh_args[0].must_equal "beep"
         cmd.must_equal "mulligan"
       end
