@@ -338,7 +338,7 @@ module Kitchen
     def perform_action(verb, output_verb)
       banner "#{output_verb} #{to_str}..."
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
-      info("Finished #{output_verb.downcase} #{to_str}" +
+      info("Finished #{output_verb.downcase} #{to_str}" \
         " #{Util.duration(elapsed.real)}.")
       yield if block_given?
       self

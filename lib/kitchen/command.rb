@@ -115,8 +115,8 @@ module Kitchen
           @config.instances.get(regexp) ||
             @config.instances.get_all(/#{regexp}/)
         rescue RegexpError => e
-          die "Invalid Ruby regular expression, " +
-            "you may need to single quote the argument. " +
+          die "Invalid Ruby regular expression, " \
+            "you may need to single quote the argument. " \
             "Please try again or consult http://rubular.com/ (#{e.message})"
         end
         result = Array(result)

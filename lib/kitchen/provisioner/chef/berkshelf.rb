@@ -101,9 +101,9 @@ module Kitchen
             logger.debug("Berkshelf #{version} previously loaded")
           end
         rescue LoadError => e
-          logger.fatal("The `berkshelf' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install berkshelf` or add the following to your" +
+          logger.fatal("The `berkshelf' gem is missing and must be installed" \
+            " or cannot be properly activated. Run" \
+            " `gem install berkshelf` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
           raise UserError,
             "Could not load or activate Berkshelf (#{e.message})"

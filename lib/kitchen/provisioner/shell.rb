@@ -88,7 +88,7 @@ module Kitchen
           FileUtils.cp_r(config[:script], sandbox_path)
         else
           config[:script] = File.join(sandbox_path, "bootstrap.sh")
-          info("#{File.basename(config[:script])} not found " +
+          info("#{File.basename(config[:script])} not found " \
             "so Kitchen will run a stubbed script. Is this intended?")
           File.open(config[:script], "wb") do |file|
             file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})

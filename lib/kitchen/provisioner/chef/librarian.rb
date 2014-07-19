@@ -99,9 +99,9 @@ module Kitchen
             logger.debug("Librarian-Chef #{version} previously loaded")
           end
         rescue LoadError => e
-          logger.fatal("The `librarian-chef' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install librarian-chef` or add the following to your" +
+          logger.fatal("The `librarian-chef' gem is missing and must be installed" \
+            " or cannot be properly activated. Run" \
+            " `gem install librarian-chef` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
           raise UserError,
             "Could not load or activate Librarian-Chef (#{e.message})"

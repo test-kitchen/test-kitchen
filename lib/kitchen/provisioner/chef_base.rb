@@ -391,7 +391,7 @@ module Kitchen
         debug("Using metadata.rb from #{metadata_rb}")
 
         cb_name = MetadataChopper.extract(metadata_rb).first || raise(UserError,
-          "The metadata.rb does not define the 'name' key." +
+          "The metadata.rb does not define the 'name' key." \
             " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
         cb_path = File.join(tmpbooks_dir, cb_name)
@@ -406,7 +406,7 @@ module Kitchen
       #
       # @api private
       def make_fake_cookbook
-        info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " +
+        info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
           "so Chef will run with effectively no cookbooks. Is this intended?")
         name = File.basename(config[:kitchen_root])
         fake_cb = File.join(tmpbooks_dir, name)

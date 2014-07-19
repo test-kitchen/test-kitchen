@@ -31,7 +31,7 @@ module Kitchen
       def call
         result = parse_subcommand(args.first)
         if options[:debug]
-          die "The --debug flag on the list subcommand is deprecated, " +
+          die "The --debug flag on the list subcommand is deprecated, " \
             "please use `kitchen diagnose'."
         elsif options[:bare]
           puts Array(result).map { |i| i.name }.join("\n")

@@ -223,7 +223,7 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           logged_output.string.must_match info_line(
-            "bootstrap.sh not found so Kitchen will run a stubbed script. " +
+            "bootstrap.sh not found so Kitchen will run a stubbed script. " \
             "Is this intended?")
         end
 

@@ -175,9 +175,9 @@ module Kitchen
       def process_erb(string, file)
         ERB.new(string).result
       rescue => e
-        raise UserError, "Error parsing ERB content in #{file} " +
-          "(#{e.class}: #{e.message}).\n" +
-          "Please run `kitchen diagnose --no-instances --loader' to help " +
+        raise UserError, "Error parsing ERB content in #{file} " \
+          "(#{e.class}: #{e.message}).\n" \
+          "Please run `kitchen diagnose --no-instances --loader' to help " \
           "debug your issue."
       end
 
@@ -330,15 +330,15 @@ module Kitchen
 
         result = SafeYAML.load(string) || Hash.new
         unless result.is_a?(Hash)
-          raise UserError, "Error parsing #{file_name} as YAML " +
-            "(Result of parse was not a Hash, but was a #{result.class}).\n" +
-            "Please run `kitchen diagnose --no-instances --loader' to help " +
+          raise UserError, "Error parsing #{file_name} as YAML " \
+            "(Result of parse was not a Hash, but was a #{result.class}).\n" \
+            "Please run `kitchen diagnose --no-instances --loader' to help " \
             "debug your issue."
         end
         result
       rescue SyntaxError, Psych::SyntaxError
-        raise UserError, "Error parsing #{file_name} as YAML.\n" +
-          "Please run `kitchen diagnose --no-instances --loader' to help " +
+        raise UserError, "Error parsing #{file_name} as YAML.\n" \
+          "Please run `kitchen diagnose --no-instances --loader' to help " \
           "debug your issue."
       end
     end
