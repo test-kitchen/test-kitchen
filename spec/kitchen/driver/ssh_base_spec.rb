@@ -574,7 +574,7 @@ describe Kitchen::Driver::SSHBase do
       Kitchen::SSH.expects(:new).with { |hostname, username, opts|
         hostname.must_equal "host"
         username.must_equal "user"
-        opts.must_equal({ :one => "two" })
+        opts.must_equal(:one => "two")
       }
 
       cmd
@@ -591,14 +591,14 @@ describe Kitchen::Driver::SSHBase do
   describe "#wait_for_sshd" do
 
     let(:cmd) do
-      driver.send(:wait_for_sshd, "host", "user", { :one => "two" })
+      driver.send(:wait_for_sshd, "host", "user", :one => "two")
     end
 
     it "creates an SSH object with merged options" do
       Kitchen::SSH.expects(:new).with { |hostname, username, opts|
         hostname.must_equal "host"
         username.must_equal "user"
-        opts.must_equal({ :one => "two", :logger => logger })
+        opts.must_equal(:one => "two", :logger => logger)
       }.returns(stub(:wait => true))
 
       cmd

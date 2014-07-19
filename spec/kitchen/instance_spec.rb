@@ -262,9 +262,9 @@ describe Kitchen::Instance do
     end
 
     it "sets :state_file key to state_file's diganose info" do
-      state_file.stubs(:diagnose).returns({ :a => "b" })
+      state_file.stubs(:diagnose).returns(:a => "b")
 
-      instance.diagnose[:state_file].must_equal({ :a => "b" })
+      instance.diagnose[:state_file].must_equal(:a => "b")
     end
 
     it "sets :state_file key to :unknown if obj can't respond to #diagnose" do
@@ -276,9 +276,9 @@ describe Kitchen::Instance do
     end
 
     it "sets :provisioner key to provisioner's diganose info" do
-      provisioner.stubs(:diagnose).returns({ :a => "b" })
+      provisioner.stubs(:diagnose).returns(:a => "b")
 
-      instance.diagnose[:provisioner].must_equal({ :a => "b" })
+      instance.diagnose[:provisioner].must_equal(:a => "b")
     end
 
     it "sets :provisioner key to :unknown if obj can't respond to #diagnose" do
@@ -290,9 +290,9 @@ describe Kitchen::Instance do
     end
 
     it "sets :busser key to busser's diganose info" do
-      busser.stubs(:diagnose).returns({ :a => "b" })
+      busser.stubs(:diagnose).returns(:a => "b")
 
-      instance.diagnose[:busser].must_equal({ :a => "b" })
+      instance.diagnose[:busser].must_equal(:a => "b")
     end
 
     it "sets :busser key to :unknown if obj can't respond to #diagnose" do

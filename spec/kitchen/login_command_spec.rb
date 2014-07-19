@@ -44,6 +44,6 @@ describe Kitchen::LoginCommand do
   it "#options returns the options hash from the constructor" do
     opts[:cake] = "yummy"
 
-    cmd.options.must_equal({ :cake => "yummy" })
+    cmd.options.must_equal(:cake => "yummy")
   end
 end

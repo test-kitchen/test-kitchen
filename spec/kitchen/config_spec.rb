@@ -168,17 +168,17 @@ describe Kitchen::Config do
     end
 
     it "contructs Platform objects" do
-      Kitchen::Platform.expects(:new).with({ :one => "a" })
-      Kitchen::Platform.expects(:new).with({ :two => "b" })
+      Kitchen::Platform.expects(:new).with(:one => "a")
+      Kitchen::Platform.expects(:new).with(:two => "b")
 
       config.platforms
     end
 
     it "returns a Collection of platforms" do
       Kitchen::Platform.stubs(:new).
-        with({ :one => "a" }).returns(stub(:name => "one"))
+        with(:one => "a").returns(stub(:name => "one"))
       Kitchen::Platform.stubs(:new).
-        with({ :two => "b" }).returns(stub(:name => "two"))
+        with(:two => "b").returns(stub(:name => "two"))
 
       config.platforms.as_names.must_equal %w[one two]
     end
@@ -219,17 +219,17 @@ describe Kitchen::Config do
     end
 
     it "contructs Suite objects" do
-      Kitchen::Suite.expects(:new).with({ :one => "a" })
-      Kitchen::Suite.expects(:new).with({ :two => "b" })
+      Kitchen::Suite.expects(:new).with(:one => "a")
+      Kitchen::Suite.expects(:new).with(:two => "b")
 
       config.suites
     end
 
     it "returns a Collection of suites" do
       Kitchen::Suite.stubs(:new).
-        with({ :one => "a" }).returns(stub(:name => "one"))
+        with(:one => "a").returns(stub(:name => "one"))
       Kitchen::Suite.stubs(:new).
-        with({ :two => "b" }).returns(stub(:name => "two"))
+        with(:two => "b").returns(stub(:name => "two"))
 
       config.suites.as_names.must_equal %w[one two]
     end
@@ -276,20 +276,20 @@ describe Kitchen::Config do
 
     it "constructs a Driver object" do
       munger.expects(:driver_data_for).with("tiny", "unax").
-        returns({ :name => "drivey", :datum => "lots" })
+        returns(:name => "drivey", :datum => "lots")
       Kitchen::Driver.unstub(:for_plugin)
       Kitchen::Driver.expects(:for_plugin).
-        with("drivey", { :name => "drivey", :datum => "lots" })
+        with("drivey", :name => "drivey", :datum => "lots")
 
       config.instances
     end
 
     it "constructs a Provisioner object" do
       munger.expects(:provisioner_data_for).with("tiny", "unax").
-        returns({ :name => "provey", :datum => "lots" })
+        returns(:name => "provey", :datum => "lots")
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin).
-        with("provey", { :name => "provey", :datum => "lots" })
+        with("provey", :name => "provey", :datum => "lots")
 
       config.instances
     end

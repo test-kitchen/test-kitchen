@@ -260,7 +260,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:attributes] = { "one" => { "two" => "three" } }
         provisioner.create_sandbox
 
-        json["one"].must_equal({ "two" => "three" })
+        json["one"].must_equal("two" => "three")
       end
 
       it "creates a json file with run_list" do

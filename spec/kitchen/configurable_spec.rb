@@ -362,7 +362,7 @@ describe Kitchen::Configurable do
 
     it "returns a hash of config" do
       config[:alpha] = "beta"
-      subject.diagnose.must_equal({ :alpha => "beta" })
+      subject.diagnose.must_equal(:alpha => "beta")
     end
 
     it "returns a hash with sorted keys" do
