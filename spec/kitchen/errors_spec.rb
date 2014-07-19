@@ -57,7 +57,7 @@ describe Kitchen::Error do
 
     it "returns an array containing the exception's backtrace" do
       begin
-        raise Kitchen::StandardError.new("shoot")
+        raise Kitchen::StandardError, "shoot"
       rescue => e
         Kitchen::Error.formatted_trace(e)[4...-1].must_equal e.backtrace
       end
@@ -65,7 +65,7 @@ describe Kitchen::Error do
 
     it "returns an array containing a nested exception, if given" do
       begin
-        raise IOError.new("no disk, yo")
+        raise IOError, "no disk, yo"
       rescue
         e = Kitchen::StandardError.new("shoot")
 
