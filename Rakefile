@@ -24,7 +24,7 @@ task :stats do
   sh "countloc -r spec features"
 end
 
-unless RUBY_ENGINE == 'jruby'
+if RUBY_ENGINE != 'jruby'
   require 'cane/rake_task'
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
