@@ -257,7 +257,7 @@ describe Kitchen::Provisioner::ChefBase do
       let(:json) { JSON.parse(IO.read(sandbox_path("dna.json"))) }
 
       it "creates a json file with node attributes" do
-        config[:attributes] = { "one" => { "two" => "three"} }
+        config[:attributes] = { "one" => { "two" => "three" } }
         provisioner.create_sandbox
 
         json["one"].must_equal({ "two" => "three" })
