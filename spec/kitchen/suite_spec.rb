@@ -26,8 +26,8 @@ describe Kitchen::Suite do
   let(:opts) do
     {
       :name => "suitezy",
-      :includes => %w{testbuntu testcent},
-      :excludes => %w{prodbuntu}
+      :includes => %w[testbuntu testcent],
+      :excludes => %w[prodbuntu]
     }
   end
 
@@ -43,7 +43,7 @@ describe Kitchen::Suite do
   end
 
   it "returns the includes" do
-    suite.includes.must_equal %w{testbuntu testcent}
+    suite.includes.must_equal %w[testbuntu testcent]
   end
 
   it "returns an empty Array when includes not given" do
@@ -52,7 +52,7 @@ describe Kitchen::Suite do
   end
 
   it "returns the excludes" do
-    suite.excludes.must_equal %w{prodbuntu}
+    suite.excludes.must_equal %w[prodbuntu]
   end
 
   it "returns an empty Array when excludes not given" do

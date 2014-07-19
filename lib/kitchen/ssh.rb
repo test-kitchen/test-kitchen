@@ -138,16 +138,16 @@ module Kitchen
     #
     # @return [LoginCommand] the login command
     def login_command
-      args  = %W{ -o UserKnownHostsFile=/dev/null }
-      args += %W{ -o StrictHostKeyChecking=no }
-      args += %W{ -o IdentitiesOnly=yes } if options[:keys]
-      args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
+      args  = %W[ -o UserKnownHostsFile=/dev/null ]
+      args += %W[ -o StrictHostKeyChecking=no ]
+      args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
+      args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
       if options.key?(:forward_agent)
-        args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} }
+        args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
       end
-      Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key}} }
-      args += %W{ -p #{port}}
-      args += %W{ #{username}@#{hostname}}
+      Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
+      args += %W[ -p #{port} ]
+      args += %W[ #{username}@#{hostname} ]
 
       LoginCommand.new(["ssh", *args])
     end

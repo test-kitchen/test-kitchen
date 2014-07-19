@@ -25,7 +25,7 @@ require "kitchen/base64_stream"
 
 describe Kitchen::Base64Stream do
 
-  SHORT_BODIES = %w{you test wakkawakkawakka}
+  SHORT_BODIES = %w[you test wakkawakkawakka]
 
   describe ".strict_encode" do
 

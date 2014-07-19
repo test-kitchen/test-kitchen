@@ -201,7 +201,7 @@ module Kitchen
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
     end
-    map %w(-v --version) => :version
+    map %w[-v --version] => :version
 
     desc "sink", "Show the Kitchen sink!", :hide => true
     def sink

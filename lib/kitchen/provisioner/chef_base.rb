@@ -89,7 +89,7 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        dirs = %w{cookbooks data data_bags environments roles clients}.
+        dirs = %w[cookbooks data data_bags environments roles clients].
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
         lines = ["#{sudo('rm')} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
 
@@ -137,7 +137,7 @@ module Kitchen
       # @api private
       def chef_shell_helpers
         IO.read(File.join(
-          File.dirname(__FILE__), %w{.. .. .. support chef_helpers.sh}
+          File.dirname(__FILE__), %w[.. .. .. support chef_helpers.sh]
         ))
       end
 
@@ -153,7 +153,7 @@ module Kitchen
                          when "latest" then "always install latest version"
                          else version
                          end
-        install_flags = %w{latest true}.include?(version) ? "" : "-v #{version}"
+        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
         <<-INSTALL.gsub(/^ {10}/, '')
           if should_update_chef "/opt/chef" "#{version}" ; then
@@ -295,7 +295,7 @@ module Kitchen
       # @api private
       def all_files_in_cookbooks
         Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
-          select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
+          select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
       end
 
       # Generates a list of all typical cookbook files needed in a Chef run,
@@ -307,7 +307,7 @@ module Kitchen
         glob = File.join(tmpbooks_dir, "*", "{#{config[:cookbook_files_glob]}}")
 
         Dir.glob(glob, File::FNM_DOTMATCH).
-          select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
+          select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
       end
 
       # @return [String] an absolute path to a Berksfile, relative to the

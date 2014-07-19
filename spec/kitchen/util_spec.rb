@@ -30,7 +30,7 @@ describe Kitchen::Util do
       Kitchen::Util.to_logger_level(:nope).must_be_nil
     end
 
-    %w{debug info warn error fatal}.each do |level|
+    %w[debug info warn error fatal].each do |level|
       it "returns Logger::#{level.upcase} for :#{level} input" do
         Kitchen::Util.to_logger_level(level.to_sym).
           must_equal Logger.const_get(level.upcase)
@@ -44,7 +44,7 @@ describe Kitchen::Util do
       Kitchen::Util.from_logger_level("nope").must_equal :fatal
     end
 
-    %w{debug info warn error fatal}.each do |level|
+    %w[debug info warn error fatal].each do |level|
       it "returns :#{level} for Logger::#{level.upcase} input" do
         Kitchen::Util.from_logger_level(Logger.const_get(level.upcase)).
           must_equal(level.to_sym)
@@ -146,9 +146,9 @@ describe Kitchen::Util do
 
   describe ".shell_helpers" do
 
-    %w{
+    %w[
       exists do_wget do_curl do_fetch do_perl do_python do_download
-    }.each do |func|
+    ].each do |func|
       it "contains a #{func} shell function" do
         Kitchen::Util.shell_helpers.must_match "#{func}() {"
       end

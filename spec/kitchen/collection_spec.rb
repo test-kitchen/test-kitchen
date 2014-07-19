@@ -68,7 +68,7 @@ describe Kitchen::Collection do
   describe "#as_name" do
 
     it "returns an Array of names as strings" do
-      collection.as_names.must_equal %w{one two two three}
+      collection.as_names.must_equal %w[one two two three]
     end
   end
 

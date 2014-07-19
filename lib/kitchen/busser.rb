@@ -194,7 +194,7 @@ module Kitchen
     #   plugin gem names
     # @api private
     def plugins
-      non_suite_dirs = %w{data data_bags environments nodes roles}
+      non_suite_dirs = %w[data data_bags environments nodes roles]
       glob = File.join(config[:test_base_path], config[:suite_name], "*")
       Dir.glob(glob).reject { |d|
         !File.directory?(d) || non_suite_dirs.include?(File.basename(d))

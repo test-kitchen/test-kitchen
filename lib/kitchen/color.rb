@@ -33,10 +33,10 @@ module Kitchen
       :bright_cyan => 96, :bright_white => 97
     }.freeze
 
-    COLORS = %w(
+    COLORS = %w[
       cyan yellow green magenta blue bright_cyan bright_yellow
       bright_green bright_magenta bright_blue
-    ).freeze
+    ].freeze
 
     # Returns an ansi escaped string representing a color control sequence.
     #

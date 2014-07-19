@@ -207,7 +207,7 @@ describe Kitchen::Provisioner::ChefBase do
         wont_match regexify("sudo -E rm -rf ", :partial_line)
     end
 
-    %w{cookbooks data data_bags environments roles clients}.each do |dir|
+    %w[cookbooks data data_bags environments roles clients].each do |dir|
       it "removes the #{dir} directory" do
         config[:root_path] = "/route"
 
@@ -264,10 +264,10 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "creates a json file with run_list" do
-        config[:run_list] = %w{alpha bravo charlie}
+        config[:run_list] = %w[alpha bravo charlie]
         provisioner.create_sandbox
 
-        json["run_list"].must_equal %w{alpha bravo charlie}
+        json["run_list"].must_equal %w[alpha bravo charlie]
       end
 
       it "creates a json file with an empty run_list" do
@@ -298,7 +298,7 @@ describe Kitchen::Provisioner::ChefBase do
       sandbox_path("cache").directory?.must_equal true
     end
 
-    %w{data data_bags environments nodes roles clients}.each do |thing|
+    %w[data data_bags environments nodes roles clients].each do |thing|
       describe "#{thing} files" do
 
         before do
@@ -601,10 +601,10 @@ describe Kitchen::Provisioner::ChefBase do
         end
 
         it "strips extra cookbook files" do
-          extras = %w{
+          extras = %w[
             .gitignore tmp/librarian chefignore .git/info/excludes
             cookbooks/another/metadata.rb CONTRIBUTING.md metadata.py
-          }
+          ]
 
           create_full_cookbook("#{kitchen_root}/cookbooks/full")
           extras.each do |file|
@@ -725,18 +725,18 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       def create_cookbook(path)
-        %w{metadata.rb attributes/all.rb recipes/default.rb}.each do |file|
+        %w[metadata.rb attributes/all.rb recipes/default.rb].each do |file|
           create_file(File.join(path, file))
         end
       end
 
       def full_cookbook_files
-        %w{
+        %w[
           README.org metadata.rb attributes/all.rb definitions/def.rb
           files/default/config.conf libraries/one.rb libraries/two.rb
           providers/sweet.rb recipes/default.rb resources/sweet.rb
           templates/ubuntu/12.04/nginx.conf.erb
-        }
+        ]
       end
 
       def create_full_cookbook(path)

@@ -103,7 +103,7 @@ module Kitchen
         debug("Using a vendored chef-client-zero.rb")
 
         source = File.join(File.dirname(__FILE__),
-          %w{.. .. .. support chef-client-zero.rb})
+          %w[.. .. .. support chef-client-zero.rb])
         FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
@@ -115,7 +115,7 @@ module Kitchen
         debug("Using a dummy validation.pem")
 
         source = File.join(File.dirname(__FILE__),
-          %w{.. .. .. support dummy-validation.pem})
+          %w[.. .. .. support dummy-validation.pem])
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 

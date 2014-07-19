@@ -118,10 +118,10 @@ describe Kitchen::Configurable do
     describe "provided from the outside" do
 
       it "returns provided config" do
-        config[:fruit] = %w{apples oranges}
+        config[:fruit] = %w[apples oranges]
         config[:cool_enough] = true
 
-        subject[:fruit].must_equal %w{apples oranges}
+        subject[:fruit].must_equal %w[apples oranges]
         subject[:cool_enough].must_equal true
       end
     end

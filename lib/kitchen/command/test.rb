@@ -33,7 +33,7 @@ module Kitchen
 
       # Invoke the command.
       def call
-        if !%w{passing always never}.include?(options[:destroy])
+        if !%w[passing always never].include?(options[:destroy])
           raise ArgumentError, "Destroy mode must be passing, always, or never."
         end
 
