@@ -30,7 +30,7 @@ describe Kitchen::LazyHash do
     {
       :shed_color => ->(c) { c.color },
       :barn => "locked",
-      :genre => Proc.new { |c| "#{c.metal} metal" }
+      :genre => proc { |c| "#{c.metal} metal" }
     }
   end
 
