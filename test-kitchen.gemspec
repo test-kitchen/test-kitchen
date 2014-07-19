@@ -10,7 +10,9 @@ Gem::Specification.new do |gem|
   gem.license       = "Apache 2.0"
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
-  gem.description   = "Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms."
+  gem.description   = "Test Kitchen is an integration tool for developing " \
+                      "and testing infrastructure code and software on " \
+                      "isolated target platforms."
   gem.summary       = gem.description
   gem.homepage      = "http://kitchen.ci"
 
