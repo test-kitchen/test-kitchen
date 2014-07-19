@@ -222,7 +222,7 @@ module Kitchen
     #   Chef-related file
     # @api private
     def chef_data_dir?(base, file)
-      file =~ %r[^#{base}/(data|data_bags|environments|nodes|roles)/]
+      file =~ %r{^#{base}/(data|data_bags|environments|nodes|roles)/}
     end
 
     # Returns an Array of common helper filenames currently residing on the
