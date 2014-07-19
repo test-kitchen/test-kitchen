@@ -516,7 +516,7 @@ describe Kitchen::SSH do
     end
 
     it "sets SSH keys options if given" do
-      opts[:keys] = ["one", "two"]
+      opts[:keys] = %w[one two]
 
       cmd.must_match regexify(" -i one ")
       cmd.must_match regexify(" -i two ")

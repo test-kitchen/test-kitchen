@@ -180,7 +180,7 @@ describe Kitchen::Config do
       Kitchen::Platform.stubs(:new).
         with({ :two => "b" }).returns(stub(:name => "two"))
 
-      config.platforms.as_names.must_equal ["one", "two"]
+      config.platforms.as_names.must_equal %w[one two]
     end
   end
 
@@ -231,7 +231,7 @@ describe Kitchen::Config do
       Kitchen::Suite.stubs(:new).
         with({ :two => "b" }).returns(stub(:name => "two"))
 
-      config.suites.as_names.must_equal ["one", "two"]
+      config.suites.as_names.must_equal %w[one two]
     end
   end
 
@@ -338,7 +338,7 @@ describe Kitchen::Config do
         stub(:name => "one")
       ])
       config.stubs(:suites).returns([
-        stub(:name => "selecta", :includes => ["good", "one"], :excludes => []),
+        stub(:name => "selecta", :includes => %w[good one], :excludes => []),
         stub(:name => "allem", :includes => [], :excludes => [])
       ])
 
