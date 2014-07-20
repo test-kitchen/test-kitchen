@@ -53,7 +53,7 @@ describe Kitchen::Driver::Dummy do
     it "sets :my_id to a unique value as an example" do
       driver.create(state)
 
-      state[:my_id].must_match /^coolbeans-/
+      state[:my_id].must_match(/^coolbeans-/)
     end
 
     it "calls sleep if :sleep value is greater than 0" do
@@ -91,7 +91,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a create event to INFO" do
       driver.create(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Create on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Create on .+$/)
     end
   end
 
@@ -120,7 +120,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a converge event to INFO" do
       driver.converge(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Converge on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)
     end
   end
 
@@ -149,7 +149,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a setup event to INFO" do
       driver.setup(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Setup on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Setup on .+$/)
     end
   end
 
@@ -178,7 +178,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a verify event to INFO" do
       driver.verify(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Verify on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Verify on .+$/)
     end
   end
 
@@ -214,7 +214,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a destroy event to INFO" do
       driver.destroy(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Destroy on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Destroy on .+$/)
     end
   end
 end

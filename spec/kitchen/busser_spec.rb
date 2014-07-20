@@ -140,8 +140,8 @@ describe Kitchen::Busser do
       end
 
       it "uses bourne shell" do
-        cmd.must_match /\Ash -c '$/
-        cmd.must_match /'\Z/
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
       end
 
       it "sets the BUSSER_ROOT environment variable" do
@@ -309,8 +309,8 @@ describe Kitchen::Busser do
       end
 
       it "uses bourne shell" do
-        cmd.must_match /\Ash -c '$/
-        cmd.must_match /'\Z/
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
       end
 
       it "sets the BUSSER_ROOT environment variable" do
@@ -432,8 +432,8 @@ describe Kitchen::Busser do
       end
 
       it "uses bourne shell" do
-        cmd.must_match /\Ash -c '$/
-        cmd.must_match /'\Z/
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
       end
 
       it "sets the BUSSER_ROOT environment variable" do

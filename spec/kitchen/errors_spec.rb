@@ -189,7 +189,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string.must_match /ERROR -- Kitchen: cannot do that$/
+          logger_io.string.must_match(/ERROR -- Kitchen: cannot do that$/)
         end
       end
 
@@ -199,7 +199,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string.must_match /DEBUG -- Kitchen: cannot do that$/
+          logger_io.string.must_match(/DEBUG -- Kitchen: cannot do that$/)
         end
       end
     end
@@ -246,11 +246,11 @@ describe Kitchen do
           go_boom
         rescue SystemExit
           logger_io.string.
-            must_match /ERROR -- Kitchen: ------Exception-------$/
+            must_match(/ERROR -- Kitchen: ------Exception-------$/)
           logger_io.string.
-            must_match /ERROR -- Kitchen: Class: Kitchen::StandardError$/
+            must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string.
-            must_match /ERROR -- Kitchen: ------Backtrace-------$/
+            must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
         end
       end
 
@@ -261,11 +261,11 @@ describe Kitchen do
           go_boom
         rescue SystemExit
           logger_io.string.
-            must_match /DEBUG -- Kitchen: ------Exception-------$/
+            must_match(/DEBUG -- Kitchen: ------Exception-------$/)
           logger_io.string.
-            must_match /DEBUG -- Kitchen: Class: Kitchen::StandardError$/
+            must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string.
-            must_match /DEBUG -- Kitchen: ------Backtrace-------$/
+            must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
         end
       end
     end

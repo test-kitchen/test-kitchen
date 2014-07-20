@@ -373,13 +373,13 @@ describe Kitchen::Driver::SSHBase do
         cmd
 
         logged_output.string.
-          must_match /INFO -- : Transferring files to instance$/
+          must_match(/INFO -- : Transferring files to instance$/)
       end
 
       it "logs to debug" do
         cmd
 
-        logged_output.string.must_match /DEBUG -- : Transfer complete$/
+        logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
       end
 
       it "raises an ActionFailed on transfer when SSHFailed is raised" do

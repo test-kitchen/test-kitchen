@@ -94,15 +94,15 @@ describe Kitchen::Driver::Base do
   it "#puts calls logger.info" do
     driver.send(:puts, "yo")
 
-    logged_output.string.must_match /I, /
-    logged_output.string.must_match /yo\n/
+    logged_output.string.must_match(/I, /)
+    logged_output.string.must_match(/yo\n/)
   end
 
   it "#print calls logger.info" do
     driver.send(:print, "yo")
 
-    logged_output.string.must_match /I, /
-    logged_output.string.must_match /yo\n/
+    logged_output.string.must_match(/I, /)
+    logged_output.string.must_match(/yo\n/)
   end
 
   [:create, :converge, :setup, :verify, :destroy].each do |action|

@@ -194,13 +194,13 @@ describe Kitchen::SSH do
       it "logger captures stdout" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match /^ok$/
+        logged_output.string.must_match(/^ok$/)
       end
 
       it "logger captures stderr" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match /^some stderr stuffs$/
+        logged_output.string.must_match(/^some stderr stuffs$/)
       end
     end
 
@@ -247,7 +247,7 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match /^nope$/
+        logged_output.string.must_match(/^nope$/)
       end
 
       it "logger captures stderr" do
@@ -256,7 +256,7 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match /^youdead$/
+        logged_output.string.must_match(/^youdead$/)
       end
 
       it "raises an SSHFailed exception" do

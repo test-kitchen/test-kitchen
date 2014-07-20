@@ -211,43 +211,43 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        logdev.string.must_match /^I, #{ts}  INFO -- Kitchen: -----> yo$/
+        logdev.string.must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        logdev.string.must_match /^D, #{ts} DEBUG -- Kitchen: yo$/
+        logdev.string.must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        logdev.string.must_match /^I, #{ts}  INFO -- Kitchen: yo$/
+        logdev.string.must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        logdev.string.must_match /^E, #{ts} ERROR -- Kitchen: yo$/
+        logdev.string.must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        logdev.string.must_match /^W, #{ts}  WARN -- Kitchen: yo$/
+        logdev.string.must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        logdev.string.must_match /^F, #{ts} FATAL -- Kitchen: yo$/
+        logdev.string.must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        logdev.string.must_match /^A, #{ts}   ANY -- Kitchen: yo$/
+        logdev.string.must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
     end
   end
@@ -276,43 +276,43 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        IO.read(logfile).must_match /^I, #{ts}  INFO -- Kitchen: -----> yo$/
+        IO.read(logfile).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        IO.read(logfile).must_match /^D, #{ts} DEBUG -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        IO.read(logfile).must_match /^I, #{ts}  INFO -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        IO.read(logfile).must_match /^E, #{ts} ERROR -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        IO.read(logfile).must_match /^W, #{ts}  WARN -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        IO.read(logfile).must_match /^F, #{ts} FATAL -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        IO.read(logfile).must_match /^A, #{ts}   ANY -- Kitchen: yo$/
+        IO.read(logfile).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
     end
   end

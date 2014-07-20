@@ -62,8 +62,8 @@ describe Kitchen::Provisioner::Shell do
     let(:cmd) { provisioner.init_command }
 
     it "uses bourne shell" do
-      cmd.must_match /\Ash -c '$/
-      cmd.must_match /'\Z/
+      cmd.must_match(/\Ash -c '$/)
+      cmd.must_match(/'\Z/)
     end
 
     it "uses sudo for rm when configured" do
@@ -99,8 +99,8 @@ describe Kitchen::Provisioner::Shell do
     let(:cmd) { provisioner.run_command }
 
     it "uses bourne shell" do
-      cmd.must_match /\Ash -c '$/
-      cmd.must_match /'\Z/
+      cmd.must_match(/\Ash -c '$/)
+      cmd.must_match(/'\Z/)
     end
 
     it "uses sudo for script when configured" do
@@ -233,7 +233,7 @@ describe Kitchen::Provisioner::Shell do
           sandbox_path("bootstrap.sh").file?.must_equal true
           sandbox_path("bootstrap.sh").executable?.must_equal true
           IO.read(sandbox_path("bootstrap.sh")).
-            must_match /NO BOOTSTRAP SCRIPT PRESENT/
+            must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
         end
       end
     end

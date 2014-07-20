@@ -113,11 +113,11 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it "uses bourne shell (sh)" do
-      provisioner.install_command.must_match /\Ash -c '$/
+      provisioner.install_command.must_match(/\Ash -c '$/)
     end
 
     it "ends with a single quote" do
-      provisioner.install_command.must_match /'\Z/
+      provisioner.install_command.must_match(/'\Z/)
     end
 
     it "installs chef using :chef_omnibus_url, if necessary" do
@@ -187,8 +187,8 @@ describe Kitchen::Provisioner::ChefBase do
   describe "#init_command" do
 
     it "uses bourne shell" do
-      provisioner.init_command.must_match /\Ash -c '$/
-      provisioner.init_command.must_match /'\Z/
+      provisioner.init_command.must_match(/\Ash -c '$/)
+      provisioner.init_command.must_match(/'\Z/)
     end
 
     it "uses sudo for rm when configured" do
