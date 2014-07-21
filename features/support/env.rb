@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 # Set up the environment for testing
 require "aruba/cucumber"
 require "aruba/in_process"
