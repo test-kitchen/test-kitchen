@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
 module Kitchen
 
@@ -27,12 +27,13 @@ module Kitchen
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Exec < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         results = parse_subcommand(args.first)
 
         results.each do |instance|
           banner "Execute command on #{instance.name}."
-          instance.remote_exec(options['command'])
+          instance.remote_exec(options[:command])
         end
       end
     end
