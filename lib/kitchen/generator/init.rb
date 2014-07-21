@@ -17,8 +17,6 @@
 # limitations under the License.
 
 require "thor/group"
-require 'rubygems/gem_runner'
-require 'thor/group'
 
 module Kitchen
 
@@ -249,18 +247,9 @@ module Kitchen
       #
       # @api private
       def install_gem(driver_gem)
-        # Temporarily disable safe yaml so installed driver gem matches the expected
-        # gem specification output. This disabling can be removed when TK SafeYAML.load
-        # to avoid YAML monkeypath in safe_yaml by requriring 'safe_yaml/load' in
-        # lib/kitchen/command/driver_discover.rb
-        SafeYAML::OPTIONS[:default_mode] = :unsafe
         unbundlerize do
-          Gem::GemRunner.new.run(["install", driver_gem])
+          run "gem install #{driver_gem}"
         end
-      rescue Gem::SystemExitException => e
-        raise unless e.exit_code == 0
-      ensure
-        SafeYAML::OPTIONS[:default_mode] = :safe
       end
 
       # Displays a bundle warning message to the user.
