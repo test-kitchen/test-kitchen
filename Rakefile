@@ -26,6 +26,12 @@ task :stats do
   sh "countloc -r spec features"
 end
 
+require "finstyle"
+require "rubocop/rake_task"
+RuboCop::RakeTask.new(:style) do |task|
+  task.options << "--display-cop-names"
+end
+
 if RUBY_ENGINE != "jruby"
   require "cane/rake_task"
   desc "Run cane to check quality metrics"
@@ -34,10 +40,10 @@ if RUBY_ENGINE != "jruby"
   end
 
   desc "Run all quality tasks"
-  task :quality => [:cane, :stats]
+  task :quality => [:cane, :style, :stats]
 else
   desc "Run all quality tasks"
-  task :quality => [:stats]
+  task :quality => [:style, :stats]
 end
 
 require "yard"
