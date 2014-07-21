@@ -440,7 +440,7 @@ module Kitchen
           bundle exec rake gem --quiet
 
           echo "------ Uninstalling previously installed chef gem and removing executables"
-          #{sudo("$chef_bin/gem")} uninstall chef -Ix
+          #{sudo("$chef_bin/gem")} uninstall chef -qIx --no-verbose
 
           echo "------ Installing chef from locally built gem"
           #{sudo("rm")} -f pkg/chef-*-x86-mingw32.gem
