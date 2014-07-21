@@ -30,7 +30,7 @@ module Kitchen
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
-      default_config :chef_zero_port, "8889"
+      default_config :chef_zero_port, 8889
 
       # (see Base#create_sandbox)
       def create_sandbox
