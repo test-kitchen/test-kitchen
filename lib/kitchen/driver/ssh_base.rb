@@ -78,6 +78,12 @@ module Kitchen
         SSH.new(*build_ssh_args(state)).login_command
       end
 
+      def remote_command(state, command)
+        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
+          run_remote(command, conn)
+        end
+      end
+
       # **(Deprecated)** Executes a remote command over SSH.
       #
       # @param ssh_args [Array] ssh arguments
