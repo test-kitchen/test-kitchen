@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/util'
+require "thor/util"
 
 module Kitchen
 

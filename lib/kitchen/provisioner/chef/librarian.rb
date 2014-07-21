@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/errors'
-require 'kitchen/logging'
+require "kitchen/errors"
+require "kitchen/logging"
 
 module Kitchen
 
@@ -88,9 +88,9 @@ module Kitchen
         # @raise [UserError] if the library couldn't be loaded
         # @api private
         def self.load_librarian!(logger)
-          first_load = require 'librarian/chef/environment'
-          require 'librarian/action/resolve'
-          require 'librarian/action/install'
+          first_load = require "librarian/chef/environment"
+          require "librarian/action/resolve"
+          require "librarian/action/install"
 
           version = ::Librarian::Chef::VERSION
           if first_load

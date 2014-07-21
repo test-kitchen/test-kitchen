@@ -110,7 +110,7 @@ module Kitchen
     def self.wrap_command(cmd)
       cmd = "false" if cmd.nil?
       cmd = "true" if cmd.to_s.empty?
-      cmd = cmd.sub(/\n\Z/, '') if cmd =~ /\n\Z/
+      cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
 
       "sh -c '\n#{cmd}\n'"
     end
@@ -130,7 +130,7 @@ module Kitchen
     # @param string [String] the string that will be modified
     # @return [String] the modified string
     def self.outdent!(string)
-      string.gsub!(/^ {#{string.index(/[^ ]/)}}/, '')
+      string.gsub!(/^ {#{string.index(/[^ ]/)}}/, "")
     end
 
     # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper

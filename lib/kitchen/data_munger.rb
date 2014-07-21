@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'vendor/hash_recursive_merge'
+require "vendor/hash_recursive_merge"
 
 module Kitchen
 

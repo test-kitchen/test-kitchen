@@ -16,16 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
-require 'ostruct'
+require_relative "../spec_helper"
+require "ostruct"
 
-require 'kitchen/collection'
+require "kitchen/collection"
 
 describe Kitchen::Collection do
 
   let(:collection) do
     Kitchen::Collection.new([
-      obj('one'), obj('two', 'a'), obj('two', 'b'), obj('three')
+      obj("one"), obj("two", "a"), obj("two", "b"), obj("three")
     ])
   end
 
@@ -36,15 +36,15 @@ describe Kitchen::Collection do
   describe "#get" do
 
     it "returns a single object by its name" do
-      collection.get('three').must_equal obj('three')
+      collection.get("three").must_equal obj("three")
     end
 
     it "returns the first occurance of an object by its name" do
-      collection.get('two').must_equal obj('two', 'a')
+      collection.get("two").must_equal obj("two", "a")
     end
 
     it "returns nil if an object cannot be found by its name" do
-      collection.get('nope').must_be_nil
+      collection.get("nope").must_be_nil
     end
   end
 
@@ -53,8 +53,8 @@ describe Kitchen::Collection do
     it "returns a Collection of objects whose name matches the regex" do
       result = collection.get_all(/(one|three)/)
       result.size.must_equal 2
-      result[0].must_equal obj('one')
-      result[1].must_equal obj('three')
+      result[0].must_equal obj("one")
+      result[1].must_equal obj("three")
       result.get_all(/one/).size.must_equal 1
     end
 

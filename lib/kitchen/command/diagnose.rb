@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
-require 'kitchen/diagnostic'
+require "kitchen/command"
+require "kitchen/diagnostic"
 
-require 'yaml'
+require "yaml"
 
 module Kitchen
 

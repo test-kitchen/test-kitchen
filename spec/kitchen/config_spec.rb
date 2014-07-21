@@ -16,18 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen'
-require 'kitchen/logging'
-require 'kitchen/collection'
-require 'kitchen/config'
-require 'kitchen/driver'
-require 'kitchen/instance'
-require 'kitchen/platform'
-require 'kitchen/provisioner'
-require 'kitchen/suite'
-require 'kitchen/util'
+require "kitchen"
+require "kitchen/logging"
+require "kitchen/collection"
+require "kitchen/config"
+require "kitchen/driver"
+require "kitchen/instance"
+require "kitchen/platform"
+require "kitchen/provisioner"
+require "kitchen/suite"
+require "kitchen/util"
 
 module Kitchen
 

@@ -17,20 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rubygems'
-require 'chef/config'
-require 'chef_zero/server'
-require 'chef/chef_fs/chef_fs_data_store'
-require 'chef/chef_fs/config'
-require 'English'
-require 'fileutils'
+require "rubygems"
+require "chef/config"
+require "chef_zero/server"
+require "chef/chef_fs/chef_fs_data_store"
+require "chef/chef_fs/config"
+require "English"
+require "fileutils"
 
 # Bust out of our self-imposed sandbox before running chef-client so
 # gems installed via gem_package land in Chef's GEM_HOME.
 #
 # https://github.com/opscode/test-kitchen/issues/240
 #
-ENV['GEM_HOME'] = ENV['GEM_PATH'] = ENV['GEM_CACHE'] = nil
+ENV["GEM_HOME"] = ENV["GEM_PATH"] = ENV["GEM_CACHE"] = nil
 
 class ChefClientZero
 
@@ -65,7 +65,7 @@ class ChefClientZero
   end
 
   def repo_path
-    ENV.fetch('CHEF_REPO_PATH', Dir.pwd)
+    ENV.fetch("CHEF_REPO_PATH", Dir.pwd)
   end
 
   def run_chef_client

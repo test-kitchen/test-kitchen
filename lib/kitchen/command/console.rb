@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
 module Kitchen
 
@@ -29,7 +29,7 @@ module Kitchen
 
       # Invoke the command.
       def call
-        require 'pry'
+        require "pry"
         Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
       rescue LoadError
         warn %{Make sure you have the pry gem installed. You can install it with:}

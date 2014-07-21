@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor'
+require "thor"
 
-require 'kitchen'
-require 'kitchen/generator/driver_create'
-require 'kitchen/generator/init'
+require "kitchen"
+require "kitchen/generator/driver_create"
+require "kitchen/generator/init"
 
 module Kitchen
 
@@ -70,13 +70,13 @@ module Kitchen
       $stdout.sync = true
       Kitchen.logger = Kitchen.default_file_logger
       @loader = Kitchen::Loader::YAML.new(
-        :project_config => ENV['KITCHEN_YAML'],
-        :local_config => ENV['KITCHEN_LOCAL_YAML'],
-        :global_config => ENV['KITCHEN_GLOBAL_YAML']
+        :project_config => ENV["KITCHEN_YAML"],
+        :local_config => ENV["KITCHEN_LOCAL_YAML"],
+        :global_config => ENV["KITCHEN_GLOBAL_YAML"]
       )
       @config = Kitchen::Config.new(
         :loader     => @loader,
-        :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
+        :log_level  => ENV.fetch("KITCHEN_LOG", "info").downcase.to_sym
       )
     end
 
@@ -125,14 +125,14 @@ module Kitchen
         :aliases => "-c",
         :type => :numeric,
         :lazy_default => MAX_CONCURRENCY,
-        :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+        :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
           Run a #{action} against all matching instances concurrently. Only N
           instances will run at the same time if a number is given.
         DESC
       method_option :parallel,
         :aliases => "-p",
         :type => :boolean,
-        :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+        :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
@@ -160,14 +160,14 @@ module Kitchen
       :aliases => "-c",
       :type => :numeric,
       :lazy_default => MAX_CONCURRENCY,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+      :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
         Run a test against all matching instances concurrently. Only N
         instances will run at the same time if a number is given.
       DESC
     method_option :parallel,
       :aliases => "-p",
       :type => :boolean,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+      :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
         [Future DEPRECATION, use --concurrency]
         Run a test against all matching instances concurrently.
       DESC
@@ -314,7 +314,7 @@ module Kitchen
     #
     # @api private
     def ensure_initialized
-      yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
+      yaml = ENV["KITCHEN_YAML"] || ".kitchen.yml"
 
       if options[:auto_init] && !File.exist?(yaml)
         banner "Invoking init as '#{yaml}' file is missing"

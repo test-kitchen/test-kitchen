@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/base'
+require "kitchen/provisioner/base"
 
 module Kitchen
 
@@ -47,7 +47,7 @@ module Kitchen
       # (see Base#init_command)
       def init_command
         data = File.join(config[:root_path], "data")
-        cmd = "#{sudo('rm')} -rf #{data} ; mkdir -p #{config[:root_path]}"
+        cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
 
         Util.wrap_command(cmd)
       end

@@ -1,9 +1,9 @@
 # Set up the environment for testing
-require 'aruba/cucumber'
-require 'aruba/in_process'
-require 'aruba/spawn_process'
-require 'kitchen'
-require 'kitchen/cli'
+require "aruba/cucumber"
+require "aruba/in_process"
+require "aruba/spawn_process"
+require "kitchen"
+require "kitchen/cli"
 
 class ArubaHelper
   def initialize(argv, stdin = STDIN, stdout = STDOUT, stderr = STDERR, kernel = Kernel)
@@ -28,7 +28,7 @@ Before do
   Aruba.process = Aruba::InProcess
 end
 
-Before('@spawn') do
+Before("@spawn") do
   Aruba.process = Aruba::SpawnProcess
 end
 
@@ -41,7 +41,7 @@ After do |s|
   # Restore environment variables to their original settings, if they have
   # been saved off
   ENV.keys.select { |key| key =~ /^_CUKE_/ }.each do |backup_key|
-    ENV[backup_key.sub(/^_CUKE_/, '')] = ENV.delete(backup_key)
+    ENV[backup_key.sub(/^_CUKE_/, "")] = ENV.delete(backup_key)
   end
 
   @cleanup_dirs.each { |dir| FileUtils.rm_rf(dir) }

@@ -16,17 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
-require 'stringio'
+require_relative "../spec_helper"
+require "stringio"
 
-require 'kitchen/logging'
-require 'kitchen/instance'
-require 'kitchen/driver'
-require 'kitchen/driver/dummy'
-require 'kitchen/platform'
-require 'kitchen/provisioner'
-require 'kitchen/provisioner/dummy'
-require 'kitchen/suite'
+require "kitchen/logging"
+require "kitchen/instance"
+require "kitchen/driver"
+require "kitchen/driver/dummy"
+require "kitchen/platform"
+require "kitchen/provisioner"
+require "kitchen/provisioner/dummy"
+require "kitchen/suite"
 
 class DummyStateFile
 

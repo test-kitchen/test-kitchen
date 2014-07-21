@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/group'
-require 'thor/util'
+require "thor/group"
+require "thor/util"
 
 module Kitchen
 
@@ -170,7 +170,7 @@ module Kitchen
       # @api private
       def license_comment
         @license_comment ||= IO.read(File.join(target_dir, license_filename)).
-          gsub(/^/, '# ').gsub(/\s+$/, '')
+          gsub(/^/, "# ").gsub(/\s+$/, "")
       end
     end
   end

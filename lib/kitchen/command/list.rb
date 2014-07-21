@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
 module Kitchen
 
@@ -73,10 +73,10 @@ module Kitchen
       # @api private
       def format_last_action(last_action)
         case last_action
-        when 'create' then colorize("Created", :cyan)
-        when 'converge' then colorize("Converged", :magenta)
-        when 'setup' then colorize("Set Up", :blue)
-        when 'verify' then colorize("Verified", :yellow)
+        when "create" then colorize("Created", :cyan)
+        when "converge" then colorize("Converged", :magenta)
+        when "setup" then colorize("Set Up", :blue)
+        when "verify" then colorize("Verified", :yellow)
         when nil then colorize("<Not Created>", :red)
         else colorize("<Unknown>", :white)
         end

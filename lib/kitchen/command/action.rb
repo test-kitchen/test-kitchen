@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
-require 'benchmark'
+require "benchmark"
 
 module Kitchen
 

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/chef_base'
+require "kitchen/provisioner/chef_base"
 
 module Kitchen
 
@@ -47,7 +47,7 @@ module Kitchen
         # we are installing latest chef in order to get chef-zero and
         # Chef::ChefFS only. The version of Chef that gets run will be
         # the installed omnibus package. Yep, this is funky :)
-        cmd = <<-PREPARE.gsub(/^ {10}/, '')
+        cmd = <<-PREPARE.gsub(/^ {10}/, "")
           #{chef_client_zero_env(:export)}
           if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"

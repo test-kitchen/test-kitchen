@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/errors'
-require 'kitchen/state_file'
-require 'kitchen/util'
+require "kitchen/errors"
+require "kitchen/state_file"
+require "kitchen/util"
 
 class YamledState
   attr_accessor :yoinks
@@ -28,8 +28,8 @@ end
 
 describe Kitchen::StateFile do
 
-  let(:state_file)  { Kitchen::StateFile.new('/tmp', 'oftheunion') }
-  let(:file_name)   { '/tmp/.kitchen/oftheunion.yml' }
+  let(:state_file)  { Kitchen::StateFile.new("/tmp", "oftheunion") }
+  let(:file_name)   { "/tmp/.kitchen/oftheunion.yml" }
 
   before do
     FakeFS.activate!
@@ -52,23 +52,23 @@ describe Kitchen::StateFile do
 
       state_file.read.must_equal(
         :cloud_id => 42,
-        :flavor => 'extra_crispy'
+        :flavor => "extra_crispy"
       )
     end
 
     it "arbitrary objects aren't deserialized from state file" do
-      stub_state_file! <<-'YAML'.gsub(/^ {8}/, '')
+      stub_state_file! <<-'YAML'.gsub(/^ {8}/, "")
         --- !ruby/object:YamledState
         yoinks: zoinks
       YAML
 
       state_file.read.class.wont_equal YamledState
       state_file.read.class.must_equal Hash
-      state_file.read.must_equal(:yoinks => 'zoinks')
+      state_file.read.must_equal(:yoinks => "zoinks")
     end
 
     it "raises a StateFileLoadError if the state file cannot be parsed" do
-      stub_state_file!('&*%^*')
+      stub_state_file!("&*%^*")
 
       proc { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
@@ -77,15 +77,15 @@ describe Kitchen::StateFile do
   describe "#write" do
 
     it "creates the directory path to the state file" do
-      File.directory?('/tmp/.kitchen').must_equal false
+      File.directory?("/tmp/.kitchen").must_equal false
       state_file.write({})
-      File.directory?('/tmp/.kitchen').must_equal true
+      File.directory?("/tmp/.kitchen").must_equal true
     end
 
     it "writes a state file with stringified keys" do
-      state_file.write(:thekey => 'thyself')
+      state_file.write(:thekey => "thyself")
 
-      IO.read(file_name).split("\n").must_include 'thekey: thyself'
+      IO.read(file_name).split("\n").must_include "thekey: thyself"
     end
   end
 
@@ -109,7 +109,7 @@ describe Kitchen::StateFile do
 
   def stub_state_file!(yaml_string = nil)
     if yaml_string.nil?
-      yaml_string = <<-'YAML'.gsub(/^ {8}/, '')
+      yaml_string = <<-'YAML'.gsub(/^ {8}/, "")
         ---
         cloud_id: 42
         flavor: extra_crispy
@@ -117,6 +117,6 @@ describe Kitchen::StateFile do
     end
 
     FileUtils.mkdir_p(File.dirname(file_name))
-    File.open(file_name, 'wb') { |f| f.write(yaml_string) }
+    File.open(file_name, "wb") { |f| f.write(yaml_string) }
   end
 end

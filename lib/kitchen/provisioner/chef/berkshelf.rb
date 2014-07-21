@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/errors'
-require 'kitchen/logging'
+require "kitchen/errors"
+require "kitchen/logging"
 
 module Kitchen
 
@@ -92,7 +92,7 @@ module Kitchen
         # @raise [UserError] if the library couldn't be loaded
         # @api private
         def self.load_berkshelf!(logger)
-          first_load = require 'berkshelf'
+          first_load = require "berkshelf"
 
           version = ::Berkshelf::VERSION
           if first_load

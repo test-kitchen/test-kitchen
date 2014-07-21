@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
-require 'stringio'
+require_relative "../spec_helper"
+require "stringio"
 
-require 'kitchen/errors'
-require 'kitchen/configurable'
+require "kitchen/errors"
+require "kitchen/configurable"
 
 module Kitchen
 
@@ -40,7 +40,7 @@ module Kitchen
       include Kitchen::Configurable
 
       default_config :beans, "kidney"
-      default_config :tunables, 'flimflam' => 'positate'
+      default_config :tunables, "flimflam" => "positate"
       default_config :edible, true
       default_config :fetch_command, "curl"
       default_config :success_path, "./success"
@@ -138,7 +138,7 @@ describe Kitchen::Configurable do
 
       it "uses defaults" do
         subject[:beans].must_equal "kidney"
-        subject[:tunables]['flimflam'].must_equal 'positate'
+        subject[:tunables]["flimflam"].must_equal "positate"
         subject[:edible].must_equal true
       end
 
@@ -180,7 +180,7 @@ describe Kitchen::Configurable do
 
       it "contains defaults from superclass" do
         subject[:beans].must_equal "kidney"
-        subject[:tunables]['flimflam'].must_equal 'positate'
+        subject[:tunables]["flimflam"].must_equal "positate"
         subject[:edible].must_equal true
         subject[:yea].must_equal "ya"
       end

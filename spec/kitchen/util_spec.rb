@@ -16,15 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'logger'
+require "logger"
 
-require 'kitchen/util'
+require "kitchen/util"
 
 describe Kitchen::Util do
 
-  describe '.to_logger_level' do
+  describe ".to_logger_level" do
 
     it "returns nil for invalid symbols" do
       Kitchen::Util.to_logger_level(:nope).must_be_nil

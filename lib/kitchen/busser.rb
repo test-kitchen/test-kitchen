@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'base64'
-require 'digest'
+require "base64"
+require "digest"
 
 module Kitchen
 
@@ -101,7 +101,7 @@ module Kitchen
       gem     = sudo("#{config[:ruby_bindir]}/gem")
       busser  = sudo(config[:busser_bin])
 
-      cmd = <<-CMD.gsub(/^ {8}/, '')
+      cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
         gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
 
@@ -109,7 +109,7 @@ module Kitchen
           #{gem} install #{gem_install_args}
         fi
         #{sudo("${gem_bindir}")}/busser setup
-        #{busser} plugin install #{plugins.join(' ')}
+        #{busser} plugin install #{plugins.join(" ")}
       CMD
       Util.wrap_command(cmd)
     end
@@ -125,7 +125,7 @@ module Kitchen
     def sync_cmd
       return if local_suite_files.empty?
 
-      cmd = <<-CMD.gsub(/^ {8}/, '')
+      cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
         #{sudo(config[:busser_bin])} suite cleanup
@@ -151,7 +151,7 @@ module Kitchen
     def run_cmd
       return if local_suite_files.empty?
 
-      cmd = <<-CMD.gsub(/^ {8}/, '')
+      cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
         #{sudo(config[:busser_bin])} test
@@ -181,7 +181,7 @@ module Kitchen
         raise ClientError, "Busser#new requires a suite_name"
       end
 
-      if suite_name == 'helper'
+      if suite_name == "helper"
         raise UserError,
           "Suite name invalid: 'helper' is a reserved directory name."
       end
@@ -245,7 +245,7 @@ module Kitchen
     def remote_file(file, dir)
       local_prefix = File.join(config[:test_base_path], dir)
       "`#{sudo(config[:busser_bin])} suite path`/".
-        concat(file.sub(%r{^#{local_prefix}/}, ''))
+        concat(file.sub(%r{^#{local_prefix}/}, ""))
     end
 
     # Returns a command string that will, once evaluated, result in the copying
@@ -257,7 +257,7 @@ module Kitchen
     # @api private
     def stream_file(local_path, remote_path)
       local_file = IO.read(local_path)
-      encoded_file = Base64.encode64(local_file).gsub("\n", '')
+      encoded_file = Base64.encode64(local_file).gsub("\n", "")
       md5 = Digest::MD5.hexdigest(local_file)
       perms = format("%o", File.stat(local_path).mode)[2, 4]
       stream_cmd = [

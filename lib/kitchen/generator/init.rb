@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/group'
+require "thor/group"
 
 module Kitchen
 
@@ -34,7 +34,7 @@ module Kitchen
         :type => :array,
         :aliases => "-D",
         :default => "kitchen-vagrant",
-        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
         D
@@ -43,14 +43,14 @@ module Kitchen
         :type => :string,
         :aliases => "-P",
         :default => "chef_solo",
-        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
           The default Kitchen Provisioner to use
         D
 
       class_option :create_gemfile,
         :type => :boolean,
         :default => false,
-        :desc => <<-D.gsub(/^\s+/, '').gsub(/\n/, ' ')
+        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
           Whether or not to create a Gemfile if one does not exist.
           Default: false
         D
@@ -75,16 +75,16 @@ module Kitchen
       #
       # @api private
       def create_kitchen_yaml
-        cookbook_name = if File.exist?(File.expand_path('metadata.rb'))
-          MetadataChopper.extract('metadata.rb').first
+        cookbook_name = if File.exist?(File.expand_path("metadata.rb"))
+          MetadataChopper.extract("metadata.rb").first
         else
           nil
         end
         run_list = cookbook_name ? "recipe[#{cookbook_name}::default]" : nil
-        driver_plugin = Array(options[:driver]).first || 'dummy'
+        driver_plugin = Array(options[:driver]).first || "dummy"
 
         template("kitchen.yml.erb", ".kitchen.yml",
-          :driver_plugin => driver_plugin.sub(/^kitchen-/, ''),
+          :driver_plugin => driver_plugin.sub(/^kitchen-/, ""),
           :provisioner => options[:provisioner],
           :run_list => Array(run_list)
         )
@@ -122,7 +122,7 @@ module Kitchen
       #   initialized
       # @api private
       def init_git?
-        File.directory?(File.join(destination_root, '.git'))
+        File.directory?(File.join(destination_root, ".git"))
       end
 
       # Prepares a Rakefile.
@@ -131,13 +131,13 @@ module Kitchen
       def prepare_rakefile
         return unless init_rakefile?
 
-        rakedoc = <<-RAKE.gsub(/^ {10}/, '')
+        rakedoc = <<-RAKE.gsub(/^ {10}/, "")
 
           begin
-            require 'kitchen/rake_tasks'
+            require "kitchen/rake_tasks"
             Kitchen::RakeTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
           end
         RAKE
         append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
@@ -149,13 +149,13 @@ module Kitchen
       def prepare_thorfile
         return unless init_thorfile?
 
-        thordoc = <<-THOR.gsub(/^ {10}/, '')
+        thordoc = <<-THOR.gsub(/^ {10}/, "")
 
           begin
-            require 'kitchen/thor_tasks'
+            require "kitchen/thor_tasks"
             Kitchen::ThorTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
           end
         THOR
         append_to_file(File.join(destination_root, "Thorfile"), thordoc)
@@ -204,7 +204,7 @@ module Kitchen
       # @api private
       def create_gemfile_if_missing
         unless File.exist?(File.join(destination_root, "Gemfile"))
-          create_file("Gemfile", %{source 'https://rubygems.org'\n\n})
+          create_file("Gemfile", %{source "https://rubygems.org"\n\n})
         end
       end
 
@@ -213,7 +213,7 @@ module Kitchen
       # @api private
       def add_gem_to_gemfile
         if not_in_file?("Gemfile", %r{gem ('|")test-kitchen('|")})
-          append_to_file("Gemfile", %{gem 'test-kitchen'\n})
+          append_to_file("Gemfile", %{gem "test-kitchen"\n})
           @display_bundle_msg = true
         end
       end
@@ -238,7 +238,7 @@ module Kitchen
       # @api private
       def add_driver_to_gemfile(driver_gem)
         if not_in_file?("Gemfile", %r{gem ('|")#{driver_gem}('|")})
-          append_to_file("Gemfile", %{gem '#{driver_gem}'\n})
+          append_to_file("Gemfile", %{gem "#{driver_gem}"\n})
           @display_bundle_msg = true
         end
       end

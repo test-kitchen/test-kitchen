@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
+require_relative "../../spec_helper"
 
-require 'kitchen'
-require 'kitchen/provisioner/chef_base'
+require "kitchen"
+require "kitchen/provisioner/chef_base"
 
 describe Kitchen::Provisioner::ChefBase do
 

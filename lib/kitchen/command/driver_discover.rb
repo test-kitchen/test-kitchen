@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
-require 'rubygems/spec_fetcher'
+require "rubygems/spec_fetcher"
 
 module Kitchen
 

@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require 'kitchen'
+require "kitchen"
 
 module Kitchen
 

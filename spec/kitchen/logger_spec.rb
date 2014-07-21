@@ -254,7 +254,7 @@ describe Kitchen::Logger do
 
   describe "file IO logdev-based logger" do
 
-    let(:logfile) { Dir::Tmpname.make_tmpname(['kitchen', '.log'], nil) }
+    let(:logfile) { Dir::Tmpname.make_tmpname(%w[kitchen .log], nil) }
 
     before do
       opts[:logdev] = logfile

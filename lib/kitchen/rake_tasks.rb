@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rake/tasklib'
+require "rake/tasklib"
 
-require 'kitchen'
+require "kitchen"
 
 module Kitchen
 

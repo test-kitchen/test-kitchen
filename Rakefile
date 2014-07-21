@@ -1,16 +1,16 @@
-require 'bundler/gem_tasks'
+require "bundler/gem_tasks"
 
-require 'rake/testtask'
+require "rake/testtask"
 Rake::TestTask.new(:unit) do |t|
   t.libs.push "lib"
-  t.test_files = FileList['spec/**/*_spec.rb']
+  t.test_files = FileList["spec/**/*_spec.rb"]
   t.verbose = true
 end
 
-require 'cucumber'
-require 'cucumber/rake/task'
+require "cucumber"
+require "cucumber/rake/task"
 Cucumber::Rake::Task.new(:features) do |t|
-  t.cucumber_opts = ['features', '-x', '--format progress']
+  t.cucumber_opts = ["features", "-x", "--format progress"]
 end
 
 desc "Run all test suites"
@@ -24,11 +24,11 @@ task :stats do
   sh "countloc -r spec features"
 end
 
-if RUBY_ENGINE != 'jruby'
-  require 'cane/rake_task'
+if RUBY_ENGINE != "jruby"
+  require "cane/rake_task"
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new do |cane|
-    cane.canefile = './.cane'
+    cane.canefile = "./.cane"
   end
 
   desc "Run all quality tasks"
@@ -38,7 +38,7 @@ else
   task :quality => [:stats]
 end
 
-require 'yard'
+require "yard"
 YARD::Rake::YardocTask.new
 
 task :default => [:test, :quality]

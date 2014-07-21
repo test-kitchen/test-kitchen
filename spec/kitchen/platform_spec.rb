@@ -16,14 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/errors'
-require 'kitchen/platform'
+require "kitchen/errors"
+require "kitchen/platform"
 
 describe Kitchen::Platform do
 
-  let(:opts) do; { :name => 'plata' }; end
+  let(:opts) do; { :name => "plata" }; end
   let(:platform) { Kitchen::Platform.new(opts) }
 
   it "raises an ArgumentError if name is missing" do

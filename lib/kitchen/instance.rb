@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'benchmark'
-require 'fileutils'
+require "benchmark"
+require "fileutils"
 
 module Kitchen
 
@@ -42,7 +42,7 @@ module Kitchen
       # @param platform [Platform,#name] a Platform
       # @return [String] a normalized, consistent name for an instance
       def name_for(suite, platform)
-        "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+        "#{suite.name}-#{platform.name}".gsub(/_/, "-").gsub(/\./, "")
       end
     end
 
@@ -197,11 +197,11 @@ module Kitchen
     # @see Driver::Base#login_command
     def login
       login_command = driver.login_command(state_file.read)
-      command, *args = login_command.cmd_array
+      cmd, *args = login_command.cmd_array
       options = login_command.options
 
-      debug("Login command: #{command} #{args.join(' ')} (Options: #{options})")
-      Kernel.exec(command, *args, options)
+      debug(%{Login command: #{cmd} #{args.join(" ")} (Options: #{options})})
+      Kernel.exec(cmd, *args, options)
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.

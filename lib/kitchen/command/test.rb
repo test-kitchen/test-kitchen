@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
-require 'benchmark'
+require "benchmark"
 
 module Kitchen
 
@@ -40,7 +40,7 @@ module Kitchen
         banner "Starting Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           destroy_mode = options[:destroy].to_sym
-          results = parse_subcommand(args.join('|'))
+          results = parse_subcommand(args.join("|"))
 
           run_action(:test, results, destroy_mode)
         end

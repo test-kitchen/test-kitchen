@@ -59,7 +59,7 @@ module Kitchen
       #
       # @return [String] name of this driver
       def name
-        self.class.name.split('::').last
+        self.class.name.split("::").last
       end
 
       # Generates a command string which will install and configure the

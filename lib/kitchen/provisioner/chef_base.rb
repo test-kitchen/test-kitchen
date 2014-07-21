@@ -16,13 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
-require 'pathname'
-require 'json'
+require "fileutils"
+require "pathname"
+require "json"
 
-require 'kitchen/provisioner/chef/berkshelf'
-require 'kitchen/provisioner/chef/librarian'
-require 'kitchen/util'
+require "kitchen/provisioner/chef/berkshelf"
+require "kitchen/provisioner/chef/librarian"
+require "kitchen/util"
 
 module Kitchen
 
@@ -91,7 +91,7 @@ module Kitchen
       def init_command
         dirs = %w[cookbooks data data_bags environments roles clients].
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo('rm')} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
 
         Util.wrap_command(lines.join("\n"))
       end
@@ -155,11 +155,11 @@ module Kitchen
                          end
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
-        <<-INSTALL.gsub(/^ {10}/, '')
+        <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "/opt/chef" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo('sh')} /tmp/install.sh #{install_flags}
+            #{sudo("sh")} /tmp/install.sh #{install_flags}
           else
             echo "-----> Chef Omnibus installation detected (#{pretty_version})"
           fi

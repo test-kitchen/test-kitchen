@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
-require 'logger'
+require "fileutils"
+require "logger"
 
 module Kitchen
 
@@ -319,9 +319,9 @@ module Kitchen
       # @api private
       def format_line(line)
         case line
-        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ''))
-        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ''))
-        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ''))
+        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ""))
+        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ""))
+        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ""))
         else info(line)
         end
       end

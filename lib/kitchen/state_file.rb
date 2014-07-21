@@ -18,10 +18,10 @@
 
 if RUBY_VERSION <= "1.9.3"
   # ensure that Psych and not Syck is used for Ruby 1.9.2
-  require 'yaml'
-  YAML::ENGINE.yamler = 'psych'
+  require "yaml"
+  YAML::ENGINE.yamler = "psych"
 end
-require 'safe_yaml/load'
+require "safe_yaml/load"
 
 module Kitchen
 

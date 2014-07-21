@@ -16,35 +16,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'pathname'
-require 'thread'
+require "pathname"
+require "thread"
 
-require 'kitchen/errors'
-require 'kitchen/logger'
-require 'kitchen/logging'
-require 'kitchen/shell_out'
-require 'kitchen/configurable'
-require 'kitchen/util'
+require "kitchen/errors"
+require "kitchen/logger"
+require "kitchen/logging"
+require "kitchen/shell_out"
+require "kitchen/configurable"
+require "kitchen/util"
 
-require 'kitchen/provisioner'
-require 'kitchen/provisioner/base'
-require 'kitchen/busser'
-require 'kitchen/color'
-require 'kitchen/collection'
-require 'kitchen/config'
-require 'kitchen/data_munger'
-require 'kitchen/driver'
-require 'kitchen/driver/base'
-require 'kitchen/driver/ssh_base'
-require 'kitchen/driver/proxy'
-require 'kitchen/instance'
-require 'kitchen/loader/yaml'
-require 'kitchen/metadata_chopper'
-require 'kitchen/platform'
-require 'kitchen/state_file'
-require 'kitchen/ssh'
-require 'kitchen/suite'
-require 'kitchen/version'
+require "kitchen/provisioner"
+require "kitchen/provisioner/base"
+require "kitchen/busser"
+require "kitchen/color"
+require "kitchen/collection"
+require "kitchen/config"
+require "kitchen/data_munger"
+require "kitchen/driver"
+require "kitchen/driver/base"
+require "kitchen/driver/ssh_base"
+require "kitchen/driver/proxy"
+require "kitchen/instance"
+require "kitchen/loader/yaml"
+require "kitchen/metadata_chopper"
+require "kitchen/platform"
+require "kitchen/state_file"
+require "kitchen/ssh"
+require "kitchen/suite"
+require "kitchen/version"
 
 # Test Kitchen base module.
 #
@@ -63,7 +63,7 @@ module Kitchen
     #
     # @return [Pathname] root path of gem
     def source_root
-      @source_root ||= Pathname.new(File.expand_path('../../', __FILE__))
+      @source_root ||= Pathname.new(File.expand_path("../../", __FILE__))
     end
 
     # Returns a default logger which emits on standard output.
@@ -90,7 +90,7 @@ module Kitchen
     # @return [Integer,nil] a log level or nil if not set
     # @api private
     def env_log
-      level = ENV['KITCHEN_LOG'] && ENV['KITCHEN_LOG'].downcase.to_sym
+      level = ENV["KITCHEN_LOG"] && ENV["KITCHEN_LOG"].downcase.to_sym
       level = Util.to_logger_level(level) unless level.nil?
       level
     end
