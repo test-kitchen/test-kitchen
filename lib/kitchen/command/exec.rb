@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
 #
-# Copyright (C) 2012, 2013, Fletcher Nichol
+# Copyright (C) 2014, HiganWorks LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/command'
+
 module Kitchen
 
-  VERSION = "1.3.0"
+  module Command
+
+    # Execute command on remote instance.
+    #
+    # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
+    class Exec < Kitchen::Command::Base
+
+      def call
+        results = parse_subcommand(args.first)
+
+        results.each do |instance|
+          banner "Execute command on #{instance.name}."
+          instance.remote_exec(args.at(1))
+        end
+      end
+    end
+  end
 end

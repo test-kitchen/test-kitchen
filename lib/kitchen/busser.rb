@@ -114,6 +114,23 @@ module Kitchen
       Util.wrap_command(cmd)
     end
 
+    # Return a command string just like setup_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def setup_cmd_posh
+      @setup_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        setup_cmd_posh  = []
+        setup_cmd_posh << busser_setup_env_posh
+        setup_cmd_posh << "If ((gem list busser -i) -eq \"false\") { gem install #{gem_install_args} }"
+        # We have to modify Busser::Setup to work with PowerShell
+        # setup_cmd_posh << "&\"$env:SYSTEMDRIVE/tmp/busser/gems/bin/busser\" setup"
+        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+        setup_cmd_posh.join('; ')
+      end
+    end
+
     # Returns a command string which transfers all suite test files to the
     # instance.
     #
@@ -141,6 +158,23 @@ module Kitchen
       Util.wrap_command(cmd)
     end
 
+    # Return a command string just like sync_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def sync_cmd_posh
+      @sync_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        sync_cmd_posh  = []
+        sync_cmd_posh << busser_setup_env_posh
+        sync_cmd_posh << "#{config[:busser_bin]} suite cleanup"
+        sync_cmd_posh << "#{local_suite_files.map { |f|
+          stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
+        sync_cmd_posh << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
+        sync_cmd_posh.join('; ')
+      end
+    end
+
     # Returns a command string which runs all Busser suite tests for the suite.
     #
     # If no work needs to be performed, for example if there are no tests for
@@ -158,6 +192,20 @@ module Kitchen
       CMD
 
       Util.wrap_command(cmd)
+    end
+
+    # Return a command string just like run_cmd but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def run_cmd_posh
+      @run_cmd_posh ||= if local_suite_files.empty?
+        nil
+      else
+        run_cmd_posh  = []
+        run_cmd_posh << busser_setup_env_posh
+        run_cmd_posh << "#{config[:busser_bin]} test"
+        run_cmd_posh.join('; ')
+      end
     end
 
     private
@@ -311,6 +359,19 @@ module Kitchen
       args += " --version #{version}" if version
       args += " --no-rdoc --no-ri"
       args
+    end
+
+    # Return a command string just like busser_setup_env but in PowerShell
+    #
+    # @author Salim Afiune <salim@afiunemaya.com.mx>
+    def busser_setup_env_posh
+      [
+        %{$env:BUSSER_ROOT="#{config[:root_path]}";},
+        %{$env:GEM_HOME="#{config[:root_path]}/gems";},
+        %{$env:GEM_PATH="#{config[:root_path]}/gems";},
+        %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
+        %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
+      ].join(" ")
     end
   end
 end

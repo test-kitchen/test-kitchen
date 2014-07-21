@@ -50,7 +50,6 @@ module Kitchen
           :config => @config,
           :shell => shell
         }.merge(additional_options)
-
         str_const = Thor::Util.camel_case(command)
         klass = ::Kitchen::Command.const_get(str_const)
         klass.new(args, options, command_options).call
@@ -116,10 +115,17 @@ module Kitchen
       perform("diagnose", "diagnose", args, :loader => @loader)
     end
 
-    [:create, :converge, :setup, :verify, :destroy].each do |action|
+    {
+      create:   'Change instance state to create. Start one or more instances',
+      converge: 'Change instance state to converge. Use a provisioner to configure one or more instances',
+      setup:    'Change instance state to setup. Prepare to run automated tests. \
+        Install busser and related gems on one or more instances',
+      verify:   'Change instance state to verify. Run automated tests on one or more instances',
+      destroy:  'Change instance state to destroy. Delete all information for one or more instances'
+    }.each do |action, short_desc|
       desc(
         "#{action} [INSTANCE|REGEXP|all]",
-        "#{action.capitalize} one or more instances"
+        short_desc
       )
       method_option :concurrency,
         :aliases => "-c",
@@ -145,9 +151,13 @@ module Kitchen
       end
     end
 
-    desc "test [INSTANCE|REGEXP|all]", "Test one or more instances"
+    desc 'test [INSTANCE|REGEXP|all]',
+         'Test (destroy, create, converge, setup, verify and destroy) one or more instances'
     long_desc <<-DESC
-      Test one or more instances
+      The instance states are in order: destroy, create, converge, setup, verify, destroy.
+      Test changes the state of one or more instances to destroyed, then executes
+      the actions for each state up to destroy. At any sign of failure, executing the
+      actions stops and the instance is left in the last successful execution state.
 
       There are 3 post-verify modes for instance cleanup, triggered with
       the `--destroy' flag:
@@ -195,6 +205,16 @@ module Kitchen
     def login(*args)
       update_config!
       perform("login", "login", args)
+    end
+
+    desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND", "Execute command on one or more instance"
+    method_option :log_level, :aliases => "-l",
+      :desc => "Set the log level (debug, info, warn, error, fatal)"
+    method_option :command, :aliases => "-c",
+      :desc => "execute via ssh"
+    def exec(*args)
+      update_config!
+      perform("exec", "exec", args)
     end
 
     desc "version", "Print Kitchen's version information"

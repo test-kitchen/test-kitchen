@@ -41,7 +41,7 @@ $ kitchen init
 ```
 
 A `.kitchen.yml` will be created in your project base directory. This file
-describes your testing confiuration; what you want to test and on which target
+describes your testing configuration; what you want to test and on which target
 platforms. Each of these suite and platform combinations are called instances.
 By default your instances will be converged with Chef Solo and run in Vagrant
 virtual machines.
