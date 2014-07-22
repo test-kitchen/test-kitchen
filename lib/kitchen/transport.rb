@@ -1,5 +1,6 @@
 require 'kitchen/transport/base'
 require 'kitchen/transport/ssh'
+require 'kitchen/transport/winrm'
 
 module Kitchen
   module Transport

@@ -1,5 +1,4 @@
 require 'kitchen/driver/ssh_base'
-require 'kitchen/driver/winrm_base'
 require 'kitchen/transport'
 
 
@@ -17,7 +16,7 @@ module Kitchen
     class CommonBase < Base
 
       default_config :sudo, true
-      default_config :port, 22
+      default_config :port, 22 # TODO: Make the default port 5985 when transport is WinRM
       default_config :transport, "SSH" # TODO: Documetation. Can also be "WinRM"
 
       # (see Base#create)
@@ -30,6 +29,10 @@ module Kitchen
         provisioner = instance.provisioner
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
+
+        # TODO: We have below line needed for WinRM. Can we work around by some other means?
+        # Override sudo config if NOT equals to default for Windows
+        # provisioner.sudo=config[:sudo] if provisioner[:sudo] != config[:sudo]
 
         Kitchen::Transport.instantiate(config[:transport], state, self) do |conn|
           conn.run_remote(provisioner.install_command(config[:transport]))
