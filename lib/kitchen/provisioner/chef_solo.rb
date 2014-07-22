@@ -28,6 +28,7 @@ module Kitchen
     class ChefSolo < ChefBase
 
       default_config :solo_rb, {}
+      default_config :chef_path, nil
 
       def create_sandbox
         super
@@ -35,8 +36,12 @@ module Kitchen
       end
 
       def run_command
+        command = 'chef-solo';
+        unless config[:chef_path].nil?
+          command = config[:chef_path].gsub(/\/$/,'') + '/' + command
+        end
         [
-          sudo('chef-solo'),
+          sudo(command),
           "--config #{config[:root_path]}/solo.rb",
           "--json-attributes #{config[:root_path]}/dna.json",
           config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
