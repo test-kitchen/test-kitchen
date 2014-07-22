@@ -6,6 +6,7 @@ Feature: Run `kitchen test` Rake tasks on individual instances and full collecti
   Background:
     Given a file named "Rakefile" with:
     """
+    require "pp"; pp ENV
     require "kitchen/rake_tasks"
     Kitchen::RakeTasks.new
     """
@@ -27,6 +28,7 @@ Feature: Run `kitchen test` Rake tasks on individual instances and full collecti
       - name: server
     """
 
+  @announce
   @spawn
   Scenario: Listing Rake tasks
     When I run `rake -T --trace`
