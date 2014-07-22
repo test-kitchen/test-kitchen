@@ -31,7 +31,7 @@ module Kitchen
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
 
-        Kitchen::Transport.instantiate(config, state, logger) do |conn|
+        Kitchen::Transport.instantiate(config[:transport], state, self) do |conn|
           conn.run_remote(provisioner.install_command(config[:transport]))
           conn.run_remote(provisioner.init_command(config[:transport]))
           conn.transfer_path(sandbox_dirs, provisioner[:root_path])
@@ -44,14 +44,14 @@ module Kitchen
 
       # (see Base#setup)
       def setup(state)
-        Kitchen::Transport.instantiate(config, state, logger) do |conn|
+        Kitchen::Transport.instantiate(config[:transport], state, self) do |conn|
           conn.run_remote(busser.setup_cmd(config[:transport]))
         end
       end
 
       # (see Base#verify)
       def verify(state)
-        Kitchen::Transport.instantiate(config, state, logger) do |conn|
+        Kitchen::Transport.instantiate(config[:transport], state, self) do |conn|
           conn.run_remote(busser.sync_cmd(config[:transport]))
           conn.run_remote(busser.run_cmd(config[:transport]))
         end
@@ -64,7 +64,7 @@ module Kitchen
 
       # (see Base#login_command)
       def login_command(state)
-        Kitchen::Transport.instantiate(config, state, logger).login_command
+        Kitchen::Transport.instantiate(config[:transport], state, self).login_command
       end
     end
   end

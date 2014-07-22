@@ -2,14 +2,13 @@ module Kitchen
   module Transport
     # Base class that defines the Transport interface
     class Base
-      attr_accessor :config
-      attr_accessor :logger
+      attr_accessor :driver
       attr_accessor :connection
 
-      def initialize(config, state, logger)
+      def initialize(state, driver)
         # Save the config from the driver
-        @config = config
-        @logger = logger
+        @driver = driver
+        @connection = nil
       end
 
       def env_cmd(cmd)

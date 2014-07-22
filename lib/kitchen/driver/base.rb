@@ -140,7 +140,9 @@ module Kitchen
         @serial_actions += methods
       end
 
-      private
+      # NOTE: Methods that are done public when transport is using driver
+      # directly. Really what's needed is logger functionality and config
+      # functionality.
 
       # Returns a suitable logger to use for output.
       #
@@ -148,6 +150,9 @@ module Kitchen
       def logger
         instance ? instance.logger : Kitchen.logger
       end
+
+
+      private
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
       # event instead.

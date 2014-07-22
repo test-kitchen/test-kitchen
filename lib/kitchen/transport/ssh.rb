@@ -8,8 +8,8 @@ module Kitchen
       # But in order to preserve backwards compatibility we use it as is
       # for now.
 
-      def initialize(config, state, logger)
-        super(config, state, logger)
+      def initialize(state, driver)
+        super(state, driver)
 
         @connection = Kitchen::SSH.new(*build_ssh_args(state))
       end
@@ -37,9 +37,9 @@ module Kitchen
       def transfer_path(locals, remote)
         return if locals.nil? || Array(locals).empty?
 
-        info("Transferring files to #{instance.to_str}")
+        driver.info("Transferring files to #{driver.instance.to_str}")
         locals.each { |local| connection.upload_path!(local, remote) }
-        debug("Transfer complete")
+        driver.debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
       end
@@ -52,7 +52,7 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_connection(hostname, username = nil, options = {})
-        SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
+        SSH.new(hostname, username, { :logger => driver.logger }.merge(options)).wait
       end
 
       # TODO: Add documentation
@@ -73,7 +73,7 @@ module Kitchen
       # @return [Array] SSH constructor arguments
       # @api private
       def build_ssh_args(state)
-        combined = config.to_hash.merge(state)
+        combined = driver.config.to_hash.merge(state)
 
         opts = Hash.new
         opts[:user_known_hosts_file] = "/dev/null"
@@ -83,7 +83,7 @@ module Kitchen
         opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
-        opts[:logger] = logger
+        opts[:logger] = driver.logger
 
         [combined[:hostname], combined[:username], opts]
       end
@@ -96,8 +96,8 @@ module Kitchen
       # @api private
       def env_cmd(cmd)
         env = "env"
-        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
-        env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
+        env << " http_proxy=#{driver.config[:http_proxy]}" if driver.config[:http_proxy]
+        env << " https_proxy=#{driver.config[:https_proxy]}" if driver.config[:https_proxy]
 
         env == "env" ? cmd : "#{env} #{cmd}"
       end

@@ -80,95 +80,93 @@ module Kitchen
       expand_path_for :encrypted_data_bag_secret_key_path
 
       # (see Base#install_command)
-      def install_command
+      # @author Salim Afiune <salim@afiunemaya.com.mx>
+      def install_command(transport = Kitchen::Transport::Type::SSH)
         return unless config[:require_chef_omnibus]
 
-        lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
-        Util.wrap_command(lines.join("\n"))
+        if transport == Kitchen::Transport::Type::SSH
+          lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
+          Util.wrap_command(lines.join("\n"))
+        elsif transport == Kitchen::Transport::Type::WinRM
+          # If we have the default URL for UNIX then we change it for the Windows version.
+          if config[:chef_omnibus_url].eql?("https://www.getchef.com/chef/install.sh")
+            url = "http://www.getchef.com/chef/install.msi"
+          else # else we use the one that comes from .kitchen.yml
+            url = config[:chef_omnibus_url]
+          end
+
+          flag = config[:require_chef_omnibus]
+          version = if flag.is_a?(String) && flag != "latest"
+            "v=#{flag.downcase}"
+          else
+            ""
+          end
+
+          # Use Powershell to give kind of Progress Status
+          # Note: We use SYSTEMDRIVE because if we use TEMP
+          # the installation fails.
+          <<-INSTALL.gsub(/^ {10}/, '')
+            $chef_msi = $env:systemdrive + "\\chef.msi"
+
+            Function install_chef {
+              Write-Host "-----> Installing Chef Omnibus (#{flag})\n"
+              download_chef
+              $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
+
+              Write-Host -NoNewline "\t[MSI] ["
+              while (-Not $proc_msi.HasExited ) {
+                Write-Host -NoNewline "#"
+                Start-Sleep 2
+              }
+              Write-Host "]"
+              rm -r $chef_msi
+              Write-Host "Completed!\n"
+            }
+
+            Function is_chef_installed { Test-Path /opscode/chef }
+
+            Function download_chef { (New-Object System.Net.WebClient).DownloadFile('#{url}?#{version}', $chef_msi) }
+
+            Function should_update_chef {
+              try {
+                $chef_version=(chef-solo -v).split(" ",2)[1]
+              } catch [Exception] {
+                $chef_version = ''
+              }
+              switch ("#{flag}") {
+                { 'true', $chef_version -contains $_ } { return false }
+                'latest' { return true }
+                default { return true }
+              }
+            }
+
+            If (-Not (is_chef_installed) -or (should_update_chef)) { install_chef }
+
+          INSTALL
+        else
+          raise "Can not prepare install command due to unsupported transport #{transport}"
+        end
       end
 
       # (see Base#init_command)
-      def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
-
-        Util.wrap_command(lines.join("\n"))
-      end
-
-      # Definition for chef_omnibus to install chef on Windows [via PowerShell]
-      #
       # @author Salim Afiune <salim@afiunemaya.com.mx>
-      def install_command_posh
-        return unless config[:require_chef_omnibus]
+      def init_command(transport = Kitchen::Transport::Type::SSH)
+        if transport == Kitchen::Transport::Type::SSH
+          dirs = %w[cookbooks data data_bags environments roles clients].
+            map { |dir| File.join(config[:root_path], dir) }.join(" ")
+          lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
 
-        # If we have the default URL for UNIX then we change it for the Windows version.
-        if config[:chef_omnibus_url].eql?("https://www.getchef.com/chef/install.sh")
-          url = "http://www.getchef.com/chef/install.msi"
-        else # else we use the one that comes from .kitchen.yml
-          url = config[:chef_omnibus_url]
-        end
-
-        flag = config[:require_chef_omnibus]
-        version = if flag.is_a?(String) && flag != "latest"
-          "v=#{flag.downcase}"
+          Util.wrap_command(lines.join("\n"))
+        elsif transport == Kitchen::Transport::Type::WinRM
+          cmd = ""
+          %w{data data_bags environments roles clients}.map do |dir|
+            path = File.join(config[:root_path], dir)
+            cmd += "if ( Test-Path #{path} ) { rm -r #{path} };"
+          end
+          cmd += "if (-Not (Test-Path #{config[:root_path]})) { mkdir -p #{config[:root_path]} }"
         else
-          ""
+          raise "Can not prepare init command due to unsupported transport #{transport}"
         end
-
-        # Use Powershell to give kind of Progress Status
-        # Note: We use SYSTEMDRIVE because if we use TEMP
-        # the installation fails.
-        <<-INSTALL.gsub(/^ {10}/, '')
-          $chef_msi = $env:systemdrive + "\\chef.msi"
-
-          Function install_chef {
-            Write-Host "-----> Installing Chef Omnibus (#{flag})\n"
-            download_chef
-            $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
-
-            Write-Host -NoNewline "\t[MSI] ["
-            while (-Not $proc_msi.HasExited ) {
-              Write-Host -NoNewline "#"
-              Start-Sleep 2
-            }
-            Write-Host "]"
-            rm -r $chef_msi
-            Write-Host "Completed!\n"
-          }
-
-          Function is_chef_installed { Test-Path /opscode/chef }
-
-          Function download_chef { (New-Object System.Net.WebClient).DownloadFile('#{url}?#{version}', $chef_msi) }
-
-          Function should_update_chef {
-            try {
-              $chef_version=(chef-solo -v).split(" ",2)[1]
-            } catch [Exception] {
-              $chef_version = ''
-            }
-            switch ("#{flag}") {
-              { 'true', $chef_version -contains $_ } { return false }
-              'latest' { return true }
-              default { return true }
-            }
-          }
-
-          If (-Not (is_chef_installed) -or (should_update_chef)) { install_chef }
-
-        INSTALL
-      end
-
-      # Definition for Windows instances just like init_command but using PowerShell
-      #
-      # @author Salim Afiune <salim@afiunemaya.com.mx>
-      def init_command_posh
-        cmd = ""
-        %w{data data_bags environments roles clients}.map do |dir|
-          path = File.join(config[:root_path], dir)
-          cmd += "if ( Test-Path #{path} ) { rm -r #{path} };"
-        end
-        cmd += "if (-Not (Test-Path #{config[:root_path]})) { mkdir -p #{config[:root_path]} }"
       end
 
       # (see Base#create_sandbox)

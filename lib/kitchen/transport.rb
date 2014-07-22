@@ -3,11 +3,18 @@ require 'kitchen/transport/ssh'
 
 module Kitchen
   module Transport
-    def self.instantiate(config, state, logger)
-      transport_class = Kernel.const_get("Kitchen::Transport::#{config[:transport]}")
+
+    module Type
+      # Currenly supported transports
+      SSH = "SSH".freeze
+      WinRM = "WinRM".freeze
+    end
+
+    def self.instantiate(type, state, driver)
+      transport_class = Kernel.const_get("Kitchen::Transport::#{type}")
       # TODO: Catch `NameError: uninitialized constant Kitchen::Transport::Unknown`
 
-      transport = transport_class.new(config, state, logger)
+      transport = transport_class.new(state, driver)
 
       if block_given?
         yield transport
