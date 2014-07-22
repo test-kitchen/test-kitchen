@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "rubygems/gem_runner"
 require "thor/group"
 
 module Kitchen
@@ -247,9 +248,9 @@ module Kitchen
       #
       # @api private
       def install_gem(driver_gem)
-        unbundlerize do
-          run "gem install #{driver_gem}"
-        end
+        unbundlerize { Gem::GemRunner.new.run(["install", driver_gem]) }
+      rescue Gem::SystemExitException => e
+        raise unless e.exit_code == 0
       end
 
       # Displays a bundle warning message to the user.

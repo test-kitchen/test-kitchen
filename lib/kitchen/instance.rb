@@ -204,6 +204,13 @@ module Kitchen
       Kernel.exec(cmd, *args, options)
     end
 
+    # Execute command via run_remote
+    #
+    # @see Driver::Base#remote_command
+    def remote_exec(command)
+      driver.remote_command(state_file.read, command)
+    end
+
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash

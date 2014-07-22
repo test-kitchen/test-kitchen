@@ -116,7 +116,10 @@ describe Kitchen::SSH do
     ].each do |klass|
       describe "raising #{klass}" do
 
-        before { Net::SSH.stubs(:start).raises(klass) }
+        before do
+          Net::SSH.stubs(:start).raises(klass)
+          ssh.stubs(:sleep)
+        end
 
         it "reraises the #{klass} exception" do
           proc { ssh.exec("nope") }.must_raise klass
@@ -131,6 +134,16 @@ describe Kitchen::SSH do
           logged_output.string.lines.select { |l|
             l =~ debug_line("[SSH] opening connection to me@foo:22<{}>")
           }.size.must_equal 3
+        end
+
+        it "sleeps for 1 second between retries" do
+          ssh.unstub(:sleep)
+          ssh.expects(:sleep).with(1).twice
+
+          begin
+            ssh.exec("nope")
+          rescue # rubocop:disable Lint/HandleExceptions
+          end
         end
 
         it "logs the first 2 retry failures on info" do

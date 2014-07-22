@@ -55,6 +55,10 @@ describe Kitchen::Provisioner::ChefZero do
     it "sets :json_attributes to true" do
       provisioner[:json_attributes].must_equal true
     end
+
+    it "sets :chef_zero_port to 8889" do
+      provisioner[:chef_zero_port].must_equal 8889
+    end
   end
 
   describe "#create_sandbox" do
@@ -367,6 +371,22 @@ describe Kitchen::Provisioner::ChefZero do
         config[:log_level] = :extreme
 
         cmd.must_match regexify(" --log_level extreme", :partial_line)
+      end
+
+      it "sets chef zero port flag on chef-client" do
+        cmd.must_match regexify(" --chef-zero-port 8889", :partial_line)
+      end
+
+      it "sets chef zero port flag for custom port" do
+        config[:chef_zero_port] = 123
+
+        cmd.must_match regexify(" --chef-zero-port 123", :partial_line)
+      end
+
+      it "does not set chef zero port flag when value is falsey" do
+        config[:chef_zero_port] = nil
+
+        cmd.wont_match regexify(" --chef-zero-port ", :partial_line)
       end
 
       it "sets json attributes flag on chef-client" do
