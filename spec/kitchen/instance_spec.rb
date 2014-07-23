@@ -775,6 +775,20 @@ describe Kitchen::Instance do
       end
     end
 
+    describe "#remote_exec" do
+
+      before { state_file.write(:last_action => "create") }
+
+      it "calls Driver#remote_command with state and command" do
+        driver.expects(:remote_command).with do |state, command|
+          state.must_equal(:last_action => "create")
+          command.must_equal "uptime"
+        end
+
+        instance.remote_exec("uptime")
+      end
+    end
+
     [:create, :converge, :setup, :verify, :test].each do |action|
 
       describe "#{action} on driver crash with ActionFailed" do

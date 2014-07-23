@@ -204,9 +204,9 @@ module Kitchen
       Kernel.exec(cmd, *args, options)
     end
 
-    # Execute command via run_remote
+    # Executes an arbitrary command on this instance.
     #
-    # @see Driver::Base#remote_command
+    # @param command [String] a command string to execute
     def remote_exec(command)
       driver.remote_command(state_file.read, command)
     end
