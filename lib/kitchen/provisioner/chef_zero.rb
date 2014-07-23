@@ -123,7 +123,24 @@ module Kitchen
           args << "--logfile #{config[:log_file]}"
         end
 
-        args
+        # TODO: We definitely need to put more logic on this!!!
+        # Util.wrap_command([cmd, *args].join(" "))
+        [cmd, *args].join(" ")
+      end
+
+      private
+
+      # Returns the command that will run a backwards compatible shim script
+      # that approximates local mode in a modern chef-client run.
+      #
+      # @return [String] the command string
+      # @api private
+      def shim_command
+        [
+          chef_client_zero_env,
+          sudo("#{config[:ruby_bindir]}/ruby"),
+          "#{config[:root_path]}/chef-client-zero.rb"
+        ].join(" ")
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory
