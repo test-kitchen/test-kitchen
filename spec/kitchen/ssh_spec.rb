@@ -415,13 +415,13 @@ describe Kitchen::SSH do
         "[SSH] opening connection to me@foo:22<{}>"
       )
       logged_output.string.must_match debug_line(
-        "Uploaded #{remote_base}/alpha (15 bytes)"
+        "Uploaded #{@dir}/alpha (15 bytes)"
       )
       logged_output.string.must_match debug_line(
-        "Uploaded #{remote_base}/subdir/beta (14 bytes)"
+        "Uploaded #{@dir}/subdir/beta (14 bytes)"
       )
       logged_output.string.must_match debug_line(
-        "Uploaded #{remote_base}/zulu (14 bytes)"
+        "Uploaded #{@dir}/zulu (14 bytes)"
       )
     end
   end
