@@ -182,7 +182,7 @@ module Kitchen
             when String
               %{"#{value}"}
             else
-              value
+              value.inspect
             end
           ].join(" ")
         }.join("\n")

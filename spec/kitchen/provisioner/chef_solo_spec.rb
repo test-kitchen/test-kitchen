@@ -191,6 +191,26 @@ describe Kitchen::Provisioner::ChefSolo do
 
         file.must_include %{foo 7}
       end
+
+      it "formats symbol values correctly" do
+        config[:solo_rb] = {
+          :foo => :bar
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo :bar}
+      end
+
+      it "formats boolean values correctly" do
+        config[:solo_rb] = {
+          :foo => false,
+          :bar => true
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo false}
+        file.must_include %{bar true}
+      end
     end
 
     def sandbox_path(path)
