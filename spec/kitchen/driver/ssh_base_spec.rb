@@ -588,6 +588,33 @@ describe Kitchen::Driver::SSHBase do
     end
   end
 
+  describe "#remote_command" do
+
+    let(:cmd)         { driver.remote_command(state, "shipit") }
+    let(:connection)  { mock }
+
+    before do
+      state[:hostname] = "fizzy"
+      state[:username] = "bork"
+    end
+
+    it "creates an SSH object" do
+      Kitchen::SSH.expects(:new).with { |hostname, username, _opts|
+        hostname.must_equal "fizzy"
+        username.must_equal "bork"
+      }
+
+      cmd
+    end
+
+    it "invokes the command over ssh" do
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("shipit")
+
+      cmd
+    end
+  end
+
   describe "#wait_for_sshd" do
 
     let(:cmd) do

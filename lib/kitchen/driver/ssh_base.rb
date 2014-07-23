@@ -78,6 +78,11 @@ module Kitchen
         SSH.new(*build_ssh_args(state)).login_command
       end
 
+      # Executes an arbitrary command on an instance over an SSH connection.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @param command [String] the command to be executed
+      # @raise [ActionFailed] if the command could not be successfully completed
       def remote_command(state, command)
         Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
           run_remote(command, conn)
