@@ -194,6 +194,15 @@ describe Kitchen::Provisioner::ChefZero do
 
         file.must_include %{foos ["foo1", "foo2"]}
       end
+
+      it "formats integer values correctly" do
+        config[:client_rb] = {
+          :foo => 7
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo 7}
+      end
     end
 
     describe "validation.pem file" do
