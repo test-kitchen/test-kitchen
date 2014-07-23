@@ -7,3 +7,7 @@ group :guard do
   gem 'guard-rubocop'
   gem 'guard-yard'
 end
+
+group :test do
+  gem 'codeclimate-test-reporter', require: nil
+end
