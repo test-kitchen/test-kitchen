@@ -194,7 +194,7 @@ module Kitchen
         Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
         Net::SSH::Disconnect
       ]
-      retries = 3
+      retries = options[:ssh_retries] || 3
 
       begin
         logger.debug("[SSH] opening connection to #{self}")
@@ -203,7 +203,7 @@ module Kitchen
         retries -= 1
         if retries > 0
           logger.info("[SSH] connection failed, retrying (#{e.inspect})")
-          sleep 1
+          sleep options[:ssh_timeout] || 1
           retry
         else
           logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
@@ -265,7 +265,7 @@ module Kitchen
       socket = TCPSocket.new(hostname, port)
       IO.select([socket], nil, nil, 5)
     rescue *SOCKET_EXCEPTIONS
-      sleep 2
+      sleep options[:ssh_timeout] || 2
       false
     rescue Errno::EPERM, Errno::ETIMEDOUT
       false
