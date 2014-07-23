@@ -5,6 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
 [![Test Coverage](https://codeclimate.com/github/test-kitchen/test-kitchen/coverage.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
 [![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.png)](https://gemnasium.com/test-kitchen/test-kitchen)
+[![Inline docs](http://inch-ci.org/github/test-kitchen/test-kitchen.png?branch=master)](http://inch-ci.org/github/test-kitchen/test-kitchen)
 
 |             |                                               |
 |-------------|-----------------------------------------------|
