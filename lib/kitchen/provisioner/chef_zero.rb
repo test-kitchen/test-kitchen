@@ -41,43 +41,52 @@ module Kitchen
       end
 
       # (see Base#prepare_command)
-      def prepare_command
+      def prepare_command(transport = Kitchen::Transport::Type::SSH)
         return if modern?
 
-        ruby_bin = config[:ruby_bindir]
-        # we are installing latest chef in order to get chef-zero and
-        # Chef::ChefFS only. The version of Chef that gets run will be
-        # the installed omnibus package. Yep, this is funky :)
-        cmd = <<-PREPARE.gsub(/^ {10}/, "")
-          #{chef_client_zero_env(:export)}
-          if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
-            echo ">>>>>> Attempting to use chef-zero with old version of Chef"
-            echo "-----> Installing chef zero dependencies"
-            #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
-          fi
-        PREPARE
+        if transport == Kitchen::Transport::Type::SSH
+          ruby_bin = config[:ruby_bindir]
+          # we are installing latest chef in order to get chef-zero and
+          # Chef::ChefFS only. The version of Chef that gets run will be
+          # the installed omnibus package. Yep, this is funky :)
+          cmd = <<-PREPARE.gsub(/^ {10}/, "")
+            #{chef_client_zero_env(:export)}
+            if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
+              echo ">>>>>> Attempting to use chef-zero with old version of Chef"
+              echo "-----> Installing chef zero dependencies"
+              #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
+            fi
+          PREPARE
 
-        Util.wrap_command(cmd)
+          Util.wrap_command(cmd)
+        elsif transport == Kitchen::Transport::Type::WinRM
+          raise "prepare_command should be ported over to WinRM"
+        else
+          raise "Can not prepare install command due to unsupported transport #{transport}"
+        end
       end
 
       # (see Base#run_command)
-      def run_command
-        cmd = modern? ? "#{sudo("chef-client")} --local-mode" : shim_command
-        args = [
-          "--config #{config[:root_path]}/client.rb",
-          "--log_level #{config[:log_level]}"
-        ]
-        if config[:chef_zero_port]
-          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
-        end
-        if config[:json_attributes]
-          args << "--json-attributes #{config[:root_path]}/dna.json"
-        end
-        if config[:log_file]
-          args << "--logfile #{config[:log_file]}"
-        end
+      def run_command(transport = Kitchen::Transport::Type::SSH)
+        if transport == Kitchen::Transport::Type::SSH
+          cmd = modern? ? "#{sudo("chef-client")} --local-mode" : shim_command
+          args = [
+            "--config #{config[:root_path]}/client.rb",
+            "--log_level #{config[:log_level]}"
+          ]
+          if config[:json_attributes]
+            args << "--json-attributes #{config[:root_path]}/dna.json"
+          end
+          if config[:log_file]
+            args << "--logfile #{config[:log_file]}"
+          end
 
-        Util.wrap_command([cmd, *args].join(" "))
+          Util.wrap_command([cmd, *args].join(" "))
+        elsif transport == Kitchen::Transport::Type::WinRM
+          raise "run_command should be ported over to WinRM"
+        else
+          raise "Can not prepare install command due to unsupported transport #{transport}"
+        end
       end
 
       private

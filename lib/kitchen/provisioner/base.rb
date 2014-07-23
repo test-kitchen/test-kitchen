@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/transport'
+
 module Kitchen
 
   module Provisioner
@@ -67,7 +69,7 @@ module Kitchen
       # will be returned.
       #
       # @return [String] a command string
-      def install_command
+      def install_command(transport = Kitchen::Transport::Type::SSH)
       end
 
       # Generates a command string which will perform any data initialization
@@ -76,7 +78,7 @@ module Kitchen
       # is required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def init_command
+      def init_command(transport = Kitchen::Transport::Type::SSH)
       end
 
       # Generates a command string which will perform any commands or
@@ -85,7 +87,7 @@ module Kitchen
       # required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def prepare_command
+      def prepare_command(transport = Kitchen::Transport::Type::SSH)
       end
 
       # Generates a command string which will invoke the main provisioner
@@ -93,7 +95,7 @@ module Kitchen
       # will be returned.
       #
       # @return [String] a command string
-      def run_command
+      def run_command(transport = Kitchen::Transport::Type::SSH)
       end
 
       # Creates a temporary directory on the local workstation into which

@@ -117,11 +117,14 @@ module Kitchen
       result
     end
 
-    private
+    # NOTE: Methods that are done public when transport is using driver
+    # directly. Really what's needed is logger functionality and config
+    # functionality.
 
     # @return [LzayHash] a configuration hash
-    # @api private
     attr_reader :config
+
+    private
 
     # Initializes an internal configuration hash. The hash may contain
     # callable blocks as values that are meant to be called lazily. This

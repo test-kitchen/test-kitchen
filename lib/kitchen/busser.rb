@@ -94,24 +94,36 @@ module Kitchen
     #
     # @return [String] a command string to setup the test suite, or nil if no
     #   work needs to be performed
-    def setup_cmd
+    def setup_cmd(transport = Kitchen::Transport::Type::SSH)
       return if local_suite_files.empty?
 
-      ruby    = "#{config[:ruby_bindir]}/ruby"
-      gem     = sudo("#{config[:ruby_bindir]}/gem")
-      busser  = sudo(config[:busser_bin])
+      if transport == Kitchen::Transport::Type::SSH
+        ruby    = "#{config[:ruby_bindir]}/ruby"
+        gem     = sudo("#{config[:ruby_bindir]}/gem")
+        busser  = sudo(config[:busser_bin])
 
-      cmd = <<-CMD.gsub(/^ {8}/, "")
-        #{busser_setup_env}
-        gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
+        cmd = <<-CMD.gsub(/^ {8}/, "")
+          #{busser_setup_env(transport)}
+          gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
 
-        if ! #{gem} list busser -i >/dev/null; then
-          #{gem} install #{gem_install_args}
-        fi
-        #{sudo("${gem_bindir}")}/busser setup
-        #{busser} plugin install #{plugins.join(" ")}
-      CMD
-      Util.wrap_command(cmd)
+          if ! #{gem} list busser -i >/dev/null; then
+            #{gem} install #{gem_install_args}
+          fi
+          #{sudo("${gem_bindir}")}/busser setup
+          #{busser} plugin install #{plugins.join(" ")}
+        CMD
+        Util.wrap_command(cmd)
+      elsif transport == Kitchen::Transport::Type::WinRM
+        setup_cmd_posh  = []
+        setup_cmd_posh << busser_setup_env(transport)
+        setup_cmd_posh << "If ((gem list busser -i) -eq \"false\") { gem install #{gem_install_args} }"
+        # We have to modify Busser::Setup to work with PowerShell
+        # setup_cmd_posh << "&\"$env:SYSTEMDRIVE/tmp/busser/gems/bin/busser\" setup"
+        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
+        setup_cmd_posh.join('; ')
+      else
+        raise "Can not prepare setup_cmd due to unsupported transport #{transport}"
+      end
     end
 
     # Returns a command string which transfers all suite test files to the
@@ -122,23 +134,35 @@ module Kitchen
     #
     # @return [String] a command string to transfer all suite test files, or
     #   nil if no work needs to be performed.
-    def sync_cmd
+    def sync_cmd(transport = Kitchen::Transport::Type::SSH)
       return if local_suite_files.empty?
 
-      cmd = <<-CMD.gsub(/^ {8}/, "")
-        #{busser_setup_env}
+      if transport == Kitchen::Transport::Type::SSH
+        cmd = <<-CMD.gsub(/^ {8}/, "")
+          #{busser_setup_env(transport)}
 
-        #{sudo(config[:busser_bin])} suite cleanup
+          #{sudo(config[:busser_bin])} suite cleanup
 
-      CMD
-      local_suite_files.each do |f|
-        cmd << stream_file(f, remote_file(f, config[:suite_name])).concat("\n")
+        CMD
+        local_suite_files.each do |f|
+          cmd << stream_file(f, remote_file(f, config[:suite_name])).concat("\n")
+        end
+        helper_files.each do |f|
+          cmd << stream_file(f, remote_file(f, "helpers")).concat("\n")
+        end
+
+        Util.wrap_command(cmd)
+      elsif transport == Kitchen::Transport::Type::WinRM
+        sync_cmd_posh  = []
+        sync_cmd_posh << busser_setup_env(transport)
+        sync_cmd_posh << "#{config[:busser_bin]} suite cleanup"
+        sync_cmd_posh << "#{local_suite_files.map { |f|
+          stream_file(f, remote_file(f, config[:suite_name])) }.join("; ")}"
+        sync_cmd_posh << "#{helper_files.map { |f| stream_file(f, remote_file(f, "helpers")) }.join("; ")}"
+        sync_cmd_posh.join('; ')
+      else
+        raise "Can not prepare sync_cmd due to unsupported transport #{transport}"
       end
-      helper_files.each do |f|
-        cmd << stream_file(f, remote_file(f, "helpers")).concat("\n")
-      end
-
-      Util.wrap_command(cmd)
     end
 
     # Returns a command string which runs all Busser suite tests for the suite.
@@ -148,16 +172,25 @@ module Kitchen
     #
     # @return [String] a command string to run the test suites, or nil if no
     #   work needs to be performed
-    def run_cmd
+    def run_cmd(transport = Kitchen::Transport::Type::SSH)
       return if local_suite_files.empty?
 
-      cmd = <<-CMD.gsub(/^ {8}/, "")
-        #{busser_setup_env}
+      if transport == Kitchen::Transport::Type::SSH
+        cmd = <<-CMD.gsub(/^ {8}/, "")
+          #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} test
-      CMD
+          #{sudo(config[:busser_bin])} test
+        CMD
 
-      Util.wrap_command(cmd)
+        Util.wrap_command(cmd)
+      elsif transport == Kitchen::Transport::Type::WinRM
+        run_cmd_posh  = []
+        run_cmd_posh << busser_setup_env(transport)
+        run_cmd_posh << "#{config[:busser_bin]} test"
+        run_cmd_posh.join('; ')
+      else
+        raise "Can not prepare run_cmd due to unsupported transport #{transport}"
+      end
     end
 
     private
@@ -288,14 +321,26 @@ module Kitchen
     #
     # @return [String] command string
     # @api private
-    def busser_setup_env
-      [
-        %{BUSSER_ROOT="#{config[:root_path]}"},
-        %{GEM_HOME="#{config[:root_path]}/gems"},
-        %{GEM_PATH="#{config[:root_path]}/gems"},
-        %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
-        %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
-      ].join(" ")
+    def busser_setup_env(transport = Kitchen::Transport::Type::SSH)
+      if transport == Kitchen::Transport::Type::SSH
+        [
+          %{BUSSER_ROOT="#{config[:root_path]}"},
+          %{GEM_HOME="#{config[:root_path]}/gems"},
+          %{GEM_PATH="#{config[:root_path]}/gems"},
+          %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
+          %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
+        ].join(" ")
+      elsif transport == Kitchen::Transport::Type::WinRM
+        [
+          %{$env:BUSSER_ROOT="#{config[:root_path]}";},
+          %{$env:GEM_HOME="#{config[:root_path]}/gems";},
+          %{$env:GEM_PATH="#{config[:root_path]}/gems";},
+          %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
+          %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
+        ].join(" ")
+      else
+        raise "Can not prepare setup_cmd due to unsupported transport #{transport}"
+      end
     end
 
     # Returns arguments to a `gem install` command, suitable to install the
