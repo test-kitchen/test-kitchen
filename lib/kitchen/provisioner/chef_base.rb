@@ -174,17 +174,7 @@ module Kitchen
       # @api private
       def format_config_file(data)
         data.each.map { |attr, value|
-          [
-            attr,
-            case value
-            when Array
-              value.to_s
-            when String
-              %{"#{value}"}
-            else
-              value.inspect
-            end
-          ].join(" ")
+          [attr, value.inspect].join(" ")
         }.join("\n")
       end
 
