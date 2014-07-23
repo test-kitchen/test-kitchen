@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/errors'
-require 'kitchen/logging'
-require 'kitchen/provisioner'
-require 'kitchen/provisioner/base'
+require "kitchen/errors"
+require "kitchen/logging"
+require "kitchen/provisioner"
+require "kitchen/provisioner/base"
 
 module Kitchen
 
@@ -63,7 +63,7 @@ describe Kitchen::Provisioner do
       # pretend require worked
       Kitchen::Provisioner.stubs(:require).returns(true)
 
-      proc { Kitchen::Provisioner.for_plugin('nope', {}) }.
+      proc { Kitchen::Provisioner.for_plugin("nope", {}) }.
         must_raise Kitchen::ClientError
     end
   end

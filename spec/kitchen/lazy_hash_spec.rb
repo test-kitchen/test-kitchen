@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/lazy_hash'
+require "kitchen/lazy_hash"
 
 describe Kitchen::LazyHash do
 
@@ -26,33 +26,60 @@ describe Kitchen::LazyHash do
     stub(:color => "blue", :metal => "heavy")
   end
 
-  let(:hash) do
+  let(:hash_obj) do
     {
-      :shed_color => lambda { |c| c.color },
+      :shed_color => ->(c) { c.color },
       :barn => "locked",
-      :genre => Proc.new { |c| "#{c.metal} metal"}
+      :genre => proc { |c| "#{c.metal} metal" }
     }
   end
 
   describe "#[]" do
 
     it "returns regular values for keys" do
-      Kitchen::LazyHash.new(hash, context)[:barn].must_equal "locked"
+      Kitchen::LazyHash.new(hash_obj, context)[:barn].must_equal "locked"
     end
 
     it "invokes call on values that are lambdas" do
-      Kitchen::LazyHash.new(hash, context)[:shed_color].must_equal "blue"
+      Kitchen::LazyHash.new(hash_obj, context)[:shed_color].must_equal "blue"
     end
 
     it "invokes call on values that are Procs" do
-      Kitchen::LazyHash.new(hash, context)[:genre].must_equal "heavy metal"
+      Kitchen::LazyHash.new(hash_obj, context)[:genre].must_equal "heavy metal"
+    end
+  end
+
+  describe "#fetch" do
+
+    it "returns regular hash values for keys" do
+      Kitchen::LazyHash.new(hash_obj, context).fetch(:barn).must_equal "locked"
+    end
+
+    it "invokes call on values that are lambdas" do
+      Kitchen::LazyHash.new(hash_obj, context).
+        fetch(:shed_color).must_equal "blue"
+    end
+
+    it "invokes call on values that are Procs" do
+      Kitchen::LazyHash.new(hash_obj, context).
+        fetch(:genre).must_equal "heavy metal"
+    end
+
+    it "uses a default value for unset values" do
+      Kitchen::LazyHash.new(hash_obj, context).
+        fetch(:nope, "candy").must_equal "candy"
+    end
+
+    it "uses a block for unset values" do
+      Kitchen::LazyHash.new(hash_obj, context).
+        fetch(:nope) { |key| "#{key} is costly" }.must_equal "nope is costly"
     end
   end
 
   describe "#to_hash" do
 
     it "invokes any callable values and returns a Hash object" do
-      converted = Kitchen::LazyHash.new(hash, context).to_hash
+      converted = Kitchen::LazyHash.new(hash_obj, context).to_hash
 
       converted.must_be_instance_of Hash
       converted.fetch(:shed_color).must_equal "blue"

@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
-require 'kitchen/diagnostic'
+require "kitchen/command"
+require "kitchen/diagnostic"
 
-require 'yaml'
+require "yaml"
 
 module Kitchen
 
@@ -30,6 +30,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Diagnose < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         instances = record_failure { load_instances }
 
@@ -41,6 +42,10 @@ module Kitchen
 
       private
 
+      # Loads and returns instances if they are requested.
+      #
+      # @return [Array<Instance>] an array of instances or an empty array
+      # @api private
       def load_instances
         if options[:all] || options[:instances]
           parse_subcommand(args.first)
@@ -49,6 +54,10 @@ module Kitchen
         end
       end
 
+      # Loads and returns loader configuration if it is requested.
+      #
+      # @return [Hash,nil] a hash or nil
+      # @api private
       def load_loader
         if options[:all] || options[:loader]
           @loader
@@ -57,6 +66,11 @@ module Kitchen
         end
       end
 
+      # Returns a hash with exception detail if an exception is raised in the
+      # yielded block.
+      #
+      # @return [yield,Hash] the result of the yielded block or an error hash
+      # @api private
       def record_failure
         yield
       rescue => e

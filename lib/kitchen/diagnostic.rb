@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/util'
+require "kitchen/util"
+require "kitchen/version"
 
 module Kitchen
 
@@ -26,12 +27,23 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Diagnostic
 
+    # Constructs a new Diagnostic object with an optional loader and optional
+    # instances array.
+    #
+    # @param options [Hash] optional configuration
+    # @option options [#diagnose,Hash] :loader a loader instance that responds
+    #   to `#diagnose` or an error Hash
+    # @option options [Array<#diagnose>,Hash] :instances an Array of instances
+    #   that respond to `#diagnose` or an error Hash
     def initialize(options = {})
       @loader = options.fetch(:loader, nil)
       @instances = options.fetch(:instances, [])
       @result = Hash.new
     end
 
+    # Returns a Hash with stringified keys containing diagnostic information.
+    #
+    # @return [Hash] a configuration Hash
     def read
       prepare_common
       prepare_loader
@@ -42,13 +54,31 @@ module Kitchen
 
     private
 
-    attr_reader :result, :loader, :instances
+    # @return [Hash] a result hash
+    # @api private
+    attr_reader :result
 
+    # @return [#diagnose,Hash] a loader instance that responds to `#diagnose`
+    #   or an error Hash
+    # @api private
+    attr_reader :loader
+
+    # @return [Array<#diagnose>,Hash] an Array of instances that respond to
+    #   `#diagnose` or an error Hash
+    # @api private
+    attr_reader :instances
+
+    # Adds common information to the result Hash.
+    #
+    # @api private
     def prepare_common
-      result[:timestamp] = Time.now.gmtime
+      result[:timestamp] = Time.now.gmtime.to_s
       result[:kitchen_version] = Kitchen::VERSION
     end
 
+    # Adds loader information to the result Hash.
+    #
+    # @api private
     def prepare_loader
       if error_hash?(loader)
         result[:loader] = loader
@@ -57,6 +87,9 @@ module Kitchen
       end
     end
 
+    # Adds instance information to the result Hash.
+    #
+    # @api private
     def prepare_instances
       result[:instances] = Hash.new
       if error_hash?(instances)
@@ -66,8 +99,14 @@ module Kitchen
       end
     end
 
+    # Determins whether or not the object is an error hash. An error hash is
+    # defined as a Hash containing an `:error` key.
+    #
+    # @param obj [Object] an object
+    # @return [true,false] whether or not the object is an error hash
+    # @api private
     def error_hash?(obj)
-      obj.is_a?(Hash) && obj.has_key?(:error)
+      obj.is_a?(Hash) && obj.key?(:error)
     end
   end
 end

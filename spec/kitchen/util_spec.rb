@@ -16,21 +16,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'logger'
+require "logger"
 
-require 'kitchen/util'
+require "kitchen/util"
 
 describe Kitchen::Util do
 
-  describe '.to_logger_level' do
+  describe ".to_logger_level" do
 
     it "returns nil for invalid symbols" do
       Kitchen::Util.to_logger_level(:nope).must_be_nil
     end
 
-    %w{debug info warn error fatal}.each do |level|
+    %w[debug info warn error fatal].each do |level|
       it "returns Logger::#{level.upcase} for :#{level} input" do
         Kitchen::Util.to_logger_level(level.to_sym).
           must_equal Logger.const_get(level.upcase)
@@ -44,7 +44,7 @@ describe Kitchen::Util do
       Kitchen::Util.from_logger_level("nope").must_equal :fatal
     end
 
-    %w{debug info warn error fatal}.each do |level|
+    %w[debug info warn error fatal].each do |level|
       it "returns :#{level} for Logger::#{level.upcase} input" do
         Kitchen::Util.from_logger_level(Logger.const_get(level.upcase)).
           must_equal(level.to_sym)
@@ -66,8 +66,8 @@ describe Kitchen::Util do
 
     it "converts string keys into symbols" do
       Kitchen::Util.
-        symbolized_hash({ "one" => [{ "two" => :three, :four => "five" }] }).
-        must_equal({ :one => [{ :two => :three, :four => "five" }] })
+        symbolized_hash("one" => [{ "two" => :three, :four => "five" }]).
+        must_equal(:one => [{ :two => :three, :four => "five" }])
     end
   end
 
@@ -85,8 +85,8 @@ describe Kitchen::Util do
 
     it "converts symbol keys into strings" do
       Kitchen::Util.
-        stringified_hash({ :one => [{ :two => :three, "four" => "five" }] }).
-        must_equal({ "one" => [{ "two" => :three, "four" => "five" }] })
+        stringified_hash(:one => [{ :two => :three, "four" => "five" }]).
+        must_equal("one" => [{ "two" => :three, "four" => "five" }])
     end
   end
 
@@ -102,6 +102,64 @@ describe Kitchen::Util do
 
     it "formats large values into minutes and seconds" do
       Kitchen::Util.duration(48033).must_equal "(800m33.00s)"
+    end
+  end
+
+  describe ".wrap_unix_command" do
+
+    it "returns the wrapped command" do
+    end
+
+    it "returns a false if command is nil" do
+      Kitchen::Util.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
+    end
+
+    it "returns a true if command string is empty" do
+      Kitchen::Util.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
+    end
+
+    it "handles a command string with a trailing newline" do
+      Kitchen::Util.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
+    end
+  end
+
+  describe ".outdent!" do
+
+    it "modifies the argument string in place, destructively" do
+      string = "yep"
+
+      Kitchen::Util.outdent!(string).object_id.must_equal string.object_id
+    end
+
+    it "returns the same string if no leading whitespace exists" do
+      string = "one\ntwo\nthree"
+
+      Kitchen::Util.outdent!(string).must_equal "one\ntwo\nthree"
+    end
+
+    it "strips same amount of leading whitespace as found on first line" do
+      string = "  one\n    two\n      three\nfour"
+
+      Kitchen::Util.outdent!(string).must_equal "one\n  two\n    three\nfour"
+    end
+  end
+
+  describe ".shell_helpers" do
+
+    %w[
+      exists do_wget do_curl do_fetch do_perl do_python do_download
+    ].each do |func|
+      it "contains a #{func} shell function" do
+        Kitchen::Util.shell_helpers.must_match "#{func}() {"
+      end
+    end
+
+    it "does not contain bare single quotes" do
+      Kitchen::Util.shell_helpers.wont_match "'"
+    end
+
+    def regexify(str)
+      Regexp.new("^\s+" + Regexp.escape(str) + "$")
     end
   end
 end

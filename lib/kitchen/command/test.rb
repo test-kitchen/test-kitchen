@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
-require 'benchmark'
+require "benchmark"
 
 module Kitchen
 
@@ -31,15 +31,16 @@ module Kitchen
 
       include RunAction
 
+      # Invoke the command.
       def call
-        if ! %w{passing always never}.include?(options[:destroy])
+        if !%w[passing always never].include?(options[:destroy])
           raise ArgumentError, "Destroy mode must be passing, always, or never."
         end
 
         banner "Starting Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           destroy_mode = options[:destroy].to_sym
-          results = parse_subcommand(args.join('|'))
+          results = parse_subcommand(args.join("|"))
 
           run_action(:test, results, destroy_mode)
         end

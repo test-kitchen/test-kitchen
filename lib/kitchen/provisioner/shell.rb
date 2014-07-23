@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/base'
+require "kitchen/provisioner/base"
 
 module Kitchen
 
@@ -28,7 +28,7 @@ module Kitchen
     class Shell < Base
 
       default_config :script do |provisioner|
-        provisioner.calculate_path("bootstrap.sh", :script)
+        provisioner.calculate_path("bootstrap.sh", :type => :file)
       end
       expand_path_for :script
 
@@ -37,23 +37,34 @@ module Kitchen
       end
       expand_path_for :data_path
 
+      # (see Base#create_sandbox)
       def create_sandbox
         super
         prepare_data
         prepare_script
       end
 
+      # (see Base#init_command)
       def init_command
         data = File.join(config[:root_path], "data")
-        "#{sudo('rm')} -rf #{data} ; mkdir -p #{config[:root_path]}"
+        cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
+
+        Util.wrap_command(cmd)
       end
 
+      # (see Base#run_command)
       def run_command
-        sudo(File.join(config[:root_path], File.basename(config[:script])))
+        Util.wrap_command(
+          sudo(File.join(config[:root_path], File.basename(config[:script])))
+        )
       end
 
-      protected
+      private
 
+      # Creates a data directory in the sandbox directory, if a data directory
+      # can be found and copies in the tree.
+      #
+      # @api private
       def prepare_data
         return unless config[:data_path]
 
@@ -65,6 +76,10 @@ module Kitchen
         FileUtils.cp_r(Dir.glob("#{config[:data_path]}/*"), tmpdata_dir)
       end
 
+      # Copies the executable script to the sandbox directory or creates a
+      # stub script if one cannot be found.
+      #
+      # @api private
       def prepare_script
         info("Preparing script")
 
@@ -73,7 +88,7 @@ module Kitchen
           FileUtils.cp_r(config[:script], sandbox_path)
         else
           config[:script] = File.join(sandbox_path, "bootstrap.sh")
-          info("#{File.basename(config[:script])} not found " +
+          info("#{File.basename(config[:script])} not found " \
             "so Kitchen will run a stubbed script. Is this intended?")
           File.open(config[:script], "wb") do |file|
             file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})

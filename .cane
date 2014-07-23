@@ -1,5 +1,5 @@
 --abc-max 20
---style-measure 120
+--style-measure 100
 --abc-exclude Kitchen::ThorTasks#define
 --style-exclude lib/vendor/**/*.rb
 --doc-exclude lib/vendor/**/.rb

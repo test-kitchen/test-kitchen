@@ -18,18 +18,20 @@
 
 if RUBY_VERSION <= "1.9.3"
   # ensure that Psych and not Syck is used for Ruby 1.9.2
-  require 'yaml'
-  YAML::ENGINE.yamler = 'psych'
+  require "yaml"
+  YAML::ENGINE.yamler = "psych"
 end
-require 'safe_yaml/load'
+require "safe_yaml/load"
 
 module Kitchen
 
   # Exception class for any exceptions raised when reading and parsing a state
   # file from disk
-  class StateFileLoadError < StandardError ; end
+  class StateFileLoadError < StandardError; end
 
   # State persistence manager for instances between actions and invocations.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   class StateFile
 
     # Constructs an new instance taking the kitchen root and instance name.
@@ -49,7 +51,7 @@ module Kitchen
     # @raise [StateFileLoadError] if there is a problem loading the state file
     #   from disk and loading it into a Hash
     def read
-      if File.exists?(file_name)
+      if File.exist?(file_name)
         Util.symbolized_hash(deserialize_string(read_file))
       else
         Hash.new
@@ -63,13 +65,13 @@ module Kitchen
       dir = File.dirname(file_name)
       serialized_string = serialize_hash(Util.stringified_hash(state))
 
-      FileUtils.mkdir_p(dir) if ! File.directory?(dir)
+      FileUtils.mkdir_p(dir) if !File.directory?(dir)
       File.open(file_name, "wb") { |f| f.write(serialized_string) }
     end
 
     # Destroys a state file on disk if it exists.
     def destroy
-      FileUtils.rm_f(file_name) if File.exists?(file_name)
+      FileUtils.rm_f(file_name) if File.exist?(file_name)
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
@@ -84,18 +86,33 @@ module Kitchen
 
     private
 
+    # @return [String] absolute path to the yaml state file on disk
+    # @api private
     attr_reader :file_name
 
+    # @return [String] a string representation of the yaml state file
+    # @api private
     def read_file
       IO.read(file_name)
     end
 
+    # Parses a YAML string and returns a Hash.
+    #
+    # @param string [String] a yaml document as a string
+    # @return [Hash] a hash
+    # @raise [StateFileLoadError] if the string document cannot be parsed
+    # @api private
     def deserialize_string(string)
       SafeYAML.load(string)
     rescue SyntaxError, Psych::SyntaxError => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end
 
+    # Serializes a Hash into a YAML string.
+    #
+    # @param hash [Hash] a hash
+    # @return [String] a yaml document as a string
+    # @api private
     def serialize_hash(hash)
       ::YAML.dump(hash)
     end

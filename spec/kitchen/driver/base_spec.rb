@@ -16,41 +16,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
-require 'logger'
-require 'stringio'
+require_relative "../../spec_helper"
+require "logger"
+require "stringio"
 
-require 'kitchen'
+require "kitchen"
 
 module Kitchen
 
   module Driver
 
-    class StaticDefaults < Base
-
-      default_config :beans, "kidney"
-      default_config :tunables, { 'flimflam' => 'positate' }
-      default_config :edible, true
+    class Speedy < Base
     end
 
-    class SubclassDefaults < StaticDefaults
+    class Dodgy < Base
 
-      default_config :yea, "ya"
+      no_parallel_for :converge
     end
 
-    class ComputedDefaults < Base
+    class Slow < Base
 
-      default_config :beans, "kidney"
-      default_config :fetch_command, "curl"
-      default_config :beans_url do |driver|
-        "http://gim.me/#{driver[:beans]}"
-      end
-      default_config :command do |driver|
-        "#{driver[:fetch_command]} #{driver[:beans_url]}"
-      end
-      default_config :fetch_url do |driver|
-        "http://gim.me/beans-for/#{driver.instance.name}"
-      end
+      no_parallel_for :create, :destroy
+      no_parallel_for :verify
     end
   end
 end
@@ -62,96 +49,104 @@ describe Kitchen::Driver::Base do
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
+  let(:busser) do
+    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
+  end
+
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :busser => busser,
+      :to_str => "instance"
+    )
   end
 
-  describe "user config" do
-
-    let(:driver) do
-      d = Kitchen::Driver::Base.new(config)
-      d.instance = instance
-      d
-    end
-
-    it "injects config into driver" do
-      config[:fruit] = %w{apples oranges}
-      config[:cool_enough] = true
-
-      driver[:fruit].must_equal ['apples', 'oranges']
-      driver[:cool_enough].must_equal true
-    end
+  let(:driver) do
+    Kitchen::Driver::Base.new(config).finalize_config!(instance)
   end
 
-  describe "static default config" do
+  it "#instance returns its instance" do
+    driver.instance.must_equal instance
+  end
 
-    let(:driver) do
-      d = Kitchen::Driver::StaticDefaults.new(config)
-      d.instance = instance
-      d
+  it "#name returns the name of the driver" do
+    driver.name.must_equal "Base"
+  end
+
+  describe "#logger" do
+
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger if defined" do
+      driver.send(:logger).must_equal logger
     end
 
-    it "uses default config" do
-      driver[:beans].must_equal "kidney"
-      driver[:tunables]['flimflam'].must_equal 'positate'
-      driver[:edible].must_equal true
-    end
+    it "returns the default logger if instance's logger is not set" do
+      driver = Kitchen::Driver::Base.new(config)
+      Kitchen.logger = "yep"
 
-    it "uses user config over default config" do
-      config[:beans] = "pinto"
-      config[:edible] = false
-
-      driver[:beans].must_equal "pinto"
-      driver[:edible].must_equal false
+      driver.send(:logger).must_equal Kitchen.logger
     end
   end
 
-  describe "inherited static default config" do
+  it "#puts calls logger.info" do
+    driver.send(:puts, "yo")
 
-    let(:driver) do
-      p = Kitchen::Driver::SubclassDefaults.new(config)
-      p.instance = instance
-      p
-    end
+    logged_output.string.must_match(/I, /)
+    logged_output.string.must_match(/yo\n/)
+  end
 
-    it "contains defaults from superclass" do
-      driver[:beans].must_equal "kidney"
-      driver[:tunables]['flimflam'].must_equal 'positate'
-      driver[:edible].must_equal true
-      driver[:yea].must_equal "ya"
-    end
+  it "#print calls logger.info" do
+    driver.send(:print, "yo")
 
-    it "uses user config over default config" do
-      config[:beans] = "pinto"
-      config[:edible] = false
+    logged_output.string.must_match(/I, /)
+    logged_output.string.must_match(/yo\n/)
+  end
 
-      driver[:beans].must_equal "pinto"
-      driver[:edible].must_equal false
-      driver[:yea].must_equal "ya"
+  [:create, :converge, :setup, :verify, :destroy].each do |action|
+
+    it "has a #{action} method that takes state" do
+      state = Hash.new
+      driver.public_send(action, state).must_be_nil
     end
   end
 
-  describe "computed default config" do
+  it "has a login command that raises ActionFailed by default" do
+    proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
+  end
 
-    let(:driver) do
-      d = Kitchen::Driver::ComputedDefaults.new(config)
-      d.instance = instance
-      d
+  it "has a default verify dependencies method" do
+    driver.verify_dependencies.must_be_nil
+  end
+
+  it "#busser returns the instance's busser" do
+    driver.send(:busser).must_equal busser
+  end
+
+  describe ".no_parallel_for" do
+
+    it "registers no serial actions when none are declared" do
+      Kitchen::Driver::Speedy.serial_actions.must_equal nil
     end
 
-    it "uses computed config" do
-      driver[:beans_url].must_equal "http://gim.me/kidney"
-      driver[:command].must_equal "curl http://gim.me/kidney"
+    it "registers a single serial action method" do
+      Kitchen::Driver::Dodgy.serial_actions.must_equal [:converge]
     end
 
-    it "has access to instance object" do
-      driver[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
+    it "registers multiple serial action methods" do
+      actions = Kitchen::Driver::Slow.serial_actions
+
+      actions.must_include :create
+      actions.must_include :verify
+      actions.must_include :destroy
     end
 
-    it "uses user config over default config" do
-      config[:command] = "echo listentome"
-
-      driver[:command].must_equal "echo listentome"
+    it "raises a ClientError if value is not an action method" do
+      proc {
+        Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
+      }.must_raise Kitchen::ClientError
     end
   end
 end

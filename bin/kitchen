@@ -5,9 +5,9 @@
 # https://twitter.com/mitchellh/status/283014103189053442
 Signal.trap("INT") { exit 1 }
 
-$:.unshift File.join(File.dirname(__FILE__), %w{.. lib})
-require 'rubygems'
-require 'kitchen/cli'
-require 'kitchen/errors'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), %w[.. lib])
+require "rubygems"
+require "kitchen/cli"
+require "kitchen/errors"
 
 Kitchen.with_friendly_errors { Kitchen::CLI.start }

@@ -16,24 +16,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-gem 'minitest'
+gem "minitest"
 
-require 'simplecov'
-SimpleCov.adapters.define 'gem' do
-  command_name 'Specs'
+if ENV["COVERAGE"]
+  require "simplecov"
+  SimpleCov.profiles.define "gem" do
+    command_name "Specs"
 
-  add_filter '.gem/'
-  add_filter '/spec/'
-  add_filter '/lib/vendor/'
+    add_filter ".gem/"
+    add_filter "/spec/"
+    add_filter "/lib/vendor/"
 
-  add_group 'Libraries', '/lib/'
+    add_group "Libraries", "/lib/"
+  end
+  SimpleCov.start "gem"
 end
-SimpleCov.start 'gem'
 
-require 'fakefs/safe'
-require 'minitest/autorun'
-require 'mocha/setup'
-require 'tempfile'
+require "fakefs/safe"
+require "minitest/autorun"
+require "mocha/setup"
+require "tempfile"
 
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO

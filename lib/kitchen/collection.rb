@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'delegate'
+require "delegate"
 
 module Kitchen
 
@@ -42,7 +42,7 @@ module Kitchen
     # @return [Kitchen::Config::Collection<Object>] a new collection of
     #   matched objects
     def get_all(regexp)
-      Kitchen::Collection.new(__getobj__.find_all { |i| i.name =~ regexp })
+      Kitchen::Collection.new(__getobj__.select { |i| i.name =~ regexp })
     end
 
     # Returns an Array of names from the collection as strings.

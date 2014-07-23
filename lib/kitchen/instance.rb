@@ -2,7 +2,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2012, Fletcher Nichol
+# Copyright (C) 2012, 2013, 2014, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'benchmark'
-require 'fileutils'
+require "benchmark"
+require "fileutils"
 
 module Kitchen
 
@@ -31,10 +31,18 @@ module Kitchen
     include Logging
 
     class << self
+
+      # @return [Hash] a hash of mutxes, arranged by Driver class names
+      # @api private
       attr_accessor :mutexes
 
+      # Generates a name for an instance given a suite and platform.
+      #
+      # @param suite [Suite,#name] a Suite
+      # @param platform [Platform,#name] a Platform
+      # @return [String] a normalized, consistent name for an instance
       def name_for(suite, platform)
-        "#{suite.name}-#{platform.name}".gsub(/_/, '-').gsub(/\./, '')
+        "#{suite.name}-#{platform.name}".gsub(/_/, "-").gsub(/\./, "")
       end
     end
 
@@ -66,11 +74,11 @@ module Kitchen
     # Creates a new instance, given a suite and a platform.
     #
     # @param [Hash] options configuration for a new suite
-    # @option options [Suite] :suite the suite (**Required)
-    # @option options [Platform] :platform the platform (**Required)
-    # @option options [Driver::Base] :driver the driver (**Required)
+    # @option options [Suite] :suite the suite (**Required**)
+    # @option options [Platform] :platform the platform (**Required**)
+    # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
-    #   (**Required)
+    #   (**Required**)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
@@ -93,6 +101,9 @@ module Kitchen
       setup_provisioner
     end
 
+    # Returns a displayable representation of the instance.
+    #
+    # @return [String] an instance display string
     def to_str
       "<#{name}>"
     end
@@ -186,16 +197,16 @@ module Kitchen
     # @see Driver::Base#login_command
     def login
       login_command = driver.login_command(state_file.read)
-      command, *args = login_command.cmd_array
+      cmd, *args = login_command.cmd_array
       options = login_command.options
 
-      debug("Login command: #{command} #{args.join(' ')} (Options: #{options})")
-      Kernel.exec(command, *args, options)
+      debug(%{Login command: #{cmd} #{args.join(" ")} (Options: #{options})})
+      Kernel.exec(cmd, *args, options)
     end
 
-    # Execute command via run_remote
+    # Executes an arbitrary command on this instance.
     #
-    # @see Driver::Base#remote_command
+    # @param command [String] a command string to execute
     def remote_exec(command)
       driver.remote_command(state_file.read, command)
     end
@@ -212,29 +223,43 @@ module Kitchen
       result
     end
 
+    # Returns the last successfully completed action state of the instance.
+    #
+    # @return [String] a named action which was last successfully completed
     def last_action
       state_file.read[:last_action]
     end
 
     private
 
+    # @return [StateFile] a state file object that can be read from or written
+    #   to
+    # @api private
     attr_reader :state_file
 
+    # Validate the initial internal state of this object and raising an
+    # exception if any preconditions are not met.
+    #
+    # @param options[Hash] options hash passed into the constructor
+    # @raise [ClientError] if any validations fail
+    # @api private
     def validate_options(options)
-      [:suite, :platform, :driver, :provisioner, :busser, :state_file].each do |k|
-        if !options.has_key?(k)
-          raise ClientError, "Instance#new requires option :#{k}"
-        end
+      [
+        :suite, :platform, :driver, :provisioner, :busser, :state_file
+      ].each do |k|
+        next if options.key?(k)
+
+        raise ClientError, "Instance#new requires option :#{k}"
       end
     end
 
+    # Perform any final configuration or preparation needed for the driver
+    # object carry out its duties.
+    #
+    # @api private
     def setup_driver
-      @driver.instance = self
-      @driver.validate_config!
-      setup_driver_mutex
-    end
+      @driver.finalize_config!(self)
 
-    def setup_driver_mutex
       if driver.class.serial_actions
         Kitchen.mutex.synchronize do
           self.class.mutexes ||= Hash.new
@@ -243,10 +268,19 @@ module Kitchen
       end
     end
 
+    # Perform any final configuration or preparation needed for the provisioner
+    # object carry out its duties.
+    #
+    # @api private
     def setup_provisioner
-      @provisioner.instance = self
+      @provisioner.finalize_config!(self)
     end
 
+    # Perform all actions in order from last state to desired state.
+    #
+    # @param desired [Symbol] a symbol representing the desired action state
+    # @return [self] this instance, used to chain actions
+    # @api private
     def transition_to(desired)
       result = nil
       FSM.actions(last_action, desired).each do |transition|
@@ -255,35 +289,87 @@ module Kitchen
       result
     end
 
+    # Perform the create action.
+    #
+    # @see Driver::Base#create
+    # @return [self] this instance, used to chain actions
+    # @api private
     def create_action
       perform_action(:create, "Creating")
     end
 
+    # Perform the converge action.
+    #
+    # @see Driver::Base#converge
+    # @return [self] this instance, used to chain actions
+    # @api private
     def converge_action
       perform_action(:converge, "Converging")
     end
 
+    # Perform the setup action.
+    #
+    # @see Driver::Base#setup
+    # @return [self] this instance, used to chain actions
+    # @api private
     def setup_action
       perform_action(:setup, "Setting up")
     end
 
+    # Perform the verify action.
+    #
+    # @see Driver::Base#verify
+    # @return [self] this instance, used to chain actions
+    # @api private
     def verify_action
       perform_action(:verify, "Verifying")
     end
 
+    # Perform the destroy action.
+    #
+    # @see Driver::Base#destroy
+    # @return [self] this instance, used to chain actions
+    # @api private
     def destroy_action
       perform_action(:destroy, "Destroying") { state_file.destroy }
     end
 
+    # Perform an arbitrary action and provide useful logging.
+    #
+    # @param verb [Symbol] the action to be performed
+    # @param output_verb [String] a verb representing the action, suitable for
+    #   use in output logging
+    # @yield perform optional work just after action has complted
+    # @return [self] this instance, used to chain actions
+    # @api private
     def perform_action(verb, output_verb)
       banner "#{output_verb} #{to_str}..."
       elapsed = action(verb) { |state| driver.public_send(verb, state) }
-      info("Finished #{output_verb.downcase} #{to_str}" +
+      info("Finished #{output_verb.downcase} #{to_str}" \
         " #{Util.duration(elapsed.real)}.")
       yield if block_given?
       self
     end
 
+    # Times a call to an action block and handles any raised exceptions. This
+    # method ensures that the last successfully completed action is persisted
+    # to the state file. The last action state will either be the desired
+    # action that is passed in or the previous action that was persisted to the
+    # state file.
+    #
+    # @param what [Symbol] the action to be performed
+    # @param block [Proc] a block to be called
+    # @return [Benchmark::Tms] timing information for the given action
+    # @raise [InstanceFailed] if a driver action fails to complete, signaled
+    #   by a driver raising an ActionFailed exception. Typical reasons for this
+    #   would be a driver create action failing, a chef convergence crashing
+    #   in normal course of development, failing acceptance tests in the
+    #   verify action, etc.
+    # @raise [ActionFailed] if an unforseen or unplanned exception is raised.
+    #   This would usually indicate that a race condition was triggered, a
+    #   bug exists in a driver, provisioner, or core, a transient IO error
+    #   occured, etc.
+    # @api private
     def action(what, &block)
       state = state_file.read
       elapsed = Benchmark.measure do
@@ -294,9 +380,9 @@ module Kitchen
     rescue ActionFailed => e
       log_failure(what, e)
       raise(InstanceFailure, failure_message(what) +
-        "  Please see .kitchen/logs/#{self.name}.log for more details",
+        "  Please see .kitchen/logs/#{name}.log for more details",
         e.backtrace)
-    rescue Exception => e
+    rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
       raise ActionFailed,
         "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
@@ -304,6 +390,16 @@ module Kitchen
       state_file.write(state)
     end
 
+    # Runs a given action block through a common driver mutex if required or
+    # runs it directly otherwise. If a driver class' `.serial_actions` array
+    # includes the desired action, then the action must be run with a muxtex
+    # lock. Otherwise, it is assumed that the action can happen concurrently,
+    # or fully in parallel.
+    #
+    # @param what [Symbol] the action to be performed
+    # @param state [Hash] a mutable state hash for this instance
+    # @param block [Proc] a block to be called
+    # @api private
     def synchronize_or_call(what, state, &block)
       if Array(driver.class.serial_actions).include?(what)
         debug("#{to_str} is synchronizing on #{driver.class}##{what}")
@@ -316,11 +412,26 @@ module Kitchen
       end
     end
 
+    # Writes a high level message for logging and/or output.
+    #
+    # In this case, all instance banner messages will be written to the common
+    # Kitchen logger so that the high level flow of a run can be followed in
+    # the kitchen.log file.
+    #
+    # @api private
     def banner(*args)
       Kitchen.logger.logdev && Kitchen.logger.logdev.banner(*args)
       super
     end
 
+    # Logs a failure (message and backtrace) to the instance's file logger
+    # to help with debugging and diagnosing issues without overwhelming the
+    # console output in the default case (i.e. running kitchen with :info
+    # level debugging).
+    #
+    # @param what [String] an action
+    # @param e [Exception] an exception
+    # @api private
     def log_failure(what, e)
       return if logger.logdev.nil?
 
@@ -328,13 +439,20 @@ module Kitchen
       Error.formatted_trace(e).each { |line| logger.logdev.error(line) }
     end
 
+    # Returns a string explaining what action failed, at a high level. Used
+    # for displaying to end user.
+    #
+    # @param what [String] an action
+    # @return [String] a failure message
+    # @api private
     def failure_message(what)
-      "#{what.capitalize} failed on instance #{self.to_str}."
+      "#{what.capitalize} failed on instance #{to_str}."
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage
     # an Instance.
     #
+    # @api private
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class FSM
 
@@ -346,6 +464,7 @@ module Kitchen
       # @param desired [String,Symbol] the desired transitioned state for the
       #   Instance
       # @return [Array<Symbol>] an Array of transition actions to perform
+      # @api private
       def self.actions(last = nil, desired)
         last_index = index(last)
         desired_index = index(desired)
@@ -357,10 +476,13 @@ module Kitchen
         end
       end
 
-      private
-
       TRANSITIONS = [:destroy, :create, :converge, :setup, :verify]
 
+      # Determines the index of a state in the state lifecycle vector. Woah.
+      #
+      # @param transition [Symbol,#to_sym] a state
+      # @param [Integer] the index position
+      # @api private
       def self.index(transition)
         if transition.nil?
           0

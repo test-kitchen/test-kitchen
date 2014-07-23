@@ -36,8 +36,14 @@ Feature: Add Test Kitchen support to an existing project
   Scenario: Running init that creates a Gemfile
     When I successfully run `kitchen init --create-gemfile`
     Then the file "Gemfile" should contain "https://rubygems.org"
-    And the file "Gemfile" should contain "gem 'test-kitchen'"
-    And the file "Gemfile" should contain "gem 'kitchen-vagrant'"
+    And the file "Gemfile" should contain:
+    """
+    gem "test-kitchen"
+    """
+    And the file "Gemfile" should contain:
+    """
+    gem "kitchen-vagrant"
+    """
     And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with an existing Gemfile appends to the Gemfile
@@ -52,8 +58,8 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem 'test-kitchen'
-    gem 'kitchen-vagrant'
+    gem "test-kitchen"
+    gem "kitchen-vagrant"
 
     """
     And the output should contain "You must run `bundle install'"
@@ -64,7 +70,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem "test-kitchen"
+    gem 'test-kitchen'
 
     """
     When I successfully run `kitchen init`
@@ -72,8 +78,8 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem "test-kitchen"
-    gem 'kitchen-vagrant'
+    gem 'test-kitchen'
+    gem "kitchen-vagrant"
 
     """
     And the output should contain "You must run `bundle install'"
@@ -84,8 +90,8 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem "test-kitchen"
-    gem "kitchen-ec2"
+    gem 'test-kitchen'
+    gem 'kitchen-ec2'
 
     """
     When I successfully run `kitchen init --driver=kitchen-ec2`
@@ -93,8 +99,8 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem "test-kitchen"
-    gem "kitchen-ec2"
+    gem 'test-kitchen'
+    gem 'kitchen-ec2'
 
     """
     And the output should not contain "You must run `bundle install'"
@@ -102,8 +108,14 @@ Feature: Add Test Kitchen support to an existing project
   Scenario: Running init with multiple drivers appends to the Gemfile
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
-    Then the file "Gemfile" should contain "gem 'kitchen-bluebox'"
-    And the file "Gemfile" should contain "gem 'kitchen-wakka'"
+    Then the file "Gemfile" should contain:
+    """
+    gem "kitchen-bluebox"
+    """
+    And the file "Gemfile" should contain:
+    """
+    gem "kitchen-wakka"
+    """
     And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with multiple driver sets the plugin_driver to the
@@ -152,10 +164,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Rakefile" should contain:
     """
     begin
-      require 'kitchen/rake_tasks'
+      require "kitchen/rake_tasks"
       Kitchen::RakeTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
     end
     """
 
@@ -171,10 +183,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Thorfile" should contain:
     """
     begin
-      require 'kitchen/thor_tasks'
+      require "kitchen/thor_tasks"
       Kitchen::ThorTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
     end
     """
 

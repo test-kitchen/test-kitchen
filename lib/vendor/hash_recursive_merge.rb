@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 #
 # = Hash Recursive Merge
 #
@@ -24,16 +25,20 @@ module HashRecursiveMerge
   # When both +hsh+ and +other_hash+ contains an entry with the same key,
   # it merges and returns the values from both arrays.
   #
+  # @example
+  #
   #    h1 = {"a" => 100, "b" => 200, "c" => {"c1" => 12, "c2" => 14}}
   #    h2 = {"b" => 254, "c" => {"c1" => 16, "c3" => 94}}
   #    h1.rmerge!(h2)   #=> {"a" => 100, "b" => 254, "c" => {"c1" => 16, "c2" => 14, "c3" => 94}}
   #
   # Simply using Hash#merge! would return
   #
+  # @example
+  #
   #    h1.merge!(h2)    #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
   def rmerge!(other_hash)
-    merge!(other_hash) do |key, oldval, newval|
+    merge!(other_hash) do |_key, oldval, newval|
       oldval.class == self.class ? oldval.rmerge!(newval) : newval
     end
   end
@@ -51,11 +56,15 @@ module HashRecursiveMerge
   # includes the same key, the value is merged instead replaced with
   # +other_hash+ value.
   #
+  # @example
+  #
   #    h1 = {"a" => 100, "b" => 200, "c" => {"c1" => 12, "c2" => 14}}
   #    h2 = {"b" => 254, "c" => {"c1" => 16, "c3" => 94}}
   #    h1.rmerge(h2)    #=> {"a" => 100, "b" => 254, "c" => {"c1" => 16, "c2" => 14, "c3" => 94}}
   #
   # Simply using Hash#merge would return
+  #
+  # @example
   #
   #    h1.merge(h2)     #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
@@ -67,7 +76,6 @@ module HashRecursiveMerge
   end
 
 end
-
 
 class Hash
   include HashRecursiveMerge
