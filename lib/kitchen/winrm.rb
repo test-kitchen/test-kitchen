@@ -74,8 +74,9 @@ module Kitchen
       exit_code, stderr = execute_shell(command, shell)
       if exit_code != 0 || ! stderr.empty?
         raise WinRMFailed,
-          "WinRM exited (#{exit_code}) using shell [#{shell}] for command: [#{command}]\nERROR: "+
-          human_err_msg(stderr.inspect)
+          "WinRM exited (#{exit_code}) using shell [#{shell}] for
+            command: [#{command}]\nREMOTE ERROR:\n" +
+            human_err_msg(stderr.join)
       end
     end
 
@@ -118,7 +119,10 @@ module Kitchen
     end
 
     def human_err_msg(msg)
-      human = msg.inspect.split(/<S S=\\\\\\\"Error\\\\\\\">/).map!{ |a| a.gsub(/_x000D__x000A_<\/S>/,'') }
+      return msg unless msg.include?("CLIXML")
+      human = msg.split(/<S S=\"Error\">/).map! do |a|
+        a.gsub(/_x000D__x000A_<\/S>/,'')
+      end
       human.shift
       human.pop
       human.join("\n")
@@ -179,22 +183,24 @@ module Kitchen
     def should_upload_file?(local, remote)
       local_md5 = Digest::MD5.file(local).hexdigest
       cmd = <<-EOH
-        $dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
+$dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
 
-        if (Test-Path $dest_file_path) {
-          $crypto_prov = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
-          try {
-            $file = [System.IO.File]::Open($dest_file_path, [System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
-            $guest_md5 = ([System.BitConverter]::ToString($crypto_prov.ComputeHash($file))).Replace("-","").ToLower()
-          }
-          finally {
-            $file.Dispose()
-          }
-          if ($guest_md5 -eq '#{local_md5}') {
-            exit 0
-          }
-        }
-        exit 1
+if (Test-Path $dest_file_path) {
+  $crypto_prov = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+  try {
+    $file = [System.IO.File]::Open($dest_file_path,
+      [System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
+    $guest_md5 = ([System.BitConverter]::ToString($crypto_prov.ComputeHash($file)))
+    $guest_md5 = $guest_md5.Replace("-","").ToLower()
+  }
+  finally {
+    $file.Dispose()
+  }
+  if ($guest_md5 -eq '#{local_md5}') {
+    exit 0
+  }
+}
+exit 1
       EOH
       self.powershell(cmd)[:exitcode] == 1
     end
@@ -299,7 +305,6 @@ module Kitchen
     end
 
     def shell_with_exit(command, shell)
-      exit_code = nil
       winrm_err = []
       logger.debug("[WinRM] #{shell} executing:\n#{command}")
       output = session.send(shell, command) do |stdout, stderr|
@@ -334,16 +339,16 @@ module Kitchen
 
     def test_winrm
       begin
-        exitcode, error_msg = shell_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
+        exitcode, _error_msg = shell_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
         exitcode.zero?
-      rescue => e
+      rescue
         sleep 5
         false
       end
     end
 
     def guest_temp_dir
-      @guest_temp ||= (self.cmd('echo %TEMP%'))[:data][0][:stdout].chomp
+      @guest_temp ||= (self.cmd("echo %TEMP%"))[:data][0][:stdout].chomp
     end
   end
 end

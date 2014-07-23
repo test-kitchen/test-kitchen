@@ -54,16 +54,18 @@ module Kitchen
         provisioner && provisioner.cleanup_sandbox
       end
 
+      # (see Base#setup)
       def setup(state)
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(busser_setup_cmd_posh, conn)
+          run_remote(busser.setup_cmd_posh, conn)
         end
       end
 
+      # (see Base#verify)
       def verify(state)
         Kitchen::WinRM.new(*build_winrm_args(state)) do |conn|
-          run_remote(busser_sync_cmd_posh, conn)
-          run_remote(busser_run_cmd_posh, conn)
+          run_remote(busser.sync_cmd_posh, conn)
+          run_remote(busser.run_cmd_posh, conn)
         end
       end
 
