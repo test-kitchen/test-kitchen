@@ -73,11 +73,19 @@ run through all the instances in serial by running:
 $ kitchen test
 ```
 
+## Usage
+
 There is help included with the `kitchen help` subcommand which will list all
 subcommands and their usage:
 
 ```
 $ kitchen help test
+```
+
+More verbose logging (for both test-kitchen and the chef-solo/chef-zero provisioners) can be specified when running test-kitchen form the command line using:
+
+```
+$ kitchen test -l debug
 ```
 
 ## Documentation
