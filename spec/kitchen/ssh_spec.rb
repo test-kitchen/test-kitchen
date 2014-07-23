@@ -51,6 +51,27 @@ def with_sorted_dir_entries
   end
 end
 
+# Terrible hack to deal with Net::SSH:Test::Extensions which monkey patches
+# `IO.select` with a version for testing Net::SSH code. Unfortunetly this
+# impacts other code, so we'll "un-patch" this after each spec and "re-patch"
+# it before the next one.
+
+def depatch_io
+  IO.class_exec do
+    class << self
+      alias_method :select, :select_for_real
+    end
+  end
+end
+
+def repatch_io
+  IO.class_exec do
+    class << self
+      alias_method :select, :select_for_test
+    end
+  end
+end
+
 # Major hack-and-a-half to add basic `Channel#request_pty` support to
 # Net::SSH's testing framework. The `Net::SSH::Test::LocalPacket` does not
 # recognize the `"pty-req"` request type, so bombs out whenever this channel
@@ -102,9 +123,14 @@ describe Kitchen::SSH do
   let(:conn)          { connection }
 
   before do
+    repatch_io
     logger.level = Logger::DEBUG
     opts[:logger] = logger
     Net::SSH.stubs(:start).returns(conn)
+  end
+
+  after do
+    depatch_io
   end
 
   describe "establishing a connection" do
