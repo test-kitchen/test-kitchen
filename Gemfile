@@ -4,5 +4,6 @@ gemspec
 group :guard do
   gem 'guard-minitest'
   gem 'guard-cucumber', '~> 1.4'
+  gem 'guard-rubocop'
   gem 'guard-yard'
 end
