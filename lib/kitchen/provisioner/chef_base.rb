@@ -96,6 +96,7 @@ module Kitchen
           chef_src = "/tmp/src/chef"
           install_dir = "/opt/chef"
           install_string << download_chef_from_github(git_url, git_sha, chef_src)
+          install_string << install_gcc
           install_string << build_gem_and_install(chef_src, install_dir)
         end
 
@@ -429,18 +430,38 @@ module Kitchen
         TARBALL
       end
 
+      def install_gcc
+        <<-GCC.gsub(/^ {10}/, '')
+          echo "------ Installing gcc and make so we can build native gems"
+          if exists yum; then
+            echo "trying yum..."
+            #{sudo("yum")} install -qy gcc
+            #{sudo("yum")} install -qy make
+          elif exists apt-get; then
+            echo "trying apt-get..."
+            #{sudo("apt-get")} update
+            #{sudo("apt-get")} install -qy gcc
+            #{sudo("apt-get")} install -qy make
+          else
+            echo ">>>>>> apt-get or yum not found on this instance"
+          fi
+        GCC
+      end
+
       def build_gem_and_install(src_dir, install_dir)
         <<-GEMBUILD.gsub(/^ {10}/, '')
           export chef_bin=/opt/chef/embedded/bin
           export PATH=$chef_bin:$PATH
           #{sudo("chown -R $USER #{src_dir}")}
 
+
+          echo "------ Building chef gem from local source"
           cd #{src_dir}
-          bundle install --gemfile=#{src_dir}/Gemfile --quiet
+          bundle install --quiet
           bundle exec rake gem --quiet
 
           echo "------ Uninstalling previously installed chef gem and removing executables"
-          #{sudo("$chef_bin/gem")} uninstall chef -qIx --no-verbose
+          #{sudo("$chef_bin/gem")} uninstall chef -aIxq --no-verbose
 
           echo "------ Installing chef from locally built gem"
           #{sudo("rm")} -f pkg/chef-*-x86-mingw32.gem
