@@ -174,7 +174,7 @@ module Kitchen
       # @api private
       def format_config_file(data)
         data.each.map { |attr, value|
-          [attr, (value.is_a?(Array) ? value.to_s : %{"#{value}"})].join(" ")
+          [attr, value.inspect].join(" ")
         }.join("\n")
       end
 

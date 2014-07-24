@@ -173,6 +173,44 @@ describe Kitchen::Provisioner::ChefSolo do
 
         file.must_include %{dark_secret "golang"}
       end
+
+      it "formats array values correctly" do
+        config[:solo_rb] = {
+          :foos => %w[foo1 foo2]
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foos ["foo1", "foo2"]}
+      end
+
+      it "formats integer values correctly" do
+        config[:solo_rb] = {
+          :foo => 7
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo 7}
+      end
+
+      it "formats symbol values correctly" do
+        config[:solo_rb] = {
+          :foo => :bar
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo :bar}
+      end
+
+      it "formats boolean values correctly" do
+        config[:solo_rb] = {
+          :foo => false,
+          :bar => true
+        }
+        provisioner.create_sandbox
+
+        file.must_include %{foo false}
+        file.must_include %{bar true}
+      end
     end
 
     def sandbox_path(path)
