@@ -263,14 +263,22 @@ describe Kitchen::Provisioner::ChefSolo do
         " --json-attributes /booyah/dna.json", :partial_line)
     end
 
-    it "sets log level flag on chef-solo" do
-      cmd.must_match regexify(" --log_level info", :partial_line)
+    it "sets log level flag on chef-solo to auto by default" do
+      cmd.must_match regexify(" --log_level auto", :partial_line)
     end
 
     it "set log level flag for custom level" do
       config[:log_level] = :extreme
 
       cmd.must_match regexify(" --log_level extreme", :partial_line)
+    end
+
+    it "sets force formatter flag on chef-solo" do
+      cmd.must_match regexify(" --force-formatter", :partial_line)
+    end
+
+    it "sets no color flag on chef-solo" do
+      cmd.must_match regexify(" --no-color", :partial_line)
     end
 
     it "does not set logfile flag by default" do
