@@ -193,6 +193,41 @@ describe Kitchen::Logger do
           colorize("       vanilla", opts[:color]) + "\n"
         )
       end
+
+      it "message with line that is not newline terminated will be buffered" do
+        logger << [
+          "-----> banner",
+          "       info",
+          "partial"
+        ].join("\n")
+
+        stdout.string.must_equal(
+          colorize("-----> banner", opts[:color]) + "\n" +
+          colorize("       info", opts[:color]) + "\n"
+        )
+      end
+
+      it "logger with buffered data will flush on next message with newline" do
+        logger << "partial"
+        logger << "ly\nokay\n"
+
+        stdout.string.must_equal(
+          colorize("       partially", opts[:color]) + "\n" +
+          colorize("       okay", opts[:color]) + "\n"
+        )
+      end
+
+      it "logger chomps carriage return characters" do
+        logger << [
+          "-----> banner\r",
+          "vanilla\r"
+        ].join("\n").concat("\n")
+
+        stdout.string.must_equal(
+          colorize("-----> banner", opts[:color]) + "\n" +
+          colorize("       vanilla", opts[:color]) + "\n"
+        )
+      end
     end
   end
 
