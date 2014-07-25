@@ -23,21 +23,21 @@
 if defined?(WinRM).nil?
   verbose_bk = $VERBOSE
   $VERBOSE = nil
-  require 'winrm'
+  require "winrm"
   $VERBOSE = verbose_bk
 end
 
-require 'logger'
+require "logger"
 
-require 'kitchen/errors'
-require 'kitchen/login_command'
+require "kitchen/errors"
+require "kitchen/login_command"
 
 module Kitchen
 
   # Wrapped exception for any internally raised WinRM-related errors.
   #
   # @author Salim Afiune <salim@afiunemaya.com.mx>
-  class WinRMFailed < TransientFailure ; end
+  class WinRMFailed < TransientFailure; end
 
   # Class to help establish WinRM connections, issue remote commands, and
   # transfer files between a local system and remote node.
@@ -72,7 +72,7 @@ module Kitchen
     def exec(command, shell = :powershell)
       logger.debug("[WinRM] #{self}, shell => #{shell}, (#{command})")
       exit_code, stderr = execute_shell(command, shell)
-      if exit_code != 0 || ! stderr.empty?
+      if exit_code != 0 || !stderr.empty?
         raise WinRMFailed,
           "WinRM exited (#{exit_code}) using shell [#{shell}] for
             command: [#{command}]\nREMOTE ERROR:\n" +
@@ -97,7 +97,7 @@ module Kitchen
       return if @session.nil?
       logger.debug("[WinRM] closing connection to #{self}")
       # No needed as WinRM automatically open/close the shell.
-      # => https://github.com/WinRb/WinRM/blob/master/lib/winrm/winrm_service.rb#L205
+      # => https://github.com/WinRb/WinRM/blob/master/lib/winrm/winrm_service.rb L205
     ensure
       @session = nil
     end
@@ -121,7 +121,7 @@ module Kitchen
     def human_err_msg(msg)
       return msg unless msg.include?("CLIXML")
       human = msg.split(/<S S=\"Error\">/).map! do |a|
-        a.gsub(/_x000D__x000A_<\/S>/,'')
+        a.gsub(/_x000D__x000A_<\/S>/, "")
       end
       human.shift
       human.pop
@@ -202,7 +202,7 @@ if (Test-Path $dest_file_path) {
 }
 exit 1
       EOH
-      self.powershell(cmd)[:exitcode] == 1
+      powershell(cmd)[:exitcode] == 1
     end
 
     def port
@@ -214,11 +214,11 @@ exit 1
     # @param [String] The source file path on the host
     # @return [String] The temp file path on the guest
     def upload_to_temp_file(local)
-      tmp_file_path = File.join(guest_temp_dir, "winrm-upload-#{rand()}")
+      tmp_file_path = File.join(guest_temp_dir, "winrm-upload-#{rand}")
       logger.debug("Uploading '#{local}' to temp file '#{tmp_file_path}'")
-      base64_host_file = Base64.encode64(IO.binread(local)).gsub("\n",'')
-      base64_host_file.chars.to_a.each_slice(8000-tmp_file_path.size) do |chunk|
-        output = self.cmd("echo #{chunk.join} >> \"#{tmp_file_path}\"")
+      base64_host_file = Base64.encode64(IO.binread(local)).gsub("\n", "")
+      base64_host_file.chars.to_a.each_slice(8000 - tmp_file_path.size) do |chunk|
+        output = cmd("echo #{chunk.join} >> \"#{tmp_file_path}\"")
         raise_upload_error_if_failed(output, local, tmp_file_path)
       end
       tmp_file_path
@@ -229,7 +229,7 @@ exit 1
     # @param [String] The source file or directory path on the host
     # @param [String] The destination file or directory path on the host
     def upload_directory(local, remote)
-      glob_patt = File.join(local, '**/*')
+      glob_patt = File.join(local, "**/*")
       Dir.glob(glob_patt).select { |f| !File.directory?(f) }.each do |local_file_path|
         remote_file_path = remote_file_path(local, remote, local_file_path)
         upload_file(local_file_path, remote_file_path)
@@ -243,7 +243,7 @@ exit 1
     # @param [String] The destination file path on the guest
     def decode_temp_file(local, remote)
       logger.debug("Decoding temp file '#{local}' to '#{remote}'")
-      output = self.powershell <<-EOH
+      output = powershell <<-EOH
         $tmp_file_path = [System.IO.Path]::GetFullPath('#{local}')
         $dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
 
@@ -290,7 +290,7 @@ exit 1
       [endpoint, :plaintext, opts]
     end
 
-    def execute_shell(command, shell=:powershell)
+    def execute_shell(command, shell = :powershell)
       raise WinRMFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
       begin
         shell_with_exit(command, shell)
@@ -338,17 +338,15 @@ exit 1
     end
 
     def test_winrm
-      begin
-        exitcode, _error_msg = shell_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
-        exitcode.zero?
+      exitcode, _error_msg = shell_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
+      exitcode.zero?
       rescue
-        sleep 5
-        false
-      end
+      sleep 5
+      false
     end
 
     def guest_temp_dir
-      @guest_temp ||= (self.cmd("echo %TEMP%"))[:data][0][:stdout].chomp
+      @guest_temp ||= (cmd("echo %TEMP%"))[:data][0][:stdout].chomp
     end
   end
 end

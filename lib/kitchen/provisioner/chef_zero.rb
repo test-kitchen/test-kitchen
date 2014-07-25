@@ -91,7 +91,7 @@ module Kitchen
           args << "--logfile #{config[:log_file]}"
         end
 
-        # TODO: We definitely need to put more logic on this!!!
+        # TODO: We definitely need to put more logic on this.
         # Util.wrap_command([cmd, *args].join(" "))
         [cmd, *args].join(" ")
       end

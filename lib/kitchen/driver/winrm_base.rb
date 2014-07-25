@@ -31,7 +31,7 @@ module Kitchen
       default_config :sudo, false
       default_config :port, 5985
 
-      def create(state)
+      def create(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#create must be implemented"
       end
 
@@ -39,7 +39,7 @@ module Kitchen
         provisioner = instance.provisioner
 
         # Override sudo config if NOT equals to default for Windows
-        provisioner.sudo=config[:sudo] if provisioner[:sudo] != config[:sudo]
+        provisioner.sudo = config[:sudo] if provisioner[:sudo] != config[:sudo]
 
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
@@ -69,7 +69,7 @@ module Kitchen
         end
       end
 
-      def destroy(state)
+      def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
@@ -111,12 +111,12 @@ module Kitchen
         env == "" ? cmd : "#{env} #{cmd}"
       end
 
-      def run_remote(command, connection, stdout=true)
+      def run_remote(command, connection, stdout = true)
         return if command.nil?
 
         stdout ? connection.exec(env_cmd(command)) : connection.powershell(env_cmd(command))
       rescue WinRMFailed, WinRM::WinRMHTTPTransportError,
-        WinRM::WinRMAuthorizationError, WinRM::WinRMWebServiceError => ex
+      WinRM::WinRMAuthorizationError, WinRM::WinRMWebServiceError => ex
         raise ActionFailed, ex.message
       end
 
@@ -127,7 +127,7 @@ module Kitchen
         locals.each { |local| connection.upload!(local, remote) }
         debug("Transfer complete")
       rescue WinRMFailed, ::WinRM::WinRMHTTPTransportError,
-        ::WinRM::WinRMAuthorizationError, ::WinRM::WinRMWebServiceError => ex
+      ::WinRM::WinRMAuthorizationError, ::WinRM::WinRMWebServiceError => ex
         raise ActionFailed, ex.message
       end
 

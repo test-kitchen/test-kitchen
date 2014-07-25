@@ -127,8 +127,8 @@ module Kitchen
           gem install #{gem_install_args} }"
         # We have to modify Busser::Setup to work with PowerShell
         # setup_cmd_posh << "&\"$env:SYSTEMDRIVE/tmp/busser/gems/bin/busser\" setup"
-        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(' ')}"
-        setup_cmd_posh.join('; ')
+        setup_cmd_posh << "#{config[:busser_bin]} plugin install #{plugins.join(" ")}"
+        setup_cmd_posh.join("; ")
       end
     end
 

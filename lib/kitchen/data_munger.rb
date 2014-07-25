@@ -86,6 +86,22 @@ module Kitchen
     end
 
     # Generate a new Hash of configuration data that can be used to construct
+    # a new Transport object.
+    #
+    # @param suite [String] a suite name
+    # @param platform [String] a platform name
+    # @return [Hash] a new configuration Hash that can be used to construct a
+    #   new Transport
+    def transport_data_for(suite, platform)
+      merged_data_for(:transport, suite, platform).tap do |tdata|
+        set_kitchen_config_at!(tdata, :kitchen_root)
+        set_kitchen_config_at!(tdata, :test_base_path)
+        set_kitchen_config_at!(tdata, :log_level)
+        combine_arrays!(tdata, :run_list, :platform, :suite)
+      end
+    end
+
+    # Generate a new Hash of configuration data that can be used to construct
     # a new Provisioner object.
     #
     # @param suite [String] a suite name
@@ -119,7 +135,7 @@ module Kitchen
     attr_reader :kitchen_config
 
     def override_busser_guest_param!(root, driver)
-      if driver.has_key?(:guest)
+      if driver.key?(:guest)
         case driver.fetch(:guest)
         when ":windows"
           root[:sudo] = false
