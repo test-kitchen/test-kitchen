@@ -37,10 +37,14 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
+        level = config[:log_level] == :info ? :auto : config[:log_level]
+
         cmd = sudo("chef-solo")
         args = [
           "--config #{config[:root_path]}/solo.rb",
-          "--log_level #{config[:log_level]}",
+          "--log_level #{level}",
+          "--force-formatter",
+          "--no-color",
           "--json-attributes #{config[:root_path]}/dna.json"
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]

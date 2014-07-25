@@ -301,7 +301,15 @@ module Kitchen
       #
       # @param msg [String] a message
       def <<(msg)
-        msg =~ /\n/ ? msg.split("\n").each { |l| format_line(l) } : super
+        @buffer ||= ""
+        lines, _, remainder = msg.rpartition("\n")
+        if lines.empty?
+          @buffer << remainder
+        else
+          lines.insert(0, @buffer)
+          lines.split("\n").each { |l| format_line(l.chomp) }
+          @buffer = ""
+        end
       end
 
       # Log a banner message.
