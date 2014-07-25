@@ -406,7 +406,7 @@ describe Kitchen::SSH do
     end
 
     it "logs upload progress to debug" do
-      remote_base = "/tmp/#{File.basename(@dir)}"
+      # remote_base = "/tmp/#{File.basename(@dir)}"
 
       with_sorted_dir_entries do
         assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }

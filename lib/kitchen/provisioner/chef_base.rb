@@ -90,7 +90,8 @@ module Kitchen
         # If we have the default URL for UNIX then we change it for the Windows version.
         if config[:chef_omnibus_url].eql?("https://www.getchef.com/chef/install.sh")
           url = "http://www.getchef.com/chef/install.msi"
-        else # else we use the one that comes from .kitchen.yml
+        else
+          # We use the one that comes from kitchen.yml
           url = config[:chef_omnibus_url]
         end
 
@@ -102,9 +103,9 @@ module Kitchen
         end
 
         # Use Powershell to give kind of Progress Status
-        # Note: We use SYSTEMDRIVE because if we use TEMP
+        # NOTE We use SYSTEMDRIVE because if we use TEMP
         # the installation fails.
-        <<-INSTALL.gsub(/^ {10}/, '')
+        <<-INSTALL.gsub(/^ {10}/, "")
 $chef_msi = $env:systemdrive + "\\chef.msi"
 
 Function install_chef {
@@ -150,7 +151,7 @@ If (-Not (is_chef_installed) -or (should_update_chef)) { install_chef }
       # @author Salim Afiune <salim@afiunemaya.com.mx>
       def init_command_posh
         cmd = ""
-        %w{data data_bags environments roles clients}.map do |dir|
+        %w[data data_bags environments roles clients].map do |dir|
           path = File.join(config[:root_path], dir)
           cmd += "if ( Test-Path #{path} ) { rm -r #{path} };"
         end

@@ -64,6 +64,10 @@ module Kitchen
     #   automation tools
     attr_reader :provisioner
 
+    # @return [Transport::Base] transport object which will communicate with 
+    # an instance.
+    attr_reader :transport
+
     # @return [Busser] busser object for instance to manage the busser
     #   installation on this instance
     attr_reader :busser
@@ -78,6 +82,7 @@ module Kitchen
     # @option options [Platform] :platform the platform (**Required**)
     # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
+    # @option options [Transport::Base] :transport the transport
     #   (**Required**)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
@@ -93,6 +98,7 @@ module Kitchen
       @name         = self.class.name_for(@suite, @platform)
       @driver       = options.fetch(:driver)
       @provisioner  = options.fetch(:provisioner)
+      @transport    = options.fetch(:transport)
       @busser       = options.fetch(:busser)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
@@ -213,7 +219,9 @@ module Kitchen
     #
     # @param command [String] a command string to execute
     def remote_exec(command)
-      driver.remote_command(state_file.read, command)
+      @transport.connection(state_file.read) do |conn|
+        conn.execute(command)
+      end
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.

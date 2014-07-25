@@ -37,14 +37,6 @@ module Kitchen
     # @raise [ClientError] if a driver instance could not be created
     # @raise [UserError] if the driver's dependencies could not be met
     def self.for_plugin(plugin, config)
-      # What protocol should we load for the instance.
-      #
-      # If @param [:guest] exist into .kitchen.yml
-      # then we use the specific protocol from the driver.
-      #
-      # @author Salim Afiune <salim@afiunemaya.com.mx>
-      plugin = "#{plugin}_#{config[:guest].tr(":","")}" unless config[:guest].nil?
-
       first_load = require("kitchen/driver/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
