@@ -176,6 +176,14 @@ module Kitchen
       def load_needed_dependencies!
       end
 
+      # @return [Transport.shell] the transport desired shell for this instance 
+      # This would help us know which commands to use. Bourne, Powershell, etc.
+      #
+      # @api private
+      def shell
+        instance.transport.shell
+      end
+
       # @return [Logger] the instance's logger or Test Kitchen's common logger
       #   otherwise
       # @api private

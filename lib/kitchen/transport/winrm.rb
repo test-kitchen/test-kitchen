@@ -43,6 +43,7 @@ module Kitchen
     class Winrm < Kitchen::Transport::Base
       
       default_config :sudo, false
+      default_config :shell, "powershell"
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
@@ -54,6 +55,25 @@ module Kitchen
               command: [#{command}]\nREMOTE ERROR:\n" +
               human_err_msg(stderr.join)
         end
+      end
+
+# Simple function that will help us running a command with an 
+      # specific shell without printing the output to the end user.
+      #
+      # @param command [String] The command to execute 
+      # @param shell[String] The destination file path on the guest
+      # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
+      
+      def powershell(command)
+        run(command, :powershell)
+      end
+
+      def cmd(command)
+        run(command, :cmd)
+      end
+
+      def wql(query)
+        run(query, :wql)
       end
 
       # (see Base#upload!)
@@ -85,7 +105,15 @@ module Kitchen
       #   We have to implement this opening RDP on Windows and MAC
       # end
 
+      # (see Base#default_port)
+      def default_port
+        DEFAULT_PORT
+      end
+      
       private
+      
+      DEFAULT_PORT = 5985
+
 
       # (see Base#establish_connection)
       def establish_connection
@@ -129,17 +157,17 @@ module Kitchen
 
       # (see Base#port)
       def port
-        options.fetch(:port, 5985)
+        options.fetch(:port, @default_port)
       end
 
       # (see Base#execute_with_exit)
       def execute_with_exit(command, shell = :powershell)
-        raise WinRMFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
+        raise TransportFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
         winrm_err = []
         logger.debug("[#{self.class}] #{shell} executing:\n#{command}")
         begin
           output = session.send(shell, command) do |stdout, stderr|
-            info(stdout) if stdout
+            logger << stdout if stdout
             winrm_err << stderr if stderr
           end
         rescue => e
@@ -148,6 +176,23 @@ module Kitchen
         end
         logger.debug("Output: #{output.inspect}")
         [output[:exitcode], winrm_err]
+      end
+
+      # Simple function that will help us running a command with an 
+      # specific shell without printing the output to the end user.
+      #
+      # @param command [String] The command to execute 
+      # @param shell[String] The destination file path on the guest
+      # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
+      def run(command, shell)
+        raise TransportFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
+        logger.debug("[#{self.class}] #{shell} running:\n#{command}")
+        begin
+          session.send(shell, command)
+        rescue => e
+          raise TransportFailed, 
+            "[#{self.class}] #{e.message} using shell: [#{shell}] and command: [#{command}]"
+        end
       end
 
       # (see Base#env_command)
@@ -182,9 +227,9 @@ module Kitchen
 
       # Build the WinRM options to connect
       #
-      # @param endpoint [String] 
-      # @param [String] The destination file path on the guest
-      # @param options [Hash] 
+      # @return endpoint [String] Information about the host and port
+      # @return connection_type [String] Plaintext 
+      # @return options [Hash] Necesary options to connect to the remote host
       def build_winrm_options
         opts = Hash.new
 
@@ -194,6 +239,8 @@ module Kitchen
         opts[:port] = port
         opts[:operation_timeout] = timeout_in_seconds
         opts[:basic_auth_only] = true
+        opts[:disable_sspi] = true
+
         [endpoint, :plaintext, opts]
       end
 
@@ -306,7 +353,7 @@ exit 1
       end
 
       def raise_upload_error_if_failed(output, from, to)
-        raise WinRMFailed,
+        raise TransportFailed,
           :from => from,
           :to => to,
           :message => output.inspect if output[:exitcode] != 0
