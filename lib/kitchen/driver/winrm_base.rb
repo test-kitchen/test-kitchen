@@ -104,7 +104,8 @@ module Kitchen
       end
 
       def env_cmd(cmd)
-        env = ""
+        #The progress strean may get sent to stderr, so turn it off
+        env = "$ProgressPreference=\"SilentlyContinue\";"
         env << " $env:http_proxy=\"#{config[:http_proxy]}\";"   if config[:http_proxy]
         env << " $env:https_proxy=\"#{config[:https_proxy]}\";" if config[:https_proxy]
 
