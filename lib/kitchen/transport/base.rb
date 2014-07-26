@@ -38,6 +38,8 @@ module Kitchen
       include Configurable
       include Logging
 
+      @default_port = 1234
+
       # Create a new Transport object using the provided configuration data
       # which will be merged with any default configuration.
       #
@@ -121,7 +123,27 @@ module Kitchen
         logger.info("Waiting for #{hostname}:#{port}...") until test_connection
       end
 
+      # Returns the desired shell to use. 
+      # Let's see if this help for the Provisioner to chose the right code
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @return [LoginCommand] an object containing the array of command line
+      #   tokens and exec options to be used in a fork/exec
+      # @raise [ActionFailed] if the action could not be completed
+      def shell
+        config.fetch(:shell, nil)
+      end
+
+      # This will function as a guideline when nobody set the port
+      # 
+      # @return [Integer] Default port for this transport.
+      def default_port
+        DEFAULT_PORT
+      end
+
       private
+
+      DEFAULT_PORT = nil
 
       # @return [String] the remote hostname
       # @api private
@@ -157,7 +179,7 @@ module Kitchen
       # @return [Integer] Transport port
       # @api private
       def port
-        options.fetch(:port, nil)
+        options.fetch(:port, config[:port])
       end
 
       # String representation of object, reporting its connection details and

@@ -32,6 +32,7 @@ module Kitchen
     class Ssh < Kitchen::Transport::Base
       
       default_config :sudo, true
+      default_config :shell, "bourne"
 
       # (see Base#execute)
       def execute(command)
@@ -85,9 +86,16 @@ module Kitchen
 
         LoginCommand.new(["ssh", *args])
       end
+      
+      # (see Base#default_port)
+      def default_port
+        DEFAULT_PORT
+      end
 
       private
-      
+
+      DEFAULT_PORT = 22
+
       # TCP socket exceptions
       SOCKET_EXCEPTIONS = [
         SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH,
@@ -121,7 +129,7 @@ module Kitchen
 
       # (see Base#port)
       def port
-        options.fetch(:port, 22)
+        options.fetch(:port, @default_port)
       end
 
       # (see Base#execute_with_exit)

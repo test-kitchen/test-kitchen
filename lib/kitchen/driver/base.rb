@@ -214,9 +214,17 @@ module Kitchen
 
       # Returns the Transport object associated with the driver.
       #
-      # @return [Busser] a busser
+      # @return [Transport] a transport
       def transport
         instance.transport
+      end
+
+      # Returns the Transport Default Port associated with the driver.
+      # Just in case the driver need to know it to get the new one.
+      #
+      # @return [Number] a port
+      def default_port
+        transport.default_port
       end
     end
   end
