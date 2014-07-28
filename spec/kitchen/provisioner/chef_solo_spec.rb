@@ -302,7 +302,7 @@ describe Kitchen::Provisioner::ChefSolo do
     describe "config value for :chef_path is passed to instance" do
       let(:config) do
         config = Hash.new
-        config[:chef_path] = '/test'
+        config[:chef_path] = "/test"
         config
       end
       let(:provisioner) do
@@ -311,21 +311,20 @@ describe Kitchen::Provisioner::ChefSolo do
       it "prepends value of :chef_path to command 'chef-solo'" do
         provisioner.run_command.must_match(/(sudo -E )?#{provisioner[:chef_path]}\/chef-solo/)
       end
-
-
     end
 
     describe "config value for :chef_path is passed to instance containing a trailing slash" do
       let(:config) do
         config = Hash.new
-        config[:chef_path] = '/test/'
+        config[:chef_path] = "/test/"
         config
       end
       let(:provisioner) do
         Kitchen::Provisioner::ChefSolo.new(config)
       end
       it "removes a trailing slash in config key :chef_path before prepending it"  do
-        provisioner.run_command.must_match(/(sudo -E )?#{provisioner[:chef_path].gsub(/\/$/,'')}\/chef-solo/)
+        path_without_slash = provisioner[:chef_path].gsub(/\/$/, "")
+        provisioner.run_command.must_match(/(sudo -E )?#{path_without_slash}\/chef-solo/)
       end
     end
   end
