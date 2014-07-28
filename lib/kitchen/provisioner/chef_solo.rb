@@ -28,6 +28,7 @@ module Kitchen
     class ChefSolo < ChefBase
 
       default_config :solo_rb, {}
+      default_config :chef_path, nil
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -37,10 +38,17 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        cmd = sudo("chef-solo")
+        level = config[:log_level] == :info ? :auto : config[:log_level]
+
+        cmd = sudo("chef-solo");
+        unless config[:chef_path].nil?
+          cmd = sudo("#{config[:chef_path].gsub(/\/$/,'')}/chef-solo")
+        end
         args = [
           "--config #{config[:root_path]}/solo.rb",
-          "--log_level #{config[:log_level]}",
+          "--log_level #{level}",
+          "--force-formatter",
+          "--no-color",
           "--json-attributes #{config[:root_path]}/dna.json"
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]

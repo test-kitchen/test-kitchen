@@ -401,14 +401,22 @@ describe Kitchen::Provisioner::ChefZero do
         cmd.must_match regexify(" --config /a/b/client.rb", :partial_line)
       end
 
-      it "sets log level flag on chef-client" do
-        cmd.must_match regexify(" --log_level info", :partial_line)
+      it "sets log level flag on chef-client to auto by default" do
+        cmd.must_match regexify(" --log_level auto", :partial_line)
       end
 
       it "set log level flag for custom level" do
         config[:log_level] = :extreme
 
         cmd.must_match regexify(" --log_level extreme", :partial_line)
+      end
+
+      it "sets force formatter flag on chef-solo" do
+        cmd.must_match regexify(" --force-formatter", :partial_line)
+      end
+
+      it "sets no color flag on chef-solo" do
+        cmd.must_match regexify(" --no-color", :partial_line)
       end
 
       it "sets chef zero port flag on chef-client" do
@@ -501,14 +509,22 @@ describe Kitchen::Provisioner::ChefZero do
         cmd.must_match regexify(" --config /a/b/client.rb", :partial_line)
       end
 
-      it "sets log level flag on chef-client" do
-        cmd.must_match regexify(" --log_level info", :partial_line)
+      it "sets log level flag on chef-client to auto by default" do
+        cmd.must_match regexify(" --log_level auto", :partial_line)
       end
 
       it "set log level flag for custom level" do
         config[:log_level] = :extreme
 
         cmd.must_match regexify(" --log_level extreme", :partial_line)
+      end
+
+      it "sets force formatter flag on chef-solo" do
+        cmd.must_match regexify(" --force-formatter", :partial_line)
+      end
+
+      it "sets no color flag on chef-solo" do
+        cmd.must_match regexify(" --no-color", :partial_line)
       end
 
       it "sets json attributes flag on chef-client" do

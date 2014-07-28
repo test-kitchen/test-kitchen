@@ -62,10 +62,14 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
+        level = config[:log_level] == :info ? :auto : config[:log_level]
+
         cmd = modern? ? "#{sudo("chef-client")} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
-          "--log_level #{config[:log_level]}"
+          "--log_level #{level}",
+          "--force-formatter",
+          "--no-color"
         ]
         if config[:chef_zero_port]
           args <<  "--chef-zero-port #{config[:chef_zero_port]}"
