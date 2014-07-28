@@ -18,4 +18,6 @@ tmp
 .rvmrc
 .rbenv-version
 .ruby-version
+.ruby-gemset
 .project
+.idea
