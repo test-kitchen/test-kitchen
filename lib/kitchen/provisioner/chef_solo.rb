@@ -42,7 +42,7 @@ module Kitchen
 
         cmd = sudo("chef-solo");
         unless config[:chef_path].nil?
-          cmd = sudo("#{config[:chef_path].gsub(/\/$/,'')}/chef-solo")
+          cmd = sudo("#{config[:chef_path].gsub(/\/$/, "")}/chef-solo")
         end
         args = [
           "--config #{config[:root_path]}/solo.rb",
