@@ -47,6 +47,14 @@ describe Kitchen::Provisioner::ChefSolo do
     it "sets :solo_rb to an empty Hash" do
       provisioner[:solo_rb].must_equal Hash.new
     end
+
+    it "supports config key :chef_path" do
+      provisioner.config_keys.must_include(:chef_path)
+    end
+
+    it "sets :chef_path to nil" do
+      provisioner
+    end
   end
 
   describe "#create_sandbox" do
@@ -289,6 +297,35 @@ describe Kitchen::Provisioner::ChefSolo do
       config[:log_file] = "/a/out.log"
 
       cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
+    end
+
+    describe "config value for :chef_path is passed to instance" do
+      let(:config) do
+        config = Hash.new
+        config[:chef_path] = "/test"
+        config
+      end
+      let(:provisioner) do
+        Kitchen::Provisioner::ChefSolo.new(config)
+      end
+      it "prepends value of :chef_path to command 'chef-solo'" do
+        provisioner.run_command.must_match(/(sudo -E )?#{provisioner[:chef_path]}\/chef-solo/)
+      end
+    end
+
+    describe "config value for :chef_path is passed to instance containing a trailing slash" do
+      let(:config) do
+        config = Hash.new
+        config[:chef_path] = "/test/"
+        config
+      end
+      let(:provisioner) do
+        Kitchen::Provisioner::ChefSolo.new(config)
+      end
+      it "removes a trailing slash in config key :chef_path before prepending it"  do
+        path_without_slash = provisioner[:chef_path].gsub(/\/$/, "")
+        provisioner.run_command.must_match(/(sudo -E )?#{path_without_slash}\/chef-solo/)
+      end
     end
   end
 
