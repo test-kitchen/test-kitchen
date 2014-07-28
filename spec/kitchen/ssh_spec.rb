@@ -318,7 +318,7 @@ describe Kitchen::SSH do
     end
 
     before do
-      expect_scp_session("-t #{Dir.tmpdir}/remote") do |channel|
+      expect_scp_session("-t /tmp/remote") do |channel|
         channel.gets_data("\0")
         channel.sends_data("C0755 1234 #{File.basename(src.path)}\n")
         channel.gets_data("\0")
@@ -334,13 +334,13 @@ describe Kitchen::SSH do
 
     it "uploads a file to remote over scp" do
       assert_scripted do
-        ssh.upload!(src.path, "#{Dir.tmpdir}/remote")
+        ssh.upload!(src.path, "/tmp/remote")
       end
     end
 
     it "logs upload progress to debug" do
       assert_scripted do
-        ssh.upload!(src.path, "#{Dir.tmpdir}/remote")
+        ssh.upload!(src.path, "/tmp/remote")
       end
 
       logged_output.string.must_match debug_line(
@@ -366,7 +366,7 @@ describe Kitchen::SSH do
       File.open("#{@dir}/zulu", "wb") { |f| f.write("zulu-contents\n") }
       FileUtils.chmod(0444, "#{@dir}/zulu")
 
-      expect_scp_session("-t -r #{Dir.tmpdir}/remote") do |channel|
+      expect_scp_session("-t -r /tmp/remote") do |channel|
         channel.gets_data("\0")
         channel.sends_data("D0700 0 #{File.basename(@dir)}\n")
         channel.gets_data("\0")
@@ -400,15 +400,15 @@ describe Kitchen::SSH do
 
     it "uploads a file to remote over scp" do
       with_sorted_dir_entries do
-        assert_scripted { ssh.upload_path!(@dir, "#{Dir.tmpdir}/remote") }
+        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
       end
     end
 
     it "logs upload progress to debug" do
-      remote_base = "#{Dir.tmpdir}/#{File.basename(@dir)}"
+      remote_base = "/tmp/#{File.basename(@dir)}"
 
       with_sorted_dir_entries do
-        assert_scripted { ssh.upload_path!(@dir, "#{Dir.tmpdir}/remote") }
+        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
       end
 
       logged_output.string.must_match debug_line(
