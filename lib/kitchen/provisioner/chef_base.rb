@@ -91,11 +91,22 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+        case shell
+        when 'bourne'
+	        dirs = %w[cookbooks data data_bags environments roles clients].
+	          map { |dir| File.join(config[:root_path], dir) }.join(" ")
+        	lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+        when 'powershell'
+        	dirs = %w[data data_bags environments roles clients].map do |dir|
+	          path = File.join(config[:root_path], dir)
+	          cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
+	        end
+        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir -p #{config[:root_path]} }"]
+        else 
+          raise "Unsupported shell: #{shell}"
+        end
 
-        Util.wrap_command(lines.join("\n"))
+        Util.wrap_command(lines.join("\n"), shell)
       end
 
       # (see Base#create_sandbox)
@@ -139,10 +150,10 @@ module Kitchen
       # @api private
       def chef_shell_helpers
         case shell
-        when "bourne"
-          file = "chef_helpers.sh"
-        when "powershell"
-          file = "chef_helpers.ps1"
+        when 'bourne'
+          file = 'chef_helpers.sh'
+        when 'powershell'
+          file = 'chef_helpers.ps1'
         else 
           raise "[chef_shell_helpers] Unsupported shell: #{shell}"
         end

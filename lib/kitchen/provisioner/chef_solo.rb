@@ -53,9 +53,8 @@ module Kitchen
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        # TODO: We definitely need to put more logic on this.
-        # Util.wrap_command([cmd, *args].join(" "))
-        [cmd, *args].join(" ")
+        # TODO: We definitely need to put more logic on this.
+        Util.wrap_command([cmd, *args].join(" "), shell)
       end
 
       private
