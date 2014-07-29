@@ -141,7 +141,45 @@ module Kitchen
         DEFAULT_PORT
       end
 
+      # Performs any final configuration required for the transport to do its
+      # work. A reference to an Instance is required as configuration dependant
+      # data may need access through an Instance. This also acts as a hook
+      # point where the object may wish to perform other last minute checks,
+      # valiations, or configuration expansions.
+      #
+      # @param instance [Instance] an associated instance
+      # @return [self] itself, used for chaining
+      # @raise [ClientError] if instance parameter is nil
+      def finalize_config!(instance)
+        super
+        load_needed_dependencies!
+        self
+      end
+
       private
+
+      # Loads any required third party Ruby libraries or runs any shell out
+      # commands to prepare the provisioner. This method will be called in the
+      # context of the main thread of execution and so does not necessarily
+      # have to be thread safe.
+      #
+      # **Note:** any subclasses overriding this method would be well advised
+      # to call super when overriding this method, for example:
+      #
+      # @example overriding `#load_needed_dependencies!`
+      #
+      #   class MyTransport < Kitchen::Transport::Base
+      #     def load_needed_dependencies!
+      #       super
+      #       # any further work
+      #     end
+      #   end
+      #
+      # @raise [ClientError] if any library loading fails or any of the
+      #   dependency requirements cannot be satisfied
+      # @api private
+      def load_needed_dependencies!
+      end
 
       DEFAULT_PORT = nil
 

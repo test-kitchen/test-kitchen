@@ -105,6 +105,7 @@ module Kitchen
 
       setup_driver
       setup_provisioner
+      setup_transport
     end
 
     # Returns a displayable representation of the instance.
@@ -229,7 +230,7 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = Hash.new
-      [:state_file, :driver, :provisioner, :busser].each do |sym|
+      [:state_file, :driver, :provisioner, :transport, :busser].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
       end
@@ -258,7 +259,7 @@ module Kitchen
     # @api private
     def validate_options(options)
       [
-        :suite, :platform, :driver, :provisioner, :busser, :state_file
+        :suite, :platform, :driver, :provisioner, :transport, :busser, :state_file
       ].each do |k|
         next if options.key?(k)
 
@@ -287,6 +288,14 @@ module Kitchen
     # @api private
     def setup_provisioner
       @provisioner.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for the transport
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_transport
+      @transport.finalize_config!(self)
     end
 
     # Perform all actions in order from last state to desired state.
