@@ -52,6 +52,8 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
+        # Overwrite the sudo configuration comming from the Transport
+        config[:sudo] = instance.transport.sudo
         self
       end
 
