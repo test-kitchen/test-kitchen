@@ -27,6 +27,7 @@ describe "Kitchen" do
   before do
     FakeFS.activate!
     FileUtils.mkdir_p(Dir.pwd)
+    stdout.stubs(:tty?).returns(true)
     @orig_stdout = $stdout
     $stdout = stdout
   end
@@ -52,6 +53,16 @@ describe "Kitchen" do
       Kitchen::DEFAULT_LOG_DIR.must_equal ".kitchen/logs"
       Kitchen::DEFAULT_LOG_DIR.frozen?.must_equal true
     end
+  end
+
+  it ".tty? returns true if $stdout.tty? is true" do
+    Kitchen.tty?.must_equal true
+  end
+
+  it ".tty? returns flse is $stdout.tty? is false" do
+    stdout.stubs(:tty?).returns(false)
+
+    Kitchen.tty?.must_equal false
   end
 
   it ".source_root returns the root path of the gem" do

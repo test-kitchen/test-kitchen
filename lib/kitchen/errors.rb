@@ -188,8 +188,9 @@ module Kitchen
   # @param lines [Array<String>] an array of strings to log
   # @api private
   def self.stderr_log(lines)
-    Array(lines).each do |line|
-      $stderr.puts(Color.colorize(">>>>>> #{line}", :red))
+    Array(lines).map { |line| ">>>>>> #{line}" }.each do |line|
+      line = Color.colorize(line, :red) if Kitchen.tty?
+      $stderr.puts(line)
     end
   end
 

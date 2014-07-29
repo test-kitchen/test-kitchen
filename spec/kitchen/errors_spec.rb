@@ -138,6 +138,7 @@ describe Kitchen do
     let(:logger)    { Kitchen::Logger.new(:logdev => logger_io) }
 
     before do
+      Kitchen.stubs(:tty?).returns(true)
       @orig_stderr = $stderr
       $stderr = StringIO.new
       @orig_logger = Kitchen.logger
@@ -177,6 +178,23 @@ describe Kitchen do
           ">>>>>> Message: no stuff",
           ">>>>>> ----------------------"
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
+
+        begin
+          go_boom
+        rescue SystemExit
+          $stderr.string.must_equal output
+        end
+      end
+
+      it "prints a message on STDERR without color" do
+        Kitchen.stubs(:tty?).returns(false)
+        output = [
+          ">>>>>> cannot do that",
+          ">>>>>> ------Exception-------",
+          ">>>>>> Class: IOError",
+          ">>>>>> Message: no stuff",
+          ">>>>>> ----------------------"
+        ].join("\n").concat("\n")
 
         begin
           go_boom
@@ -233,6 +251,24 @@ describe Kitchen do
           ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
           ">>>>>> Also try running `kitchen diagnose --all` for configuration\n"
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
+
+        begin
+          go_boom
+        rescue SystemExit
+          $stderr.string.must_equal output
+        end
+      end
+
+      it "prints a message on STDERR without color" do
+        Kitchen.stubs(:tty?).returns(false)
+        output = [
+          ">>>>>> ------Exception-------",
+          ">>>>>> Class: Kitchen::StandardError",
+          ">>>>>> Message: ah crap",
+          ">>>>>> ----------------------",
+          ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
+          ">>>>>> Also try running `kitchen diagnose --all` for configuration"
+        ].join("\n").concat("\n")
 
         begin
           go_boom
