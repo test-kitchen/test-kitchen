@@ -376,14 +376,14 @@ describe Kitchen::Provisioner::ChefZero do
       it "uses sudo for chef-client when configured" do
         config[:sudo] = true
 
-        cmd.must_match regexify("sudo -E chef-client ", :partial_line)
+        cmd.must_match regexify("sudo -E /opt/chef/bin/chef-client ", :partial_line)
       end
 
       it "does not use sudo for chef-client when configured" do
         config[:sudo] = false
 
-        cmd.must_match regexify("chef-client ", :partial_line)
-        cmd.wont_match regexify("sudo -E chef-client ", :partial_line)
+        cmd.must_match regexify("/opt/chef/bin/chef-client ", :partial_line)
+        cmd.wont_match regexify("sudo -E /opt/chef/bin/chef-client ", :partial_line)
       end
 
       it "sets local mode flag on chef-client" do

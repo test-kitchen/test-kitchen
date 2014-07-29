@@ -39,7 +39,7 @@ module Kitchen
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
-        cmd = sudo("chef-solo")
+        cmd = sudo(chef_root.join("bin", "chef-solo"))
         args = [
           "--config #{config[:root_path]}/solo.rb",
           "--log_level #{level}",

@@ -231,14 +231,14 @@ describe Kitchen::Provisioner::ChefSolo do
     it "uses sudo for chef-solo when configured" do
       config[:sudo] = true
 
-      cmd.must_match regexify("sudo -E chef-solo ", :partial_line)
+      cmd.must_match regexify("sudo -E /opt/chef/bin/chef-solo ", :partial_line)
     end
 
     it "does not use sudo for chef-solo when configured" do
       config[:sudo] = false
 
       cmd.must_match regexify("chef-solo ", :partial_line)
-      cmd.wont_match regexify("sudo -E chef-solo ", :partial_line)
+      cmd.wont_match regexify("sudo -E /opt/chef/bin/chef-solo ", :partial_line)
     end
 
     it "sets config flag on chef-solo" do

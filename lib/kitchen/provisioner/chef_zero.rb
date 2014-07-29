@@ -44,16 +44,17 @@ module Kitchen
       def prepare_command
         return if modern?
 
-        ruby_bin = config[:ruby_bindir]
+        ruby_bin = Pathname.new(config[:ruby_bindir])
+
         # we are installing latest chef in order to get chef-zero and
         # Chef::ChefFS only. The version of Chef that gets run will be
         # the installed omnibus package. Yep, this is funky :)
         cmd = <<-PREPARE.gsub(/^ {10}/, "")
           #{chef_client_zero_env(:export)}
-          if ! #{sudo("#{ruby_bin}/gem")} list chef-zero -i >/dev/null; then
+          if ! #{sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
-            #{sudo("#{ruby_bin}/gem")} install chef --no-ri --no-rdoc --conservative
+            #{sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
           fi
         PREPARE
 
@@ -63,8 +64,9 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
+        chef_client_bin = chef_root.join("bin", "chef-client")
 
-        cmd = modern? ? "#{sudo("chef-client")} --local-mode" : shim_command
+        cmd = modern? ? "#{sudo(chef_client_bin)} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",
