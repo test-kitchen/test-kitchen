@@ -28,7 +28,7 @@ function download_chef($chef_url, $chef_msi) {
 function install_chef {
   $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
 
-  Write-Host -NoNewline "\t[MSI] ["
+  Write-Host -NoNewline "       [MSI] ["
   while (-Not $proc_msi.HasExited ) {
     Write-Host -NoNewline "#"
     Start-Sleep 2

@@ -108,10 +108,11 @@ module Kitchen
     # @param [String] the command
     # @return [String] a wrapped command string
     def self.wrap_command(cmd, shell = "bourne")
+      cmd = "false" if cmd.nil?
+      cmd = "true" if cmd.to_s.empty?
+      
       case shell
       when "bourne"
-        cmd = "false" if cmd.nil?
-        cmd = "true" if cmd.to_s.empty?
         cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
 
         "sh -c '\n#{cmd}\n'"

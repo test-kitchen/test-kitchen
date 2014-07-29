@@ -47,6 +47,7 @@ module Kitchen
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
+      	return if command.nil?
         logger.debug("[#{self.class}] shell => #{shell}, (#{command})")
         exit_code, stderr = execute_with_exit(env_command(command), shell)
         if exit_code != 0 || !stderr.empty?
@@ -79,11 +80,14 @@ module Kitchen
       # (see Base#upload!)
       def upload!(local, remote)
         logger.debug("Upload: #{local} -> #{remote}")
-        if File.directory?(local)
-          upload_directory(local, remote)
-        else
-          upload_file(local, File.join(remote, File.basename(local)))
-        end
+        local = Array.new(1) { local } if local.kind_of? String
+        local.each do |path|
+	        if File.directory?(path)
+	          upload_directory(path, remote)
+	        else
+	          upload_file(path, File.join(remote, File.basename(path)))
+	        end
+      	end
       end
       
       # Convert a complex CLIXML Error to a human readable format
@@ -351,6 +355,13 @@ exit 1
         relative_path = File.dirname(local_file_path[local.length, local_file_path.length])
         File.join(remote, File.basename(local), relative_path, File.basename(local_file_path))
       end
+
+      # Get the guest temporal path to upload temporal files
+      #
+      # @return [String] The guest temp path
+	    def guest_temp_dir
+	      @guest_temp ||= (cmd("echo %TEMP%"))[:data][0][:stdout].chomp
+	    end
 
       def raise_upload_error_if_failed(output, from, to)
         raise TransportFailed,

@@ -124,14 +124,19 @@ module Kitchen
       end
 
       # Returns the desired shell to use. 
-      # Let's see if this help for the Provisioner to chose the right code
+      # [Idea] Let's see if this help for the Provisioner to chose the right code
       #
-      # @param state [Hash] mutable instance and driver state
-      # @return [LoginCommand] an object containing the array of command line
-      #   tokens and exec options to be used in a fork/exec
-      # @raise [ActionFailed] if the action could not be completed
+      # @return [String] the desired shell for this transport
       def shell
         config.fetch(:shell, nil)
+      end
+
+      # Returns the config[:sudo] parameter.
+      # [Idea] Let's see if this help for the Provisioner to chose the right code
+      #
+      # @return [LoginCommand] an object containing the array of command line
+      def sudo
+        config.fetch(:sudo, nil)
       end
 
       # This will function as a guideline when nobody set the port

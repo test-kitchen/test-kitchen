@@ -101,7 +101,7 @@ module Kitchen
 	          path = File.join(config[:root_path], dir)
 	          cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
 	        end
-        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir -p #{config[:root_path]} }"]
+        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} }"]
         else 
           raise "Unsupported shell: #{shell}"
         end
@@ -207,7 +207,7 @@ module Kitchen
           <<-INSTALL.gsub(/^ {10}/, "")
             $chef_msi = $env:systemdrive + "\\chef.msi"
 
-            If (should_update_chef $version) { 
+            If (should_update_chef #{version}) { 
               Write-Host "-----> Installing Chef Omnibus (#{version})\n"
               download_chef "#{chef_url}" $chef_msi 
               install_chef
