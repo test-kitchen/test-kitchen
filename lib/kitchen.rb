@@ -82,6 +82,14 @@ module Kitchen
       Logger.new(:stdout => $stdout, :logdev => logfile, :level => env_log)
     end
 
+    # Returns whether or not standard output is associated with a terminal
+    # device (tty).
+    #
+    # @return [true,false] is there a tty?
+    def tty?
+      $stdout.tty?
+    end
+
     private
 
     # Determine the default log level from an environment variable, if it is
