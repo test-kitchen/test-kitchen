@@ -141,13 +141,45 @@ module Kitchen
         ))
       end
 
-      # Generates the shell code to conditionally install a Chef Omnibus
-      # package onto an instance.
+      # Generates the shell code to conditionally install Chef on the system.
       #
       # @return [String] shell code
       # @api private
       def chef_install_function
-        version = config[:require_chef_omnibus].to_s.downcase
+        install_command = install_chef_omnibus
+
+        if repo = config[:github]
+          chef_src_dir = "/tmp/src/chef"
+          chef_install_dir = "/opt/chef"
+
+          unless branch = config[:branch]
+            raise(UserError,
+              "The #{ENV['KITCHEN_YAML'] || '.kitchen.yml'} defines a 'github' key" \
+              " but does not define a 'branch' key." \
+              " Please add: `branch <git_sha>` OR `branch <branch_name>`" \
+              " to your provisioner in #{ENV['KITCHEN_YAML'] || '.kitchen.yml'} and retry.")
+          end
+
+          install_command << download_chef_from_github(repo, branch, chef_src_dir)
+          install_command << get_build_tools
+          install_command << build_and_install_chef_gem(chef_src_dir, chef_install_dir)
+        end
+
+        install_command
+      end
+
+      # Generates the shell code to conditionally install Chef omnibus on the
+      # system. Will override ``:require_chef_omnibus false` to true when
+      # `:chef_git_repo_slug` is present, as omnibus is needed to install chef
+      # from git repository.
+      #
+      # @return [String] shell code
+      # @api private
+      def install_chef_omnibus
+        # ensure we download chef omnibus only if missing when configured
+        # to install chef from git
+        require_chef_omnibus = config[:require_chef_omnibus] || !config[:github].nil?
+        version = require_chef_omnibus.to_s.downcase
         pretty_version = case version
                          when "true" then "install only if missing"
                          when "latest" then "always install latest version"
@@ -155,7 +187,7 @@ module Kitchen
                          end
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
-        <<-INSTALL.gsub(/^ {10}/, "")
+        return <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "/opt/chef" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
@@ -164,6 +196,90 @@ module Kitchen
             echo "-----> Chef Omnibus installation detected (#{pretty_version})"
           fi
         INSTALL
+      end
+
+      # Generates the shell code to download chef client source code from github.
+      #
+      # @return [String] shell code
+      # @api private
+      def download_chef_from_github(repo, branch, chef_src_dir)
+        <<-TARBALL.gsub(/^ {10}/, '')
+          echo "------ Downloading Chef Client source code from GitHub"
+          if [ -e /tmp/chef_src.tar.gz ]; then
+            #{sudo("rm")} /tmp/chef_src.tar.gz
+          fi
+
+          do_download https://github.com/#{repo}/tarball/#{branch} /tmp/chef_src.tar.gz
+          rc=$?
+          if [ ! $rc = 0 ]; then
+            echo ">>>>>> Failed to download from https://github.com/#{repo}/tarball/#{branch}"
+            exit $rc
+          fi
+
+          if [ -d #{chef_src_dir} ]; then
+            #{sudo("rm -rf")} #{chef_src_dir}
+          fi
+
+          #{sudo("mkdir -p")} #{chef_src_dir}
+          #{sudo("tar xf")} /tmp/chef_src.tar.gz -C #{chef_src_dir} --strip-components=1
+        TARBALL
+      end
+
+      # Generates the shell code to install the build tools necessary to build
+      # the chef gem from local chef client source code. These tools are:
+      # - gcc
+      # - make
+      #
+      # @return [String] shell code
+      # @api private
+      def get_build_tools
+        <<-BUILDTOOLS.gsub(/^ {10}/, '')
+          echo "------ Installing build tools (gcc, make) to build native gems"
+          if exists yum; then
+            echo "trying yum..."
+            #{sudo("yum")} install -qy gcc
+            #{sudo("yum")} install -qy make
+          elif exists apt-get; then
+            echo "trying apt-get..."
+            #{sudo("apt-get")} update
+            #{sudo("apt-get")} install -qy gcc
+            #{sudo("apt-get")} install -qy make
+          else
+            echo ">>>>>> apt-get, yum not found on this instance"
+          fi
+        BUILDTOOLS
+      end
+
+      # Generates the shell code to build a chef gem from local chef client
+      # source code, remove any previous installations of chef and chef
+      # executables, and install the locally built chef gem.
+      #
+      # @return [String] shell code
+      # @api private
+      def build_and_install_chef_gem(chef_src_dir, chef_install_dir)
+        <<-CHEFGEM.gsub(/^ {10}/, '')
+          export chef_bin=/opt/chef/embedded/bin
+          export PATH=$chef_bin:$PATH
+          #{sudo("chown -R")} $USER #{chef_src_dir}
+
+          echo "------ Building chef gem from local source"
+          cd #{chef_src_dir}
+          bundle install --quiet
+          bundle exec rake gem --quiet
+          rc=$?
+          if [ ! $rc = 0 ]; then
+            echo ">>>>>> Failed to build chef gem"
+            exit $rc
+          fi
+
+          echo "------ Uninstalling omnibus installed chef and removing executables"
+          #{sudo("$chef_bin/gem")} uninstall chef -aIxq
+
+          echo "------ Installing chef from local gem"
+          #{sudo("rm -f")} pkg/chef-*-x86-mingw32.gem
+          #{sudo("$chef_bin/gem")} install --local pkg/chef-*.gem \
+            -n #{chef_install_dir}/bin --no-rdoc --no-ri
+        CHEFGEM
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
