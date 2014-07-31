@@ -148,17 +148,17 @@ module Kitchen
       def chef_install_function
         install_command = install_chef_omnibus
 
-        if config[:git] || config[:github] || config[:branch]
+        if config[:github] || config[:branch]
           chef_src_dir = "/tmp/src/chef"
           chef_install_dir = "/opt/chef"
 
-          git = config[:git] || "github.com/#{config[:github] || 'opscode/chef'}"
+          git = "github.com/#{config[:github] || "opscode/chef"}"
           git = git[0..-5] if git.end_with?(".git")
-          branch = config[:branch] || 'master'
+          branch = config[:branch] || "master"
           url = "https://#{git}/tarball/#{branch}"
 
           install_command << download_chef_from_github(url, chef_src_dir)
-          install_command << get_build_tools
+          install_command << install_build_tools
           install_command << build_and_install_chef_gem(chef_src_dir, chef_install_dir)
         end
 
@@ -184,7 +184,7 @@ module Kitchen
                          end
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
-        return <<-INSTALL.gsub(/^ {10}/, "")
+        <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "/opt/chef" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
@@ -200,7 +200,7 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def download_chef_from_github(url, chef_src_dir)
-        <<-TARBALL.gsub(/^ {10}/, '')
+        <<-TARBALL.gsub(/^ {10}/, "")
           echo "------ Downloading Chef Client source code from GitHub"
           if [ -e /tmp/chef_src.tar.gz ]; then
             #{sudo("rm")} /tmp/chef_src.tar.gz
@@ -229,8 +229,8 @@ module Kitchen
       #
       # @return [String] shell code
       # @api private
-      def get_build_tools
-        <<-BUILDTOOLS.gsub(/^ {10}/, '')
+      def install_build_tools
+        <<-BUILDTOOLS.gsub(/^ {10}/, "")
           echo "------ Installing build tools (gcc, make) to build native gems"
           if exists yum; then
             echo "trying yum..."
@@ -254,7 +254,7 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def build_and_install_chef_gem(chef_src_dir, chef_install_dir)
-        <<-CHEFGEM.gsub(/^ {10}/, '')
+        <<-CHEFGEM.gsub(/^ {10}/, "")
           export chef_bin=/opt/chef/embedded/bin
           export PATH=$chef_bin:$PATH
           #{sudo("chown -R")} $USER #{chef_src_dir}
