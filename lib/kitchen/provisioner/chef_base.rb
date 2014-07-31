@@ -151,14 +151,7 @@ module Kitchen
         if repo = config[:github]
           chef_src_dir = "/tmp/src/chef"
           chef_install_dir = "/opt/chef"
-
-          unless branch = config[:branch]
-            raise(UserError,
-              "The #{ENV['KITCHEN_YAML'] || '.kitchen.yml'} defines a 'github' key" \
-              " but does not define a 'branch' key." \
-              " Please add: `branch <git_sha>` OR `branch <branch_name>`" \
-              " to your provisioner in #{ENV['KITCHEN_YAML'] || '.kitchen.yml'} and retry.")
-          end
+          branch = config[:branch] || 'master'
 
           install_command << download_chef_from_github(repo, branch, chef_src_dir)
           install_command << get_build_tools
