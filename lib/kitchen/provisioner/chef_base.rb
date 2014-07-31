@@ -148,12 +148,16 @@ module Kitchen
       def chef_install_function
         install_command = install_chef_omnibus
 
-        if repo = config[:github]
+        if config[:git] || config[:github] || config[:branch]
           chef_src_dir = "/tmp/src/chef"
           chef_install_dir = "/opt/chef"
-          branch = config[:branch] || 'master'
 
-          install_command << download_chef_from_github(repo, branch, chef_src_dir)
+          git = config[:git] || "github.com/#{config[:github] || 'opscode/chef'}"
+          git = git[0..-5] if git.end_with?(".git")
+          branch = config[:branch] || 'master'
+          url = "https://#{git}/tarball/#{branch}"
+
+          install_command << download_chef_from_github(url, chef_src_dir)
           install_command << get_build_tools
           install_command << build_and_install_chef_gem(chef_src_dir, chef_install_dir)
         end
@@ -195,17 +199,17 @@ module Kitchen
       #
       # @return [String] shell code
       # @api private
-      def download_chef_from_github(repo, branch, chef_src_dir)
+      def download_chef_from_github(url, chef_src_dir)
         <<-TARBALL.gsub(/^ {10}/, '')
           echo "------ Downloading Chef Client source code from GitHub"
           if [ -e /tmp/chef_src.tar.gz ]; then
             #{sudo("rm")} /tmp/chef_src.tar.gz
           fi
 
-          do_download https://github.com/#{repo}/tarball/#{branch} /tmp/chef_src.tar.gz
+          do_download #{url} /tmp/chef_src.tar.gz
           rc=$?
           if [ ! $rc = 0 ]; then
-            echo ">>>>>> Failed to download from https://github.com/#{repo}/tarball/#{branch}"
+            echo ">>>>>> Failed to download from #{url}"
             exit $rc
           fi
 
