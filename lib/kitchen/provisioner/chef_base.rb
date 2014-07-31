@@ -152,11 +152,9 @@ module Kitchen
           chef_src_dir = "/tmp/src/chef"
           chef_install_dir = "/opt/chef"
 
-          git = "github.com/#{config[:github] || "opscode/chef"}"
-          git = git[0..-5] if git.end_with?(".git")
-          branch = config[:branch] || "master"
-          url = "https://#{git}/tarball/#{branch}"
-
+          git_base = "github.com/#{config[:github] || "opscode/chef"}"
+          git_branch = config[:branch] || "master"
+          url = "https://#{git_base}/tarball/#{git_branch}"
           install_command << download_chef_from_github(url, chef_src_dir)
           install_command << install_build_tools
           install_command << build_and_install_chef_gem(chef_src_dir, chef_install_dir)
@@ -166,8 +164,8 @@ module Kitchen
       end
 
       # Generates the shell code to conditionally install Chef omnibus on the
-      # system. Will override ``:require_chef_omnibus false` to true when
-      # `:chef_git_repo_slug` is present, as omnibus is needed to install chef
+      # system. Will override `:require_chef_omnibus false` to true when
+      # :github or :branch is present, as omnibus is needed to install chef
       # from git repository.
       #
       # @return [String] shell code
@@ -175,8 +173,7 @@ module Kitchen
       def install_chef_omnibus
         # ensure we download chef omnibus only if missing when configured
         # to install chef from git
-        require_chef_omnibus = config[:require_chef_omnibus] || !config[:github].nil?
-        version = require_chef_omnibus.to_s.downcase
+        version = (config[:require_chef_omnibus] || force_omnibus?).to_s.downcase
         pretty_version = case version
                          when "true" then "install only if missing"
                          when "latest" then "always install latest version"
@@ -545,6 +542,14 @@ module Kitchen
         Kitchen.mutex.synchronize do
           Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
         end
+      end
+
+      # True if chef is going to be downloaded from GitHub
+      #
+      # @return [Boolean] install omnibus only if missing
+      # @api private
+      def force_omnibus?
+        config[:github] || config[:branch]
       end
     end
   end
