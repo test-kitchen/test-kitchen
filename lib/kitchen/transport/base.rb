@@ -38,8 +38,6 @@ module Kitchen
       include Configurable
       include Logging
 
-      @default_port = 1234
-
       # Create a new Transport object using the provided configuration data
       # which will be merged with any default configuration.
       #
@@ -120,6 +118,7 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_connection(hostname, username = nil, options = {}) # rubocop:disable Lint/UnusedMethodArgument
+        @hostname, @username = hostname, username
         logger.info("Waiting for #{hostname}:#{port}...") until test_connection
       end
 
@@ -143,7 +142,7 @@ module Kitchen
       # 
       # @return [Integer] Default port for this transport.
       def default_port
-        DEFAULT_PORT
+        @@default_port
       end
 
       # Performs any final configuration required for the transport to do its
@@ -186,7 +185,7 @@ module Kitchen
       def load_needed_dependencies!
       end
 
-      DEFAULT_PORT = nil
+      @@default_port = 1234
 
       # @return [String] the remote hostname
       # @api private
