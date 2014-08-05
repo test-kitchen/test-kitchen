@@ -42,8 +42,9 @@ module Kitchen
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     class Winrm < Kitchen::Transport::Base
       
-      default_config :sudo, false
       default_config :shell, "powershell"
+      default_config :sudo, false
+      default_config :max_threads, 5
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
@@ -58,7 +59,7 @@ module Kitchen
         end
       end
 
-# Simple function that will help us running a command with an 
+      # Simple function that will help us running a command with an 
       # specific shell without printing the output to the end user.
       #
       # @param command [String] The command to execute 
@@ -82,14 +83,30 @@ module Kitchen
         logger.debug("Upload: #{local} -> #{remote}")
         local = Array.new(1) { local } if local.kind_of? String
         local.each do |path|
-	        if File.directory?(path)
-	          upload_directory(path, remote)
-	        else
-	          upload_file(path, File.join(remote, File.basename(path)))
-	        end
-      	end
+          if File.directory?(path)
+            upload_directory(path, remote)
+          else
+            upload_file(path, File.join(remote, File.basename(path)))
+          end
+        end
+        wait_files_transfer
       end
-      
+
+      # [Improvement] Adding Parallelism to improve upload time
+      #
+      # This method will wait until all the files have been transferred
+      def wait_files_transfer
+        @threads.each do |thr|
+          thr.join
+        end
+        @threads = Array.new 
+      end
+
+      def active_threads
+        @threads = Array.new if @threads.nil?
+        @threads.size
+      end
+
       # Convert a complex CLIXML Error to a human readable format
       #
       # @param msg [String] The error message
@@ -111,12 +128,12 @@ module Kitchen
 
       # (see Base#default_port)
       def default_port
-        DEFAULT_PORT
+        @@default_port
       end
       
       private
       
-      DEFAULT_PORT = 5985
+      @@default_port = 5985
 
 
       # (see Base#establish_connection)
@@ -161,7 +178,7 @@ module Kitchen
 
       # (see Base#port)
       def port
-        options.fetch(:port, @default_port)
+        options.fetch(:port, @@default_port)
       end
 
       # (see Base#execute_with_exit)
@@ -251,16 +268,34 @@ module Kitchen
       # Uploads the given file, but only if the target file doesn't exist
       # or its MD5 checksum doens't match the host's source checksum.
       #
+      # [Improvement] Adding Parallelism to improve upload time
+      #
       # @param [String] The source file path on the host
       # @param [String] The destination file path on the guest
       def upload_file(local, remote)
-        if should_upload_file?(local, remote)
-          tmp_file_path = upload_to_temp_file(local)
-          decode_temp_file(tmp_file_path, remote)
-        else
-          logger.debug("Up to date: #{remote}")
+        logger.debug("Current Threads => #{active_threads}")
+        wait_files_transfer if active_threads > config[:max_threads]
+        @threads << Thread.new do
+          Thread.current["isFileUpload"] = true
+          logger.debug("Launched '#{remote}' Thread: #{Thread.current}")
+          if should_upload_file?(local, remote)
+            tmp_file_path = upload_to_temp_file(local)
+            decode_temp_file(tmp_file_path, remote)
+          else
+            logger.debug("Up to date: #{remote}")
+          end
+          logger.debug("Finished '#{remote}' Thread: #{Thread.current}")
         end
       end
+
+      # def upload_file(local, remote)
+      #     if should_upload_file?(local, remote)
+      #       tmp_file_path = upload_to_temp_file(local)
+      #       decode_temp_file(tmp_file_path, remote)
+      #     else
+      #       logger.debug("Up to date: #{remote}")
+      #     end
+      # end
 
       # Checks to see if the target file on the guest is missing or out of date.
       #
@@ -269,7 +304,7 @@ module Kitchen
       # @return [Boolean] True if the file is missing or out of date
       def should_upload_file?(local, remote)
         local_md5 = Digest::MD5.file(local).hexdigest
-        cmd = <<-EOH
+        command = <<-EOH
 $dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
 
 if (Test-Path $dest_file_path) {
@@ -289,7 +324,7 @@ if (Test-Path $dest_file_path) {
 }
 exit 1
         EOH
-        powershell(cmd)[:exitcode] == 1
+        powershell(command)[:exitcode] == 1
       end
 
       # Uploads the given file to a new temp file on the guest

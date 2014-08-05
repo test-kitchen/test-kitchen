@@ -68,6 +68,7 @@ module Kitchen
         transport.connection(state) do |conn|
           conn.execute(provisioner.install_command)
           conn.execute(provisioner.init_command)
+          info("Transferring files to #{instance.to_str}")
           conn.upload!(sandbox_dirs, provisioner[:root_path])
           conn.execute(provisioner.prepare_command)
           conn.execute(provisioner.run_command)
