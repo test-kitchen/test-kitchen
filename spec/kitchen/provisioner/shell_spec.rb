@@ -210,7 +210,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          sandbox_path("my_script").executable?.must_equal true
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 
@@ -250,7 +249,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("bootstrap.sh").file?.must_equal true
-          sandbox_path("bootstrap.sh").executable?.must_equal true
           IO.read(sandbox_path("bootstrap.sh")).
             must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
         end
