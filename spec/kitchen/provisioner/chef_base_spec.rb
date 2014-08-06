@@ -191,7 +191,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:chef_installer_options] = '-P chefdk'
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -P chefdk ")
+        "sudo -E sh /tmp/install.sh -P chefdk")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (install only if missing)", :partial_line)
     end
