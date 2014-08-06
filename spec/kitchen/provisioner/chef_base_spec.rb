@@ -188,7 +188,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it "will pass install options, when given" do
-      config[:chef_installer_options] = '-P chefdk'
+      config[:chef_installer_options] = "-P chefdk"
 
       provisioner.install_command.must_match regexify(
         "sudo -E sh /tmp/install.sh -P chefdk")
