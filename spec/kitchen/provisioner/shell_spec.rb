@@ -97,6 +97,8 @@ describe Kitchen::Provisioner::Shell do
 
   describe "#prepare_command" do
 
+    let(:cmd) { provisioner.prepare_command }
+
     it "uses sudo for script when configured" do
       config[:sudo] = true
 
