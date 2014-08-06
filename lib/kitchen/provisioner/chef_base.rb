@@ -155,6 +155,7 @@ module Kitchen
                          else version
                          end
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        install_flags += config[:chef_installer_options] if config[:chef_installer_options]
 
         <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "/opt/chef" "#{version}" ; then
