@@ -101,7 +101,7 @@ module Kitchen
 	          path = File.join(config[:root_path], dir)
 	          cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
 	        end
-        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} }"]
+        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} | Out-Null }"]
         else 
           raise "Unsupported shell: #{shell}"
         end
@@ -160,7 +160,7 @@ module Kitchen
 
         IO.read(File.join(
           File.dirname(__FILE__), %W[.. .. .. support #{file}]
-        ))
+        )).gsub(/\\n/, "\n")
       end
 
       # Generates the shell code to conditionally install a Chef Omnibus

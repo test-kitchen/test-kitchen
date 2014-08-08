@@ -72,14 +72,6 @@ module Kitchen
       def install_command
       end
 
-      # Override sudo configuration
-      #
-      # @param boolean [Boolean] activate/deactivate sudo
-      # @author Salim Afiune <salim@afiunemaya.com.mx>
-      def sudo=(boolean)
-        @config[:sudo] = boolean
-      end
-
       # Generates a command string which will perform any data initialization
       # or configuration required after the provisioner software is installed
       # but before the sandbox has been transferred to the instance. If no work

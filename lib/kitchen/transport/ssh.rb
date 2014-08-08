@@ -89,12 +89,10 @@ module Kitchen
       
       # (see Base#default_port)
       def default_port
-        DEFAULT_PORT
+        @default_port ||= 22
       end
 
       private
-
-      DEFAULT_PORT = 22
 
       # TCP socket exceptions
       SOCKET_EXCEPTIONS = [
@@ -125,11 +123,6 @@ module Kitchen
             raise
           end
         end
-      end
-
-      # (see Base#port)
-      def port
-        options.fetch(:port, @default_port)
       end
 
       # (see Base#execute_with_exit)
@@ -196,7 +189,6 @@ module Kitchen
 
         opts
       end
-
     end
   end
 end

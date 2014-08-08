@@ -7,33 +7,35 @@ function should_update_chef($version) {
   if (-Not (is_chef_installed)) { return $true }
 
   try {
-    $chef_version=(chef-solo -v).split(" ",2)[1]
+    $chef_version=(chef-solo -v).split(' ',2)[1]
   } catch [Exception] {
-    $chef_version = ""
+    $chef_version = ''
   }
 
   switch ($version) {
-    { "true", $chef_version -contains $_ } { return $false }
-    "latest" { return $true }
+    { 'true', $chef_version -contains $_ } { return $false }
+    'latest' { return $true }
     default { return $true }
   }
 }
+
 # @param $chef_url The url where we will download chef
 # @param $chef_msi Temporal MSI path
 function download_chef($chef_url, $chef_msi) {
+  Write-Host -NoNewline "`r`tDownloading Chef..."
   (New-Object System.Net.WebClient).DownloadFile($chef_url, $chef_msi)
+  Write-Host -NoNewline "`r`tDone!              "
 }
 
 # function to install chef with sort of a nice progress bar
 function install_chef {
   $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
-
-  Write-Host -NoNewline "       [MSI] ["
+  $bar = ""
   while (-Not $proc_msi.HasExited ) {
-    Write-Host -NoNewline "#"
+    Write-Host -NoNewline "`r`t[MSI] [$bar"
     Start-Sleep 2
+    $bar += "#"
   }
-  Write-Host "]"
   rm -r $chef_msi
-  Write-Host "Completed!\n"
+  Write-Host -NoNewline "`r`t[MSI] [$bar] Completed!\n"
 }

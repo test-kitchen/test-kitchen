@@ -117,8 +117,7 @@ module Kitchen
       # @param username [String] username (default: `nil`)
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
-      def wait_for_connection(hostname, username = nil, options = {}) # rubocop:disable Lint/UnusedMethodArgument
-        @hostname, @username = hostname, username
+      def wait_for_connection
         logger.info("Waiting for #{hostname}:#{port}...") until test_connection
       end
 
@@ -142,7 +141,7 @@ module Kitchen
       # 
       # @return [Integer] Default port for this transport.
       def default_port
-        @@default_port
+        @default_port ||= 1234
       end
 
       # Performs any final configuration required for the transport to do its
@@ -185,8 +184,6 @@ module Kitchen
       def load_needed_dependencies!
       end
 
-      @@default_port = 1234
-
       # @return [String] the remote hostname
       # @api private
       attr_reader :hostname
@@ -221,7 +218,7 @@ module Kitchen
       # @return [Integer] Transport port
       # @api private
       def port
-        options.fetch(:port, config[:port])
+        options.fetch(:port, default_port)
       end
 
       # String representation of object, reporting its connection details and
