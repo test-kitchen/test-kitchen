@@ -44,7 +44,7 @@ module Kitchen
       
       default_config :shell, "powershell"
       default_config :sudo, false
-      default_config :max_threads, 5
+      default_config :max_threads, 2
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
@@ -65,7 +65,6 @@ module Kitchen
       # @param command [String] The command to execute 
       # @param shell[String] The destination file path on the guest
       # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
-      
       def powershell(command)
         run(command, :powershell)
       end
@@ -80,6 +79,7 @@ module Kitchen
 
       # (see Base#upload!)
       def upload!(local, remote)
+        logger.info("Concurrent threads set to :max_threads => #{config[:max_threads]}")
         logger.debug("Upload: #{local} -> #{remote}")
         local = Array.new(1) { local } if local.kind_of? String
         local.each do |path|
@@ -122,20 +122,52 @@ module Kitchen
       end
 
       # (see Base#login_command)
-      # def login_command
-      #   We have to implement this opening RDP on Windows and MAC
-      # end
+      def login_command
+        rdp_file = File.join(config[:kitchen_root], ".kitchen", "#{instance.name}.rdp")
+        case RUBY_PLATFORM 
+        when /cygwin|mswin|mingw|bccwin|wince|emx/
+          # On Windows, use default RDP software
+          rdp_cmd = "mstsc"
+          File.open(rdp_file, "w") do |f|     
+            f.write(
+              <<-RDP.gsub(/^ {16}/, "")
+                full address:s:#{@hostname}:3389
+                username:s:#{@username}
+              RDP
+            )   
+          end
+          LoginCommand.new([rdp_cmd, rdp_file])
+        when /darwin/
+          # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
+          rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
+          raise TransportFailed, "RDC application not found at path: #{rdc_path}" unless File.exists?(rdc_path)
+          rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
+          File.open(rdp_file, "w") do |f|     
+            f.write(
+              <<-RDP.gsub(/^ {16}/, "")
+                <dict>
+                  <key>ConnectionString</key>
+                  <string>#{@hostname}:3389</string>
+                  <key>UserName</key>
+                  <string>#{@username}</string>
+                </dict>
+              RDP
+            )
+          end
+          LoginCommand.new([rdc_cmd, rdp_file])
+        else
+          raise TransportFailed, 
+            "[#{self.class}] Cannot open Remote Desktop App: Unsupported platform"
+        end
+      end
 
       # (see Base#default_port)
       def default_port
-        @@default_port
+        @default_port ||= 5985
       end
       
       private
       
-      @@default_port = 5985
-
-
       # (see Base#establish_connection)
       def establish_connection
         rescue_exceptions = [
@@ -174,11 +206,6 @@ module Kitchen
       # @return [String] The endpoint
       def endpoint
         "http://#{@hostname}:#{port}/wsman"
-      end
-
-      # (see Base#port)
-      def port
-        options.fetch(:port, @@default_port)
       end
 
       # (see Base#execute_with_exit)
@@ -288,15 +315,6 @@ module Kitchen
         end
       end
 
-      # def upload_file(local, remote)
-      #     if should_upload_file?(local, remote)
-      #       tmp_file_path = upload_to_temp_file(local)
-      #       decode_temp_file(tmp_file_path, remote)
-      #     else
-      #       logger.debug("Up to date: #{remote}")
-      #     end
-      # end
-
       # Checks to see if the target file on the guest is missing or out of date.
       #
       # @param [String] The source file path on the host
@@ -402,7 +420,7 @@ exit 1
         raise TransportFailed,
           :from => from,
           :to => to,
-          :message => output.inspect if output[:exitcode] != 0
+          :message => output.inspect unless output[:exitcode].zero?
       end
     end
   end

@@ -106,6 +106,7 @@ module Kitchen
       setup_driver
       setup_provisioner
       setup_transport
+      setup_busser
     end
 
     # Returns a displayable representation of the instance.
@@ -296,6 +297,14 @@ module Kitchen
     # @api private
     def setup_transport
       @transport.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for busser to
+    # carry out its duties.
+    #
+    # @api private
+    def setup_busser
+      @busser.finalize_config!(self)
     end
 
     # Perform all actions in order from last state to desired state.
