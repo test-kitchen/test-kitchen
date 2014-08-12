@@ -60,6 +60,8 @@ module Kitchen
       end
 
       default_config :interface, nil
+      default_config :ssh_timeout, 1
+      default_config :ssh_retries, 3
 
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
@@ -75,8 +77,11 @@ module Kitchen
         server.wait_for { print '.'; ready? }
         print '(server ready)'
         state[:hostname] = hostname(server)
-        wait_for_sshd(state[:hostname], config[:username])
-        print '(ssh ready)\n'
+        wait_for_sshd(state[:hostname], config[:username], {
+          :ssh_timeout => config[:ssh_timeout],
+          :ssh_retries => config[:ssh_retries]
+        })
+        print "(ssh ready)\n"
         debug("ec2:create '#{state[:hostname]}'")
       rescue Fog::Errors::Error, Excon::Errors::Error => ex
         raise ActionFailed, ex.message
@@ -141,6 +146,8 @@ module Kitchen
         debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
         debug("ec2:subnet_id '#{config[:subnet_id]}'")
         debug("ec2:iam_profile_name '#{config[:iam_profile_name]}'")
+        debug("ec2:ssh_timeout '#{config[:ssh_timeout]}'")
+        debug("ec2:ssh_retries '#{config[:ssh_retries]}'")
       end
 
       def amis

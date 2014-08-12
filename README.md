@@ -160,6 +160,18 @@ Path to the private SSH key used to connect to the instance.
 
 The default is unset, or `nil`.
 
+### <a name="config-ssh-timeout"></a> ssh\_timeout
+
+The number of seconds to sleep before trying to SSH again.
+
+The default is `1`.
+
+### <a name="config-ssh-retries"></a> ssh\_retries
+
+The number of times to retry SSH-ing into the instance.
+
+The default is `3`.
+
 ### <a name="config-subnet-id"></a> subnet\_id
 
 The EC2 [subnet][subnet_docs] to use.
@@ -205,6 +217,8 @@ driver:
   require_chef_omnibus: true
   subnet_id: subnet-6d6...
   iam_profile_name: chef-client
+  ssh_timeout: 10
+  ssh_retries: 5
 
 platforms:
   - name: ubuntu-12.04
