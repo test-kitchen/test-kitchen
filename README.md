@@ -31,6 +31,8 @@ platforms:
   - name: ubuntu-12.04
   - name: ubuntu-12.10
   - name: ubuntu-13.04
+  - name: ubuntu-13.10
+  - name: ubuntu-14.04
   - name: centos-6.4
   - name: debian-7.1.0
 ```
