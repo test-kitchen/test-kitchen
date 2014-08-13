@@ -144,6 +144,7 @@ describe Kitchen::SSH do
 
         before do
           Net::SSH.stubs(:start).raises(klass)
+          opts[:ssh_retries] = 3
           ssh.stubs(:sleep)
         end
 
@@ -151,15 +152,15 @@ describe Kitchen::SSH do
           proc { ssh.exec("nope") }.must_raise klass
         end
 
-        it "attempts to connect 3 times" do
+        it "attempts to connect ':ssh_retries' times" do
           begin
             ssh.exec("nope")
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
           logged_output.string.lines.select { |l|
-            l =~ debug_line("[SSH] opening connection to me@foo:22<{}>")
-          }.size.must_equal 3
+            l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
+          }.size.must_equal opts[:ssh_retries]
         end
 
         it "sleeps for 1 second between retries" do
