@@ -37,6 +37,7 @@ module Kitchen
       default_config :security_group_ids, ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :iam_profile_name,   nil
+      default_config :price,   nil
       default_config :aws_access_key_id do |driver|
         ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
       end
@@ -73,9 +74,15 @@ module Kitchen
 
       def create(state)
         return if state[:server_id]
-        server = create_server
-        state[:server_id] = server.id
+        if config[:price]
+          # Spot instance when a price is set
+          server = submit_spot
+        else
+           # On-demand instance
+          server = create_server
+        end
 
+        state[:server_id] = server.id
         info("EC2 instance <#{state[:server_id]}> created.")
         server.wait_for do
           print '.'
@@ -153,6 +160,24 @@ module Kitchen
         )
       end
 
+      def request_spot
+        debug_server_config
+
+        connection.spot_requests.create(
+          :availability_zone         => config[:availability_zone],
+          :security_group_ids        => config[:security_group_ids],
+          :tags                      => config[:tags],
+          :flavor_id                 => config[:flavor_id],
+          :ebs_optimized             => config[:ebs_optimized],
+          :image_id                  => config[:image_id],
+          :key_name                  => config[:aws_ssh_key_id],
+          :subnet_id                 => config[:subnet_id],
+          :iam_instance_profile_name => config[:iam_profile_name],
+          :price                     => config[:price],
+          :instance_count            => config[:instance_count]
+        )
+      end
+
       def debug_server_config
         debug("ec2:region '#{config[:region]}'")
         debug("ec2:availability_zone '#{config[:availability_zone]}'")
@@ -167,6 +192,7 @@ module Kitchen
         debug("ec2:associate_public_ip '#{config[:associate_public_ip]}'")
         debug("ec2:ssh_timeout '#{config[:ssh_timeout]}'")
         debug("ec2:ssh_retries '#{config[:ssh_retries]}'")
+        debug("ec2:spot_price'#{config[:price]}'")
       end
 
       def amis
@@ -194,6 +220,23 @@ module Kitchen
         else
           server.dns_name || server.public_ip_address || server.private_ip_address
         end
+      end
+
+      def submit_spot
+        spot = request_spot
+        info("Spot instance <#{spot.id}> requested.")
+        info("Spot price is <#{spot.price}>.")
+        spot.wait_for { print '.'; spot.state == 'active' }
+        print '(spot active)'
+
+        # tag assignation on the instance.
+        if config[:tags]
+          connection.create_tags(
+            spot.instance_id,
+            spot.tags
+          )
+        end
+        connection.servers.get(spot.instance_id)
       end
     end
   end
