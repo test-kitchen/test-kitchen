@@ -93,9 +93,8 @@ module Kitchen
         info("EC2 instance <#{state[:server_id]}> created.")
         server.wait_for do
           print '.'
-          ready? and                          # Euca instances often report ready
-            !public_ip_address.nil? and       # before they have an IP
-            (public_ip_address != '0.0.0.0')
+          # Euca instances often report ready before they have an IP
+          ready? && !public_ip_address.nil? && public_ip_address != '0.0.0.0'
         end
         print '(server ready)'
         state[:hostname] = hostname(server)
@@ -158,7 +157,7 @@ module Kitchen
           :key_name                  => config[:aws_ssh_key_id],
           :subnet_id                 => config[:subnet_id],
           :iam_instance_profile_name => config[:iam_profile_name],
-          :associate_public_ip       => config[:associate_public_ip]
+          :associate_public_ip       => config[:associate_public_ip],
           :block_device_mapping      => [{
             'Ebs.VolumeSize' => config[:ebs_volume_size],
             'Ebs.DeleteOnTermination' => config[:ebs_delete_on_termination],
