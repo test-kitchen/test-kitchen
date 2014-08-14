@@ -4,7 +4,11 @@ require 'kitchen/provisioner/dummy'
 describe Kitchen::Driver::Ec2 do
 
     let(:config) do
-      {}
+      {
+        aws_ssh_key_id: 'larry',
+        aws_access_key_id: 'secret',
+        aws_secret_access_key: 'moarsecret'
+      }
     end
 
     let(:state) do

@@ -62,6 +62,20 @@ For specific default values, please consult [amis.json][amis_json].
 
 ## <a name="config"></a> Configuration
 
+### <a name="config-associate-public-ip"></a> associate\_public\_ip
+
+AWS does not automatically allocate public IP addresses for instances created
+within non-default [subnets][subnet_docs]. Set this option to `true` to force
+allocation of a public IP and associate it with the launched instance.
+
+If you set this option to `false` when launching into a non-default
+[subnet][subnet_docs], Test Kitchen will be unable to communicate with the
+instance unless you have a VPN connection to your
+[Virtual Private Cloud][vpc_docs].
+
+The default is `true` if you have configured a [subnet_id](#config-subnet-id),
+or `false` otherwise.
+
 ### <a name="config-az"></a> availability\_zone
 
 **Required** The AWS [availability zone][region_docs] to use.
@@ -146,7 +160,6 @@ The place from which to derive the hostname for communicating with the instance.
 3. Private IP Address
 
 The default is unset.
-
 
 ### <a name="config-region"></a> region
 
@@ -306,3 +319,4 @@ Apache 2.0 (see [LICENSE][license])
 [kitchenci]:        http://kitchen.ci/
 [region_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 [subnet_docs]:      http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
+[vpc_docs]:         http://docs.aws.amazon.com/AmazonVPC/latest/GettingStartedGuide/ExerciseOverview.html
