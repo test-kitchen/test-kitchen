@@ -74,6 +74,13 @@ module Kitchen
 
       def create(state)
         return if state[:server_id]
+
+        info("Creating <#{state[:server_id]}>...")
+        info("If you are not using an account that qualifies under the AWS")
+        info("free-tier, you may be charged to run these suites. The charge")
+        info("should be minimal, but neither Test Kitchen nor its maintainers")
+        info("are responsible for your incurred costs.")
+
         if config[:price]
           # Spot instance when a price is set
           server = submit_spot
