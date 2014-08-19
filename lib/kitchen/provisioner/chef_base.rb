@@ -223,6 +223,7 @@ module Kitchen
       # the chef gem from local chef client source code. These tools are:
       # - gcc
       # - make
+      # - git
       #
       # @return [String] shell code
       # @api private
@@ -233,11 +234,13 @@ module Kitchen
             echo "trying yum..."
             #{sudo("yum")} install -qy gcc
             #{sudo("yum")} install -qy make
+            #{sudo("yum")} install -qy git
           elif exists apt-get; then
             echo "trying apt-get..."
             #{sudo("apt-get")} update
             #{sudo("apt-get")} install -qy gcc
             #{sudo("apt-get")} install -qy make
+            #{sudo("apt-get")} install -qy git
           else
             echo ">>>>>> apt-get, yum not found on this instance"
           fi
