@@ -41,14 +41,14 @@ module Kitchen
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     class Winrm < Kitchen::Transport::Base
-      
+
       default_config :shell, "powershell"
       default_config :sudo, false
       default_config :max_threads, 2
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
-      	return if command.nil?
+        return if command.nil?
         logger.debug("[#{self.class}] shell => #{shell}, (#{command})")
         exit_code, stderr = execute_with_exit(env_command(command), shell)
         if exit_code != 0 || !stderr.empty?
@@ -59,10 +59,10 @@ module Kitchen
         end
       end
 
-      # Simple function that will help us running a command with an 
+      # Simple function that will help us running a command with an
       # specific shell without printing the output to the end user.
       #
-      # @param command [String] The command to execute 
+      # @param command [String] The command to execute
       # @param shell[String] The destination file path on the guest
       # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
       def powershell(command)
@@ -81,7 +81,7 @@ module Kitchen
       def upload!(local, remote)
         logger.info("Concurrent threads set to :max_threads => #{config[:max_threads]}")
         logger.debug("Upload: #{local} -> #{remote}")
-        local = Array.new(1) { local } if local.kind_of? String
+        local = Array.new(1) { local } if local.is_a? String
         local.each do |path|
           if File.directory?(path)
             upload_directory(path, remote)
@@ -99,7 +99,7 @@ module Kitchen
         @threads.each do |thr|
           thr.join
         end
-        @threads = Array.new 
+        @threads = Array.new
       end
 
       def active_threads
@@ -124,25 +124,25 @@ module Kitchen
       # (see Base#login_command)
       def login_command
         rdp_file = File.join(config[:kitchen_root], ".kitchen", "#{instance.name}.rdp")
-        case RUBY_PLATFORM 
+        case RUBY_PLATFORM
         when /cygwin|mswin|mingw|bccwin|wince|emx/
           # On Windows, use default RDP software
           rdp_cmd = "mstsc"
-          File.open(rdp_file, "w") do |f|     
+          File.open(rdp_file, "w") do |f|
             f.write(
               <<-RDP.gsub(/^ {16}/, "")
                 full address:s:#{@hostname}:3389
                 username:s:#{@username}
               RDP
-            )   
+            )
           end
           LoginCommand.new([rdp_cmd, rdp_file])
         when /darwin/
           # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
           rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
-          raise TransportFailed, "RDC application not found at path: #{rdc_path}" unless File.exists?(rdc_path)
+          raise TransportFailed, "RDC application not found at path: #{rdc_path}" unless File.exist?(rdc_path)
           rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
-          File.open(rdp_file, "w") do |f|     
+          File.open(rdp_file, "w") do |f|
             f.write(
               <<-RDP.gsub(/^ {16}/, "")
                 <dict>
@@ -156,7 +156,7 @@ module Kitchen
           end
           LoginCommand.new([rdc_cmd, rdp_file])
         else
-          raise TransportFailed, 
+          raise TransportFailed,
             "[#{self.class}] Cannot open Remote Desktop App: Unsupported platform"
         end
       end
@@ -165,9 +165,9 @@ module Kitchen
       def default_port
         @default_port ||= 5985
       end
-      
+
       private
-      
+
       # (see Base#establish_connection)
       def establish_connection
         rescue_exceptions = [
@@ -219,17 +219,17 @@ module Kitchen
             winrm_err << stderr if stderr
           end
         rescue => e
-          raise TransportFailed, 
+          raise TransportFailed,
             "[#{self.class}] #{e.message} using shell: [#{shell}] and command: [#{command}]"
         end
         logger.debug("Output: #{output.inspect}")
         [output[:exitcode], winrm_err]
       end
 
-      # Simple function that will help us running a command with an 
+      # Simple function that will help us running a command with an
       # specific shell without printing the output to the end user.
       #
-      # @param command [String] The command to execute 
+      # @param command [String] The command to execute
       # @param shell[String] The destination file path on the guest
       # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
       def run(command, shell)
@@ -238,7 +238,7 @@ module Kitchen
         begin
           session.send(shell, command)
         rescue => e
-          raise TransportFailed, 
+          raise TransportFailed,
             "[#{self.class}] #{e.message} using shell: [#{shell}] and command: [#{command}]"
         end
       end
@@ -251,7 +251,7 @@ module Kitchen
 
         env == "" ? command : "#{env} #{command}"
       end
-      
+
       # (see Base#test_connection)
       def test_connection
         exitcode, _error_msg = execute_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
@@ -276,7 +276,7 @@ module Kitchen
       # Build the WinRM options to connect
       #
       # @return endpoint [String] Information about the host and port
-      # @return connection_type [String] Plaintext 
+      # @return connection_type [String] Plaintext
       # @return options [Hash] Necesary options to connect to the remote host
       def build_winrm_options
         opts = Hash.new
@@ -412,9 +412,9 @@ exit 1
       # Get the guest temporal path to upload temporal files
       #
       # @return [String] The guest temp path
-	    def guest_temp_dir
-	      @guest_temp ||= (cmd("echo %TEMP%"))[:data][0][:stdout].chomp
-	    end
+      def guest_temp_dir
+        @guest_temp ||= (cmd("echo %TEMP%"))[:data][0][:stdout].chomp
+      end
 
       def raise_upload_error_if_failed(output, from, to)
         raise TransportFailed,

@@ -65,7 +65,7 @@ module Kitchen
       #   itself and calls `#disconnect` at the end, closing the remote connection
       def connection(state)
         @options  =  build_transport_args(state)
-        @hostname = state[:hostname] if state[:hostname] 
+        @hostname = state[:hostname] if state[:hostname]
         @username = state[:username] if state[:username]
         @logger   = @options.delete(:logger) || ::Logger.new(STDOUT)
 
@@ -121,7 +121,7 @@ module Kitchen
         logger.info("Waiting for #{hostname}:#{port}...") until test_connection
       end
 
-      # Returns the desired shell to use. 
+      # Returns the desired shell to use.
       # [Idea] Let's see if this help for the Provisioner to chose the right code
       #
       # @return [String] the desired shell for this transport
@@ -138,7 +138,7 @@ module Kitchen
       end
 
       # This will function as a guideline when nobody set the port
-      # 
+      #
       # @return [Integer] Default port for this transport.
       def default_port
         @default_port ||= 1234
@@ -207,7 +207,6 @@ module Kitchen
       def session
         @session ||= establish_connection
       end
-      
       # Establish a connection session to the remote host.
       #
       # @return [Transport::Session] the Transport connection session
@@ -246,7 +245,7 @@ module Kitchen
 
       # Test a remote connectivity.
       #
-      # @return [true,false] a truthy value if the connection is ready 
+      # @return [true,false] a truthy value if the connection is ready
       # and false otherwise
       # @api private
       def test_connection

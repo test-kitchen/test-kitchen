@@ -110,7 +110,7 @@ module Kitchen
     def self.wrap_command(cmd, shell = "bourne")
       cmd = "false" if cmd.nil?
       cmd = "true" if cmd.to_s.empty?
-      
+
       case shell
       when "bourne"
         cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
@@ -119,7 +119,7 @@ module Kitchen
       when "powershell"
         # Do we need a wrapper for powershell
         cmd
-      else 
+      else
         raise "[Util.shell_helpers] Unsupported shell: #{shell}"
       end
     end
@@ -152,10 +152,10 @@ module Kitchen
       when "bourne"
         file = "download_helpers.sh"
       when "powershell"
-        # No download helper for now.. 
+        # No download helper for now..
         # Should we have one: file = "download_helpers.ps1"
         return ""
-      else 
+      else
         raise "[Util.shell_helpers] Unsupported shell: #{shell}"
       end
 

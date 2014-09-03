@@ -99,13 +99,12 @@ module Kitchen
     #   work needs to be performed
     def setup_cmd
       return if local_suite_files.empty?
-      
       ruby    = "#{config[:ruby_bindir]}/ruby"
       gem     = sudo("#{config[:ruby_bindir]}/gem")
       busser  = sudo(config[:busser_bin])
-      
+
       case shell
-      when 'bourne'
+      when "bourne"
 
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
@@ -117,11 +116,11 @@ module Kitchen
           #{sudo("${gem_bindir}")}/busser setup
           #{busser} plugin install #{plugins.join(" ")}
         CMD
-      when 'powershell'
+      when "powershell"
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
           if ((gem list busser -i) -eq \"false\") {
-            gem install #{gem_install_args} 
+            gem install #{gem_install_args}
           }
           # We have to modify Busser::Setup to work with PowerShell
           # busser setup
@@ -292,10 +291,10 @@ module Kitchen
     def remote_file(file, dir)
       local_prefix = File.join(config[:test_base_path], dir)
       case shell
-      when 'bourne'
+      when "bourne"
         "`#{sudo(config[:busser_bin])} suite path`/".
           concat(file.sub(%r{^#{local_prefix}/}, ""))
-      when 'powershell'
+      when "powershell"
         "$env:BUSSER_SUITE_PATH/".
           concat(file.sub(%r{^#{local_prefix}/}, ""))
       else
@@ -338,7 +337,7 @@ module Kitchen
       config[:sudo] ? "sudo -E #{command}" : command
     end
 
-    # @return [Transport.shell] the transport desired shell for this instance 
+    # @return [Transport.shell] the transport desired shell for this instance
     # This would help us know which commands to use. Bourne, Powershell, etc.
     #
     # @api private
@@ -353,7 +352,7 @@ module Kitchen
     # @api private
     def busser_setup_env
       case shell
-      when 'bourne'
+      when "bourne"
         [
           %{BUSSER_ROOT="#{config[:root_path]}"},
           %{GEM_HOME="#{config[:root_path]}/gems"},
@@ -361,7 +360,7 @@ module Kitchen
           %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
           %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
         ].join(" ")
-      when 'powershell'
+      when "powershell"
         [
           %{$env:BUSSER_ROOT="#{config[:root_path]}";},
           %{$env:GEM_HOME="#{config[:root_path]}/gems";},

@@ -64,7 +64,6 @@ module Kitchen
         provisioner = instance.provisioner
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
-        
         transport.connection(state) do |conn|
           conn.execute(provisioner.install_command)
           conn.execute(provisioner.init_command)
@@ -113,7 +112,7 @@ module Kitchen
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
       def login_command(state)
-        transport.connection(state) 
+        transport.connection(state)
         transport.login_command
       end
 

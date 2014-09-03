@@ -30,7 +30,7 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
-      
+
       default_config :sudo, true
       default_config :shell, "bourne"
 
@@ -56,8 +56,8 @@ module Kitchen
           }
         end
 
-        local.each do |path| 
-          session.scp.upload!(path, remote, options, &progress) 
+        local.each do |path|
+          session.scp.upload!(path, remote, options, &progress)
         end
       end
 
@@ -70,7 +70,6 @@ module Kitchen
       ensure
         @session = nil
       end
-      
       # (see Base#login_command)
       def login_command
         args  = %W[ -o UserKnownHostsFile=/dev/null ]
@@ -86,7 +85,6 @@ module Kitchen
 
         LoginCommand.new(["ssh", *args])
       end
-      
       # (see Base#default_port)
       def default_port
         @default_port ||= 22
@@ -159,7 +157,6 @@ module Kitchen
 
         env == "env" ? command : "#{env} #{command}"
       end
-      
       # (see Base#test_connection)
       def test_connection
         socket = TCPSocket.new(hostname, port)

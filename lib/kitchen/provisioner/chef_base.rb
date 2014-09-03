@@ -92,17 +92,17 @@ module Kitchen
       # (see Base#init_command)
       def init_command
         case shell
-        when 'bourne'
-	        dirs = %w[cookbooks data data_bags environments roles clients].
-	          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        	lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
-        when 'powershell'
-        	dirs = %w[data data_bags environments roles clients].map do |dir|
-	          path = File.join(config[:root_path], dir)
-	          cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
-	        end
-        	lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} | Out-Null }"]
-        else 
+        when "bourne"
+          dirs = %w[cookbooks data data_bags environments roles clients].
+            map { |dir| File.join(config[:root_path], dir) }.join(" ")
+          lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+        when "powershell"
+          dirs = %w[data data_bags environments roles clients].map do |dir|
+            path = File.join(config[:root_path], dir)
+            cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
+          end
+          lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} | Out-Null }"]
+        else
           raise "Unsupported shell: #{shell}"
         end
 
@@ -150,11 +150,11 @@ module Kitchen
       # @api private
       def chef_shell_helpers
         case shell
-        when 'bourne'
-          file = 'chef_helpers.sh'
-        when 'powershell'
-          file = 'chef_helpers.ps1'
-        else 
+        when "bourne"
+          file = "chef_helpers.sh"
+        when "powershell"
+          file = "chef_helpers.ps1"
+        else
           raise "[chef_shell_helpers] Unsupported shell: #{shell}"
         end
 
@@ -199,23 +199,23 @@ module Kitchen
           if config[:chef_omnibus_url].eql?("https://www.getchef.com/chef/install.sh")
             chef_url = "http://www.getchef.com/chef/install.msi?#{install_flags}"
           else
-            # We use the one that comes from kitchen.yml
+            # We use the one that comes from kitchen.yml
             chef_url = "#{config[:chef_omnibus_url]}?#{install_flags}"
           end
 
-          # NOTE We use SYSTEMDRIVE because if we use TEMP the installation fails.
+          # NOTE We use SYSTEMDRIVE because if we use TEMP the installation fails.
           <<-INSTALL.gsub(/^ {10}/, "")
             $chef_msi = $env:systemdrive + "\\chef.msi"
 
-            If (should_update_chef #{version}) { 
+            If (should_update_chef #{version}) {
               Write-Host "-----> Installing Chef Omnibus (#{version})\n"
-              download_chef "#{chef_url}" $chef_msi 
+              download_chef "#{chef_url}" $chef_msi
               install_chef
             } else {
               Write-Host "-----> Chef Omnibus installation detected (#{version})\n"
             }
           INSTALL
-        else 
+        else
           raise "[chef_install_function] Unsupported shell: #{shell}"
         end
       end

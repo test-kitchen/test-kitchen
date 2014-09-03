@@ -64,7 +64,7 @@ module Kitchen
     #   automation tools
     attr_reader :provisioner
 
-    # @return [Transport::Base] transport object which will communicate with 
+    # @return [Transport::Base] transport object which will communicate with
     # an instance.
     attr_reader :transport
 
