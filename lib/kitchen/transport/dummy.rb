@@ -23,44 +23,43 @@ module Kitchen
   module Transport
 
     class Dummy < Kitchen::Transport::Base
-      
+
       default_config :sleep, 1
       default_config :random_exit_code, 0
 
       # (see Base#exec)
-      def execute(cmd) 
+      def execute(cmd)
         exit_code = execute_with_exit(cmd)
         if exit_code != 0
           info("Transport #{name} exited (#{exit_code}) for command: [#{cmd}]")
         end
       end
 
-      def upload!(local, remote, options = {}, &progress) 
+      def upload!(local, remote, options = {}, &progress)
         report(:upload, "#{local} => #{remote}")
       end
 
-      def disconnect 
+      def disconnect
         report(:disconnect)
       end
 
-      def login_command(state) 
+      def login_command(state)
         report(:login_command)
       end
 
       private
 
       def establish_connection
-      	report(:establish_connection)
-
+        report(:establish_connection)
       end
 
       def port
         config.fetch(:port, 1234)
       end
 
-      def execute_with_exit(cmd) 
-      	report(:exec_with_exit, cmd)
-      	config[:random_exit_code]
+      def execute_with_exit(cmd)
+        report(:exec_with_exit, cmd)
+        config[:random_exit_code]
       end
 
       def test_connection
@@ -76,7 +75,7 @@ module Kitchen
       def report(action, msg = "")
         what = action.capitalize
         info("[Dummy] #{what} #{msg} on Transport=#{name}")
-		    sleep_if_set
+        sleep_if_set
         debug("[Dummy] #{what} #{msg} completed (#{config[:sleep]}s).")
       end
 
