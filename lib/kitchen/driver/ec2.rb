@@ -30,6 +30,10 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
 
+      include Fog::AWS::CredentialFetcher::ServiceMethods
+
+      iam_credentials = fetch_credentials(use_iam_profile: true) rescue {}
+
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
@@ -41,13 +45,13 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
+        iam_credentials[:aws_access_key_id] || ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
+        iam_credentials[:aws_secret_access_key] || ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+        iam_credentials[:aws_session_token] || ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
