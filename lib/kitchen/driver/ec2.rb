@@ -32,7 +32,7 @@ module Kitchen
 
       include Fog::AWS::CredentialFetcher::ServiceMethods
 
-      iam_credentials = fetch_credentials(use_iam_profile: true) rescue {}
+      iam_creds = fetch_credentials(use_iam_profile: true) rescue {}
 
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
@@ -45,13 +45,13 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        iam_credentials[:aws_access_key_id] || ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
+        iam_creds[:aws_access_key_id] || ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
       end
       default_config :aws_secret_access_key do |driver|
-        iam_credentials[:aws_secret_access_key] || ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
+        iam_creds[:aws_secret_access_key] || ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
       end
       default_config :aws_session_token do |driver|
-        iam_credentials[:aws_session_token] || ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+        iam_creds[:aws_session_token] || ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -105,10 +105,10 @@ module Kitchen
         return if state[:server_id]
 
         info("Creating <#{state[:server_id]}>...")
-        info("If you are not using an account that qualifies under the AWS")
-        info("free-tier, you may be charged to run these suites. The charge")
-        info("should be minimal, but neither Test Kitchen nor its maintainers")
-        info("are responsible for your incurred costs.")
+        info('If you are not using an account that qualifies under the AWS')
+        info('free-tier, you may be charged to run these suites. The charge')
+        info('should be minimal, but neither Test Kitchen nor its maintainers')
+        info('are responsible for your incurred costs.')
 
         if config[:price]
           # Spot instance when a price is set
