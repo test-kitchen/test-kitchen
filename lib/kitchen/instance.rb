@@ -197,11 +197,12 @@ module Kitchen
     # @see Driver::Base#login_command
     def login
       login_command = driver.login_command(state_file.read)
-      cmd, *args = login_command.cmd_array
+      *cmd = ['sh', '-c']
+      *args = login_command.cmd_array
       options = login_command.options
 
-      debug(%{Login command: #{cmd} #{args.join(" ")} (Options: #{options})})
-      Kernel.exec(cmd, *args, options)
+      debug(%{Login command: #{cmd.join(" ")} #{args.join(" ")} (Options: #{options})})
+      Kernel.exec(*cmd, *args.join(" "), options)
     end
 
     # Executes an arbitrary command on this instance.
