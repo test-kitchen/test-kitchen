@@ -197,7 +197,7 @@ module Kitchen
     # @see Driver::Base#login_command
     def login
       login_command = driver.login_command(state_file.read)
-      *cmd = ['sh', '-c']
+      *cmd = ["sh", "-c"]
       *args = login_command.cmd_array
       options = login_command.options
 
