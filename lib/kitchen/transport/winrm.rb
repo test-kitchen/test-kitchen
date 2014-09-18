@@ -53,9 +53,9 @@ module Kitchen
         exit_code, stderr = execute_with_exit(env_command(command), shell)
         if exit_code != 0 || !stderr.empty?
           raise TransportFailed,
-            "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for
-              command: [#{command}]\nREMOTE ERROR:\n" +
-              human_err_msg(stderr.join)
+            "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for " +
+              "command: [#{command}]\nREMOTE ERROR:\n" +
+              human_err_msg(stderr)
         end
       end
 
@@ -112,13 +112,28 @@ module Kitchen
       # @param msg [String] The error message
       # @return [String] The error message with human format
       def human_err_msg(msg)
-        return msg unless msg.include?("CLIXML")
-        human = msg.split(/<S S=\"Error\">/).map! do |a|
-          a.gsub(/_x000D__x000A_<\/S>/, "")
+        err_msg = ""
+
+        while msg.size > 0
+          line = msg.shift
+          if line.include?("CLIXML")
+            msg.unshift(line)
+            break
+          else
+            err_msg << line
+          end
         end
-        human.shift
-        human.pop
-        human.join("\n")
+
+        unless msg.empty?
+          msg = msg.join
+          human = msg.split(/<S S=\"Error\">/).map! do |a|
+            a.gsub(/_x000D__x000A_<\/S>/, "")
+          end
+          human.shift
+          human.pop
+          err_msg << human.join("\n")
+        end
+        err_msg
       end
 
       # (see Base#login_command)
