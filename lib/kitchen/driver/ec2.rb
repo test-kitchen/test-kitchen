@@ -94,7 +94,8 @@ module Kitchen
         server.wait_for do
           print '.'
           # Euca instances often report ready before they have an IP
-          ready? && !public_ip_address.nil? && public_ip_address != '0.0.0.0'
+          ipaddress = Kitchen::Driver::Ec2.hostname(self)
+          ready? && !ipaddress.nil? && ipaddress != '0.0.0.0'
         end
         print '(server ready)'
         state[:hostname] = hostname(server)
@@ -219,10 +220,18 @@ module Kitchen
 
       def hostname(server)
         if config[:interface]
-          method = interface_types.fetch(config[:interface]) do
+          interface_type = interface_types.fetch(config[:interface]) do
             raise Kitchen::UserError, 'Invalid interface'
           end
-          server.send(method)
+          Kitchen::Driver::Ec2.hostname(server, interface_type)
+        else
+          Kitchen::Driver::Ec2.hostname(server)
+        end
+      end
+
+      def self.hostname(server, interface_type=nil)
+        if interface_type
+          server.send(interface_type)
         else
           server.dns_name || server.public_ip_address || server.private_ip_address
         end
