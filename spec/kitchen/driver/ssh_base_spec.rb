@@ -190,7 +190,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :password option set if given in state" do
-        config[:password] = "psst"
+        state[:password] = "psst"
 
         Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:password].must_equal "psst"
@@ -246,7 +246,7 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "with :port option set if customized in state" do
-        config[:port] = 9999
+        state[:port] = 9999
 
         Kitchen::SSH.expects(:new).with { |_hostname, _username, opts|
           opts[:port].must_equal 9999
