@@ -31,7 +31,6 @@ require "logger"
 
 require "kitchen/errors"
 require "kitchen/login_command"
-
 module Kitchen
 
   module Transport
@@ -260,7 +259,7 @@ module Kitchen
 
       # (see Base#env_command)
       def env_command(command)
-        env = ""
+        env = " $ProgressPreference='SilentlyContinue';"
         env << " $env:http_proxy=\"#{config[:http_proxy]}\";"   if config[:http_proxy]
         env << " $env:https_proxy=\"#{config[:https_proxy]}\";" if config[:https_proxy]
 
