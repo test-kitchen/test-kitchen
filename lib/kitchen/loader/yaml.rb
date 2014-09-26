@@ -111,12 +111,13 @@ module Kitchen
       # Performed a prioritized recursive merge of several source Hashes and
       # returns a new merged Hash. There are 3 sources of configuration data:
       #
-      # 1. global config
+      # 1. local config
       # 2. project config
-      # 3. local config
+      # 3. global config
       #
-      # The merge order is 3 -> 2 -> 1, meaning that the highest number in the
-      # above list has merge precedence over any lower numbered source.
+      # The merge order is local -> project -> global, meaning that elements at
+      # the top of the above list will be merged last, and have greater
+      # precedence than elements at the bottom of the list.
       #
       # @return [Hash] a new merged Hash
       # @api private
