@@ -10,7 +10,7 @@ next:
 
 There are a few basic ways of dynamically configuring test-kitchen:
 
-The YAML file can contain `<% erb %>`, which you could use for selecting drivers, etc. based on which platform your currently running, or based of environment variables. 
+The YAML file can contain `<% erb %>`, which you could use for selecting drivers, etc. based on which platform your currently running, or based of environment variables.
 
 Test-kitchen well also look for a `.kitchen.local.yml` which could be used for development purposes.  This is a file that's not typically checked into version control.
 
@@ -33,7 +33,7 @@ driver:
   openstack_username: <%= ENV['YOUR_OPENSTACK_USERNAME'] %>
   openstack_api_key: <%= ENV['YOUR_OPENSTACK_API_KEY'] %>
   openstack_auth_url: <%= ENV['YOUR_OPENSTACK_AUTH_URL'] %>
-  image_ref: <%= ENV['SERVER_IMAGE_ID'] %> 
+  image_ref: <%= ENV['SERVER_IMAGE_ID'] %>
   flavor_ref: <%= ENV['SERVER_FLAVOR_ID'] %>
 provisioner:
   name: chef_zero
@@ -54,4 +54,3 @@ suites:
       - recipe[git::server]
     attributes:
 ~~~
-
