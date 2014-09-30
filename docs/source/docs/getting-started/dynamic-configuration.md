@@ -8,26 +8,16 @@ next:
   url: "fixing-converge"
 ---
 
-There are a few basic ways of dynamically configuring test-kitchen:
+There are a few basic ways of dynamically configuring Test Kitchen:
 
-The YAML file can contain `<% erb %>`, which you could use for selecting drivers, etc. based on which platform your currently running, or based of environment variables.
+* A local configuration will be looked for in `.kitchen.local.yml` which could be used for development purposes.  This is a file that is not typically checked into version control.
+* A global configuration file will also be looked for in `$HOME/.kitchen/config.yml` to set preferred defaults for all your projects.
+* Finally, each YAML file can contain ERB fragments, which you could use for selecting drivers, etc. based on which platform your currently running, or based of environment variables.
 
-Test-kitchen well also look for a `.kitchen.local.yml` which could be used for development purposes.  This is a file that's not typically checked into version control.
-
-Test Kitchen allows a "global" configuration file that you can drop off to set preferred defaults in ~/.kitchen/config.yml. That, along with allowing ERB, should provide plenty of customizability.
-
-
-We're going to add some erb to our config by opening `.kitchen.yml` in your editor of choice so that it looks similar to:
+For example, you could modify `.kitchen.yml` (or `.kitchen.local.yml`, or `$HOME/.kitchen/config.yml`) to look like:
 
 ~~~yaml
 ---
-<% if ENV['KITCHEN_ENV'] == 'development' %>
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_solo
-<% elsif ENV['KITCHEN_ENV'] == 'test' %>
 driver:
   name: openstack
   openstack_username: <%= ENV['YOUR_OPENSTACK_USERNAME'] %>
@@ -35,22 +25,6 @@ driver:
   openstack_auth_url: <%= ENV['YOUR_OPENSTACK_AUTH_URL'] %>
   image_ref: <%= ENV['SERVER_IMAGE_ID'] %>
   flavor_ref: <%= ENV['SERVER_FLAVOR_ID'] %>
-provisioner:
-  name: chef_zero
-<% end %>
-
-platforms:
-  - name: ubuntu-12.04
-  - name: ubuntu-10.04
-  - name: centos-6.4
-
-suites:
-  - name: default
-    run_list:
-      - recipe[git::default]
-    attributes:
-  - name: server
-    run_list:
-      - recipe[git::server]
-    attributes:
 ~~~
+
+Keep in mind, this assumes you have an OpenStack deployment setup and ready to use. If this doesn't apply, let us continue.
