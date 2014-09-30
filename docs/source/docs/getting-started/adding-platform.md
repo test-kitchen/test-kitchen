@@ -12,18 +12,21 @@ Now that we are masters of the Ubuntu platform, let's add support for CentOS to 
 
 ~~~yaml
 ---
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
 
 platforms:
-- name: ubuntu-12.04
-- name: centos-6.4
+  - name: ubuntu-12.04
+  - name: centos-6.4
 
 suites:
-- name: default
-  run_list: ["recipe[git]"]
-  attributes: {}
+  - name: default
+    run_list:
+      - recipe[git::default]
+    attributes:
 ~~~
 
 Now let's check the status of our instances:
