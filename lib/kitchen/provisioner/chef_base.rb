@@ -35,6 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
+      default_config :chef_omnibus_package, nil
       default_config :run_list, []
       default_config :attributes, {}
       default_config :log_file, nil
@@ -148,12 +149,16 @@ module Kitchen
       # @api private
       def chef_install_function
         version = config[:require_chef_omnibus].to_s.downcase
+        package = config[:chef_omnibus_package]
         pretty_version = case version
                          when "true" then "install only if missing"
                          when "latest" then "always install latest version"
                          else version
                          end
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        flags = []
+        flags << "-v #{version}" unless %w[latest true].include?(version)
+        flags << "-P #{package}" unless package.nil?
+        install_flags = flags.join(' ')
 
         <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "/opt/chef" "#{version}" ; then
