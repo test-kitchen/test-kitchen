@@ -57,6 +57,10 @@ describe Kitchen::Provisioner::ChefBase do
         must_equal "https://www.getchef.com/chef/install.sh"
     end
 
+    it ":chef_package defaults to nil" do
+      provision[:chef_omnibus_package].must_eql nil
+    end
+
     it ":run_list defaults to an empty array" do
       provisioner[:run_list].must_equal []
     end
@@ -181,6 +185,14 @@ describe Kitchen::Provisioner::ChefBase do
         "sudo -E sh /tmp/install.sh ")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (install only if missing)", :partial_line)
+    end
+
+    it "will install a specific chef package, if specified" do
+      config[:require_chef_omnibus] = true
+      config[:chef_omnibus_package] = "angrychef"
+
+      provisioner.install_command.must_match regexify(
+        "sudo -E sh /tmp/install.sh -P angrychef")
     end
   end
 
