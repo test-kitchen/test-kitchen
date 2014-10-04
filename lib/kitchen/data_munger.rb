@@ -44,7 +44,7 @@ module Kitchen
       convert_legacy_require_chef_omnibus_format!
       convert_legacy_busser_format!
       convert_legacy_driver_http_proxy_format!
-      move_chef_data_to_provisioner!
+      move_data_to_provisioner!
     end
 
     # Generate a new Hash of configuration data that can be used to construct
@@ -277,7 +277,7 @@ module Kitchen
           data data_bags encrypted_data_bag_secret_key
           environments nodes roles
         }.each do |key|
-          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
+          move_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
         end
       end
     end
@@ -619,14 +619,16 @@ module Kitchen
       ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
     end
 
-    # Destructively moves key Chef configuration key/value pairs from being
+    # Destructively moves key Provisioner configuration key/value pairs from being
     # directly under a suite or platform into a `:provisioner` sub-hash.
     #
-    # There are three key Chef configuration key/value pairs:
+    # There are three key Chef and two Shell configuration key/value pairs:
     #
     # 1. `:attributes`
     # 2. `:run_list`
     # 3. `:named_run_list`
+    # 4. `:script`
+    # 5. `:data_path`
     #
     # This method converts the following:
     #
@@ -635,7 +637,9 @@ module Kitchen
     #       {
     #         :name => "ubuntu-12.04",
     #         :attributes => { :one => "two" },
-    #         :run_list => ["alpha", "bravo"]
+    #         :run_list => ["alpha", "bravo"],
+    #         :script => "bootstrap.sh",
+    #         :data_path => "platform_data"
     #       }
     #     ],
     #
@@ -643,7 +647,9 @@ module Kitchen
     #       {
     #         :name => "alpha",
     #         :attributes => { :three => "four" },
-    #         :run_list => ["charlie", "delta"]
+    #         :run_list => ["charlie", "delta"],
+    #         :script => "suite.sh",
+    #         :data_path => "suite_data"
     #       }
     #     ]
     #   }
@@ -656,7 +662,9 @@ module Kitchen
     #         :name => "ubuntu-12.04",
     #         :provisioner => {
     #           :attributes => { :one => "two" },
-    #           :run_list => ["alpha", "bravo"]
+    #           :run_list => ["alpha", "bravo"],
+    #           :script => "bootstrap.sh",
+    #           :data_path => "platform_data"
     #         }
     #       }
     #     ],
@@ -667,27 +675,37 @@ module Kitchen
     #         :provisioner => {
     #           :attributes => { :three => "four" },
     #           :run_list => ["charlie", "delta"]
+    #           :script => "suite.sh",
+    #           :data_path => "suite_data"
     #         }
     #       }
     #     ]
     #   }
     #
     # @api private
-    def move_chef_data_to_provisioner!
+    def move_data_to_provisioner!
       data.fetch(:suites, []).each do |suite|
-        move_chef_data_to_provisioner_at!(suite, :attributes)
-        move_chef_data_to_provisioner_at!(suite, :run_list)
-        move_chef_data_to_provisioner_at!(suite, :named_run_list)
+        # Chef Provisioner
+        move_data_to_provisioner_at!(suite, :attributes)
+        move_data_to_provisioner_at!(suite, :run_list)
+        move_data_to_provisioner_at!(suite, :named_run_list)
+        # Script Provisioner
+        move_data_to_provisioner_at!(suite, :script)
+        move_data_to_provisioner_at!(suite, :data_path)
       end
 
       data.fetch(:platforms, []).each do |platform|
-        move_chef_data_to_provisioner_at!(platform, :attributes)
-        move_chef_data_to_provisioner_at!(platform, :run_list)
-        move_chef_data_to_provisioner_at!(platform, :named_run_list)
+        # Chef Provisioner
+        move_data_to_provisioner_at!(platform, :attributes)
+        move_data_to_provisioner_at!(platform, :run_list)
+        move_data_to_provisioner_at!(platform, :named_run_list)
+        # Script Provisioner
+        move_data_to_provisioner_at!(platform, :script)
+        move_data_to_provisioner_at!(platform, :data_path)
       end
     end
 
-    # Destructively moves key Chef configuration key/value pairs from being
+    # Destructively moves key Provisioner configuration key/value pairs from being
     # directly under a hash into a `:provisioner` sub-hash block. This method
     # has no knowledge of suites, platforms, or the like, just a vanilla hash.
     #
@@ -695,7 +713,7 @@ module Kitchen
     # @param key [Symbol] a key in the root hash to move into a `:provisioner`
     #   sub-hash block
     # @api private
-    def move_chef_data_to_provisioner_at!(root, key)
+    def move_data_to_provisioner_at!(root, key)
       if root.key?(key)
         pdata = root.fetch(:provisioner, {})
         pdata = { name: pdata } if pdata.is_a?(String)
