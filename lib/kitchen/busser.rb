@@ -52,6 +52,7 @@ module Kitchen
       @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
+      @config[:plugins] = opts.fetch(:plugins, [])
       @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
     end
 
@@ -198,7 +199,24 @@ module Kitchen
       glob = File.join(config[:test_base_path], config[:suite_name], "*")
       Dir.glob(glob).reject { |d|
         !File.directory?(d) || non_suite_dirs.include?(File.basename(d))
-      }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
+      }.map { |d| "busser-#{File.basename(d)}#{plugin_version(File.basename(d))}" }.sort.uniq
+    end
+
+    # Returns a version string for a plugin that will be installed by Busser
+    #
+    # @param plugin_name [String] name of the plugin
+    # @return [String] @version or empty string if no version was set in the
+    #   config file.
+    # @api private
+    def plugin_version(plugin_name)
+      version = ''
+      config[:plugins].each do |plugin|
+        p = plugin.split('@')
+        if p[0] == plugin_name && p.length > 1
+          version += "@#{p[1]}"
+        end
+      end
+      version
     end
 
     # Returns an Array of test suite filenames for the related suite currently
