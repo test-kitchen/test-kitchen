@@ -209,12 +209,11 @@ module Kitchen
     #   config file.
     # @api private
     def plugin_version(plugin_name)
-      version = ''
+      version = ""
       config[:plugins].each do |plugin|
-        p = plugin.split('@')
-        if p[0] == plugin_name && p.length > 1
-          version += "@#{p[1]}"
-        end
+        p = plugin.split("@")
+        next unless p[0] == plugin_name && p.length > 1
+        version += "@#{p[1]}"
       end
       version
     end
