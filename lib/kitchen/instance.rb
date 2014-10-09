@@ -230,6 +230,14 @@ module Kitchen
       state_file.read[:last_action]
     end
 
+    def hostname
+      state_file.read[:hostname]
+    end
+
+    def port
+      state_file.read[:port]
+    end
+
     private
 
     # @return [StateFile] a state file object that can be read from or written

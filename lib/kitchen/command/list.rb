@@ -62,7 +62,8 @@ module Kitchen
           color_pad(instance.name),
           color_pad(instance.driver.name),
           color_pad(instance.provisioner.name),
-          format_last_action(instance.last_action)
+          format_last_action(instance.last_action),
+          *format_connection(instance)
         ]
       end
 
@@ -82,6 +83,21 @@ module Kitchen
         end
       end
 
+      # Format connect infomation the given instance.
+      #
+      # @param [String] instance
+      # @return [Array] hostname and ssh_port
+      def format_connection(instance)
+        if instance.hostname
+          [
+            colorize(instance.hostname, :white),
+            colorize(instance.port || "<Unknown>", :white)
+          ]
+        else
+          [colorize("<Unknown>", :white), colorize("<Unknown>", :white)]
+        end
+      end
+
       # Constructs a list display table and output it to the screen.
       #
       # @param result [Array<Instance>] an array of instances
@@ -90,7 +106,8 @@ module Kitchen
         table = [
           [
             colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Last Action", :green)
+            colorize("Provisioner", :green), colorize("Last Action", :green),
+            colorize("Hostname", :green), colorize("SSHPort", :green)
           ]
         ]
         table += Array(result).map { |i| display_instance(i) }
