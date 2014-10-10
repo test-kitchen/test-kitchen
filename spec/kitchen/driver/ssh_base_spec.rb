@@ -357,6 +357,14 @@ describe Kitchen::Driver::SSHBase do
       cmd
     end
 
+    it "invokes the #install_command with :cmd_prefix set" do
+      config[:cmd_prefix] = "my_shell"
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("my_shell install")
+
+      cmd
+    end
+
     describe "transferring files" do
 
       before do
