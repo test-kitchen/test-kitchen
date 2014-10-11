@@ -23,14 +23,8 @@ Next, create a file called `test/integration/server/serverspec/git_daemon_spec.r
 ~~~ruby
 require 'serverspec'
 
-include Serverspec::Helper::Exec
-include Serverspec::Helper::DetectOS
-
-RSpec.configure do |c|
-  c.before :all do
-    c.path = '/sbin:/usr/sbin'
-  end
-end
+# Required by serverspec
+set :backend, :exec
 
 describe "Git Daemon" do
 
