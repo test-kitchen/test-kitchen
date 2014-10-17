@@ -248,11 +248,18 @@ describe Kitchen::Instance do
   end
 
   it "#login executes the driver's login_command" do
-    driver.stubs(:login_command).with(Hash.new).
+    state_file.write(:last_action => "create")
+    driver.stubs(:login_command).with(:last_action => "create").
       returns(Kitchen::LoginCommand.new(%w[echo hello], :purple => true))
     Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
     instance.login
+  end
+
+  it "#login raises a UserError if the instance is not created" do
+    state_file.write({})
+
+    proc { instance.login }.must_raise Kitchen::UserError
   end
 
   describe "#diagnose" do
