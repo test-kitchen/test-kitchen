@@ -196,7 +196,12 @@ module Kitchen
     # @see Driver::LoginCommand
     # @see Driver::Base#login_command
     def login
-      login_command = driver.login_command(state_file.read)
+      state = state_file.read
+      if state[:last_action].nil?
+        raise UserError, "Instance #{to_str} has not yet been created"
+      end
+
+      login_command = driver.login_command(state)
       cmd, *args = login_command.cmd_array
       options = login_command.options
 

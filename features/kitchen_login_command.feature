@@ -20,11 +20,21 @@ Feature: Logging into a Kitchen instance
       - name: default
       - name: full
     """
+    And I successfully run `kitchen create default-flebian`
 
   @spawn
   Scenario: Logging in to an instance
     When I run `kitchen login default-flebian`
     Then the output should contain "Remote login is not supported in this driver."
+    And the exit status should not be 0
+
+  @spawn
+  Scenario: Attempting to log into a non-created instance
+    When I run `kitchen login full-flebian`
+    Then the output should contain:
+    """
+    Instance <full-flebian> has not yet been created
+    """
     And the exit status should not be 0
 
   @spawn
