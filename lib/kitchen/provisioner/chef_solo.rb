@@ -29,6 +29,10 @@ module Kitchen
 
       default_config :solo_rb, {}
 
+      default_config :chef_solo_path do |provisioner|
+        File.join(provisioner[:chef_omnibus_root], %w[bin chef-solo])
+      end
+
       # (see Base#create_sandbox)
       def create_sandbox
         super
@@ -39,7 +43,7 @@ module Kitchen
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
-        cmd = sudo("chef-solo")
+        cmd = sudo(config[:chef_solo_path])
         args = [
           "--config #{config[:root_path]}/solo.rb",
           "--log_level #{level}",

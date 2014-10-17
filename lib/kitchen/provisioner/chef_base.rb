@@ -35,6 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
+      default_config :chef_omnibus_root, "/opt/chef"
       default_config :run_list, []
       default_config :attributes, {}
       default_config :log_file, nil
@@ -156,7 +157,7 @@ module Kitchen
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
         <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "/opt/chef" "#{version}" ; then
+          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
             #{sudo("sh")} /tmp/install.sh #{install_flags}

@@ -48,6 +48,12 @@ describe Kitchen::Provisioner::ChefZero do
       provisioner[:client_rb].must_equal Hash.new
     end
 
+    it "sets :chef_client_path to a path using :chef_omnibus_root" do
+      config[:chef_omnibus_root] = "/nice/place"
+
+      provisioner[:chef_client_path].must_equal "/nice/place/bin/chef-client"
+    end
+
     it "sets :ruby_bindir to use an Omnibus Ruby" do
       provisioner[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
     end
@@ -374,16 +380,18 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       it "uses sudo for chef-client when configured" do
+        config[:chef_omnibus_root] = "/c"
         config[:sudo] = true
 
-        cmd.must_match regexify("sudo -E chef-client ", :partial_line)
+        cmd.must_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
       end
 
       it "does not use sudo for chef-client when configured" do
+        config[:chef_omnibus_root] = "/c"
         config[:sudo] = false
 
-        cmd.must_match regexify("chef-client ", :partial_line)
-        cmd.wont_match regexify("sudo -E chef-client ", :partial_line)
+        cmd.must_match regexify("/c/bin/chef-client ", :partial_line)
+        cmd.wont_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
       end
 
       it "sets local mode flag on chef-client" do
