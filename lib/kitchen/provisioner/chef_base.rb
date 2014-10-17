@@ -35,7 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
-      default_config :chef_root, "/opt/chef"
+      default_config :chef_omnibus_root, "/opt/chef"
       default_config :run_list, []
       default_config :attributes, {}
       default_config :log_file, nil
@@ -157,7 +157,7 @@ module Kitchen
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
 
         <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "#{chef_root}" "#{version}" ; then
+          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
             #{sudo("sh")} /tmp/install.sh #{install_flags}
@@ -358,11 +358,6 @@ module Kitchen
       # @api private
       def tmpsitebooks_dir
         File.join(sandbox_path, "cookbooks")
-      end
-
-      # @return [Pathname]
-      def chef_root
-        @chef_root ||= Pathname.new(config[:chef_root])
       end
 
       # Copies a cookbooks/ directory into the sandbox path.

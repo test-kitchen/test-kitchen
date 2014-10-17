@@ -32,6 +32,10 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_port, 8889
 
+      default_config :chef_client_path do |provisioner|
+        File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
+      end
+
       # (see Base#create_sandbox)
       def create_sandbox
         super
@@ -64,9 +68,9 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
-        chef_client_bin = chef_root.join("bin", "chef-client")
+        chef_client_bin = sudo(config[:chef_client_path])
 
-        cmd = modern? ? "#{sudo(chef_client_bin)} --local-mode" : shim_command
+        cmd = modern? ? "#{chef_client_bin} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",

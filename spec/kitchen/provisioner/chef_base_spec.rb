@@ -57,6 +57,10 @@ describe Kitchen::Provisioner::ChefBase do
         must_equal "https://www.getchef.com/chef/install.sh"
     end
 
+    it ":chef_omnibus_root has a default" do
+      provisioner[:chef_omnibus_root].must_equal "/opt/chef"
+    end
+
     it ":run_list defaults to an empty array" do
       provisioner[:run_list].must_equal []
     end
