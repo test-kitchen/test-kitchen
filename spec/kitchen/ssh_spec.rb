@@ -138,7 +138,7 @@ describe Kitchen::SSH do
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-      Net::SSH::Disconnect
+      Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
     ].each do |klass|
       describe "raising #{klass}" do
 
