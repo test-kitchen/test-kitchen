@@ -192,7 +192,7 @@ module Kitchen
       rescue_exceptions = [
         Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
         Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-        Net::SSH::Disconnect
+        Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
       ]
       retries = options[:ssh_retries] || 3
 
