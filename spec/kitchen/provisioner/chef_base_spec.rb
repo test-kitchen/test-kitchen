@@ -61,6 +61,10 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:chef_omnibus_root].must_equal "/opt/chef"
     end
 
+    it ":chef_omnibus_install_options defaults to nil" do
+      provisioner[:chef_omnibus_install_options].must_equal nil
+    end
+
     it ":run_list defaults to an empty array" do
       provisioner[:run_list].must_equal []
     end
@@ -186,6 +190,16 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (install only if missing)", :partial_line)
     end
+
+    it "will pass install options, when given" do
+      config[:chef_omnibus_install_options] = "-P chefdk"
+
+      provisioner.install_command.must_match regexify(
+        "sudo -E sh /tmp/install.sh -P chefdk")
+      provisioner.install_command.must_match regexify(
+        "Installing Chef Omnibus (install only if missing)", :partial_line)
+    end
+
   end
 
   describe "#init_command" do
