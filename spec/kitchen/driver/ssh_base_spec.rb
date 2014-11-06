@@ -80,7 +80,8 @@ describe Kitchen::Driver::SSHBase do
     proc { driver.destroy(state) }.must_raise Kitchen::ClientError
   end
 
-  def self.constructs_an_ssh_object # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def self.constructs_an_ssh_object
     describe "constructs an SSH object" do
 
       it "with hostname set from state" do
@@ -264,6 +265,7 @@ describe Kitchen::Driver::SSHBase do
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   describe "#login_command" do
 
