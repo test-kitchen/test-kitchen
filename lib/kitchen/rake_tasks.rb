@@ -56,7 +56,7 @@ module Kitchen
         end
 
         desc "Run all test instances"
-        task "all" => config.instances.map { |i| i.name }
+        task "all" => config.instances.map(&:name)
       end
     end
   end

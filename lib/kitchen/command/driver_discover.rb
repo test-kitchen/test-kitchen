@@ -77,7 +77,7 @@ module Kitchen
       # @api private
       def fetch_gem_specs_pre_rubygems_2(fetcher, dep)
         specs = fetcher.find_matching(dep, false, false, false)
-        specs.map { |t| t.first }.map { |t| t[0, 2] }
+        specs.map(&:first).map { |t| t[0, 2] }
       end
 
       # Print out a display table.

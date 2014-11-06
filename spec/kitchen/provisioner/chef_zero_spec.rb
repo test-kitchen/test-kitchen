@@ -85,7 +85,7 @@ describe Kitchen::Provisioner::ChefZero do
     describe "client.rb file" do
 
       let(:file) do
-        IO.read(sandbox_path("client.rb")).lines.map { |l| l.chomp }
+        IO.read(sandbox_path("client.rb")).lines.map(&:chomp)
       end
 
       it "creates a client.rb" do

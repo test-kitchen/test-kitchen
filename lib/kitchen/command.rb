@@ -177,7 +177,7 @@ module Kitchen
             end
           end
         end
-        threads.map { |i| i.join }
+        threads.map(&:join)
       end
     end
   end

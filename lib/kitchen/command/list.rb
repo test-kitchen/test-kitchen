@@ -34,7 +34,7 @@ module Kitchen
           die "The --debug flag on the list subcommand is deprecated, " \
             "please use `kitchen diagnose'."
         elsif options[:bare]
-          puts Array(result).map { |i| i.name }.join("\n")
+          puts Array(result).map(&:name).join("\n")
         else
           list_table(result)
         end

@@ -73,7 +73,7 @@ describe Kitchen::Provisioner::ChefSolo do
     describe "solo.rb file" do
 
       let(:file) do
-        IO.read(sandbox_path("solo.rb")).lines.map { |l| l.chomp }
+        IO.read(sandbox_path("solo.rb")).lines.map(&:chomp)
       end
 
       it "creates a solo.rb" do

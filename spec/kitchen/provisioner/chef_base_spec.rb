@@ -647,7 +647,7 @@ describe Kitchen::Provisioner::ChefBase do
       describe "Chef config files" do
 
         let(:file) do
-          IO.read(sandbox_path("generic.rb")).lines.map { |l| l.chomp }
+          IO.read(sandbox_path("generic.rb")).lines.map(&:chomp)
         end
 
         it "#create_sanbox creates a generic.rb" do

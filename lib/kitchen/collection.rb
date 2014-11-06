@@ -49,7 +49,7 @@ module Kitchen
     #
     # @return [Array<String>] array of name strings
     def as_names
-      __getobj__.map { |i| i.name }
+      __getobj__.map(&:name)
     end
   end
 end
