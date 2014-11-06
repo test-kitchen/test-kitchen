@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 ignore %r{^\.gem/}
 
 def rubocop_opts
