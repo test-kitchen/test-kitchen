@@ -9,7 +9,7 @@ group :guard do
 end
 
 group :test do
-  gem "codeclimate-test-reporter", require: nil
+  gem "codeclimate-test-reporter", :require => nil
 end
 
 gem "finstyle", path: "~/Projects/github.com/fnichol/finstyle"
