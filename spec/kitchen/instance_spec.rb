@@ -27,6 +27,7 @@ require "kitchen/platform"
 require "kitchen/provisioner"
 require "kitchen/provisioner/dummy"
 require "kitchen/suite"
+require "kitchen/transport/dummy"
 
 class DummyStateFile
 
@@ -96,11 +97,12 @@ describe Kitchen::Instance do
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
   let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
+  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
       :provisioner => provisioner, :busser => busser,
-      :logger => logger, :state_file => state_file }
+      :logger => logger, :state_file => state_file, :transport => transport }
   end
 
   def suite(name = "suite")
@@ -787,8 +789,7 @@ describe Kitchen::Instance do
       before { state_file.write(:last_action => "create") }
 
       it "calls Driver#remote_command with state and command" do
-        driver.expects(:remote_command).with do |state, command|
-          state.must_equal(:last_action => "create")
+        transport.expects(:execute).with do |command|
           command.must_equal "uptime"
         end
 
