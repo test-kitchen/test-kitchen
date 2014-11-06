@@ -2,9 +2,9 @@ ignore %r{^\.gem/}
 
 group :red_green_refactor, halt_on_fail: true do
   guard 'minitest' do
-    watch(%r|^spec/(.*)_spec\.rb|)
-    watch(%r|^lib/(.*)([^/]+)\.rb|)     { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
-    watch(%r|^spec/spec_helper\.rb|)    { "spec" }
+    watch(%r{^spec/(.*)_spec\.rb})
+    watch(%r{^lib/(.*)([^/]+)\.rb})     { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
+    watch(%r{^spec/spec_helper\.rb})    { "spec" }
   end
 
   guard :rubocop, all_on_start: false, keep_failed: false, cli: "-r finstyle" do
