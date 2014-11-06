@@ -12,5 +12,3 @@ end
 group :test do
   gem "codeclimate-test-reporter", :require => nil
 end
-
-gem "finstyle", path: "~/Projects/github.com/fnichol/finstyle"
