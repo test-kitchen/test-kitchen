@@ -286,11 +286,17 @@ module Kitchen
       end
 
       # Removes all non-cookbook files in the sandbox path.
+      # Commented out as part of Issue #537.
+      #
+      # Test Kitchen should follow convention and look at the chefignore file:
+      #
+      #   https://docs.getchef.com/essentials_repository.html#chefignore-files
+      #
       #
       # @api private
       def filter_only_cookbook_files
-        info("Removing non-cookbook files before transfer")
-        FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
+        # info("Removing non-cookbook files before transfer")
+        # FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
       end
 
       # Generates a list of all files in the cookbooks directory in the
