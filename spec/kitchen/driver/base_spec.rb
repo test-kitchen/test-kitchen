@@ -54,6 +54,10 @@ describe Kitchen::Driver::Base do
     stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
   end
 
+  let(:transport) do
+    Kitchen::Transport::Dummy.new
+  end
+
   let(:instance) do
     stub(
       :name => "coolbeans",
@@ -116,9 +120,10 @@ describe Kitchen::Driver::Base do
     end
   end
 
+  [:setup, :verify].each do |action|
     it "has a #{action} method that takes state" do
       state = Hash.new
-      driver.public_send(action, state).must_be_nil
+      driver.public_send(action, state).must_equal true
     end
   end
 

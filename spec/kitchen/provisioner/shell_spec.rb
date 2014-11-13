@@ -27,15 +27,19 @@ describe Kitchen::Provisioner::Shell do
   let(:logger)          { Logger.new(logged_output) }
 
   let(:config) do
-    { :test_base_path => "/basist", :kitchen_root => "/rooty" }
+    { :test_base_path => "/basist", :kitchen_root => "/rooty", :sudo => true }
   end
 
   let(:suite) do
     stub(:name => "fries")
   end
 
+  let(:transport) do
+    stub(:sudo => config[:sudo], :shell => "bourne")
+  end
+
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite)
+    stub(:name => "coolbeans", :logger => logger, :suite => suite, :transport => transport)
   end
 
   let(:provisioner) do

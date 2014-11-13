@@ -282,6 +282,7 @@ module Kitchen
       # @return [Hash] Options to build the transport
       # @api private
       def build_transport_args(state) # rubocop:disable Lint/UnusedMethodArgument
+        {}
       end
     end
   end
