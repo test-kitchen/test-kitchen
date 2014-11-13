@@ -18,6 +18,7 @@
 
 require "base64"
 require "digest"
+require "kitchen"
 
 module Kitchen
 

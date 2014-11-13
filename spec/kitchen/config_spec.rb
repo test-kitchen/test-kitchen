@@ -61,7 +61,8 @@ describe Kitchen::Config do
     {
       :defaults => {
         :driver => "dummy",
-        :provisioner => "chef_solo"
+        :provisioner => "chef_solo",
+        :transport => "ssh",
       },
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
@@ -153,7 +154,7 @@ describe Kitchen::Config do
       config.platforms
     end
 
-    it "constucts a munger with loader data and defaults" do
+    it "constructs a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
       Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
@@ -266,6 +267,7 @@ describe Kitchen::Config do
       Kitchen::Transport.stubs(:for_plugin).returns(transport)
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
+      munger.stubs(:transport_data_for).returns({ :name => "dummy" })
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
     end

@@ -43,8 +43,9 @@ module Kitchen
         report(:disconnect)
       end
 
-      def login_command(state)
+      def login_command
         report(:login_command)
+        super.login_command
       end
 
       private

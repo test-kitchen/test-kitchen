@@ -97,7 +97,7 @@ describe Kitchen::Instance do
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
   let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
-  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
+  let(:transport)   { Kitchen::Transport::Dummy.new }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
@@ -803,7 +803,11 @@ describe Kitchen::Instance do
 
       before { state_file.write(:last_action => "create") }
 
-      it "calls Driver#remote_command with state and command" do
+      it "calls Transport#execute with command" do
+
+        # TODO: minitest seems to lack an equivalent of #and_call_original, not sure what to do here.
+        # transport.expect(:connection, { :last_action => "create" })
+
         transport.expects(:execute).with do |command|
           command.must_equal "uptime"
         end

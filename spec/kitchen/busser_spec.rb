@@ -28,7 +28,9 @@ describe Kitchen::Busser do
   let(:config)      { Hash.new }
 
   let(:busser) do
-    Kitchen::Busser.new(suite_name, config)
+    b = Kitchen::Busser.new(suite_name, config)
+    b.stubs(:shell).returns("bourne")
+    b
   end
 
   describe ".new" do
