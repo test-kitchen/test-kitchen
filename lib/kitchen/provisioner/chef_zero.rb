@@ -30,6 +30,7 @@ module Kitchen
       default_config :client_rb, {}
       default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
+      default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
 
       default_config :chef_client_path do |provisioner|
@@ -77,6 +78,9 @@ module Kitchen
           "--force-formatter",
           "--no-color"
         ]
+        if config[:chef_zero_host]
+          args <<  "--chef-zero-host #{config[:chef_zero_host]}"
+        end
         if config[:chef_zero_port]
           args <<  "--chef-zero-port #{config[:chef_zero_port]}"
         end

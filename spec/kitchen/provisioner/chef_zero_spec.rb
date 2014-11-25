@@ -62,6 +62,10 @@ describe Kitchen::Provisioner::ChefZero do
       provisioner[:json_attributes].must_equal true
     end
 
+    it "does not set :chef_zero_host" do
+      provisioner[:chef_zero_host].must_equal nil
+    end
+
     it "sets :chef_zero_port to 8889" do
       provisioner[:chef_zero_port].must_equal 8889
     end
@@ -431,10 +435,22 @@ describe Kitchen::Provisioner::ChefZero do
         cmd.must_match regexify(" --chef-zero-port 8889", :partial_line)
       end
 
+      it "sets chef zero host flag for custom host" do
+        config[:chef_zero_host] = '192.168.0.1'
+
+        cmd.must_match regexify(" --chef-zero-host 192.168.0.1", :partial_line)
+      end
+
       it "sets chef zero port flag for custom port" do
         config[:chef_zero_port] = 123
 
         cmd.must_match regexify(" --chef-zero-port 123", :partial_line)
+      end
+
+      it "does not set chef zero host flag when value is falsey" do
+        config[:chef_zero_host] = nil
+
+        cmd.wont_match regexify(" --chef-zero-host ", :partial_line)
       end
 
       it "does not set chef zero port flag when value is falsey" do
