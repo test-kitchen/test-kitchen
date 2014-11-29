@@ -36,6 +36,7 @@ module Kitchen
       default_config :ebs_optimized,      false
       default_config :security_group_ids, ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
+      default_config :user_data,          nil
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
@@ -158,6 +159,11 @@ module Kitchen
           :subnet_id                 => config[:subnet_id],
           :iam_instance_profile_name => config[:iam_profile_name],
           :associate_public_ip       => config[:associate_public_ip],
+          :user_data                 => (config[:user_data].nil? ? nil :
+            (File.file?(config[:user_data]) ?
+              File.read(config[:user_data]) : config[:user_data]
+            )
+          ),
           :block_device_mapping      => [{
             'Ebs.VolumeSize' => config[:ebs_volume_size],
             'Ebs.DeleteOnTermination' => config[:ebs_delete_on_termination],
@@ -179,6 +185,11 @@ module Kitchen
           :key_name                  => config[:aws_ssh_key_id],
           :subnet_id                 => config[:subnet_id],
           :iam_instance_profile_name => config[:iam_profile_name],
+          :user_data                 => (config[:user_data].nil? ? nil :
+            (File.file?(config[:user_data]) ?
+              File.read(config[:user_data]) : config[:user_data]
+            )
+          ),
           :price                     => config[:price],
           :instance_count            => config[:instance_count]
         )
@@ -196,9 +207,10 @@ module Kitchen
         debug("ec2:subnet_id '#{config[:subnet_id]}'")
         debug("ec2:iam_profile_name '#{config[:iam_profile_name]}'")
         debug("ec2:associate_public_ip '#{config[:associate_public_ip]}'")
+        debug("ec2:user_data '#{config[:user_data]}'")
         debug("ec2:ssh_timeout '#{config[:ssh_timeout]}'")
         debug("ec2:ssh_retries '#{config[:ssh_retries]}'")
-        debug("ec2:spot_price'#{config[:price]}'")
+        debug("ec2:spot_price '#{config[:price]}'")
       end
 
       def amis
