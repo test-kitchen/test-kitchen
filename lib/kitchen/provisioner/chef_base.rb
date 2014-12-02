@@ -274,6 +274,7 @@ module Kitchen
           resolve_with_berkshelf
         elsif File.exist?(cheffile)
           resolve_with_librarian
+          cp_site_cookbooks if File.directory?(site_cookbooks_dir)
         elsif File.directory?(cookbooks_dir)
           cp_cookbooks
         elsif File.exist?(metadata_rb)
