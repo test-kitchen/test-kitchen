@@ -5,7 +5,6 @@ rvm:
   - 2.0.0
   - 1.9.3
   - ruby-head
-  - jruby-19mode
 
 env:
   - RUBYGEMS_VERSION=
@@ -23,15 +22,12 @@ bundler_args: --without guard
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-19mode
   exclude:
     - rvm: 2.1
       env: RUBYGEMS_VERSION=1.8.29
     - rvm: 2.0.0
       env: RUBYGEMS_VERSION=1.8.29
     - rvm: ruby-head
-      env: RUBYGEMS_VERSION=1.8.29
-    - rvm: jruby-19mode
       env: RUBYGEMS_VERSION=1.8.29
 
 notifications:
