@@ -436,7 +436,7 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       it "sets chef zero host flag for custom host" do
-        config[:chef_zero_host] = '192.168.0.1'
+        config[:chef_zero_host] = "192.168.0.1"
 
         cmd.must_match regexify(" --chef-zero-host 192.168.0.1", :partial_line)
       end
