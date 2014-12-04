@@ -147,6 +147,21 @@ describe Kitchen::Instance do
       Kitchen::Instance.name_for(suite("_s__s_"), platform("pp_")).
         must_equal "-s--s--pp-"
     end
+
+    it "transforms forward slashes to dashes in suite name" do
+      Kitchen::Instance.name_for(suite("suite/ness"), platform("platform")).
+        must_equal "suite-ness-platform"
+    end
+
+    it "transforms forward slashes to dashes in platform name" do
+      Kitchen::Instance.name_for(suite("suite"), platform("platform/s")).
+        must_equal "suite-platform-s"
+    end
+
+    it "transforms forward slashes to dashes in suite and platform names" do
+      Kitchen::Instance.name_for(suite("/s//s/"), platform("pp/")).
+        must_equal "-s--s--pp-"
+    end
   end
 
   describe "#suite" do
