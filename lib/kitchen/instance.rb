@@ -42,7 +42,7 @@ module Kitchen
       # @param platform [Platform,#name] a Platform
       # @return [String] a normalized, consistent name for an instance
       def name_for(suite, platform)
-        "#{suite.name}-#{platform.name}".gsub(/_/, "-").gsub(/\./, "")
+        "#{suite.name}-#{platform.name}".gsub(%r{[_,/]}, "-").gsub(/\./, "")
       end
     end
 
