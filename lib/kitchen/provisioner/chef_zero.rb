@@ -68,16 +68,48 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        level = config[:log_level] == :info ? :auto : config[:log_level]
-        chef_client_bin = sudo(config[:chef_client_path])
+        cmd = modern? ? local_mode_command : shim_command
 
-        cmd = modern? ? "#{chef_client_bin} --local-mode" : shim_command
+        Util.wrap_command([cmd, *chef_client_args].join(" "))
+      end
+
+      private
+
+      # Returns the command that will run chef client in local mode (a.k.a.
+      # chef zero mode).
+      #
+      # @return [String] the command string
+      # @api private
+      def local_mode_command
+        "#{sudo(config[:chef_client_path])} --local-mode"
+      end
+
+      # Returns the command that will run a backwards compatible shim script
+      # that approximates local mode in a modern chef-client run.
+      #
+      # @return [String] the command string
+      # @api private
+      def shim_command
+        [
+          chef_client_zero_env,
+          sudo("#{config[:ruby_bindir]}/ruby"),
+          "#{config[:root_path]}/chef-client-zero.rb"
+        ].join(" ")
+      end
+
+      # Returns an Array of command line arguments for the chef client.
+      #
+      # @return [Array<String>] an array of command line arguments
+      # @api private
+      def chef_client_args
+        level = config[:log_level] == :info ? :auto : config[:log_level]
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",
           "--force-formatter",
           "--no-color"
         ]
+
         if config[:chef_zero_host]
           args <<  "--chef-zero-host #{config[:chef_zero_host]}"
         end
@@ -91,22 +123,7 @@ module Kitchen
           args << "--logfile #{config[:log_file]}"
         end
 
-        Util.wrap_command([cmd, *args].join(" "))
-      end
-
-      private
-
-      # Returns the command that will run a backwards compatible shim script
-      # that approximates local mode in a modern chef-client run.
-      #
-      # @return [String] the command string
-      # @api private
-      def shim_command
-        [
-          chef_client_zero_env,
-          sudo("#{config[:ruby_bindir]}/ruby"),
-          "#{config[:root_path]}/chef-client-zero.rb"
-        ].join(" ")
+        args
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory
