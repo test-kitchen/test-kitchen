@@ -112,8 +112,8 @@ module Kitchen
       # returns a new merged Hash. There are 3 sources of configuration data:
       #
       # 1. global config
-      # 2. local config
-      # 3. project config
+      # 2. project config
+      # 3. local config
       #
       # The merge order is 3 -> 2 -> 1, meaning that the highest number in the
       # above list has merge precedence over any lower numbered source.
@@ -121,12 +121,12 @@ module Kitchen
       # @return [Hash] a new merged Hash
       # @api private
       def combined_hash
-        y = if @process_local
-          normalize(yaml).rmerge(normalize(local_yaml))
+        y = if @process_global
+          normalize(global_yaml).rmerge(normalize(yaml))
         else
           normalize(yaml)
         end
-        @process_global ? y.rmerge(normalize(global_yaml)) : y
+        @process_local ? y.rmerge(normalize(local_yaml)) : y
       end
 
       # Loads and returns the Kitchen config YAML as a Hash.
