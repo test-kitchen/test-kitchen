@@ -54,7 +54,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     it ":chef_omnibus_url has a default" do
       provisioner[:chef_omnibus_url].
-        must_equal "https://www.getchef.com/chef/install.sh"
+        must_equal "https://www.chef.io/chef/install.sh"
     end
 
     it ":chef_omnibus_root has a default" do
