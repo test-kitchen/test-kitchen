@@ -154,6 +154,17 @@ describe Kitchen::Loader::YAML do
       )
     end
 
+    it "merges kitchen.yml over configuration in global config" do
+      stub_global!(
+        "common" => { "thekey" => "nope" }
+      )
+      stub_yaml!(".kitchen.yml",
+        "common" => { "thekey" => "yep" }
+      )
+
+      loader.read.must_equal(:common => { :thekey => "yep" })
+    end
+
     it "merges kitchen.local.yml over configuration in kitchen.yml" do
       stub_yaml!(".kitchen.yml",
         "common" => { "thekey" => "nope" }
@@ -165,7 +176,7 @@ describe Kitchen::Loader::YAML do
       loader.read.must_equal(:common => { :thekey => "yep" })
     end
 
-    it "merges global config over both kitchen.local.yml and kitchen.yml" do
+    it "merges kitchen.local.yml over both kitchen.yml and global config" do
       stub_yaml!(".kitchen.yml",
         "common" => { "thekey" => "nope" }
       )
@@ -176,7 +187,7 @@ describe Kitchen::Loader::YAML do
         "common" => { "thekey" => "kinda" }
       )
 
-      loader.read.must_equal(:common => { :thekey => "kinda" })
+      loader.read.must_equal(:common => { :thekey => "yep" })
     end
 
     NORMALIZED_KEYS = {
