@@ -62,6 +62,7 @@ module Kitchen
           color_pad(instance.name),
           color_pad(instance.driver.name),
           color_pad(instance.provisioner.name),
+          color_pad(instance.transport.name),
           format_last_action(instance.last_action)
         ]
       end
@@ -90,7 +91,8 @@ module Kitchen
         table = [
           [
             colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Last Action", :green)
+            colorize("Provisioner", :green), colorize("Transport", :green),
+            colorize("Last Action", :green)
           ]
         ]
         table += Array(result).map { |i| display_instance(i) }

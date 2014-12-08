@@ -64,6 +64,10 @@ module Kitchen
     #   automation tools
     attr_reader :provisioner
 
+    # @return [Transport::Base] transport object which will communicate with
+    # an instance.
+    attr_reader :transport
+
     # @return [Busser] busser object for instance to manage the busser
     #   installation on this instance
     attr_reader :busser
@@ -78,6 +82,7 @@ module Kitchen
     # @option options [Platform] :platform the platform (**Required**)
     # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
+    # @option options [Transport::Base] :transport the transport
     #   (**Required**)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
@@ -93,12 +98,15 @@ module Kitchen
       @name         = self.class.name_for(@suite, @platform)
       @driver       = options.fetch(:driver)
       @provisioner  = options.fetch(:provisioner)
+      @transport    = options.fetch(:transport)
       @busser       = options.fetch(:busser)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
 
       setup_driver
       setup_provisioner
+      setup_transport
+      setup_busser
     end
 
     # Returns a displayable representation of the instance.
@@ -213,7 +221,9 @@ module Kitchen
     #
     # @param command [String] a command string to execute
     def remote_exec(command)
-      driver.remote_command(state_file.read, command)
+      @transport.connection(state_file.read) do |conn|
+        conn.execute(command)
+      end
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
@@ -221,7 +231,7 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = Hash.new
-      [:state_file, :driver, :provisioner, :busser].each do |sym|
+      [:state_file, :driver, :provisioner, :transport, :busser].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
       end
@@ -250,7 +260,7 @@ module Kitchen
     # @api private
     def validate_options(options)
       [
-        :suite, :platform, :driver, :provisioner, :busser, :state_file
+        :suite, :platform, :driver, :provisioner, :transport, :busser, :state_file
       ].each do |k|
         next if options.key?(k)
 
@@ -279,6 +289,22 @@ module Kitchen
     # @api private
     def setup_provisioner
       @provisioner.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for the transport
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_transport
+      @transport.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for busser to
+    # carry out its duties.
+    #
+    # @api private
+    def setup_busser
+      @busser.finalize_config!(self)
     end
 
     # Perform all actions in order from last state to desired state.

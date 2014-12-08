@@ -26,10 +26,14 @@ describe Kitchen::Provisioner::Base do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:config)          { Hash.new }
+  let(:config)          { { :sudo => true } }
+
+  let(:transport) do
+    stub(:sudo => config[:sudo], :shell => "bourne")
+  end
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger)
+    stub(:name => "coolbeans", :logger => logger, :transport => transport)
   end
 
   let(:provisioner) do

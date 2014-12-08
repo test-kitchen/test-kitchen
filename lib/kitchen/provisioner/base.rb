@@ -52,6 +52,8 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
+        # Overwrite the sudo configuration comming from the Transport
+        config[:sudo] = instance.transport.sudo
         self
       end
 
@@ -166,6 +168,14 @@ module Kitchen
       #   dependency requirements cannot be satisfied
       # @api private
       def load_needed_dependencies!
+      end
+
+      # @return [Transport.shell] the transport desired shell for this instance
+      # This would help us know which commands to use. Bourne, Powershell, etc.
+      #
+      # @api private
+      def shell
+        instance.transport.shell
       end
 
       # @return [Logger] the instance's logger or Test Kitchen's common logger

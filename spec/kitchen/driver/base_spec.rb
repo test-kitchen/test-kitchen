@@ -21,6 +21,7 @@ require "logger"
 require "stringio"
 
 require "kitchen"
+require "kitchen/transport/dummy"
 
 module Kitchen
 
@@ -53,12 +54,18 @@ describe Kitchen::Driver::Base do
     stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
   end
 
+  let(:transport) do
+    Kitchen::Transport::Dummy.new
+  end
+
   let(:instance) do
     stub(
       :name => "coolbeans",
       :logger => logger,
       :busser => busser,
-      :to_str => "instance"
+      :to_str => "instance",
+      :transport => transport,
+      :provisioner => Kitchen::Provisioner::Base.new,
     )
   end
 
@@ -105,11 +112,18 @@ describe Kitchen::Driver::Base do
     logged_output.string.must_match(/yo\n/)
   end
 
-  [:create, :converge, :setup, :verify, :destroy].each do |action|
-
+  # XXX I think the :converge test passes without actually testing anything.
+  [:create, :converge, :destroy].each do |action|
     it "has a #{action} method that takes state" do
       state = Hash.new
-      driver.public_send(action, state).must_be_nil
+      proc { driver.public_send(action, state) }.must_raise Kitchen::ClientError
+    end
+  end
+
+  [:setup, :verify].each do |action|
+    it "has a #{action} method that takes state" do
+      state = Hash.new
+      driver.public_send(action, state).must_equal true
     end
   end
 

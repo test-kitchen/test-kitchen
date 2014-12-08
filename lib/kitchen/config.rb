@@ -188,7 +188,7 @@ module Kitchen
     end
 
     # Generates the immutable Test Kitchen configuration and reasonable
-    # defaults for Drivers and Provisioners.
+    # defaults for Drivers, Provisioners and Transports.
     #
     # @return [Hash] a configuration Hash
     # @api private
@@ -196,7 +196,8 @@ module Kitchen
       @kitchen_config ||= {
         :defaults => {
           :driver       => Driver::DEFAULT_PLUGIN,
-          :provisioner  => Provisioner::DEFAULT_PLUGIN
+          :provisioner  => Provisioner::DEFAULT_PLUGIN,
+          :transport    => Transport::DEFAULT_PLUGIN
         },
         :kitchen_root   => kitchen_root,
         :test_base_path => test_base_path,
@@ -242,6 +243,7 @@ module Kitchen
         :suite        => suite,
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
+        :transport    => new_transport(suite, platform),
         :state_file   => new_state_file(suite, platform)
       )
     end
@@ -275,6 +277,18 @@ module Kitchen
     def new_provisioner(suite, platform)
       pdata = data.provisioner_data_for(suite.name, platform.name)
       Provisioner.for_plugin(pdata[:name], pdata)
+    end
+
+    # Builds a newly configured Transport object, for a given Suite and
+    # Platform.
+    #
+    # @param suite [Suite,#name] a Suite
+    # @param platform [Platform,#name] a Platform
+    # @return [Transport] a new Transport object
+    # @api private
+    def new_transport(suite, platform)
+      tdata = data.transport_data_for(suite.name, platform.name)
+      Transport.for_plugin(tdata[:name], tdata)
     end
 
     # Builds a newly configured StateFile object, for a given Suite and
