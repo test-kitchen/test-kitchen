@@ -115,8 +115,9 @@ module Kitchen
       # 2. project config
       # 3. local config
       #
-      # The merge order is 3 -> 2 -> 1, meaning that the highest number in the
-      # above list has merge precedence over any lower numbered source.
+      # The merge order is project -> local -> global, meaning that elements at
+      # the top of the above list will be merged last, and have greater
+      # precedence than elements at the bottom of the list.
       #
       # @return [Hash] a new merged Hash
       # @api private
