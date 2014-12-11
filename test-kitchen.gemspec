@@ -23,12 +23,13 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 1.9.1"
 
-  gem.add_dependency "mixlib-shellout", "~> 1.2"
+  gem.add_dependency "mixlib-shellout", "~> 2.0"
   gem.add_dependency "net-scp",         "~> 1.1"
   gem.add_dependency "net-ssh",         "~> 2.7"
   gem.add_dependency "winrm",           "~> 1.1"
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
+  gem.add_dependency "rubyzip",         "~> 1.1"
 
   gem.add_development_dependency "pry"
 
