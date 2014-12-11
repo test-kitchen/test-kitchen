@@ -90,6 +90,13 @@ module Kitchen
       result
     end
 
+    # Returns an array of all files to be copied to the instance
+    #
+    # @return [Array<String>] array of local payload files
+    def local_payload
+      local_suite_files.concat(helper_files)
+    end
+
     # Returns a command string which installs Busser, and installs all
     # required Busser plugins for the suite.
     #
@@ -130,6 +137,26 @@ module Kitchen
       else
         raise "[#{self}] Unsupported shell: #{shell}"
       end
+      Util.wrap_command(cmd, shell)
+    end
+
+    # Returns a command string which removes all suite test files on the
+    # instance.
+    #
+    # If no work needs to be performed, for example if there are no tests for
+    # the given suite, then `nil` will be returned.
+    #
+    # @return [String] a command string to remove all suite test files, or
+    #   nil if no work needs to be performed.
+    def cleanup_cmd
+      return if local_suite_files.empty?
+
+      cmd = <<-CMD.gsub(/^ {8}/, "")
+        #{busser_setup_env}
+
+        #{sudo(config[:busser_bin])} suite cleanup
+
+      CMD
       Util.wrap_command(cmd, shell)
     end
 

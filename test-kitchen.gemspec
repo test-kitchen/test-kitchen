@@ -29,6 +29,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "winrm",           "~> 1.1"
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
+  gem.add_dependency "rubyzip",         "~> 1.1"
 
   gem.add_development_dependency "pry"
 

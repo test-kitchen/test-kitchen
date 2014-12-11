@@ -31,6 +31,9 @@ require "logger"
 
 require "kitchen/errors"
 require "kitchen/login_command"
+require 'kitchen/transport/winrm_file_transfer/remote_file'
+require 'kitchen/transport/winrm_file_transfer/remote_zip_file'
+
 module Kitchen
 
   module Transport
@@ -43,7 +46,6 @@ module Kitchen
 
       default_config :shell, "powershell"
       default_config :sudo, false
-      default_config :max_threads, 2
 
       # (see Base#execute)
       def execute(command, shell = :powershell)
@@ -62,7 +64,6 @@ module Kitchen
       # specific shell without printing the output to the end user.
       #
       # @param command [String] The command to execute
-      # @param shell[String] The destination file path on the guest
       # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
       def powershell(command)
         run(command, :powershell)
@@ -77,34 +78,13 @@ module Kitchen
       end
 
       # (see Base#upload!)
-      def upload!(local, remote)
-        logger.info("Concurrent threads set to :max_threads => #{config[:max_threads]}")
-        logger.debug("Upload: #{local} -> #{remote}")
-        local = Array.new(1) { local } if local.is_a? String
-        local.each do |path|
-          if File.directory?(path)
-            upload_directory(path, remote)
-          else
-            upload_file(path, File.join(remote, File.basename(path)))
-          end
-        end
-        wait_files_transfer
-      end
-
-      # [Improvement] Adding Parallelism to improve upload time
-      #
-      # This method will wait until all the files have been transferred
-      def wait_files_transfer
-        @threads.each do |thr|
-          thr.join
-        end
-        @threads = Array.new
-      end
-
-      def active_threads
-        @threads = Array.new if @threads.nil?
-        @threads.size
-      end
+      def upload!(local_path, remote_path, &block)
+        local_path = [local_path] if local_path.is_a? String
+        file = create_remote_file(local_path, remote_path)
+        file.upload(&block)
+      ensure
+        file.close unless file.nil?
+       end
 
       # Convert a complex CLIXML Error to a human readable format
       #
@@ -181,6 +161,15 @@ module Kitchen
       end
 
       private
+
+      def create_remote_file(local_paths, remote_path)
+        if local_paths.count == 1 && !File.directory?(local_paths[0])
+          return WinRMFileTransfer::RemoteFile.new(logger, session, local_paths[0], remote_path)
+        end
+        zip_file = WinRMFileTransfer::RemoteZipFile.new(logger, session, remote_path)
+        local_paths.each { |path| zip_file.add_file(path) }
+        zip_file
+      end
 
       # (see Base#establish_connection)
       def establish_connection
@@ -304,137 +293,6 @@ module Kitchen
         opts[:disable_sspi] = true
 
         [endpoint, :plaintext, opts]
-      end
-
-      # Uploads the given file, but only if the target file doesn't exist
-      # or its MD5 checksum doens't match the host's source checksum.
-      #
-      # [Improvement] Adding Parallelism to improve upload time
-      #
-      # @param [String] The source file path on the host
-      # @param [String] The destination file path on the guest
-      def upload_file(local, remote)
-        logger.debug("Current Threads => #{active_threads}")
-        wait_files_transfer if active_threads > config[:max_threads]
-        @threads << Thread.new do
-          Thread.current["isFileUpload"] = true
-          logger.debug("Launched '#{remote}' Thread: #{Thread.current}")
-          if should_upload_file?(local, remote)
-            tmp_file_path = upload_to_temp_file(local)
-            decode_temp_file(tmp_file_path, remote)
-          else
-            logger.debug("Up to date: #{remote}")
-          end
-          logger.debug("Finished '#{remote}' Thread: #{Thread.current}")
-        end
-      end
-
-      # Checks to see if the target file on the guest is missing or out of date.
-      #
-      # @param [String] The source file path on the host
-      # @param [String] The destination file path on the guest
-      # @return [Boolean] True if the file is missing or out of date
-      def should_upload_file?(local, remote)
-        local_md5 = Digest::MD5.file(local).hexdigest
-        command = <<-EOH
-$dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
-
-if (Test-Path $dest_file_path) {
-  $crypto_prov = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
-  try {
-    $file = [System.IO.File]::Open($dest_file_path,
-      [System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
-    $guest_md5 = ([System.BitConverter]::ToString($crypto_prov.ComputeHash($file)))
-    $guest_md5 = $guest_md5.Replace("-","").ToLower()
-  }
-  finally {
-    $file.Dispose()
-  }
-  if ($guest_md5 -eq '#{local_md5}') {
-    exit 0
-  }
-}
-exit 1
-        EOH
-        powershell(command)[:exitcode] == 1
-      end
-
-      # Uploads the given file to a new temp file on the guest
-      #
-      # @param [String] The source file path on the host
-      # @return [String] The temp file path on the guest
-      def upload_to_temp_file(local)
-        tmp_file_path = File.join(guest_temp_dir, "winrm-upload-#{rand}")
-        logger.debug("Uploading '#{local}' to temp file '#{tmp_file_path}'")
-        base64_host_file = Base64.encode64(IO.binread(local)).gsub("\n", "")
-        base64_host_file.chars.to_a.each_slice(8000 - tmp_file_path.size) do |chunk|
-          output = cmd("echo #{chunk.join} >> \"#{tmp_file_path}\"")
-          raise_upload_error_if_failed(output, local, tmp_file_path)
-        end
-        tmp_file_path
-      end
-
-      # Recursively uploads the given directory from the host to the guest
-      #
-      # @param [String] The source file or directory path on the host
-      # @param [String] The destination file or directory path on the host
-      def upload_directory(local, remote)
-        glob_patt = File.join(local, "**/*")
-        Dir.glob(glob_patt).select { |f| !File.directory?(f) }.each do |local_file_path|
-          remote_file_path = remote_file_path(local, remote, local_file_path)
-          upload_file(local_file_path, remote_file_path)
-        end
-      end
-
-      # Moves and decodes the given file temp file on the guest to its
-      # permanent location
-      #
-      # @param [String] The source base64 encoded temp file path on the guest
-      # @param [String] The destination file path on the guest
-      def decode_temp_file(local, remote)
-        logger.debug("Decoding temp file '#{local}' to '#{remote}'")
-        output = powershell <<-EOH
-          $tmp_file_path = [System.IO.Path]::GetFullPath('#{local}')
-          $dest_file_path = [System.IO.Path]::GetFullPath('#{remote}')
-
-          if (Test-Path $dest_file_path) {
-            rm $dest_file_path
-          }
-          else {
-            $dest_dir = ([System.IO.Path]::GetDirectoryName($dest_file_path))
-            New-Item -ItemType directory -Force -Path $dest_dir
-          }
-
-          $base64_string = Get-Content $tmp_file_path
-          $bytes = [System.Convert]::FromBase64String($base64_string)
-          [System.IO.File]::WriteAllBytes($dest_file_path, $bytes)
-        EOH
-        raise_upload_error_if_failed(output, local, remote)
-      end
-
-      # Creates a guest file path equivalent from a host file path
-      #
-      # @param [String] The base host directory we're going to copy from
-      # @param [String] The base guest directory we're going to copy to
-      # @param [String] A full path to a file on the host underneath local
-      # @return [String] The guest file path equivalent
-      def remote_file_path(local, remote, local_file_path)
-        relative_path = File.dirname(local_file_path[local.length, local_file_path.length])
-        File.join(remote, File.basename(local), relative_path, File.basename(local_file_path))
-      end
-
-      # Get the guest temporal path to upload temporal files
-      #
-      # @return [String] The guest temp path
-      def guest_temp_dir
-        @guest_temp ||= (cmd("echo %TEMP%"))[:data][0][:stdout].chomp
-      end
-
-      def raise_upload_error_if_failed(output, from, to)
-        raise TransportFailed,
-          :from => from,
-          :to => to,
-          :message => output.inspect unless output[:exitcode].zero?
       end
     end
   end
