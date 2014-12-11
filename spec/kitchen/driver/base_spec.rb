@@ -51,7 +51,13 @@ describe Kitchen::Driver::Base do
   let(:state)         { Hash.new }
 
   let(:busser) do
-    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run", :cleanup_cmd => "cleanup")
+    stub(
+      :setup_cmd => "setup", 
+      :sync_cmd => "sync", 
+      :run_cmd => "run", 
+      :cleanup_cmd => "cleanup", 
+      :local_payload => ["payload"]
+    )
   end
 
   let(:transport) do
