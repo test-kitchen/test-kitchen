@@ -264,6 +264,7 @@ describe Kitchen::Config do
       Kitchen::DataMunger.stubs(:new).returns(munger)
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
+      munger.stubs(:steps?).returns(false)
     end
 
     it "constructs a Busser object" do
@@ -284,8 +285,20 @@ describe Kitchen::Config do
       config.instances
     end
 
-    it "constructs a Provisioner object" do
+    it "constructs single Provisioner object" do
       munger.expects(:provisioner_data_for).with("tiny", "unax").
+        returns(:name => "provey", :datum => "lots")
+      Kitchen::Provisioner.unstub(:for_plugin)
+      Kitchen::Provisioner.expects(:for_plugin).
+        with("provey", :name => "provey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs Provisioner objects" do
+      munger.stubs(:steps?).returns(true)
+      config.stubs(:each_step).yields(stub(:name => "tiny_step_1"))
+      munger.expects(:provisioner_data_for).with("tiny_step_1", "unax").
         returns(:name => "provey", :datum => "lots")
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin).
@@ -322,7 +335,7 @@ describe Kitchen::Config do
         :logger => "logger",
         :suite => suites.first,
         :platform => platforms.first,
-        :provisioner => "provisioner",
+        :provisioners => ["provisioner"],
         :state_file => "state_file"
       )
       config.instances

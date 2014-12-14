@@ -52,7 +52,7 @@ describe Kitchen::Driver::SSHBase do
       :name         => "coolbeans",
       :logger       => logger,
       :busser       => busser,
-      :provisioner  => provisioner,
+      :provisioners => [provisioner],
       :to_str       => "instance"
     )
   end
@@ -286,7 +286,7 @@ describe Kitchen::Driver::SSHBase do
   describe "#converge" do
 
     let(:cmd)         { driver.converge(state) }
-    let(:connection)  { stub(:exec => true) }
+    let(:connection)  { stub(:exec => true, :wait => true) }
 
     before do
       state[:hostname] = "fizzy"
