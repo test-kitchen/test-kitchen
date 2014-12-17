@@ -19,6 +19,8 @@ before_install:
 
 bundler_args: --without guard
 
+sudo: false
+
 matrix:
   allow_failures:
     - rvm: ruby-head
