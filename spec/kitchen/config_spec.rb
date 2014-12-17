@@ -16,29 +16,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen'
-require 'kitchen/logging'
-require 'kitchen/collection'
-require 'kitchen/config'
-require 'kitchen/driver'
-require 'kitchen/instance'
-require 'kitchen/platform'
-require 'kitchen/provisioner'
-require 'kitchen/suite'
-require 'kitchen/util'
+require "kitchen"
+require "kitchen/logging"
+require "kitchen/collection"
+require "kitchen/config"
+require "kitchen/driver"
+require "kitchen/instance"
+require "kitchen/platform"
+require "kitchen/provisioner"
+require "kitchen/suite"
+require "kitchen/util"
 
 module Kitchen
 
   class DummyLoader
 
+    attr_writer :data
+
     def read
       @data || Hash.new
-    end
-
-    def data=(hash)
-      @data = hash
     end
   end
 end
@@ -49,9 +47,25 @@ describe Kitchen::Config do
   let(:config)  { Kitchen::Config.new(opts) }
 
   let(:opts) do
-    { :loader => loader, :kitchen_root => "/tmp/that/place",
-      :log_root => "/tmp/logs", :test_base_path => "/testing/yo",
-      :log_level => :debug }
+    {
+      :loader         => loader,
+      :kitchen_root   => "/tmp/that/place",
+      :log_root       => "/tmp/logs",
+      :test_base_path => "/testing/yo",
+      :log_level      => :debug
+    }
+  end
+
+  let(:default_kitchen_config) do
+    {
+      :defaults => {
+        :driver => "dummy",
+        :provisioner => "chef_solo"
+      },
+      :kitchen_root => "/tmp/that/place",
+      :test_base_path => "/testing/yo",
+      :log_level => :debug
+    }
   end
 
   describe "#loader" do
@@ -121,75 +135,233 @@ describe Kitchen::Config do
 
   describe "#platforms" do
 
-    it "returns an array of platforms" do
-      stub_data!({
-        :platforms => [
-          { :name => 'one' },
-          { :name => 'two' }
-        ]
-      })
-
-      config.platforms.size.must_equal 2
-      config.platforms[0].name.must_equal 'one'
-      config.platforms[1].name.must_equal 'two'
+    before do
+      Kitchen::DataMunger.stubs(:new).returns(munger)
+      Kitchen::Platform.stubs(:new).returns("platform")
     end
 
-    it "returns an empty Array if no platforms are given" do
-      stub_data!({})
+    let(:munger) do
+      stub(
+        :platform_data => [{ :one => "a" }, { :two => "b" }]
+      )
+    end
 
-      config.platforms.must_equal []
+    it "loader loads data" do
+      loader.expects(:read).returns(Hash.new)
+
+      config.platforms
+    end
+
+    it "constucts a munger with loader data and defaults" do
+      loader.stubs(:read).returns("datum")
+
+      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
+        returns(munger)
+
+      config.platforms
+    end
+
+    it "platform_data is called on munger" do
+      munger.expects(:platform_data).returns([])
+
+      config.platforms
+    end
+
+    it "contructs Platform objects" do
+      Kitchen::Platform.expects(:new).with(:one => "a")
+      Kitchen::Platform.expects(:new).with(:two => "b")
+
+      config.platforms
+    end
+
+    it "returns a Collection of platforms" do
+      Kitchen::Platform.stubs(:new).
+        with(:one => "a").returns(stub(:name => "one"))
+      Kitchen::Platform.stubs(:new).
+        with(:two => "b").returns(stub(:name => "two"))
+
+      config.platforms.as_names.must_equal %w[one two]
     end
   end
 
   describe "#suites" do
 
-    it "returns an array of suites" do
-      stub_data!({
-        :suites => [
-          { :name => 'one' },
-          { :name => 'two' }
-        ]
-      })
-
-      config.suites.size.must_equal 2
-      config.suites[0].name.must_equal 'one'
-      config.suites[1].name.must_equal 'two'
+    before do
+      Kitchen::DataMunger.stubs(:new).returns(munger)
+      Kitchen::Suite.stubs(:new).returns("suite")
     end
 
-    it "returns an empty Array if no suites are given" do
-      stub_data!({})
+    let(:munger) do
+      stub(
+        :suite_data => [{ :one => "a" }, { :two => "b" }]
+      )
+    end
 
-      config.suites.must_equal []
+    it "loader loads data" do
+      loader.expects(:read).returns(Hash.new)
+
+      config.suites
+    end
+
+    it "constucts a munger with loader data and defaults" do
+      loader.stubs(:read).returns("datum")
+
+      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
+        returns(munger)
+
+      config.suites
+    end
+
+    it "platform_data is called on munger" do
+      munger.expects(:suite_data).returns([])
+
+      config.suites
+    end
+
+    it "contructs Suite objects" do
+      Kitchen::Suite.expects(:new).with(:one => "a")
+      Kitchen::Suite.expects(:new).with(:two => "b")
+
+      config.suites
+    end
+
+    it "returns a Collection of suites" do
+      Kitchen::Suite.stubs(:new).
+        with(:one => "a").returns(stub(:name => "one"))
+      Kitchen::Suite.stubs(:new).
+        with(:two => "b").returns(stub(:name => "two"))
+
+      config.suites.as_names.must_equal %w[one two]
     end
   end
 
   describe "#instances" do
 
-    it "returns an empty Array if no suites and platforms are given" do
-      stub_data!({})
-
-      config.instances.must_equal []
+    let(:platforms) do
+      [stub(:name => "unax")]
     end
 
-    it "returns an array of instances" do
-      skip "much more needed here"
+    let(:suites) do
+      [stub(:name => "tiny", :includes => [], :excludes => [])]
+    end
 
-      stub_data!({
-        :platforms => [
-          { :name => "p1" },
-          { :name => "p2" }
-        ],
-        :suites => [
-          { :name => 's1' },
-          { :name => 's2' }
-        ]
-      })
+    let(:munger) do
+      stub(
+        :busser_data_for => { "junk" => true },
+        :driver_data_for => { "junk" => true },
+        :provisioner_data_for => { "junk" => true }
+      )
+    end
 
+    before do
+      Kitchen::Instance.stubs(:new).returns("instance")
+      Kitchen::Busser.stubs(:new).returns("busser")
+      Kitchen::Driver.stubs(:for_plugin).returns("driver")
+      Kitchen::Provisioner.stubs(:for_plugin).returns("provisioner")
+      Kitchen::Logger.stubs(:new).returns("logger")
+      Kitchen::StateFile.stubs(:new).returns("state_file")
+
+      Kitchen::DataMunger.stubs(:new).returns(munger)
+      config.stubs(:platforms).returns(platforms)
+      config.stubs(:suites).returns(suites)
+    end
+
+    it "constructs a Busser object" do
+      munger.expects(:busser_data_for).with("tiny", "unax").returns("datum")
+      Kitchen::Busser.unstub(:new)
+      Kitchen::Busser.expects(:new).with("tiny", "datum")
+
+      config.instances
+    end
+
+    it "constructs a Driver object" do
+      munger.expects(:driver_data_for).with("tiny", "unax").
+        returns(:name => "drivey", :datum => "lots")
+      Kitchen::Driver.unstub(:for_plugin)
+      Kitchen::Driver.expects(:for_plugin).
+        with("drivey", :name => "drivey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs a Provisioner object" do
+      munger.expects(:provisioner_data_for).with("tiny", "unax").
+        returns(:name => "provey", :datum => "lots")
+      Kitchen::Provisioner.unstub(:for_plugin)
+      Kitchen::Provisioner.expects(:for_plugin).
+        with("provey", :name => "provey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs a Logger object" do
+      Kitchen::Logger.unstub(:new)
+      Kitchen::Logger.expects(:new).with(
+        :stdout => STDOUT,
+        :color => :cyan,
+        :logdev => "/tmp/logs/tiny-unax.log",
+        :level => 0,
+        :progname => "tiny-unax"
+      )
+
+      config.instances
+    end
+
+    it "constructs a StateFile object" do
+      Kitchen::StateFile.unstub(:new)
+      Kitchen::StateFile.expects(:new).with("/tmp/that/place", "tiny-unax")
+
+      config.instances
+    end
+
+    it "constructs an Instance object from all built objects" do
+      Kitchen::Instance.unstub(:new)
+      Kitchen::Instance.expects(:new).with(
+        :busser => "busser",
+        :driver => "driver",
+        :logger => "logger",
+        :suite => suites.first,
+        :platform => platforms.first,
+        :provisioner => "provisioner",
+        :state_file => "state_file"
+      )
       config.instances
     end
   end
 
-  def stub_data!(hash)
-    loader.data = hash
+  describe "using Suite#includes" do
+
+    it "selects only platforms in a suite's includes array" do
+      config.stubs(:platforms).returns([
+        stub(:name => "good"),
+        stub(:name => "nope"),
+        stub(:name => "one")
+      ])
+      config.stubs(:suites).returns([
+        stub(:name => "selecta", :includes => %w[good one], :excludes => []),
+        stub(:name => "allem", :includes => [], :excludes => [])
+      ])
+
+      config.instances.as_names.must_equal [
+        "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]
+    end
+  end
+
+  describe "using Suite#excludes" do
+
+    it "selects only platforms in a suite's includes array" do
+      config.stubs(:platforms).returns([
+        stub(:name => "good"),
+        stub(:name => "nope"),
+        stub(:name => "one")
+      ])
+      config.stubs(:suites).returns([
+        stub(:name => "selecta", :includes => [], :excludes => ["nope"]),
+        stub(:name => "allem", :includes => [], :excludes => [])
+      ])
+
+      config.instances.as_names.must_equal [
+        "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]
+    end
   end
 end

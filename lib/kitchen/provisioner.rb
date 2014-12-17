@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/util'
+require "thor/util"
 
 module Kitchen
 
@@ -40,12 +40,12 @@ module Kitchen
       require("kitchen/provisioner/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
-      klass = self.const_get(str_const)
+      klass = const_get(str_const)
       klass.new(config)
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' provisioner from the load path." +
-          " Please ensure that your provisioner is installed as a gem or" +
+        "Could not load the '#{plugin}' provisioner from the load path." \
+          " Please ensure that your provisioner is installed as a gem or" \
           " included in your Gemfile if using Bundler."
     end
   end

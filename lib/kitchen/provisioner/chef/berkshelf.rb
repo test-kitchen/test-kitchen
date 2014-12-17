@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/errors'
-require 'kitchen/logging'
+require "kitchen/errors"
+require "kitchen/logging"
 
 module Kitchen
 
@@ -33,16 +33,29 @@ module Kitchen
 
         include Logging
 
+        # Creates a new cookbook resolver.
+        #
+        # @param berksfile [String] path to a Berksfile
+        # @param path [String] path in which to vendor the resulting
+        #   cookbooks
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def initialize(berksfile, path, logger = Kitchen.logger)
           @berksfile  = berksfile
           @path       = path
           @logger     = logger
         end
 
+        # Loads the library code required to use the resolver.
+        #
+        # @param logger [Kitchen::Logger] a logger to use for output, defaults
+        #   to `Kitchen.logger`
         def self.load!(logger = Kitchen.logger)
           load_berkshelf!(logger)
         end
 
+        # Performs the cookbook resolution and vendors the resulting cookbooks
+        # in the desired path.
         def resolve
           version = ::Berkshelf::VERSION
           info("Resolving cookbook dependencies with Berkshelf #{version}...")
@@ -54,17 +67,32 @@ module Kitchen
               FileUtils.rm_rf(path)
               ::Berkshelf::Berksfile.from_file(berksfile).vendor(path)
             else
-              ::Berkshelf::Berksfile.from_file(berksfile).install(path: path)
+              ::Berkshelf::Berksfile.from_file(berksfile).install(:path => path)
             end
           end
         end
 
         private
 
-        attr_reader :berksfile, :path, :logger
+        # @return [String] path to a Berksfile
+        # @api private
+        attr_reader :berksfile
 
+        # @return [String] path in which to vendor the resulting cookbooks
+        # @api private
+        attr_reader :path
+
+        # @return [Kitchen::Logger] a logger to use for output
+        # @api private
+        attr_reader :logger
+
+        # Load the Berkshelf-specific libary code.
+        #
+        # @param logger [Kitchen::Logger] the logger to use
+        # @raise [UserError] if the library couldn't be loaded
+        # @api private
         def self.load_berkshelf!(logger)
-          first_load = require 'berkshelf'
+          first_load = require "berkshelf"
 
           version = ::Berkshelf::VERSION
           if first_load
@@ -73,9 +101,9 @@ module Kitchen
             logger.debug("Berkshelf #{version} previously loaded")
           end
         rescue LoadError => e
-          logger.fatal("The `berkshelf' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install berkshelf` or add the following to your" +
+          logger.fatal("The `berkshelf' gem is missing and must be installed" \
+            " or cannot be properly activated. Run" \
+            " `gem install berkshelf` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
           raise UserError,
             "Could not load or activate Berkshelf (#{e.message})"

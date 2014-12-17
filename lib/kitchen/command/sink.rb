@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
 module Kitchen
 
@@ -27,6 +27,7 @@ module Kitchen
     # @author Seth Vargo <sethvargo@gmail.com>
     class Sink < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
         puts [
           "",

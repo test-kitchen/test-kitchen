@@ -4,17 +4,17 @@ rvm:
   - 2.1
   - 2.0.0
   - 1.9.3
-  - 1.9.2
   - ruby-head
-  - jruby-19mode
 
 env:
+  - RUBYGEMS_VERSION=
+  - RUBYGEMS_VERSION=2.2.2
   - RUBYGEMS_VERSION=2.1.11
   - RUBYGEMS_VERSION=2.0.14
-  - RUBYGEMS_VERSION=1.8.25
+  - RUBYGEMS_VERSION=1.8.29
 
 before_install:
-  - gem update --system $RUBYGEMS_VERSION
+  - if [ -n "$RUBYGEMS_VERSION" ]; then gem update --system $RUBYGEMS_VERSION; fi
   - gem --version
 
 bundler_args: --without guard
@@ -22,7 +22,18 @@ bundler_args: --without guard
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-19mode
   exclude:
+    - rvm: 2.1
+      env: RUBYGEMS_VERSION=1.8.29
     - rvm: 2.0.0
-      env: RUBYGEMS_VERSION=1.8.25
+      env: RUBYGEMS_VERSION=1.8.29
+    - rvm: ruby-head
+      env: RUBYGEMS_VERSION=1.8.29
+
+notifications:
+  irc: "chat.freenode.net#kitchenci"
+
+addons:
+  code_climate:
+    repo_token:
+      secure: "lcqi3hbalLTinxwsl+um1aN1dgijBrODSMseGEJMJGkofz3VZ+Ofuuwp9x9VjvewuiUFHsiPD5SQ6hx8N+L3wXB6qA+HTmIrXecL7VjehbImEyOuu4/++vcTdpTINAd2Qt/KuJ1eY0okSwVmvtX1VD8gYD8yrlMKdj6uexf8Bgs="

@@ -3,7 +3,9 @@
 [![Gem Version](https://badge.fury.io/rb/test-kitchen.png)](http://badge.fury.io/rb/test-kitchen)
 [![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.png?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
 [![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
+[![Test Coverage](https://codeclimate.com/github/test-kitchen/test-kitchen/coverage.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
 [![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.png)](https://gemnasium.com/test-kitchen/test-kitchen)
+[![Inline docs](http://inch-ci.org/github/test-kitchen/test-kitchen.png?branch=master)](http://inch-ci.org/github/test-kitchen/test-kitchen)
 
 |             |                                               |
 |-------------|-----------------------------------------------|
@@ -71,11 +73,19 @@ run through all the instances in serial by running:
 $ kitchen test
 ```
 
+## Usage
+
 There is help included with the `kitchen help` subcommand which will list all
 subcommands and their usage:
 
 ```
 $ kitchen help test
+```
+
+More verbose logging (for both test-kitchen and the chef-solo/chef-zero provisioners) can be specified when running test-kitchen form the command line using:
+
+```
+$ kitchen test -l debug
 ```
 
 ## Documentation

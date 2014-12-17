@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/util'
+require "thor/util"
 
 module Kitchen
 
@@ -40,7 +40,7 @@ module Kitchen
       first_load = require("kitchen/driver/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
-      klass = self.const_get(str_const)
+      klass = const_get(str_const)
       object = klass.new(config)
       object.verify_dependencies if first_load
       object
@@ -48,8 +48,8 @@ module Kitchen
       raise
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' driver from the load path." +
-          " Please ensure that your driver is installed as a gem or included" +
+        "Could not load the '#{plugin}' driver from the load path." \
+          " Please ensure that your driver is installed as a gem or included" \
           " in your Gemfile if using Bundler."
     end
   end

@@ -16,79 +16,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
-require 'stringio'
+require_relative "../../spec_helper"
+require "logger"
+require "stringio"
 
-require 'kitchen'
-
-module Kitchen
-
-  module Provisioner
-
-    class StaticDefaults < Base
-
-      default_config :rank, "captain"
-      default_config :tunables, { "foo" => "fa" }
-      default_config :nice, true
-    end
-
-    class SubclassDefaults < StaticDefaults
-
-      default_config :yea, "ya"
-    end
-
-    class ComputedDefaults < Base
-
-      default_config :beans, "kidney"
-      default_config :fetch_command, "curl"
-      default_config :beans_url do |provisioner|
-        "http://gim.me/#{provisioner[:beans]}"
-      end
-      default_config :command do |provisioner|
-        "#{provisioner[:fetch_command]} #{provisioner[:beans_url]}"
-      end
-      default_config :fetch_url do |provisioner|
-        "http://gim.me/beans-for/#{provisioner.instance.name}"
-      end
-    end
-  end
-end
+require "kitchen"
 
 describe Kitchen::Provisioner::Base do
 
+  let(:logged_output)   { StringIO.new }
+  let(:logger)          { Logger.new(logged_output) }
   let(:config)          { Hash.new }
-  let(:logger_io)       { StringIO.new }
-  let(:instance_logger) { Kitchen::Logger.new(:logdev => logger_io) }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => instance_logger)
+    stub(:name => "coolbeans", :logger => logger)
   end
 
   let(:provisioner) do
-    p = Kitchen::Provisioner::Base.new(config)
-    p.instance = instance
-    p
+    Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
   end
 
-  it "#instance returns its instance" do
-    provisioner.instance.must_equal instance
-  end
-
-  it "#name returns its class name as a string" do
+  it "#name returns the name of the provisioner" do
     provisioner.name.must_equal "Base"
   end
 
-  describe "user config" do
-
-    before do
-      config[:animals] = %w{cats dogs}
-      config[:coolness] = true
-    end
-
-    it "injects config into the provisioner" do
-      provisioner[:animals].must_equal ["cats", "dogs"]
-      provisioner[:coolness].must_equal true
-    end
+  describe "configuration" do
 
     it ":root_path defaults to /tmp/kitchen" do
       provisioner[:root_path].must_equal "/tmp/kitchen"
@@ -97,99 +49,87 @@ describe Kitchen::Provisioner::Base do
     it ":sudo defaults to true" do
       provisioner[:sudo].must_equal true
     end
-
-    it "#config_keys returns the config keys" do
-      provisioner.config_keys.sort.
-        must_equal [:animals, :coolness, :root_path, :sudo]
-    end
-  end
-
-  describe ".default_config" do
-
-    describe "static default config" do
-
-      let(:provisioner) do
-        p = Kitchen::Provisioner::StaticDefaults.new(config)
-        p.instance = instance
-        p
-      end
-
-      it "uses default config" do
-        provisioner[:rank].must_equal "captain"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal true
-      end
-
-      it "uses user config over default config" do
-        config[:rank] = "commander"
-        config[:nice] = :maybe
-
-        provisioner[:rank].must_equal "commander"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal :maybe
-      end
-    end
-
-    describe "inherited static default config" do
-
-      let(:provisioner) do
-        p = Kitchen::Provisioner::SubclassDefaults.new(config)
-        p.instance = instance
-        p
-      end
-
-      it "contains defaults from superclass" do
-        provisioner[:rank].must_equal "captain"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal true
-        provisioner[:yea].must_equal "ya"
-      end
-
-      it "uses user config over default config" do
-        config[:rank] = "commander"
-        config[:nice] = :maybe
-
-        provisioner[:rank].must_equal "commander"
-        provisioner[:tunables]["foo"].must_equal "fa"
-        provisioner[:nice].must_equal :maybe
-        provisioner[:yea].must_equal "ya"
-      end
-    end
-
-    describe "computed default config" do
-
-      let(:provisioner) do
-        p = Kitchen::Provisioner::ComputedDefaults.new(config)
-        p.instance = instance
-        p
-      end
-
-      it "uses computed config" do
-        provisioner[:beans_url].must_equal "http://gim.me/kidney"
-        provisioner[:command].must_equal "curl http://gim.me/kidney"
-      end
-
-      it "has access to instance object" do
-        provisioner[:fetch_url].must_equal "http://gim.me/beans-for/coolbeans"
-      end
-
-      it "uses user config over default config" do
-        config[:command] = "echo listentome"
-
-        provisioner[:command].must_equal "echo listentome"
-      end
-    end
   end
 
   describe "#logger" do
 
-    it "if instance is set, use its logger" do
-      provisioner.send(:logger).must_equal instance_logger
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger" do
+      provisioner.send(:logger).must_equal logger
     end
 
-    it "if instance is not set, use Kitchen.logger" do
-      provisioner.instance = nil
+    it "returns the default logger if instance's logger is not set" do
+      provisioner = Kitchen::Provisioner::Base.new(config)
+      Kitchen.logger = "yep"
+
       provisioner.send(:logger).must_equal Kitchen.logger
+    end
+  end
+
+  [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
+
+    it "has a #{cmd} method" do
+      provisioner.public_send(cmd).must_be_nil
+    end
+  end
+
+  describe "sandbox" do
+
+    after do
+      begin
+        provisioner.cleanup_sandbox
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
+    end
+
+    it "raises ClientError if #sandbox_path is called before #create_sandbox" do
+      proc { provisioner.sandbox_path }.must_raise Kitchen::ClientError
+    end
+
+    it "#create_sandbox creates a temporary directory" do
+      provisioner.create_sandbox
+
+      File.directory?(provisioner.sandbox_path).must_equal true
+      format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4].
+        must_equal "0755"
+    end
+
+    it "#create_sandbox logs an info message" do
+      provisioner.create_sandbox
+
+      logged_output.string.must_match info_line("Preparing files for transfer")
+    end
+
+    it "#create_sandbox logs a debug message" do
+      provisioner.create_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Creating local sandbox in ")
+    end
+
+    it "#cleanup_sandbox deletes the sandbox directory" do
+      provisioner.create_sandbox
+      provisioner.cleanup_sandbox
+
+      File.directory?(provisioner.sandbox_path).must_equal false
+    end
+
+    it "#cleanup_sandbox logs a debug message" do
+      provisioner.create_sandbox
+      provisioner.cleanup_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Cleaning up local sandbox in ")
+    end
+
+    def info_line(msg)
+      %r{^I, .* : #{Regexp.escape(msg)}$}
+    end
+
+    def debug_line_starting_with(msg)
+      %r{^D, .* : #{Regexp.escape(msg)}}
     end
   end
 

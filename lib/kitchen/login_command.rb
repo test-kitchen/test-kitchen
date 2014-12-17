@@ -24,10 +24,19 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class LoginCommand
 
-    attr_reader :cmd_array, :options
+    # @return [Array] array of login command arguments
+    attr_reader :cmd_array
 
+    # @return [Hash] options hash, passed to `Kernel#exec`
+    attr_reader :options
+
+    # Constructs a new LoginCommand instance.
+    #
+    # @param cmd_array [Array] array of login command arguments
+    # @param options [Hash] options hash, passed to `Kernel#exec`
+    # @see http://www.ruby-doc.org/core-2.1.2/Kernel.html#method-i-exec
     def initialize(cmd_array, options = {})
-      @cmd_array = cmd_array
+      @cmd_array = Array(cmd_array)
       @options = options
     end
   end

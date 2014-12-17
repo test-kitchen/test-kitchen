@@ -16,15 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'erb'
-require 'vendor/hash_recursive_merge'
+require "erb"
+require "vendor/hash_recursive_merge"
 
 if RUBY_VERSION <= "1.9.3"
   # ensure that Psych and not Syck is used for Ruby 1.9.2
-  require 'yaml'
-  YAML::ENGINE.yamler = 'psych'
+  require "yaml"
+  YAML::ENGINE.yamler = "psych"
 end
-require 'safe_yaml/load'
+require "safe_yaml/load"
 
 module Kitchen
 
@@ -46,7 +46,7 @@ module Kitchen
       #   config YAML file (default: `./.kitchen.yml`)
       # @option options [String] :local_config path to the Kitchen local
       #   config YAML file (default: `./.kitchen.local.yml`)
-      # @option options [String] :local_config path to the Kitchen global
+      # @option options [String] :global_config path to the Kitchen global
       #   config YAML file (default: `$HOME/.kitchen/config.yml`)
       # @option options [String] :process_erb whether or not to process YAML
       #   through an ERB processor (default: `true`)
@@ -70,7 +70,7 @@ module Kitchen
       #
       # @return [Hash] merged configuration data
       def read
-        if ! File.exists?(config_file)
+        if !File.exist?(config_file)
           raise UserError, "Kitchen YAML file #{config_file} does not exist."
         end
 
@@ -92,64 +92,144 @@ module Kitchen
         result
       end
 
-      protected
+      private
 
-      attr_reader :config_file, :local_config_file, :global_config_file
+      # @return [String] the absolute path to the Kitchen config YAML file
+      # @api private
+      attr_reader :config_file
 
-      def default_config_file
-        File.join(Dir.pwd, '.kitchen.yml')
-      end
+      # @return [String] the absolute path to the Kitchen local config YAML
+      #   file
+      # @api private
+      attr_reader :local_config_file
 
+      # @return [String] the absolute path to the Kitchen global config YAML
+      #   file
+      # @api private
+      attr_reader :global_config_file
+
+      # Performed a prioritized recursive merge of several source Hashes and
+      # returns a new merged Hash. There are 3 sources of configuration data:
+      #
+      # 1. local config
+      # 2. project config
+      # 3. global config
+      #
+      # The merge order is local -> project -> global, meaning that elements at
+      # the top of the above list will be merged last, and have greater
+      # precedence than elements at the bottom of the list.
+      #
+      # @return [Hash] a new merged Hash
+      # @api private
       def combined_hash
-        y = if @process_local
-          normalize(yaml).rmerge(normalize(local_yaml))
+        y = if @process_global
+          normalize(global_yaml).rmerge(normalize(yaml))
         else
           normalize(yaml)
         end
-        @process_global ? y.rmerge(normalize(global_yaml)) : y
+        @process_local ? y.rmerge(normalize(local_yaml)) : y
       end
 
+      # Loads and returns the Kitchen config YAML as a Hash.
+      #
+      # @return [Hash] the config hash
+      # @api private
       def yaml
         parse_yaml_string(yaml_string(config_file), config_file)
       end
 
+      # Loads and returns the Kitchen local config YAML as a Hash.
+      #
+      # @return [Hash] the config hash
+      # @api private
       def local_yaml
         parse_yaml_string(yaml_string(local_config_file), local_config_file)
       end
 
+      # Loads and returns the Kitchen global config YAML as a Hash.
+      #
+      # @return [Hash] the config hash
+      # @api private
       def global_yaml
         parse_yaml_string(yaml_string(global_config_file), global_config_file)
       end
 
+      # Loads a file to a string and optionally passes it through an ERb
+      # process.
+      #
+      # @return [String] a file's contents as a string
+      # @api private
       def yaml_string(file)
         string = read_file(file)
 
         @process_erb ? process_erb(string, file) : string
       end
 
+      # Passes a string through ERb to evaulate any ERb blocks.
+      #
+      # @param string [String] the string to process
+      # @param file [String] an absolute path to the file represented as the
+      #   passed in string, used for error reporting
+      # @return [String] a new string, passed through an ERb process
+      # @raise [UserError] if an ERb parsing error occurs
+      # @api private
       def process_erb(string, file)
         ERB.new(string).result
       rescue => e
-        raise UserError, "Error parsing ERB content in #{file} " +
-          "(#{e.class}: #{e.message}).\n" +
-          "Please run `kitchen diagnose --no-instances --loader' to help " +
+        raise UserError, "Error parsing ERB content in #{file} " \
+          "(#{e.class}: #{e.message}).\n" \
+          "Please run `kitchen diagnose --no-instances --loader' to help " \
           "debug your issue."
       end
 
+      # Reads a file and returns its contents as a string.
+      #
+      # @param file [String] a path to a file
+      # @return [String] the files contents, or an empty string if the file
+      #   does not exist
+      # @api private
       def read_file(file)
-        File.exists?(file.to_s) ? IO.read(file) : ""
+        File.exist?(file.to_s) ? IO.read(file) : ""
       end
 
+      # Determines the default absolute path to the Kitchen config YAML file,
+      # based on current working directory.
+      #
+      # @return [String] an absolute path to a Kitchen config YAML file
+      # @api private
+      def default_config_file
+        File.join(Dir.pwd, ".kitchen.yml")
+      end
+
+      # Determines the default absolute path to the Kitchen local YAML file,
+      # based on the base Kitchen config YAML file.
+      #
+      # @return [String] an absolute path to a Kitchen local YAML file
+      # @api private
       def default_local_config_file
         config_file.sub(/(#{File.extname(config_file)})$/, '.local\1')
       end
 
+      # Determines the default absolute path to the Kitchen global YAML file,
+      # based on the base Kitchen config YAML file.
+      #
+      # @return [String] an absolute path to a Kitchen global YAML file
+      # @api private
       def default_global_config_file
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
       end
 
+      # Generate a diganose Hash for a particular YAML file Hash. If an error
+      # occurs when loading the data, then a failure hash will be inserted
+      # into the `:raw_data` sub-hash.
+      #
+      # @param component [Symbol] a YAML source component
+      # @param file [String] the absolute path to a file which is used for
+      #   reporting (default: `nil`)
+      # @return [Hash] a hash data structure
+      # @api private
       def diagnose_component(component, file = nil)
-        return if file && !File.exists?(file)
+        return if file && !File.exist?(file)
 
         hash = begin
           send(component)
@@ -160,6 +240,12 @@ module Kitchen
         { :filename => file, :raw_data => hash }
       end
 
+      # Generates a Hash respresenting a failure, given an Exception object.
+      #
+      # @param e [Exception] an exception
+      # @param file [String] the absolute path to a file (default: `nil`)
+      # @return [Hash] a hash data structure
+      # @api private
       def failure_hash(e, file = nil)
         result = {
           :error => {
@@ -172,14 +258,50 @@ module Kitchen
         result
       end
 
+      # Destructively modify an object containing one or more hashes so that
+      # the resulting formatted data can be consumed upstream.
+      #
+      # @param obj [Object] an object
+      # @return [Object] an object
+      # @api private
       def normalize(obj)
         if obj.is_a?(Hash)
-          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v) ; h }
+          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v); h }
         else
           obj
         end
       end
 
+      # Normalizes certain keys in the root of a data hash to be a proper
+      # sub-hash in all cases. Specifically handled are the following cases:
+      #
+      # * If the value for certain keys (`"driver"`, `"provisioner"`,
+      #   `"busser"`) are set to `nil`, a new Hash will be put in its place.
+      # * If the value for certain keys is a String, then the value is
+      #   converted to a new Hash with a default key pointing to the original
+      #   String.
+      #
+      # Given a hash:
+      #
+      #   { "driver" => nil }
+      #
+      # this method would return:
+      #
+      #   { "driver" => {} }
+      #
+      # Given a hash:
+      #
+      #   { :driver => "coolbeans" }
+      #
+      # this method would return:
+      #
+      #   { :name => { "driver" => "coolbeans" } }
+      #
+      #
+      # @param hash [Hash] the Hash to normalize
+      # @param key [Symbol] the key to normalize
+      # @param value [Object] the value to normalize
+      # @api private
       def normalize_hash(hash, key, value)
         case key
         when "driver", "provisioner", "busser"
@@ -196,20 +318,28 @@ module Kitchen
         end
       end
 
+      # Parses a YAML string and returns a Hash.
+      #
+      # @param string [String] a yaml document as a string
+      # @param file_name [String] an absolute path to the file represented as
+      #   the passed in string, used for error reporting
+      # @return [Hash] a hash
+      # @raise [UserError] if the string document cannot be parsed
+      # @api private
       def parse_yaml_string(string, file_name)
         return Hash.new if string.nil? || string.empty?
 
         result = SafeYAML.load(string) || Hash.new
         unless result.is_a?(Hash)
-          raise UserError, "Error parsing #{file_name} as YAML " +
-            "(Result of parse was not a Hash, but was a #{result.class}).\n" +
-            "Please run `kitchen diagnose --no-instances --loader' to help " +
+          raise UserError, "Error parsing #{file_name} as YAML " \
+            "(Result of parse was not a Hash, but was a #{result.class}).\n" \
+            "Please run `kitchen diagnose --no-instances --loader' to help " \
             "debug your issue."
         end
         result
       rescue SyntaxError, Psych::SyntaxError
-        raise UserError, "Error parsing #{file_name} as YAML.\n" +
-          "Please run `kitchen diagnose --no-instances --loader' to help " +
+        raise UserError, "Error parsing #{file_name} as YAML.\n" \
+          "Please run `kitchen diagnose --no-instances --loader' to help " \
           "debug your issue."
       end
     end

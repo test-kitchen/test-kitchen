@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
-require 'logger'
-require 'stringio'
+require_relative "../../spec_helper"
+require "logger"
+require "stringio"
 
-require 'kitchen/driver/dummy'
+require "kitchen/driver/dummy"
 
 describe Kitchen::Driver::Dummy do
 
@@ -34,9 +34,7 @@ describe Kitchen::Driver::Dummy do
   end
 
   let(:driver) do
-    d = Kitchen::Driver::Dummy.new(config)
-    d.instance = instance
-    d
+    Kitchen::Driver::Dummy.new(config).finalize_config!(instance)
   end
 
   describe "default_config" do
@@ -55,7 +53,7 @@ describe Kitchen::Driver::Dummy do
     it "sets :my_id to a unique value as an example" do
       driver.create(state)
 
-      state[:my_id].must_match /^coolbeans-/
+      state[:my_id].must_match(/^coolbeans-/)
     end
 
     it "calls sleep if :sleep value is greater than 0" do
@@ -63,6 +61,12 @@ describe Kitchen::Driver::Dummy do
       driver.expects(:sleep).with(12.5).returns(true)
 
       driver.create(state)
+    end
+
+    it "raises ActionFailed if :fail_create is set" do
+      config[:fail_create] = true
+
+      proc { driver.create(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
@@ -77,16 +81,17 @@ describe Kitchen::Driver::Dummy do
 
       begin
         driver.create(state)
-      rescue Kitchen::ActionFailed => ex
+      rescue Kitchen::ActionFailed
         # If exception is anything other than Kitchen::ActionFailed, this spec
         # will fail
+        true
       end
     end
 
     it "logs a create event to INFO" do
       driver.create(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Create on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Create on .+$/)
     end
   end
 
@@ -99,6 +104,12 @@ describe Kitchen::Driver::Dummy do
       driver.create(state)
     end
 
+    it "raises ActionFailed if :fail_converge is set" do
+      config[:fail_converge] = true
+
+      proc { driver.converge(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -109,7 +120,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a converge event to INFO" do
       driver.converge(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Converge on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)
     end
   end
 
@@ -122,6 +133,12 @@ describe Kitchen::Driver::Dummy do
       driver.setup(state)
     end
 
+    it "raises ActionFailed if :fail_setup is set" do
+      config[:fail_setup] = true
+
+      proc { driver.setup(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -132,7 +149,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a setup event to INFO" do
       driver.setup(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Setup on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Setup on .+$/)
     end
   end
 
@@ -145,6 +162,12 @@ describe Kitchen::Driver::Dummy do
       driver.verify(state)
     end
 
+    it "raises ActionFailed if :fail_verify is set" do
+      config[:fail_verify] = true
+
+      proc { driver.verify(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -155,7 +178,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a verify event to INFO" do
       driver.verify(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Verify on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Verify on .+$/)
     end
   end
 
@@ -175,6 +198,12 @@ describe Kitchen::Driver::Dummy do
       driver.verify(state)
     end
 
+    it "raises ActionFailed if :fail_destroy is set" do
+      config[:fail_destroy] = true
+
+      proc { driver.destroy(state) }.must_raise Kitchen::ActionFailed
+    end
+
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
@@ -185,7 +214,7 @@ describe Kitchen::Driver::Dummy do
     it "logs a destroy event to INFO" do
       driver.destroy(state)
 
-      logged_output.string.must_match /^.+ INFO .+ \[Dummy\] Destroy on .+$/
+      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Destroy on .+$/)
     end
   end
 end

@@ -18,12 +18,39 @@
 
 module Kitchen
 
+  # Mixin module that delegates logging methods to a local `#logger`.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Logging
 
-    %w{banner debug info warn error fatal}.map(&:to_sym).each do |meth|
-      define_method(meth) do |*args|
-        logger.public_send(meth, *args)
+    class << self
+
+      private
+
+      # @api private
+      # @!macro logger_method
+      #   @method $1($2)
+      #   Log a message with severity of $1
+      #   @param message_or_progname [#to_s] the message to log. In the block
+      #     form, this is the progname to use in the log message.
+      #   @yield evaluates to the message to log. This is not evaluated unless
+      #     the logger's level is sufficient to log the message. This allows
+      #     you to create potentially expensive logging messages that are
+      #     only called when the logger is configured to show them.
+      #   @return [nil,true] when the given severity is not high enough (for
+      #     this particular logger), log no message, and return true
+      def logger_method(meth)
+        define_method(meth) do |*args|
+          logger.public_send(meth, *args)
+        end
       end
     end
+
+    logger_method :banner
+    logger_method :debug
+    logger_method :info
+    logger_method :warn
+    logger_method :error
+    logger_method :fatal
   end
 end

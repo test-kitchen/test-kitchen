@@ -16,13 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/errors'
-require 'kitchen/logging'
-require 'kitchen/shell_out'
-require 'kitchen/driver'
-require 'kitchen/driver/base'
+require "kitchen/errors"
+require "kitchen/logging"
+require "kitchen/shell_out"
+require "kitchen/driver"
+require "kitchen/driver/base"
 
 module Kitchen
 
@@ -63,28 +63,28 @@ describe Kitchen::Driver do
     end
 
     it "returns a driver object of the correct class" do
-      driver = Kitchen::Driver.for_plugin('coolbeans', {})
+      driver = Kitchen::Driver.for_plugin("coolbeans", {})
 
       driver.must_be_kind_of Kitchen::Driver::Coolbeans
     end
 
     it "returns a driver initialized with its config" do
-      driver = Kitchen::Driver.for_plugin('coolbeans', { :jelly => 'beans' })
+      driver = Kitchen::Driver.for_plugin("coolbeans", :jelly => "beans")
 
-      driver[:jelly].must_equal 'beans'
+      driver[:jelly].must_equal "beans"
     end
 
     it "calls #verify_dependencies on the driver object" do
-      driver = Kitchen::Driver.for_plugin('it_depends', {})
+      driver = Kitchen::Driver.for_plugin("it_depends", {})
 
       driver.verify_call_count.must_equal 1
     end
 
     it "calls #verify_dependencies once per driver require" do
       Kitchen::Driver.stubs(:require).returns(true, false)
-      driver1 = Kitchen::Driver.for_plugin('it_depends', {})
+      driver1 = Kitchen::Driver.for_plugin("it_depends", {})
       driver1.verify_call_count.must_equal 1
-      driver2 = Kitchen::Driver.for_plugin('it_depends', {})
+      driver2 = Kitchen::Driver.for_plugin("it_depends", {})
 
       driver2.verify_call_count.must_equal 0
     end
@@ -92,19 +92,19 @@ describe Kitchen::Driver do
     it "raises ClientError if the driver could not be required" do
       Kitchen::Driver.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Driver.for_plugin('coolbeans', {}) }.
+      proc { Kitchen::Driver.for_plugin("coolbeans", {}) }.
         must_raise Kitchen::ClientError
     end
 
     it "raises ClientError if the driver's class constant could not be found" do
       Kitchen::Driver.stubs(:require).returns(true) # pretend require worked
 
-      proc { Kitchen::Driver.for_plugin('nope', {}) }.
+      proc { Kitchen::Driver.for_plugin("nope", {}) }.
         must_raise Kitchen::ClientError
     end
 
     it "raises UserError if #verify_dependencies fails" do
-      proc { Kitchen::Driver.for_plugin('unstable_depends', {}) }.
+      proc { Kitchen::Driver.for_plugin("unstable_depends", {}) }.
         must_raise Kitchen::UserError
     end
   end

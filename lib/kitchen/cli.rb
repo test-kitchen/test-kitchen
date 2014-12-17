@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor'
+require "thor"
 
-require 'kitchen'
-require 'kitchen/generator/driver_create'
-require 'kitchen/generator/init'
+require "kitchen"
+require "kitchen/generator/driver_create"
+require "kitchen/generator/init"
 
 module Kitchen
 
@@ -32,12 +32,21 @@ module Kitchen
     # Common module to load and invoke a CLI-implementation agnostic command.
     module PerformCommand
 
+      # Perform a CLI subcommand.
+      #
+      # @param task [String] action to take, usually corresponding to the
+      #   subcommand name
+      # @param command [String] command class to create and invoke]
+      # @param args [Array] remainder arguments from processed ARGV
+      #   (default: `nil`)
+      # @param additional_options [Hash] additional configuration needed to
+      #   set up the command class (default: `{}`)
       def perform(task, command, args = nil, additional_options = {})
         require "kitchen/command/#{command}"
 
         command_options = {
           :action => task,
-          :help => lambda { help(task) },
+          :help => -> { help(task) },
           :config => @config,
           :shell => shell
         }.merge(additional_options)
@@ -51,6 +60,8 @@ module Kitchen
     include Logging
     include PerformCommand
 
+    # The maximum number of concurrent instances that can run--which is a bit
+    # high
     MAX_CONCURRENCY = 9999
 
     # Constructs a new instance.
@@ -59,22 +70,27 @@ module Kitchen
       $stdout.sync = true
       Kitchen.logger = Kitchen.default_file_logger
       @loader = Kitchen::Loader::YAML.new(
-        :project_config => ENV['KITCHEN_YAML'],
-        :local_config => ENV['KITCHEN_LOCAL_YAML'],
-        :global_config => ENV['KITCHEN_GLOBAL_YAML']
+        :project_config => ENV["KITCHEN_YAML"],
+        :local_config => ENV["KITCHEN_LOCAL_YAML"],
+        :global_config => ENV["KITCHEN_GLOBAL_YAML"]
       )
       @config = Kitchen::Config.new(
         :loader     => @loader,
-        :log_level  => ENV.fetch('KITCHEN_LOG', "info").downcase.to_sym
+        :log_level  => ENV.fetch("KITCHEN_LOG", "info").downcase.to_sym
       )
     end
 
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
-    method_option :bare, :aliases => "-b", :type => :boolean,
+    method_option :bare,
+      :aliases => "-b",
+      :type => :boolean,
       :desc => "List the name of each instance only, one per line"
-    method_option :debug, :aliases => "-d", :type => :boolean,
+    method_option :debug,
+      :aliases => "-d",
+      :type => :boolean,
       :desc => "[Deprecated] Please use `kitchen diagnose'"
-    method_option :log_level, :aliases => "-l",
+    method_option :log_level,
+      :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def list(*args)
       update_config!
@@ -82,13 +98,18 @@ module Kitchen
     end
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
-    method_option :log_level, :aliases => "-l",
+    method_option :log_level,
+      :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
-    method_option :loader, :type => :boolean,
+    method_option :loader,
+      :type => :boolean,
       :desc => "Include data loader diagnostics"
-    method_option :instances, :type => :boolean, :default => true,
+    method_option :instances,
+      :type => :boolean,
+      :default => true,
       :desc => "Include instances diagnostics"
-    method_option :all, :type => :boolean,
+    method_option :all,
+      :type => :boolean,
       :desc => "Include all diagnostics"
     def diagnose(*args)
       update_config!
@@ -96,12 +117,17 @@ module Kitchen
     end
 
     {
-      create:   'Change instance state to create. Start one or more instances',
-      converge: 'Change instance state to converge. Use a provisioner to configure one or more instances',
-      setup:    'Change instance state to setup. Prepare to run automated tests. \
-        Install busser and related gems on one or more instances',
-      verify:   'Change instance state to verify. Run automated tests on one or more instances',
-      destroy:  'Change instance state to destroy. Delete all information for one or more instances'
+      :create   => "Change instance state to create. " \
+                   "Start one or more instances",
+      :converge => "Change instance state to converge. " \
+                   "Use a provisioner to configure one or more instances",
+      :setup    => "Change instance state to setup. " \
+                   "Prepare to run automated tests. " \
+                   "Install busser and related gems on one or more instances",
+      :verify   => "Change instance state to verify. " \
+                   "Run automated tests on one or more instances",
+      :destroy  => "Change instance state to destroy. " \
+                   "Delete all information for one or more instances"
     }.each do |action, short_desc|
       desc(
         "#{action} [INSTANCE|REGEXP|all]",
@@ -112,18 +138,23 @@ module Kitchen
         Change one or more instances from the current state to the #{action} state. Actions for all
         intermediate states will be executed. See http://kitchen.ci for further explanation.
       DESC
-      method_option :concurrency, :aliases => "-c",
-        :type => :numeric, :lazy_default => MAX_CONCURRENCY,
-        :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+      method_option :concurrency,
+        :aliases => "-c",
+        :type => :numeric,
+        :lazy_default => MAX_CONCURRENCY,
+        :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
           Run a #{action} against all matching instances concurrently. Only N
           instances will run at the same time if a number is given.
         DESC
-      method_option :parallel, :aliases => "-p", :type => :boolean,
-        :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+      method_option :parallel,
+        :aliases => "-p",
+        :type => :boolean,
+        :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
-      method_option :log_level, :aliases => "-l",
+      method_option :log_level,
+        :aliases => "-l",
         :desc => "Set the log level (debug, info, warn, error, fatal)"
       define_method(action) do |*args|
         update_config!
@@ -131,8 +162,8 @@ module Kitchen
       end
     end
 
-    desc 'test [INSTANCE|REGEXP|all]',
-         'Test (destroy, create, converge, setup, verify and destroy) one or more instances'
+    desc "test [INSTANCE|REGEXP|all]",
+      "Test (destroy, create, converge, setup, verify and destroy) one or more instances"
     long_desc <<-DESC
       The instance states are in order: destroy, create, converge, setup, verify, destroy.
       Test changes the state of one or more instances to destroyed, then executes
@@ -146,22 +177,31 @@ module Kitchen
       * always: instances will always be destroyed afterwards.\n
       * never: instances will never be destroyed afterwards.
     DESC
-    method_option :concurrency, :aliases => "-c",
-      :type => :numeric, :lazy_default => MAX_CONCURRENCY,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+    method_option :concurrency,
+      :aliases => "-c",
+      :type => :numeric,
+      :lazy_default => MAX_CONCURRENCY,
+      :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
         Run a test against all matching instances concurrently. Only N
         instances will run at the same time if a number is given.
       DESC
-    method_option :parallel, :aliases => "-p", :type => :boolean,
-      :desc => <<-DESC.gsub(/^\s+/, '').gsub(/\n/, ' ')
+    method_option :parallel,
+      :aliases => "-p",
+      :type => :boolean,
+      :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
         [Future DEPRECATION, use --concurrency]
         Run a test against all matching instances concurrently.
       DESC
-    method_option :log_level, :aliases => "-l",
+    method_option :log_level,
+      :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
-    method_option :destroy, :aliases => "-d", :default => "passing",
+    method_option :destroy,
+      :aliases => "-d",
+      :default => "passing",
       :desc => "Destroy strategy to use after testing (passing, always, never)."
-    method_option :auto_init, :type => :boolean, :default => false,
+    method_option :auto_init,
+      :type => :boolean,
+      :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
     def test(*args)
       update_config!
@@ -170,17 +210,21 @@ module Kitchen
     end
 
     desc "login INSTANCE|REGEXP", "Log in to one instance"
-    method_option :log_level, :aliases => "-l",
+    method_option :log_level,
+      :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
     def login(*args)
       update_config!
       perform("login", "login", args)
     end
 
-    desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND", "Execute command on one or more instance"
-    method_option :log_level, :aliases => "-l",
+    desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
+      "Execute command on one or more instance"
+    method_option :log_level,
+      :aliases => "-l",
       :desc => "Set the log level (debug, info, warn, error, fatal)"
-    method_option :command, :aliases => "-c",
+    method_option :command,
+      :aliases => "-c",
       :desc => "execute via ssh"
     def exec(*args)
       update_config!
@@ -191,7 +235,7 @@ module Kitchen
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
     end
-    map %w(-v --version) => :version
+    map %w[-v --version] => :version
 
     desc "sink", "Show the Kitchen sink!", :hide => true
     def sink
@@ -243,6 +287,7 @@ module Kitchen
         perform("discover", "driver_discover", args)
       end
 
+      # @return [String] basename
       def self.basename
         super + " driver"
       end
@@ -264,14 +309,23 @@ module Kitchen
 
     private
 
+    # Ensure the any failing commands exit non-zero.
+    #
+    # @return [true] you die always on failure
+    # @api private
     def self.exit_on_failure?
       true
     end
 
+    # @return [Logger] the common logger
+    # @api private
     def logger
       Kitchen.logger
     end
 
+    # Update and finalize options for logging, concurrency, and other concerns.
+    #
+    # @api private
     def update_config!
       if options[:log_level]
         level = options[:log_level].downcase.to_sym
@@ -290,10 +344,13 @@ module Kitchen
       end
     end
 
+    # If auto_init option is active, invoke the init generator.
+    #
+    # @api private
     def ensure_initialized
-      yaml = ENV['KITCHEN_YAML'] || '.kitchen.yml'
+      yaml = ENV["KITCHEN_YAML"] || ".kitchen.yml"
 
-      if options[:auto_init] && ! File.exists?(yaml)
+      if options[:auto_init] && !File.exist?(yaml)
         banner "Invoking init as '#{yaml}' file is missing"
         invoke "init"
       end

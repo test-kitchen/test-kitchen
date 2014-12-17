@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'thor/util'
+require "thor/util"
 
-require 'kitchen/lazy_hash'
+require "kitchen/lazy_hash"
 
 module Kitchen
 
@@ -30,78 +30,58 @@ module Kitchen
     class Base
 
       include ShellOut
+      include Configurable
       include Logging
 
-      attr_accessor :instance
-
-      class << self
-        attr_reader :serial_actions
-      end
-
+      # Creates a new Driver object using the provided configuration data
+      # which will be merged with any default configuration.
+      #
+      # @param config [Hash] provided driver configuration
       def initialize(config = {})
-        @config = LazyHash.new(config, self)
-        self.class.defaults.each do |attr, value|
-          @config[attr] = value unless @config.has_key?(attr)
-        end
-      end
-
-      def validate_config!
-        Array(self.class.validations).each do |tuple|
-          tuple.last.call(tuple.first, config[tuple.first], self)
-        end
+        init_config(config)
       end
 
       # Returns the name of this driver, suitable for display in a CLI.
       #
       # @return [String] name of this driver
       def name
-        self.class.name.split('::').last
-      end
-
-      # Provides hash-like access to configuration keys.
-      #
-      # @param attr [Object] configuration key
-      # @return [Object] value at configuration key
-      def [](attr)
-        config[attr]
-      end
-
-      # Returns an array of configuration keys.
-      #
-      # @return [Array] array of configuration keys
-      def config_keys
-        config.keys
+        self.class.name.split("::").last
       end
 
       # Creates an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def create(state) ; end
+      def create(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Converges a running instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(state) ; end
+      def converge(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Sets up an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(state) ; end
+      def setup(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Verifies a converged instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(state) ; end
+      def verify(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(state) ; end
+      def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
 
       # Returns the shell command that will log into an instance.
       #
@@ -109,7 +89,7 @@ module Kitchen
       # @return [LoginCommand] an object containing the array of command line
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
-      def login_command(state)
+      def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ActionFailed, "Remote login is not supported in this driver."
       end
 
@@ -120,36 +100,80 @@ module Kitchen
       #
       # @raise [UserError] if the driver will not be able to perform or if a
       #   documented dependency is missing from the system
-      def verify_dependencies ; end
-
-      # Returns a Hash of configuration and other useful diagnostic information.
-      #
-      # @return [Hash] a diagnostic hash
-      def diagnose
-        result = Hash.new
-        config_keys.sort.each { |k| result[k] = config[k] }
-        result
+      def verify_dependencies
       end
 
-      protected
+      class << self
+        # @return [Array<Symbol>] an array of action method names that cannot
+        #   be run concurrently and must be run in serial via a shared mutex
+        attr_reader :serial_actions
+      end
 
-      attr_reader :config
+      # Registers certain driver actions that cannot be safely run concurrently
+      # in threads across multiple instances. Typically this might be used
+      # for create or destroy actions that use an underlying resource that
+      # cannot be used at the same time.
+      #
+      # A shared mutex for this driver object will be used to synchronize all
+      # registered methods.
+      #
+      # @example a single action method that cannot be run concurrently
+      #
+      #   no_parallel_for :create
+      #
+      # @example multiple action methods that cannot be run concurrently
+      #
+      #   no_parallel_for :create, :destroy
+      #
+      # @param methods [Array<Symbol>] one or more actions as symbols
+      # @raise [ClientError] if any method is not a valid action method name
+      def self.no_parallel_for(*methods)
+        action_methods = [:create, :converge, :setup, :verify, :destroy]
 
-      ACTION_METHODS = %w{create converge setup verify destroy}.
-        map(&:to_sym).freeze
+        Array(methods).each do |meth|
+          next if action_methods.include?(meth)
 
+          raise ClientError, "##{meth} is not a valid no_parallel_for method"
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
+      end
+
+      private
+
+      # Returns a suitable logger to use for output.
+      #
+      # @return [Kitchen::Logger] a logger
       def logger
         instance ? instance.logger : Kitchen.logger
       end
 
+      # Intercepts any bare #puts calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
       def puts(msg)
         info(msg)
       end
 
+      # Intercepts any bare #print calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
       def print(msg)
         info(msg)
       end
 
+      # Delegates to Kitchen::ShellOut.run_command, overriding some default
+      # options:
+      #
+      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
+      #   Driver object
+      # * `:log_subject` defaults to a String representation of the Driver's
+      #   class name
+      #
+      # @see ShellOut#run_command
       def run_command(cmd, options = {})
         base_options = {
           :use_sudo => config[:use_sudo],
@@ -158,70 +182,11 @@ module Kitchen
         super(cmd, base_options)
       end
 
-      def busser_setup_cmd
-        busser.setup_cmd
-      end
-
-      def busser_sync_cmd
-        busser.sync_cmd
-      end
-
-      def busser_run_cmd
-        busser.run_cmd
-      end
-
+      # Returns the Busser object associated with the driver.
+      #
+      # @return [Busser] a busser
       def busser
-        @busser ||= begin
-          raise ClientError, "Instance must be set for Driver" if instance.nil?
-          instance.busser
-        end
-      end
-
-      def self.defaults
-        @defaults ||= Hash.new.merge(super_defaults)
-      end
-
-      def self.super_defaults
-        klass = self.superclass
-
-        if klass.respond_to?(:defaults)
-          klass.defaults
-        else
-          Hash.new
-        end
-      end
-
-      def self.default_config(attr, value = nil, &block)
-        defaults[attr] = block_given? ? block : value
-      end
-
-      def self.validations
-        @validations
-      end
-
-      def self.required_config(attr, &block)
-        @validations = [] if @validations.nil?
-        if ! block_given?
-          klass = self
-          block = lambda do |attr, value, driver|
-            if value.nil? || value.to_s.empty?
-              attribute = "#{klass}#{driver.instance.to_str}#config[:#{attr}]"
-              raise UserError, "#{attribute} cannot be blank"
-            end
-          end
-        end
-        @validations << [attr, block]
-      end
-
-      def self.no_parallel_for(*methods)
-        Array(methods).each do |meth|
-          if ! ACTION_METHODS.include?(meth)
-            raise ClientError, "##{meth} is not a valid no_parallel_for method"
-          end
-        end
-
-        @serial_actions ||= []
-        @serial_actions += methods
+        instance.busser
       end
     end
   end

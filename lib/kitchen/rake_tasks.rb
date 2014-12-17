@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rake/tasklib'
+require "rake/tasklib"
 
-require 'kitchen'
+require "kitchen"
 
 module Kitchen
 
@@ -39,8 +39,13 @@ module Kitchen
 
     private
 
+    # @return [Config] a Kitchen::Config
     attr_reader :config
 
+    # Generates a test Rake task for each instance and one to test all
+    # instances in serial.
+    #
+    # @api private
     def define
       namespace "kitchen" do
         config.instances.each do |instance|
@@ -51,7 +56,7 @@ module Kitchen
         end
 
         desc "Run all test instances"
-        task "all" => config.instances.map { |i| i.name }
+        task "all" => config.instances.map(&:name)
       end
     end
   end

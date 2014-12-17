@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/command'
+require "kitchen/command"
 
 module Kitchen
 
@@ -27,20 +27,27 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Console < Kitchen::Command::Base
 
+      # Invoke the command.
       def call
-        require 'pry'
+        require "pry"
         Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
-      rescue LoadError => e
+      rescue LoadError
         warn %{Make sure you have the pry gem installed. You can install it with:}
         warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
         exit 1
       end
 
-      protected
+      private
 
+      # Construct a custom Pry prompt proc.
+      #
+      # @param char [String] prompt character
+      # @return [proc] a prompt proc
+      # @api private
       def prompt(char)
         proc { |target_self, nest_level, pry|
-          ["[#{pry.input_array.size}] ",
+          [
+            "[#{pry.input_array.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level.zero?}#{char} "
           ].join

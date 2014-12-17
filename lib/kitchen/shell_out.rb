@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'mixlib/shellout'
+require "mixlib/shellout"
 
 module Kitchen
 
@@ -27,7 +27,7 @@ module Kitchen
   module ShellOut
 
     # Wrapped exception for any interally raised shell out commands.
-    class ShellCommandFailed < TransientFailure ; end
+    class ShellCommandFailed < TransientFailure; end
 
     # Executes a command in a subshell on the local running system.
     #
@@ -41,11 +41,11 @@ module Kitchen
     #   the command
     # @option options [Hash] :environment a Hash of environment variables to
     #   set before the command is run. By default, the environment will
-    #   *always* be set to 'LC_ALL' => 'C' to prevent issues with multibyte
+    #   *always* be set to `'LC_ALL' => 'C'` to prevent issues with multibyte
     #   characters in Ruby 1.8. To avoid this, use :environment => nil for
     #   *no* extra environment settings, or
-    #   :environment => {'LC_ALL'=>nil, ...} to set other environment settings
-    #   without changing the locale.
+    #   `:environment => {'LC_ALL'=>nil, ...}` to set other environment
+    #   settings without changing the locale.
     # @option options [Integer] :timeout Numeric value for the number of
     #   seconds to wait on the child process before raising an Exception.
     #   This is calculated as the total amount of time that ShellOut waited on
@@ -56,11 +56,10 @@ module Kitchen
     # @raise [ShellCommandFailed] if the command fails
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
-      use_sudo = options[:use_sudo].nil? ? false : options[:use_sudo]
-      cmd = "sudo -E #{cmd}" if use_sudo
-      subject = "[#{options[:log_subject] || "local"} command]"
+      cmd = "sudo -E #{cmd}" if options.fetch(:use_sudo, false)
+      subject = "[#{options.fetch(:log_subject, "local")} command]"
 
-      debug("#{subject} BEGIN (#{display_cmd(cmd)})")
+      debug("#{subject} BEGIN (#{cmd})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
       sh.run_command
       debug("#{subject} END #{Util.duration(sh.execution_time)}")
@@ -68,22 +67,20 @@ module Kitchen
       sh.stdout
     rescue Mixlib::ShellOut::ShellCommandFailed => ex
       raise ShellCommandFailed, ex.message
-    rescue Exception => error
+    rescue Exception => error # rubocop:disable Lint/RescueException
       error.extend(Kitchen::Error)
       raise
     end
 
     private
 
-    def display_cmd(cmd)
-      first_line, newline, rest = cmd.partition("\n")
-      last_char = cmd[cmd.size - 1]
-
-      newline == "\n" ? "#{first_line}\\n...#{last_char}" : cmd
-    end
-
+    # Returns a hash of MixLib::ShellOut options for the command.
+    #
+    # @param options [Hash] a Hash of options
+    # @return [Hash] a new Hash of options, filterd and merged with defaults
+    # @api private
     def shell_opts(options)
-      filtered_opts = options.reject do |key, value|
+      filtered_opts = options.reject do |key, _value|
         [:use_sudo, :log_subject, :quiet].include?(key)
       end
       { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)

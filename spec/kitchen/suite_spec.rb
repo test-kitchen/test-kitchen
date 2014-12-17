@@ -16,18 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'kitchen/errors'
-require 'kitchen/suite'
+require "kitchen/errors"
+require "kitchen/suite"
 
 describe Kitchen::Suite do
 
   let(:opts) do
     {
       :name => "suitezy",
-      :includes => ["testbuntu", "testcent"],
-      :excludes => ["prodbuntu"]
+      :includes => %w[testbuntu testcent],
+      :excludes => %w[prodbuntu]
     }
   end
 
@@ -43,7 +43,7 @@ describe Kitchen::Suite do
   end
 
   it "returns the includes" do
-    suite.includes.must_equal ["testbuntu", "testcent"]
+    suite.includes.must_equal %w[testbuntu testcent]
   end
 
   it "returns an empty Array when includes not given" do
@@ -52,7 +52,7 @@ describe Kitchen::Suite do
   end
 
   it "returns the excludes" do
-    suite.excludes.must_equal ["prodbuntu"]
+    suite.excludes.must_equal %w[prodbuntu]
   end
 
   it "returns an empty Array when excludes not given" do
