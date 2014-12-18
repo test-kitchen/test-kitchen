@@ -195,7 +195,7 @@ module Kitchen
       # Overwrite the sudo configuration comming from the Transport
       config[:sudo] = instance.transport.sudo
       # Smart way to do this?
-      config[:busser_bin] = "busser" if shell.eql?("powershell")
+      config[:busser_bin] = "#{config[:ruby_bindir]}/ruby #{config[:root_path]}/gems/bin/busser" if shell.eql?("powershell")
       self
     end
 
