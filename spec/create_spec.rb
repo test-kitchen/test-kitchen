@@ -7,7 +7,8 @@ describe Kitchen::Driver::Ec2 do
       {
         aws_ssh_key_id: 'larry',
         aws_access_key_id: 'secret',
-        aws_secret_access_key: 'moarsecret'
+        aws_secret_access_key: 'moarsecret',
+        user_data: nil
       }
     end
 
@@ -107,4 +108,20 @@ describe Kitchen::Driver::Ec2 do
     end
 
   end
+
+  context 'user_data implementation is working' do
+
+    it 'user_data is not defined' do
+      driver.create(state)
+      expect(state[:user_data]).to eql(nil)
+    end
+
+    it 'user_data is defined' do
+      config[:user_data] = "#!/bin/bash\necho server > /tmp/hostname"
+      driver.create(state)
+      expect(config[:user_data]).to eql("#!/bin/bash\necho server > /tmp/hostname")
+    end
+
+  end
+
 end
