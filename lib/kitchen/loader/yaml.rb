@@ -174,7 +174,9 @@ module Kitchen
       # @raise [UserError] if an ERb parsing error occurs
       # @api private
       def process_erb(string, file)
-        ERB.new(string).result
+        tpl = ERB.new(string)
+        tpl.filename = file
+        tpl.result
       rescue => e
         raise UserError, "Error parsing ERB content in #{file} " \
           "(#{e.class}: #{e.message}).\n" \
