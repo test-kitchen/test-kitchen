@@ -58,7 +58,8 @@ module Kitchen
 
       # Invoke the command.
       def init
-        self.class.source_root(Kitchen.source_root.join("templates", "init"))
+        source_root = find_existing_template_dir || Kitchen.source_root.join("templates", "init")
+        self.class.source_root(source_root)
 
         create_kitchen_yaml
         prepare_rakefile
@@ -71,6 +72,15 @@ module Kitchen
       end
 
       private
+      def find_existing_template_dir
+        config_dir = nil
+        Pathname.new(Dir.pwd).ascend do |path|
+          if File.exists?(File.expand_path('kitchen.yml.erb', path))
+            config_dir = path
+          end
+        end
+        config_dir
+      end
 
       # Creates the `.kitchen.yml` file.
       #
