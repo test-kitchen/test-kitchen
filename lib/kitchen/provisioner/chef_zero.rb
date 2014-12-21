@@ -32,10 +32,7 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
-
-      default_config :chef_client_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
-      end
+      default_config :chef_client_path, nil
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -69,8 +66,7 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
-        chef_client_bin = sudo(config[:chef_client_path])
-
+        chef_client_bin = sudo(chef_client_path)
         cmd = modern? ? "#{chef_client_bin} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
@@ -192,6 +188,11 @@ module Kitchen
         else
           Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
         end
+      end
+
+      def chef_client_path
+        chef_client_file = shell == 'powershell' ? 'chef-client.bat' : 'chef-client'
+        config[:chef_client_path] || File.join(chef_omnibus_root, 'bin', chef_client_file)
       end
     end
   end
