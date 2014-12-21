@@ -32,10 +32,7 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
-
-      default_config :chef_client_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
-      end
+      default_config :chef_client_path, nil
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -70,7 +67,7 @@ module Kitchen
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        Util.wrap_command([cmd, *chef_client_args].join(" "))
+        Util.wrap_command([cmd, *chef_client_args].join(" "), shell)
       end
 
       private
@@ -81,7 +78,7 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def local_mode_command
-        "#{sudo(config[:chef_client_path])} --local-mode"
+        "#{sudo(chef_client_path)} --local-mode"
       end
 
       # Returns the command that will run a backwards compatible shim script
@@ -123,23 +120,7 @@ module Kitchen
           args << "--logfile #{config[:log_file]}"
         end
 
-        # TODO: We definitely need to put more logic on this.
-        Util.wrap_command([cmd, *args].join(" "), shell)
-      end
-
-      private
-
-      # Returns the command that will run a backwards compatible shim script
-      # that approximates local mode in a modern chef-client run.
-      #
-      # @return [String] the command string
-      # @api private
-      def shim_command
-        [
-          chef_client_zero_env,
-          sudo("#{config[:ruby_bindir]}/ruby"),
-          "#{config[:root_path]}/chef-client-zero.rb"
-        ].join(" ")
+        args
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory
@@ -224,6 +205,11 @@ module Kitchen
         else
           Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
         end
+      end
+
+      def chef_client_path
+        chef_client_file = shell == 'powershell' ? 'chef-client.bat' : 'chef-client'
+        config[:chef_client_path] || File.join(chef_omnibus_root, 'bin', chef_client_file)
       end
     end
   end
