@@ -126,6 +126,7 @@ module Kitchen
         CMD
       when "powershell"
         cmd = <<-CMD.gsub(/^ {10}/, "")
+          Copy-Item #{config[:ruby_bindir].gsub('/opt/','/opscode/')}/ruby.exe #{config[:root_path]}/gems/bin
           #{busser_setup_env}
           if ((gem list busser -i) -eq \"false\") {
             gem install #{gem_install_args}
@@ -393,7 +394,7 @@ module Kitchen
           %{$env:BUSSER_ROOT="#{config[:root_path]}";},
           %{$env:GEM_HOME="#{config[:root_path]}/gems";},
           %{$env:GEM_PATH="#{config[:root_path]}/gems";},
-          %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
+          %{$env:PATH="$env:PATH;#{config[:ruby_bindir].gsub('/opt/','/opscode/')};$env:GEM_PATH/bin";},
           %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }},
           %{catch { $env:BUSSER_SUITE_PATH="" };},
           %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
