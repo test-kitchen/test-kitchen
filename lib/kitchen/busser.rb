@@ -115,6 +115,7 @@ module Kitchen
       when "bourne"
 
         cmd = <<-CMD.gsub(/^ {10}/, "")
+          mkdir -p #{config[:root_path]}
           #{busser_setup_env}
           gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
 
