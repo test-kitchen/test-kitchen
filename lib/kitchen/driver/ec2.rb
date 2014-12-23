@@ -37,6 +37,7 @@ module Kitchen
       default_config :security_group_ids, ['default']
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :user_data,          nil
+      default_config :private_ip_address, nil
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
@@ -155,6 +156,7 @@ module Kitchen
           :flavor_id                 => config[:flavor_id],
           :ebs_optimized             => config[:ebs_optimized],
           :image_id                  => config[:image_id],
+          :private_ip_address        => config[:private_ip_address],
           :key_name                  => config[:aws_ssh_key_id],
           :subnet_id                 => config[:subnet_id],
           :iam_instance_profile_name => config[:iam_profile_name],
@@ -182,6 +184,7 @@ module Kitchen
           :flavor_id                 => config[:flavor_id],
           :ebs_optimized             => config[:ebs_optimized],
           :image_id                  => config[:image_id],
+          :private_ip_address        => config[:private_ip_address],
           :key_name                  => config[:aws_ssh_key_id],
           :subnet_id                 => config[:subnet_id],
           :iam_instance_profile_name => config[:iam_profile_name],
@@ -201,6 +204,7 @@ module Kitchen
         debug("ec2:flavor_id '#{config[:flavor_id]}'")
         debug("ec2:ebs_optimized '#{config[:ebs_optimized]}'")
         debug("ec2:image_id '#{config[:image_id]}'")
+        debug("ec2:private_ip_address '#{config[:private_ip_address]}'")
         debug("ec2:security_group_ids '#{config[:security_group_ids]}'")
         debug("ec2:tags '#{config[:tags]}'")
         debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
