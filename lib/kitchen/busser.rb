@@ -127,13 +127,13 @@ module Kitchen
         CMD
       when "powershell"
         cmd = <<-CMD.gsub(/^ {10}/, "")
-          Copy-Item #{config[:ruby_bindir].gsub('/opt/','/opscode/')}/ruby.exe #{config[:root_path]}/gems/bin
           #{busser_setup_env}
           if ((gem list busser -i) -eq \"false\") {
             gem install #{gem_install_args}
           }
           # We have to modify Busser::Setup to work with PowerShell
           # busser setup
+          Copy-Item #{config[:ruby_bindir].gsub('/opt/','/opscode/')}/ruby.exe #{config[:root_path]}/gems/bin
           #{busser} plugin install #{plugins.join(" ")}
         CMD
       else
