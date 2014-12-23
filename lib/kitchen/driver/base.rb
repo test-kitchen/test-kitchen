@@ -94,8 +94,10 @@ module Kitchen
         transport.connection(state) do |conn|
           conn.execute(busser.cleanup_cmd)
           dirs = busser.local_payload.map {|f| File.dirname(f)}.uniq
-          conn.upload!(dirs, "/tmp/busser/suites")
-          conn.execute(busser.run_cmd)
+          if !dirs.empty?
+            conn.upload!(dirs, "/tmp/busser/suites")
+            conn.execute(busser.run_cmd)
+          end
         end
       end
 
