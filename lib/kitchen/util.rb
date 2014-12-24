@@ -117,8 +117,7 @@ module Kitchen
 
         "sh -c '\n#{cmd}\n'"
       when "powershell"
-        # Do we need a wrapper for powershell
-        cmd
+        "echo '\n#{cmd}\n' | powershell.exe -Command -"
       else
         raise "[Util.shell_helpers] Unsupported shell: #{shell}"
       end
