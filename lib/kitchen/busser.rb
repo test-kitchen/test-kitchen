@@ -56,7 +56,10 @@ module Kitchen
       @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
-      @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
+      @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "gems/bin/busser"))
+
+      @busser_bin = "#{config[:ruby_bindir]}/ruby #{config[:busser_bin]}"
+      @gem_bin = "#{config[:ruby_bindir]}/ruby #{config[:ruby_bindir]}/gem"
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -100,32 +103,30 @@ module Kitchen
     #   work needs to be performed
     def setup_cmd
       return if local_suite_files.empty?
-      ruby    = "#{config[:ruby_bindir]}/ruby"
-      gem     = sudo("#{config[:ruby_bindir]}/gem")
-      busser  = sudo(config[:busser_bin])
 
       case shell
       when "bourne"
-
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
-          gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
-
-          if ! #{gem} list busser -i >/dev/null; then
-            #{gem} install #{gem_install_args}
+          if ! #{sudo(@gem_bin)} list busser -i >/dev/null; then
+            mkdir -p #{config[:root_path]}/gems/bin
+            mkdir -p #{config[:root_path]}/gems/cache
+            #{sudo(@gem_bin)} install #{gem_install_args}
           fi
-          #{sudo("${gem_bindir}")}/busser setup
-          #{busser} plugin install #{plugins.join(" ")}
+          #{sudo(@busser_bin)} setup
+          #{sudo(@busser_bin)} plugin install #{plugins.join(" ")}
         CMD
       when "powershell"
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
-          if ((gem list busser -i) -eq \"false\") {
-            gem install #{gem_install_args}
+          if ((#{sudo(@gem_bin)} list busser -i) -eq \"false\") {
+            mkdir -p #{config[:root_path]}/gems/bin
+            mkdir -p #{config[:root_path]}/gems/cache
+            #{sudo(@gem_bin)} install #{gem_install_args}
           }
           # We have to modify Busser::Setup to work with PowerShell
-          # busser setup
-          #{busser} plugin install #{plugins.join(" ")}
+          # #{sudo(@busser_bin)} setup
+          #{sudo(@busser_bin)} plugin install #{plugins.join(" ")}
         CMD
       else
         raise "[#{self}] Unsupported shell: #{shell}"
@@ -147,7 +148,7 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} suite cleanup
+        #{sudo(@busser_bin)} suite cleanup
 
       CMD
 
@@ -174,7 +175,7 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} test
+        #{sudo(@busser_bin)} test
       CMD
 
       Util.wrap_command(cmd, shell)
@@ -194,8 +195,6 @@ module Kitchen
       load_needed_dependencies!
       # Overwrite the sudo configuration comming from the Transport
       config[:sudo] = instance.transport.sudo
-      # Smart way to do this?
-      config[:busser_bin] = "busser" if shell.eql?("powershell")
       self
     end
 
@@ -293,10 +292,10 @@ module Kitchen
       local_prefix = File.join(config[:test_base_path], dir)
       case shell
       when "bourne"
-        "`#{sudo(config[:busser_bin])} suite path`/".
+        "#{config[:root_path]}/suites/".
           concat(file.sub(%r{^#{local_prefix}/}, ""))
       when "powershell"
-        "$env:BUSSER_SUITE_PATH/".
+        "#{config[:root_path]}/suites/".
           concat(file.sub(%r{^#{local_prefix}/}, ""))
       else
         raise "[#{self}] Unsupported shell: #{shell}"
@@ -316,7 +315,7 @@ module Kitchen
       md5 = Digest::MD5.hexdigest(local_file)
       perms = format("%o", File.stat(local_path).mode)[2, 4]
       stream_cmd = [
-        sudo(config[:busser_bin]),
+        sudo(@busser_bin),
         "deserialize",
         "--destination=#{remote_path}",
         "--md5sum=#{md5}",
@@ -366,10 +365,7 @@ module Kitchen
           %{$env:BUSSER_ROOT="#{config[:root_path]}";},
           %{$env:GEM_HOME="#{config[:root_path]}/gems";},
           %{$env:GEM_PATH="#{config[:root_path]}/gems";},
-          %{$env:PATH="$env:PATH;$env:GEM_PATH/bin";},
-          %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }},
-          %{catch { $env:BUSSER_SUITE_PATH="" };},
-          %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
+          %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache";}
         ].join(" ")
       else
         raise "[#{self}] Unsupported shell: #{shell}"
