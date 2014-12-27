@@ -55,7 +55,7 @@ task :deploy_over_dk do
   if RUBY_PLATFORM =~ /mswin|mingw|windows/
     dk_path = File.join(ENV['SYSTEMDRIVE'], 'opscode', 'chefdk')
   else
-    dk_path = 'opt/chefdk'
+    dk_path = '/opt/chefdk'
   end
 
   dk_app_path = File.join(dk_path, %w[embedded apps test-kitchen])
