@@ -5,6 +5,9 @@ require 'kitchen/transport/winrm_file_transfer/shell'
 module Kitchen
   module Transport
     module WinRMFileTransfer
+
+      # Represents a file to be copied to the test instance
+      # It maintains a winrm session to be used for all operations
       class RemoteFile
 
         attr_reader :local_path
@@ -29,8 +32,13 @@ module Kitchen
         end
 
         def upload(&block)
-          raise TransportFailed.new("This RemoteFile is closed.") if closed
-          raise TransportFailed.new("Cannot find path: '#{local_path}'") unless File.exist?(local_path)
+          if closed
+            raise TransportFailed.new("This RemoteFile is closed.")
+          end
+
+          if !File.exist?(local_path)
+            raise TransportFailed.new("Cannot find path: '#{local_path}'")
+          end
 
           @remote_path, should_upload = powershell_batch do | builder |
             builder << resolve_remote_command
@@ -46,7 +54,7 @@ module Kitchen
           powershell_batch {|builder| builder << create_post_upload_command}
           size
         end
-        
+
         def close
           shell.close unless shell.nil? or closed
           @closed = true
@@ -70,7 +78,8 @@ module Kitchen
 
         def resolve_remote_command
           <<-EOH
-            $dest_file_path = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("#{remote_path}")
+            $sessionPath = $ExecutionContext.SessionState.Path
+            $dest_file_path = $sessionPath.GetUnresolvedProviderPathFromPSPath("#{remote_path}")
 
             if (!(Test-Path $dest_file_path)) {
               $dest_dir = ([System.IO.Path]::GetDirectoryName($dest_file_path))
@@ -84,14 +93,15 @@ module Kitchen
         def is_dirty_command
           local_md5 = Digest::MD5.file(local_path).hexdigest
           <<-EOH
-            $dest_file_path = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("#{remote_path}")
+            $sessionPath = $ExecutionContext.SessionState.Path
+            $dest_file_path = $sessionPath.GetUnresolvedProviderPathFromPSPath("#{remote_path}")
 
             if (Test-Path $dest_file_path) {
-              $crypto_prov = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+              $crypto = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
               try {
                 $file = [System.IO.File]::Open($dest_file_path,
                   [System.IO.Filemode]::Open, [System.IO.FileAccess]::Read)
-                $guest_md5 = ([System.BitConverter]::ToString($crypto_prov.ComputeHash($file)))
+                $guest_md5 = ([System.BitConverter]::ToString($crypto.ComputeHash($file)))
                 $guest_md5 = $guest_md5.Replace("-","").ToLower()
               }
               finally {
@@ -114,7 +124,7 @@ module Kitchen
           base64_array.each_slice(8000 - remote_path.size) do |chunk|
             shell.cmd("echo #{chunk.join} >> \"#{remote_path}\"")
             bytes_copied += chunk.count
-            logger.debug("Uploading chunk #{bytes_copied} bytes copied of #{base64_array.count} total bytes")
+            logger.debug("Uploading #{bytes_copied} bytes of #{base64_array.count}")
             yield bytes_copied, base64_array.count, local_path, remote_path if block_given?
           end
           base64_array.length
@@ -149,8 +159,13 @@ module Kitchen
             EOH
             idx += 1
           end
-          commands << "\"{\";$result.keys | % { write-output \"`\"$_`\": `\"$($result[$_])`\",\".Replace('\\','\\\\')};\"}\""
-
+          commands <<  <<-EOH
+            "{"
+            $result.keys | % { 
+              write-output "`"$_`": `"$($result[$_])`",".Replace('\\','\\\\')
+            }
+            "}"
+          EOH
           result = []
           begin
             result_hash = JSON.parse(shell.powershell(commands.join("\n")).gsub(",\r\n}","\n}"))

@@ -3,6 +3,8 @@ require 'zip'
 module Kitchen
   module Transport
     module WinRMFileTransfer
+
+      # A zip file containing a directory to upload to the test instance
       class RemoteZipFile < RemoteFile
 
         attr_reader :archive
@@ -23,7 +25,12 @@ module Kitchen
           Zip::File.open(archive, 'w') do |zipfile|
             Dir.glob(glob).each do |file|
               logger.debug("adding zip entry for '#{file}'")
-              entry = Zip::Entry.new(archive, file.sub(File.dirname(path)+'/',''), nil, nil, nil, nil, nil, nil, ::Zip::DOSTime.new(2000))
+              entry = Zip::Entry.new(
+                archive, 
+                file.sub(File.dirname(path)+'/',''), 
+                nil, nil, nil, nil, nil, nil, 
+                ::Zip::DOSTime.new(2000)
+              )
               zipfile.add(entry,file)
             end
           end
@@ -38,7 +45,8 @@ module Kitchen
         private
 
         def create_archive(remote_path)
-          archive_folder = File.join(ENV['TMP'] || ENV['TMPDIR'] || '/tmp', 'WinRM_file_transfer_local')
+          temp_dir = ENV['TMP'] || ENV['TMPDIR'] || '/tmp'
+          archive_folder = File.join(temp_dir, 'WinRM_file_transfer_local')
           Dir.mkdir(archive_folder) unless File.exist?(archive_folder)
           archive = File.join(archive_folder,File.basename(remote_path))+'.zip'
           FileUtils.rm archive, :force=>true
@@ -48,12 +56,13 @@ module Kitchen
 
         def extract_zip_command
           <<-EOH
-            $destination = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("#{@unzip_remote_path}")
-            $shellApplication = new-object -com shell.application 
+            $sessionPath = $ExecutionContext.SessionState.Path
+            $dest = $sessionPath.GetUnresolvedProviderPathFromPSPath("#{@unzip_remote_path}")
+            $shellApplication = new-object -com shell.application
 
-            $zipPackage = $shellApplication.NameSpace('#{remote_path}') 
-            mkdir $destination -ErrorAction SilentlyContinue | Out-Null
-            $destinationFolder = $shellApplication.NameSpace($destination) 
+            $zipPackage = $shellApplication.NameSpace('#{remote_path}')
+            mkdir $dest -ErrorAction SilentlyContinue | Out-Null
+            $destinationFolder = $shellApplication.NameSpace($dest)
             $destinationFolder.CopyHere($zipPackage.Items(),0x10) | Out-Null
           EOH
         end

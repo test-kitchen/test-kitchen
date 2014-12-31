@@ -1,6 +1,11 @@
 module Kitchen
   module Transport
     module WinRMFileTransfer
+
+      # A shell that holds the state of a single winrm connection
+      # Windows 7 and Server 2008 R2 by default are allowed no more
+      # than 15 commands per session. So we reset the session whenever
+      # this threshold is reached.
       class Shell
         def initialize(logger, service)
           @logger = logger
