@@ -26,9 +26,9 @@ module Kitchen
             Dir.glob(glob).each do |file|
               logger.debug("adding zip entry for '#{file}'")
               entry = Zip::Entry.new(
-                archive, 
-                file.sub(File.dirname(path)+'/',''), 
-                nil, nil, nil, nil, nil, nil, 
+                archive,
+                file.sub(File.dirname(path)+'/',''),
+                nil, nil, nil, nil, nil, nil,
                 ::Zip::DOSTime.new(2000)
               )
               zipfile.add(entry,file)

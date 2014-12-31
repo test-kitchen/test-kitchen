@@ -112,8 +112,8 @@ module Kitchen
             cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
           end
           cmd = <<-CMD.gsub(/^ {10}/, "")
-            if (-Not (Test-Path #{config[:root_path]})) { 
-              mkdir #{config[:root_path]} | Out-Null 
+            if (-Not (Test-Path #{config[:root_path]})) {
+              mkdir #{config[:root_path]} | Out-Null
             }
           CMD
           lines = [dirs, cmd]
