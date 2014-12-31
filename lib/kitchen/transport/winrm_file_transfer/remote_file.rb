@@ -161,7 +161,7 @@ module Kitchen
           end
           commands <<  <<-EOH
             "{"
-            $result.keys | % { 
+            $result.keys | % {
               write-output "`"$_`": `"$($result[$_])`",".Replace('\\','\\\\')
             }
             "}"

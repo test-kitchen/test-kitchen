@@ -260,7 +260,7 @@ module Kitchen
       # (see Base#test_connection)
       def test_connection
         exitcode, _error_msg = execute_with_exit(
-          "Write-Host '[Server] Reachable...\n'", 
+          "Write-Host '[Server] Reachable...\n'",
           :powershell
         )
         exitcode.zero?

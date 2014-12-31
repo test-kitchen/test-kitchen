@@ -127,7 +127,7 @@ module Kitchen
         CMD
       when "powershell"
         ruby_bindir = config[:ruby_bindir].gsub('/opt/','/opscode/')
-        
+
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
           if ((gem list busser -i) -eq \"false\") {
