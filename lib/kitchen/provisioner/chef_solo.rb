@@ -28,7 +28,13 @@ module Kitchen
     class ChefSolo < ChefBase
 
       default_config :solo_rb, {}
-      default_config :chef_solo_path, nil
+      default_config :chef_solo_path do |provisioner|
+        chef_solo_file = File.join(provisioner[:chef_omnibus_root], %w[bin chef-solo])
+        if provisioner.shell == :powershell
+          chef_solo_file << '.bat'
+        end
+        chef_solo_file
+      end
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -72,7 +78,7 @@ module Kitchen
 
       def chef_solo_path
         chef_solo_file = shell == :powershell ? 'chef-solo.bat' : 'chef-solo'
-        config[:chef_solo_path] || File.join(chef_omnibus_root, 'bin', chef_solo_file)
+        config[:chef_solo_path] || File.join(config[:chef_omnibus_root], 'bin', chef_solo_file)
       end
     end
   end

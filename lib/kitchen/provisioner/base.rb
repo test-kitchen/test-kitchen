@@ -145,6 +145,12 @@ module Kitchen
         FileUtils.rmtree(sandbox_path)
       end
 
+      # @return [Transport.shell] the transport desired shell for this instance
+      # This would help us know which commands to use. Bourne, Powershell, etc.
+      def shell
+        instance.transport.shell
+      end
+
       private
 
       # Loads any required third party Ruby libraries or runs any shell out
@@ -168,14 +174,6 @@ module Kitchen
       #   dependency requirements cannot be satisfied
       # @api private
       def load_needed_dependencies!
-      end
-
-      # @return [Transport.shell] the transport desired shell for this instance
-      # This would help us know which commands to use. Bourne, Powershell, etc.
-      #
-      # @api private
-      def shell
-        instance.transport.shell
       end
 
       # @return [Logger] the instance's logger or Test Kitchen's common logger

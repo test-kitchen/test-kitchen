@@ -32,7 +32,13 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
-      default_config :chef_client_path, nil
+      default_config :chef_client_path do |provisioner|
+        chef_client_file = File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
+        if provisioner.shell == 'powershell'
+          chef_client_file << '.bat'
+        end
+        chef_client_file
+      end
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -78,7 +84,7 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def local_mode_command
-        "#{sudo(chef_client_path)} --local-mode"
+        "#{sudo(config[:chef_client_path])} --local-mode"
       end
 
       # Returns the command that will run a backwards compatible shim script
@@ -205,11 +211,6 @@ module Kitchen
         else
           Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
         end
-      end
-
-      def chef_client_path
-        chef_client_file = shell == 'powershell' ? 'chef-client.bat' : 'chef-client'
-        config[:chef_client_path] || File.join(chef_omnibus_root, 'bin', chef_client_file)
       end
     end
   end
