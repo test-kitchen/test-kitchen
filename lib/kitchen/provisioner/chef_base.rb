@@ -112,7 +112,12 @@ module Kitchen
             path = File.join(config[:root_path], dir)
             cmd = "if ( Test-Path #{path} ) { rm -r #{path} };"
           end
-          lines = [dirs, "if (-Not (Test-Path #{config[:root_path]})) { mkdir #{config[:root_path]} | Out-Null }"]
+          cmd = <<-CMD.gsub(/^ {10}/, "")
+            if (-Not (Test-Path #{config[:root_path]})) { 
+              mkdir #{config[:root_path]} | Out-Null 
+            }
+          CMD
+          lines = [dirs, cmd]
         else
           raise "Unsupported shell: #{shell}"
         end

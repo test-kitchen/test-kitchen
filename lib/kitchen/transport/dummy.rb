@@ -22,6 +22,10 @@ module Kitchen
 
   module Transport
 
+    # Dummy transport for Kitchen. This transport does nothing but report what would
+    # happen if this transport did anything of consequence. As a result it may
+    # be a useful transport to use when debugging or developing new features or
+    # plugins.
     class Dummy < Kitchen::Transport::Base
 
       default_config :sleep, 1

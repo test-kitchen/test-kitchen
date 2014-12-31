@@ -134,7 +134,9 @@ module Kitchen
         when /darwin/
           # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
           rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
-          raise TransportFailed, "RDC application not found at path: #{rdc_path}" unless File.exist?(rdc_path)
+          unless File.exist?(rdc_path)
+            raise TransportFailed, "RDC application not found at path: #{rdc_path}"
+          end
           rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
           File.open(rdp_file, "w") do |f|
             f.write(
@@ -257,7 +259,10 @@ module Kitchen
 
       # (see Base#test_connection)
       def test_connection
-        exitcode, _error_msg = execute_with_exit("Write-Host '[Server] Reachable...\n'", :powershell)
+        exitcode, _error_msg = execute_with_exit(
+          "Write-Host '[Server] Reachable...\n'", 
+          :powershell
+        )
         exitcode.zero?
       rescue
         sleep 5
