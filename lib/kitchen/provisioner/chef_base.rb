@@ -35,7 +35,6 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.getchef.com/chef/install.sh"
-      default_config :chef_omnibus_root, nil
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -45,6 +44,17 @@ module Kitchen
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
+
+      default_config :chef_omnibus_root do |provisioner|
+        case provisioner.shell
+        when "bourne"
+          "/opt/chef"
+        when "powershell"
+          "&$env:systemdrive\\opscode\\chef"
+        else
+          raise "Unsupported shell: #{provisioner.shell}"
+        end
+      end
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
@@ -129,21 +139,6 @@ module Kitchen
         )
       end
 
-      protected
-
-      def chef_omnibus_root
-        return config[:chef_omnibus_root] unless config[:chef_omnibus_root].nil?
-          
-        case shell
-        when "bourne"
-          "/opt/chef"
-        when "powershell"
-          "&$env:systemdrive\\opscode\\chef"
-        else
-          raise "Unsupported shell: #{shell}"
-        end
-      end
-
       private
 
       # Load cookbook dependency resolver code, if required.
@@ -198,7 +193,7 @@ module Kitchen
           end
 
           <<-INSTALL.gsub(/^ {10}/, "")
-            if should_update_chef "#{chef_omnibus_root}" "#{version}" ; then
+            if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
               echo "-----> Installing Chef Omnibus (#{pretty_version})"
               do_download #{config[:chef_omnibus_url]} /tmp/install.sh
               #{sudo("sh")} /tmp/install.sh #{install_flags}
