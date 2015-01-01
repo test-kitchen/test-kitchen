@@ -53,10 +53,14 @@ module Kitchen
       @config[:test_base_path] = File.expand_path(test_base_path, kitchen_root)
       @config[:suite_name] = suite_name
       @config[:sudo] = opts.fetch(:sudo, true)
-      @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
       @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
+
+      @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)      
+      if shell == "powershell"
+        config[:ruby_bindir].sub!("/opt/", "/opscode/")
+      end
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -107,40 +111,30 @@ module Kitchen
     #   work needs to be performed
     def setup_cmd
       return if local_suite_files.empty?
-      ruby    = "#{config[:ruby_bindir]}/ruby"
-      gem     = sudo("#{config[:ruby_bindir]}/gem")
-      busser  = sudo(config[:busser_bin])
-
+      cmd = "#{busser_setup_env}\n"
       case shell
       when "bourne"
-
-        cmd = <<-CMD.gsub(/^ {10}/, "")
+        gem = sudo("#{config[:ruby_bindir]}/gem")
+        cmd << <<-CMD.gsub(/^ {10}/, "")
           mkdir -p #{config[:root_path]}/suites
-          #{busser_setup_env}
-          gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
+          gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e "puts Gem.bindir"`
 
           if ! #{gem} list busser -i >/dev/null; then
             #{gem} install #{gem_install_args}
           fi
           #{sudo("${gem_bindir}")}/busser setup
-          #{busser} plugin install #{plugins.join(" ")}
         CMD
       when "powershell"
-        ruby_bindir = config[:ruby_bindir].gsub("/opt/", "/opscode/")
-
-        cmd = <<-CMD.gsub(/^ {10}/, "")
-          #{busser_setup_env}
+        cmd << <<-CMD.gsub(/^ {10}/, "")
           if ((gem list busser -i) -eq \"false\") {
             gem install #{gem_install_args}
           }
-          # We have to modify Busser::Setup to work with PowerShell
-          # busser setup
-          Copy-Item #{ruby_bindir}/ruby.exe #{config[:root_path]}/gems/bin
-          #{busser} plugin install #{plugins.join(" ")}
+          Copy-Item #{config[:ruby_bindir]}/ruby.exe #{config[:root_path]}/gems/bin
         CMD
       else
         raise "[#{self}] Unsupported shell: #{shell}"
       end
+      cmd << "\n#{sudo(config[:busser_bin])} plugin install #{plugins.join(" ")}"
       Util.wrap_command(cmd, shell)
     end
 
@@ -393,13 +387,11 @@ module Kitchen
           %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
         ].join(" ")
       when "powershell"
-        ruby_bindir = config[:ruby_bindir].gsub("/opt/", "/opscode/")
-
         [
           %{$env:BUSSER_ROOT="#{config[:root_path]}";},
           %{$env:GEM_HOME="#{config[:root_path]}/gems";},
           %{$env:GEM_PATH="#{config[:root_path]}/gems";},
-          %{$env:PATH="$env:PATH;#{ruby_bindir};$env:GEM_PATH/bin";},
+          %{$env:PATH="$env:PATH;#{config[:ruby_bindir]};$env:GEM_PATH/bin";},
           %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }},
           %{catch { $env:BUSSER_SUITE_PATH="" };},
           %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}

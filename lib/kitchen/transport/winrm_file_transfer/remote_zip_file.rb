@@ -19,7 +19,7 @@ module Kitchen
         def add_file(path)
           path = path.gsub("\\", "/")
           logger.debug("adding '#{path}' to zip file")
-          raise TransportFailed.new("Cannot find path: '#{path}'") unless File.exist?(path)
+          raise TransportFailed, "Cannot find path: '#{path}'" unless File.exist?(path)
           File.directory?(path) ? glob = File.join(path, "**/*") : glob = path
           logger.debug("iterating files in '#{glob}'")
           Zip::File.open(archive, "w") do |zipfile|

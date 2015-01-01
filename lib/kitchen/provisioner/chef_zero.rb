@@ -72,28 +72,18 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
-        chef_client_bin = sudo(config[:chef_client_path])
-        cmd = modern? ? "#{chef_client_bin} --local-mode" : shim_command
+        cmd = modern? ? "#{sudo(config[:chef_client_path])} --local-mode" : shim_command
         args = [
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",
           "--force-formatter",
           "--no-color"
         ]
-        if config[:chef_zero_host]
-          args <<  "--chef-zero-host #{config[:chef_zero_host]}"
-        end
-        if config[:chef_zero_port]
-          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
-        end
-        if config[:json_attributes]
-          args << "--json-attributes #{config[:root_path]}/dna.json"
-        end
-        if config[:log_file]
-          args << "--logfile #{config[:log_file]}"
-        end
+        args <<  "--chef-zero-host #{config[:chef_zero_host]}" if config[:chef_zero_host]
+        args <<  "--chef-zero-port #{config[:chef_zero_port]}" if config[:chef_zero_port]
+        args << "--json-attributes #{config[:root_path]}/dna.json" if config[:json_attributes]
+        args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        # TODO: We definitely need to put more logic on this.
         Util.wrap_command([cmd, *args].join(" "), shell)
       end
 

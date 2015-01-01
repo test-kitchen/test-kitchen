@@ -89,6 +89,7 @@ module Kitchen
       end
 
       def build_transport_args(state)
+        report(:build_transport_args, state)
         {}
       end
     end
