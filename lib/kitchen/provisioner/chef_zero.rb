@@ -112,21 +112,18 @@ module Kitchen
           "--force-formatter",
           "--no-color"
         ]
-
-        if config[:chef_zero_host]
-          args <<  "--chef-zero-host #{config[:chef_zero_host]}"
-        end
-        if config[:chef_zero_port]
-          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
-        end
-        if config[:json_attributes]
-          args << "--json-attributes #{config[:root_path]}/dna.json"
-        end
-        if config[:log_file]
-          args << "--logfile #{config[:log_file]}"
-        end
+        add_argument(args, :chef_zero_host, "--chef-zero-host %config%")
+        add_argument(args, :chef_zero_port, "--chef-zero-port %config%")
+        add_argument(args, :json_attributes, "--json-attributes #{config[:root_path]}/dna.json")
+        add_argument(args, :log_file, "--logfile %config%")
 
         args
+      end
+
+      def add_argument(line, config_key, arg)
+        config_val = config[config_key]
+        return unless config_val
+        line << arg.gsub("%config%", config_val.to_s)
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory

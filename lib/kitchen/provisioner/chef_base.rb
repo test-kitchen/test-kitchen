@@ -214,7 +214,7 @@ module Kitchen
           if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags}
+            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
           else
             echo "-----> Chef Omnibus installation detected (#{pretty_version})"
           fi
