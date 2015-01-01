@@ -384,25 +384,29 @@ module Kitchen
     # @return [String] command string
     # @api private
     def busser_setup_env
-      case shell
-      when "bourne"
-        env = [%{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}]
-      when "powershell"
-        env = [
-          %{$env:PATH="$env:PATH;#{config[:ruby_bindir]};$env:GEM_PATH/bin";},
-          %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }},
-          %{catch { $env:BUSSER_SUITE_PATH="" };},
-        ]
+      env = []
+
+      if shell == "powershell"
         env_prefix = "$env:"
         env_suffix = ";"
-      else
-        raise "[#{self}] Unsupported shell: #{shell}"
       end
 
       env << %{#{env_prefix}BUSSER_ROOT="#{config[:root_path]}"#{env_suffix}}
       env << %{#{env_prefix}GEM_HOME="#{config[:root_path]}/gems"#{env_suffix}}
       env << %{#{env_prefix}GEM_PATH="#{config[:root_path]}/gems"#{env_suffix}}
       env << %{#{env_prefix}GEM_CACHE="#{config[:root_path]}/gems/cache"#{env_suffix}}
+
+      case shell
+      when "bourne"
+        env << %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
+      when "powershell"
+        env << %{$env:PATH="$env:PATH;#{config[:ruby_bindir]};$env:GEM_PATH/bin";}
+        env << %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }}
+        env << %{catch { $env:BUSSER_SUITE_PATH="" };}
+      else
+        raise "[#{self}] Unsupported shell: #{shell}"
+      end
+
       env.join(" ")
     end
 
