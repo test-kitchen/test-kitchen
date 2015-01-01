@@ -148,7 +148,6 @@ module Kitchen
           yield ps_builder
 
           commands = ["$result = @()"]
-          idx = 0
           ps_builder.flatten.each do |cmd_item|
             commands << "$result += Invoke-Command { #{cmd_item} }"
           end

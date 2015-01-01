@@ -120,37 +120,9 @@ module Kitchen
         rdp_file = File.join(config[:kitchen_root], ".kitchen", "#{instance.name}.rdp")
         case RUBY_PLATFORM
         when /cygwin|mswin|mingw|bccwin|wince|emx/
-          # On Windows, use default RDP software
-          rdp_cmd = "mstsc"
-          File.open(rdp_file, "w") do |f|
-            f.write(
-              <<-RDP.gsub(/^ {16}/, "")
-                full address:s:#{@hostname}:3389
-                username:s:#{@username}
-              RDP
-            )
-          end
-          LoginCommand.new([rdp_cmd, rdp_file])
+          windows_login_command(rdp_file)
         when /darwin/
-          # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
-          rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
-          unless File.exist?(rdc_path)
-            raise TransportFailed, "RDC application not found at path: #{rdc_path}"
-          end
-          rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
-          File.open(rdp_file, "w") do |f|
-            f.write(
-              <<-RDP.gsub(/^ {16}/, "")
-                <dict>
-                  <key>ConnectionString</key>
-                  <string>#{@hostname}:3389</string>
-                  <key>UserName</key>
-                  <string>#{@username}</string>
-                </dict>
-              RDP
-            )
-          end
-          LoginCommand.new([rdc_cmd, rdp_file])
+          mac_login_command(rdp_file)
         else
           raise TransportFailed,
             "[#{self.class}] Cannot open Remote Desktop App: Unsupported platform"
@@ -163,6 +135,42 @@ module Kitchen
       end
 
       private
+
+      def windows_login_command(rdp_file)
+        # On Windows, use default RDP software
+        rdp_cmd = "mstsc"
+        File.open(rdp_file, "w") do |f|
+          f.write(
+            <<-RDP.gsub(/^ {16}/, "")
+              full address:s:#{@hostname}:3389
+              username:s:#{@username}
+            RDP
+          )
+        end
+        LoginCommand.new([rdp_cmd, rdp_file])
+      end
+
+      def mac_login_command(rdp_file)
+        # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
+        rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
+        unless File.exist?(rdc_path)
+          raise TransportFailed, "RDC application not found at path: #{rdc_path}"
+        end
+        rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
+        File.open(rdp_file, "w") do |f|
+          f.write(
+            <<-RDP.gsub(/^ {16}/, "")
+              <dict>
+                <key>ConnectionString</key>
+                <string>#{@hostname}:3389</string>
+                <key>UserName</key>
+                <string>#{@username}</string>
+              </dict>
+            RDP
+          )
+        end
+        LoginCommand.new([rdc_cmd, rdp_file])
+      end
 
       def create_remote_file(local_paths, remote_path)
         if local_paths.count == 1 && !File.directory?(local_paths[0])
@@ -180,22 +188,19 @@ module Kitchen
           Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
           ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError
         ]
-        retries = 3
+        retries ||= 3
 
-        begin
-          logger.debug("[#{self.class}] opening connection to #{self}")
-          socket = ::WinRM::WinRMWebService.new(*build_winrm_options)
-          socket.set_timeout(timeout_in_seconds)
-          socket
-        rescue *rescue_exceptions => e
-          if (retries -= 1) > 0
-            logger.info("[#{self.class}] connection failed, retrying (#{e.inspect})")
-            sleep 1
-            retry
-          else
-            logger.warn("[#{self.class}] connection failed, terminating (#{e.inspect})")
-            raise
-          end
+        logger.debug("[#{self.class}] opening connection to #{self}")
+        socket = ::WinRM::WinRMWebService.new(*build_winrm_options)
+        socket.set_timeout(timeout_in_seconds)
+        socket
+      rescue *rescue_exceptions => e
+        if (retries -= 1) > 0
+          logger.info("[#{self.class}] connection failed, retrying (#{e.inspect})")
+          sleep 1; retry
+        else
+          logger.warn("[#{self.class}] connection failed, terminating (#{e.inspect})")
+          raise
         end
       end
 

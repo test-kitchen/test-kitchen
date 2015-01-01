@@ -110,23 +110,9 @@ module Kitchen
       cmd = "#{busser_setup_env}\n"
       case shell
       when "bourne"
-        gem = sudo("#{config[:ruby_bindir]}/gem")
-        cmd << <<-CMD.gsub(/^ {10}/, "")
-          mkdir -p #{config[:root_path]}/suites
-          gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e "puts Gem.bindir"`
-
-          if ! #{gem} list busser -i >/dev/null; then
-            #{gem} install #{gem_install_args}
-          fi
-          #{sudo("${gem_bindir}")}/busser setup
-        CMD
+        cmd << bourne_setup
       when "powershell"
-        cmd << <<-CMD.gsub(/^ {10}/, "")
-          if ((gem list busser -i) -eq \"false\") {
-            gem install #{gem_install_args}
-          }
-          Copy-Item #{config[:ruby_bindir]}/ruby.exe #{config[:root_path]}/gems/bin
-        CMD
+        cmd << powershell_setup
       else
         raise "[#{self}] Unsupported shell: #{shell}"
       end
@@ -239,6 +225,28 @@ module Kitchen
     # @return [Hash] a configuration hash
     # @api private
     attr_reader :config
+
+    def bourne_setup
+      gem = sudo("#{config[:ruby_bindir]}/gem")
+      <<-CMD.gsub(/^ {10}/, "")
+        mkdir -p #{config[:root_path]}/suites
+        gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e "puts Gem.bindir"`
+
+        if ! #{gem} list busser -i >/dev/null; then
+          #{gem} install #{gem_install_args}
+        fi
+        #{sudo("${gem_bindir}")}/busser setup
+      CMD
+    end
+
+    def powershell_setup
+      <<-CMD.gsub(/^ {10}/, "")
+        if ((gem list busser -i) -eq \"false\") {
+          gem install #{gem_install_args}
+        }
+        Copy-Item #{config[:ruby_bindir]}/ruby.exe #{config[:root_path]}/gems/bin
+      CMD
+    end
 
     # Ensures that the object is internally consistent and otherwise raising
     # an exception.
@@ -378,26 +386,24 @@ module Kitchen
     def busser_setup_env
       case shell
       when "bourne"
-        [
-          %{BUSSER_ROOT="#{config[:root_path]}"},
-          %{GEM_HOME="#{config[:root_path]}/gems"},
-          %{GEM_PATH="#{config[:root_path]}/gems"},
-          %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
-          %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
-        ].join(" ")
+        env = [%{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}]
       when "powershell"
-        [
-          %{$env:BUSSER_ROOT="#{config[:root_path]}";},
-          %{$env:GEM_HOME="#{config[:root_path]}/gems";},
-          %{$env:GEM_PATH="#{config[:root_path]}/gems";},
+        env = [
           %{$env:PATH="$env:PATH;#{config[:ruby_bindir]};$env:GEM_PATH/bin";},
           %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }},
           %{catch { $env:BUSSER_SUITE_PATH="" };},
-          %{$env:GEM_CACHE="#{config[:root_path]}/gems/cache"}
-        ].join(" ")
+        ]
+        env_prefix = "$env:"
+        env_suffix = ";"
       else
         raise "[#{self}] Unsupported shell: #{shell}"
       end
+
+      env << %{#{env_prefix}BUSSER_ROOT="#{config[:root_path]}"#{env_suffix}}
+      env << %{#{env_prefix}GEM_HOME="#{config[:root_path]}/gems"#{env_suffix}}
+      env << %{#{env_prefix}GEM_PATH="#{config[:root_path]}/gems"#{env_suffix}}
+      env << %{#{env_prefix}GEM_CACHE="#{config[:root_path]}/gems/cache"#{env_suffix}}
+      env.join(" ")
     end
 
     # Returns arguments to a `gem install` command, suitable to install the
