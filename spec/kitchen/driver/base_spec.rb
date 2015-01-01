@@ -71,7 +71,7 @@ describe Kitchen::Driver::Base do
       :busser => busser,
       :to_str => "instance",
       :transport => transport,
-      :provisioner => Kitchen::Provisioner::Base.new,
+      :provisioner => Kitchen::Provisioner::Base.new
     )
   end
 

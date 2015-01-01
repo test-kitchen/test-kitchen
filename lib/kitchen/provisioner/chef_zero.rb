@@ -34,8 +34,8 @@ module Kitchen
       default_config :chef_zero_port, 8889
       default_config :chef_client_path do |provisioner|
         chef_client_file = File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
-        if provisioner.shell == 'powershell'
-          chef_client_file << '.bat'
+        if provisioner.shell == "powershell"
+          chef_client_file << ".bat"
         end
         chef_client_file
       end

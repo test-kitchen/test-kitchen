@@ -62,7 +62,7 @@ describe Kitchen::Config do
       :defaults => {
         :driver => "dummy",
         :provisioner => "chef_solo",
-        :transport => "ssh",
+        :transport => "ssh"
       },
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
@@ -267,7 +267,7 @@ describe Kitchen::Config do
       Kitchen::Transport.stubs(:for_plugin).returns(transport)
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
-      munger.stubs(:transport_data_for).returns({ :name => "dummy" })
+      munger.stubs(:transport_data_for).returns(:name => "dummy")
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
     end
@@ -331,7 +331,7 @@ describe Kitchen::Config do
         :platform => platforms.first,
         :provisioner => "provisioner",
         :state_file => "state_file",
-        :transport => transport,
+        :transport => transport
       )
 
       config.instances

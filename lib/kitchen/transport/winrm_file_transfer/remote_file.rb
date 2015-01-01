@@ -1,6 +1,6 @@
-require 'io/console'
-require 'json'
-require 'kitchen/transport/winrm_file_transfer/shell'
+require "io/console"
+require "json"
+require "kitchen/transport/winrm_file_transfer/shell"
 
 module Kitchen
   module Transport
@@ -27,7 +27,7 @@ module Kitchen
           logger.debug("Creating RemoteFile of local '#{local_path}' at '#{@remote_path}'")
         ensure
           if !shell.nil?
-            ObjectSpace.define_finalizer( self, self.class.close(shell) )
+            ObjectSpace.define_finalizer(self, self.class.close(shell))
           end
         end
 
@@ -42,21 +42,21 @@ module Kitchen
 
           @remote_path, should_upload = powershell_batch do | builder |
             builder << resolve_remote_command
-            builder << is_dirty_command
+            builder << dirty_command
           end
 
-          if should_upload == 'True'
+          if should_upload == "True"
             size = upload_to_remote(&block)
           else
             size = 0
             logger.debug("Files are equal. Not copying #{local_path} to #{remote_path}")
           end
-          powershell_batch {|builder| builder << create_post_upload_command}
+          powershell_batch { |builder| builder << create_post_upload_command }
           size
         end
 
         def close
-          shell.close unless shell.nil? or closed
+          shell.close unless shell.nil? || closed
           @closed = true
         end
 
@@ -90,7 +90,7 @@ module Kitchen
           EOH
         end
 
-        def is_dirty_command
+        def dirty_command
           local_md5 = Digest::MD5.file(local_path).hexdigest
           <<-EOH
             $sessionPath = $ExecutionContext.SessionState.Path
@@ -116,7 +116,7 @@ module Kitchen
           EOH
         end
 
-        def upload_to_remote(&block)
+        def upload_to_remote
           logger.debug("Uploading '#{local_path}' to temp file '#{remote_path}'")
           base64_host_file = Base64.encode64(IO.binread(local_path)).gsub("\n", "")
           base64_array = base64_host_file.chars.to_a
@@ -147,11 +147,11 @@ module Kitchen
           [decode_command]
         end
 
-        def powershell_batch(&block)
+        def powershell_batch
           ps_builder = []
           yield ps_builder
 
-          commands = [ "$result = @{}" ]
+          commands = ["$result = @{}"]
           idx = 0
           ps_builder.flatten.each do |cmd_item|
             commands << <<-EOH
@@ -168,7 +168,7 @@ module Kitchen
           EOH
           result = []
           begin
-            result_hash = JSON.parse(shell.powershell(commands.join("\n")).gsub(",\r\n}","\n}"))
+            result_hash = JSON.parse(shell.powershell(commands.join("\n")).gsub(",\r\n}", "\n}"))
             result_hash.keys.sort.each do |key|
               logger.debug("result key: #{key} is '#{result_hash[key]}'")
               result << result_hash[key] unless result_hash[key].nil?

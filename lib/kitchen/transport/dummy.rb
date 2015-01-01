@@ -39,7 +39,7 @@ module Kitchen
         end
       end
 
-      def upload!(local, remote, options = {}, &progress)
+      def upload!(local, remote)
         report(:upload, "#{local} => #{remote}")
       end
 
@@ -88,7 +88,7 @@ module Kitchen
         sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
       end
 
-      def build_transport_args(state)
+      def build_transport_args
         {}
       end
     end
