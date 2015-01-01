@@ -77,15 +77,21 @@ module Kitchen
         cmd << "--log_level #{level}"
         cmd << "--force-formatter"
         cmd << "--no-color"
-        cmd << "--chef-zero-host #{config[:chef_zero_host]}" if config[:chef_zero_host]
-        cmd << "--chef-zero-port #{config[:chef_zero_port]}" if config[:chef_zero_port]
-        cmd << "--json-attributes #{config[:root_path]}/dna.json" if config[:json_attributes]
-        cmd << "--logfile #{config[:log_file]}" if config[:log_file]
+        add_argument(cmd, :chef_zero_host, "--chef-zero-host %config%")
+        add_argument(cmd, :chef_zero_port, "--chef-zero-port %config%")
+        add_argument(cmd, :json_attributes, "--json-attributes #{config[:root_path]}/dna.json")
+        add_argument(cmd, :log_file, "--logfile %config%")
 
         Util.wrap_command(cmd.join(" "), shell)
       end
 
       private
+
+      def add_argument(line, config_key, arg)
+        config_val = config[config_key]
+        return unless config_val
+        line << arg.gsub("%config%", config_val.to_s)
+      end
 
       # Returns the command that will run a backwards compatible shim script
       # that approximates local mode in a modern chef-client run.
