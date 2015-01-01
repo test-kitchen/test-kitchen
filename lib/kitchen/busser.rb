@@ -56,11 +56,7 @@ module Kitchen
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
       @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
-
       @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)      
-      if shell == "powershell"
-        config[:ruby_bindir].sub!("/opt/", "/opscode/")
-      end
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -220,7 +216,10 @@ module Kitchen
       # Overwrite the sudo configuration comming from the Transport
       config[:sudo] = instance.transport.sudo
       # Smart way to do this?
-      config[:busser_bin] = "busser" if shell.eql?("powershell")
+      if shell.eql?("powershell")
+        config[:busser_bin] = "busser"
+        config[:ruby_bindir].sub!("/opt/", "/opscode/")
+      end
       self
     end
 
