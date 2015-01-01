@@ -88,7 +88,7 @@ module Kitchen
         sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
       end
 
-      def build_transport_args
+      def build_transport_args(state)
         {}
       end
     end
