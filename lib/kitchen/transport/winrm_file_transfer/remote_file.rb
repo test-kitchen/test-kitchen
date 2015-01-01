@@ -155,7 +155,7 @@ module Kitchen
           commands <<  <<-EOH
             "{"; $result | % { write-output "`"++$idx`": `"$_`",".Replace('\\','\\\\') }; "}"
           EOH
-          
+
           parse_batch_result(shell.powershell(commands.join("\n")).gsub(",\r\n}", "\n}"))
         end
 
