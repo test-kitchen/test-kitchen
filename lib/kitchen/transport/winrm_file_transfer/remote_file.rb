@@ -33,11 +33,11 @@ module Kitchen
 
         def upload(&block)
           if closed
-            raise TransportFailed.new("This RemoteFile is closed.")
+            raise TransportFailed, "This RemoteFile is closed."
           end
 
           if !File.exist?(local_path)
-            raise TransportFailed.new("Cannot find path: '#{local_path}'")
+            raise TransportFailed, "Cannot find path: '#{local_path}'"
           end
 
           @remote_path, should_upload = powershell_batch do | builder |
@@ -104,12 +104,8 @@ module Kitchen
                 $guest_md5 = ([System.BitConverter]::ToString($crypto.ComputeHash($file)))
                 $guest_md5 = $guest_md5.Replace("-","").ToLower()
               }
-              finally {
-                $file.Dispose()
-              }
-              if ($guest_md5 -eq '#{local_md5}') {
-                return $false
-              }
+              finally { $file.Dispose() }
+              if ($guest_md5 -eq '#{local_md5}') { return $false }
             }
             if(Test-Path $dest_file_path){remove-item $dest_file_path -Force}
             return $true
@@ -151,24 +147,22 @@ module Kitchen
           ps_builder = []
           yield ps_builder
 
-          commands = ["$result = @{}"]
+          commands = ["$result = @()"]
           idx = 0
           ps_builder.flatten.each do |cmd_item|
-            commands << <<-EOH
-              $result.ret#{idx} = Invoke-Command { #{cmd_item} }
-            EOH
-            idx += 1
+            commands << "$result += Invoke-Command { #{cmd_item} }"
           end
           commands <<  <<-EOH
-            "{"
-            $result.keys | % {
-              write-output "`"$_`": `"$($result[$_])`",".Replace('\\','\\\\')
-            }
-            "}"
+            "{"; $result | % { write-output "`"++$idx`": `"$_`",".Replace('\\','\\\\') }; "}"
           EOH
+          
+          parse_batch_result(shell.powershell(commands.join("\n")).gsub(",\r\n}", "\n}"))
+        end
+
+        def parse_batch_result(batch_result)
           result = []
           begin
-            result_hash = JSON.parse(shell.powershell(commands.join("\n")).gsub(",\r\n}", "\n}"))
+            result_hash = JSON.parse(batch_result)
             result_hash.keys.sort.each do |key|
               logger.debug("result key: #{key} is '#{result_hash[key]}'")
               result << result_hash[key] unless result_hash[key].nil?

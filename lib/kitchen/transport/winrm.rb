@@ -56,7 +56,7 @@ module Kitchen
           raise TransportFailed,
             "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for " \
             "command: [#{command}]\nREMOTE ERROR:\n" \
-            human_err_msg(stderr)
+            "#{human_err_msg(stderr)}"
         end
       end
 
