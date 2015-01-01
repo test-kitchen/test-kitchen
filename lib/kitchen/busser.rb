@@ -126,7 +126,7 @@ module Kitchen
           #{busser} plugin install #{plugins.join(" ")}
         CMD
       when "powershell"
-        ruby_bindir = config[:ruby_bindir].gsub('/opt/','/opscode/')
+        ruby_bindir = config[:ruby_bindir].gsub("/opt/", "/opscode/")
 
         cmd = <<-CMD.gsub(/^ {10}/, "")
           #{busser_setup_env}
@@ -393,7 +393,7 @@ module Kitchen
           %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
         ].join(" ")
       when "powershell"
-        ruby_bindir = config[:ruby_bindir].gsub('/opt/','/opscode/')
+        ruby_bindir = config[:ruby_bindir].gsub("/opt/", "/opscode/")
 
         [
           %{$env:BUSSER_ROOT="#{config[:root_path]}";},

@@ -31,8 +31,8 @@ require "logger"
 
 require "kitchen/errors"
 require "kitchen/login_command"
-require 'kitchen/transport/winrm_file_transfer/remote_file'
-require 'kitchen/transport/winrm_file_transfer/remote_zip_file'
+require "kitchen/transport/winrm_file_transfer/remote_file"
+require "kitchen/transport/winrm_file_transfer/remote_zip_file"
 
 module Kitchen
 
@@ -54,9 +54,9 @@ module Kitchen
         exit_code, stderr = execute_with_exit(env_command(command), shell)
         if exit_code != 0 || !stderr.empty?
           raise TransportFailed,
-            "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for " +
-              "command: [#{command}]\nREMOTE ERROR:\n" +
-              human_err_msg(stderr)
+            "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for " \
+            "command: [#{command}]\nREMOTE ERROR:\n" \
+            human_err_msg(stderr)
         end
       end
 
@@ -84,7 +84,7 @@ module Kitchen
         file.upload(&block)
       ensure
         file.close unless file.nil?
-       end
+      end
 
       # Convert a complex CLIXML Error to a human readable format
       #

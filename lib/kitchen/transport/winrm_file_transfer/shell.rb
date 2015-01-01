@@ -13,24 +13,23 @@ module Kitchen
           @shell = reset
           os_version = powershell("[environment]::OSVersion.Version.tostring()")
           os_version < "6.2" ? @op_limit = 15 : @op_limit = 1500
-          @op_limit = @op_limit - 2 #to be safe
+          @op_limit -= 2 # to be safe
         end
 
         def powershell(script)
           script = "$ProgressPreference='SilentlyContinue';" + script
           @logger.debug("executing powershell script: \n#{script}")
-          script = script.encode('UTF-16LE', 'UTF-8')
+          script = script.encode("UTF-16LE", "UTF-8")
           script = Base64.strict_encode64(script)
-          cmd("powershell", ['-encodedCommand', script])
+          cmd("powershell", ["-encodedCommand", script])
         end
 
         def cmd(command, arguments = [])
           check_op_count!
 
-          command_output = nil
           out_stream = []
           err_stream = []
-          @op_count = @op_count + 1
+          @op_count += 1
           command_id = @service.run_command(@shell, command, arguments)
           command_output = @service.get_command_output(@shell, command_id) do |stdout, stderr|
             out_stream << stdout if stdout
@@ -38,7 +37,7 @@ module Kitchen
           end
           @service.cleanup_command(@shell, command_id)
 
-          if !command_output[:exitcode].zero? or !err_stream.empty?
+          if !command_output[:exitcode].zero? || !err_stream.empty?
             raise TransportFailed, :message => command_output.inspect
           end
           out_stream.join.chomp
