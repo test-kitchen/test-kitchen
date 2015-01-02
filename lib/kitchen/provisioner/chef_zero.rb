@@ -33,11 +33,7 @@ module Kitchen
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
       default_config :chef_client_path do |provisioner|
-        chef_client_file = File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
-        if provisioner.shell == "powershell"
-          chef_client_file << ".bat"
-        end
-        chef_client_file
+        File.join(provisioner[:chef_omnibus_root], provisioner.shell.chef_client_file)
       end
 
       # (see Base#create_sandbox)
@@ -59,20 +55,20 @@ module Kitchen
         # the installed omnibus package. Yep, this is funky :)
         cmd = <<-PREPARE.gsub(/^ {10}/, "")
           #{chef_client_zero_env(:export)}
-          if ! #{sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
+          if ! #{shell.sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
-            #{sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
+            #{shell.sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
           fi
         PREPARE
 
-        Util.wrap_command(cmd, shell)
+        shell.wrap_command(cmd)
       end
 
       # (see Base#run_command)
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
-        cmd = [modern? ? "#{sudo(config[:chef_client_path])} --local-mode" : shim_command]
+        cmd = [modern? ? "#{shell.sudo(config[:chef_client_path])} --local-mode" : shim_command]
         cmd << "--config #{config[:root_path]}/client.rb"
         cmd << "--log_level #{level}"
         cmd << "--force-formatter"
@@ -82,7 +78,7 @@ module Kitchen
         add_argument(cmd, :json_attributes, "--json-attributes #{config[:root_path]}/dna.json")
         add_argument(cmd, :log_file, "--logfile %config%")
 
-        Util.wrap_command(cmd.join(" "), shell)
+        shell.wrap_command(cmd.join(" "))
       end
 
       private
@@ -101,7 +97,7 @@ module Kitchen
       def shim_command
         [
           chef_client_zero_env,
-          sudo("#{config[:ruby_bindir]}/ruby"),
+          shell.sudo("#{config[:ruby_bindir]}/ruby"),
           "#{config[:root_path]}/chef-client-zero.rb"
         ].join(" ")
       end

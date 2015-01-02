@@ -21,7 +21,9 @@ require "pathname"
 require "json"
 
 require "kitchen/provisioner/chef/berkshelf"
+require "kitchen/provisioner/chef/bourne_shell"
 require "kitchen/provisioner/chef/librarian"
+require "kitchen/provisioner/chef/powershell_shell"
 require "kitchen/util"
 
 module Kitchen
@@ -46,14 +48,7 @@ module Kitchen
       ].join(",")
 
       default_config :chef_omnibus_root do |provisioner|
-        case provisioner.shell
-        when "bourne"
-          "/opt/chef"
-        when "powershell"
-          "&$env:systemdrive\\opscode\\chef"
-        else
-          raise "Unsupported shell: #{provisioner.shell}"
-        end
+        provisioner.shell.chef_omnibus_root
       end
 
       default_config :data_path do |provisioner|
@@ -95,35 +90,13 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus]
 
-        lines = [Util.shell_helpers(shell), chef_shell_helpers, chef_install_function]
-        Util.wrap_command(lines.join("\n"), shell)
+        lines = [Util.shell_helpers(shell.name), chef_shell_helpers, chef_install_function]
+        shell.wrap_command(lines.join("\n"))
       end
 
       # (see Base#init_command)
       def init_command
-        case shell
-        when "bourne"
-          dirs = %w[cookbooks data data_bags environments roles clients].
-            map { |dir| File.join(config[:root_path], dir) }.join(" ")
-          lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
-        when "powershell"
-          cmd = <<-CMD.gsub(/^ {10}/, "")
-            if (-Not (Test-Path #{config[:root_path]})) {
-              mkdir #{config[:root_path]} | Out-Null
-            }
-          CMD
-
-          dirs = %w[data data_bags environments roles clients].map do |dir|
-            path = File.join(config[:root_path], dir)
-            cmd << "if ( Test-Path #{path} ) { rm -r #{path} };"
-          end
-
-          lines = [dirs, cmd]
-        else
-          raise "Unsupported shell: #{shell}"
-        end
-
-        Util.wrap_command(lines.join("\n"), shell)
+        shell.init_command(config)
       end
 
       # (see Base#create_sandbox)
@@ -166,14 +139,7 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def chef_shell_helpers
-        case shell
-        when "bourne"
-          file = "chef_helpers.sh"
-        when "powershell"
-          file = "chef_helpers.ps1"
-        else
-          raise "[chef_shell_helpers] Unsupported shell: #{shell}"
-        end
+        file = shell.helper_file
 
         IO.read(File.join(
           File.dirname(__FILE__), %W[.. .. .. support #{file}]
@@ -187,62 +153,7 @@ module Kitchen
       # @api private
       def chef_install_function
         version = config[:require_chef_omnibus].to_s.downcase
-
-        case shell
-        when "bourne"
-          bourne_install_function(version)
-        when "powershell"
-          powershell_install_function(version)
-        else
-          raise "[chef_install_function] Unsupported shell: #{shell}"
-        end
-      end
-
-      def bourne_install_function(version)
-        pretty_version = case version
-                         when "true" then "install only if missing"
-                         when "latest" then "always install latest version"
-                         else version
-                         end
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
-        if config[:chef_omnibus_install_options]
-          install_flags += config[:chef_omnibus_install_options]
-        end
-
-        <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
-            echo "-----> Installing Chef Omnibus (#{pretty_version})"
-            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags}
-          else
-            echo "-----> Chef Omnibus installation detected (#{pretty_version})"
-          fi
-        INSTALL
-      end
-
-      def powershell_install_function(version)
-        install_flags = %w[latest true].include?(version) ? "" : "v=#{version}"
-
-        # If we have the default URL for UNIX then we change it for the Windows version.
-        if config[:chef_omnibus_url] =~ %r{http[s]*://www.getchef.com/chef/install.sh}
-          chef_url = "http://www.getchef.com/chef/install.msi?#{install_flags}"
-        else
-          # We use the one that comes from kitchen.yml
-          chef_url = "#{config[:chef_omnibus_url]}?#{install_flags}"
-        end
-
-        # NOTE We use SYSTEMDRIVE because if we use TEMP the installation fails.
-        <<-INSTALL.gsub(/^ {10}/, "")
-          $chef_msi = $env:systemdrive + "\\chef.msi"
-
-          If (should_update_chef #{version}) {
-            Write-Host "-----> Installing Chef Omnibus (#{version})\n"
-            download_chef "#{chef_url}" $chef_msi
-            install_chef
-          } else {
-            Write-Host "-----> Chef Omnibus installation detected (#{version})\n"
-          }
-        INSTALL
+        shell.install_function(version, config)
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a

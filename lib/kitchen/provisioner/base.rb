@@ -148,7 +148,16 @@ module Kitchen
       # @return [Transport.shell] the transport desired shell for this instance
       # This would help us know which commands to use. Bourne, Powershell, etc.
       def shell
-        instance.transport.shell
+        @shell ||= begin
+          case instance.transport.shell
+          when "bourne"
+            Chef::BourneShell.new(config[:sudo])
+          when "powershell"
+            Chef::PowershellShell.new
+          else
+            raise "Unsupported shell: #{provisioner.shell}"
+          end
+        end
       end
 
       private
@@ -181,15 +190,6 @@ module Kitchen
       # @api private
       def logger
         instance ? instance.logger : Kitchen.logger
-      end
-
-      # Conditionally prefixes a command with a sudo command.
-      #
-      # @param command [String] command to be prefixed
-      # @return [String] the command, conditionaly prefixed with sudo
-      # @api private
-      def sudo(script)
-        config[:sudo] ? "sudo -E #{script}" : script
       end
     end
   end

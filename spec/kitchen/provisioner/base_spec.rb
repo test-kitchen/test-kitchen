@@ -142,13 +142,13 @@ describe Kitchen::Provisioner::Base do
     it "if :sudo is set, prepend sudo command" do
       config[:sudo] = true
 
-      provisioner.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      provisioner.shell.send(:sudo, "wakka").must_equal("sudo -E wakka")
     end
 
     it "if :sudo is falsy, do not include sudo command" do
       config[:sudo] = false
 
-      provisioner.send(:sudo, "wakka").must_equal("wakka")
+      provisioner.shell.send(:sudo, "wakka").must_equal("wakka")
     end
   end
 end
