@@ -4,15 +4,7 @@ module Kitchen
 
     module Chef
       # blah
-      class BourneShell
-
-        def initialize(use_sudo)
-          @use_sudo = use_sudo
-        end
-
-        def name
-          "bourne"
-        end
+      module BourneShell
 
         def chef_omnibus_root
           "/opt/chef"
@@ -34,7 +26,7 @@ module Kitchen
           wrap_command([dirs, lines].join("\n"))
         end
 
-        def helper_file
+        def chef_helper_file
           "chef_helpers.sh"
         end
 
@@ -58,19 +50,6 @@ module Kitchen
               echo "-----> Chef Omnibus installation detected (#{pretty_version})"
             fi
           INSTALL
-        end
-
-        def wrap_command(command)
-          Util.wrap_command(command, name)
-        end
-
-        # Conditionally prefixes a command with a sudo command.
-        #
-        # @param command [String] command to be prefixed
-        # @return [String] the command, conditionaly prefixed with sudo
-        # @api private
-        def sudo(script)
-          @use_sudo ? "sudo -E #{script}" : script
         end
       end
     end

@@ -91,7 +91,7 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus]
 
-        lines = [Util.shell_helpers(shell.name), chef_shell_helpers, chef_install_function]
+        lines = [shell.helper_file, chef_shell_helpers, chef_install_function]
         shell.wrap_command(lines.join("\n"))
       end
 
@@ -120,6 +120,14 @@ module Kitchen
         )
       end
 
+      def shell
+        @shell ||= begin
+          shell_name = instance.transport.shell.name
+          mod_name = "Kitchen::Provisioner::Chef::#{shell_name}Shell"
+          instance.transport.shell.extend(Module.const_get(mod_name))
+        end
+      end
+
       private
 
       # Load cookbook dependency resolver code, if required.
@@ -140,7 +148,7 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def chef_shell_helpers
-        file = shell.helper_file
+        file = shell.chef_helper_file
 
         IO.read(File.join(
           File.dirname(__FILE__), %W[.. .. .. support #{file}]

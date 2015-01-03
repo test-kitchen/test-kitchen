@@ -20,6 +20,7 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/provisioner/shell"
+require "kitchen/shell/bourne"
 
 describe Kitchen::Provisioner::Shell do
 
@@ -34,8 +35,12 @@ describe Kitchen::Provisioner::Shell do
     stub(:name => "fries")
   end
 
+  let(:shell) do
+    Kitchen::Shell::Bourne.new(config)
+  end
+
   let(:transport) do
-    stub(:sudo => config[:sudo], :shell => "bourne")
+    stub(:sudo => config[:sudo], :shell => shell)
   end
 
   let(:instance) do

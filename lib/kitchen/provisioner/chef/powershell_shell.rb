@@ -4,13 +4,7 @@ module Kitchen
 
     module Chef
       # blah
-      class PowershellShell
-
-        include Logging
-
-        def name
-          "powershell"
-        end
+      module PowershellShell
 
         def chef_omnibus_root
           "&$env:systemdrive\\opscode\\chef"
@@ -39,7 +33,7 @@ module Kitchen
           wrap_command([dirs, cmd].join("\n"))
         end
 
-        def helper_file
+        def chef_helper_file
           "chef_helpers.ps1"
         end
 
@@ -66,19 +60,6 @@ module Kitchen
               Write-Host "-----> Chef Omnibus installation detected (#{version})\n"
             }
           INSTALL
-        end
-
-        def wrap_command(command)
-          Util.wrap_command(command, name)
-        end
-
-        # Conditionally prefixes a command with a sudo command.
-        #
-        # @param command [String] command to be prefixed
-        # @return [String] the command, conditionaly prefixed with sudo
-        # @api private
-        def sudo(script)
-          @use_sudo ? "sudo -E #{script}" : script
         end
       end
     end

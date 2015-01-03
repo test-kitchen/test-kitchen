@@ -124,9 +124,9 @@ module Kitchen
       # Returns the desired shell to use.
       # [Idea] Let's see if this help for the Provisioner to chose the right code
       #
-      # @return [String] the desired shell for this transport
+      # @return [Shell] the desired shell for this transport
       def shell
-        config.fetch(:shell, nil)
+        @shell ||= Shell.for_plugin(config.fetch(:shell, "bourne"))
       end
 
       # Returns the config[:sudo] parameter.
@@ -156,6 +156,8 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
+        config[:http_proxy] = instance.driver[:http_proxy] unless config[:http_proxy]
+        shell.finalize_config!(instance)
         self
       end
 

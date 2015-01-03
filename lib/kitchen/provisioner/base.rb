@@ -148,16 +148,7 @@ module Kitchen
       # @return [Transport.shell] the transport desired shell for this instance
       # This would help us know which commands to use. Bourne, Powershell, etc.
       def shell
-        @shell ||= begin
-          case instance.transport.shell
-          when "bourne"
-            Chef::BourneShell.new(config[:sudo])
-          when "powershell"
-            Chef::PowershellShell.new
-          else
-            raise "Unsupported shell: #{provisioner.shell}"
-          end
-        end
+        instance.transport.shell
       end
 
       private

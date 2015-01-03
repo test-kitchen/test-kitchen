@@ -105,23 +105,23 @@ describe Kitchen::Util do
     end
   end
 
-  describe ".wrap_unix_command" do
+  # describe ".wrap_unix_command" do
 
-    it "returns the wrapped command" do
-    end
+  #   it "returns the wrapped command" do
+  #   end
 
-    it "returns a false if command is nil" do
-      Kitchen::Util.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
-    end
+  #   it "returns a false if command is nil" do
+  #     Kitchen::Util.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
+  #   end
 
-    it "returns a true if command string is empty" do
-      Kitchen::Util.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
-    end
+  #   it "returns a true if command string is empty" do
+  #     Kitchen::Util.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
+  #   end
 
-    it "handles a command string with a trailing newline" do
-      Kitchen::Util.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
-    end
-  end
+  #   it "handles a command string with a trailing newline" do
+  #     Kitchen::Util.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
+  #   end
+  # end
 
   describe ".outdent!" do
 
@@ -144,22 +144,22 @@ describe Kitchen::Util do
     end
   end
 
-  describe ".shell_helpers" do
+  # describe ".shell_helpers" do
 
-    %w[
-      exists do_wget do_curl do_fetch do_perl do_python do_download
-    ].each do |func|
-      it "contains a #{func} shell function" do
-        Kitchen::Util.shell_helpers.must_match "#{func}() {"
-      end
-    end
+  #   %w[
+  #     exists do_wget do_curl do_fetch do_perl do_python do_download
+  #   ].each do |func|
+  #     it "contains a #{func} shell function" do
+  #       Kitchen::Util.shell_helpers.must_match "#{func}() {"
+  #     end
+  #   end
 
-    it "does not contain bare single quotes" do
-      Kitchen::Util.shell_helpers.wont_match "'"
-    end
+  #   it "does not contain bare single quotes" do
+  #     Kitchen::Util.shell_helpers.wont_match "'"
+  #   end
 
-    def regexify(str)
-      Regexp.new("^\s+" + Regexp.escape(str) + "$")
-    end
-  end
+  #   def regexify(str)
+  #     Regexp.new("^\s+" + Regexp.escape(str) + "$")
+  #   end
+  # end
 end
