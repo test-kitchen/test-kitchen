@@ -29,11 +29,14 @@ module Kitchen
         "$env:systemdrive\\opscode\\chef\\embedded\\bin"
       end
 
+      def default_busser_bin(busser_root)
+        File.join(busser_root, "gems/bin/busser.bat")
+      end
+
       def busser_setup(ruby_bin, busser_root, gem_install_args)
-        gem_cmd = "#{ruby_bin}\\gem"
         <<-CMD.gsub(/^ {10}/, "")
-          if ((#{gem_cmd} list busser -i) -eq \"false\") {
-            #{gem_cmd} install #{gem_install_args}
+          if ((gem list busser -i) -eq \"false\") {
+            gem install #{gem_install_args}
           }
           Copy-Item #{ruby_bin}/ruby.exe #{busser_root}/gems/bin
         CMD
@@ -42,6 +45,12 @@ module Kitchen
       def set_env(key, value)
         <<-CMD.gsub(/^ {10}/, "")
           $env:#{key}="#{value}"
+        CMD
+      end
+
+      def add_to_path(dir)
+        <<-CMD.gsub(/^ {10}/, "")
+          $env:PATH="$env:PATH;#{dir}"
         CMD
       end
 
