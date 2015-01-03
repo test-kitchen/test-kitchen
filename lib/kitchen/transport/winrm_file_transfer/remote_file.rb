@@ -152,7 +152,7 @@ module Kitchen
             commands << "$result += Invoke-Command { #{cmd_item} }"
           end
           commands <<  <<-EOH
-            "{"; $result | % { write-output "`"++$idx`": `"$_`",".Replace('\\','\\\\') }; "}"
+            "{"; $result | % { ++$idx;write-output "`"$idx`": `"$_`",".Replace('\\','\\\\') }; "}"
           EOH
 
           parse_batch_result(shell.powershell(commands.join("\n")).gsub(",\r\n}", "\n}"))
@@ -161,6 +161,7 @@ module Kitchen
         def parse_batch_result(batch_result)
           result = []
           begin
+            logger.debug("parsing: #{batch_result}")
             result_hash = JSON.parse(batch_result)
             result_hash.keys.sort.each do |key|
               logger.debug("result key: #{key} is '#{result_hash[key]}'")
