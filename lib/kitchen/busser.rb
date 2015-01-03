@@ -32,6 +32,19 @@ module Kitchen
     include Configurable
     include Logging
 
+    default_config :kitchen_root, Dir.pwd
+    default_config :test_base_path, Kitchen::DEFAULT_TEST_DIR
+    default_config :root_path, "/tmp/busser"
+    default_config :version, "busser"
+
+    default_config :ruby_bindir do |busser|
+      busser.instance.transport.shell.default_ruby_bin
+    end
+
+    default_config :busser_bin do |busser|
+      File.join(busser[:root_path], "gems/bin/busser")
+    end
+
     # Constructs a new Busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
@@ -40,23 +53,10 @@ module Kitchen
     # @option opts [String] :kitchen_root local path to the root of the project
     # @option opts [String] :instance_ruby_bindir path to the directory
     #   containing the Ruby binary on the remote instance
-    # @option opts [TrueClass, FalseClass] :sudo whether or not to invoke
-    #   sudo before commands requiring root access (default: `true`)
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
-
-      kitchen_root = opts.fetch(:kitchen_root) { Dir.pwd }
-      test_base_path = opts.fetch(:test_base_path, Kitchen::DEFAULT_TEST_DIR)
-
-      @config = Hash.new
-      @config[:kitchen_root] = kitchen_root
-      @config[:test_base_path] = File.expand_path(test_base_path, kitchen_root)
-      @config[:suite_name] = suite_name
-      @config[:sudo] = opts.fetch(:sudo, true)
-      @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
-      @config[:version] = opts.fetch(:version, "busser")
-      @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
-      @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
+      init_config(opts)
+      config[:suite_name] = suite_name
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -64,30 +64,6 @@ module Kitchen
     # @return [String] name of this busser
     def name
       config[:suite_name]
-    end
-
-    # Returns an array of configuration keys.
-    #
-    # @return [Array] array of configuration keys
-    def config_keys
-      config.keys
-    end
-
-    # Provides hash-like access to configuration keys.
-    #
-    # @param attr [Object] configuration key
-    # @return [Object] value at configuration key
-    def [](attr)
-      config[attr]
-    end
-
-    # Returns a Hash of configuration and other useful diagnostic information.
-    #
-    # @return [Hash] a diagnostic hash
-    def diagnose
-      result = Hash.new
-      config_keys.sort.each { |k| result[k] = config[k] }
-      result
     end
 
     # Returns an array of all files to be copied to the instance
@@ -108,16 +84,9 @@ module Kitchen
     def setup_cmd
       return if local_suite_files.empty?
       cmd = "#{busser_setup_env}\n"
-      case shell
-      when "bourne"
-        cmd << bourne_setup
-      when "powershell"
-        cmd << powershell_setup
-      else
-        raise "[#{self}] Unsupported shell: #{shell}"
-      end
-      cmd << "\n#{sudo(config[:busser_bin])} plugin install #{plugins.join(" ")}"
-      Util.wrap_command(cmd, shell)
+      cmd << shell.busser_setup(config[:ruby_bindir], config[:root_path], gem_install_args)
+      cmd << "\n#{shell.sudo(config[:busser_bin])} plugin install #{plugins.join(" ")}"
+      shell.wrap_command(cmd)
     end
 
     # Returns a command string which removes all suite test files on the
@@ -134,38 +103,10 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} suite cleanup
+        #{shell.sudo(config[:busser_bin])} suite cleanup
 
       CMD
-      Util.wrap_command(cmd, shell)
-    end
-
-    # Returns a command string which transfers all suite test files to the
-    # instance.
-    #
-    # If no work needs to be performed, for example if there are no tests for
-    # the given suite, then `nil` will be returned.
-    #
-    # @return [String] a command string to transfer all suite test files, or
-    #   nil if no work needs to be performed.
-    def sync_cmd
-      return if local_suite_files.empty?
-
-      cmd = <<-CMD.gsub(/^ {8}/, "")
-        #{busser_setup_env}
-
-        #{sudo(config[:busser_bin])} suite cleanup
-
-      CMD
-
-      local_suite_files.each do |f|
-        cmd << stream_file(f, remote_file(f, config[:suite_name])).concat("\n")
-      end
-      helper_files.each do |f|
-        cmd << stream_file(f, remote_file(f, "helpers")).concat("\n")
-      end
-
-      Util.wrap_command(cmd, shell)
+      shell.wrap_command(cmd)
     end
 
     # Returns a command string which runs all Busser suite tests for the suite.
@@ -181,10 +122,10 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} test
+        #{shell.sudo(config[:busser_bin])} test
       CMD
 
-      Util.wrap_command(cmd, shell)
+      shell.wrap_command(cmd)
     end
 
     # Performs any final configuration required to do its work.
@@ -199,20 +140,11 @@ module Kitchen
     def finalize_config!(instance)
       super
       load_needed_dependencies!
-      # Overwrite the sudo configuration comming from the Transport
-      config[:sudo] = instance.transport.sudo
-      # Smart way to do this?
-      if shell.eql?("powershell")
-        config[:busser_bin] = "busser"
-        config[:ruby_bindir].sub!("/opt/", "/opscode/")
-      end
+      config[:test_base_path] = File.expand_path(config[:test_base_path], config[:kitchen_root])
       self
     end
 
     private
-
-    DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
-    DEFAULT_ROOT_PATH = "/tmp/busser".freeze
 
     # Loads any needed dependencies
     #
@@ -220,32 +152,6 @@ module Kitchen
     #   dependency requirements cannot be satisfied
     # @api private
     def load_needed_dependencies!
-    end
-
-    # @return [Hash] a configuration hash
-    # @api private
-    attr_reader :config
-
-    def bourne_setup
-      gem = sudo("#{config[:ruby_bindir]}/gem")
-      <<-CMD.gsub(/^ {10}/, "")
-        mkdir -p #{config[:root_path]}/suites
-        gem_bindir=`#{config[:ruby_bindir]}/ruby -rrubygems -e "puts Gem.bindir"`
-
-        if ! #{gem} list busser -i >/dev/null; then
-          #{gem} install #{gem_install_args}
-        fi
-        #{sudo("${gem_bindir}")}/busser setup
-      CMD
-    end
-
-    def powershell_setup
-      <<-CMD.gsub(/^ {10}/, "")
-        if ((gem list busser -i) -eq \"false\") {
-          gem install #{gem_install_args}
-        }
-        Copy-Item #{config[:ruby_bindir]}/ruby.exe #{config[:root_path]}/gems/bin
-      CMD
     end
 
     # Ensures that the object is internally consistent and otherwise raising
@@ -314,62 +220,6 @@ module Kitchen
       Dir.glob(glob).reject { |f| File.directory?(f) }
     end
 
-    # Returns a command string that will, once evaluated, result in the
-    # fully qualified destination path of a file on an instance.
-    #
-    # @param file [String] absolute path to the local file
-    # @param dir [String] suite directory or helper directory name
-    # @return [String] command string
-    # @api private
-    def remote_file(file, dir)
-      local_prefix = File.join(config[:test_base_path], dir)
-      case shell
-      when "bourne"
-        "`#{sudo(config[:busser_bin])} suite path`/".
-          concat(file.sub(%r{^#{local_prefix}/}, ""))
-      when "powershell"
-        "$env:BUSSER_SUITE_PATH/".
-          concat(file.sub(%r{^#{local_prefix}/}, ""))
-      else
-        raise "[#{self}] Unsupported shell: #{shell}"
-      end
-    end
-
-    # Returns a command string that will, once evaluated, result in the copying
-    # of a local file to a remote instance.
-    #
-    # @param local_path [String] the path to a local source file for copying
-    # @param remote_path [String] the destrination path on the remote instance
-    # @return [String] command string
-    # @api private
-    def stream_file(local_path, remote_path)
-      local_file = IO.read(local_path)
-      encoded_file = Base64.encode64(local_file).gsub("\n", "")
-      md5 = Digest::MD5.hexdigest(local_file)
-      perms = format("%o", File.stat(local_path).mode)[2, 4]
-      stream_cmd = [
-        sudo(config[:busser_bin]),
-        "deserialize",
-        "--destination=#{remote_path}",
-        "--md5sum=#{md5}",
-        "--perms=#{perms}"
-      ].join(" ")
-
-      [
-        %{echo "Uploading #{remote_path} (mode=#{perms})"},
-        %{echo "#{encoded_file}" | #{stream_cmd}}
-      ].join("\n").concat("\n")
-    end
-
-    # Conditionally prefixes a command with a sudo command.
-    #
-    # @param command [String] command to be prefixed
-    # @return [String] the command, conditionaly prefixed with sudo
-    # @api private
-    def sudo(command)
-      config[:sudo] ? "sudo -E #{command}" : command
-    end
-
     # @return [Transport.shell] the transport desired shell for this instance
     # This would help us know which commands to use. Bourne, Powershell, etc.
     #
@@ -386,28 +236,12 @@ module Kitchen
     def busser_setup_env
       env = []
 
-      if shell == "powershell"
-        env_prefix = "$env:"
-        env_suffix = ";"
-      end
+      env << shell.set_env("BUSSER_ROOT", "#{config[:root_path]}")
+      env << shell.set_env("GEM_HOME", "#{config[:root_path]}/gems")
+      env << shell.set_env("GEM_PATH", "#{config[:root_path]}/gems")
+      env << shell.set_env("GEM_CACHE", "#{config[:root_path]}/gems/cache")
 
-      env << %{#{env_prefix}BUSSER_ROOT="#{config[:root_path]}"#{env_suffix}}
-      env << %{#{env_prefix}GEM_HOME="#{config[:root_path]}/gems"#{env_suffix}}
-      env << %{#{env_prefix}GEM_PATH="#{config[:root_path]}/gems"#{env_suffix}}
-      env << %{#{env_prefix}GEM_CACHE="#{config[:root_path]}/gems/cache"#{env_suffix}}
-
-      case shell
-      when "bourne"
-        env << %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
-      when "powershell"
-        env << %{$env:PATH="$env:PATH;#{config[:ruby_bindir]};$env:GEM_PATH/bin";}
-        env << %{try { $env:BUSSER_SUITE_PATH=@(#{@config[:busser_bin]} suite path) }}
-        env << %{catch { $env:BUSSER_SUITE_PATH="" };}
-      else
-        raise "[#{self}] Unsupported shell: #{shell}"
-      end
-
-      env.join(" ")
+      env.join("\n")
     end
 
     # Returns arguments to a `gem install` command, suitable to install the

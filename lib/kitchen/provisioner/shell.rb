@@ -49,7 +49,7 @@ module Kitchen
         data = File.join(config[:root_path], "data")
         cmd = "#{shell.sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
 
-        Util.wrap_command(cmd)
+        shell.wrap_command(cmd)
       end
 
       # (see Base#run_command)

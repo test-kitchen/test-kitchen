@@ -99,31 +99,6 @@ module Kitchen
       format("(%dm%.2fs)", minutes, seconds)
     end
 
-    # Generates a command (or series of commands) wrapped so that it can be
-    # invoked on a remote instance or locally.
-    #
-    # This method uses the Bourne shell (/bin/sh) to maximize the chance of
-    # cross platform portability on Unixlike systems.
-    #
-    # @param [String] the command
-    # @return [String] a wrapped command string
-    def self.wrap_command(cmd, shell = "bourne")
-      cmd = "false" if cmd.nil?
-      cmd = "true" if cmd.to_s.empty?
-
-      case shell
-      when "bourne"
-        cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
-
-        "sh -c '\n#{cmd}\n'"
-      when "powershell"
-        # Do we need a wrapper for powershell
-        cmd
-      else
-        raise "[Util.shell_helpers] Unsupported shell: #{shell}"
-      end
-    end
-
     # Modifes the given string to strip leading whitespace on each line, the
     # amount which is calculated by using the first line of text.
     #

@@ -60,14 +60,6 @@ module Kitchen
         end
       end
 
-      # (see Base#verify)
-      def verify(state)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser.sync_cmd, conn)
-          run_remote(busser.run_cmd, conn)
-        end
-      end
-
       # (see Base#destroy)
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#destroy must be implemented"
