@@ -33,9 +33,12 @@ module Kitchen
     include Logging
 
     default_config :kitchen_root, Dir.pwd
-    default_config :test_base_path, Kitchen::DEFAULT_TEST_DIR
     default_config :root_path, "/tmp/busser"
     default_config :version, "busser"
+
+    default_config :test_base_path do |busser|
+      Kitchen::DEFAULT_TEST_DIR
+    end
 
     default_config :ruby_bindir do |busser|
       busser.instance.transport.shell.default_ruby_bin
