@@ -35,6 +35,9 @@ module Kitchen
         init_config(config)
       end
 
+      def default_busser_bin(busser_root)
+      end
+
       # Returns the name of this shell.
       #
       # @return [String] name of this shell
@@ -46,6 +49,9 @@ module Kitchen
       end
 
       def set_env(key, value)
+      end
+
+      def add_to_path(dir)
       end
 
       # Returns a set of Shell compatible helper

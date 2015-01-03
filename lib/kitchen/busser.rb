@@ -45,7 +45,7 @@ module Kitchen
     end
 
     default_config :busser_bin do |busser|
-      File.join(busser[:root_path], "gems/bin/busser")
+      busser.instance.transport.shell.default_busser_bin(busser[:root_path])
     end
 
     # Constructs a new Busser command generator, given a suite name.
@@ -243,6 +243,7 @@ module Kitchen
       env << shell.set_env("GEM_HOME", "#{config[:root_path]}/gems")
       env << shell.set_env("GEM_PATH", "#{config[:root_path]}/gems")
       env << shell.set_env("GEM_CACHE", "#{config[:root_path]}/gems/cache")
+      env << shell.add_to_path(config[:ruby_bindir])
 
       env.join("\n")
     end

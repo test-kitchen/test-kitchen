@@ -29,6 +29,10 @@ module Kitchen
         "/opt/chef/embedded/bin"
       end
 
+      def default_busser_bin(busser_root)
+        File.join(busser_root, "gems/bin/busser")
+      end
+
       def busser_setup(ruby_bin, busser_root, gem_install_args)
         gem = sudo("#{ruby_bin}/gem")
         <<-CMD.gsub(/^ {10}/, "")
@@ -46,6 +50,12 @@ module Kitchen
         <<-CMD.gsub(/^ {10}/, "")
           #{key}="#{value}"
           export #{key}
+        CMD
+      end
+
+      def add_to_path(dir)
+        <<-CMD.gsub(/^ {10}/, "")
+          export PATH="#{dir}:$PATH"
         CMD
       end
 
