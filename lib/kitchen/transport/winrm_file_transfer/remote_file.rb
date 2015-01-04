@@ -30,11 +30,20 @@ module Kitchen
       # @author Matt Wrock <matt@mattwrock.com>
       class RemoteFile
 
+        # @return [String] path to a file or directory to copy to the test instance
         attr_reader :local_path
+
+        # @return [String] target path on test instance to copy to
         attr_reader :remote_path
+
+        # @return [Boolean] true if the shell has been closed.
+        # The remote_file cannot be used if the shell is closed.
         attr_reader :closed
-        attr_reader :options
+
+        # @return [WinRMWebService] the winrm connection used for upload
         attr_reader :service
+
+        # @return [WinRMShell] the winrm shell used for upload
         attr_reader :shell
 
         # Initializes a new remote file intended for uploading
@@ -59,6 +68,14 @@ module Kitchen
           end
         end
 
+        # Initiaes the upload of the local_path to the remote_path. This
+        # method takes a block and yields progress data that can be
+        # displayed while the upload is in progress.
+        #
+        # @yieldparam [Fixnum] Number of bytes copied in current payload sent to the winrm endpoint
+        # @yieldparam [Fixnum] The total number of bytes to be copied
+        # @yieldparam [String] Path of file being copied
+        # @yieldparam [String] Target path on the winrm endpoint
         def upload(&block)
           if closed
             raise TransportFailed, "This RemoteFile is closed."
@@ -83,6 +100,8 @@ module Kitchen
           size
         end
 
+        # Closes the winrm shell used to upload the files. Note: this keeps the
+        # connection open which can run multiple shells.
         def close
           shell.close unless shell.nil? || closed
           @closed = true

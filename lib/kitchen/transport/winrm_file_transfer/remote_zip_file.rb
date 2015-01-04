@@ -1,3 +1,21 @@
+# -*- encoding: utf-8 -*-
+#
+# Author:: Matt Wrock (<matt@mattwrock.com>)
+#
+# Copyright (C) 2014, Matt Wrock
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 require "zip"
 
 module Kitchen
@@ -5,10 +23,20 @@ module Kitchen
     module WinRMFileTransfer
 
       # A zip file containing a directory to upload to the test instance
+      #
+      # @author Matt Wrock <matt@mattwrock.com>
       class RemoteZipFile < RemoteFile
 
+        # @return [String] path to the local zip file being
+        # used to store multiple files for upload
         attr_reader :archive
 
+        # Initializes a new remote zip file intended for uploading
+        # a directory to the test instance
+        #
+        # @param logger [Logger] kitchen logger for messaging output
+        # @param service [WinRMWebService] an active winrm connection
+        # @param remote_path [String] target path on test instance to copy to
         def initialize(logger, service, remote_path)
           @archive = create_archive(remote_path)
           @unzip_remote_path = remote_path
@@ -16,6 +44,9 @@ module Kitchen
           super(logger, service, @archive, remote_path)
         end
 
+        # Adds a file to the zip file that will be uploaded
+        #
+        # @param path [String] the path to the local file to be added to the zip file
         def add_file(path)
           path = path.gsub("\\", "/")
           logger.debug("adding '#{path}' to zip file")
