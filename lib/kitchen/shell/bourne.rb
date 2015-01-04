@@ -25,14 +25,6 @@ module Kitchen
     # @author Matt Wrock <matt@mattwrock.com>
     class Bourne < Base
 
-      def default_ruby_bin
-        "/opt/chef/embedded/bin"
-      end
-
-      def default_busser_bin(busser_root)
-        File.join(busser_root, "gems/bin/busser")
-      end
-
       def busser_setup(ruby_bin, busser_root, gem_install_args)
         gem = sudo("#{ruby_bin}/gem")
         <<-CMD.gsub(/^ {10}/, "")

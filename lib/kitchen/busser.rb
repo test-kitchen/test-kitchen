@@ -36,7 +36,7 @@ module Kitchen
     default_config :root_path, "/tmp/busser"
     default_config :version, "busser"
 
-    default_config :test_base_path do |busser|
+    default_config :test_base_path do
       Kitchen::DEFAULT_TEST_DIR
     end
 
