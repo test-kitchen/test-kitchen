@@ -25,6 +25,7 @@ module Kitchen
     # @author Matt Wrock <matt@mattwrock.com>
     class Bourne < Base
 
+      # (see Base#busser_setup)
       def busser_setup(ruby_bin, busser_root, gem_install_args)
         gem = sudo("#{ruby_bin}/gem")
         <<-CMD.gsub(/^ {10}/, "")
@@ -38,6 +39,7 @@ module Kitchen
         CMD
       end
 
+      # (see Base#set_env)
       def set_env(key, value)
         <<-CMD.gsub(/^ {10}/, "")
           #{key}="#{value}"
@@ -45,12 +47,14 @@ module Kitchen
         CMD
       end
 
+      # (see Base#add_to_path)
       def add_to_path(dir)
         <<-CMD.gsub(/^ {10}/, "")
           export PATH="#{dir}:$PATH"
         CMD
       end
 
+      # (see Base#helper_file)
       def helper_file
         file = "download_helpers.sh"
 

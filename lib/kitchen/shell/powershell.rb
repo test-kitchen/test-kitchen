@@ -25,14 +25,17 @@ module Kitchen
     # @author Matt Wrock <matt@mattwrock.com>
     class Powershell < Base
 
+      # (see Base#default_ruby_bin)
       def default_ruby_bin
         "$env:systemdrive\\opscode\\chef\\embedded\\bin"
       end
 
+      # (see Base#default_busser_bin)
       def default_busser_bin(busser_root)
         File.join(busser_root, "gems/bin/busser.bat")
       end
 
+      # (see Base#busser_setup)
       def busser_setup(ruby_bin, busser_root, gem_install_args)
         <<-CMD.gsub(/^ {10}/, "")
           if ((gem list busser -i) -eq \"false\") {
@@ -42,12 +45,14 @@ module Kitchen
         CMD
       end
 
+      # (see Base#set_env)
       def set_env(key, value)
         <<-CMD.gsub(/^ {10}/, "")
           $env:#{key}="#{value}"
         CMD
       end
 
+      # (see Base#add_to_path)
       def add_to_path(dir)
         <<-CMD.gsub(/^ {10}/, "")
           $env:PATH="$env:PATH;#{dir}"

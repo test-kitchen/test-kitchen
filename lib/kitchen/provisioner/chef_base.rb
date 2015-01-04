@@ -97,7 +97,7 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        shell.init_command(config)
+        shell.init_command(config[:root_path])
       end
 
       # (see Base#create_sandbox)
