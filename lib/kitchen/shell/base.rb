@@ -35,7 +35,12 @@ module Kitchen
         init_config(config)
       end
 
+      def default_ruby_bin
+        "/opt/chef/embedded/bin"
+      end
+
       def default_busser_bin(busser_root)
+        File.join(busser_root, "gems/bin/busser")
       end
 
       # Returns the name of this shell.
@@ -45,13 +50,13 @@ module Kitchen
         self.class.name.split("::").last
       end
 
-      def busser_setup(busser_root, gem_install_args)
+      def busser_setup(busser_root, gem_install_args) # rubocop:disable Lint/UnusedMethodArgument
       end
 
-      def set_env(key, value)
+      def set_env(key, value) # rubocop:disable Lint/UnusedMethodArgument
       end
 
-      def add_to_path(dir)
+      def add_to_path(dir) # rubocop:disable Lint/UnusedMethodArgument
       end
 
       # Returns a set of Shell compatible helper
@@ -84,6 +89,7 @@ module Kitchen
       # @param [String] the command
       # @return [String] a wrapped command string
       def wrap_command(command)
+        command
       end
 
       # Conditionally prefixes a command with a sudo command.
@@ -92,6 +98,7 @@ module Kitchen
       # @return [String] the command, conditionaly prefixed with sudo
       # @api private
       def sudo(script)
+        script
       end
     end
   end
