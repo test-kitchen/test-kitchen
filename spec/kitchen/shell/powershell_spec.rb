@@ -24,8 +24,10 @@ require "kitchen/shell/powershell"
 
 describe Kitchen::Shell::Powershell do
 
+  let(:config) { Hash.new }
+
   let(:shell) do
-    Kitchen::Shell::Powershell.new
+    Kitchen::Shell::Powershell.new(config)
   end
 
   describe "set_env" do
@@ -41,9 +43,19 @@ describe Kitchen::Shell::Powershell do
     end
   end
 
-  def regexify(str, line = :whole_line)
-    r = Regexp.escape(str)
-    r = "^\s*#{r}$" if line == :whole_line
-    Regexp.new(r)
+  describe "sudo" do
+    let(:cmd) { shell.sudo("invoke-fix -all") }
+
+    it "passes thru when configured" do
+      config[:sudo] = true
+
+      cmd.must_equal "invoke-fix -all"
+    end
+
+    it "passes thru when not configured" do
+      config[:sudo] = false
+
+      cmd.must_equal "invoke-fix -all"
+    end
   end
 end

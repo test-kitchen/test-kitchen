@@ -458,14 +458,6 @@ describe Kitchen::Busser do
 
         cmd.must_match regexify("sudo -E /p/b test", :partial_line)
       end
-
-      # it "does not use sudo for busser test when configured" do
-      #   config[:sudo] = false
-      #   config[:busser_bin] = "/p/b"
-
-      #   cmd.must_match regexify("/p/b test", :partial_line)
-      #   cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
-      # end
     end
   end
 

@@ -24,8 +24,10 @@ require "kitchen/shell/bourne"
 
 describe Kitchen::Shell::Bourne do
 
+  let(:config) { Hash.new }
+
   let(:shell) do
-    Kitchen::Shell::Bourne.new
+    Kitchen::Shell::Bourne.new(config)
   end
 
   describe "set_env" do
@@ -42,9 +44,19 @@ describe Kitchen::Shell::Bourne do
     end
   end
 
-  def regexify(str, line = :whole_line)
-    r = Regexp.escape(str)
-    r = "^\s*#{r}$" if line == :whole_line
-    Regexp.new(r)
+  describe "sudo" do
+    let(:cmd) { shell.sudo("fix --all") }
+
+    it "uses sudo when configured" do
+      config[:sudo] = true
+
+      cmd.must_equal "sudo -E fix --all"
+    end
+
+    it "does not use sudo when not configured" do
+      config[:sudo] = false
+
+      cmd.must_equal "fix --all"
+    end
   end
 end
