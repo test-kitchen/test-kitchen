@@ -1,3 +1,21 @@
+# -*- encoding: utf-8 -*-
+#
+# Author:: Matt Wrock (<matt@mattwrock.com>)
+#
+# Copyright (C) 2014, Matt Wrock
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 require "io/console"
 require "json"
 require "kitchen/transport/winrm_file_transfer/shell"
@@ -8,6 +26,8 @@ module Kitchen
 
       # Represents a file to be copied to the test instance
       # It maintains a winrm session to be used for all operations
+      #
+      # @author Matt Wrock <matt@mattwrock.com>
       class RemoteFile
 
         attr_reader :local_path
@@ -17,6 +37,14 @@ module Kitchen
         attr_reader :service
         attr_reader :shell
 
+        # Initializes a new remote file intended for uploading
+        # to the test instance
+        #
+        # @param logger [Logger] kitchen logger for messaging output
+        # @param service [WinRMWebService] an active winrm connection
+        # @param local_path [String] path to a file or directory to
+        # copy to the test instance
+        # @param remote_path [String] target path on test instance to copy to
         def initialize(logger, service, local_path, remote_path)
           @closed = false
           @service = service
