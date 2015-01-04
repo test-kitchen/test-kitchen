@@ -276,11 +276,12 @@ module Kitchen
 
       # (see Base#build_transport_args)
       def build_transport_args(state)
-        combined = state.to_hash.merge(config)
+        combined = config.to_hash.merge(state)
 
         opts = Hash.new
-        opts[:port]           = combined[:port] if combined[:port]
-        opts[:password]       = combined[:password] if combined[:password]
+        [:hostname, :username, :password, :port].each do |key|
+          opts[key] = combined[key] if combined[key]
+        end
         opts[:forward_agent]  = combined[:forward_agent] if combined.key? :forward_agent
         opts[:logger]         = logger
         opts
