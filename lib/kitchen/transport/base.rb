@@ -65,8 +65,8 @@ module Kitchen
       #   itself and calls `#disconnect` at the end, closing the remote connection
       def connection(state)
         @options  =  build_transport_args(state)
-        @hostname = state[:hostname] if state[:hostname]
-        @username = state[:username] if state[:username]
+        @hostname = @options.delete(:hostname)
+        @username = @options.delete(:username)
         @logger   = @options.delete(:logger) || ::Logger.new(STDOUT)
 
         if block_given?
