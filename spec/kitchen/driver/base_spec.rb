@@ -71,12 +71,18 @@ describe Kitchen::Driver::Base do
       :busser => busser,
       :to_str => "instance",
       :transport => transport,
+      :driver => driver,
       :provisioner => Kitchen::Provisioner::Base.new
     )
   end
 
   let(:driver) do
-    Kitchen::Driver::Base.new(config).finalize_config!(instance)
+    Kitchen::Driver::Base.new(config)
+  end
+
+  before do
+    driver.finalize_config!(instance)
+    transport.finalize_config!(instance)
   end
 
   it "#instance returns its instance" do
