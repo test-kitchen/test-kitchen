@@ -123,8 +123,8 @@ module Kitchen
       def shell
         @shell ||= begin
           shell_name = instance.transport.shell.name
-          mod_name = "Kitchen::Provisioner::Chef::#{shell_name}Shell"
-          instance.transport.shell.extend(Module.const_get(mod_name))
+          mod = Kitchen::Provisioner::Chef.const_get("#{shell_name}Shell")
+          instance.transport.shell.extend(mod)
         end
       end
 
