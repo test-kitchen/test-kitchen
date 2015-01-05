@@ -59,4 +59,23 @@ describe Kitchen::Shell::Bourne do
       cmd.must_equal "fix --all"
     end
   end
+
+  describe "wrap_command" do
+
+    it "returns a false if command is nil" do
+      shell.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
+    end
+
+    it "uses bourne shell" do
+      shell.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
+    end
+
+    it "returns a true if command string is empty" do
+      shell.wrap_command("").must_equal("sh -c '\ntrue\n'")
+    end
+
+    it "handles a command string with a trailing newline" do
+      shell.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
+    end
+  end
 end

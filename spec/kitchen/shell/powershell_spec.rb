@@ -58,4 +58,19 @@ describe Kitchen::Shell::Powershell do
       cmd.must_equal "invoke-fix -all"
     end
   end
+
+  describe "wrap_command" do
+
+    it "returns a false if command is nil" do
+      shell.wrap_command(nil).must_equal("false")
+    end
+
+    it "passes thru the command" do
+      shell.wrap_command("yoyo").must_equal("yoyo")
+    end
+
+    it "returns a true if command string is empty" do
+      shell.wrap_command("").must_equal("true")
+    end
+  end
 end
