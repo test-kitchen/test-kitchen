@@ -41,8 +41,7 @@ module Kitchen
       str_const = Thor::Util.camel_case(plugin)
       klass = const_get(str_const)
       klass.new
-    rescue LoadError, NameError => e
-      puts "******#{e}"
+    rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' shell from the load path." \
           " Please ensure that your shell is installed as a gem or" \
