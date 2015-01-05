@@ -30,6 +30,76 @@ describe Kitchen::Shell::Bourne do
     Kitchen::Shell::Bourne.new(config)
   end
 
+  describe "default_ruby_bin" do
+    it "returns the chef omnibus bin" do
+      shell.default_ruby_bin.must_equal("/opt/chef/embedded/bin")
+    end
+  end
+
+  describe "default_busser_bin" do
+    it "returns the busser bin from the given root" do
+      shell.default_busser_bin("/b").must_equal("/b/gems/bin/busser")
+    end
+  end
+
+  describe "name" do
+    it "returns the shell name" do
+      shell.name.must_equal("Bourne")
+    end
+  end
+
+  describe "busser_setup" do
+
+    it "checks if busser is installed" do
+      shell.busser_setup("/r", "", "").must_match regexify(
+        %{if ! /r/gem list busser -i >/dev/null;}, :partial_line)
+    end
+
+    it "installs the latest busser gem by default" do
+      shell.busser_setup("/r", "", "busser --no-rdoc --no-ri").must_match regexify(
+        %{/r/gem install busser --no-rdoc --no-ri}, :partial_line)
+    end
+
+    it "calculates RubyGem's bindir" do
+      shell.busser_setup("/r", "", "").must_match regexify(
+        %{gem_bindir=`/r/ruby -rrubygems -e "puts Gem.bindir"`},
+        :partial_line)
+    end
+
+    it "runs busser setup from the installed gem_bindir binstub" do
+      shell.busser_setup("/r", "", "").must_match regexify(
+        %{${gem_bindir}/busser setup}, :partial_line)
+    end
+
+    it "creates the suites directory" do
+      shell.busser_setup("", "/b", "").must_match regexify(
+        %{mkdir -p /b/suites}, :partial_line)
+    end
+
+    describe "sudo enabled" do
+      it "checks if busser is installed with sudo" do
+        config[:sudo] = true
+
+        shell.busser_setup("/r", "", "").must_match regexify(
+          %{if ! sudo -E /r/gem list busser -i >/dev/null;}, :partial_line)
+      end
+
+      it "installs the latest busser gem by default with sudo" do
+        config[:sudo] = true
+
+        shell.busser_setup("/r", "", "busser --no-rdoc --no-ri").must_match regexify(
+          %{sudo -E /r/gem install busser --no-rdoc --no-ri}, :partial_line)
+      end
+
+      it "runs busser setup from the installed gem_bindir binstub with sudo" do
+        config[:sudo] = true
+
+        shell.busser_setup("/r", "", "").must_match regexify(
+          %{sudo -E ${gem_bindir}/busser setup}, :partial_line)
+      end
+    end
+  end
+
   describe "set_env" do
 
     let(:env) { shell.set_env("my_var", "this is my value") }
@@ -77,5 +147,11 @@ describe Kitchen::Shell::Bourne do
     it "handles a command string with a trailing newline" do
       shell.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
     end
+  end
+
+  def regexify(str, line = :whole_line)
+    r = Regexp.escape(str)
+    r = "^\s*#{r}$" if line == :whole_line
+    Regexp.new(r)
   end
 end

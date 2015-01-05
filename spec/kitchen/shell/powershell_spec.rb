@@ -30,6 +30,43 @@ describe Kitchen::Shell::Powershell do
     Kitchen::Shell::Powershell.new(config)
   end
 
+  describe "default_ruby_bin" do
+    it "returns the chef omnibus bin" do
+      shell.default_ruby_bin.must_equal("$env:systemdrive\\opscode\\chef\\embedded\\bin")
+    end
+  end
+
+  describe "default_busser_bin" do
+    it "returns the busser bin from the given rootwith a .bat extension" do
+      shell.default_busser_bin("/b").must_equal("/b/gems/bin/busser.bat")
+    end
+  end
+
+  describe "name" do
+    it "returns the shell name" do
+      shell.name.must_equal("Powershell")
+    end
+  end
+
+  describe "busser_setup" do
+
+    it "checks if busser is installed" do
+      shell.busser_setup("", "", "").must_match regexify(
+        %{if ((gem list busser -i) -eq \"false\")}, :partial_line)
+    end
+
+    it "installs the latest busser gem by default" do
+      shell.busser_setup("", "", "busser --no-rdoc --no-ri").must_match regexify(
+        %{gem install busser --no-rdoc --no-ri}, :partial_line)
+    end
+
+    it "copies the reby executable to the busser bin" do
+      shell.busser_setup("/r", "/b", "").must_match regexify(
+        %{Copy-Item /r/ruby.exe /b/gems/bin},
+        :partial_line)
+    end
+  end
+
   describe "set_env" do
 
     let(:env) { shell.set_env("my_var", "this is my value") }
@@ -72,5 +109,11 @@ describe Kitchen::Shell::Powershell do
     it "returns a true if command string is empty" do
       shell.wrap_command("").must_equal("true")
     end
+  end
+
+  def regexify(str, line = :whole_line)
+    r = Regexp.escape(str)
+    r = "^\s*#{r}$" if line == :whole_line
+    Regexp.new(r)
   end
 end
