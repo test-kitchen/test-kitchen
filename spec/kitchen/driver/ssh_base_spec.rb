@@ -72,6 +72,7 @@ describe Kitchen::Driver::SSHBase do
   end
 
   describe "configuration" do
+    let(:config) { { :wakawaka => "weekeeweekee" } }
 
     it ":sudo defaults to true" do
       driver[:sudo].must_equal true
@@ -79,6 +80,10 @@ describe Kitchen::Driver::SSHBase do
 
     it ":port defaults to 22" do
       driver[:port].must_equal 22
+    end
+
+    it "sends configuration to the transport" do
+      transport[:wakawaka].must_equal("weekeeweekee")
     end
   end
 
