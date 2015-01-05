@@ -294,17 +294,6 @@ describe Kitchen::Busser do
         }
       end
 
-      let(:helper_files) do
-        {
-          "abba/common" => {
-            :content => "yeppers",
-            :perms => "0664",
-            :base64 => "eWVwcGVycw==",
-            :md5 => "7c3157de4890b1abcb7a6a3695eb6dd2"
-          }
-        }
-      end
-
       it "uses wraps command with shell" do
         cmd.must_match(/\Ash -c '$/)
         cmd.must_match(/'\Z/)
@@ -333,11 +322,138 @@ describe Kitchen::Busser do
 
         cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"})
       end
+    end
+  end
 
-      def create_file(file, content, perms)
-        FileUtils.mkdir_p(File.dirname(file))
-        File.open(file, "wb") { |f| f.write(content) }
-        FileUtils.chmod(perms.to_i(8), file)
+  describe "#local_payload" do
+    before do
+      @root = Dir.mktmpdir
+      config[:test_base_path] = @root
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+    end
+
+    describe "with no chef files" do
+      before do
+        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
+        end
+        helper_files.map { |f, md| [File.join(hbase, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
+        end
+      end
+      let(:base) { "#{config[:test_base_path]}/germany" }
+      let(:hbase) { "#{config[:test_base_path]}/helpers" }
+
+      let(:files) do
+        {
+          "mondospec/charlie" => {
+            :content => "charlie",
+            :perms => "0764",
+            :base64 => "Y2hhcmxpZQ==",
+            :md5 => "bf779e0933a882808585d19455cd7937"
+          },
+          "minispec/beta" => {
+            :content => "beta",
+            :perms => "0644",
+            :base64 => "YmV0YQ==",
+            :md5 => "987bcab01b929eb2c07877b224215c92"
+          },
+          "abba/alpha" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          }
+        }
+      end
+
+      let(:helper_files) do
+        {
+          "minispec/spec_helper" => {
+            :content => "helping",
+            :perms => "0644",
+            :base64 => "aGVscGluZw==",
+            :md5 => "111c081293c11cb7c2ac6fbf841805cb"
+          },
+          "abba/common" => {
+            :content => "yeppers",
+            :perms => "0664",
+            :base64 => "eWVwcGVycw==",
+            :md5 => "7c3157de4890b1abcb7a6a3695eb6dd2"
+          }
+        }
+      end
+
+      let(:cmd) { busser.local_payload }
+
+      it "returns all suite files and helper files" do
+        cmd.count.must_equal(5)
+        files.keys.each do |file|
+          cmd.must_include(File.join(base, file))
+        end
+        helper_files.keys.each do |file|
+          cmd.must_include(File.join(hbase, file))
+        end
+      end
+    end
+
+    describe "with chef files" do
+      before do
+        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
+        end
+      end
+      let(:base) { "#{config[:test_base_path]}/germany" }
+
+      let(:files) do
+        {
+          "data/data" => {
+            :content => "charlie",
+            :perms => "0764",
+            :base64 => "Y2hhcmxpZQ==",
+            :md5 => "bf779e0933a882808585d19455cd7937"
+          },
+          "data_bags/bag.json" => {
+            :content => "beta",
+            :perms => "0644",
+            :base64 => "YmV0YQ==",
+            :md5 => "987bcab01b929eb2c07877b224215c92"
+          },
+          "environments/alpha.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "nodes/node.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "roles/roles.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "abba/alpha" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          }
+        }
+      end
+
+      let(:cmd) { busser.local_payload }
+
+      it "returns all suite files except those in chef directories" do
+        cmd.count.must_equal(1)
+        cmd.must_equal([File.join(base, "abba/alpha")])
       end
     end
   end
@@ -419,5 +535,11 @@ describe Kitchen::Busser do
     r = Regexp.escape(str)
     r = "^\s*#{r}$" if line == :whole_line
     Regexp.new(r)
+  end
+
+  def create_file(file, content, perms)
+    FileUtils.mkdir_p(File.dirname(file))
+    File.open(file, "wb") { |f| f.write(content) }
+    FileUtils.chmod(perms.to_i(8), file)
   end
 end
