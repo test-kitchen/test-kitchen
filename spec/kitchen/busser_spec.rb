@@ -334,52 +334,6 @@ describe Kitchen::Busser do
         cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"})
       end
 
-      # it "logs a message for each file" do
-      #   config[:busser_bin] = "/b/busser"
-
-      #   files.each do |f, md|
-      #     cmd.must_match regexify([
-      #       %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-      #       %{(mode=#{md[:perms]})"}
-      #     ].join(" "))
-      #   end
-      # end
-
-      # it "logs a message for each helper file" do
-      #   config[:busser_bin] = "/b/busser"
-
-      #   helper_files.each do |f, md|
-      #     cmd.must_match regexify([
-      #       %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-      #       %{(mode=#{md[:perms]})"}
-      #     ].join(" "))
-      #   end
-      # end
-
-      # it "base64 encodes each file for deserializing with busser" do
-      #   config[:busser_bin] = "/b/busser"
-
-      #   files.each do |f, md|
-      #     cmd.must_match regexify([
-      #       %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-      #       %{--destination=`sudo -E /b/busser suite path`/#{f}},
-      #       %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-      #     ].join(" "))
-      #   end
-      # end
-
-      # it "base64 encodes each helper file for deserializing with busser" do
-      #   config[:busser_bin] = "/b/busser"
-
-      #   helper_files.each do |f, md|
-      #     cmd.must_match regexify([
-      #       %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-      #       %{--destination=`sudo -E /b/busser suite path`/#{f}},
-      #       %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-      #     ].join(" "))
-      #   end
-      # end
-
       def create_file(file, content, perms)
         FileUtils.mkdir_p(File.dirname(file))
         File.open(file, "wb") { |f| f.write(content) }
