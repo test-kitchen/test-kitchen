@@ -39,7 +39,7 @@ module Kitchen
         super
         # we merge in the legacy SSHBase config
         driver = instance.driver
-        if driver.class < Kitchen::Driver::SSHBase
+        if driver.class <= Kitchen::Driver::SSHBase
           driver.config_keys.each do |key|
             config[key] ||= driver[key]
           end
