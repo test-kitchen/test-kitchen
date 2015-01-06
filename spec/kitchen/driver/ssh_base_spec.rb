@@ -73,6 +73,9 @@ describe Kitchen::Driver::SSHBase do
 
   describe "configuration" do
     let(:config) { { :wakawaka => "weekeeweekee" } }
+    let(:transport) do
+      Kitchen::Transport::Ssh.new(Hash.new)
+    end
 
     it ":sudo defaults to true" do
       driver[:sudo].must_equal true
