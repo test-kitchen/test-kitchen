@@ -1,11 +1,11 @@
 # Test Kitchen
 
-[![Gem Version](https://badge.fury.io/rb/test-kitchen.png)](http://badge.fury.io/rb/test-kitchen)
-[![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.png?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
-[![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
-[![Test Coverage](https://codeclimate.com/github/test-kitchen/test-kitchen/coverage.png)](https://codeclimate.com/github/test-kitchen/test-kitchen)
-[![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.png)](https://gemnasium.com/test-kitchen/test-kitchen)
-[![Inline docs](http://inch-ci.org/github/test-kitchen/test-kitchen.png?branch=master)](http://inch-ci.org/github/test-kitchen/test-kitchen)
+[![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
+[![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.svg?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
+[![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.svg)](https://codeclimate.com/github/test-kitchen/test-kitchen)
+[![Test Coverage](https://codeclimate.com/github/test-kitchen/test-kitchen/coverage.svg)](https://codeclimate.com/github/test-kitchen/test-kitchen)
+[![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.svg)](https://gemnasium.com/test-kitchen/test-kitchen)
+[![Inline docs](http://inch-ci.org/github/test-kitchen/test-kitchen.svg?branch=master)](http://inch-ci.org/github/test-kitchen/test-kitchen)
 
 |             |                                               |
 |-------------|-----------------------------------------------|
