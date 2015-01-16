@@ -1,3 +1,14 @@
+## 1.3.1 / 2015-01-16
+
+### Bug fixes
+
+* Pull request [#581][], issue [#580][]: Fix omnibus install argument passing bug with missing space character. ([@fnichol][], [@tknerr][])
+
+### Improvements
+
+* Pull request [#579][]: Update README.md badges to use SVG. ([@miketheman][])
+
+
 ## 1.3.0 / 2015-01-15
 
 ### Upstream changes
@@ -561,6 +572,9 @@ The initial release.
 [#557]: https://github.com/test-kitchen/test-kitchen/issues/557
 [#558]: https://github.com/test-kitchen/test-kitchen/issues/558
 [#567]: https://github.com/test-kitchen/test-kitchen/issues/567
+[#579]: https://github.com/test-kitchen/test-kitchen/issues/579
+[#580]: https://github.com/test-kitchen/test-kitchen/issues/580
+[#581]: https://github.com/test-kitchen/test-kitchen/issues/581
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@adamhjk]: https://github.com/adamhjk
@@ -604,6 +618,7 @@ The initial release.
 [@mconigliaro]: https://github.com/mconigliaro
 [@mcquin]: https://github.com/mcquin
 [@michaelkirk]: https://github.com/michaelkirk
+[@miketheman]: https://github.com/miketheman
 [@mthssdrbrg]: https://github.com/mthssdrbrg
 [@oferrigni]: https://github.com/oferrigni
 [@patcon]: https://github.com/patcon
@@ -627,4 +642,5 @@ The initial release.
 [@srenatus]: https://github.com/srenatus
 [@stevendanna]: https://github.com/stevendanna
 [@thommay]: https://github.com/thommay
+[@tknerr]: https://github.com/tknerr
 [@zts]: https://github.com/zts
