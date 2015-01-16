@@ -28,6 +28,12 @@ matrix:
     - rvm: ruby-head
   exclude:
     - rvm: 2.2
+      env: RUBYGEMS_VERSION=2.2.2
+    - rvm: 2.2
+      env: RUBYGEMS_VERSION=2.1.11
+    - rvm: 2.2
+      env: RUBYGEMS_VERSION=2.0.14
+    - rvm: 2.2
       env: RUBYGEMS_VERSION=1.8.29
     - rvm: 2.1
       env: RUBYGEMS_VERSION=1.8.29
