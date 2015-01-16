@@ -1,6 +1,7 @@
 language: ruby
 
 rvm:
+  - 2.2
   - 2.1
   - 2.0.0
   - 1.9.3
@@ -8,6 +9,7 @@ rvm:
 
 env:
   - RUBYGEMS_VERSION=
+  - RUBYGEMS_VERSION=2.4.5
   - RUBYGEMS_VERSION=2.2.2
   - RUBYGEMS_VERSION=2.1.11
   - RUBYGEMS_VERSION=2.0.14
@@ -25,10 +27,18 @@ matrix:
   allow_failures:
     - rvm: ruby-head
   exclude:
+    - rvm: 2.2
+      env: RUBYGEMS_VERSION=1.8.29
     - rvm: 2.1
       env: RUBYGEMS_VERSION=1.8.29
     - rvm: 2.0.0
       env: RUBYGEMS_VERSION=1.8.29
+    - rvm: ruby-head
+      env: RUBYGEMS_VERSION=2.2.2
+    - rvm: ruby-head
+      env: RUBYGEMS_VERSION=2.1.11
+    - rvm: ruby-head
+      env: RUBYGEMS_VERSION=2.0.14
     - rvm: ruby-head
       env: RUBYGEMS_VERSION=1.8.29
 
