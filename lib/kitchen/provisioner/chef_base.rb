@@ -157,14 +157,14 @@ module Kitchen
                          end
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
         if config[:chef_omnibus_install_options]
-          install_flags += config[:chef_omnibus_install_options]
+          install_flags << " " << config[:chef_omnibus_install_options]
         end
 
         <<-INSTALL.gsub(/^ {10}/, "")
           if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
             do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags}
+            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
           else
             echo "-----> Chef Omnibus installation detected (#{pretty_version})"
           fi

@@ -200,6 +200,13 @@ describe Kitchen::Provisioner::ChefBase do
         "Installing Chef Omnibus (install only if missing)", :partial_line)
     end
 
+    it "will pass install options and version info, when given" do
+      config[:require_chef_omnibus] = "11"
+      config[:chef_omnibus_install_options] = "-d /tmp/place"
+
+      provisioner.install_command.must_match regexify(
+        "sudo -E sh /tmp/install.sh -v 11 -d /tmp/place")
+    end
   end
 
   describe "#init_command" do
