@@ -106,12 +106,12 @@ module Kitchen
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",
           "--force-formatter",
-          "--no-color"
+          "--no-color",
+          yield_if_exists(:chef_zero_host) { |config_val| "--chef-zero-host #{config_val}" },
+          yield_if_exists(:chef_zero_port) { |config_val| "--chef-zero-port #{config_val}" },
+          yield_if_exists(:json_attributes) { "--json-attributes #{config[:root_path]}/dna.json" },
+          yield_if_exists(:log_file) { |config_val| "--logfile #{config_val}" }
         ]
-        add_argument(args, :chef_zero_host, "--chef-zero-host %config%")
-        add_argument(args, :chef_zero_port, "--chef-zero-port %config%")
-        add_argument(args, :json_attributes, "--json-attributes #{config[:root_path]}/dna.json")
-        add_argument(args, :log_file, "--logfile %config%")
 
         args
       end
