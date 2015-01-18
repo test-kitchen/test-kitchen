@@ -32,7 +32,7 @@ module Kitchen
     class Ssh < Kitchen::Transport::Base
 
       default_config :sudo, true
-      default_config :shell, "bourne"
+      default_config :shell, Kitchen::Shell::DEFAULT_SHELL
 
       # (see Base#finalize_config
       def finalize_config!(instance)
