@@ -64,7 +64,7 @@ module Kitchen
           logger.debug("Creating RemoteFile of local '#{local_path}' at '#{@remote_path}'")
         ensure
           if !shell.nil?
-            ObjectSpace.define_finalizer(self, self.class.close(shell))
+            ObjectSpace.define_finalizer(self, self.class.finalizer(shell))
           end
         end
 
@@ -111,7 +111,7 @@ module Kitchen
 
         attr_reader :logger
 
-        def self.close(shell)
+        def self.finalizer(shell)
           proc { shell.close }
         end
 
