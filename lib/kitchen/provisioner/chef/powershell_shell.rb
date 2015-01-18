@@ -57,14 +57,14 @@ module Kitchen
         # chef environment
         def init_command(root_path)
           cmd = <<-CMD.gsub(/^ {10}/, "")
-            if (-Not (Test-Path #{root_path})) {
-              mkdir #{root_path} | Out-Null
+            if (-Not (Test-Path "#{root_path}")) {
+              mkdir "#{root_path}" | Out-Null
             }
           CMD
 
           dirs = %w[data data_bags environments roles clients].map do |dir|
             path = File.join(root_path, dir)
-            cmd << "if ( Test-Path #{path} ) { rm -r #{path} };"
+            cmd << "if ( Test-Path '#{path}' ) { rm -r '#{path}' };"
           end
 
           wrap_command([dirs, cmd].join("\n"))
