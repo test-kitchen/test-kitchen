@@ -71,7 +71,7 @@ module Kitchen
       #
       # @param key [String] environmnt variable name
       # @param value [String] value to be assigned to environment variable
-      # @return [String] command for setting an environmrnt variable on
+      # @return [String] command for setting an environment variable on
       # the test instance
       def set_env(key, value) # rubocop:disable Lint/UnusedMethodArgument
       end
