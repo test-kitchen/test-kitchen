@@ -123,6 +123,14 @@ module Kitchen
     # @api private
     attr_reader :config
 
+    # Yields the config value if the config key exists
+    #
+    # @param config_key [Symbol] config key to check
+    # @api private
+    def yield_if_exists(config_key)
+      yield config[config_key] if config[config_key]
+    end
+
     # Initializes an internal configuration hash. The hash may contain
     # callable blocks as values that are meant to be called lazily. This
     # method is intended to be included in an object's .initialize method.

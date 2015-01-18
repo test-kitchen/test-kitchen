@@ -67,27 +67,20 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        level = config[:log_level] == :info ? :auto : config[:log_level]
-        cmd = [modern? ? "#{shell.sudo(config[:chef_client_path])} --local-mode" : shim_command]
-        cmd << "--config #{config[:root_path]}/client.rb"
-        cmd << "--log_level #{level}"
-        cmd << "--force-formatter"
-        cmd << "--no-color"
-        add_argument(cmd, :chef_zero_host, "--chef-zero-host %config%")
-        add_argument(cmd, :chef_zero_port, "--chef-zero-port %config%")
-        add_argument(cmd, :json_attributes, "--json-attributes #{config[:root_path]}/dna.json")
-        add_argument(cmd, :log_file, "--logfile %config%")
-
-        shell.wrap_command(cmd.join(" "))
+        shell.wrap_command([
+          modern? ? "#{shell.sudo(config[:chef_client_path])} --local-mode" : shim_command,
+          "--config #{config[:root_path]}/client.rb",
+          "--log_level #{config[:log_level] == :info ? :auto : config[:log_level]}",
+          "--force-formatter",
+          "--no-color",
+          yield_if_exists(:chef_zero_host) { |config_val| "--chef-zero-host #{config_val}" },
+          yield_if_exists(:chef_zero_port) { |config_val| "--chef-zero-port #{config_val}" },
+          yield_if_exists(:json_attributes) { "--json-attributes #{config[:root_path]}/dna.json" },
+          yield_if_exists(:log_file) { |config_val| "--logfile #{config_val}" }
+        ].join(" "))
       end
 
       private
-
-      def add_argument(line, config_key, arg)
-        config_val = config[config_key]
-        return unless config_val
-        line << arg.gsub("%config%", config_val.to_s)
-      end
 
       # Returns the command that will run a backwards compatible shim script
       # that approximates local mode in a modern chef-client run.
