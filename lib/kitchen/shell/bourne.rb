@@ -50,7 +50,7 @@ module Kitchen
       # (see Base#add_to_path)
       def add_to_path(dir)
         <<-CMD.gsub(/^ {10}/, "")
-          export PATH="#{dir}:$PATH"
+          export PATH="$PATH:#{dir}"
         CMD
       end
 
