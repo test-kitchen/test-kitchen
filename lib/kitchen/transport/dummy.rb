@@ -22,6 +22,10 @@ module Kitchen
 
   module Transport
 
+    # Dummy transport for Kitchen. This transport does nothing but report what would
+    # happen if this transport did anything of consequence. As a result it may
+    # be a useful transport to use when debugging or developing new features or
+    # plugins.
     class Dummy < Kitchen::Transport::Base
 
       default_config :sleep, 1
@@ -35,7 +39,7 @@ module Kitchen
         end
       end
 
-      def upload!(local, remote, options = {}, &progress)
+      def upload!(local, remote)
         report(:upload, "#{local} => #{remote}")
       end
 
@@ -85,6 +89,7 @@ module Kitchen
       end
 
       def build_transport_args(state)
+        report(:build_transport_args, state)
         {}
       end
     end

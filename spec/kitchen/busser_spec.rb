@@ -21,16 +21,55 @@ require_relative "../spec_helper"
 require "kitchen/busser"
 # @TODO: this can be remove once Kitchen::DEFAULT_TEST_DIR is removed
 require "kitchen"
+require "kitchen/shell/bourne"
+require "kitchen/transport/ssh"
 
 describe Kitchen::Busser do
 
   let(:suite_name)  { "germany" }
   let(:config)      { Hash.new }
+  let(:logged_output) { StringIO.new }
+  let(:logger)        { Logger.new(logged_output) }
+
+  let(:provisioner) do
+    stub(
+      :install_command  => "install",
+      :init_command     => "init",
+      :prepare_command  => "prepare",
+      :run_command      => "run",
+      :create_sandbox   => true,
+      :cleanup_sandbox  => true,
+      :sandbox_path     => "/tmp/sandbox"
+    )
+  end
+
+  let(:transport) do
+    Kitchen::Transport::Ssh.new(config)
+  end
+
+  let(:driver) do
+    Kitchen::Driver::SSHBase.new(config)
+  end
+
+  let(:instance) do
+    stub(
+      :name         => "coolbeans",
+      :logger       => logger,
+      :busser       => busser,
+      :provisioner  => provisioner,
+      :to_str       => "instance",
+      :driver       => driver,
+      :transport    => transport
+    )
+  end
 
   let(:busser) do
-    b = Kitchen::Busser.new(suite_name, config)
-    b.stubs(:shell).returns("bourne")
-    b
+    Kitchen::Busser.new(suite_name, config)
+  end
+
+  before do
+    transport.finalize_config!(instance)
+    busser.finalize_config!(instance)
   end
 
   describe ".new" do
@@ -50,13 +89,6 @@ describe Kitchen::Busser do
 
   it "#name returns the name of the suite" do
     busser.name.must_equal "germany"
-  end
-
-  it "#config_keys returns an array of config key names" do
-    busser.config_keys.sort.must_equal [
-      :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-      :suite_name, :test_base_path, :version
-    ]
   end
 
   describe "configuration" do
@@ -92,17 +124,7 @@ describe Kitchen::Busser do
     it ":busser_bin defaults to a binstub under :root_path" do
       config[:root_path] = "/beep"
 
-      busser[:busser_bin].must_equal "/beep/bin/busser"
-    end
-  end
-
-  describe "#diagnose" do
-
-    it "returns a hash with sorted keys" do
-      busser.diagnose.keys.must_equal [
-        :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-        :suite_name, :test_base_path, :version
-      ]
+      busser[:busser_bin].must_equal "/beep/gems/bin/busser"
     end
   end
 
@@ -155,24 +177,19 @@ describe Kitchen::Busser do
       it "sets the GEM_HOME environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
+        cmd.must_match regexify(%{GEM_HOME="/r/gems"}, :partial_line)
       end
 
       it "sets the GEM_PATH environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
+        cmd.must_match regexify(%{GEM_PATH="/r/gems"}, :partial_line)
       end
 
       it "sets the GEM_CACHE environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
+        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"}, :partial_line)
       end
 
       it "checks if busser is installed" do
@@ -234,7 +251,7 @@ describe Kitchen::Busser do
     end
   end
 
-  describe "#sync_cmd" do
+  describe "#cleanup_cmd" do
 
     before do
       @root = Dir.mktmpdir
@@ -245,7 +262,7 @@ describe Kitchen::Busser do
       FileUtils.remove_entry(@root)
     end
 
-    let(:cmd) { busser.sync_cmd }
+    let(:cmd) { busser.cleanup_cmd }
 
     describe "with no suite test files" do
 
@@ -258,17 +275,77 @@ describe Kitchen::Busser do
 
       before do
         base = "#{config[:test_base_path]}/germany"
-        hbase = "#{config[:test_base_path]}/helpers"
 
+        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
+        end
+
+        config[:ruby_bindir] = "/r"
+      end
+
+      let(:files) do
+        {
+          "abba/alpha" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          }
+        }
+      end
+
+      it "uses wraps command with shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "sets the BUSSER_ROOT environment variable" do
+        config[:root_path] = "/r"
+
+        cmd.must_match regexify(%{BUSSER_ROOT="/r"})
+      end
+
+      it "sets the GEM_HOME environment variable" do
+        config[:root_path] = "/r"
+
+        cmd.must_match regexify(%{GEM_HOME="/r/gems"})
+      end
+
+      it "sets the GEM_PATH environment variable" do
+        config[:root_path] = "/r"
+
+        cmd.must_match regexify(%{GEM_PATH="/r/gems"})
+      end
+
+      it "sets the GEM_CACHE environment variable" do
+        config[:root_path] = "/r"
+
+        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"})
+      end
+    end
+  end
+
+  describe "#local_payload" do
+    before do
+      @root = Dir.mktmpdir
+      config[:test_base_path] = @root
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+    end
+
+    describe "with no chef files" do
+      before do
         files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
           create_file(f, md[:content], md[:perms])
         end
         helper_files.map { |f, md| [File.join(hbase, f), md] }.each do |f, md|
           create_file(f, md[:content], md[:perms])
         end
-
-        config[:ruby_bindir] = "/r"
       end
+      let(:base) { "#{config[:test_base_path]}/germany" }
+      let(:hbase) { "#{config[:test_base_path]}/helpers" }
 
       let(:files) do
         {
@@ -310,90 +387,73 @@ describe Kitchen::Busser do
         }
       end
 
-      it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
-      end
+      let(:cmd) { busser.local_payload }
 
-      it "sets the BUSSER_ROOT environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{BUSSER_ROOT="/r"}, :partial_line)
-      end
-
-      it "sets the GEM_HOME environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_PATH environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_CACHE environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
-      end
-
-      it "logs a message for each file" do
-        config[:busser_bin] = "/b/busser"
-
-        files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-            %{(mode=#{md[:perms]})"}
-          ].join(" "))
+      it "returns all suite files and helper files" do
+        cmd.count.must_equal(5)
+        files.keys.each do |file|
+          cmd.must_include(File.join(base, file))
+        end
+        helper_files.keys.each do |file|
+          cmd.must_include(File.join(hbase, file))
         end
       end
+    end
 
-      it "logs a message for each helper file" do
-        config[:busser_bin] = "/b/busser"
-
-        helper_files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-            %{(mode=#{md[:perms]})"}
-          ].join(" "))
+    describe "with chef files" do
+      before do
+        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+          create_file(f, md[:content], md[:perms])
         end
       end
+      let(:base) { "#{config[:test_base_path]}/germany" }
 
-      it "base64 encodes each file for deserializing with busser" do
-        config[:busser_bin] = "/b/busser"
-
-        files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-          ].join(" "))
-        end
+      let(:files) do
+        {
+          "data/data" => {
+            :content => "charlie",
+            :perms => "0764",
+            :base64 => "Y2hhcmxpZQ==",
+            :md5 => "bf779e0933a882808585d19455cd7937"
+          },
+          "data_bags/bag.json" => {
+            :content => "beta",
+            :perms => "0644",
+            :base64 => "YmV0YQ==",
+            :md5 => "987bcab01b929eb2c07877b224215c92"
+          },
+          "environments/alpha.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "nodes/node.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "roles/roles.json" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          },
+          "abba/alpha" => {
+            :content => "alpha",
+            :perms => "0440",
+            :base64 => "YWxwaGE=",
+            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
+          }
+        }
       end
 
-      it "base64 encodes each helper file for deserializing with busser" do
-        config[:busser_bin] = "/b/busser"
+      let(:cmd) { busser.local_payload }
 
-        helper_files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-          ].join(" "))
-        end
-      end
-
-      def create_file(file, content, perms)
-        FileUtils.mkdir_p(File.dirname(file))
-        File.open(file, "wb") { |f| f.write(content) }
-        FileUtils.chmod(perms.to_i(8), file)
+      it "returns all suite files except those in chef directories" do
+        cmd.count.must_equal(1)
+        cmd.must_equal([File.join(base, "abba/alpha")])
       end
     end
   end
@@ -447,24 +507,19 @@ describe Kitchen::Busser do
       it "sets the GEM_HOME environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
+        cmd.must_match regexify(%{GEM_HOME="/r/gems"}, :partial_line)
       end
 
       it "sets the GEM_PATH environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
+        cmd.must_match regexify(%{GEM_PATH="/r/gems"}, :partial_line)
       end
 
       it "sets the GEM_CACHE environment variable" do
         config[:root_path] = "/r"
 
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
+        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"}, :partial_line)
       end
 
       it "uses sudo for busser test when configured" do
@@ -473,14 +528,6 @@ describe Kitchen::Busser do
 
         cmd.must_match regexify("sudo -E /p/b test", :partial_line)
       end
-
-      it "does not use sudo for busser test when configured" do
-        config[:sudo] = false
-        config[:busser_bin] = "/p/b"
-
-        cmd.must_match regexify("/p/b test", :partial_line)
-        cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
-      end
     end
   end
 
@@ -488,5 +535,11 @@ describe Kitchen::Busser do
     r = Regexp.escape(str)
     r = "^\s*#{r}$" if line == :whole_line
     Regexp.new(r)
+  end
+
+  def create_file(file, content, perms)
+    FileUtils.mkdir_p(File.dirname(file))
+    File.open(file, "wb") { |f| f.write(content) }
+    FileUtils.chmod(perms.to_i(8), file)
   end
 end

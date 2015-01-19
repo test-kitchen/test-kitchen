@@ -92,8 +92,12 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def verify(state)
         transport.connection(state) do |conn|
-          conn.execute(busser.sync_cmd)
-          conn.execute(busser.run_cmd)
+          conn.execute(busser.cleanup_cmd)
+          dirs = busser.local_payload.map { |f| File.dirname(f) }.uniq
+          if !dirs.empty?
+            conn.upload!(dirs, "/tmp/busser/suites")
+            conn.execute(busser.run_cmd)
+          end
         end
       end
 

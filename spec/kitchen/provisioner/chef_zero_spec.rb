@@ -20,6 +20,7 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/provisioner/chef_zero"
+require "kitchen/shell/bourne"
 
 describe Kitchen::Provisioner::ChefZero do
 
@@ -34,8 +35,12 @@ describe Kitchen::Provisioner::ChefZero do
     stub(:name => "fries")
   end
 
+  let(:shell) do
+    Kitchen::Shell::Bourne.new(config)
+  end
+
   let(:transport) do
-    stub(:sudo => config[:sudo], :shell => "bourne")
+    stub(:sudo => config[:sudo], :shell => shell)
   end
 
   let(:instance) do
@@ -440,7 +445,7 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       it "sets chef zero host flag for custom host" do
-        config[:chef_zero_host] = '192.168.0.1'
+        config[:chef_zero_host] = "192.168.0.1"
 
         cmd.must_match regexify(" --chef-zero-host 192.168.0.1", :partial_line)
       end

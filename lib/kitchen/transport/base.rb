@@ -65,8 +65,8 @@ module Kitchen
       #   itself and calls `#disconnect` at the end, closing the remote connection
       def connection(state)
         @options  =  build_transport_args(state)
-        @hostname = state[:hostname] if state[:hostname]
-        @username = state[:username] if state[:username]
+        @hostname = @options.delete(:hostname)
+        @username = @options.delete(:username)
         @logger   = @options.delete(:logger) || ::Logger.new(STDOUT)
 
         if block_given?
@@ -124,9 +124,9 @@ module Kitchen
       # Returns the desired shell to use.
       # [Idea] Let's see if this help for the Provisioner to chose the right code
       #
-      # @return [String] the desired shell for this transport
+      # @return [Shell] the desired shell for this transport
       def shell
-        config.fetch(:shell, nil)
+        @shell ||= Shell.for_plugin(config.fetch(:shell, Kitchen::Shell::DEFAULT_SHELL))
       end
 
       # Returns the config[:sudo] parameter.
@@ -156,6 +156,8 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
+        config[:http_proxy] ||= instance.driver[:http_proxy]
+        shell.finalize_config!(instance)
         self
       end
 

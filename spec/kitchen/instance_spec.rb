@@ -790,7 +790,8 @@ describe Kitchen::Instance do
 
       it "calls Transport#execute with command" do
 
-        # TODO: minitest seems to lack an equivalent of #and_call_original, not sure what to do here.
+        # TODO: minitest seems to lack an equivalent of #and_call_original
+        # not sure what to do here.
         # transport.expect(:connection, { :last_action => "create" })
 
         transport.expects(:execute).with do |command|

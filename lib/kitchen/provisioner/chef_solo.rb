@@ -28,9 +28,8 @@ module Kitchen
     class ChefSolo < ChefBase
 
       default_config :solo_rb, {}
-
       default_config :chef_solo_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-solo])
+        File.join(provisioner[:chef_omnibus_root], provisioner.shell.chef_solo_file)
       end
 
       # (see Base#create_sandbox)
@@ -43,7 +42,7 @@ module Kitchen
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
-        cmd = sudo(config[:chef_solo_path])
+        cmd = shell.sudo(config[:chef_solo_path])
         args = [
           "--config #{config[:root_path]}/solo.rb",
           "--log_level #{level}",
@@ -54,7 +53,7 @@ module Kitchen
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
         # TODO: We definitely need to put more logic on this.
-        Util.wrap_command([cmd, *args].join(" "), shell)
+        shell.wrap_command([cmd, *args].join(" "))
       end
 
       private

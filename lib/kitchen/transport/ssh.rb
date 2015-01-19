@@ -32,7 +32,20 @@ module Kitchen
     class Ssh < Kitchen::Transport::Base
 
       default_config :sudo, true
-      default_config :shell, "bourne"
+      default_config :shell, Kitchen::Shell::DEFAULT_SHELL
+
+      # (see Base#finalize_config
+      def finalize_config!(instance)
+        super
+        # we merge in the legacy SSHBase config
+        driver = instance.driver
+        if driver.class <= Kitchen::Driver::SSHBase
+          driver.config_keys.each do |key|
+            config[key] ||= driver[key]
+          end
+        end
+        self
+      end
 
       # (see Base#execute)
       def execute(command)
@@ -172,15 +185,16 @@ module Kitchen
 
       # (see Base#build_transport_args)
       def build_transport_args(state)
-        combined = state.to_hash.merge(config)
+        combined = config.to_hash.merge(state)
 
         opts = Hash.new
+        [:hostname, :username, :password, :port].each do |key|
+          opts[key] = combined[key] if combined[key]
+        end
         opts[:user_known_hosts_file] = "/dev/null"
         opts[:paranoid] = false
         opts[:keys_only] = true if combined[:ssh_key]
-        opts[:password] = combined[:password] if combined[:password]
         opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
-        opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
 

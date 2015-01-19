@@ -49,9 +49,16 @@ describe Kitchen::Driver::Base do
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
+  let(:payload)       { ["payload"] }
 
   let(:busser) do
-    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
+    stub(
+      :setup_cmd => "setup",
+      :sync_cmd => "sync",
+      :run_cmd => "run",
+      :cleanup_cmd => "cleanup",
+      :local_payload => payload
+    )
   end
 
   let(:transport) do
@@ -65,12 +72,18 @@ describe Kitchen::Driver::Base do
       :busser => busser,
       :to_str => "instance",
       :transport => transport,
-      :provisioner => Kitchen::Provisioner::Base.new,
+      :driver => driver,
+      :provisioner => Kitchen::Provisioner::Base.new
     )
   end
 
   let(:driver) do
-    Kitchen::Driver::Base.new(config).finalize_config!(instance)
+    Kitchen::Driver::Base.new(config)
+  end
+
+  before do
+    driver.finalize_config!(instance)
+    transport.finalize_config!(instance)
   end
 
   it "#instance returns its instance" do
@@ -161,6 +174,34 @@ describe Kitchen::Driver::Base do
       proc {
         Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
       }.must_raise Kitchen::ClientError
+    end
+  end
+
+  describe "#verify" do
+
+    let(:payload) { ["/dir1/file1", "/dir2/file1", "/dir2/file2"] }
+
+    it "invokes the busser#cleanup_cmd & #run_cmd over transport" do
+      transport.expects(:execute).with(busser.cleanup_cmd)
+      transport.expects(:execute).with(busser.run_cmd)
+
+      driver.send(:verify, Hash.new)
+    end
+
+    it "copies local payload directories" do
+      transport.expects(:upload!).with(["/dir1", "/dir2"], "/tmp/busser/suites")
+
+      driver.send(:verify, Hash.new)
+    end
+
+    describe "no payload files" do
+      let(:payload) { [] }
+
+      it "invokes the busser#cleanup_cmd only" do
+        transport.expects(:execute).with(busser.cleanup_cmd)
+
+        driver.send(:verify, Hash.new)
+      end
     end
   end
 end

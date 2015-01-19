@@ -10,6 +10,9 @@ Feature: Logging into a Kitchen instance
     driver:
       name: dummy
 
+    transport:
+      name: dummy
+      
     provisioner:
       name: dummy
 
@@ -25,7 +28,7 @@ Feature: Logging into a Kitchen instance
   @spawn
   Scenario: Logging in to an instance
     When I run `kitchen login default-flebian`
-    Then the output should contain "Remote login is not supported in this driver."
+    Then the output should contain "Remote login is not supported in this transport."
     And the exit status should not be 0
 
   @spawn

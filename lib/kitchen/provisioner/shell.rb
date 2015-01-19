@@ -47,15 +47,15 @@ module Kitchen
       # (see Base#init_command)
       def init_command
         data = File.join(config[:root_path], "data")
-        cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
+        cmd = "#{shell.sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
 
-        Util.wrap_command(cmd)
+        shell.wrap_command(cmd)
       end
 
       # (see Base#run_command)
       def run_command
-        Util.wrap_command(
-          sudo(File.join(config[:root_path], File.basename(config[:script])))
+        shell.wrap_command(
+          shell.sudo(File.join(config[:root_path], File.basename(config[:script])))
         )
       end
 

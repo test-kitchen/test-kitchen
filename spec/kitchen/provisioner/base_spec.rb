@@ -21,6 +21,7 @@ require "logger"
 require "stringio"
 
 require "kitchen"
+require "kitchen/shell/bourne"
 
 describe Kitchen::Provisioner::Base do
 
@@ -28,8 +29,12 @@ describe Kitchen::Provisioner::Base do
   let(:logger)          { Logger.new(logged_output) }
   let(:config)          { { :sudo => true } }
 
+  let(:shell) do
+    Kitchen::Shell::Bourne.new(config)
+  end
+
   let(:transport) do
-    stub(:sudo => config[:sudo], :shell => "bourne")
+    stub(:sudo => config[:sudo], :shell => shell)
   end
 
   let(:instance) do
@@ -142,13 +147,13 @@ describe Kitchen::Provisioner::Base do
     it "if :sudo is set, prepend sudo command" do
       config[:sudo] = true
 
-      provisioner.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      provisioner.shell.send(:sudo, "wakka").must_equal("sudo -E wakka")
     end
 
     it "if :sudo is falsy, do not include sudo command" do
       config[:sudo] = false
 
-      provisioner.send(:sudo, "wakka").must_equal("wakka")
+      provisioner.shell.send(:sudo, "wakka").must_equal("wakka")
     end
   end
 end
