@@ -89,6 +89,7 @@ module Kitchen
     DATA_KEYS = {
       :driver => :name,
       :provisioner => :name,
+      :transport => :name,
       :busser => :version
     }
 
@@ -1132,6 +1133,93 @@ module Kitchen
                 {}
               ).busser_data_for("sweet", "plat").must_equal(
                 :version => "chefy"
+              )
+            end
+          end
+
+          describe "for #transport_data_for" do
+
+            it "is returned when provided" do
+              DataMunger.new(
+                {
+                  :transport => "pipes",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {
+                  key => "datvalue"
+                }
+              ).transport_data_for("sweet", "plat").must_equal(
+                :name => "pipes",
+                key => "datvalue"
+              )
+            end
+
+            it "is returned when provided in user data" do
+              DataMunger.new(
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :transport => "pipes",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {}
+              ).transport_data_for("sweet", "plat").must_equal(
+                :name => "pipes",
+                key => "datvalue"
+              )
+            end
+
+            it "user data value beats provided value" do
+              DataMunger.new(
+                {
+                  :kitchen => {
+                    key => "datvalue"
+                  },
+                  :transport => "pipes",
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {
+                  key => "ilose"
+                }
+              ).transport_data_for("sweet", "plat").must_equal(
+                :name => "pipes",
+                key => "datvalue"
+              )
+            end
+
+            it "rejects any value in transport data" do
+              DataMunger.new(
+                {
+                  :transport => {
+                    :name => "pipes",
+                    key => "imevil"
+                  },
+                  :platforms => [
+                    { :name => "plat" }
+                  ],
+                  :suites => [
+                    { :name => "sweet" }
+                  ]
+                },
+                {}
+              ).transport_data_for("sweet", "plat").must_equal(
+                :name => "pipes"
               )
             end
           end

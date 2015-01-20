@@ -96,7 +96,6 @@ module Kitchen
         set_kitchen_config_at!(tdata, :kitchen_root)
         set_kitchen_config_at!(tdata, :test_base_path)
         set_kitchen_config_at!(tdata, :log_level)
-        combine_arrays!(tdata, :run_list, :platform, :suite)
       end
     end
 
