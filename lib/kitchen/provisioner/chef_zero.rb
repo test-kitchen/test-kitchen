@@ -116,10 +116,12 @@ module Kitchen
         args
       end
 
-      def add_argument(line, config_key, arg)
-        config_val = config[config_key]
-        return unless config_val
-        line << arg.gsub("%config%", config_val.to_s)
+      # Yields the config value if the config key exists
+      #
+      # @param config_key [Symbol] config key to check
+      # @api private
+      def yield_if_exists(config_key)
+        yield config[config_key] if config[config_key]
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory
