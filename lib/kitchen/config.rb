@@ -279,6 +279,17 @@ module Kitchen
       Provisioner.for_plugin(pdata[:name], pdata)
     end
 
+    # Builds a newly configured StateFile object, for a given Suite and
+    # Platform.
+    #
+    # @param suite [Suite,#name] a Suite
+    # @param platform [Platform,#name] a Platform
+    # @return [StateFile] a new StateFile object
+    # @api private
+    def new_state_file(suite, platform)
+      StateFile.new(kitchen_root, instance_name(suite, platform))
+    end
+
     # Builds a newly configured Transport object, for a given Suite and
     # Platform.
     #
@@ -289,17 +300,6 @@ module Kitchen
     def new_transport(suite, platform)
       tdata = data.transport_data_for(suite.name, platform.name)
       Transport.for_plugin(tdata[:name], tdata)
-    end
-
-    # Builds a newly configured StateFile object, for a given Suite and
-    # Platform.
-    #
-    # @param suite [Suite,#name] a Suite
-    # @param platform [Platform,#name] a Platform
-    # @return [StateFile] a new StateFile object
-    # @api private
-    def new_state_file(suite, platform)
-      StateFile.new(kitchen_root, instance_name(suite, platform))
     end
   end
 end
