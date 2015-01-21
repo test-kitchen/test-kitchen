@@ -22,8 +22,8 @@ Feature: Listing Test Kitchen instances
   Scenario: Listing instances
     When I run `kitchen list`
     Then the exit status should be 0
-    And the output should match /^foobar-ubuntu-1304\s+Dummy\s+ChefSolo\s+ssh\s+\<Not Created\>$/
-    And the output should match /^foobar-centos-64\s+Dummy\s+ChefSolo\s+ssh\s+\<Not Created\>$/
+    And the output should match /^foobar-ubuntu-1304\s+Dummy\s+ChefSolo\s+Ssh\s+\<Not Created\>$/
+    And the output should match /^foobar-centos-64\s+Dummy\s+ChefSolo\s+Ssh\s+\<Not Created\>$/
 
   Scenario: Listing instances with the --bare option
     When I run `kitchen list --bare`

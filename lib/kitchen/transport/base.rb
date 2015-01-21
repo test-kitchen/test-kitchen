@@ -79,7 +79,7 @@ module Kitchen
       #
       # @return [String] name of this transport
       def name
-        self.class.name.split("::").last.downcase
+        self.class.name.split("::").last
       end
 
       # Execute a command on the remote host.
