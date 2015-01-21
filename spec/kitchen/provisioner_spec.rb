@@ -18,6 +18,7 @@
 
 require_relative "../spec_helper"
 
+require "kitchen/configurable"
 require "kitchen/errors"
 require "kitchen/logging"
 require "kitchen/provisioner"
