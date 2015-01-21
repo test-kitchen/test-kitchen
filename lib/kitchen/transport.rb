@@ -34,12 +34,11 @@ module Kitchen
     #
     # @param plugin [String] a transport plugin type, to be constantized
     # @param config [Hash] a configuration hash to initialize the transport
-    # @return [Transport::Base] a driver instance
+    # @return [Transport::Base] a transport instance
     # @raise [ClientError] if a transport instance could not be created
     def self.for_plugin(plugin, config)
       require("kitchen/transport/#{plugin}")
 
-      # str_const = plugin.upcase
       str_const = Thor::Util.camel_case(plugin)
       klass = const_get(str_const)
       klass.new(config)

@@ -34,7 +34,7 @@ module Kitchen
     #
     # @param plugin [String] a provisioner plugin type, to be constantized
     # @param config [Hash] a configuration hash to initialize the provisioner
-    # @return [Provisioner::Base] a driver instance
+    # @return [Provisioner::Base] a provisioner instance
     # @raise [ClientError] if a provisioner instance could not be created
     def self.for_plugin(plugin, config)
       require("kitchen/provisioner/#{plugin}")
