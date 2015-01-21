@@ -37,11 +37,13 @@ module Kitchen
     # @return [Transport::Base] a transport instance
     # @raise [ClientError] if a transport instance could not be created
     def self.for_plugin(plugin, config)
-      require("kitchen/transport/#{plugin}")
+      first_load = require("kitchen/transport/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
       klass = const_get(str_const)
-      klass.new(config)
+      object = klass.new(config)
+      object.verify_dependencies if first_load
+      object
     rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' transport from the load path." \
