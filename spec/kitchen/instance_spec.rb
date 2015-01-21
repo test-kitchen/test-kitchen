@@ -97,7 +97,7 @@ describe Kitchen::Instance do
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
   let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
-  let(:transport)   { Kitchen::Transport::Dummy.new }
+  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
@@ -236,6 +236,23 @@ describe Kitchen::Instance do
     end
   end
 
+  describe "#transport" do
+
+    it "returns its transport" do
+      instance.transport.must_equal transport
+    end
+
+    it "raises an ArgumentError if missing" do
+      opts.delete(:transport)
+      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+    end
+
+    it "sets Transport#instance to itself" do
+      # it's mind-bottling
+      instance.transport.instance.must_equal instance
+    end
+  end
+
   describe "#busser" do
 
     it "returns its busser" do
@@ -325,6 +342,20 @@ describe Kitchen::Instance do
       }.new(suite.name, {})
 
       instance.diagnose[:busser].must_equal :unknown
+    end
+
+    it "sets :transport key to transport's diganose info" do
+      transport.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose[:transport].must_equal(:a => "b")
+    end
+
+    it "sets :transport key to :unknown if obj can't respond to #diagnose" do
+      opts[:transport] = Class.new(transport.class) {
+        undef_method :diagnose
+      }.new
+
+      instance.diagnose[:transport].must_equal :unknown
     end
   end
 

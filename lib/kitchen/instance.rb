@@ -65,7 +65,7 @@ module Kitchen
     attr_reader :provisioner
 
     # @return [Transport::Base] transport object which will communicate with
-    # an instance.
+    #   an instance.
     attr_reader :transport
 
     # @return [Busser] busser object for instance to manage the busser
