@@ -366,7 +366,9 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "uploads files" do
-        connection.expects(:upload_path!).with("/tmp/sandbox/stuff", "/rooty")
+        connection.expects(:upload_path!).with do |locals, remote|
+          locals.match(Regexp.new("(.*)sandbox(.*)\.tar\.gz")) &&   remote == '/rooty'
+        end
 
         cmd
       end

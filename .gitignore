@@ -19,3 +19,5 @@ tmp
 .rbenv-version
 .ruby-version
 .project
+/.idea/
+*.iml
