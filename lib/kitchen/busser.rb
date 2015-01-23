@@ -28,6 +28,11 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Busser
 
+    # Pattern to use with Dir.glob to return all paths in the current
+    # directory and all subdirectories, dereferencing symlinks along the
+    # way.
+    GLOB_RECURSE_ALL = '{*,**/*/**/*}'
+
     # Constructs a new Busser command generator, given a suite name.
     #
     # @param [String] suite_name name of suite on which to operate
@@ -209,7 +214,7 @@ module Kitchen
     # @api private
     def local_suite_files
       base = File.join(config[:test_base_path], config[:suite_name])
-      glob = File.join(base, "*/**/*")
+      glob = File.join(base, GLOB_RECURSE_ALL)
       Dir.glob(glob).reject do |f|
         chef_data_dir?(base, f) || File.directory?(f)
       end
@@ -231,7 +236,7 @@ module Kitchen
     # @return [Array<String>] array of helper files
     # @api private
     def helper_files
-      glob = File.join(config[:test_base_path], "helpers", "*/**/*")
+      glob = File.join(config[:test_base_path], "helpers", GLOB_RECURSE_ALL)
       Dir.glob(glob).reject { |f| File.directory?(f) }
     end
 
