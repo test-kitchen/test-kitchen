@@ -91,8 +91,8 @@ module Kitchen
           install_flags = %w[latest true].include?(version) ? "" : "v=#{version}"
 
           # If we have the default URL for UNIX then we change it for the Windows version.
-          if config[:chef_omnibus_url] =~ %r{http[s]*://www.getchef.com/chef/install.sh}
-            chef_url = "http://www.getchef.com/chef/install.msi?#{install_flags}"
+          if config[:chef_omnibus_url] =~ %r{http[s]*://www.chef.io/chef/install.sh}
+            chef_url = "http://www.chef.io/chef/install.msi?#{install_flags}"
           else
             # We use the one that comes from kitchen.yml
             chef_url = "#{config[:chef_omnibus_url]}?#{install_flags}"
