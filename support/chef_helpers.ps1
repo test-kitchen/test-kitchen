@@ -36,6 +36,10 @@ function install_chef {
     Start-Sleep 2
     $bar += "#"
   }
+
+  if ($proc_msi.ExitCode -ne 0) {
+    throw "msiexec was not successful. Received exit code $($proc_msi.ExitCode)"
+  }
   rm -r $chef_msi
   Write-Host -NoNewline "`r`t[MSI] [$bar] Completed!\n"
 }
