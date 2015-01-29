@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "httpclient"
+
 module Kitchen
 
   module Provisioner
@@ -88,6 +90,7 @@ module Kitchen
         # @option opts [String] :chef_omnibus_url URL to download the chef installer
         # @return [String] command to install chef
         def install_function(version, config)
+          version = expand_version(version)
           install_flags = %w[latest true].include?(version) ? "" : "v=#{version}"
 
           # If we have the default URL for UNIX then we change it for the Windows version.
@@ -111,6 +114,29 @@ module Kitchen
             }
           INSTALL
         end
+
+        private
+
+        # Converts a non-complete version (EG, 12) into a complete version (EG, 12.0.3)
+        def expand_version(version)
+          # TODO: all windows architectures and versions use the same Chef package
+          # when this changes, we will need to hit a different omnitruck URL per
+          # os version and architecture.
+          # https://docs.chef.io/api_omnitruck.html#supported-platforms
+          omnitruck = "http://www.chef.io/chef/metadata?p=windows&pv=2008r2&m=x86_64&v=#{version}"
+          client = HTTPClient.new(
+              :default_header => { "Accept" => "application/json" },
+              :follow_redirect => true
+          )
+          resp = client.request(:get, URI.parse(omnitruck))
+          if resp.code == 200
+            require "json"
+            body = JSON.parse(resp.body)
+            version = body["relpath"].gsub(/.+\/chef-(client|windows)-([^\-]+)-.+$/, '\2')
+          end
+          version
+        end
+
       end
     end
   end
