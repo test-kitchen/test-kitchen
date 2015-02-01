@@ -181,7 +181,9 @@ module Kitchen
       # @return [String] the command, conditionaly prefixed with sudo
       # @api private
       def sudo(script)
-        config[:sudo] ? "sudo -E #{script}" : script
+        return script unless config[:sudo]
+
+        "sudo su -m -c '#{script}'"
       end
     end
   end

@@ -69,7 +69,7 @@ describe Kitchen::Provisioner::Shell do
     it "uses sudo for rm when configured" do
       config[:sudo] = true
 
-      cmd.must_match regexify("sudo -E rm -rf ", :partial_line)
+      cmd.must_match regexify("sudo su -m -c 'rm -rf ", :partial_line)
     end
 
     it "does not use sudo for rm when configured" do
@@ -78,13 +78,13 @@ describe Kitchen::Provisioner::Shell do
       provisioner.init_command.
         must_match regexify("rm -rf ", :partial_line)
       provisioner.init_command.
-        wont_match regexify("sudo -E rm -rf ", :partial_line)
+        wont_match regexify("sudo su -m -c 'rm -rf ", :partial_line)
     end
 
     it "removes the data directory" do
       config[:root_path] = "/route"
 
-      cmd.must_match %r{rm -rf\b.*\s+/route/data\s+}
+      cmd.must_match %r{'rm -rf\b.*\s+/route/data'\s+}
     end
 
     it "creates :root_path directory" do
@@ -107,7 +107,7 @@ describe Kitchen::Provisioner::Shell do
       config[:root_path] = "/r"
       config[:sudo] = true
 
-      cmd.must_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+      cmd.must_match regexify("sudo su -m -c '/r/bootstrap.sh'", :partial_line)
     end
 
     it "does not use sudo for script when configured" do
@@ -115,7 +115,7 @@ describe Kitchen::Provisioner::Shell do
       config[:sudo] = false
 
       cmd.must_match regexify("/r/bootstrap.sh", :partial_line)
-      cmd.wont_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+      cmd.wont_match regexify("sudo su -m -c '/r/bootstrap.sh'", :partial_line)
     end
   end
 

@@ -107,7 +107,8 @@ describe Kitchen::ShellOut do
 
     it "prepends with sudo if :use_sudo is truthy" do
       Mixlib::ShellOut.unstub(:new)
-      Mixlib::ShellOut.expects(:new).with("sudo -E yo", opts).returns(command)
+      Mixlib::ShellOut.expects(:new).with("sudo su -m -c 'yo'", opts).
+        returns(command)
 
       subject.run_command("yo", :use_sudo => true)
     end

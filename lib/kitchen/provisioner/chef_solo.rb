@@ -41,19 +41,9 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        level = config[:log_level] == :info ? :auto : config[:log_level]
+        cmd = sudo("#{chef_solo_path} #{run_command_args}")
 
-        cmd = sudo(config[:chef_solo_path])
-        args = [
-          "--config #{config[:root_path]}/solo.rb",
-          "--log_level #{level}",
-          "--force-formatter",
-          "--no-color",
-          "--json-attributes #{config[:root_path]}/dna.json"
-        ]
-        args << "--logfile #{config[:log_file]}" if config[:log_file]
-
-        Util.wrap_command([cmd, *args].join(" "))
+        Util.wrap_command(cmd)
       end
 
       private
@@ -70,6 +60,58 @@ module Kitchen
         File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
+      end
+
+      # Returns a path string to the log file.
+      #
+      # @return [String] path string
+      # @api private
+      def log_file
+        config[:log_file]
+      end
+
+      # Returns a log level symbol.
+      #
+      # @return [Symbol] log level symbol
+      # @api private
+      def log_level
+        level = config[:log_level]
+
+        level == :info ? :auto : level
+      end
+
+      # Returns a root path string.
+      #
+      # @return [String] root path string
+      # @api private
+      def root_path
+        config[:root_path]
+      end
+
+      # Returns an arguments string for running Chef Solo.
+      #
+      # @return [String] arguments string
+      # @api private
+      def run_command_args
+        args = [
+          "--config #{root_path}/solo.rb",
+          "--log_level #{log_level}",
+          "--force-formatter",
+          "--no-color",
+          "--json-attributes #{root_path}/dna.json"
+        ].join(" ")
+
+        args << " --logfile #{log_file}" if log_file
+
+        args
+      end
+
+      # Returns a path string for the Chef Solo binary.
+      #
+      # @return [String] path string
+      # @api private
+      def chef_solo_path
+        config[:chef_solo_path]
       end
     end
   end

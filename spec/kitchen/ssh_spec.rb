@@ -406,6 +406,7 @@ describe Kitchen::SSH do
     end
 
     it "logs upload progress to debug" do
+      # FIXME: this isn't guaranteed to be /tmp
       remote_base = "/tmp/#{File.basename(@dir)}"
 
       with_sorted_dir_entries do

@@ -1,3 +1,4 @@
-Style/FileName:
+AllCops:
   Exclude:
+    - 'spec/**/*'
     - 'support/**/*'

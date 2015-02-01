@@ -49,17 +49,15 @@ module Kitchen
       def prepare_command
         return if modern?
 
-        ruby_bin = Pathname.new(config[:ruby_bindir])
-
         # we are installing latest chef in order to get chef-zero and
         # Chef::ChefFS only. The version of Chef that gets run will be
         # the installed omnibus package. Yep, this is funky :)
         cmd = <<-PREPARE.gsub(/^ {10}/, "")
           #{chef_client_zero_env(:export)}
-          if ! #{sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
+          if ! #{chef_zero_installed?}; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
-            #{sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
+            #{install_chef}
           fi
         PREPARE
 
@@ -81,7 +79,7 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def local_mode_command
-        "#{sudo(config[:chef_client_path])} --local-mode"
+        sudo("#{config[:chef_client_path]} --local-mode")
       end
 
       # Returns the command that will run a backwards compatible shim script
@@ -92,8 +90,7 @@ module Kitchen
       def shim_command
         [
           chef_client_zero_env,
-          sudo("#{config[:ruby_bindir]}/ruby"),
-          "#{config[:root_path]}/chef-client-zero.rb"
+          sudo("#{ruby_bindir}/ruby #{config[:root_path]}/chef-client-zero.rb")
         ].join(" ")
       end
 
@@ -208,6 +205,38 @@ module Kitchen
         else
           Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
         end
+      end
+
+      # Returns a path string for Ruby's binary directory.
+      #
+      # @return [String] path
+      # @api private
+      def ruby_bindir
+        config[:ruby_bindir]
+      end
+
+      # Returns a pathname for Ruby's gem binary.
+      #
+      # @return [Pathname] pathname
+      # @api private
+      def gem
+        Pathname.new(ruby_bindir).join("gem")
+      end
+
+      # Returns a command string to search for the chef-zero gem.
+      #
+      # @returns [String] command string
+      # @api private
+      def chef_zero_installed?
+        sudo("#{gem} list chef-zero -i >/dev/null")
+      end
+
+      # Returns a command string to install the chef gem.
+      #
+      # @return [String] command string
+      # @api private
+      def install_chef
+        sudo("#{gem} install chef --no-ri --no-rdoc --conservative")
       end
     end
   end

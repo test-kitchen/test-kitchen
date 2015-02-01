@@ -91,11 +91,10 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+        cmd = [sudo("rm -rf #{chef_directories}"), "mkdir -p #{root_path}"].
+          join("\n")
 
-        Util.wrap_command(lines.join("\n"))
+        Util.wrap_command(cmd)
       end
 
       # (see Base#create_sandbox)
@@ -149,22 +148,11 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def chef_install_function
-        version = config[:require_chef_omnibus].to_s.downcase
-        pretty_version = case version
-                         when "true" then "install only if missing"
-                         when "latest" then "always install latest version"
-                         else version
-                         end
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
-        if config[:chef_omnibus_install_options]
-          install_flags << " " << config[:chef_omnibus_install_options]
-        end
-
         <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
+          if #{should_update_chef?}; then
             echo "-----> Installing Chef Omnibus (#{pretty_version})"
-            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
+            #{download_chef}
+            #{install_chef}
           else
             echo "-----> Chef Omnibus installation detected (#{pretty_version})"
           fi
@@ -189,24 +177,24 @@ module Kitchen
       # @return [Hash] a configuration hash
       # @api private
       def default_config_rb
-        root = config[:root_path]
-
         {
           :node_name        => instance.name,
-          :checksum_path    => "#{root}/checksums",
-          :file_cache_path  => "#{root}/cache",
-          :file_backup_path => "#{root}/backup",
-          :cookbook_path    => ["#{root}/cookbooks", "#{root}/site-cookbooks"],
-          :data_bag_path    => "#{root}/data_bags",
-          :environment_path => "#{root}/environments",
-          :node_path        => "#{root}/nodes",
-          :role_path        => "#{root}/roles",
-          :client_path      => "#{root}/clients",
-          :user_path        => "#{root}/users",
-          :validation_key   => "#{root}/validation.pem",
-          :client_key       => "#{root}/client.pem",
+          :checksum_path    => "#{root_path}/checksums",
+          :file_cache_path  => "#{root_path}/cache",
+          :file_backup_path => "#{root_path}/backup",
+          :cookbook_path    => ["#{root_path}/cookbooks",
+                                "#{root_path}/site-cookbooks"],
+          :data_bag_path    => "#{root_path}/data_bags",
+          :environment_path => "#{root_path}/environments",
+          :node_path        => "#{root_path}/nodes",
+          :role_path        => "#{root_path}/roles",
+          :client_path      => "#{root_path}/clients",
+          :user_path        => "#{root_path}/users",
+          :validation_key   => "#{root_path}/validation.pem",
+          :client_key       => "#{root_path}/client.pem",
           :chef_server_url  => "http://127.0.0.1:8889",
-          :encrypted_data_bag_secret => "#{root}/encrypted_data_bag_secret"
+          :encrypted_data_bag_secret =>
+            "#{root_path}/encrypted_data_bag_secret"
         }
       end
 
@@ -440,6 +428,76 @@ module Kitchen
         Kitchen.mutex.synchronize do
           Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
         end
+      end
+
+      # Returns a path list string of the Chef directories.
+      #
+      # @return [String] path list string
+      # @api private
+      def chef_directories
+        %w[cookbooks data data_bags environments roles clients].
+          map { |dir| File.join(root_path, dir) }.join(" ")
+      end
+
+      # Returns a root path string.
+      #
+      # @return [String] root path string
+      # @api private
+      def root_path
+        config[:root_path]
+      end
+
+      # Returns a version requirement string.
+      #
+      # @return [String] version requirement string
+      # @api private
+      def version
+        config[:require_chef_omnibus].to_s.downcase
+      end
+
+      # Returns a pretty version string.
+      #
+      # @return [String] pretty version string
+      # @api private
+      def pretty_version
+        { "true" => "install only if missing",
+          "latest" => "always install latest version" }.
+          fetch(version) { version }
+      end
+
+      # Returns an install flags string for the Chef omnibus installer.
+      #
+      # @return [String] install flags string
+      # @api private
+      def install_flags
+        version_flag = %w[latest true].include?(version) ? "" : "-v #{version}"
+        options = config[:chef_omnibus_install_options]
+
+        "#{version_flag} #{options}".strip
+      end
+
+      # Returns a command string to determine if Chef should be updated.
+      #
+      # @return [String] command string
+      # @api private
+      def should_update_chef?
+        "should_update_chef '#{config[:chef_omnibus_root]}' '#{version}'"
+      end
+
+      # Returns a command string to download Chef.
+      #
+      # @return [String] command string
+      # @api private
+      def download_chef
+        "do_download #{config[:chef_omnibus_url]} /tmp/install.sh"
+      end
+
+      # Returns a command string to install Chef.
+      #
+      # @return [String] command string
+      # @api private
+      def install_chef
+        sudo("sh /tmp/install.sh #{install_flags}")
       end
     end
   end
