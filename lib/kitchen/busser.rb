@@ -97,20 +97,16 @@ module Kitchen
     def setup_cmd
       return if local_suite_files.empty?
 
-      ruby    = "#{config[:ruby_bindir]}/ruby"
-      gem     = sudo("#{config[:ruby_bindir]}/gem")
-      busser  = sudo(config[:busser_bin])
-
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
-        gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
 
-        if ! #{gem} list busser -i >/dev/null; then
-          #{gem} install #{gem_install_args}
+        if ! #{busser_installed?}; then
+          #{busser_install}
         fi
-        #{sudo("${gem_bindir}")}/busser setup
-        #{busser} plugin install #{plugins.join(" ")}
+        #{busser_setup}
+        #{busser_install_plugins}
       CMD
+
       Util.wrap_command(cmd)
     end
 
@@ -128,15 +124,11 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} suite cleanup
+        #{busser_suite_cleanup}
 
+        #{stream_files(:local_suite)}
+        #{stream_files(:helper)}
       CMD
-      local_suite_files.each do |f|
-        cmd << stream_file(f, remote_file(f, config[:suite_name])).concat("\n")
-      end
-      helper_files.each do |f|
-        cmd << stream_file(f, remote_file(f, "helpers")).concat("\n")
-      end
 
       Util.wrap_command(cmd)
     end
@@ -154,7 +146,7 @@ module Kitchen
       cmd = <<-CMD.gsub(/^ {8}/, "")
         #{busser_setup_env}
 
-        #{sudo(config[:busser_bin])} test
+        #{busser_test}
       CMD
 
       Util.wrap_command(cmd)
@@ -244,8 +236,9 @@ module Kitchen
     # @api private
     def remote_file(file, dir)
       local_prefix = File.join(config[:test_base_path], dir)
-      "`#{sudo(config[:busser_bin])} suite path`/".
-        concat(file.sub(%r{^#{local_prefix}/}, ""))
+      busser_suite_path = sudo("#{busser_bin} suite path")
+
+      "`#{busser_suite_path}`/".concat(file.sub(%r{^#{local_prefix}/}, ""))
     end
 
     # Returns a command string that will, once evaluated, result in the copying
@@ -256,21 +249,13 @@ module Kitchen
     # @return [String] command string
     # @api private
     def stream_file(local_path, remote_path)
-      local_file = IO.read(local_path)
-      encoded_file = Base64.encode64(local_file).gsub("\n", "")
-      md5 = Digest::MD5.hexdigest(local_file)
-      perms = format("%o", File.stat(local_path).mode)[2, 4]
-      stream_cmd = [
-        sudo(config[:busser_bin]),
-        "deserialize",
-        "--destination=#{remote_path}",
-        "--md5sum=#{md5}",
-        "--perms=#{perms}"
-      ].join(" ")
+      encoded_file = encoded_file(local_path)
+      permissions = permissions(local_path)
+      stream_command = stream_command(local_path, remote_path)
 
       [
-        %{echo "Uploading #{remote_path} (mode=#{perms})"},
-        %{echo "#{encoded_file}" | #{stream_cmd}}
+        %{echo "Uploading #{remote_path} (mode=#{permissions})"},
+        %{echo "#{encoded_file}" | #{stream_command}}
       ].join("\n").concat("\n")
     end
 
@@ -280,7 +265,9 @@ module Kitchen
     # @return [String] the command, conditionaly prefixed with sudo
     # @api private
     def sudo(command)
-      config[:sudo] ? "sudo -E #{command}" : command
+      return command unless config[:sudo]
+
+      "sudo su -m -c '#{command}'"
     end
 
     # Returns a command string that sets appropriate environment variables for
@@ -311,6 +298,146 @@ module Kitchen
       args += " --version #{version}" if version
       args += " --no-rdoc --no-ri"
       args
+    end
+
+    # Returns a path to the busser binary.
+    #
+    # @return [String] binary path
+    # @api private
+    def busser_bin
+      config[:busser_bin]
+    end
+
+    # Returns a command string to check for the busser gem.
+    #
+    # Returns [String] command string
+    # @api private
+    def busser_installed?
+      sudo("#{gem} list busser -i >/dev/null")
+    end
+
+    # Returns a path to the `gem` command.
+    #
+    # @return [String] command string
+    # @api private
+    def gem
+      "#{config[:ruby_bindir]}/gem"
+    end
+
+    # Returns a command string to install the busser gem.
+    #
+    # @return [String] command string
+    # @api private
+    def busser_install
+      sudo("#{gem} install #{gem_install_args}")
+    end
+
+    # Returns a command string to install busser plugins.
+    #
+    # @return [String] command string
+    # @api private
+    def busser_install_plugins
+      sudo("#{busser_bin} plugin install #{plugins.join(" ")}")
+    end
+
+    # Returns a path to the Ruby Gems binary directory.
+    #
+    # @return [String] directory path
+    # @api private
+    def gem_bindir
+      "#{ruby} -rrubygems -e \"puts Gem.bindir\""
+    end
+
+    # Returns a path to the `ruby` command.
+    #
+    # @return [String] command string
+    # @api private
+    def ruby
+      "#{config[:ruby_bindir]}/ruby"
+    end
+
+    # Returns a command string to setup the busser gem.
+    #
+    # @return [String] command string
+    # @api private
+    def busser_setup
+      sudo("`#{gem_bindir}`/busser setup")
+    end
+
+    # Returns a command string to cleanup the busser suite.
+    #
+    # @return [String] command string
+    # @api private
+    def busser_suite_cleanup
+      sudo("#{busser_bin} suite cleanup")
+    end
+
+    # Returns a command string to copy local files of a given type
+    # to remote locations.
+    #
+    # @param [String] type type of local file to copy
+    # @return [String] command string
+    # @api private
+    def stream_files(type)
+      dir = { :local_suite => config[:suite_name], :helper => "helpers" }.
+        fetch(type)
+
+      send("#{type}_files").map do |file|
+        remote_file = remote_file(file, dir)
+
+        stream_file(file, remote_file)
+      end.join("\n")
+    end
+
+    # Returns a command string to run `busser test`.
+    #
+    # @return [String] command string
+    # @api private
+    def busser_test
+      sudo("#{busser_bin} test")
+    end
+
+    # Returns the base 64 encoding of a file.
+    #
+    # @return [String] base 64 encoding
+    # @api private
+    def encoded_file(path)
+      file = IO.read(path)
+
+      Base64.encode64(file).gsub("\n", "")
+    end
+
+    # Returns the MD5 hex digest of a file.
+    #
+    # @return [String] hex digest
+    # @api private
+    def md5(path)
+      file = IO.read(path)
+
+      Digest::MD5.hexdigest(file)
+    end
+
+    # Returns a permission bit string for a file.
+    #
+    # @return [String] permission bit string
+    # @api private
+    def permissions(path)
+      file_mode = File.stat(path).mode
+
+      format("%o", file_mode)[2, 4]
+    end
+
+    # Returns a command string to stream a local file to a remote destination.
+    #
+    # @return [String] command string
+    # @api private
+    def stream_command(local_path, remote_path)
+      md5 = md5(local_path)
+      permissions = permissions(local_path)
+
+      sudo("#{busser_bin} deserialize " \
+                          "--destination=#{remote_path} --md5sum=#{md5} " \
+                          "--perms=#{permissions}")
     end
   end
 end

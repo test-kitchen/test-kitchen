@@ -175,21 +175,24 @@ describe Kitchen::Busser do
 
       it "checks if busser is installed" do
         cmd.must_match regexify(
-          %{if ! sudo -E /r/gem list busser -i >/dev/null;}, :partial_line)
+          %{if ! sudo su -m -c '/r/gem list busser -i >/dev/null';},
+          :partial_line)
       end
 
       describe "installing busser" do
 
         it "installs the latest busser gem by default" do
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --no-rdoc --no-ri}, :partial_line)
+            %{sudo su -m -c '/r/gem install busser --no-rdoc --no-ri'},
+            :partial_line)
         end
 
         it "installs a specific busser version gem" do
           config[:version] = "4.0.7"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --version 4.0.7 --no-rdoc --no-ri},
+            %{sudo su -m -c '/r/gem install busser --version 4.0.7 } +
+              %{--no-rdoc --no-ri'},
             :partial_line)
         end
 
@@ -197,7 +200,8 @@ describe Kitchen::Busser do
           config[:version] = "busser@1.2.3"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --version 1.2.3 --no-rdoc --no-ri},
+            %{sudo su -m -c '/r/gem install busser --version 1.2.3 } +
+              %{--no-rdoc --no-ri'},
             :partial_line)
         end
 
@@ -205,28 +209,25 @@ describe Kitchen::Busser do
           config[:version] = "foo@9.0.1"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install foo --version 9.0.1 --no-rdoc --no-ri},
+            %{sudo su -m -c '/r/gem install foo --version 9.0.1 --no-rdoc } +
+              %{--no-ri'},
             :partial_line)
         end
       end
 
-      it "calculates RubyGem's bindir" do
-        cmd.must_match regexify(
-          %{gem_bindir=`/r/ruby -rrubygems -e "puts Gem.bindir"`},
-          :partial_line)
-      end
-
       it "runs busser setup from the installed gem_bindir binstub" do
         cmd.must_match regexify(
-          %{sudo -E ${gem_bindir}/busser setup}, :partial_line)
+          %{sudo su -m -c '`/r/ruby -rrubygems -e "puts Gem.bindir"`/busser } +
+            %{setup'},
+          :partial_line)
       end
 
       it "runs busser plugin install with the :busser_bindir command" do
         config[:busser_bin] = "/b/b"
 
         cmd.must_match regexify(
-          %{sudo -E /b/b plugin install } +
-            %{busser-abba busser-minispec busser-mondospec},
+          %{sudo su -m -c '/b/b plugin install } +
+            %{busser-abba busser-minispec busser-mondospec'},
           :partial_line)
       end
     end
@@ -347,7 +348,7 @@ describe Kitchen::Busser do
 
         files.each do |f, md|
           cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
+            %{echo "Uploading `sudo su -m -c '/b/busser suite path'`/#{f}},
             %{(mode=#{md[:perms]})"}
           ].join(" "))
         end
@@ -358,7 +359,7 @@ describe Kitchen::Busser do
 
         helper_files.each do |f, md|
           cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
+            %{echo "Uploading `sudo su -m -c '/b/busser suite path'`/#{f}},
             %{(mode=#{md[:perms]})"}
           ].join(" "))
         end
@@ -369,9 +370,9 @@ describe Kitchen::Busser do
 
         files.each do |f, md|
           cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
+            %{echo "#{md[:base64]}" | sudo su -m -c '/b/busser deserialize},
+            %{--destination=`sudo su -m -c '/b/busser suite path'`/#{f}},
+            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}'}
           ].join(" "))
         end
       end
@@ -381,9 +382,9 @@ describe Kitchen::Busser do
 
         helper_files.each do |f, md|
           cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
+            %{echo "#{md[:base64]}" | sudo su -m -c '/b/busser deserialize},
+            %{--destination=`sudo su -m -c '/b/busser suite path'`/#{f}},
+            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}'}
           ].join(" "))
         end
       end
@@ -469,7 +470,7 @@ describe Kitchen::Busser do
         config[:sudo] = true
         config[:busser_bin] = "/p/b"
 
-        cmd.must_match regexify("sudo -E /p/b test", :partial_line)
+        cmd.must_match regexify("sudo su -m -c '/p/b test'", :partial_line)
       end
 
       it "does not use sudo for busser test when configured" do
@@ -477,7 +478,7 @@ describe Kitchen::Busser do
         config[:busser_bin] = "/p/b"
 
         cmd.must_match regexify("/p/b test", :partial_line)
-        cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
+        cmd.wont_match regexify("sudo su -m -c '/p/b test'", :partial_line)
       end
     end
   end
