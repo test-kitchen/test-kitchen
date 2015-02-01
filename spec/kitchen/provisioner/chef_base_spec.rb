@@ -139,7 +139,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = "1.2.3"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 1.2.3")
+        "sudo su -m -c 'sh /tmp/install.sh -v 1.2.3'")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (1.2.3)", :partial_line)
     end
@@ -148,7 +148,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = "11.10"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11.10")
+        "sudo su -m -c 'sh /tmp/install.sh -v 11.10'")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (11.10)", :partial_line)
     end
@@ -157,7 +157,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = "12"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 12")
+        "sudo su -m -c 'sh /tmp/install.sh -v 12'")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (12)", :partial_line)
     end
@@ -166,7 +166,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = "10.1.0.RC.1"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 10.1.0.rc.1")
+        "sudo su -m -c 'sh /tmp/install.sh -v 10.1.0.rc.1'")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (10.1.0.rc.1)", :partial_line)
     end
@@ -175,7 +175,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = "latest"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
+        "sudo su -m -c 'sh /tmp/install.sh '")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (always install latest version)",
         :partial_line
@@ -186,7 +186,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:require_chef_omnibus] = true
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
+        "sudo su -m -c 'sh /tmp/install.sh '")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (install only if missing)", :partial_line)
     end
@@ -195,7 +195,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:chef_omnibus_install_options] = "-P chefdk"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -P chefdk")
+        "sudo su -m -c 'sh /tmp/install.sh -P chefdk'")
       provisioner.install_command.must_match regexify(
         "Installing Chef Omnibus (install only if missing)", :partial_line)
     end
@@ -205,7 +205,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:chef_omnibus_install_options] = "-d /tmp/place"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11 -d /tmp/place")
+        "sudo su -m -c 'sh /tmp/install.sh -v 11 -d /tmp/place'")
     end
   end
 
@@ -220,7 +220,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:sudo] = true
 
       provisioner.init_command.
-        must_match regexify("sudo -E rm -rf ", :partial_line)
+        must_match regexify("sudo su -m -c 'rm -rf ", :partial_line)
     end
 
     it "does not use sudo for rm when configured" do
@@ -229,14 +229,15 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner.init_command.
         must_match regexify("rm -rf ", :partial_line)
       provisioner.init_command.
-        wont_match regexify("sudo -E rm -rf ", :partial_line)
+        wont_match regexify("sudo su -m -c 'rm -rf ", :partial_line)
     end
 
     %w[cookbooks data data_bags environments roles clients].each do |dir|
       it "removes the #{dir} directory" do
         config[:root_path] = "/route"
 
-        provisioner.init_command.must_match %r{rm -rf\b.*\s+/route/#{dir}\s+}
+        provisioner.init_command.
+          must_match %r{'rm -rf\b.*\s+/route/#{dir}[\s']+}
       end
     end
 
