@@ -360,12 +360,13 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "checks if chef-zero is installed" do
         cmd.must_match regexify(
-          %{if ! sudo -E /rbd/gem list chef-zero -i >/dev/null; then})
+          %{if ! sudo su -m -c '/rbd/gem list chef-zero -i >/dev/null'; then})
       end
 
       it "installs the chef gem" do
         cmd.must_match regexify(
-          %{sudo -E /rbd/gem install chef --no-ri --no-rdoc --conservative})
+          %{sudo su -m -c '/rbd/gem install chef --no-ri --no-rdoc } +
+            %{--conservative'})
       end
     end
   end
@@ -387,7 +388,8 @@ describe Kitchen::Provisioner::ChefZero do
         config[:chef_omnibus_root] = "/c"
         config[:sudo] = true
 
-        cmd.must_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
+        cmd.must_match regexify("sudo su -m -c '/c/bin/chef-client ",
+                                :partial_line)
       end
 
       it "does not use sudo for chef-client when configured" do
@@ -395,7 +397,8 @@ describe Kitchen::Provisioner::ChefZero do
         config[:sudo] = false
 
         cmd.must_match regexify("/c/bin/chef-client ", :partial_line)
-        cmd.wont_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
+        cmd.wont_match regexify("sudo su -m -c '/c/bin/chef-client' ",
+                                :partial_line)
       end
 
       it "sets local mode flag on chef-client" do
@@ -505,7 +508,7 @@ describe Kitchen::Provisioner::ChefZero do
         config[:sudo] = true
 
         cmd.must_match regexify(
-          "sudo -E /r/bin/ruby /x/chef-client-zero.rb ", :partial_line)
+          "sudo su -m -c '/r/bin/ruby /x/chef-client-zero.rb' ", :partial_line)
       end
 
       it "does not use sudo for ruby when configured" do
@@ -515,7 +518,7 @@ describe Kitchen::Provisioner::ChefZero do
         cmd.must_match regexify(
           "/r/bin/ruby /x/chef-client-zero.rb ", :partial_line)
         cmd.wont_match regexify(
-          "sudo -E /r/bin/ruby /x/chef-client-zero.rb ", :partial_line)
+          "sudo su -m -c '/r/bin/ruby /x/chef-client-zero.rb' ", :partial_line)
       end
 
       it "does not set local mode flag" do
