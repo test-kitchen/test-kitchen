@@ -46,17 +46,16 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        data = File.join(config[:root_path], "data")
-        cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
+        cmd = "#{sudo("rm -rf #{root_data_path}")} ; mkdir -p #{root_path}"
 
         Util.wrap_command(cmd)
       end
 
       # (see Base#run_command)
       def run_command
-        Util.wrap_command(
-          sudo(File.join(config[:root_path], File.basename(config[:script])))
-        )
+        cmd = sudo(root_script_path)
+
+        Util.wrap_command(cmd)
       end
 
       private
@@ -83,20 +82,53 @@ module Kitchen
       def prepare_script
         info("Preparing script")
 
-        if config[:script]
-          debug("Using script from #{config[:script]}")
-          FileUtils.cp_r(config[:script], sandbox_path)
+        if script
+          debug("Using script from #{script}")
+          FileUtils.cp_r(script, sandbox_path)
         else
           config[:script] = File.join(sandbox_path, "bootstrap.sh")
-          info("#{File.basename(config[:script])} not found " \
+          info("#{File.basename(script)} not found " \
             "so Kitchen will run a stubbed script. Is this intended?")
-          File.open(config[:script], "wb") do |file|
+          File.open(script, "wb") do |file|
             file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
           end
         end
 
-        FileUtils.chmod(0755,
-          File.join(sandbox_path, File.basename(config[:script])))
+        FileUtils.chmod(0755, File.join(sandbox_path, File.basename(script)))
+      end
+
+      # Returns a path string to the root directory.
+      #
+      # @return [String] path string
+      # @api private
+      def root_path
+        config[:root_path]
+      end
+
+      # Returns a path string to the root data directory.
+      #
+      # @return [String] path string
+      # @api private
+      def root_data_path
+        File.join(root_path, "data")
+      end
+
+      # Returns a path string to the root script.
+      #
+      # @return [String] path string
+      # @api private
+      def root_script_path
+        script_name = File.basename(script)
+
+        File.join(root_path, script_name)
+      end
+
+      # Returns a path string to the bootstrap script.
+      #
+      # @return [String] path string
+      # @api private
+      def script
+        config[:script]
       end
     end
   end
