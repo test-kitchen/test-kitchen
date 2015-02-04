@@ -426,6 +426,15 @@ describe Kitchen::Transport::Ssh do
         first_connection.object_id.must_equal second_connection.object_id
       end
 
+      it "logs a debug message when the connection is reused" do
+        make_connection(state)
+        make_connection(state)
+
+        logged_output.string.lines.select { |l|
+          l =~ debug_line_with("[SSH] reusing existing connection ")
+        }.size.must_equal 1
+      end
+
       it "returns a new connection when called again if state differs" do
         first_connection  = make_connection(state)
         second_connection = make_connection(state.merge(:port => 9000))

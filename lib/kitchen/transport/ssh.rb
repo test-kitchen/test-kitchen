@@ -224,20 +224,6 @@ module Kitchen
 
       private
 
-      def create_new_connection(options, &block)
-        if @connection
-          logger.debug("[SSH] shutting previous connection #{@connection}")
-          @connection.shutdown
-        end
-        @connection_options = options
-
-        @connection = if block_given?
-          Kitchen::Transport::Ssh::Connection.new(options, &block)
-        else
-          Kitchen::Transport::Ssh::Connection.new(options)
-        end
-      end
-
       def connection_options(data)
         opts = {
           :logger                 => logger,
@@ -258,6 +244,16 @@ module Kitchen
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
 
         opts
+      end
+
+      def create_new_connection(options, &block)
+        if @connection
+          logger.debug("[SSH] shutting previous connection #{@connection}")
+          @connection.shutdown
+        end
+
+        @connection_options = options
+        @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)
       end
 
       def reuse_connection
