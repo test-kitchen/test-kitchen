@@ -241,7 +241,45 @@ describe Kitchen::Transport::Winrm do
 
         make_connection
       end
-      # TODO: add connection reusing
+
+      it "returns the same connection when called again with same state" do
+        first_connection  = make_connection(state)
+        second_connection = make_connection(state)
+
+        first_connection.object_id.must_equal second_connection.object_id
+      end
+
+      it "logs a debug message when the connection is reused" do
+        make_connection(state)
+        make_connection(state)
+
+        logged_output.string.lines.select { |l|
+          l =~ debug_line_with("[WinRM] reusing existing connection ")
+        }.size.must_equal 1
+      end
+
+      it "returns a new connection when called again if state differs" do
+        first_connection  = make_connection(state)
+        second_connection = make_connection(state.merge(:port => 9000))
+
+        first_connection.object_id.wont_equal second_connection.object_id
+      end
+
+      it "closes first connection when a second is created" do
+        first_connection = make_connection(state)
+        first_connection.expects(:shutdown)
+
+        make_connection(state.merge(:port => 9000))
+      end
+
+      it "logs a debug message a second connection is created" do
+        make_connection(state)
+        make_connection(state.merge(:port => 9000))
+
+        logged_output.string.lines.select { |l|
+          l =~ debug_line_with("[WinRM] shutting previous connection ")
+        }.size.must_equal 1
+      end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 

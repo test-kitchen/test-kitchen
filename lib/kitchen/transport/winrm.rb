@@ -58,10 +58,10 @@ module Kitchen
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))
 
-        if block_given?
-          Kitchen::Transport::Winrm::Connection.new(options, &block)
+        if @connection && @connection_options == options
+          reuse_connection(&block)
         else
-          Kitchen::Transport::Winrm::Connection.new(options)
+          create_new_connection(options, &block)
         end
       end
 
@@ -221,6 +221,22 @@ module Kitchen
         }
 
         opts
+      end
+
+      def create_new_connection(options, &block)
+        if @connection
+          logger.debug("[WinRM] shutting previous connection #{@connection}")
+          @connection.shutdown
+        end
+
+        @connection_options = options
+        @connection = Kitchen::Transport::Winrm::Connection.new(options, &block)
+      end
+
+      def reuse_connection
+        logger.debug("[WinRM] reusing existing connection #{@connection}")
+        yield @connection if block_given?
+        @connection
       end
     end
   end
