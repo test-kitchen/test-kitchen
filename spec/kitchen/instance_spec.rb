@@ -835,14 +835,9 @@ describe Kitchen::Instance do
       before { state_file.write(:last_action => "create") }
 
       it "calls Transport#execute with command" do
-
-        # TODO: minitest seems to lack an equivalent of #and_call_original
-        # not sure what to do here.
-        # transport.expect(:connection, { :last_action => "create" })
-
-        transport.expects(:execute).with do |command|
-          command.must_equal "uptime"
-        end
+        connection = mock("connection")
+        connection.expects(:execute).with("uptime")
+        transport.stubs(:connection).yields(connection)
 
         instance.remote_exec("uptime")
       end

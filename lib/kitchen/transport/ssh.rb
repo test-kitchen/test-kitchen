@@ -16,14 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "logger"
+require "kitchen"
+
 require "net/ssh"
 require "net/scp"
-require "socket"
 
 module Kitchen
 
   module Transport
+
+    # Wrapped exception for any internally raised SSH-related errors.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class SshFailed < TransportFailed; end
 
     # Class to help establish SSH connections, issue remote commands, and
     # transfer files between a local system and remote node.
@@ -31,174 +36,234 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
 
-      default_config :sudo, true
-      default_config :shell, Kitchen::Shell::DEFAULT_SHELL
+      default_config :port, 22
+      default_config :username, "root"
+      default_config :connection_timeout, 15
+      default_config :connection_retries, 5
+      default_config :connection_retry_sleep, 1
+      default_config :max_wait_until_ready, 600
 
-      # (see Base#finalize_config
-      def finalize_config!(instance)
-        super
-        # we merge in the legacy SSHBase config
-        driver = instance.driver
-        if driver.class <= Kitchen::Driver::SSHBase
-          driver.config_keys.each do |key|
-            config[key] ||= driver[key]
+      def connection(state, &block)
+        options = connection_options(config.to_hash.merge(state))
+
+        if @connection && @connection_options == options
+          reuse_connection(&block)
+        else
+          create_new_connection(options, &block)
+        end
+      end
+
+      # TODO: comment
+      class Connection < Kitchen::Transport::Base::Connection
+
+        # (see Base#execute)
+        def execute(command)
+          logger.debug("[SSH] #{self} (#{command})")
+          exit_code = execute_with_exit_code(command)
+
+          if exit_code != 0
+            raise Transport::SshFailed,
+              "SSH exited (#{exit_code}) for command: [#{command}]"
           end
         end
-        self
-      end
 
-      # (see Base#execute)
-      def execute(command)
-        logger.debug("[#{self.class}] #{self} (#{command})")
-        exit_code = execute_with_exit(env_command(command))
+        # (see Base#login_command)
+        def login_command
+          args  = %W[ -o UserKnownHostsFile=/dev/null ]
+          args += %W[ -o StrictHostKeyChecking=no ]
+          args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
+          args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
+          if options.key?(:forward_agent)
+            args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
+          end
+          Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
+          args += %W[ -p #{port} ]
+          args += %W[ #{username}@#{hostname} ]
 
-        if exit_code != 0
-          raise TransportFailed, "[#{name}] exited (#{exit_code}) for command: [#{command}]"
+          LoginCommand.new(["ssh", *args])
         end
-      end
 
-      # (see Base#upload!)
-      def upload!(local, remote, options = {}, &progress)
-        options = { :recursive => true }.merge(options)
+        # (see Base#shutdown)
+        def shutdown
+          return if @session.nil?
 
-        if progress.nil?
-          progress = lambda { |_ch, name, sent, total|
-            if sent == total
-              logger.debug("Uploaded #{name} (#{total} bytes)")
+          logger.debug("[SSH] closing connection to #{self}")
+          session.shutdown!
+        ensure
+          @session = nil
+        end
+
+        # (see Base#upload)
+        def upload(locals, remote)
+          Array(locals).each do |local|
+            opts = File.directory?(local) ? { :recursive => true } : {}
+
+            session.scp.upload!(local, remote, opts) do |_ch, name, sent, total|
+              logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
             end
-          }
+          end
         end
 
-        local.each do |path|
-          session.scp.upload!(path, remote, options, &progress)
+        # (see Base#wait_until_ready)
+        def wait_until_ready
+          delay = 3
+          session(
+            :retries  => max_wait_until_ready / delay,
+            :delay    => delay,
+            :message  => "Waiting for SSH service on #{hostname}:#{port}, " \
+              "retrying in #{delay} seconds"
+          )
+          execute("")
         end
-      end
 
-      # (see Base#disconnect)
-      def disconnect
-        return if @session.nil?
+        private
 
-        logger.debug("[#{self.class}] closing connection to #{self}")
-        session.shutdown!
-      ensure
-        @session = nil
-      end
-      # (see Base#login_command)
-      def login_command
-        args  = %W[ -o UserKnownHostsFile=/dev/null ]
-        args += %W[ -o StrictHostKeyChecking=no ]
-        args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
-        args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
-        if options.key?(:forward_agent)
-          args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
+        RESCUE_EXCEPTIONS_ON_ESTABLISH = [
+          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+          Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
+        ].freeze
+
+        attr_reader :connection_retries
+
+        attr_reader :connection_retry_sleep
+
+        attr_reader :hostname
+
+        attr_reader :max_wait_until_ready
+
+        attr_reader :username
+
+        attr_reader :port
+
+        # Establish a connection session to the remote host.
+        #
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def establish_connection(opts)
+          logger.debug("[SSH] opening connection to #{self}")
+          Net::SSH.start(hostname, username, options)
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          if (opts[:retries] -= 1) > 0
+            message = if opts[:message]
+              logger.debug("[SSH] connection failed (#{e.inspect})")
+              opts[:message]
+            else
+              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                "(#{e.inspect})"
+            end
+            logger.info(message)
+            sleep(opts[:delay])
+            retry
+          else
+            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+            raise
+          end
         end
-        Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
-        args += %W[ -p #{port} ]
-        args += %W[ #{username}@#{hostname} ]
 
-        LoginCommand.new(["ssh", *args])
-      end
-      # (see Base#default_port)
-      def default_port
-        @default_port ||= 22
+        # Execute a remote command and return the command's exit code.
+        #
+        # @param cmd [String] command string to execute
+        # @return [Integer] the exit code of the command
+        # @api private
+        def execute_with_exit_code(command)
+          exit_code = nil
+          session.open_channel do |channel|
+
+            channel.request_pty
+
+            channel.exec(command) do |_ch, _success|
+
+              channel.on_data do |_ch, data|
+                logger << data
+              end
+
+              channel.on_extended_data do |_ch, _type, data|
+                logger << data
+              end
+
+              channel.on_request("exit-status") do |_ch, data|
+                exit_code = data.read_long
+              end
+            end
+          end
+          session.loop
+          exit_code
+        end
+
+        # (see Base#init_options)
+        def init_options(options)
+          super
+          @username               = @options.delete(:username)
+          @hostname               = @options.delete(:hostname)
+          @port                   = @options[:port] # don't delete from options
+          @connection_retries     = @options.delete(:connection_retries)
+          @connection_retry_sleep = @options.delete(:connection_retry_sleep)
+          @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+        end
+
+        # Establish a connection session to the remote host.
+        #
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def session(connection_options = {})
+          @session ||= establish_connection({
+            :retries => connection_retries.to_i,
+            :delay   => connection_retry_sleep.to_i
+          }.merge(connection_options))
+        end
+
+        # String representation of object, reporting its connection details and
+        # configuration.
+        #
+        # @api private
+        def to_s
+          "#{username}@#{hostname}<#{options.inspect}>"
+        end
       end
 
       private
 
-      # TCP socket exceptions
-      SOCKET_EXCEPTIONS = [
-        SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH,
-        Errno::ENETUNREACH, IOError
-      ]
+      def create_new_connection(options, &block)
+        if @connection
+          logger.debug("[SSH] shutting previous connection #{@connection}")
+          @connection.shutdown
+        end
+        @connection_options = options
 
-      # (see Base#establish_connection)
-      def establish_connection
-        rescue_exceptions = [
-          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
-          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-          Net::SSH::Disconnect
-        ]
-        retries = 3
-
-        begin
-          logger.debug("[#{self.class}] opening connection to #{self}")
-          Net::SSH.start(hostname, username, options)
-        rescue *rescue_exceptions => e
-          retries -= 1
-          if retries > 0
-            logger.info("[#{self.class}] connection failed, retrying (#{e.inspect})")
-            sleep 1
-            retry
-          else
-            logger.warn("[#{self.class}] connection failed, terminating (#{e.inspect})")
-            raise
-          end
+        @connection = if block_given?
+          Kitchen::Transport::Ssh::Connection.new(options, &block)
+        else
+          Kitchen::Transport::Ssh::Connection.new(options)
         end
       end
 
-      # (see Base#execute_with_exit)
-      def execute_with_exit(command)
-        exit_code = nil
-        session.open_channel do |channel|
+      def connection_options(data)
+        opts = {
+          :logger                 => logger,
+          :user_known_hosts_file  => "/dev/null",
+          :paranoid               => false,
+          :hostname               => data[:hostname],
+          :port                   => data[:port],
+          :username               => data[:username],
+          :timeout                => data[:connection_timeout],
+          :connection_retries     => data[:connection_retries],
+          :connection_retry_sleep => data[:connection_retry_sleep],
+          :max_wait_until_ready   => data[:max_wait_until_ready]
+        }
 
-          channel.request_pty
-
-          channel.exec(command) do |_ch, _success|
-
-            channel.on_data do |_ch, data|
-              logger << data
-            end
-
-            channel.on_extended_data do |_ch, _type, data|
-              logger << data
-            end
-
-            channel.on_request("exit-status") do |_ch, data|
-              exit_code = data.read_long
-            end
-          end
-        end
-        session.loop
-        exit_code
-      end
-
-      # (see Base#env_command)
-      def env_command(command)
-        env = "env"
-        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
-        env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
-
-        env == "env" ? command : "#{env} #{command}"
-      end
-      # (see Base#test_connection)
-      def test_connection
-        socket = TCPSocket.new(hostname, port)
-        IO.select([socket], nil, nil, 5)
-      rescue *SOCKET_EXCEPTIONS
-        sleep 2
-        false
-      rescue Errno::EPERM, Errno::ETIMEDOUT
-        false
-      ensure
-        socket && socket.close
-      end
-
-      # (see Base#build_transport_args)
-      def build_transport_args(state)
-        combined = config.to_hash.merge(state)
-
-        opts = Hash.new
-        [:hostname, :username, :password, :port].each do |key|
-          opts[key] = combined[key] if combined[key]
-        end
-        opts[:user_known_hosts_file] = "/dev/null"
-        opts[:paranoid] = false
-        opts[:keys_only] = true if combined[:ssh_key]
-        opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
-        opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
-        opts[:logger] = logger
+        opts[:keys_only] = true                     if data[:ssh_key]
+        opts[:keys] = Array(data[:ssh_key])         if data[:ssh_key]
+        opts[:password] = data[:password]           if data.key?(:password)
+        opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
 
         opts
+      end
+
+      def reuse_connection
+        logger.debug("[SSH] reusing existing connection #{@connection}")
+        yield @connection if block_given?
+        @connection
       end
     end
   end

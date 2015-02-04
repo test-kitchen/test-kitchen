@@ -31,66 +31,44 @@ module Kitchen
       default_config :sleep, 1
       default_config :random_exit_code, 0
 
-      # (see Base#exec)
-      def execute(cmd)
-        exit_code = execute_with_exit(cmd)
-        if exit_code != 0
-          info("Transport #{name} exited (#{exit_code}) for command: [#{cmd}]")
+      def connection(state, &block)
+        options = config.to_hash.merge(state)
+        Kitchen::Transport::Dummy::Connection.new(options, &block)
+      end
+
+      # TODO: comment
+      class Connection < Kitchen::Transport::Base::Connection
+
+        # (see Base#execute)
+        def execute(command)
+          report(:execute, command)
+          if options[:random_exit_code] != 0
+            info("Dummy exited (#{exit_code}) for command: [#{command}]")
+          end
         end
-      end
 
-      def upload!(local, remote)
-        report(:upload, "#{local} => #{remote}")
-      end
+        def upload(locals, remote)
+          report(:upload, "#{locals.inspect} => #{remote}")
+        end
 
-      def disconnect
-        report(:disconnect)
-      end
+        private
 
-      def login_command
-        report(:login_command)
-        super.login_command
-      end
+        # Report what action is taking place, sleeping if so configured, and
+        # possibly fail randomly.
+        #
+        # @param action [Symbol] the action currently taking place
+        # @param state [Hash] the state hash
+        # @api private
+        def report(action, msg = "")
+          what = action.capitalize
+          info("[Dummy] #{what} #{msg} on Transport=Dummy")
+          sleep_if_set
+          debug("[Dummy] #{what} #{msg} completed (#{options[:sleep]}s).")
+        end
 
-      private
-
-      def establish_connection
-        report(:establish_connection)
-      end
-
-      def port
-        config.fetch(:port, 1234)
-      end
-
-      def execute_with_exit(cmd)
-        report(:exec_with_exit, cmd)
-        config[:random_exit_code]
-      end
-
-      def test_connection
-        report(:test_connection)
-      end
-
-      # Report what action is taking place, sleeping if so configured, and
-      # possibly fail randomly.
-      #
-      # @param action [Symbol] the action currently taking place
-      # @param state [Hash] the state hash
-      # @api private
-      def report(action, msg = "")
-        what = action.capitalize
-        info("[Dummy] #{what} #{msg} on Transport=#{name}")
-        sleep_if_set
-        debug("[Dummy] #{what} #{msg} completed (#{config[:sleep]}s).")
-      end
-
-      def sleep_if_set
-        sleep(config[:sleep].to_f) if config[:sleep].to_f > 0.0
-      end
-
-      def build_transport_args(state)
-        report(:build_transport_args, state)
-        {}
+        def sleep_if_set
+          sleep(options[:sleep].to_f) if options[:sleep].to_f > 0.0
+        end
       end
     end
   end

@@ -18,9 +18,7 @@
 
 require_relative "../spec_helper"
 
-require "kitchen/errors"
-require "kitchen/logging"
-require "kitchen/shell"
+require "kitchen"
 require "kitchen/shell/base"
 
 module Kitchen
@@ -41,7 +39,7 @@ describe Kitchen::Shell do
     end
 
     it "returns a shell object of the correct class" do
-      shell = Kitchen::Shell.for_plugin("soft")
+      shell = Kitchen::Shell.for_plugin("soft", Hash.new)
 
       shell.must_be_kind_of Kitchen::Shell::Soft
     end
@@ -49,7 +47,7 @@ describe Kitchen::Shell do
     it "raises ClientError if the shell could not be required" do
       Kitchen::Shell.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Shell.for_plugin("soft") }.
+      proc { Kitchen::Shell.for_plugin("soft", Hash.new) }.
         must_raise Kitchen::ClientError
     end
 
@@ -57,7 +55,7 @@ describe Kitchen::Shell do
       # pretend require worked
       Kitchen::Shell.stubs(:require).returns(true)
 
-      proc { Kitchen::Shell.for_plugin("nope") }.
+      proc { Kitchen::Shell.for_plugin("nope", Hash.new) }.
         must_raise Kitchen::ClientError
     end
   end

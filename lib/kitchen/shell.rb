@@ -34,13 +34,13 @@ module Kitchen
     # @param plugin [String] a shell plugin type, to be constantized
     # @return [Shell::Base] a driver instance
     # @raise [ClientError] if a shell instance could not be created
-    def self.for_plugin(plugin)
+    def self.for_plugin(plugin, config)
       require("kitchen/shell/#{plugin}")
 
       # str_const = plugin.upcase
       str_const = Thor::Util.camel_case(plugin)
       klass = const_get(str_const)
-      klass.new
+      klass.new(config)
     rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' shell from the load path." \

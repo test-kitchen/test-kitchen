@@ -27,10 +27,8 @@ if defined?(WinRM).nil?
   $VERBOSE = verbose_bk
 end
 
-require "logger"
-
-require "kitchen/errors"
-require "kitchen/login_command"
+require "kitchen"
+require "kitchen/transport/winrm/command_executor"
 require "kitchen/transport/winrm_file_transfer/remote_file"
 require "kitchen/transport/winrm_file_transfer/remote_zip_file"
 
@@ -38,272 +36,191 @@ module Kitchen
 
   module Transport
 
+    # Wrapped exception for any internally raised WinRM-related errors.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
+    class WinrmFailed < TransportFailed; end
+
     # Class to help establish WinRM connections, issue remote commands, and
     # transfer files between a local system and remote node.
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     class Winrm < Kitchen::Transport::Base
 
-      default_config :shell, "powershell"
-      default_config :sudo, false
+      default_config :port, 5985
+      default_config :username, ".\\administrator"
+      default_config :password, nil
+      default_config :endpoint_template, "http://%{hostname}:%{port}/wsman"
+      default_config :connection_retries, 5
+      default_config :connection_retry_sleep, 1
+      default_config :max_wait_until_ready, 600
 
-      # (see Base#execute)
-      def execute(command, shell = :powershell)
-        return if command.nil?
-        logger.debug("[#{self.class}] shell => #{shell}, (#{command})")
-        exit_code, stderr = execute_with_exit(env_command(command), shell)
-        if exit_code != 0 || !stderr.empty?
-          raise TransportFailed,
-            "Transport WinRM exited (#{exit_code}) using shell [#{shell}] for " \
-            "command: [#{command}]\nREMOTE ERROR:\n" \
-            "#{human_err_msg(stderr)}"
-        end
-      end
+      def connection(state, &block)
+        options = connection_options(config.to_hash.merge(state))
 
-      # Simple function that will help us running a command with an
-      # specific shell without printing the output to the end user.
-      #
-      # @param command [String] The command to execute
-      # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
-      def powershell(command)
-        run(command, :powershell)
-      end
-
-      def cmd(command)
-        run(command, :cmd)
-      end
-
-      def wql(query)
-        run(query, :wql)
-      end
-
-      # (see Base#upload!)
-      def upload!(local_path, remote_path, &block)
-        local_path = [local_path] if local_path.is_a? String
-        file = create_remote_file(local_path, remote_path)
-        file.upload(&block)
-      ensure
-        file.close unless file.nil?
-      end
-
-      # Convert a complex CLIXML Error to a human readable format
-      #
-      # @param msg [String] The error message
-      # @return [String] The error message with human format
-      def human_err_msg(msg)
-        err_msg = ""
-
-        while msg.size > 0
-          line = msg.shift
-          if line.include?("CLIXML")
-            msg.unshift(line)
-            break
-          else
-            err_msg << line
-          end
-        end
-
-        unless msg.empty?
-          msg = msg.join
-          human = msg.split(/<S S=\"Error\">/).map! do |a|
-            a.gsub(/_x000D__x000A_<\/S>/, "")
-          end
-          human.shift
-          human.pop
-          err_msg << human.join("\n")
-        end
-        err_msg
-      end
-
-      # (see Base#login_command)
-      def login_command
-        rdp_file = File.join(config[:kitchen_root], ".kitchen", "#{instance.name}.rdp")
-        case RUBY_PLATFORM
-        when /cygwin|mswin|mingw|bccwin|wince|emx/
-          windows_login_command(rdp_file)
-        when /darwin/
-          mac_login_command(rdp_file)
+        if block_given?
+          Kitchen::Transport::Winrm::Connection.new(options, &block)
         else
-          raise TransportFailed,
-            "[#{self.class}] Cannot open Remote Desktop App: Unsupported platform"
+          Kitchen::Transport::Winrm::Connection.new(options)
         end
       end
 
-      # (see Base#default_port)
-      def default_port
-        @default_port ||= 5985
+      # TODO: comment
+      class Connection < Kitchen::Transport::Base::Connection
+
+        # (see Base#execute)
+        def execute(command)
+          logger.debug("[WinRM] #{self} (#{command})")
+          exit_code, stderr = execute_with_exit_code(command)
+
+          if exit_code != 0
+            log_stderr_on_warn(stderr)
+            raise Transport::WinrmFailed,
+              "WinRM exited (#{exit_code}) for command: [#{command}]"
+          elsif !stderr.empty?
+            log_stderr_on_warn(stderr)
+            raise Transport::WinrmFailed,
+              "WinRM exited (#{exit_code}) but contained a STDERR stream " \
+              "for command: [#{command}]"
+          end
+        end
+
+        # (see Base#wait_until_ready)
+        def wait_until_ready
+          delay = 3
+          exit_code, stderr = execute_with_exit_code(
+            PING_COMMAND,
+            :retries  => max_wait_until_ready / delay,
+            :delay    => delay,
+            :message  => "Waiting for WinRM service on #{endpoint}, " \
+              "retrying in #{delay} seconds"
+          )
+
+          if exit_code != 0
+            log_stderr_on_warn(stderr)
+            raise Transport::WinrmFailed,
+              "WinRM exited (#{exit_code}) for command: [#{PING_COMMAND}]"
+          end
+        end
+
+        private
+
+        PING_COMMAND = "Write-Host '[WinRM] Established\n'".freeze
+
+        RESCUE_EXCEPTIONS_ON_ESTABLISH = [
+          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+          ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
+          HTTPClient::KeepAliveDisconnected
+        ].freeze
+
+        attr_reader :connection_retries
+
+        attr_reader :connection_retry_sleep
+
+        attr_reader :endpoint
+
+        attr_reader :max_wait_until_ready
+
+        attr_reader :winrm_transport
+
+        def execute_with_exit_code(command, opts = {})
+          opts = {
+            :retries => connection_retries.to_i,
+            :delay   => connection_retry_sleep.to_i
+          }.merge(opts)
+
+          retryable(opts) do
+            logger.debug("[WinRM] opening connection to #{self}")
+            response = session.run_powershell_script(command) do |stdout, _|
+              logger << stdout if stdout
+            end
+
+            [response[:exitcode], stderr_from_response(response)]
+          end
+        end
+
+        # (see Base#init_options)
+        def init_options(options)
+          super
+          @endpoint           = @options.delete(:endpoint)
+          @winrm_transport    = @options.delete(:winrm_transport)
+          @connection_retries = @options.delete(:connection_retries)
+          @connection_retry_sleep = @options.delete(:connection_retry_sleep)
+          @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+        end
+
+        def log_stderr_on_warn(stderr)
+          error_regexp = /<S S=\"Error\">/
+
+          if stderr.grep(error_regexp).empty?
+            stderr.join.
+              split("\r\n").
+              each { |line| logger.warn(line) }
+          else
+            stderr.join.
+              split(error_regexp)[1..-2].
+              map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }.
+              each { |line| logger.warn(line) }
+          end
+        end
+
+        def retryable(opts)
+          yield
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          if (opts[:retries] -= 1) > 0
+            message = if opts[:message]
+              logger.debug("[WinRM] connection failed (#{e.inspect})")
+              opts[:message]
+            else
+              "[WinRM] connection failed, " \
+                "retrying in #{opts[:delay]} seconds (#{e.inspect})"
+            end
+            logger.info(message)
+            sleep(opts[:delay])
+            retry
+          else
+            logger.warn("[WinRM] connection failed, terminating (#{e.inspect})")
+            raise
+          end
+        end
+
+        def session
+          @session ||= ::WinRM::WinRMWebService.new(
+            endpoint, winrm_transport, options)
+        end
+
+        def stderr_from_response(response)
+          response[:data].select { |hash| hash.key?(:stderr) }.
+            map { |hash| hash[:stderr] }
+        end
+
+        # String representation of object, reporting its connection details and
+        # configuration.
+        #
+        # @api private
+        def to_s
+          "#{winrm_transport}::#{endpoint}<#{options.inspect}>"
+        end
       end
 
       private
 
-      def windows_login_command(rdp_file)
-        # On Windows, use default RDP software
-        rdp_cmd = "mstsc"
-        File.open(rdp_file, "w") do |f|
-          f.write(
-            <<-RDP.gsub(/^ {16}/, "")
-              full address:s:#{@hostname}:3389
-              username:s:#{@username}
-            RDP
-          )
-        end
-        LoginCommand.new([rdp_cmd, rdp_file])
-      end
+      def connection_options(data)
+        opts = {
+          :logger                 => logger,
+          :winrm_transport        => :plaintext,
+          :disable_sspi           => true,
+          :basic_auth_only        => true,
+          :endpoint               => data[:endpoint_template] % data,
+          :user                   => data[:username],
+          :pass                   => data[:password],
+          :connection_retries     => data[:connection_retries],
+          :connection_retry_sleep => data[:connection_retry_sleep],
+          :max_wait_until_ready   => data[:max_wait_until_ready]
+        }
 
-      def mac_login_command(rdp_file)
-        # On MAC, we should have /Applications/Remote\ Desktop\ Connection.app
-        rdc_path = "/Applications/Remote\ Desktop\ Connection.app"
-        unless File.exist?(rdc_path)
-          raise TransportFailed, "RDC application not found at path: #{rdc_path}"
-        end
-        rdc_cmd = File.join(rdc_path, "Contents/MacOS/Remote\ Desktop\ Connection")
-        File.open(rdp_file, "w") do |f|
-          f.write(
-            <<-RDP.gsub(/^ {16}/, "")
-              <dict>
-                <key>ConnectionString</key>
-                <string>#{@hostname}:3389</string>
-                <key>UserName</key>
-                <string>#{@username}</string>
-              </dict>
-            RDP
-          )
-        end
-        LoginCommand.new([rdc_cmd, rdp_file])
-      end
-
-      def create_remote_file(local_paths, remote_path)
-        if local_paths.count == 1 && !File.directory?(local_paths[0])
-          return WinRMFileTransfer::RemoteFile.new(logger, session, local_paths[0], remote_path)
-        end
-        zip_file = WinRMFileTransfer::RemoteZipFile.new(logger, session, remote_path)
-        local_paths.each { |path| zip_file.add_file(path) }
-        zip_file
-      end
-
-      # (see Base#establish_connection)
-      def establish_connection
-        rescue_exceptions = [
-          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
-          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-          ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError
-        ]
-        retries ||= 3
-
-        logger.debug("[#{self.class}] opening connection to #{self}")
-        socket = ::WinRM::WinRMWebService.new(*build_winrm_options)
-        socket.set_timeout(timeout_in_seconds)
-        socket
-      rescue *rescue_exceptions => e
-        if (retries -= 1) > 0
-          logger.info("[#{self.class}] connection failed, retrying (#{e.inspect})")
-          sleep 1; retry
-        else
-          logger.warn("[#{self.class}] connection failed, terminating (#{e.inspect})")
-          raise
-        end
-      end
-
-      # Timeout in seconds
-      #
-      # @return [Number] Timeout in seconds
-      def timeout_in_seconds
-        options.fetch(:timeout_in_seconds, 1800)
-      end
-
-      # String endpoint to connect thru WinRM Web Service
-      #
-      # @return [String] The endpoint
-      def endpoint
-        "http://#{@hostname}:#{port}/wsman"
-      end
-
-      # (see Base#execute_with_exit)
-      def execute_with_exit(command, shell = :powershell)
-        raise TransportFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
-        winrm_err = []
-        logger.debug("[#{self.class}] #{shell} executing:\n#{command}")
-        begin
-          output = session.send(shell, command) do |stdout, stderr|
-            logger << stdout if stdout
-            winrm_err << stderr if stderr
-          end
-        rescue => e
-          raise TransportFailed,
-            "[#{self.class}] #{e.message} using shell: [#{shell}] and command: [#{command}]"
-        end
-        logger.debug("Output: #{output.inspect}")
-        [output[:exitcode], winrm_err]
-      end
-
-      # Simple function that will help us running a command with an
-      # specific shell without printing the output to the end user.
-      #
-      # @param command [String] The command to execute
-      # @param shell[String] The destination file path on the guest
-      # @return [Hash] Information about the STDOUT, STDERR and EXIT_CODE
-      def run(command, shell)
-        raise TransportFailed, :shell => shell unless [:powershell, :cmd, :wql].include?(shell)
-        logger.debug("[#{self.class}] #{shell} running:\n#{command}")
-        begin
-          session.send(shell, command)
-        rescue => e
-          raise TransportFailed,
-            "[#{self.class}] #{e.message} using shell: [#{shell}] and command: [#{command}]"
-        end
-      end
-
-      # (see Base#env_command)
-      def env_command(command)
-        env = " $ProgressPreference='SilentlyContinue';"
-        env << " $env:http_proxy=\"#{config[:http_proxy]}\";"   if config[:http_proxy]
-        env << " $env:https_proxy=\"#{config[:https_proxy]}\";" if config[:https_proxy]
-
-        env == "" ? command : "#{env} #{command}"
-      end
-
-      # (see Base#test_connection)
-      def test_connection
-        exitcode, _error_msg = execute_with_exit(
-          "Write-Host '[Server] Reachable...\n'",
-          :powershell
-        )
-        exitcode.zero?
-      rescue
-        sleep 5
-        false
-      end
-
-      # (see Base#build_transport_args)
-      def build_transport_args(state)
-        combined = config.to_hash.merge(state)
-
-        opts = Hash.new
-        [:hostname, :username, :password, :port].each do |key|
-          opts[key] = combined[key] if combined[key]
-        end
-        opts[:forward_agent]  = combined[:forward_agent] if combined.key? :forward_agent
-        opts[:logger]         = logger
         opts
-      end
-
-      # Build the WinRM options to connect
-      #
-      # @return endpoint [String] Information about the host and port
-      # @return connection_type [String] Plaintext
-      # @return options [Hash] Necesary options to connect to the remote host
-      def build_winrm_options
-        opts = Hash.new
-
-        opts[:user] = username
-        opts[:pass] = options[:password] if options[:password]
-        opts[:host] = hostname
-        opts[:port] = port
-        opts[:operation_timeout] = timeout_in_seconds
-        opts[:basic_auth_only] = true
-        opts[:disable_sspi] = true
-
-        [endpoint, :plaintext, opts]
       end
     end
   end

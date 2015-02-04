@@ -68,7 +68,7 @@ module Kitchen
           conn.execute(provisioner.install_command)
           conn.execute(provisioner.init_command)
           info("Transferring files to #{instance.to_str}")
-          conn.upload!(sandbox_dirs, provisioner[:root_path])
+          conn.upload(sandbox_dirs, provisioner[:root_path])
           conn.execute(provisioner.prepare_command)
           conn.execute(provisioner.run_command)
         end
@@ -95,7 +95,7 @@ module Kitchen
           conn.execute(busser.cleanup_cmd)
           dirs = busser.local_payload.map { |f| File.dirname(f) }.uniq
           if !dirs.empty?
-            conn.upload!(dirs, "/tmp/busser/suites")
+            conn.upload(dirs, "/tmp/busser/suites")
             conn.execute(busser.run_cmd)
           end
         end
@@ -116,8 +116,7 @@ module Kitchen
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
       def login_command(state)
-        transport.connection(state)
-        transport.login_command
+        transport.connection(state).login_command
       end
 
       # Performs whatever tests that may be required to ensure that this driver

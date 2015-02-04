@@ -52,8 +52,6 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
-        # Overwrite the sudo configuration comming from the Transport
-        config[:sudo] = instance.transport.sudo
         self
       end
 
@@ -148,7 +146,10 @@ module Kitchen
       # @return [Transport.shell] the transport desired shell for this instance
       # This would help us know which commands to use. Bourne, Powershell, etc.
       def shell
-        instance.transport.shell
+        @shell = Kitchen::Shell.for_plugin(
+          config.fetch(:shell, Kitchen::Shell::DEFAULT_SHELL),
+          config
+        )
       end
 
       private

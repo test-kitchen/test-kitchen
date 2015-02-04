@@ -21,7 +21,6 @@ require "logger"
 require "stringio"
 
 require "kitchen"
-require "kitchen/transport/dummy"
 
 module Kitchen
 
@@ -62,7 +61,18 @@ describe Kitchen::Driver::Base do
   end
 
   let(:transport) do
-    Kitchen::Transport::Dummy.new
+    stub
+  end
+
+  let(:connection) do
+    stub(
+      :execute => true,
+      :upload => true
+    )
+  end
+
+  let(:provisioner) do
+    stub
   end
 
   let(:instance) do
@@ -73,7 +83,7 @@ describe Kitchen::Driver::Base do
       :to_str => "instance",
       :transport => transport,
       :driver => driver,
-      :provisioner => Kitchen::Provisioner::Base.new
+      :provisioner => provisioner
     )
   end
 
@@ -82,8 +92,8 @@ describe Kitchen::Driver::Base do
   end
 
   before do
+    transport.stubs(:connection).yields(connection).returns(connection)
     driver.finalize_config!(instance)
-    transport.finalize_config!(instance)
   end
 
   it "#instance returns its instance" do
@@ -125,23 +135,18 @@ describe Kitchen::Driver::Base do
     logged_output.string.must_match(/yo\n/)
   end
 
-  # XXX I think the :converge test passes without actually testing anything.
-  [:create, :converge, :destroy].each do |action|
-    it "has a #{action} method that takes state" do
-      state = Hash.new
-      proc { driver.public_send(action, state) }.must_raise Kitchen::ClientError
-    end
+  it "has a #create method that raises by default" do
+    proc { driver.create(Hash.new) }.must_raise Kitchen::ClientError
   end
 
-  [:setup, :verify].each do |action|
-    it "has a #{action} method that takes state" do
-      state = Hash.new
-      driver.public_send(action, state).must_equal true
-    end
+  it "has a #destroy method that raises by default" do
+    proc { driver.create(Hash.new) }.must_raise Kitchen::ClientError
   end
 
-  it "has a login command that raises ActionFailed by default" do
-    proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
+  it "has a login command that delegates to the transport" do
+    connection.expects(:login_command)
+
+    driver.login_command(Hash.new)
   end
 
   it "has a default verify dependencies method" do
@@ -182,14 +187,14 @@ describe Kitchen::Driver::Base do
     let(:payload) { ["/dir1/file1", "/dir2/file1", "/dir2/file2"] }
 
     it "invokes the busser#cleanup_cmd & #run_cmd over transport" do
-      transport.expects(:execute).with(busser.cleanup_cmd)
-      transport.expects(:execute).with(busser.run_cmd)
+      connection.expects(:execute).with(busser.cleanup_cmd)
+      connection.expects(:execute).with(busser.run_cmd)
 
       driver.send(:verify, Hash.new)
     end
 
     it "copies local payload directories" do
-      transport.expects(:upload!).with(["/dir1", "/dir2"], "/tmp/busser/suites")
+      connection.expects(:upload).with(["/dir1", "/dir2"], "/tmp/busser/suites")
 
       driver.send(:verify, Hash.new)
     end
@@ -198,7 +203,7 @@ describe Kitchen::Driver::Base do
       let(:payload) { [] }
 
       it "invokes the busser#cleanup_cmd only" do
-        transport.expects(:execute).with(busser.cleanup_cmd)
+        connection.expects(:execute).with(busser.cleanup_cmd)
 
         driver.send(:verify, Hash.new)
       end

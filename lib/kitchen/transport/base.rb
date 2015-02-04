@@ -46,102 +46,8 @@ module Kitchen
         init_config(config)
       end
 
-      # Configure Transport and allows the callee to use it.
-      #
-      # @example block usage
-      #
-      #   state = {
-      #      :hostname => "remote.example.com",
-      #      :username => "root"
-      #   }
-      #
-      #   transport.connection(state) do |ssh|
-      #     ssh.exec("sudo apt-get update")
-      #     ssh.upload!("/tmp/data.txt", "/var/lib/data.txt")
-      #   end
-      #
-      # @param state [Hash] configuration hash state
-      # @yield [self] if a block is given then the constructed object yields
-      #   itself and calls `#disconnect` at the end, closing the remote connection
-      def connection(state)
-        @options  =  build_transport_args(state)
-        @hostname = @options.delete(:hostname)
-        @username = @options.delete(:username)
-        @logger   = @options.delete(:logger) || ::Logger.new(STDOUT)
-
-        if block_given?
-          yield self
-          disconnect
-        end
-      end
-
-      # Returns the name of this transport, suitable for display in a CLI.
-      #
-      # @return [String] name of this transport
-      def name
-        self.class.name.split("::").last
-      end
-
-      # Execute a command on the remote host.
-      #
-      # @param command [String] command string to execute
-      # @raise [TransportFailed] if the command does not exit with a 0 code
-      def execute(command) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Uploads a local path or file to remote host.
-      #
-      # @param local [String] path to local file
-      # @param remote [String] path to remote file destination
-      # @param options [Hash] configuration options that are passed.
-      def upload!(local, remote, options = {}) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Disconnect the session connection, if it is still active.
-      def disconnect
-      end
-
-      # Returns the shell command that will log into an instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @return [LoginCommand] an object containing the array of command line
-      #   tokens and exec options to be used in a fork/exec
-      # @raise [ActionFailed] if the action could not be completed
-      def login_command
-        raise ActionFailed, "Remote login is not supported in this transport."
-      end
-
-      # Blocks until the remote host is listening thru the transport.
-      #
-      # @param hostname [String] remote server host
-      # @param username [String] username (default: `nil`)
-      # @param options [Hash] configuration hash (default: `{}`)
-      # @api private
-      def wait_for_connection
-        logger.info("Waiting for #{hostname}:#{port}...") until test_connection
-      end
-
-      # Returns the desired shell to use.
-      # [Idea] Let's see if this help for the Provisioner to chose the right code
-      #
-      # @return [Shell] the desired shell for this transport
-      def shell
-        @shell ||= Shell.for_plugin(config.fetch(:shell, Kitchen::Shell::DEFAULT_SHELL))
-      end
-
-      # Returns the config[:sudo] parameter.
-      # [Idea] Let's see if this help for the Provisioner to chose the right code
-      #
-      # @return [LoginCommand] an object containing the array of command line
-      def sudo
-        config.fetch(:sudo, nil)
-      end
-
-      # This will function as a guideline when nobody set the port
-      #
-      # @return [Integer] Default port for this transport.
-      def default_port
-        @default_port ||= 1234
+      def connection(_state)
+        raise ClientError, "#{self.class}#connection must be implemented"
       end
 
       # Performs any final configuration required for the transport to do its
@@ -156,9 +62,14 @@ module Kitchen
       def finalize_config!(instance)
         super
         load_needed_dependencies!
-        config[:http_proxy] ||= instance.driver[:http_proxy]
-        shell.finalize_config!(instance)
         self
+      end
+
+      # Returns the name of this transport, suitable for display in a CLI.
+      #
+      # @return [String] name of this transport
+      def name
+        self.class.name.split("::").last
       end
 
       # Performs whatever tests that may be required to ensure that this
@@ -169,6 +80,69 @@ module Kitchen
       # @raise [UserError] if the transport will not be able to perform or if
       #   a documented dependency is missing from the system
       def verify_dependencies
+        # this method may be left unimplemented if that is applicable
+      end
+
+      # TODO: comment
+      class Connection
+
+        include Logging
+
+        def initialize(options = {})
+          init_options(options)
+
+          if block_given?
+            yield self
+          end
+        end
+
+        # Execute a command on the remote host.
+        #
+        # @param command [String] command string to execute
+        # @raise [TransportFailed] if the command does not exit with a 0 code
+        def execute(_command)
+          raise ClientError, "#{self.class}#execute must be implemented"
+        end
+
+        # Builds a LoginCommand which can be used to open an interactive session
+        # on the remote host.
+        #
+        # @return [LoginCommand] an object containing the array of command line
+        #   tokens and exec options to be used in a fork/exec
+        # @raise [ActionFailed] if the action could not be completed
+        def login_command
+          raise ActionFailed, "Remote login not supported in #{self.class}."
+        end
+
+        # Shuts down the session connection, if it is still active.
+        def shutdown
+          # this method may be left unimplemented if that is applicable
+        end
+
+        # Uploads local files or directories to remote host.
+        #
+        # @param locals [Array<String>] paths to local files or directories
+        # @param remote [String] path to remote destination
+        def upload(_locals, _remote)
+          raise ClientError, "#{self.class}#upload must be implemented"
+        end
+
+        def wait_until_ready
+          # this method may be left unimplemented if that is applicable
+        end
+
+        private
+
+        attr_reader :logger
+
+        # @return [Hash] connection options
+        # @api private
+        attr_reader :options
+
+        def init_options(options)
+          @options = options.dup
+          @logger = @options.delete(:logger) || Kitchen.logger
+        end
       end
 
       private
@@ -194,107 +168,15 @@ module Kitchen
       #   dependency requirements cannot be satisfied
       # @api private
       def load_needed_dependencies!
-      end
-
-      # @return [String] the remote hostname
-      # @api private
-      attr_reader :hostname
-
-      # @return [String] the username for the remote host
-      # @api private
-      attr_reader :username
-
-      # @return [Hash] Transport options
-      attr_reader :options
-
-      # @return [Logger] the logger to use
-      # @api private
-      attr_reader :logger
-
-      # Builds the Transport session connection or returns the existing one if
-      # built.
-      #
-      # @return [Transport::Session] the Transport connection session
-      # @api private
-      def session
-        @session ||= establish_connection
-      end
-      # Establish a connection session to the remote host.
-      #
-      # @return [Transport::Session] the Transport connection session
-      # @api private
-      def establish_connection
-      end
-
-      # @return [Integer] Transport port
-      # @api private
-      def port
-        options.fetch(:port, default_port)
-      end
-
-      # String representation of object, reporting its connection details and
-      # configuration.
-      #
-      # @api private
-      def to_s
-        "#{username}@#{hostname}:#{port}<#{options.inspect}>"
-      end
-
-      # Execute a remote command and return the command's exit code.
-      #
-      # @param command [String] command string to execute
-      # @return [Integer] the exit code of the command
-      # @api private
-      def execute_with_exit(command) # rubocop:disable Lint/UnusedMethodArgument
+        # this method may be left unimplemented if that is applicable
       end
 
       # Returns a suitable logger to use for output.
       #
       # @return [Kitchen::Logger] a logger
+      # @api private
       def logger
         instance ? instance.logger : Kitchen.logger
-      end
-
-      # Test a remote connectivity.
-      #
-      # @return [true,false] a truthy value if the connection is ready
-      # and false otherwise
-      # @api private
-      def test_connection
-      end
-
-      # Intercepts any bare #puts calls in subclasses and issues an INFO log
-      # event instead.
-      #
-      # @param msg [String] message string
-      def puts(msg) # rubocop:disable Lint/UnusedMethodArgument
-        info(msg)
-      end
-
-      # Intercepts any bare #print calls in subclasses and issues an INFO log
-      # event instead.
-      #
-      # @param msg [String] message string
-      def print(msg) # rubocop:disable Lint/UnusedMethodArgument
-        info(msg)
-      end
-
-      # Adds http and https proxy environment variables to a command, if set
-      # in configuration data.
-      #
-      # @param command [String] command string
-      # @return [String] command string
-      # @api private
-      def env_command(command) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Builds arguments for constructing a `Kitchen::Transport` instance.
-      #
-      # @param state [Hash] state hash
-      # @return [Hash] Options to build the transport
-      # @api private
-      def build_transport_args(state) # rubocop:disable Lint/UnusedMethodArgument
-        {}
       end
     end
   end

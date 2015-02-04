@@ -41,11 +41,11 @@ module Kitchen
     end
 
     default_config :ruby_bindir do |busser|
-      busser.instance.transport.shell.default_ruby_bin
+      busser.instance.provisioner.shell.default_ruby_bin
     end
 
     default_config :busser_bin do |busser|
-      busser.instance.transport.shell.default_busser_bin(busser[:root_path])
+      busser.instance.provisioner.shell.default_busser_bin(busser[:root_path])
     end
 
     # Constructs a new Busser command generator, given a suite name.
@@ -228,7 +228,7 @@ module Kitchen
     #
     # @api private
     def shell
-      instance.transport.shell
+      instance.provisioner.shell
     end
 
     # Returns a command string that sets appropriate environment variables for

@@ -39,8 +39,13 @@ describe Kitchen::Busser do
       :run_command      => "run",
       :create_sandbox   => true,
       :cleanup_sandbox  => true,
-      :sandbox_path     => "/tmp/sandbox"
+      :sandbox_path     => "/tmp/sandbox",
+      :shell            => shell
     )
+  end
+
+  let(:shell) do
+    Kitchen::Shell::Bourne.new(config)
   end
 
   let(:transport) do
