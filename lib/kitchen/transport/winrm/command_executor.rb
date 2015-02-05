@@ -65,10 +65,17 @@ module Kitchen
         end
 
         def run_powershell_script(script_file, &block)
-          text = script_file.is_a?(IO) ? script_file.read : script_file
+          # this code looks overly compact in an attempt to limit local
+          # variable assignments that may contain large strings and
+          # consequently bloat the Ruby VM
           run_cmd(
             "powershell",
-            ["-encodedCommand", WinRM::PowershellScript.new(text).encoded],
+            [
+              "-encodedCommand",
+              WinRM::PowershellScript.new(
+                script_file.is_a?(IO) ? script_file.read : script_file
+              ).encoded
+            ],
             &block
           )
         end
