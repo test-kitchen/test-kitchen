@@ -348,6 +348,19 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
     end
   end
 
+  describe "#shell" do
+
+    it "is initially nil" do
+      executor.shell.must_equal nil
+    end
+
+    it "is set after #open is called" do
+      executor.open
+
+      executor.shell.must_equal shell_id
+    end
+  end
+
   def debug_line_with(msg)
     %r{^D, .* : #{Regexp.escape(msg)}}
   end

@@ -330,6 +330,12 @@ describe Kitchen::Transport::Winrm::Connection do
     s
   end
 
+  let(:executor) do
+    s = mock("command_executor")
+    s.responds_like_instance_of(Kitchen::Transport::Winrm::CommandExecutor)
+    s
+  end
+
   let(:connection) do
     Kitchen::Transport::Winrm::Connection.new(options)
   end
@@ -339,6 +345,9 @@ describe Kitchen::Transport::Winrm::Connection do
     ::WinRM::WinRMWebService.stubs(:new).
       with("http://foo:5985/wsman", :plaintext, :user => "me", :pass => "haha").
       returns(winrm_session)
+    Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).
+      with(winrm_session, logger).
+      returns(executor)
   end
 
   describe "#execute" do
@@ -353,7 +362,8 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       before do
-        winrm_session.expects(:run_powershell_script).
+        executor.expects(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
           with("doit").yields("ok\n", nil).returns(response)
       end
 
@@ -368,7 +378,10 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         logged_output.string.must_match debug_line(
-          "[WinRM] opening connection to #{info}"
+          "[WinRM] opening remote shell on #{info}"
+        )
+        logged_output.string.must_match debug_line(
+          "[WinRM] remote shell shell-123 is open on #{info}"
         )
       end
 
@@ -409,7 +422,8 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       before do
-        winrm_session.expects(:run_powershell_script).
+        executor.expects(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
           with("doit").yields("nope\n", nil).returns(response)
       end
 
@@ -435,7 +449,10 @@ describe Kitchen::Transport::Winrm::Connection do
           end
 
           logged_output.string.must_match debug_line(
-            "[WinRM] opening connection to #{info}"
+            "[WinRM] opening remote shell on #{info}"
+          )
+          logged_output.string.must_match debug_line(
+            "[WinRM] remote shell shell-123 is open on #{info}"
           )
         end
 
@@ -521,10 +538,10 @@ MSG
             klass
           end
 
-          winrm_session.stubs(:run_powershell_script).raises(k)
           options[:connection_retries] = 3
           options[:connection_retry_sleep] = 7
           connection.stubs(:sleep)
+          executor.stubs(:open).raises(k)
         end
 
         it "reraises the #{klass} exception" do
@@ -539,8 +556,11 @@ MSG
           end
 
           logged_output.string.lines.select { |l|
-            l =~ debug_line("[WinRM] opening connection to #{info}")
+            l =~ debug_line("[WinRM] opening remote shell on #{info}")
           }.size.must_equal 3
+          logged_output.string.lines.select { |l|
+            l =~ debug_line("[WinRM] remote shell shell-123 is open on #{info}")
+          }.size.must_equal 0
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -592,7 +612,7 @@ MSG
     describe "when failing to connect" do
 
       before do
-        winrm_session.stubs(:run_powershell_script).raises(Errno::ECONNREFUSED)
+        executor.stubs(:open).raises(Errno::ECONNREFUSED)
       end
 
       it "attempts to connect :max_wait_until_ready / 3 times if failing" do
@@ -636,7 +656,8 @@ MSG
       end
 
       before do
-        winrm_session.expects(:run_powershell_script).
+        executor.stubs(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
           with("Write-Host '[WinRM] Established\n'").returns(response)
       end
 
@@ -655,7 +676,8 @@ MSG
       end
 
       before do
-        winrm_session.expects(:run_powershell_script).
+        executor.stubs(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
           with("Write-Host '[WinRM] Established\n'").returns(response)
       end
 

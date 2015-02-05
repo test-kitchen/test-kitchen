@@ -88,13 +88,13 @@ module Kitchen
         # (see Base#wait_until_ready)
         def wait_until_ready
           delay = 3
-          exit_code, stderr = execute_with_exit_code(
-            PING_COMMAND,
+          session(
             :retries  => max_wait_until_ready / delay,
             :delay    => delay,
             :message  => "Waiting for WinRM service on #{endpoint}, " \
               "retrying in #{delay} seconds"
           )
+          exit_code, stderr = execute_with_exit_code(PING_COMMAND)
 
           if exit_code != 0
             log_stderr_on_warn(stderr)
@@ -124,20 +124,25 @@ module Kitchen
 
         attr_reader :winrm_transport
 
-        def execute_with_exit_code(command, opts = {})
-          opts = {
-            :retries => connection_retries.to_i,
-            :delay   => connection_retry_sleep.to_i
-          }.merge(opts)
+        def establish_shell(opts)
+          @service = ::WinRM::WinRMWebService.new(
+            endpoint, winrm_transport, options)
 
+          executor = Winrm::CommandExecutor.new(@service, logger)
           retryable(opts) do
-            logger.debug("[WinRM] opening connection to #{self}")
-            response = session.run_powershell_script(command) do |stdout, _|
-              logger << stdout if stdout
-            end
-
-            [response[:exitcode], stderr_from_response(response)]
+            logger.debug("[WinRM] opening remote shell on #{self}")
+            shell_id = executor.open
+            logger.debug("[WinRM] remote shell #{shell_id} is open on #{self}")
           end
+          executor
+        end
+
+        def execute_with_exit_code(command)
+          response = session.run_powershell_script(command) do |stdout, _|
+            logger << stdout if stdout
+          end
+
+          [response[:exitcode], stderr_from_response(response)]
         end
 
         # (see Base#init_options)
@@ -185,9 +190,11 @@ module Kitchen
           end
         end
 
-        def session
-          @session ||= ::WinRM::WinRMWebService.new(
-            endpoint, winrm_transport, options)
+        def session(connection_options = {})
+          @session ||= establish_shell({
+            :retries => connection_retries.to_i,
+            :delay   => connection_retry_sleep.to_i
+          }.merge(connection_options))
         end
 
         def stderr_from_response(response)

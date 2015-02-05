@@ -24,9 +24,12 @@ module Kitchen
 
     class Winrm < Kitchen::Transport::Base
 
+      # TODO: comment
       class CommandExecutor
 
         attr_reader :max_commands
+
+        attr_reader :shell
 
         def initialize(service, logger = nil)
           @service        = service
@@ -80,8 +83,6 @@ module Kitchen
         attr_reader :logger
 
         attr_reader :service
-
-        attr_accessor :shell
 
         def command_count_exceeded?
           command_count > max_commands.to_i
