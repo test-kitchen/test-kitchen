@@ -85,6 +85,17 @@ module Kitchen
           end
         end
 
+        def shutdown
+          return if @session.nil?
+
+          shell_id = session.shell
+          logger.debug("[WinRM] closing remote shell #{shell_id} on #{self}")
+          session.close
+          logger.debug("[WinRM] remote shell #{shell_id} closed")
+        ensure
+          @session = nil
+        end
+
         # (see Base#wait_until_ready)
         def wait_until_ready
           delay = 3
