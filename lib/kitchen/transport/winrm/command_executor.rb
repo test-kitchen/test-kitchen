@@ -66,8 +66,11 @@ module Kitchen
 
         def run_powershell_script(script_file, &block)
           text = script_file.is_a?(IO) ? script_file.read : script_file
-          script = WinRM::PowershellScript.new(text)
-          run_cmd("powershell", ["-encodedCommand", script.encoded], &block)
+          run_cmd(
+            "powershell",
+            ["-encodedCommand", WinRM::PowershellScript.new(text).encoded],
+            &block
+          )
         end
 
         private

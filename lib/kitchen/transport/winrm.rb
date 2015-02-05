@@ -44,6 +44,7 @@ module Kitchen
     # Class to help establish WinRM connections, issue remote commands, and
     # transfer files between a local system and remote node.
     #
+    # @author Matt Wrock <matt@mattwrock.com>
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     class Winrm < Kitchen::Transport::Base
 
