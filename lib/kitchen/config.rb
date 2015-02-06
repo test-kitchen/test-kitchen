@@ -72,6 +72,11 @@ module Kitchen
     # @api private
     attr_accessor :log_level
 
+    # @return [Boolean] whether to overwrite the log file when
+    #   Test Kitchen runs
+    # @api private
+    attr_accessor :log_overwrite
+
     # Creates a new configuration, representing a particular testing
     # configuration for a project.
     #
@@ -94,6 +99,7 @@ module Kitchen
       @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
       @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
+      @log_overwrite  = options.fetch(:log_overwrite) { Kitchen::DEFAULT_LOG_OVERWRITE }
       @log_root       = options.fetch(:log_root) { default_log_root }
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
     end
@@ -200,7 +206,8 @@ module Kitchen
         },
         :kitchen_root   => kitchen_root,
         :test_base_path => test_base_path,
-        :log_level      => log_level
+        :log_level      => log_level,
+        :log_overwrite  => log_overwrite
       }
     end
 
@@ -238,7 +245,7 @@ module Kitchen
       Instance.new(
         :busser       => new_busser(suite, platform),
         :driver       => new_driver(suite, platform),
-        :logger       => new_logger(suite, platform, index),
+        :logger       => new_instance_logger(suite, platform, index),
         :suite        => suite,
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
@@ -254,13 +261,15 @@ module Kitchen
     # @param index [Integer] an index used for colorizing output
     # @return [Logger] a new Logger object
     # @api private
-    def new_logger(suite, platform, index)
+    def new_instance_logger(suite, platform, index)
       name = instance_name(suite, platform)
+      log_location = File.join(log_root, "#{name}.log").to_s
       Logger.new(
         :stdout   => STDOUT,
         :color    => Color::COLORS[index % Color::COLORS.size].to_sym,
-        :logdev   => File.join(log_root, "#{name}.log"),
+        :logdev   => log_location,
         :level    => Util.to_logger_level(log_level),
+        :log_overwrite => log_overwrite,
         :progname => name
       )
     end

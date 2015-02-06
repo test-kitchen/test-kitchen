@@ -19,7 +19,6 @@ Feature: Add Test Kitchen support to an existing project
     And I have a git repository
     When I run `kitchen init`
     Then the exit status should be 0
-    And a directory named ".kitchen" should exist
     And a directory named "test/integration/default" should exist
     And the file ".gitignore" should contain ".kitchen/"
     And the file ".gitignore" should contain ".kitchen.local.yml"

@@ -68,7 +68,6 @@ module Kitchen
     def initialize(*args)
       super
       $stdout.sync = true
-      Kitchen.logger = Kitchen.default_file_logger
       @loader = Kitchen::Loader::YAML.new(
         :project_config => ENV["KITCHEN_YAML"],
         :local_config => ENV["KITCHEN_LOCAL_YAML"],
@@ -76,8 +75,20 @@ module Kitchen
       )
       @config = Kitchen::Config.new(
         :loader     => @loader,
-        :log_level  => ENV.fetch("KITCHEN_LOG", "info").downcase.to_sym
+        :log_level  => Kitchen.env_log,
+        :log_overwrite => Kitchen.env_log_overwrite
       )
+    end
+
+    # Sets the logging method_options
+    # @api private
+    def self.log_options
+      method_option :log_level,
+        :aliases => "-l",
+        :desc => "Set the log level (debug, info, warn, error, fatal)"
+      method_option :log_overwrite,
+        :desc => "Set to false to prevent log overwriting each time Test Kitchen runs",
+        :type => :boolean
     end
 
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
@@ -89,18 +100,13 @@ module Kitchen
       :aliases => "-d",
       :type => :boolean,
       :desc => "[Deprecated] Please use `kitchen diagnose'"
-    method_option :log_level,
-      :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
+    log_options
     def list(*args)
       update_config!
       perform("list", "list", args)
     end
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
-    method_option :log_level,
-      :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :loader,
       :type => :boolean,
       :desc => "Include data loader diagnostics"
@@ -111,6 +117,7 @@ module Kitchen
     method_option :all,
       :type => :boolean,
       :desc => "Include all diagnostics"
+    log_options
     def diagnose(*args)
       update_config!
       perform("diagnose", "diagnose", args, :loader => @loader)
@@ -153,9 +160,7 @@ module Kitchen
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
-      method_option :log_level,
-        :aliases => "-l",
-        :desc => "Set the log level (debug, info, warn, error, fatal)"
+      log_options
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
@@ -192,9 +197,6 @@ module Kitchen
         [Future DEPRECATION, use --concurrency]
         Run a test against all matching instances concurrently.
       DESC
-    method_option :log_level,
-      :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :destroy,
       :aliases => "-d",
       :default => "passing",
@@ -203,6 +205,7 @@ module Kitchen
       :type => :boolean,
       :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
+    log_options
     def test(*args)
       update_config!
       ensure_initialized
@@ -210,9 +213,7 @@ module Kitchen
     end
 
     desc "login INSTANCE|REGEXP", "Log in to one instance"
-    method_option :log_level,
-      :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
+    log_options
     def login(*args)
       update_config!
       perform("login", "login", args)
@@ -220,12 +221,10 @@ module Kitchen
 
     desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
       "Execute command on one or more instance"
-    method_option :log_level,
-      :aliases => "-l",
-      :desc => "Set the log level (debug, info, warn, error, fatal)"
     method_option :command,
       :aliases => "-c",
       :desc => "execute via ssh"
+    log_options
     def exec(*args)
       update_config!
       perform("exec", "exec", args)
@@ -330,9 +329,24 @@ module Kitchen
       if options[:log_level]
         level = options[:log_level].downcase.to_sym
         @config.log_level = level
-        Kitchen.logger.level = Util.to_logger_level(level)
+      end
+      unless options[:log_overwrite].nil?
+        @config.log_overwrite = options[:log_overwrite]
       end
 
+      # Now that we have required configs, lets create our file logger
+      Kitchen.logger = Kitchen.default_file_logger(
+        level,
+        options[:log_overwrite]
+      )
+
+      update_parallel!
+    end
+
+    # Set parallel concurrency options for Thor
+    #
+    # @api private
+    def update_parallel!
       if options[:parallel]
         # warn here in a future release when option is used
         @options = Thor::CoreExt::HashWithIndifferentAccess.new(options.to_hash)

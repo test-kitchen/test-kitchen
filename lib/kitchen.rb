@@ -70,16 +70,27 @@ module Kitchen
     #
     # @return [Logger] a logger
     def default_logger
-      Logger.new(:stdout => $stdout, :level => env_log)
+      Logger.new(:stdout => $stdout, :level => Util.to_logger_level(env_log))
     end
 
     # Returns a default file logger which emits on standard output and to a
     # log file.
     #
+    # @param [Symbol] level logging level
+    # @param [Boolean] log_overwrite logging level
     # @return [Logger] a logger
-    def default_file_logger
-      logfile = File.expand_path(File.join(".kitchen", "logs", "kitchen.log"))
-      Logger.new(:stdout => $stdout, :logdev => logfile, :level => env_log)
+    def default_file_logger(level = nil, log_overwrite = nil)
+      level ||= env_log
+      log_overwrite = log_overwrite.nil? ? env_log_overwrite : log_overwrite
+      log_location = File.expand_path(File.join(DEFAULT_LOG_DIR, "kitchen.log"))
+      log_location = log_location.to_s
+
+      Logger.new(
+          :stdout => $stdout,
+          :logdev => log_location,
+          :level => Util.to_logger_level(level),
+          :log_overwrite => log_overwrite
+      )
     end
 
     # Returns whether or not standard output is associated with a terminal
@@ -90,22 +101,37 @@ module Kitchen
       $stdout.tty?
     end
 
-    private
-
     # Determine the default log level from an environment variable, if it is
     # set.
     #
-    # @return [Integer,nil] a log level or nil if not set
+    # @return [Symbol,nil] a log level or nil if not set
     # @api private
     def env_log
-      level = ENV["KITCHEN_LOG"] && ENV["KITCHEN_LOG"].downcase.to_sym
-      level = Util.to_logger_level(level) unless level.nil?
-      level
+      ENV["KITCHEN_LOG"] && ENV["KITCHEN_LOG"].downcase.to_sym
+    end
+
+    # Determine the log overwriting logic from an environment variable,
+    # if it is set.
+    #
+    # @return [Boolean,nil]
+    # @api private
+    def env_log_overwrite
+      case ENV["KITCHEN_LOG_OVERWRITE"] && ENV["KITCHEN_LOG_OVERWRITE"].downcase
+      when nil, ""
+        nil
+      when "false", "f", "no"
+        false
+      else
+        true
+      end
     end
   end
 
   # Default log level verbosity
   DEFAULT_LOG_LEVEL = :info
+
+  # Overwrite the log file when Test Kitchen runs
+  DEFAULT_LOG_OVERWRITE = true
 
   # Default base directory for integration tests, fixtures, etc.
   DEFAULT_TEST_DIR = "test/integration".freeze

@@ -19,3 +19,6 @@ tmp
 .rbenv-version
 .ruby-version
 .project
+.kitchen/
+.kitchen.yml
+.kitchen.local.yml

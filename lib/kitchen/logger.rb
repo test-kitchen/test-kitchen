@@ -34,6 +34,10 @@ module Kitchen
     # @return [IO] the log device
     attr_reader :logdev
 
+    # @return [Boolean] whether logger is configured for
+    #   overwriting
+    attr_reader :log_overwrite
+
     # Constructs a new logger.
     #
     # @param options [Hash] configuration for a new logger
@@ -41,6 +45,9 @@ module Kitchen
     #   messages
     # @option options [Integer] :level the logging severity threshold
     #   (default: `Kitchen::DEFAULT_LOG_LEVEL`)
+    # @option options [Boolean] whether to overwrite the log
+    #   when Test Kitchen runs. Only applies if the :logdev is a String.
+    #   (default: `Kitchen::DEFAULT_LOG_OVERWRITE`)
     # @option options [String,IO] :logdev filepath String or IO object to be
     #   used for logging (default: `nil`)
     # @option options [String] :progname program name to include in log
@@ -49,15 +56,32 @@ module Kitchen
     #   (default: `$stdout`)
     def initialize(options = {})
       color = options[:color]
+      @log_overwrite = if options[:log_overwrite].nil?
+        default_log_overwrite
+      else
+        options[:log_overwrite]
+      end
 
-      @loggers = []
-      @loggers << @logdev = logdev_logger(options[:logdev]) if options[:logdev]
-      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
-      @loggers << stdout_logger($stdout, color) if @loggers.empty?
+      @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
 
+      populate_loggers(color, options)
+
+      # These setters cannot be called until @loggers are populated because
+      # they are delegated
       self.progname = options[:progname] || "Kitchen"
       self.level = options[:level] || default_log_level
     end
+
+    # Pulled out for Rubocop complexity issues
+    #
+    # @api private
+    def populate_loggers(color, options)
+      @loggers = []
+      @loggers << logdev unless logdev.nil?
+      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
+      @loggers << stdout_logger($stdout, color) if @loggers.empty?
+    end
+    private :populate_loggers
 
     class << self
 
@@ -252,6 +276,12 @@ module Kitchen
       Util.to_logger_level(Kitchen::DEFAULT_LOG_LEVEL)
     end
 
+    # @return [Boolean] whether to overwrite logs by default
+    # @api private
+    def default_log_overwrite
+      Kitchen::DEFAULT_LOG_OVERWRITE
+    end
+
     # Construct a new standard out logger.
     #
     # @param stdout [IO] the IO object that represents stdout (or similar)
@@ -275,21 +305,26 @@ module Kitchen
     # Construct a new logdev logger.
     #
     # @param filepath_or_logdev [String,IO] a filepath String or IO object
+    # @param log_overwrite [Boolean] apply log overwriting
+    #   if filepath_or_logdev is a file path
     # @return [LogdevLogger] a new logger
     # @api private
-    def logdev_logger(filepath_or_logdev)
-      LogdevLogger.new(resolve_logdev(filepath_or_logdev))
+    def logdev_logger(filepath_or_logdev, log_overwrite)
+      LogdevLogger.new(resolve_logdev(filepath_or_logdev, log_overwrite))
     end
 
     # Return an IO object from a filepath String or the IO object itself.
     #
     # @param filepath_or_logdev [String,IO] a filepath String or IO object
+    # @param log_overwrite [Boolean] apply log overwriting
+    #   if filepath_or_logdev is a file path
     # @return [IO] an IO object
     # @api private
-    def resolve_logdev(filepath_or_logdev)
+    def resolve_logdev(filepath_or_logdev, log_overwrite)
       if filepath_or_logdev.is_a? String
+        mode = log_overwrite ? "wb" : "ab"
         FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
-        file = File.open(File.expand_path(filepath_or_logdev), "ab")
+        file = File.open(File.expand_path(filepath_or_logdev), mode)
         file.sync = true
         file
       else
