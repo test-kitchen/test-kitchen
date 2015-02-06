@@ -348,6 +348,9 @@ describe Kitchen::Transport::Winrm::Connection do
     Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).
       with(winrm_session, logger).
       returns(executor)
+    # disable finalizer as service is a fake anyway
+    ObjectSpace.stubs(:define_finalizer).
+      with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
   end
 
   describe "#execute" do

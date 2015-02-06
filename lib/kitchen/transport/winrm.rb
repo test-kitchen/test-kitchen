@@ -93,6 +93,7 @@ module Kitchen
           logger.debug("[WinRM] closing remote shell #{shell_id} on #{self}")
           session.close
           logger.debug("[WinRM] remote shell #{shell_id} closed")
+          remove_finalizer
         ensure
           @session = nil
         end
@@ -136,6 +137,20 @@ module Kitchen
 
         attr_reader :winrm_transport
 
+        def add_finalizer(shell_id)
+          ObjectSpace.define_finalizer(
+            self,
+            ShellCloser.new(
+              logger.debug?,
+              shell_id,
+              "#{self}",
+              endpoint,
+              winrm_transport,
+              options
+            )
+          )
+        end
+
         def establish_shell(opts)
           @service = ::WinRM::WinRMWebService.new(
             endpoint, winrm_transport, options)
@@ -145,6 +160,7 @@ module Kitchen
             logger.debug("[WinRM] opening remote shell on #{self}")
             shell_id = executor.open
             logger.debug("[WinRM] remote shell #{shell_id} is open on #{self}")
+            add_finalizer(shell_id)
           end
           executor
         end
@@ -180,6 +196,10 @@ module Kitchen
               map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }.
               each { |line| logger.warn(line) }
           end
+        end
+
+        def remove_finalizer
+          ObjectSpace.undefine_finalizer(self)
         end
 
         def retryable(opts)
@@ -256,6 +276,31 @@ module Kitchen
         logger.debug("[WinRM] reusing existing connection #{@connection}")
         yield @connection if block_given?
         @connection
+      end
+
+      # TODO: comment
+      class ShellCloser
+
+        def initialize(*args)
+          @debug = args.shift
+          @shell_id = args.shift
+          @info = args.shift
+          @args = args
+        end
+
+        def call(*)
+          debug("[WinRM] closing remote shell #{@shell_id} on #{@info}")
+          ::WinRM::WinRMWebService.new(*@args).close_shell(@shell_id)
+          debug("[WinRM] remote shell #{@shell_id} closed")
+        rescue => e
+          debug("Exception: #{e.inspect}")
+        end
+
+        private
+
+        def debug(msg)
+          $stdout.puts "D      #{msg}" if @debug
+        end
       end
     end
   end
