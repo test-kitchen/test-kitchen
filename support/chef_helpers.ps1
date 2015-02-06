@@ -23,7 +23,11 @@ function should_update_chef($version) {
 # @param $chef_msi Temporal MSI path
 function download_chef($chef_url, $chef_msi) {
   Write-Host -NoNewline "`r`tDownloading Chef..."
-  (New-Object System.Net.WebClient).DownloadFile($chef_url, $chef_msi)
+  $proxy = new-object System.Net.WebProxy
+  $proxy.Address = $env:http_proxy
+  $wc = new-object system.net.WebClient
+  $wc.proxy = $proxy
+  $wc.DownloadFile($chef_url, $chef_msi)
   Write-Host -NoNewline "`r`tDone!              "
 }
 
