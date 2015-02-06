@@ -69,6 +69,19 @@ module Kitchen
       # TODO: comment
       class Connection < Kitchen::Transport::Base::Connection
 
+        # (see Base#close)
+        def close
+          return if @session.nil?
+
+          shell_id = session.shell
+          logger.debug("[WinRM] closing remote shell #{shell_id} on #{self}")
+          session.close
+          logger.debug("[WinRM] remote shell #{shell_id} closed")
+          remove_finalizer
+        ensure
+          @session = nil
+        end
+
         # (see Base#execute)
         def execute(command)
           logger.debug("[WinRM] #{self} (#{command})")
@@ -84,18 +97,6 @@ module Kitchen
               "WinRM exited (#{exit_code}) but contained a STDERR stream " \
               "for command: [#{command}]"
           end
-        end
-
-        def shutdown
-          return if @session.nil?
-
-          shell_id = session.shell
-          logger.debug("[WinRM] closing remote shell #{shell_id} on #{self}")
-          session.close
-          logger.debug("[WinRM] remote shell #{shell_id} closed")
-          remove_finalizer
-        ensure
-          @session = nil
         end
 
         # (see Base#wait_until_ready)
@@ -265,7 +266,7 @@ module Kitchen
       def create_new_connection(options, &block)
         if @connection
           logger.debug("[WinRM] shutting previous connection #{@connection}")
-          @connection.shutdown
+          @connection.close
         end
 
         @connection_options = options

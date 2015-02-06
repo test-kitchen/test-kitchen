@@ -267,7 +267,7 @@ describe Kitchen::Transport::Winrm do
 
       it "closes first connection when a second is created" do
         first_connection = make_connection(state)
-        first_connection.expects(:shutdown)
+        first_connection.expects(:close)
 
         make_connection(state.merge(:port => 9000))
       end
@@ -351,6 +351,45 @@ describe Kitchen::Transport::Winrm::Connection do
     # disable finalizer as service is a fake anyway
     ObjectSpace.stubs(:define_finalizer).
       with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+  end
+
+  describe "#close" do
+
+    let(:response) do
+      {
+        :data => [{ :stdout => "ok\r\n" }],
+        :exitcode => 0
+      }
+    end
+
+    before do
+      executor.stubs(:open).returns("shell-123")
+      executor.stubs(:shell).returns("shell-123")
+      executor.stubs(:close)
+      executor.stubs(:run_powershell_script).
+        with("doit").yields("ok\n", nil).returns(response)
+    end
+
+    it "logger displays closing connection on debug" do
+      connection.execute("doit")
+      connection.close
+
+      logged_output.string.must_match debug_line(
+        "[WinRM] closing remote shell shell-123 on #{info}"
+      )
+      logged_output.string.must_match debug_line(
+        "[WinRM] remote shell shell-123 closed"
+      )
+    end
+
+    it "only closes the shell once for multiple calls" do
+      executor.expects(:close).once
+
+      connection.execute("doit")
+      connection.close
+      connection.close
+      connection.close
+    end
   end
 
   describe "#execute" do
@@ -602,45 +641,6 @@ MSG
           }.size.must_equal 1
         end
       end
-    end
-  end
-
-  describe "#shutdown" do
-
-    let(:response) do
-      {
-        :data => [{ :stdout => "ok\r\n" }],
-        :exitcode => 0
-      }
-    end
-
-    before do
-      executor.stubs(:open).returns("shell-123")
-      executor.stubs(:shell).returns("shell-123")
-      executor.stubs(:close)
-      executor.stubs(:run_powershell_script).
-        with("doit").yields("ok\n", nil).returns(response)
-    end
-
-    it "logger displays closing connection on debug" do
-      connection.execute("doit")
-      connection.shutdown
-
-      logged_output.string.must_match debug_line(
-        "[WinRM] closing remote shell shell-123 on #{info}"
-      )
-      logged_output.string.must_match debug_line(
-        "[WinRM] remote shell shell-123 closed"
-      )
-    end
-
-    it "only closes the shell once for multiple calls" do
-      executor.expects(:close).once
-
-      connection.execute("doit")
-      connection.shutdown
-      connection.shutdown
-      connection.shutdown
     end
   end
 

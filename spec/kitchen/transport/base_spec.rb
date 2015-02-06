@@ -70,16 +70,16 @@ describe Kitchen::Transport::Base::Connection do
     Kitchen::Transport::Base::Connection.new(options)
   end
 
+  it "has a #close method that does nothing" do
+    connection.close.must_be_nil
+  end
+
   it "has an #execute method which raises a ClientError" do
     proc { connection.execute("boo") }.must_raise Kitchen::ClientError
   end
 
   it "has a #login_command method which raises an ActionFailed" do
     proc { connection.login_command }.must_raise Kitchen::ActionFailed
-  end
-
-  it "has a #shutdown method that does nothing" do
-    connection.shutdown.must_be_nil
   end
 
   it "has an #upload method which raises a ClientError" do

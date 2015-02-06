@@ -96,6 +96,11 @@ module Kitchen
           end
         end
 
+        # Closes the session connection, if it is still active.
+        def close
+          # this method may be left unimplemented if that is applicable
+        end
+
         # Execute a command on the remote host.
         #
         # @param command [String] command string to execute
@@ -112,11 +117,6 @@ module Kitchen
         # @raise [ActionFailed] if the action could not be completed
         def login_command
           raise ActionFailed, "Remote login not supported in #{self.class}."
-        end
-
-        # Shuts down the session connection, if it is still active.
-        def shutdown
-          # this method may be left unimplemented if that is applicable
         end
 
         # Uploads local files or directories to remote host.

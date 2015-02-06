@@ -56,6 +56,16 @@ module Kitchen
       # TODO: comment
       class Connection < Kitchen::Transport::Base::Connection
 
+        # (see Base#close)
+        def close
+          return if @session.nil?
+
+          logger.debug("[SSH] closing connection to #{self}")
+          session.close
+        ensure
+          @session = nil
+        end
+
         # (see Base#execute)
         def execute(command)
           logger.debug("[SSH] #{self} (#{command})")
@@ -81,16 +91,6 @@ module Kitchen
           args += %W[ #{username}@#{hostname} ]
 
           LoginCommand.new(["ssh", *args])
-        end
-
-        # (see Base#shutdown)
-        def shutdown
-          return if @session.nil?
-
-          logger.debug("[SSH] closing connection to #{self}")
-          session.close
-        ensure
-          @session = nil
         end
 
         # (see Base#upload)
@@ -249,7 +249,7 @@ module Kitchen
       def create_new_connection(options, &block)
         if @connection
           logger.debug("[SSH] shutting previous connection #{@connection}")
-          @connection.shutdown
+          @connection.close
         end
 
         @connection_options = options

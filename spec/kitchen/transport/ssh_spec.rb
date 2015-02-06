@@ -444,7 +444,7 @@ describe Kitchen::Transport::Ssh do
 
       it "closes first connection when a second is created" do
         first_connection = make_connection(state)
-        first_connection.expects(:shutdown)
+        first_connection.expects(:close)
 
         make_connection(state.merge(:port => 9000))
       end
@@ -582,6 +582,45 @@ describe Kitchen::Transport::Ssh::Connection do
             l =~ warn_line_with("[SSH] connection failed, terminating ")
           }.size.must_equal 1
         end
+      end
+    end
+  end
+
+  describe "#close" do
+
+    before do
+      story do |script|
+        channel = script.opens_channel
+        channel.sends_request_pty
+        channel.sends_exec("doit")
+        channel.gets_data("ok\n")
+        channel.gets_exit_status(0)
+        channel.gets_close
+        channel.sends_close
+      end
+    end
+
+    it "logger displays closing connection on debug" do
+      conn.expects(:close)
+
+      assert_scripted do
+        connection.execute("doit")
+        connection.close
+      end
+
+      logged_output.string.must_match debug_line(
+        "[SSH] closing connection to me@foo<{:port=>22}>"
+      )
+    end
+
+    it "only closes the connection once for multiple calls" do
+      conn.expects(:close).once
+
+      assert_scripted do
+        connection.execute("doit")
+        connection.close
+        connection.close
+        connection.close
       end
     end
   end
@@ -781,45 +820,6 @@ describe Kitchen::Transport::Ssh::Connection do
       options[:port] = 1234
 
       cmd.must_match regexify(" -p 1234 ")
-    end
-  end
-
-  describe "#shutdown" do
-
-    before do
-      story do |script|
-        channel = script.opens_channel
-        channel.sends_request_pty
-        channel.sends_exec("doit")
-        channel.gets_data("ok\n")
-        channel.gets_exit_status(0)
-        channel.gets_close
-        channel.sends_close
-      end
-    end
-
-    it "logger displays closing connection on debug" do
-      conn.expects(:close)
-
-      assert_scripted do
-        connection.execute("doit")
-        connection.shutdown
-      end
-
-      logged_output.string.must_match debug_line(
-        "[SSH] closing connection to me@foo<{:port=>22}>"
-      )
-    end
-
-    it "only closes the connection once for multiple calls" do
-      conn.expects(:close).once
-
-      assert_scripted do
-        connection.execute("doit")
-        connection.shutdown
-        connection.shutdown
-        connection.shutdown
-      end
     end
   end
 
