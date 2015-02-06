@@ -29,7 +29,13 @@ function download_chef($chef_url, $chef_msi) {
 
 # function to install chef with sort of a nice progress bar
 function install_chef {
-  $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru -Wait
+  $proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $chef_msi" -Passthru
+  $bar = ""
+  while (-Not $proc_msi.HasExited ) {
+    Write-Host -NoNewline "`r`t[MSI] [$bar"
+    Start-Sleep 2
+    $bar += "#"
+  }
 
   if ($proc_msi.ExitCode -ne 0) {
     throw "msiexec was not successful. Received exit code $($proc_msi.ExitCode)"
