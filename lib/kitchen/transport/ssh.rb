@@ -88,7 +88,7 @@ module Kitchen
           return if @session.nil?
 
           logger.debug("[SSH] closing connection to #{self}")
-          session.shutdown!
+          session.close
         ensure
           @session = nil
         end

@@ -799,7 +799,7 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     it "logger displays closing connection on debug" do
-      conn.expects(:shutdown!)
+      conn.expects(:close)
 
       assert_scripted do
         connection.execute("doit")
@@ -812,7 +812,7 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     it "only closes the connection once for multiple calls" do
-      conn.expects(:shutdown!).once
+      conn.expects(:close).once
 
       assert_scripted do
         connection.execute("doit")
