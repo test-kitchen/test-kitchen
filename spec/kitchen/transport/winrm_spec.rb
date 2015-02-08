@@ -54,6 +54,10 @@ describe Kitchen::Transport::Winrm do
         must_equal "http://%{hostname}:%{port}/wsman"
     end
 
+    it "sets :rdp_port to 3389 by default" do
+      transport[:rdp_port].must_equal 3389
+    end
+
     it "sets :connection_retries to 5 by default" do
       transport[:connection_retries].must_equal 5
     end
@@ -75,10 +79,26 @@ describe Kitchen::Transport::Winrm do
     def self.common_connection_specs
       before do
         config[:hostname] = "here"
+        config[:kitchen_root] = "/i/am/root"
       end
 
       it "returns a Kitchen::Transport::Winrm::Connection object" do
         transport.connection(state).must_be_kind_of klass
+      end
+
+      it "sets :instance_name to the instance's name" do
+        klass.expects(:new).with do |hash|
+          hash[:instance_name] == "coolbeans"
+        end
+
+        make_connection
+      end
+      it "sets :kitchen_root to the transport's kitchen_root" do
+        klass.expects(:new).with do |hash|
+          hash[:kitchen_root] == "/i/am/root"
+        end
+
+        make_connection
       end
 
       it "sets the :logger to the transport's logger" do
@@ -174,6 +194,27 @@ describe Kitchen::Transport::Winrm do
 
         klass.expects(:new).with do |hash|
           hash[:pass] == "pass_from_state"
+        end
+
+        make_connection
+      end
+
+      it "sets :rdp_port from config" do
+        config[:rdp_port] = "rdp_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:rdp_port] == "rdp_from_config"
+        end
+
+        make_connection
+      end
+
+      it "sets :rdp_port from state over config data" do
+        state[:rdp_port] = "rdp_from_state"
+        config[:rdp_port] = "rdp_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:rdp_port] == "rdp_from_state"
         end
 
         make_connection
@@ -316,7 +357,9 @@ describe Kitchen::Transport::Winrm::Connection do
 
   let(:options) do
     { :logger => logger, :user => "me", :pass => "haha",
-      :endpoint => "http://foo:5985/wsman", :winrm_transport => :plaintext }
+      :endpoint => "http://foo:5985/wsman", :winrm_transport => :plaintext,
+      :kitchen_root => "/i/am/root", :instance_name => "coolbeans",
+      :rdp_port => "rdpyeah" }
   end
 
   let(:info) do
@@ -342,15 +385,6 @@ describe Kitchen::Transport::Winrm::Connection do
 
   before do
     logger.level = Logger::DEBUG
-    ::WinRM::WinRMWebService.stubs(:new).
-      with("http://foo:5985/wsman", :plaintext, :user => "me", :pass => "haha").
-      returns(winrm_session)
-    Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).
-      with(winrm_session, logger).
-      returns(executor)
-    # disable finalizer as service is a fake anyway
-    ObjectSpace.stubs(:define_finalizer).
-      with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
   end
 
   describe "#close" do
@@ -363,6 +397,10 @@ describe Kitchen::Transport::Winrm::Connection do
     end
 
     before do
+      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      # disable finalizer as service is a fake anyway
+      ObjectSpace.stubs(:define_finalizer).
+        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
       executor.stubs(:open).returns("shell-123")
       executor.stubs(:shell).returns("shell-123")
       executor.stubs(:close)
@@ -393,6 +431,13 @@ describe Kitchen::Transport::Winrm::Connection do
   end
 
   describe "#execute" do
+
+    before do
+      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      # disable finalizer as service is a fake anyway
+      ObjectSpace.stubs(:define_finalizer).
+        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+    end
 
     describe "for a successful command" do
 
@@ -644,9 +689,81 @@ MSG
     end
   end
 
+  describe "#login_command" do
+
+    let(:login_command) { connection.login_command }
+    let(:exec_args)     { login_command.exec_args }
+
+    let(:rdp_doc) do
+      File.join(File.join(options[:kitchen_root], ".kitchen", "coolbeans.rdp"))
+    end
+
+    describe "for Mac-based workstations" do
+
+      before do
+        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("darwin14")
+      end
+
+      it "returns a LoginCommand" do
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command.must_be_instance_of Kitchen::LoginCommand
+        end
+      end
+
+      it "creates an rdp document" do
+        actual = nil
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command
+          actual = IO.read(rdp_doc)
+        end
+
+        actual.must_equal Kitchen::Util.outdent!(<<-RDP)
+          drivestoredirect:s:*
+          full address:s:foo:rdpyeah
+          prompt for credentials:i:1
+          username:s:me
+        RDP
+      end
+
+      it "prints the rdp document on debug" do
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command
+        end
+
+        expected = Kitchen::Util.outdent!(<<-OUTPUT)
+          Creating RDP document for coolbeans (/i/am/root/.kitchen/coolbeans.rdp)
+          ------------
+          drivestoredirect:s:*
+          full address:s:foo:rdpyeah
+          prompt for credentials:i:1
+          username:s:me
+          ------------
+        OUTPUT
+        debug_output(logged_output.string).must_match expected
+      end
+
+      it "returns a LoginCommand which calls open on the rdp document" do
+        actual = nil
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          actual = login_command
+        end
+
+        actual.exec_args.must_equal ["open", rdp_doc, {}]
+      end
+    end
+  end
+
   describe "#wait_until_ready" do
 
     before do
+      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      # disable finalizer as service is a fake anyway
+      ObjectSpace.stubs(:define_finalizer).
+        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
       options[:max_wait_until_ready] = 300
       connection.stubs(:sleep)
     end
@@ -741,6 +858,11 @@ MSG
         logged_output.string.must_match warn_line("Ah crap.\n")
       end
     end
+  end
+
+  def debug_output(output)
+    regexp = %r{^D, .* DEBUG -- : }
+    output.lines.grep(%r{^D, .* DEBUG -- : }).map { |l| l.sub(regexp, "") }.join
   end
 
   def debug_line(msg)

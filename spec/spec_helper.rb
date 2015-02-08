@@ -46,3 +46,11 @@ class IO
     File.open(args[0], "rb") { |f| f.read(args[1]) }
   end
 end
+
+def with_fake_fs
+  FakeFS.activate!
+  FileUtils.mkdir_p("/tmp")
+  yield
+  FakeFS.deactivate!
+  FakeFS::FileSystem.clear
+end

@@ -27,6 +27,8 @@ if defined?(WinRM).nil?
   $VERBOSE = verbose_bk
 end
 
+require "rbconfig"
+
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
 require "kitchen/transport/winrm_file_transfer/remote_file"
@@ -52,6 +54,7 @@ module Kitchen
       default_config :username, ".\\administrator"
       default_config :password, nil
       default_config :endpoint_template, "http://%{hostname}:%{port}/wsman"
+      default_config :rdp_port, 3389
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
@@ -99,6 +102,28 @@ module Kitchen
           end
         end
 
+        # (see Base#login_command)
+        def login_command
+          rdp_doc = File.join(kitchen_root, ".kitchen", "#{instance_name}.rdp")
+          content = Util.outdent!(<<-RDP)
+            drivestoredirect:s:*
+            full address:s:#{URI.parse(endpoint).host}:#{rdp_port}
+            prompt for credentials:i:1
+            username:s:#{options[:user]}
+          RDP
+
+          File.open(rdp_doc, "wb") { |f| f.write(content) }
+
+          if logger.debug?
+            debug("Creating RDP document for #{instance_name} (#{rdp_doc})")
+            debug("------------")
+            IO.read(rdp_doc).each_line { |l| debug("#{l.chomp}") }
+            debug("------------")
+          end
+
+          LoginCommand.new("open", rdp_doc)
+        end
+
         # (see Base#wait_until_ready)
         def wait_until_ready
           delay = 3
@@ -134,7 +159,13 @@ module Kitchen
 
         attr_reader :endpoint
 
+        attr_reader :instance_name
+
+        attr_reader :kitchen_root
+
         attr_reader :max_wait_until_ready
+
+        attr_reader :rdp_port
 
         attr_reader :winrm_transport
 
@@ -177,7 +208,10 @@ module Kitchen
         # (see Base#init_options)
         def init_options(options)
           super
+          @instance_name      = @options.delete(:instance_name)
+          @kitchen_root       = @options.delete(:kitchen_root)
           @endpoint           = @options.delete(:endpoint)
+          @rdp_port           = @options.delete(:rdp_port)
           @winrm_transport    = @options.delete(:winrm_transport)
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
@@ -248,6 +282,8 @@ module Kitchen
 
       def connection_options(data)
         opts = {
+          :instance_name          => instance.name,
+          :kitchen_root           => data[:kitchen_root],
           :logger                 => logger,
           :winrm_transport        => :plaintext,
           :disable_sspi           => true,
@@ -255,6 +291,7 @@ module Kitchen
           :endpoint               => data[:endpoint_template] % data,
           :user                   => data[:username],
           :pass                   => data[:password],
+          :rdp_port               => data[:rdp_port],
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
           :max_wait_until_ready   => data[:max_wait_until_ready]
