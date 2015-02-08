@@ -28,6 +28,7 @@ if defined?(WinRM).nil?
 end
 
 require "rbconfig"
+require "uri"
 
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
@@ -109,6 +110,11 @@ module Kitchen
             login_command_for_mac
           when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
             login_command_for_windows
+          when /linux/
+            login_command_for_linux
+          else
+            raise ActionFailed, "Remote login not supported in #{self.class} " \
+              "from host OS '#{RbConfig::CONFIG["host_os"]}'."
           end
         end
 
@@ -239,13 +245,24 @@ module Kitchen
           end
         end
 
+        # TODO: determine whether or not `desktop` exists
+        def login_command_for_linux
+          args  = %W[ -u #{options[:user]} ]
+          args += %W[ -p #{options[:pass]} ] if options.key?(:pass)
+          args += %W[ #{URI.parse(endpoint).host}:#{rdp_port} ]
+
+          LoginCommand.new("rdesktop", args)
+        end
+
         def login_command_for_mac
           create_rdp_doc(:mac => true)
+
           LoginCommand.new("open", rdp_doc_path)
         end
 
         def login_command_for_windows
           create_rdp_doc
+
           LoginCommand.new("mstsc", rdp_doc_path)
         end
 

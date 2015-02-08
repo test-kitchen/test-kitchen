@@ -692,6 +692,7 @@ MSG
   describe "#login_command" do
 
     let(:login_command) { connection.login_command }
+    let(:args)          { login_command.arguments.join(" ") }
     let(:exec_args)     { login_command.exec_args }
 
     let(:rdp_doc) do
@@ -809,6 +810,49 @@ MSG
         end
 
         actual.exec_args.must_equal ["mstsc", rdp_doc, {}]
+      end
+    end
+
+    describe "for Linux-based workstations" do
+
+      before do
+        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("linux-gnu")
+      end
+
+      it "returns a LoginCommand" do
+        login_command.must_be_instance_of Kitchen::LoginCommand
+      end
+
+      it "is an rdesktop command" do
+        login_command.command.must_equal "rdesktop"
+        args.must_match %r{ foo:rdpyeah$}
+      end
+
+      it "sets the user" do
+        args.must_match regexify("-u me ")
+      end
+
+      it "sets the pass if given" do
+        args.must_match regexify(" -p haha ")
+      end
+
+      it "won't set the pass if not given" do
+        options.delete(:pass)
+
+        args.wont_match regexify(" -p haha ")
+      end
+    end
+
+    describe "for unknown workstation platforms" do
+
+      before do
+        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("cray")
+      end
+
+      it "raises an ActionFailed error" do
+        err = proc { login_command }.must_raise Kitchen::ActionFailed
+        err.message.must_equal "Remote login not supported in " \
+          "Kitchen::Transport::Winrm::Connection from host OS 'cray'."
       end
     end
   end
@@ -931,6 +975,10 @@ MSG
 
   def info_line_with(msg)
     %r{^I, .* : #{Regexp.escape(msg)}}
+  end
+
+  def regexify(string)
+    Regexp.new(Regexp.escape(string))
   end
 
   def warn_line(msg)
