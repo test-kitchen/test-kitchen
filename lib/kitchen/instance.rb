@@ -209,12 +209,11 @@ module Kitchen
         raise UserError, "Instance #{to_str} has not yet been created"
       end
 
-      login_command = driver.login_command(state)
-      cmd, *args = login_command.cmd_array
-      options = login_command.options
+      lc = driver.login_command(state)
 
-      debug(%{Login command: #{cmd} #{args.join(" ")} (Options: #{options})})
-      Kernel.exec(cmd, *args, options)
+      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} " \
+        "(Options: #{lc.options})})
+      Kernel.exec(*lc.exec_args)
     end
 
     # Executes an arbitrary command on this instance.

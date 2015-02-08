@@ -22,28 +22,47 @@ require "kitchen/login_command"
 
 describe Kitchen::LoginCommand do
 
-  let(:argv) { Array.new }
-  let(:opts) { Hash.new }
+  let(:cmd)   { "" }
+  let(:argv)  { Array.new }
+  let(:opts)  { Hash.new }
 
-  let(:cmd) { Kitchen::LoginCommand.new(argv, opts) }
+  let(:login_command) { Kitchen::LoginCommand.new(cmd, argv, opts) }
 
-  it "#cmd_array defaults to an empty array" do
-    Kitchen::LoginCommand.new(nil, opts).cmd_array.must_equal []
+  it "#command returns the command" do
+    cmd << "one"
+
+    login_command.command.must_equal "one"
   end
 
-  it "#cmd_array returns the command array from the constructor" do
-    argv.concat(["one", "-o", "two"])
+  it "#arguments defaults to an empty array" do
+    Kitchen::LoginCommand.new("echo", nil).arguments.must_equal []
+  end
 
-    cmd.cmd_array.must_equal ["one", "-o", "two"]
+  it "#arguments returns the command arguments" do
+    argv.concat(["-o", "two"])
+
+    login_command.arguments.must_equal ["-o", "two"]
   end
 
   it "#options defaults to an empty hash" do
-    Kitchen::LoginCommand.new(argv, nil).options.must_equal {}
+    Kitchen::LoginCommand.new(cmd, argv, nil).options.must_equal {}
   end
 
   it "#options returns the options hash from the constructor" do
     opts[:cake] = "yummy"
 
-    cmd.options.must_equal(:cake => "yummy")
+    login_command.options.must_equal(:cake => "yummy")
+  end
+
+  it "#exec_args returns an array of arguments for Kernel.exec" do
+    cmd << "alpha"
+    login_command.exec_args.must_equal ["alpha", {}]
+
+    argv.concat(["-o", "beta"])
+    login_command.exec_args.must_equal ["alpha", "-o", "beta", {}]
+
+    opts[:charlie] = "delta"
+    login_command.exec_args.must_equal [
+      "alpha", "-o", "beta", { :charlie => "delta" }]
   end
 end

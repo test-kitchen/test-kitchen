@@ -742,84 +742,84 @@ describe Kitchen::Transport::Ssh::Connection do
   describe "#login_command" do
 
     let(:login_command) { connection.login_command }
-    let(:cmd)           { login_command.cmd_array.join(" ") }
+    let(:args)          { login_command.arguments.join(" ") }
 
     it "returns a LoginCommand" do
       login_command.must_be_instance_of Kitchen::LoginCommand
     end
 
     it "is an SSH command" do
-      cmd.must_match %r{^ssh }
-      cmd.must_match %r{ me@foo$}
+      login_command.command.must_equal "ssh"
+      args.must_match %r{ me@foo$}
     end
 
     it "sets the UserKnownHostsFile option" do
-      cmd.must_match regexify(" -o UserKnownHostsFile=/dev/null ")
+      args.must_match regexify("-o UserKnownHostsFile=/dev/null ")
     end
 
     it "sets the StrictHostKeyChecking option" do
-      cmd.must_match regexify(" -o StrictHostKeyChecking=no ")
+      args.must_match regexify(" -o StrictHostKeyChecking=no ")
     end
 
     it "won't set IdentitiesOnly option by default" do
-      cmd.wont_match regexify(" -o IdentitiesOnly=")
+      args.wont_match regexify(" -o IdentitiesOnly=")
     end
 
     it "sets the IdentiesOnly option if :keys option is given" do
       options[:keys] = ["yep"]
 
-      cmd.must_match regexify(" -o IdentitiesOnly=yes ")
+      args.must_match regexify(" -o IdentitiesOnly=yes ")
     end
 
     it "sets the LogLevel option to VERBOSE if logger is set to debug" do
       logger.level = ::Logger::DEBUG
       options[:logger] = logger
 
-      cmd.must_match regexify(" -o LogLevel=VERBOSE ")
+      args.must_match regexify(" -o LogLevel=VERBOSE ")
     end
 
     it "sets the LogLevel option to ERROR if logger is not set to debug" do
       logger.level = ::Logger::INFO
       options[:logger] = logger
 
-      cmd.must_match regexify(" -o LogLevel=ERROR ")
+      args.must_match regexify(" -o LogLevel=ERROR ")
     end
 
     it "won't set the ForwardAgent option by default" do
-      cmd.wont_match regexify(" -o ForwardAgent=")
+      args.wont_match regexify(" -o ForwardAgent=")
     end
 
     it "sets the ForwardAgent option to yes if truthy" do
       options[:forward_agent] = "yep"
 
-      cmd.must_match regexify(" -o ForwardAgent=yes")
+      args.must_match regexify(" -o ForwardAgent=yes")
     end
 
     it "sets the ForwardAgent option to no if falsey" do
       options[:forward_agent] = false
 
-      cmd.must_match regexify(" -o ForwardAgent=no")
+      args.must_match regexify(" -o ForwardAgent=no")
     end
 
     it "won't add any SSH keys by default" do
-      cmd.wont_match regexify(" -i ")
+      args.wont_match regexify(" -i ")
     end
 
     it "sets SSH keys options if given" do
       options[:keys] = %w[one two]
 
-      cmd.must_match regexify(" -i one ")
-      cmd.must_match regexify(" -i two ")
+      args.must_match regexify(" -i one ")
+      args.must_match regexify(" -i two ")
     end
 
     it "sets the port option to 22 by default" do
-      cmd.must_match regexify(" -p 22 ")
+      args.must_match regexify(" -p 22 ")
     end
 
     it "sets the port option" do
       options[:port] = 1234
 
-      cmd.must_match regexify(" -p 1234 ")
+      args.must_match regexify(" -p 1234 ")
     end
   end
 
