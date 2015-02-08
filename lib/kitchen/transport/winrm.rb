@@ -104,24 +104,12 @@ module Kitchen
 
         # (see Base#login_command)
         def login_command
-          rdp_doc = File.join(kitchen_root, ".kitchen", "#{instance_name}.rdp")
-          content = Util.outdent!(<<-RDP)
-            drivestoredirect:s:*
-            full address:s:#{URI.parse(endpoint).host}:#{rdp_port}
-            prompt for credentials:i:1
-            username:s:#{options[:user]}
-          RDP
-
-          File.open(rdp_doc, "wb") { |f| f.write(content) }
-
-          if logger.debug?
-            debug("Creating RDP document for #{instance_name} (#{rdp_doc})")
-            debug("------------")
-            IO.read(rdp_doc).each_line { |l| debug("#{l.chomp}") }
-            debug("------------")
+          case RbConfig::CONFIG["host_os"]
+          when /darwin/
+            login_command_for_mac
+          when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+            login_command_for_windows
           end
-
-          LoginCommand.new("open", rdp_doc)
         end
 
         # (see Base#wait_until_ready)
@@ -183,6 +171,24 @@ module Kitchen
           )
         end
 
+        def create_rdp_doc(opts = {})
+          content = Util.outdent!(<<-RDP)
+            full address:s:#{URI.parse(endpoint).host}:#{rdp_port}
+            prompt for credentials:i:1
+            username:s:#{options[:user]}
+          RDP
+          content.prepend("drivestoredirect:s:*\n") if opts[:mac]
+
+          File.open(rdp_doc_path, "wb") { |f| f.write(content) }
+
+          if logger.debug?
+            debug("Creating RDP document for #{instance_name} (#{rdp_doc_path})")
+            debug("------------")
+            IO.read(rdp_doc_path).each_line { |l| debug("#{l.chomp}") }
+            debug("------------")
+          end
+        end
+
         def establish_shell(opts)
           @service = ::WinRM::WinRMWebService.new(
             endpoint, winrm_transport, options)
@@ -231,6 +237,20 @@ module Kitchen
               map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }.
               each { |line| logger.warn(line) }
           end
+        end
+
+        def login_command_for_mac
+          create_rdp_doc(:mac => true)
+          LoginCommand.new("open", rdp_doc_path)
+        end
+
+        def login_command_for_windows
+          create_rdp_doc
+          LoginCommand.new("mstsc", rdp_doc_path)
+        end
+
+        def rdp_doc_path
+          File.join(kitchen_root, ".kitchen", "#{instance_name}.rdp")
         end
 
         def remove_finalizer

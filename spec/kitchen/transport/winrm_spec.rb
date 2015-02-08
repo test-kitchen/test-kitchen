@@ -755,6 +755,62 @@ MSG
         actual.exec_args.must_equal ["open", rdp_doc, {}]
       end
     end
+
+    describe "for Windows-based workstations" do
+
+      before do
+        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
+      end
+
+      it "returns a LoginCommand" do
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command.must_be_instance_of Kitchen::LoginCommand
+        end
+      end
+
+      it "creates an rdp document" do
+        actual = nil
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command
+          actual = IO.read(rdp_doc)
+        end
+
+        actual.must_equal Kitchen::Util.outdent!(<<-RDP)
+          full address:s:foo:rdpyeah
+          prompt for credentials:i:1
+          username:s:me
+        RDP
+      end
+
+      it "prints the rdp document on debug" do
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          login_command
+        end
+
+        expected = Kitchen::Util.outdent!(<<-OUTPUT)
+          Creating RDP document for coolbeans (/i/am/root/.kitchen/coolbeans.rdp)
+          ------------
+          full address:s:foo:rdpyeah
+          prompt for credentials:i:1
+          username:s:me
+          ------------
+        OUTPUT
+        debug_output(logged_output.string).must_match expected
+      end
+
+      it "returns a LoginCommand which calls mstsc on the rdp document" do
+        actual = nil
+        with_fake_fs do
+          FileUtils.mkdir_p(File.dirname(rdp_doc))
+          actual = login_command
+        end
+
+        actual.exec_args.must_equal ["mstsc", rdp_doc, {}]
+      end
+    end
   end
 
   describe "#wait_until_ready" do
