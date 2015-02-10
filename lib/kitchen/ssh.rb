@@ -195,6 +195,9 @@ module Kitchen
         Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
       ]
       retries = options[:ssh_retries] || 3
+      timeout = options[:ssh_timeout] || 1
+      options.delete(:ssh_retries) if options.has_key?(:ssh_retries)
+      options.delete(:ssh_timeout) if options.has_key?(:ssh_timeout)
 
       begin
         logger.debug("[SSH] opening connection to #{self}")
@@ -203,7 +206,7 @@ module Kitchen
         retries -= 1
         if retries > 0
           logger.info("[SSH] connection failed, retrying (#{e.inspect})")
-          sleep options[:ssh_timeout] || 1
+          sleep timeout
           retry
         else
           logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
