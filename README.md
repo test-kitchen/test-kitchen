@@ -120,7 +120,7 @@ or `nil` otherwise.
 
 ### <a name="config-ebs_device_name"></a> ebs\_device\_name
 
-**Required** name of your ebs device, for example: `/dev/sda`
+**Required** name of your ebs device, for example: `/dev/sda1`
 
 ### endpoint
 
@@ -260,8 +260,9 @@ driver:
   ssh_timeout: 10
   ssh_retries: 5
   ebs_volume_size: 6,
-  ebs_delete_on_termination: 'true'
-  ebs_device_name: '/dev/sda'
+  ebs_delete_on_termination: true
+  ebs_device_name: '/dev/sda1'
+  flavor_id: t2.micro
 
 platforms:
   - name: ubuntu-12.04
