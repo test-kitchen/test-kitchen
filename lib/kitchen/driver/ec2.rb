@@ -177,7 +177,7 @@ module Kitchen
 
         connection.spot_requests.create(
           :availability_zone         => config[:availability_zone],
-          :security_group_ids        => config[:security_group_ids],
+          :groups                    => config[:security_group_ids],
           :tags                      => config[:tags],
           :flavor_id                 => config[:flavor_id],
           :ebs_optimized             => config[:ebs_optimized],
