@@ -25,19 +25,38 @@ module Kitchen
 
     class Winrm < Kitchen::Transport::Base
 
-      # TODO: comment
+      # Object which can execute multiple commands and Powershell scripts in
+      # one shared remote shell session. The maximum number of commands per
+      # shell is determined by interrogating the remote host when the session
+      # is opened and the remote shell is automatically recycled before the
+      # threshold is reached.
+      #
+      # @author Matt Wrock <matt@mattwrock.com>
+      # @author Fletcher Nichol <fnichol@nichol.ca>
       class CommandExecutor
 
+        # @return [Integer,nil] the safe maximum number of commands that can
+        #   be executed in one remote shell session, or `nil` if the
+        #   threshold has not yet been determined
         attr_reader :max_commands
 
+        # @return [String,nil] the identifier for the current open remote
+        #   shell session, or `nil` if the session is not open
         attr_reader :shell
 
+        # Creates a CommandExecutor given a `WinRM::WinRMWebService` object.
+        #
+        # @param service [WinRM::WinRMWebService] a winrm web service object
+        # @param logger [#debug,#info] an optional logger/ui object that
+        #   responds to `#debug` and `#info` (default: `nil`)
         def initialize(service, logger = nil)
           @service        = service
           @logger         = logger
           @command_count  = 0
         end
 
+        # Closes the open remote shell session. This method can be called
+        # multiple times, even if there is no open session.
         def close
           return if shell.nil?
 
@@ -45,6 +64,11 @@ module Kitchen
           @shell = nil
         end
 
+        # Opens a remote shell session for reuse. The maxiumum
+        # command-per-shell threshold is also determined the first time this
+        # method is invoked and cached for later invocations.
+        #
+        # @return [String] the remote shell session indentifier
         def open
           close
           @shell = service.open_shell
@@ -53,6 +77,15 @@ module Kitchen
           shell
         end
 
+        # Runs a CMD command.
+        #
+        # @param command [String] the command to run on the remote system
+        # @param arguments [Array<String>] arguments to the command
+        # @yield [stdout, stderr] yields more live access the standard
+        #   output and standard error streams as they are returns, if
+        #   streaming behavior is desired
+        # @return [WinRM::Output] output object with stdout, stderr, and
+        #   exit code
         def run_cmd(command, arguments = [], &block)
           reset if command_count_exceeded?
           ensure_open_shell!
@@ -72,10 +105,11 @@ module Kitchen
         #
         # @example Running multiple commands
         #
-        #   executor.run_invoke_commands do |builder|
+        #   result = executor.run_invoke_commands do |builder|
         #     builder << "return $true"
         #     builder << "return $false"
         #   end
+        #   result[:returns] # => ["True", "False"]
         #
         # @yield [commands] gives the Array of commands to the block so that
         #   additional commands can be appended
@@ -100,6 +134,15 @@ module Kitchen
           invoke_commands_response(output)
         end
 
+        # Run a Powershell script that resides on the local box.
+        #
+        # @param script_file [IO,String] an IO reference for reading the
+        #   Powershell script or the actual file contents
+        # @yield [stdout, stderr] yields more live access the standard
+        #   output and standard error streams as they are returns, if
+        #   streaming behavior is desired
+        # @return [WinRM::Output] output object with stdout, stderr, and
+        #   exit code
         def run_powershell_script(script_file, &block)
           # this code looks overly compact in an attempt to limit local
           # variable assignments that may contain large strings and
@@ -124,16 +167,30 @@ module Kitchen
 
         PS1_OS_VERSION = "[environment]::OSVersion.Version.tostring()".freeze
 
+        # @return [Integer] the number of executed commands on the remote
+        #   shell session
+        # @api private
         attr_accessor :command_count
 
+        # @return [#debug,#info] the logger
+        # @api private
         attr_reader :logger
 
+        # @return [WinRM::WinRMWebService] a WinRM web service object
+        # @api private
         attr_reader :service
 
+        # @return [true,false] whether or not the number of exeecuted commands
+        #   have exceeded the maxiumum threshold
+        # @api private
         def command_count_exceeded?
           command_count > max_commands.to_i
         end
 
+        # Ensures that there is an open remote shell session.
+        #
+        # @raise [WinRM::WinRMError] if there is no open shell
+        # @api private
         def ensure_open_shell!
           if shell.nil?
             raise WinRM::WinRMError, "#{self.class}#open must be called " \
@@ -141,6 +198,10 @@ module Kitchen
           end
         end
 
+        # Determines the safe maximum number of commands that can be executed
+        # on a remote shell session by interrogating the remote host.
+        #
+        # @api private
         def determine_max_commands
           os_version = run_powershell_script(PS1_OS_VERSION).stdout.chomp
           @max_commands = os_version < "6.2" ? LEGACY_LIMIT : MODERN_LIMIT
@@ -153,7 +214,7 @@ module Kitchen
         # @param output [WinRM::Output] output object to augment
         # @return [WinRM::Output] output object with an additional `:results`
         #   key
-        # @raises [WinRM::WinRMError] if the JSON document could not be parsed
+        # @raise [WinRM::WinRMError] if the JSON document could not be parsed
         # @api private
         def invoke_commands_response(output)
           _, _, json = output.stdout.
@@ -168,6 +229,9 @@ module Kitchen
             "Failed to parse JSON in response: #{e.inspect} for #{json}"
         end
 
+        # Closes the remote shell session and opens a new one.
+        #
+        # @api private
         def reset
           logger.debug("[#{self.class}] Resetting WinRM shell " \
             "(Max command limit is #{max_commands})") if logger
