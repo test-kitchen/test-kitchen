@@ -21,6 +21,7 @@ require_relative "../../../spec_helper"
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
 
+require "base64"
 require "securerandom"
 require "winrm"
 
@@ -231,6 +232,137 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
     end
   end
 
+  describe "#run_invoke_commands" do
+
+    describe "when #open has not been previously called" do
+
+      it "raises a WinRMError error" do
+        err = proc {
+          executor.run_invoke_commands { |cmds| cmds << "nope" }
+        }.must_raise WinRM::WinRMError
+        err.message.must_equal "#{executor.class}#open must be called " \
+          "before any run methods are invoked"
+      end
+    end
+
+    describe "when #open has been previously called" do
+
+      let(:output) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "__JSON__" },
+          { :stdout => "\r\n" },
+          { :stdout => "{\r\n" },
+          { :stderr => "#< CLIXML\r\n" },
+          { :stdout => %{"1": "True",} },
+          { :stdout => "\r\n" },
+          { :stdout => %["2": "False",\r\n}\r\n] }
+        ])
+        o
+      end
+
+      let(:bad_json_output) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "__JSON__" },
+          { :stdout => "\r\n" },
+          { :stdout => "{\r\n" },
+          { :stderr => "#< CLIXML\r\n" },
+          { :stdout => %{uh oh,} },
+          { :stdout => "\r\n" },
+          { :stdout => %["2": "False",\r\n}\r\n] }
+        ])
+        o
+      end
+
+      before do
+        executor.open
+      end
+
+      let(:command_id) { "command-123" }
+
+      it "run no powershell_scripts if there are no commands to be run" do
+        service.expects(:run_command).never
+
+        result = executor.run_invoke_commands { |_| "cmd not added here" }
+        result.must_equal []
+      end
+
+      it "wraps the commands with tracking code" do
+        service.expects(:run_command).with { |_, cmd, args|
+          cmd.must_equal "powershell"
+          script = decode(args.last)
+          script.must_match regexify_line("$result = @()")
+          script.must_match regexify_line([
+            %{"__JSON__"\n},
+            %["{"\n],
+            %{$result | % },
+            %[{ ++$idx;write-output "`"$idx`": `"$_`",".Replace('\\','\\\\') }\n],
+            %["}"]
+          ].join)
+        }.yields(command_id)
+        service.stubs(:get_command_output).with(shell_id, command_id).
+          returns(output)
+
+        executor.run_invoke_commands do |builder|
+          builder << "return $true"
+          builder << "return $false\n"
+        end
+      end
+
+      it "wraps each command in an Invoke-Command block" do
+        service.expects(:run_command).with { |_, cmd, args|
+          cmd.must_equal "powershell"
+          script = decode(args.last)
+          script.must_match regexify_line(
+            "$result += Invoke-Command { return $true }")
+          script.must_match regexify(
+            "$result += Invoke-Command { return $false\n }")
+        }.yields(command_id)
+        service.stubs(:get_command_output).with(shell_id, command_id).
+          returns(output)
+
+        executor.run_invoke_commands do |builder|
+          builder << "return $true"
+          builder << "return $false\n"
+        end
+      end
+
+      it "adds a :returns key to the reponse with the return values" do
+        service.stubs(:run_command).with { |_, cmd, _|
+          cmd.must_equal "powershell"
+        }.yields(command_id)
+        service.stubs(:get_command_output).with(shell_id, command_id).
+          returns(output)
+
+        output = executor.run_invoke_commands do |builder|
+          builder << "return $true"
+          builder << "return $false\n"
+        end
+
+        output[:returns].must_equal %W[True False]
+      end
+
+      it "raises a WinRM::WinRMError when the JSON can't be parsed" do
+        service.stubs(:run_command).with { |_, cmd, _|
+          cmd.must_equal "powershell"
+        }.yields(command_id)
+        service.stubs(:get_command_output).with(shell_id, command_id).
+          returns(bad_json_output)
+
+        err = proc {
+          executor.run_invoke_commands do |builder|
+            builder << "return $true"
+            builder << "return $false\n"
+          end
+        }.must_raise WinRM::WinRMError
+        err.message.must_match "Failed to parse JSON in response"
+      end
+    end
+  end
+
   describe "#run_powershell_script" do
 
     describe "when #open has not been previously called" do
@@ -361,8 +493,20 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
     end
   end
 
+  def decode(powershell)
+    Base64.strict_decode64(powershell).encode("UTF-8", "UTF-16LE")
+  end
+
   def debug_line_with(msg)
     %r{^D, .* : #{Regexp.escape(msg)}}
+  end
+
+  def regexify(string)
+    Regexp.new(Regexp.escape(string))
+  end
+
+  def regexify_line(string)
+    Regexp.new("^#{Regexp.escape(string)}$")
   end
 
   # rubocop:disable Metrics/ParameterLists

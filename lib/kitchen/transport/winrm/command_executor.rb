@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "base64"
+require "json"
+require "ostruct"
 
 module Kitchen
 
@@ -62,6 +63,41 @@ module Kitchen
             result = service.get_command_output(shell, command_id, &block)
           end
           result
+        end
+
+        # Runs a series of Powershell commands in one Powershell session, using
+        # `Invoke-Command` cmdlets. The resulting output object is augmented
+        # with a `:results` key containing an Array of the return values of
+        # `Invoke-Command` blocks which have return values.
+        #
+        # @example Running multiple commands
+        #
+        #   executor.run_invoke_commands do |builder|
+        #     builder << "return $true"
+        #     builder << "return $false"
+        #   end
+        #
+        # @yield [commands] gives the Array of commands to the block so that
+        #   additional commands can be appended
+        # @return [WinRM::Output] output object with an additional `:results`
+        #   key
+        def run_invoke_commands
+          commands = []
+          yield commands
+          return [] if commands.empty?
+
+          @batch_template ||= Template.new(File.join(
+            File.dirname(__FILE__),
+            %W[.. .. .. .. support powershell_batch.ps1.erb]
+          ))
+
+          commands = commands.
+            map { |entry| "$result += Invoke-Command { #{entry} }" }.join("\n")
+
+          output = run_powershell_script(
+            @batch_template % { :commands => commands })
+
+          invoke_commands_response(output)
         end
 
         def run_powershell_script(script_file, &block)
@@ -111,10 +147,76 @@ module Kitchen
           @max_commands -= 2 # to be safe
         end
 
+        # Parses the output of a script containing a `__JSON__` delimiter
+        # and extracts the returns values from that JSON data.
+        #
+        # @param output [WinRM::Output] output object to augment
+        # @return [WinRM::Output] output object with an additional `:results`
+        #   key
+        # @raises [WinRM::WinRMError] if the JSON document could not be parsed
+        # @api private
+        def invoke_commands_response(output)
+          _, _, json = output.stdout.
+            sub(",\r\n}", "\n}").partition("__JSON__\r\n")
+
+          output[:returns] = JSON.parse(json).to_a.
+            sort { |a, b| a.first <=> b.first }.map(&:last)
+
+          output
+        rescue JSON::JSONError => e
+          raise WinRM::WinRMError,
+            "Failed to parse JSON in response: #{e.inspect} for #{json}"
+        end
+
         def reset
           logger.debug("[#{self.class}] Resetting WinRM shell " \
             "(Max command limit is #{max_commands})") if logger
           open
+        end
+
+        # Wraps an ERb template which can be called multiple times with
+        # different binding contexts.
+        #
+        # @author Fletcher Nichol <fnichol@nichol.ca>
+        # @api private
+        class Template
+
+          # Initializes an ERb template using a file as the template source.
+          #
+          # @param file [String] path to an ERb template file
+          def initialize(file)
+            @erb = ERB.new(IO.read(file))
+          end
+
+          # Renders the template using a hash as context.
+          #
+          # @param vars [Hash] a hash used for context
+          # @return [String] the rendered template
+          def render(vars)
+            @erb.result(Context.for(vars))
+          end
+          alias_method :%, :render
+
+          # Internal class which wraps a binding context for rendering
+          # an ERb template.
+          #
+          # @author Fletcher Nichol <fnichol@nichol.ca>
+          # @api private
+          class Context < OpenStruct
+
+            # Creates a new binding context for a hash of data.
+            #
+            # @param vars [Hash] a hash used for context
+            # @return [Binding] a binding context for the given hash
+            def self.for(vars)
+              new(vars).my_binding
+            end
+
+            # @return [Binding] a binding context
+            def my_binding
+              binding
+            end
+          end
         end
       end
     end
