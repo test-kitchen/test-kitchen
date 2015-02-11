@@ -30,7 +30,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SshFailed < TransportFailed; end
 
-    # A Transport which uses the SSH protocol to execute command and transfer
+    # A Transport which uses the SSH protocol to execute commands and transfer
     # files.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
