@@ -93,6 +93,7 @@ module Kitchen
             $shellApplication = new-object -com shell.application
 
             $zipPackage = $shellApplication.NameSpace('#{remote_path}')
+            Remove-Item -Recurse -Force $dest | Out-Null
             mkdir $dest -ErrorAction SilentlyContinue | Out-Null
             $destinationFolder = $shellApplication.NameSpace($dest)
             $destinationFolder.CopyHere($zipPackage.Items(),0x10) | Out-Null
