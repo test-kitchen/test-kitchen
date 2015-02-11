@@ -30,8 +30,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class SshFailed < TransportFailed; end
 
-    # Class to help establish SSH connections, issue remote commands, and
-    # transfer files between a local system and remote node.
+    # A Transport which uses the SSH protocol to execute command and transfer
+    # files.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
@@ -43,6 +43,7 @@ module Kitchen
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
 
+      # (see Base#connection)
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))
 
@@ -53,10 +54,15 @@ module Kitchen
         end
       end
 
-      # TODO: comment
+      # A Connection instance can be generated and re-generated, given new
+      # connection details such as connection port, hostname, credentials, etc.
+      # This object is responsible for carrying out the actions on the remote
+      # host such as executing commands, transferring files, etc.
+      #
+      # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
 
-        # (see Base#close)
+        # (see Base::Connection#close)
         def close
           return if @session.nil?
 
@@ -66,7 +72,7 @@ module Kitchen
           @session = nil
         end
 
-        # (see Base#execute)
+        # (see Base::Connection#execute)
         def execute(command)
           logger.debug("[SSH] #{self} (#{command})")
           exit_code = execute_with_exit_code(command)
@@ -77,7 +83,7 @@ module Kitchen
           end
         end
 
-        # (see Base#login_command)
+        # (see Base::Connection#login_command)
         def login_command
           args  = %W[ -o UserKnownHostsFile=/dev/null ]
           args += %W[ -o StrictHostKeyChecking=no ]
@@ -93,7 +99,7 @@ module Kitchen
           LoginCommand.new("ssh", args)
         end
 
-        # (see Base#upload)
+        # (see Base::Connection#upload)
         def upload(locals, remote)
           Array(locals).each do |local|
             opts = File.directory?(local) ? { :recursive => true } : {}
@@ -104,7 +110,7 @@ module Kitchen
           end
         end
 
-        # (see Base#wait_until_ready)
+        # (see Base::Connection#wait_until_ready)
         def wait_until_ready
           delay = 3
           session(
@@ -124,20 +130,44 @@ module Kitchen
           Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
         ].freeze
 
+        # @return [Integer] how many times to retry when failing to execute
+        #   a command or transfer files
+        # @api private
         attr_reader :connection_retries
 
+        # @return [Float] how many seconds to wait before attempting a retry
+        #   when failing to execute a command or transfer files
+        # @api private
         attr_reader :connection_retry_sleep
 
+        # @return [String] the hostname or IP address of the remote SSH host
+        # @api private
         attr_reader :hostname
 
+        # @return [Integer] how many times to retry when invoking
+        #   `#wait_until_ready` before failing
+        # @api private
         attr_reader :max_wait_until_ready
 
+        # @return [String] the username to use when connecting to the remote
+        #   SSH host
+        # @api private
         attr_reader :username
 
+        # @return [Integer] the TCP port number to use when connecting to the
+        #   remote SSH host
+        # @api private
         attr_reader :port
 
-        # Establish a connection session to the remote host.
+        # Establish an SSH session on the remote host.
         #
+        # @param opts [Hash] retry options
+        # @option opts [Integer] :retries the number of times to retry before
+        #   failing
+        # @option opts [Float] :delay the number of seconds to wait until
+        #   attempting a retry
+        # @option opts [String] :message an optional message to be logged on
+        #   debug (overriding the default) when a rescuable exception is raised
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
@@ -161,9 +191,9 @@ module Kitchen
           end
         end
 
-        # Execute a remote command and return the command's exit code.
+        # Execute a remote command over SSH and return the command's exit code.
         #
-        # @param cmd [String] command string to execute
+        # @param command [String] command string to execute
         # @return [Integer] the exit code of the command
         # @api private
         def execute_with_exit_code(command)
@@ -191,7 +221,7 @@ module Kitchen
           exit_code
         end
 
-        # (see Base#init_options)
+        # (see Base::Connection#init_options)
         def init_options(options)
           super
           @username               = @options.delete(:username)
@@ -202,15 +232,17 @@ module Kitchen
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
         end
 
-        # Establish a connection session to the remote host.
+        # Returns a connection session, or establishes one when invoked the
+        # first time.
         #
+        # @param retry_options [Hash] retry options for the initial connection
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
-        def session(connection_options = {})
+        def session(retry_options = {})
           @session ||= establish_connection({
             :retries => connection_retries.to_i,
             :delay   => connection_retry_sleep.to_i
-          }.merge(connection_options))
+          }.merge(retry_options))
         end
 
         # String representation of object, reporting its connection details and
@@ -224,6 +256,12 @@ module Kitchen
 
       private
 
+      # Builds the hash of options needed by the Connection object on
+      # construction.
+      #
+      # @param data [Hash] merged configuration and mutable state data
+      # @return [Hash] hash of connection options
+      # @api private
       def connection_options(data)
         opts = {
           :logger                 => logger,
@@ -246,6 +284,12 @@ module Kitchen
         opts
       end
 
+      # Creates a new SSH Connection instance and save it for potential future
+      # reuse.
+      #
+      # @param options [Hash] conneciton options
+      # @return [Ssh::Connection] an SSH Connection instance
+      # @api private
       def create_new_connection(options, &block)
         if @connection
           logger.debug("[SSH] shutting previous connection #{@connection}")
@@ -256,6 +300,10 @@ module Kitchen
         @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)
       end
 
+      # Return the last saved SSH connection instance.
+      #
+      # @return [Ssh::Connection] an SSH Connection instance
+      # @api private
       def reuse_connection
         logger.debug("[SSH] reusing existing connection #{@connection}")
         yield @connection if block_given?
