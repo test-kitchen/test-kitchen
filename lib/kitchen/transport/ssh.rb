@@ -38,6 +38,8 @@ module Kitchen
 
       default_config :port, 22
       default_config :username, "root"
+      default_config :keepalive, true
+      default_config :keepalive_interval, 60
       default_config :connection_timeout, 15
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
@@ -270,6 +272,8 @@ module Kitchen
           :hostname               => data[:hostname],
           :port                   => data[:port],
           :username               => data[:username],
+          :keepalive              => data[:keepalive],
+          :keepalive_interval     => data[:keepalive_interval],
           :timeout                => data[:connection_timeout],
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],

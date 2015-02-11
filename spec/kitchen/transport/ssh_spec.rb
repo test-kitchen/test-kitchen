@@ -137,6 +137,14 @@ describe Kitchen::Transport::Ssh do
       transport[:username].must_equal "root"
     end
 
+    it "sets :keepalive to true by default" do
+      transport[:keepalive].must_equal true
+    end
+
+    it "sets :keepalive_interval to 60 by default" do
+      transport[:keepalive_interval].must_equal 60
+    end
+
     it "sets :connection_timeout to 15 by default" do
       transport[:connection_timeout].must_equal 15
     end
@@ -267,6 +275,48 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:timeout] == "timeout_from_state"
+        end
+
+        make_connection
+      end
+
+      it "sets :keepalive from config" do
+        config[:keepalive] = "keepalive_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:keepalive] == "keepalive_from_config"
+        end
+
+        make_connection
+      end
+
+      it "sets :keepalive from state over config data" do
+        state[:keepalive] = "keepalive_from_state"
+        config[:keepalive] = "keepalive_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:keepalive] == "keepalive_from_state"
+        end
+
+        make_connection
+      end
+
+      it "sets :keepalive_interval from config" do
+        config[:keepalive_interval] = "interval_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:keepalive_interval] == "interval_from_config"
+        end
+
+        make_connection
+      end
+
+      it "sets :keepalive_interval from state over config data" do
+        state[:keepalive_interval] = "interval_from_state"
+        config[:keepalive_interval] = "interval_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:keepalive_interval] == "interval_from_state"
         end
 
         make_connection
