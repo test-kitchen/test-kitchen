@@ -187,7 +187,7 @@ describe Kitchen::Provisioner::ChefZero do
         file.must_include %{client_key "lol"}
       end
 
-      it " supports adding new configuration" do
+      it "supports adding new configuration" do
         config[:client_rb] = {
           :dark_secret => "golang"
         }
@@ -293,6 +293,15 @@ describe Kitchen::Provisioner::ChefZero do
           logged_output.string.must_match debug_line_starting_with(
             "Using a vendored chef-client-zero.rb")
         end
+      end
+    end
+
+    describe "populating cache" do
+
+      it "moves cookbooks into the cache directory" do
+        provisioner.create_sandbox
+
+        sandbox_path("cache/cookbooks").directory?.must_equal true
       end
     end
 

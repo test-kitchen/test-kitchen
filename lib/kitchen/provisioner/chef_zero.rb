@@ -41,6 +41,7 @@ module Kitchen
       def create_sandbox
         super
         prepare_chef_client_zero_rb
+        prepare_chef_zero_cache
         prepare_validation_pem
         prepare_client_rb
       end
@@ -166,6 +167,15 @@ module Kitchen
         File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
           file.write(format_config_file(data))
         end
+      end
+
+      # Copy sandboxed cookbooks into to the sandbox cache directory. This
+      # will prime the chef-client cache in order to speed up cookbook
+      # synchronization.
+      #
+      # @api private
+      def prepare_chef_zero_cache
+        FileUtils.cp_r(tmpbooks_dir, File.join(sandbox_path, "cache"))
       end
 
       # Generates a string of shell environment variables needed for the
