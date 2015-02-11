@@ -55,6 +55,7 @@ module Kitchen
           logger.debug("iterating files in '#{glob}'")
           Zip::File.open(archive, "w") do |zipfile|
             Dir.glob(glob).each do |file|
+              next if File.directory?(file)
               logger.debug("adding zip entry for '#{file}'")
               entry = Zip::Entry.new(
                 archive,
