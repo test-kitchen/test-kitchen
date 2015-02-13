@@ -95,7 +95,8 @@ module Kitchen
         server.wait_for do
           print '.'
           # Euca instances often report ready before they have an IP
-          ready? && !public_ip_address.nil? && public_ip_address != '0.0.0.0'
+          hostname = Kitchen::Driver::Ec2.hostname(self)
+          ready? && !hostname.nil? && hostname != '0.0.0.0'
         end
         print '(server ready)'
         state[:hostname] = hostname(server)
@@ -221,22 +222,41 @@ module Kitchen
         end
       end
 
-      def interface_types
+      #
+      # Ordered mapping from config name to Fog name.  Ordered by preference
+      # when looking up hostname.
+      #
+      INTERFACE_TYPES =
         {
           'dns' => 'dns_name',
           'public' => 'public_ip_address',
           'private' => 'private_ip_address'
         }
+
+      #
+      # Lookup hostname of a provided server using the configured interface.
+      #
+      def hostname(server)
+        Kitchen::Driver::Ec2.hostname(server, config[:interface])
       end
 
-      def hostname(server)
-        if config[:interface]
-          method = interface_types.fetch(config[:interface]) do
-            raise Kitchen::UserError, 'Invalid interface'
+      #
+      # Lookup hostname of provided server.  If interface_type is provided use
+      # that interface to lookup hostname.  Otherwise, try ordered list of
+      # options.
+      #
+      def self.hostname(server, interface_type=nil)
+        if interface_type
+          INTERFACE_TYPES.fetch(interface_type) do
+            raise Kitchen::UserError, "Invalid interface [#{interface_type}]"
           end
-          server.send(method)
+          server.send(interface_type)
         else
-          server.dns_name || server.public_ip_address || server.private_ip_address
+          potential_hostname = nil
+          INTERFACE_TYPES.values.each do |type|
+            potential_hostname ||= server.send(type)
+          end
+          potential_hostname
         end
       end
 
