@@ -162,7 +162,7 @@ Well that was easy!
 
 I'm going to spare us all a great deal of pain and say that getting CentOS working with Git Daemon and runit is, well, kinda nuts. Ultimately not worth it for the sake of this guide. So should we leave a Platform/Suite combination lying around that we know we won't support? Naw!
 
-> **Add a platform name to an `excludes` array in a suite to remove the the platform/suite combination from testing.**
+> **Add a platform name to an `excludes` array in a suite to remove the platform/suite combination from testing.**
 
 Let's exclude the `server-centos-64` instance so that it doesn't accidentally get run. Update `.kitchen.yml` to look like the following:
 
