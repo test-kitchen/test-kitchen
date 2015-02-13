@@ -214,7 +214,7 @@ module Kitchen
             logger << stdout if stdout
           end
 
-          [response[:exitcode], stderr_from_response(response)]
+          [response[:exitcode], response.stderr]
         end
 
         # (see Base#init_options)
@@ -299,11 +299,6 @@ module Kitchen
             :retries => connection_retries.to_i,
             :delay   => connection_retry_sleep.to_i
           }.merge(connection_options))
-        end
-
-        def stderr_from_response(response)
-          response[:data].select { |hash| hash.key?(:stderr) }.
-            map { |hash| hash[:stderr] }
         end
 
         # String representation of object, reporting its connection details and
