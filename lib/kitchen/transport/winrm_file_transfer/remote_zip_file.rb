@@ -55,6 +55,7 @@ module Kitchen
           logger.debug("iterating files in '#{glob}'")
           Zip::File.open(archive, "w") do |zipfile|
             Dir.glob(glob).each do |file|
+              next if File.directory?(file)
               logger.debug("adding zip entry for '#{file}'")
               entry = Zip::Entry.new(
                 archive,
@@ -92,6 +93,7 @@ module Kitchen
             $shellApplication = new-object -com shell.application
 
             $zipPackage = $shellApplication.NameSpace('#{remote_path}')
+            if ( Test-Path $dest ) { Remove-Item -Recurse -Force $dest | Out-Null }
             mkdir $dest -ErrorAction SilentlyContinue | Out-Null
             $destinationFolder = $shellApplication.NameSpace($dest)
             $destinationFolder.CopyHere($zipPackage.Items(),0x10) | Out-Null
