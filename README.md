@@ -112,15 +112,45 @@ or `nil` otherwise.
 
 ### <a name="config-ebs_volume_size"></a> ebs\_volume\_size
 
-**Required** Size of ebs volume in GB.
+**Deprecated** See [block_device_mappings](#config-block_device_mappings) below.
+
+Size of ebs volume in GB.
 
 ### <a name="config-ebs_delete_on_termination"></a> ebs\_delete\_on\_termination
 
-**Required** `true` if you want ebs volumes to get deleted automatically after instance is terminated, `false` otherwise
+**Deprecated** See [block_device_mappings](#config-block_device_mappings) below.
+
+`true` if you want ebs volumes to get deleted automatically after instance is terminated, `false` otherwise
 
 ### <a name="config-ebs_device_name"></a> ebs\_device\_name
 
-**Required** name of your ebs device, for example: `/dev/sda1`
+**Deprecated** See [block_device_mappings](#config-block_device_mappings) below.
+
+name of your ebs device, for example: `/dev/sda1`
+
+### <a name="config-block_device_mappings"></a> block\_device\_mappings
+
+**Required** A list of block device mappings for the machine.  An example of all available keys looks like:
+```yaml
+block_device_mappings:
+  - ebs_device_name: /dev/sda1
+    ebs_volume_size: 20
+    ebs_delete_on_termination: true
+  - ebs_device_name: /dev/sda1
+    ebs_volume_type: gp2
+    ebs_virtual_name: test
+    ebs_volume_size: 15
+    ebs_delete_on_termination: true
+    ebs_snapshot_id: snap-0015d0bc
+```
+
+The keys `ebs_device_name`, `ebs_volume_size` and `ebs_delete_on_termination` are required for every mapping.
+For backwards compatiability a default `block_device_mappings` will be created if none are listed and the deprecated
+storage config keys are present.
+
+The keys `ebs_volume_type`, `ebs_virtual_name` and `ebs_snapshot_id` are optional.  See
+[Amazon EBS Volume Types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html) to find out more about
+volume types. `ebs_volume_type` defaults to `standard` but can also be `gp2` or `io1`.
 
 ### endpoint
 
