@@ -300,6 +300,7 @@ module Kitchen
           :ebs_volume_size => 'Ebs.VolumeSize',
           :ebs_volume_type => 'Ebs.VolumeType',
           :ebs_delete_on_termination => 'Ebs.DeleteOnTermination',
+          :ebs_snapshot_id => 'Ebs.SnapshotId',
           :ebs_device_name => 'DeviceName',
           :ebs_virtual_name => 'VirtualName'
       }
@@ -313,12 +314,20 @@ module Kitchen
             :ebs_volume_type => 'standard',
             :ebs_volume_size => config[:ebs_volume_size],
             :ebs_delete_on_termination => config[:ebs_delete_on_termination],
+            :ebs_snapshot_id => nil,
             :ebs_device_name => config[:ebs_device_name],
             :ebs_virtual_name => nil
           }]
         end
 
-        # Lets validate that all the provided mappings have required fields
+        # This could be helpful for users debugging
+        image = connection.images.get(config[:image_id])
+        root_device_name = image.root_device_name
+        bdms.find {|bdm|
+          if bdm[:ebs_device_name] == root_device_name
+            info("Overriding root device [#{root_device_name}] from image [#{config[:image_id]}]")
+          end
+        }
 
         # Convert the provided keys to what Fog expects
         bdms = bdms.map do |bdm|
