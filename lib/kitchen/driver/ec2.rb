@@ -73,6 +73,28 @@ module Kitchen
       required_config :aws_ssh_key_id
       required_config :image_id
 
+      # TODO: remove these in the next major version of TK
+      deprecated_configs = [:ebs_volume_size, :ebs_delete_on_termination, :ebs_device_name]
+      deprecated_configs.each do |d|
+        validations[d] = lambda do |attr, val, driver|
+          unless val.nil?
+            warn("WARN: The config key `#{attr}` is deprecated - please use `block_device_mappings`")
+          end
+        end
+      end
+
+      default_config :block_device_mappings, []
+      validations[:block_device_mappings] = lambda do |attr, val, driver|
+        val.each do |bdm|
+          unless bdm.keys.include?(:ebs_volume_size) &&
+              bdm.keys.include?(:ebs_delete_on_termination) &&
+              bdm.keys.include?(:ebs_device_name)
+            raise "Every :block_device_mapping must include the keys :ebs_volume_size, " +
+                    ":ebs_delete_on_termination and :ebs_device_name"
+          end
+        end
+      end
+
       def create(state)
         return if state[:server_id]
 
@@ -165,11 +187,7 @@ module Kitchen
               File.read(config[:user_data]) : config[:user_data]
             )
           ),
-          :block_device_mapping      => [{
-            'Ebs.VolumeSize' => config[:ebs_volume_size],
-            'Ebs.DeleteOnTermination' => config[:ebs_delete_on_termination],
-            'DeviceName' => config[:ebs_device_name]
-          }]
+          :block_device_mapping      => block_device_mappings
         )
       end
 
@@ -275,6 +293,39 @@ module Kitchen
           )
         end
         connection.servers.get(spot.instance_id)
+      end
+
+      # A mapping from config key values to what Fog expects
+      CONFIG_TO_AWS = {
+          :ebs_volume_size => 'Ebs.VolumeSize',
+          :ebs_volume_type => 'Ebs.VolumeType',
+          :ebs_delete_on_termination => 'Ebs.DeleteOnTermination',
+          :ebs_device_name => 'DeviceName',
+          :ebs_virtual_name => 'VirtualName'
+      }
+
+      def block_device_mappings
+        bdms = config[:block_device_mappings]
+
+        # If they don't provide one, lets give them a default one
+        if bdms.nil? || bdms.empty?
+          bdms = [{
+            :ebs_volume_type => 'standard',
+            :ebs_volume_size => config[:ebs_volume_size],
+            :ebs_delete_on_termination => config[:ebs_delete_on_termination],
+            :ebs_device_name => config[:ebs_device_name],
+            :ebs_virtual_name => nil
+          }]
+        end
+
+        # Lets validate that all the provided mappings have required fields
+
+        # Convert the provided keys to what Fog expects
+        bdms = bdms.map do |bdm|
+          Hash[bdm.map { |k, v| [CONFIG_TO_AWS[k], v] }]
+        end
+
+        bdms
       end
     end
   end
