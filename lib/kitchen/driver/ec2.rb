@@ -247,7 +247,7 @@ module Kitchen
       #
       def self.hostname(server, interface_type=nil)
         if interface_type
-          INTERFACE_TYPES.fetch(interface_type) do
+          interface_type = INTERFACE_TYPES.fetch(interface_type) do
             raise Kitchen::UserError, "Invalid interface [#{interface_type}]"
           end
           server.send(interface_type)
