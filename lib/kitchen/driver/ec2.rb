@@ -78,7 +78,8 @@ module Kitchen
       deprecated_configs.each do |d|
         validations[d] = lambda do |attr, val, driver|
           unless val.nil?
-            warn("WARN: The config key `#{attr}` is deprecated, please use `block_device_mappings`")
+            driver.warn "WARN: The config key `#{attr}` is deprecated," +
+              " please use `block_device_mappings`"
           end
         end
       end
@@ -265,7 +266,7 @@ module Kitchen
       #
       def self.hostname(server, interface_type=nil)
         if interface_type
-          INTERFACE_TYPES.fetch(interface_type) do
+          interface_type = INTERFACE_TYPES.fetch(interface_type) do
             raise Kitchen::UserError, "Invalid interface [#{interface_type}]"
           end
           server.send(interface_type)
@@ -321,11 +322,15 @@ module Kitchen
         end
 
         # This could be helpful for users debugging
-        image = connection.images.get(config[:image_id])
+        image_id = config[:image_id]
+        image = connection.images.get(image_id)
+        if image.nil?
+          raise "Could not find image [#{image_id}]"
+        end
         root_device_name = image.root_device_name
         bdms.find { |bdm|
           if bdm[:ebs_device_name] == root_device_name
-            info("Overriding root device [#{root_device_name}] from image [#{config[:image_id]}]")
+            info("Overriding root device [#{root_device_name}] from image [#{image_id}]")
           end
         }
 
