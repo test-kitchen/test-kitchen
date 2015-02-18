@@ -78,7 +78,7 @@ module Kitchen
       deprecated_configs.each do |d|
         validations[d] = lambda do |attr, val, driver|
           unless val.nil?
-            warn("WARN: The config key `#{attr}` is deprecated - please use `block_device_mappings`")
+            warn("WARN: The config key `#{attr}` is deprecated, please use `block_device_mappings`")
           end
         end
       end
@@ -87,10 +87,10 @@ module Kitchen
       validations[:block_device_mappings] = lambda do |attr, val, driver|
         val.each do |bdm|
           unless bdm.keys.include?(:ebs_volume_size) &&
-              bdm.keys.include?(:ebs_delete_on_termination) &&
-              bdm.keys.include?(:ebs_device_name)
+            bdm.keys.include?(:ebs_delete_on_termination) &&
+            bdm.keys.include?(:ebs_device_name)
             raise "Every :block_device_mapping must include the keys :ebs_volume_size, " +
-                    ":ebs_delete_on_termination and :ebs_device_name"
+              ":ebs_delete_on_termination and :ebs_device_name"
           end
         end
       end
@@ -297,12 +297,12 @@ module Kitchen
 
       # A mapping from config key values to what Fog expects
       CONFIG_TO_AWS = {
-          :ebs_volume_size => 'Ebs.VolumeSize',
-          :ebs_volume_type => 'Ebs.VolumeType',
-          :ebs_delete_on_termination => 'Ebs.DeleteOnTermination',
-          :ebs_snapshot_id => 'Ebs.SnapshotId',
-          :ebs_device_name => 'DeviceName',
-          :ebs_virtual_name => 'VirtualName'
+        :ebs_volume_size => 'Ebs.VolumeSize',
+        :ebs_volume_type => 'Ebs.VolumeType',
+        :ebs_delete_on_termination => 'Ebs.DeleteOnTermination',
+        :ebs_snapshot_id => 'Ebs.SnapshotId',
+        :ebs_device_name => 'DeviceName',
+        :ebs_virtual_name => 'VirtualName'
       }
 
       def block_device_mappings
@@ -323,7 +323,7 @@ module Kitchen
         # This could be helpful for users debugging
         image = connection.images.get(config[:image_id])
         root_device_name = image.root_device_name
-        bdms.find {|bdm|
+        bdms.find { |bdm|
           if bdm[:ebs_device_name] == root_device_name
             info("Overriding root device [#{root_device_name}] from image [#{config[:image_id]}]")
           end
