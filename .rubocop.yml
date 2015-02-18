@@ -1,3 +1,7 @@
 Style/FileName:
   Exclude:
     - 'support/**/*'
+
+Style/ClassLength:
+  Exclude:
+    - 'lib/kitchen/provisioner/chef_base.rb'
