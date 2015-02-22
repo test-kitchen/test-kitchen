@@ -18,9 +18,9 @@
 
 require "benchmark"
 require "csv"
-require "erb"
 require "digest"
-require "ostruct"
+
+require "kitchen/transport/winrm/template"
 
 module Kitchen
 
@@ -333,52 +333,6 @@ module Kitchen
             end
           end
           response
-        end
-
-        # TODO: remove duplication in CommandExectuor
-        # Wraps an ERb template which can be called multiple times with
-        # different binding contexts.
-        #
-        # @author Fletcher Nichol <fnichol@nichol.ca>
-        # @api private
-        class Template
-
-          # Initializes an ERb template using a file as the template source.
-          #
-          # @param file [String] path to an ERb template file
-          def initialize(file)
-            @erb = ERB.new(IO.read(file))
-          end
-
-          # Renders the template using a hash as context.
-          #
-          # @param vars [Hash] a hash used for context
-          # @return [String] the rendered template
-          def render(vars)
-            @erb.result(Context.for(vars))
-          end
-          alias_method :%, :render
-
-          # Internal class which wraps a binding context for rendering
-          # an ERb template.
-          #
-          # @author Fletcher Nichol <fnichol@nichol.ca>
-          # @api private
-          class Context < OpenStruct
-
-            # Creates a new binding context for a hash of data.
-            #
-            # @param vars [Hash] a hash used for context
-            # @return [Binding] a binding context for the given hash
-            def self.for(vars)
-              new(vars).my_binding
-            end
-
-            # @return [Binding] a binding context
-            def my_binding
-              binding
-            end
-          end
         end
       end
     end
