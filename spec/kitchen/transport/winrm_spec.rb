@@ -857,6 +857,70 @@ MSG
     end
   end
 
+  describe "#upload" do
+
+    let(:transporter) do
+      t = mock("file_transporter")
+      t.responds_like_instance_of(Kitchen::Transport::Winrm::FileTransporter)
+      t
+    end
+
+    before do
+      # disable finalizer as service is a fake anyway
+      ObjectSpace.stubs(:define_finalizer).
+        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+
+      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      executor.stubs(:open)
+
+      Kitchen::Transport::Winrm::FileTransporter.stubs(:new).
+        with(executor, logger).returns(transporter)
+      transporter.stubs(:upload)
+    end
+
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def self.common_specs_for_upload
+      it "builds a Winrm::FileTransporter" do
+        Kitchen::Transport::Winrm::FileTransporter.unstub(:new)
+
+        Kitchen::Transport::Winrm::FileTransporter.expects(:new).
+          with(executor, logger).returns(transporter)
+
+        upload
+      end
+
+      it "reuses the Winrm::FileTransporter" do
+        Kitchen::Transport::Winrm::FileTransporter.unstub(:new)
+
+        Kitchen::Transport::Winrm::FileTransporter.expects(:new).
+          with(executor, logger).returns(transporter).once
+
+        upload
+        upload
+        upload
+      end
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+    describe "for a file" do
+
+      def upload # execute every time, not lazily once
+        connection.upload("/tmp/file.txt", "C:\\dest")
+      end
+
+      common_specs_for_upload
+    end
+
+    describe "for a collection of files" do
+
+      def upload # execute every time, not lazily once
+        connection.upload(%W[/tmp/file1.txt /tmp/file2.txt], "C:\\dest")
+      end
+
+      common_specs_for_upload
+    end
+  end
+
   describe "#wait_until_ready" do
 
     before do

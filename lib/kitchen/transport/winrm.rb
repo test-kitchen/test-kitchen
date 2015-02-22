@@ -32,6 +32,7 @@ require "uri"
 
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
+require "kitchen/transport/winrm/file_transporter"
 require "kitchen/transport/winrm_file_transfer/remote_file"
 require "kitchen/transport/winrm_file_transfer/remote_zip_file"
 
@@ -122,6 +123,11 @@ module Kitchen
             raise ActionFailed, "Remote login not supported in #{self.class} " \
               "from host OS '#{RbConfig::CONFIG["host_os"]}'."
           end
+        end
+
+        # (see Base::Connection#upload)
+        def upload(locals, remote)
+          file_transporter.upload(locals, remote)
         end
 
         # (see Base::Connection#wait_until_ready)
@@ -272,6 +278,12 @@ module Kitchen
           end
 
           [response[:exitcode], response.stderr]
+        end
+
+        # @return [Winrm::FileTransporter] a file transporter
+        # @api private
+        def file_transporter
+          @file_transporter ||= Winrm::FileTransporter.new(session, logger)
         end
 
         # (see Base#init_options)
