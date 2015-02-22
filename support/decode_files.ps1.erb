@@ -1,0 +1,37 @@
+$files = @{ <%= files %> }
+
+Function Get-MD5Sum($src) {
+  Try {
+    $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+    $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
+    return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
+  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
+}
+
+Function Decode-Base64File($src, $dst) {
+  Try {
+    $in = (Get-Item $src).OpenRead()
+    $b64 = New-Object -TypeName System.Security.Cryptography.FromBase64Transform
+    $mode = [System.Security.Cryptography.CryptoStreamMode]::Read
+    $d = New-Object -TypeName System.Security.Cryptography.CryptoStream $in,$b64,$mode
+    $d.CopyTo(($out = [System.IO.File]::OpenWrite($dst)))
+  } Finally { if ($in -ne $null) { $in.Dispose() }; if ($out -ne $null) { $out.Dispose() }; if ($d -ne $null) { $d.Dispose() } }
+}
+
+Function Decode-Files($hash) {
+  $hash.GetEnumerator() | ForEach-Object {
+    $tmp = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($_.Key)
+    $srcMd5 = (Get-Item $tmp).BaseName.Replace("b64-", "")
+    Decode-Base64File $tmp $_.Value
+    Remove-Item $tmp -Force
+    New-Object psobject -Property @{
+      dst = $_.Value
+      verifies = if ($srcMd5 -eq ($dstMd5 = Get-MD5Sum $_.Value)) { $true } else { $false }
+      src_md5 = $srcMd5
+      dst_md5 = $dstMd5
+      tmpfile = $tmp
+    }
+  } | Select-Object -Property dst,verifies,src_md5,dst_md5,tmpfile
+}
+
+Decode-Files $files | ConvertTo-Csv -NoTypeInformation

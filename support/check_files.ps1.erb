@@ -1,0 +1,24 @@
+$files = @{ <%= files %> }
+
+Function Get-MD5Sum($src) {
+  Try {
+    $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+    $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
+    return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
+  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
+}
+
+Function Check-Files($hash) {
+  return $hash.GetEnumerator() | ForEach-Object {
+    New-Object psobject -Property @{
+      dst = ($dst = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($_.Key))
+      chk_exists = ($exists = Test-Path $dst -PathType Leaf)
+      src_md5 = ($srcMd5 = $_.Value)
+      dst_md5 = ($dstMd5 = if ($exists) { Get-MD5Sum $dst } else { $null })
+      chk_dirty = ($dirty = if ($srcMd5 -ne $dstMd5) { $true } else { $false })
+      verifies = if ($dirty -eq $false) { $true } else { $false }
+    }
+  } | Select-Object -Property dst,chk_exists,src_md5,dst_md5,chk_dirty,verifies
+}
+
+Check-Files $files | ConvertTo-Csv -NoTypeInformation
