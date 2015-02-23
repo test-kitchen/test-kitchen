@@ -136,7 +136,7 @@ block_device_mappings:
   - ebs_device_name: /dev/sda1
     ebs_volume_size: 20
     ebs_delete_on_termination: true
-  - ebs_device_name: /dev/sda1
+  - ebs_device_name: /dev/sda2
     ebs_volume_type: gp2
     ebs_virtual_name: test
     ebs_volume_size: 15
@@ -151,6 +151,9 @@ storage config keys are present.
 The keys `ebs_volume_type`, `ebs_virtual_name` and `ebs_snapshot_id` are optional.  See
 [Amazon EBS Volume Types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html) to find out more about
 volume types. `ebs_volume_type` defaults to `standard` but can also be `gp2` or `io1`.
+
+If you have a block device mapping with a `ebs_device_name` equal to the root storage device name on your
+[image](#config-image-id) then the provided mapping will replace the settings in the image.
 
 ### endpoint
 
