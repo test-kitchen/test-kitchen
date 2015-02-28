@@ -19,6 +19,7 @@
 require "json"
 require "ostruct"
 
+require "kitchen/transport/winrm/logging"
 require "kitchen/transport/winrm/template"
 
 module Kitchen
@@ -36,6 +37,8 @@ module Kitchen
       # @author Matt Wrock <matt@mattwrock.com>
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class CommandExecutor
+
+        include Logging
 
         # @return [Integer,nil] the safe maximum number of commands that can
         #   be executed in one remote shell session, or `nil` if the
@@ -235,8 +238,7 @@ module Kitchen
         #
         # @api private
         def reset
-          logger.debug("[#{self.class}] Resetting WinRM shell " \
-            "(Max command limit is #{max_commands})") if logger
+          debug { "Resetting WinRM shell (Max command limit is #{max_commands})"}
           open
         end
       end

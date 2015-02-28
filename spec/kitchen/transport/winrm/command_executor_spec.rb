@@ -226,7 +226,7 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
         iterations.times { executor.run_cmd("echo", ["Hello"]) }
 
         logged_output.string.lines.select { |l|
-          l =~ debug_line_with("[#{executor.class}] Resetting WinRM shell")
+          l =~ debug_line_with("[CommandExecutor] Resetting WinRM shell")
         }.size.must_equal reset_times
       end
     end
@@ -474,7 +474,7 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
         iterations.times { executor.run_powershell_script("echo Hello") }
 
         logged_output.string.lines.select { |l|
-          l =~ debug_line_with("[#{executor.class}] Resetting WinRM shell")
+          l =~ debug_line_with("[CommandExecutor] Resetting WinRM shell")
         }.size.must_equal reset_times
       end
     end

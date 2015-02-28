@@ -20,6 +20,7 @@ require "benchmark"
 require "csv"
 require "digest"
 
+require "kitchen/transport/winrm/logging"
 require "kitchen/transport/winrm/template"
 
 module Kitchen
@@ -46,6 +47,8 @@ module Kitchen
       # @author Fletcher Nichol <fnichol@nichol.ca>
       # @author Matt Wrock <matt@mattwrock.com>
       class FileTransporter
+
+        include Logging
 
         # Creates a FileTransporter given a service object and optional logger.
         # The service object may be a `WinRM::WinRMWebService` or
@@ -142,18 +145,6 @@ module Kitchen
             File.dirname(__FILE__),
             %W[.. .. .. .. support check_files.ps1.erb]
           ))
-        end
-
-        # Logs a message on the logger at the debug level, if a logger is
-        # present.
-        #
-        # @param msg [String] a message to log
-        # @yield evaluates and uses return value as message to log. If msg
-        #   parameter is set, it will take precedence over the block.
-        # @api private
-        def debug(msg = nil, &block)
-          return if logger.nil? || !logger.debug?
-          logger.debug("[WinRM] " << (msg || block.call))
         end
 
         # Runs the decode_files Powershell script against a collection of
