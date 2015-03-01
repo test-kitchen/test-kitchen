@@ -19,7 +19,6 @@
 require_relative "../../spec_helper"
 
 require "kitchen"
-require "kitchen/transport/ssh"
 
 describe Kitchen::Driver::SSHBase do
 
@@ -31,6 +30,7 @@ describe Kitchen::Driver::SSHBase do
   let(:busser) do
     stub(
       :setup_cmd  => "setup",
+      :sync_cmd   => "sync",
       :run_cmd    => "run"
     )
   end
@@ -53,30 +53,15 @@ describe Kitchen::Driver::SSHBase do
       :logger       => logger,
       :busser       => busser,
       :provisioner  => provisioner,
-      :to_str       => "instance",
-      :driver       => driver,
-      :transport    => transport
+      :to_str       => "instance"
     )
   end
 
-  let(:transport) do
-    Kitchen::Transport::Ssh.new(config)
-  end
-
   let(:driver) do
-    Kitchen::Driver::SSHBase.new(config)
-  end
-
-  before do
-    driver.finalize_config!(instance)
-    transport.finalize_config!(instance)
+    Kitchen::Driver::SSHBase.new(config).finalize_config!(instance)
   end
 
   describe "configuration" do
-
-    let(:transport) do
-      Kitchen::Transport::Ssh.new(Hash.new)
-    end
 
     it ":sudo defaults to true" do
       driver[:sudo].must_equal true
@@ -475,6 +460,94 @@ describe Kitchen::Driver::SSHBase do
       Kitchen::SSH.stubs(:new).yields(connection)
       connection.expects(:exec).with(
         "env http_proxy=http://proxy https_proxy=https://proxy setup")
+
+      cmd
+    end
+
+    it "raises an ActionFailed when SSHFailed is raised" do
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.stubs(:exec).raises(Kitchen::SSHFailed.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
+    end
+
+    it "raises an ActionFailed when Net::SSH:Exception is raised" do
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.stubs(:exec).raises(Net::SSH::Exception.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
+    end
+  end
+
+  describe "#verify" do
+
+    let(:cmd)         { driver.verify(state) }
+    let(:connection)  { mock }
+
+    before do
+      state[:hostname] = "fizzy"
+      state[:username] = "bork"
+    end
+
+    constructs_an_ssh_object
+
+    it "doesn't invoke an ssh command if busser#sync_cmd & #run_cmd are nil" do
+      busser.stubs(:sync_cmd).returns(nil)
+      busser.stubs(:run_cmd).returns(nil)
+      Kitchen::SSH.stubs(:new).yields(connection)
+
+      cmd
+    end
+
+    it "doesn't invoke an ssh command for busser#sync_cmd if nil" do
+      busser.stubs(:sync_cmd).returns(nil)
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("run")
+
+      cmd
+    end
+
+    it "doesn't invoke an ssh command for busser#run_cmd if nil" do
+      busser.stubs(:run_cmd).returns(nil)
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("sync")
+
+      cmd
+    end
+
+    it "invokes the busser#sync_cmd & #run_cmd over ssh" do
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("sync")
+      connection.expects(:exec).with("run")
+
+      cmd
+    end
+
+    it "invokes the busser#setup_cmd with :http_proxy set in config" do
+      busser.stubs(:run_cmd).returns(nil)
+      config[:http_proxy] = "http://proxy"
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("env http_proxy=http://proxy sync")
+
+      cmd
+    end
+
+    it "invokes the busser#setup_cmd with :https_proxy set in config" do
+      busser.stubs(:run_cmd).returns(nil)
+      config[:https_proxy] = "https://proxy"
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with("env https_proxy=https://proxy sync")
+
+      cmd
+    end
+
+    it "invokes the busser#setup_cmd with :http_proxy & :https_proxy set" do
+      busser.stubs(:run_cmd).returns(nil)
+      config[:http_proxy] = "http://proxy"
+      config[:https_proxy] = "https://proxy"
+      Kitchen::SSH.stubs(:new).yields(connection)
+      connection.expects(:exec).with(
+        "env http_proxy=http://proxy https_proxy=https://proxy sync")
 
       cmd
     end

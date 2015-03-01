@@ -32,8 +32,9 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
+
       default_config :chef_client_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], provisioner.shell.chef_client_file)
+        File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
       end
 
       # (see Base#create_sandbox)
@@ -55,21 +56,21 @@ module Kitchen
         # the installed omnibus package. Yep, this is funky :)
         cmd = <<-PREPARE.gsub(/^ {10}/, "")
           #{chef_client_zero_env(:export)}
-          if ! #{shell.sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
+          if ! #{sudo(ruby_bin.join("gem"))} list chef-zero -i >/dev/null; then
             echo ">>>>>> Attempting to use chef-zero with old version of Chef"
             echo "-----> Installing chef zero dependencies"
-            #{shell.sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
+            #{sudo(ruby_bin.join("gem"))} install chef --no-ri --no-rdoc --conservative
           fi
         PREPARE
 
-        shell.wrap_command(cmd)
+        Util.wrap_command(cmd)
       end
 
       # (see Base#run_command)
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        shell.wrap_command([cmd, *chef_client_args].join(" "))
+        Util.wrap_command([cmd, *chef_client_args].join(" "))
       end
 
       private
@@ -80,7 +81,7 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def local_mode_command
-        "#{shell.sudo(config[:chef_client_path])} --local-mode"
+        "#{sudo(config[:chef_client_path])} --local-mode"
       end
 
       # Returns the command that will run a backwards compatible shim script
@@ -91,7 +92,7 @@ module Kitchen
       def shim_command
         [
           chef_client_zero_env,
-          shell.sudo("#{config[:ruby_bindir]}/ruby"),
+          sudo("#{config[:ruby_bindir]}/ruby"),
           "#{config[:root_path]}/chef-client-zero.rb"
         ].join(" ")
       end
@@ -106,22 +107,23 @@ module Kitchen
           "--config #{config[:root_path]}/client.rb",
           "--log_level #{level}",
           "--force-formatter",
-          "--no-color",
-          yield_if_exists(:chef_zero_host) { |config_val| "--chef-zero-host #{config_val}" },
-          yield_if_exists(:chef_zero_port) { |config_val| "--chef-zero-port #{config_val}" },
-          yield_if_exists(:json_attributes) { "--json-attributes #{config[:root_path]}/dna.json" },
-          yield_if_exists(:log_file) { |config_val| "--logfile #{config_val}" }
+          "--no-color"
         ]
 
-        args
-      end
+        if config[:chef_zero_host]
+          args <<  "--chef-zero-host #{config[:chef_zero_host]}"
+        end
+        if config[:chef_zero_port]
+          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
+        end
+        if config[:json_attributes]
+          args << "--json-attributes #{config[:root_path]}/dna.json"
+        end
+        if config[:log_file]
+          args << "--logfile #{config[:log_file]}"
+        end
 
-      # Yields the config value if the config key exists
-      #
-      # @param config_key [Symbol] config key to check
-      # @api private
-      def yield_if_exists(config_key)
-        yield config[config_key] if config[config_key]
+        args
       end
 
       # Writes a chef-client local-mode shim script to the sandbox directory

@@ -48,31 +48,9 @@ describe Kitchen::Driver::Base do
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
-  let(:payload)       { ["payload"] }
 
   let(:busser) do
-    stub(
-      :setup_cmd => "setup",
-      :sync_cmd => "sync",
-      :run_cmd => "run",
-      :cleanup_cmd => "cleanup",
-      :local_payload => payload
-    )
-  end
-
-  let(:transport) do
-    stub
-  end
-
-  let(:connection) do
-    stub(
-      :execute => true,
-      :upload => true
-    )
-  end
-
-  let(:provisioner) do
-    stub
+    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
   end
 
   let(:instance) do
@@ -80,20 +58,12 @@ describe Kitchen::Driver::Base do
       :name => "coolbeans",
       :logger => logger,
       :busser => busser,
-      :to_str => "instance",
-      :transport => transport,
-      :driver => driver,
-      :provisioner => provisioner
+      :to_str => "instance"
     )
   end
 
   let(:driver) do
-    Kitchen::Driver::Base.new(config)
-  end
-
-  before do
-    transport.stubs(:connection).yields(connection).returns(connection)
-    driver.finalize_config!(instance)
+    Kitchen::Driver::Base.new(config).finalize_config!(instance)
   end
 
   it "#instance returns its instance" do
@@ -135,18 +105,16 @@ describe Kitchen::Driver::Base do
     logged_output.string.must_match(/yo\n/)
   end
 
-  it "has a #create method that raises by default" do
-    proc { driver.create(Hash.new) }.must_raise Kitchen::ClientError
+  [:create, :converge, :setup, :verify, :destroy].each do |action|
+
+    it "has a #{action} method that takes state" do
+      state = Hash.new
+      driver.public_send(action, state).must_be_nil
+    end
   end
 
-  it "has a #destroy method that raises by default" do
-    proc { driver.create(Hash.new) }.must_raise Kitchen::ClientError
-  end
-
-  it "has a login command that delegates to the transport" do
-    connection.expects(:login_command)
-
-    driver.login_command(Hash.new)
+  it "has a login command that raises ActionFailed by default" do
+    proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
   end
 
   it "has a default verify dependencies method" do
@@ -179,34 +147,6 @@ describe Kitchen::Driver::Base do
       proc {
         Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
       }.must_raise Kitchen::ClientError
-    end
-  end
-
-  describe "#verify" do
-
-    let(:payload) { ["/dir1/file1", "/dir2/file1", "/dir2/file2"] }
-
-    it "invokes the busser#cleanup_cmd & #run_cmd over transport" do
-      connection.expects(:execute).with(busser.cleanup_cmd)
-      connection.expects(:execute).with(busser.run_cmd)
-
-      driver.send(:verify, Hash.new)
-    end
-
-    it "copies local payload directories" do
-      connection.expects(:upload).with(["/dir1", "/dir2"], "/tmp/busser/suites")
-
-      driver.send(:verify, Hash.new)
-    end
-
-    describe "no payload files" do
-      let(:payload) { [] }
-
-      it "invokes the busser#cleanup_cmd only" do
-        connection.expects(:execute).with(busser.cleanup_cmd)
-
-        driver.send(:verify, Hash.new)
-      end
     end
   end
 end

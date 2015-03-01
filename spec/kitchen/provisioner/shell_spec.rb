@@ -20,7 +20,6 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/provisioner/shell"
-require "kitchen/shell/bourne"
 
 describe Kitchen::Provisioner::Shell do
 
@@ -28,23 +27,15 @@ describe Kitchen::Provisioner::Shell do
   let(:logger)          { Logger.new(logged_output) }
 
   let(:config) do
-    { :test_base_path => "/basist", :kitchen_root => "/rooty", :sudo => true }
+    { :test_base_path => "/basist", :kitchen_root => "/rooty" }
   end
 
   let(:suite) do
     stub(:name => "fries")
   end
 
-  let(:shell) do
-    Kitchen::Shell::Bourne.new(config)
-  end
-
-  let(:transport) do
-    stub(:sudo => config[:sudo], :shell => shell)
-  end
-
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite, :transport => transport)
+    stub(:name => "coolbeans", :logger => logger, :suite => suite)
   end
 
   let(:provisioner) do

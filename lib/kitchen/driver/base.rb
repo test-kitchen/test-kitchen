@@ -53,52 +53,27 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
-        raise ClientError, "#{self.class}#create must be implemented"
       end
 
       # Converges a running instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def converge(state)
-        provisioner = instance.provisioner
-        provisioner.create_sandbox
-        sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
-        transport.connection(state) do |conn|
-          conn.execute(provisioner.install_command)
-          conn.execute(provisioner.init_command)
-          info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, provisioner[:root_path])
-          conn.execute(provisioner.prepare_command)
-          conn.execute(provisioner.run_command)
-        end
-      ensure
-        provisioner && provisioner.cleanup_sandbox
+      def converge(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
       # Sets up an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def setup(state)
-        transport.connection(state) do |conn|
-          conn.execute(busser.setup_cmd)
-        end
+      def setup(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
       # Verifies a converged instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def verify(state)
-        transport.connection(state) do |conn|
-          conn.execute(busser.cleanup_cmd)
-          dirs = busser.local_payload.map { |f| File.dirname(f) }.uniq
-          if !dirs.empty?
-            conn.upload(dirs, "/tmp/busser/suites")
-            conn.execute(busser.run_cmd)
-          end
-        end
+      def verify(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
       # Destroys an instance.
@@ -106,7 +81,6 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
-        raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
       # Returns the shell command that will log into an instance.
@@ -115,8 +89,8 @@ module Kitchen
       # @return [LoginCommand] an object containing the array of command line
       #   tokens and exec options to be used in a fork/exec
       # @raise [ActionFailed] if the action could not be completed
-      def login_command(state)
-        transport.connection(state).login_command
+      def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
+        raise ActionFailed, "Remote login is not supported in this driver."
       end
 
       # Performs whatever tests that may be required to ensure that this driver
@@ -213,21 +187,6 @@ module Kitchen
       # @return [Busser] a busser
       def busser
         instance.busser
-      end
-
-      # Returns the Transport object associated with the driver.
-      #
-      # @return [Transport] a transport
-      def transport
-        instance.transport
-      end
-
-      # Returns the Transport Default Port associated with the driver.
-      # Just in case the driver need to know it to get the new one.
-      #
-      # @return [Number] a port
-      def default_port
-        transport.default_port
       end
     end
   end

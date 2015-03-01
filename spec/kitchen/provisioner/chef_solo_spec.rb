@@ -20,7 +20,6 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/provisioner/chef_solo"
-require "kitchen/shell/bourne"
 
 describe Kitchen::Provisioner::ChefSolo do
 
@@ -28,23 +27,15 @@ describe Kitchen::Provisioner::ChefSolo do
   let(:logger)          { Logger.new(logged_output) }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r", :log_level => :info, :sudo => true }
+    { :test_base_path => "/b", :kitchen_root => "/r", :log_level => :info }
   end
 
   let(:suite) do
     stub(:name => "fries")
   end
 
-  let(:shell) do
-    Kitchen::Shell::Bourne.new(config)
-  end
-
-  let(:transport) do
-    stub(:sudo => config[:sudo], :shell => shell)
-  end
-
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite, :transport => transport)
+    stub(:name => "coolbeans", :logger => logger, :suite => suite)
   end
 
   let(:provisioner) do
@@ -239,8 +230,8 @@ describe Kitchen::Provisioner::ChefSolo do
     let(:cmd) { provisioner.run_command }
 
     it "uses bourne shell" do
-      # cmd.must_match(/\Ash -c '$/)
-      # cmd.must_match(/'\Z/)
+      cmd.must_match(/\Ash -c '$/)
+      cmd.must_match(/'\Z/)
     end
 
     it "uses sudo for chef-solo when configured" do

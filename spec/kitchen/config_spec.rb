@@ -27,7 +27,7 @@ require "kitchen/instance"
 require "kitchen/platform"
 require "kitchen/provisioner"
 require "kitchen/suite"
-require "kitchen/transport/dummy"
+require "kitchen/transport"
 require "kitchen/util"
 
 module Kitchen
@@ -251,23 +251,21 @@ describe Kitchen::Config do
       stub(
         :busser_data_for => { "junk" => true },
         :driver_data_for => { "junk" => true },
-        :provisioner_data_for => { "junk" => true }
+        :provisioner_data_for => { "junk" => true },
+        :transport_data_for => { "junk" => true }
       )
     end
-
-    let(:transport) { Kitchen::Transport::Dummy.new }
 
     before do
       Kitchen::Instance.stubs(:new).returns("instance")
       Kitchen::Busser.stubs(:new).returns("busser")
       Kitchen::Driver.stubs(:for_plugin).returns("driver")
       Kitchen::Provisioner.stubs(:for_plugin).returns("provisioner")
+      Kitchen::Transport.stubs(:for_plugin).returns("transport")
       Kitchen::Logger.stubs(:new).returns("logger")
       Kitchen::StateFile.stubs(:new).returns("state_file")
-      Kitchen::Transport.stubs(:for_plugin).returns(transport)
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
-      munger.stubs(:transport_data_for).returns(:name => "dummy")
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
     end
@@ -296,6 +294,16 @@ describe Kitchen::Config do
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin).
         with("provey", :name => "provey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs a Transport object" do
+      munger.expects(:transport_data_for).with("tiny", "unax").
+        returns(:name => "transey", :datum => "lots")
+      Kitchen::Transport.unstub(:for_plugin)
+      Kitchen::Transport.expects(:for_plugin).
+        with("transey", :name => "transey", :datum => "lots")
 
       config.instances
     end
@@ -330,8 +338,8 @@ describe Kitchen::Config do
         :suite => suites.first,
         :platform => platforms.first,
         :provisioner => "provisioner",
-        :state_file => "state_file",
-        :transport => transport
+        :transport => "transport",
+        :state_file => "state_file"
       )
 
       config.instances

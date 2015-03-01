@@ -21,9 +21,7 @@ require "pathname"
 require "json"
 
 require "kitchen/provisioner/chef/berkshelf"
-require "kitchen/provisioner/chef/bourne_shell"
 require "kitchen/provisioner/chef/librarian"
-require "kitchen/provisioner/chef/powershell_shell"
 require "kitchen/util"
 
 module Kitchen
@@ -37,7 +35,7 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.chef.io/chef/install.sh"
-      default_config :chef_omnibus_root, nil
+      default_config :chef_omnibus_root, "/opt/chef"
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -47,10 +45,6 @@ module Kitchen
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
-
-      default_config :chef_omnibus_root do |provisioner|
-        provisioner.shell.chef_omnibus_root
-      end
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
@@ -91,13 +85,17 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus]
 
-        lines = [shell.helper_file, chef_shell_helpers, chef_install_function]
-        shell.wrap_command(lines.join("\n"))
+        lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
+        Util.wrap_command(lines.join("\n"))
       end
 
       # (see Base#init_command)
       def init_command
-        shell.init_command(config[:root_path])
+        dirs = %w[cookbooks data data_bags environments roles clients].
+          map { |dir| File.join(config[:root_path], dir) }.join(" ")
+        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
+
+        Util.wrap_command(lines.join("\n"))
       end
 
       # (see Base#create_sandbox)
@@ -120,14 +118,6 @@ module Kitchen
         )
       end
 
-      def shell
-        @shell ||= begin
-          shell_name = instance.transport.shell.name
-          mod = Kitchen::Provisioner::Chef.const_get("#{shell_name}Shell")
-          instance.transport.shell.extend(mod)
-        end
-      end
-
       private
 
       # Load cookbook dependency resolver code, if required.
@@ -148,11 +138,9 @@ module Kitchen
       # @return [String] shell code
       # @api private
       def chef_shell_helpers
-        file = shell.chef_helper_file
-
         IO.read(File.join(
-          File.dirname(__FILE__), %W[.. .. .. support #{file}]
-        )).gsub(/\\n/, "\n")
+          File.dirname(__FILE__), %w[.. .. .. support chef_helpers.sh]
+        ))
       end
 
       # Generates the shell code to conditionally install a Chef Omnibus
@@ -162,7 +150,25 @@ module Kitchen
       # @api private
       def chef_install_function
         version = config[:require_chef_omnibus].to_s.downcase
-        shell.install_function(version, config)
+        pretty_version = case version
+                         when "true" then "install only if missing"
+                         when "latest" then "always install latest version"
+                         else version
+                         end
+        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        if config[:chef_omnibus_install_options]
+          install_flags << " " << config[:chef_omnibus_install_options]
+        end
+
+        <<-INSTALL.gsub(/^ {10}/, "")
+          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
+            echo "-----> Installing Chef Omnibus (#{pretty_version})"
+            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
+            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
+          else
+            echo "-----> Chef Omnibus installation detected (#{pretty_version})"
+          fi
+        INSTALL
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a

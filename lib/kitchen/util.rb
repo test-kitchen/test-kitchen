@@ -99,6 +99,22 @@ module Kitchen
       format("(%dm%.2fs)", minutes, seconds)
     end
 
+    # Generates a command (or series of commands) wrapped so that it can be
+    # invoked on a remote instance or locally.
+    #
+    # This method uses the Bourne shell (/bin/sh) to maximize the chance of
+    # cross platform portability on Unixlike systems.
+    #
+    # @param [String] the command
+    # @return [String] a wrapped command string
+    def self.wrap_command(cmd)
+      cmd = "false" if cmd.nil?
+      cmd = "true" if cmd.to_s.empty?
+      cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
+
+      "sh -c '\n#{cmd}\n'"
+    end
+
     # Modifes the given string to strip leading whitespace on each line, the
     # amount which is calculated by using the first line of text.
     #
@@ -117,25 +133,14 @@ module Kitchen
       string.gsub!(/^ {#{string.index(/[^ ]/)}}/, "")
     end
 
-    # Returns a set of Shell compatible helper
+    # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper
     # functions. This function is usually called inline in a string that
     # will be executed remotely on a test instance.
     #
     # @return [String] a string representation of useful helper functions
-    def self.shell_helpers(shell = "bourne")
-      case shell
-      when "bourne"
-        file = "download_helpers.sh"
-      when "powershell"
-        # No download helper for now..
-        # Should we have one: file = "download_helpers.ps1"
-        return ""
-      else
-        raise "[Util.shell_helpers] Unsupported shell: #{shell}"
-      end
-
+    def self.shell_helpers
       IO.read(File.join(
-        File.dirname(__FILE__), %W[.. .. support #{file}]
+        File.dirname(__FILE__), %w[.. .. support download_helpers.sh]
       ))
     end
   end
