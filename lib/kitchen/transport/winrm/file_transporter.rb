@@ -19,9 +19,12 @@
 require "benchmark"
 require "csv"
 require "digest"
+require "securerandom"
+require "stringio"
 
 require "kitchen/transport/winrm/logging"
 require "kitchen/transport/winrm/template"
+require "kitchen/transport/winrm/tmp_zip"
 
 module Kitchen
 
@@ -30,10 +33,10 @@ module Kitchen
     class Winrm < Kitchen::Transport::Base
 
       # Object which can upload one or more files or directories to a remote
-      # host over WinRM using Powershell scripts and CMD commands. Note that
+      # host over WinRM using PowerShell scripts and CMD commands. Note that
       # this form of file transfer is *not* ideal and extremely costly on both
       # the local and remote sides. Great pains are made to minimize round
-      # trips to  the remote host and to minimize the number of Powershell
+      # trips to  the remote host and to minimize the number of PowerShell
       # sessions being invoked which can be 2 orders of magnitude more
       # expensive than vanilla CMD commands.
       #
@@ -58,12 +61,13 @@ module Kitchen
         #   winrm web service object
         # @param logger [#debug,#debug?] an optional logger/ui object that
         #   responds to `#debug` and `#debug?` (default: `nil`)
-        def initialize(service, logger = nil)
+        def initialize(service, logger = nil, opts = {})
           @service  = service
           @logger   = logger
+          @id_generator = opts.fetch(:id_generator) { -> { SecureRandom.uuid } }
         end
 
-        # Uploads a collection of files to the remote host.
+        # Uploads a collection of files and/or directories to the remote host.
         #
         # **TODO Notes:**
         # * options could specify zip mode, zip options, etc.
@@ -71,13 +75,16 @@ module Kitchen
         # * progress yields block like net-scp progress
         # * final API: def upload(locals, remote, _options = {}, &_progress)
         #
-        # @param locals [Array<String>,String] one or more local file paths
+        # @param locals [Array<String>,String] one or more local file or
+        #   directory paths
         # @param remote [String] the base destination path on the remote host
         # @return [Hash] report hash, keyed by the local MD5 digest
         def upload(locals, remote)
-          files = make_files_hash(Array(locals), remote)
+          files = nil
 
           elapsed = Benchmark.measure do
+            files = make_files_hash(Array(locals), remote)
+
             report = check_files(files)
             merge_with_report!(files, report)
 
@@ -86,6 +93,8 @@ module Kitchen
 
             report = decode_files(files)
             merge_with_report!(files, report)
+
+            cleanup(files)
           end
 
           debug {
@@ -111,8 +120,45 @@ module Kitchen
         # @api private
         attr_reader :service
 
-        # Runs the check_files Powershell script against a collection of
-        # destination path/MD5 checksum pairs. The Powershell script returns
+        # Adds an entry to a files Hash (keyed by local MD5 digest) for a
+        # directory. When a directory is added, a temporary Zip file is created
+        # containing the contents of the directory and any file-related data
+        # such as MD5 digest, size, etc. will be referring to the Zip file.
+        #
+        # @param hash [Hash] hash to be mutated
+        # @param dir [String] directory path to be Zipped and added
+        # @param remote [String] path to destination on remote host
+        # @api private
+        def add_directory_hash!(hash, dir, remote)
+          zip_io = TmpZip.new(dir, logger)
+          zip_md5 = md5sum(zip_io.path)
+
+          hash[zip_md5] = {
+            "src"     => dir,
+            "src_zip" => zip_io.path.to_s,
+            "zip_io"  => zip_io,
+            "tmpzip"  => "$env:TEMP\\tmpzip-#{zip_md5}.zip",
+            "dst"     => remote,
+            "size"    => File.size(zip_io.path)
+          }
+        end
+
+        # Adds an entry to a files Hash (keyed by local MD5 digest) for a file.
+        #
+        # @param hash [Hash] hash to be mutated
+        # @param local [String] file path
+        # @param remote [String] path to destination on remote host
+        # @api private
+        def add_file_hash!(hash, local, remote)
+          hash[md5sum(local)] = {
+            "src"   => local,
+            "dst"   => "#{remote}\\#{File.basename(local)}",
+            "size"  => File.size(local)
+          }
+        end
+
+        # Runs the check_files PowerShell script against a collection of
+        # destination path/MD5 checksum pairs. The PowerShell script returns
         # its results as a CSV-formatted report which is converted into a Ruby
         # Hash.
         #
@@ -121,24 +167,27 @@ module Kitchen
         # @api private
         def check_files(files)
           debug { "Running check_files.ps1" }
+          hash_file = create_remote_hash_file(check_files_ps_hash(files))
           output = service.run_powershell_script(
-            check_files_template % { :files => check_files_ps_hash(files) }
+            check_files_template % { :hash_file => hash_file }
           )
           parse_response(output)
         end
 
         # Constructs a collection of destination path/MD5 checksum pairs as a
-        # String representation of the contents of a Powershell Hash Table.
+        # String representation of the contents of a PowerShell Hash Table.
         #
         # @param files [Hash] files hash, keyed by the local MD5 digest
-        # @return [String] the inner contents of a Powershell Hash Table
+        # @return [String] the inner contents of a PowerShell Hash Table
         # @api private
         def check_files_ps_hash(files)
-          files.map { |md5, paths| %{"#{paths["dst"]}" = "#{md5}"} }.join("; ")
+          ps_hash(Hash[
+            files.map { |md5, data| [data.fetch("tmpzip", data["dst"]), md5] }
+          ])
         end
 
         # @return [Template] an un-rendered template of the check_files
-        #   Powershell script
+        #   PowerShell script
         # @api private
         def check_files_template
           @check_files_template ||= Template.new(File.join(
@@ -147,8 +196,35 @@ module Kitchen
           ))
         end
 
-        # Runs the decode_files Powershell script against a collection of
-        # temporary file/destination path pairs. The Powershell script returns
+        # Performs any final cleanup on the report Hash and removes any
+        # temporary files/resources used in the upload task.
+        #
+        # @param files [Hash] a files hash
+        # @api private
+        def cleanup(files)
+          files.select { |_, data| data.key?("zip_io") }.each do |md5, data|
+            data.fetch("zip_io").unlink
+            files.fetch(md5).delete("zip_io")
+            debug { "Cleaned up src_zip #{data["src_zip"]}" }
+          end
+        end
+
+        # Creates a remote Base64-encoded temporary file containing a
+        # PowerShell hash table.
+        #
+        # @param hash [String] a String representation of a PowerShell hash
+        #   table
+        # @return [String] the remote path to the temporary file
+        # @api private
+        def create_remote_hash_file(hash)
+          hash_file = "$env:TEMP\\hash-#{@id_generator.call}.txt"
+          hash.lines.each { |line| debug { line.chomp } }
+          StringIO.open(hash) { |io| stream_upload(io, hash_file) }
+          hash_file
+        end
+
+        # Runs the decode_files PowerShell script against a collection of
+        # temporary file/destination path pairs. The PowerShell script returns
         # its results as a CSV-formatted report which is converted into a Ruby
         # Hash. The script will not be invoked if there are no "dirty" files
         # present in the incoming files Hash.
@@ -159,13 +235,14 @@ module Kitchen
         def decode_files(files)
           decoded_files = decode_files_ps_hash(files)
 
-          if decoded_files.empty?
+          if decoded_files == ps_hash(Hash.new)
             debug { "No remote files to decode, skipping" }
             Hash.new
           else
             debug { "Running decode_files.ps1" }
+            hash_file = create_remote_hash_file(decoded_files)
             output = service.run_powershell_script(
-              decode_files_template % { :files => decoded_files }
+              decode_files_template % { :hash_file => hash_file }
             )
             parse_response(output)
           end
@@ -173,20 +250,25 @@ module Kitchen
 
         # Constructs a collection of temporary file/destination path pairs for
         # all "dirty" files as a String representation of the contents of a
-        # Powershell Hash Table. A "dirty" file is one which has the
+        # PowerShell Hash Table. A "dirty" file is one which has the
         # `"chk_dirty"` option set to `"True"` in the incoming files Hash.
         #
         # @param files [Hash] files hash, keyed by the local MD5 digest
-        # @return [String] the inner contents of a Powershell Hash Table
+        # @return [String] the inner contents of a PowerShell Hash Table
         # @api private
         def decode_files_ps_hash(files)
-          files.select { |_, data| data["chk_dirty"] == "True" }.
-            map { |_, data| %{"#{data["tmpfile"]}" = "#{data["dst"]}"} }.
-            join("; ")
+          result = files.select { |_, data| data["chk_dirty"] == "True" }.map { |_, data|
+            val = { "dst" => data["dst"] }
+            val["tmpzip"] = data["tmpzip"] if data["tmpzip"]
+
+            [data["tmpfile"], val]
+          }
+
+          ps_hash(Hash[result])
         end
 
         # @return [Template] an un-rendered template of the decode_files
-        #   Powershell script
+        #   PowerShell script
         # @api private
         def decode_files_template
           @decode_files_template ||= Template.new(File.join(
@@ -195,24 +277,28 @@ module Kitchen
           ))
         end
 
-        # Contructs a Hash of files, keyed by the local MD5 digest. Each file
-        # entry has a source and destination set, at a minimum.
+        # Contructs a Hash of files or directories, keyed by the local MD5
+        # digest. Each file entry has a source and destination set, at a
+        # minimum.
         #
-        # @param locals [Array<String>] a collection of local files
+        # @param locals [Array<String>] a collection of local files or
+        #   directories
         # @param remote [String] the base destination path on the remote host
         # @return [Hash] files hash, keyed by the local MD5 digest
         # @api private
         def make_files_hash(locals, remote)
           hash = Hash.new
           locals.each do |local|
-            local = File.expand_path(local)
-            raise "No file #{local} found" unless File.file?(local)
+            expanded = File.expand_path(local)
+            expanded += local[-1] if local.end_with?("/", "\\")
 
-            hash[md5sum(local)] = {
-              "src"   => local,
-              "dst"   => "#{remote}\\#{File.basename(local)}",
-              "size"  => File.size(local)
-            }
+            if File.file?(expanded)
+              add_file_hash!(hash, expanded, remote)
+            elsif File.directory?(expanded)
+              add_directory_hash!(hash, expanded, remote)
+            else
+              raise Errno::ENOENT, "No such file or directory #{expanded}"
+            end
           end
           hash
         end
@@ -233,7 +319,14 @@ module Kitchen
           files.merge!(report) { |_, oldval, newval| oldval.merge(newval) }
         end
 
-        # Parses response of a Powershell script or CMD command which contains
+        # @param depth [Integer] number of padding characters (default: `0`)
+        # @return [String] a whitespace padded string of the given length
+        # @api private
+        def pad(depth = 0)
+          " " * depth
+        end
+
+        # Parses response of a PowerShell script or CMD command which contains
         # a CSV-formatted document in the standard output stream.
         #
         # @param output [WinRM::Output] output object with stdout, stderr, and
@@ -242,7 +335,27 @@ module Kitchen
         # @api private
         def parse_response(output)
           array = CSV.parse(output.stdout, :headers => true).map(&:to_hash)
+          array.each { |h| h.each { |key, value| h[key] = nil if value == "" } }
           Hash[array.map { |entry| [entry.fetch("src_md5"), entry] }]
+        end
+
+        # Converts a Ruby hash into a PowerShell hash table, represented in a
+        # String.
+        #
+        # @param obj [Object] source Hash or object when used in recursive
+        #   calls
+        # @param depth [Integer] padding depth, used in recursive calls
+        #   (default: `0`)
+        # @return [String] a PowerShell hash table
+        # @api private
+        def ps_hash(obj, depth = 0)
+          if obj.is_a?(Hash)
+            obj.map { |k, v|
+              %{#{pad(depth + 2)}#{ps_hash(k)} = #{ps_hash(v, depth + 2)}}
+            }.join("\n").insert(0, "@{\n").insert(-1, "\n#{pad(depth)}}")
+          else
+            %{"#{obj}"}
+          end
         end
 
         # Uploads an IO stream to a Base64-encoded destination file.
@@ -313,10 +426,11 @@ module Kitchen
         def stream_upload_files(files)
           response = Hash.new
           files.each do |md5, data|
+            src = data.fetch("src_zip", data["src"])
             if data["chk_dirty"] == "True"
               tmpfile = "$env:TEMP\\b64-#{md5}.txt"
               response[md5] = { "tmpfile" => tmpfile }
-              chunks, bytes = stream_upload_file(data["src"], tmpfile)
+              chunks, bytes = stream_upload_file(src, tmpfile)
               response[md5]["chunks"] = chunks
               response[md5]["xfered"] = bytes
             else

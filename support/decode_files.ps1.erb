@@ -1,12 +1,4 @@
-$files = @{ <%= files %> }
-
-Function Get-MD5Sum($src) {
-  Try {
-    $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
-    $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
-    return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
-  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
-}
+$hash_file = "<%= hash_file %>"
 
 Function Decode-Base64File($src, $dst) {
   Try {
@@ -20,18 +12,51 @@ Function Decode-Base64File($src, $dst) {
 
 Function Decode-Files($hash) {
   $hash.GetEnumerator() | ForEach-Object {
-    $tmp = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($_.Key)
+    $tmp = Unresolve-Path $_.Key
     $srcMd5 = (Get-Item $tmp).BaseName.Replace("b64-", "")
-    Decode-Base64File $tmp $_.Value
+    $tmpzip, $dst = (Unresolve-Path $_.Value["tmpzip"]), (Unresolve-Path $_.Value["dst"])
+    $decoded = if ($tmpzip -ne $null) { $tmpzip } else { $dst }
+    Decode-Base64File $tmp $decoded
     Remove-Item $tmp -Force
+    $dstMd5 = Get-MD5Sum $decoded
+    $verifies = if ($srcMd5 -eq $dstMd5) { $true } else { $false }
+    if ($tmpzip) { Unzip-File $tmpzip $dst; Remove-Item $tmpzip -Force }
     New-Object psobject -Property @{
-      dst = $_.Value
-      verifies = if ($srcMd5 -eq ($dstMd5 = Get-MD5Sum $_.Value)) { $true } else { $false }
-      src_md5 = $srcMd5
-      dst_md5 = $dstMd5
-      tmpfile = $tmp
+      dst = $dst; verifies = $verifies; src_md5 = $srcMd5; dst_md5 = $dstMd5; tmpfile = $tmp; tmpzip = $tmpzip
     }
-  } | Select-Object -Property dst,verifies,src_md5,dst_md5,tmpfile
+  } | Select-Object -Property dst,verifies,src_md5,dst_md5,tmpfile,tmpzip
 }
 
-Decode-Files $files | ConvertTo-Csv -NoTypeInformation
+Function Get-MD5Sum($src) {
+  Try {
+    $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+    $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
+    return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
+  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
+}
+
+Function Invoke-Input($infile) {
+  $infile = Unresolve-Path $infile
+  Decode-Base64File $infile ($decoded = "$($infile).ps1")
+  $expr = Get-Content $decoded | Out-String
+  Remove-Item $infile,$decoded -Force
+  return Invoke-Expression "$expr"
+}
+
+Function Release-COM($o) {
+  [void][System.Runtime.Interopservices.Marshal]::ReleaseComObject($o)
+}
+
+Function Unresolve-Path($p) {
+  if ($p -eq $null) { return $null }
+  else { return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p) }
+}
+
+Function Unzip-File($src, $dst) {
+  Try {
+    $s = New-Object -ComObject Shell.Application
+    ($destPath = $s.NameSpace($dst)).CopyHere(($zip = $s.NameSpace($src)).Items(), 0x610)
+  } Finally { if ($s -ne $null) { Release-Com $s }; if ($zip -ne $null) { Release-Com $zip }; if ($destPath -ne $null) { Release-COM $destPath } }
+}
+
+Decode-Files (Invoke-Input $hash_file) | ConvertTo-Csv -NoTypeInformation

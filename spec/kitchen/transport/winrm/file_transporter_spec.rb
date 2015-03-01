@@ -29,11 +29,16 @@ require "kitchen/transport/winrm/file_transporter"
 
 describe Kitchen::Transport::Winrm::FileTransporter do
 
-  CheckEntry = Struct.new(:dst, :chk_exists, :src_md5, :dst_md5, :chk_dirty, :verifies)
-  DecodeEntry = Struct.new(:dst, :verifies, :src_md5, :dst_md5, :tmpfile)
+  CheckEntry = Struct.new(
+    :chk_exists, :src_md5, :dst_md5, :chk_dirty, :verifies)
+  DecodeEntry = Struct.new(
+    :dst, :verifies, :src_md5, :dst_md5, :tmpfile, :tmpzip)
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
+
+  let(:randomness)    { %W[alpha beta charlie delta].each }
+  let(:id_generator)  { -> { randomness.next } }
 
   let(:service) do
     s = mock("winrm_service")
@@ -42,7 +47,11 @@ describe Kitchen::Transport::Winrm::FileTransporter do
   end
 
   let(:transporter) do
-    Kitchen::Transport::Winrm::FileTransporter.new(service, logger)
+    Kitchen::Transport::Winrm::FileTransporter.new(
+      service,
+      logger,
+      :id_generator => id_generator
+    )
   end
 
   before { @tempfiles = [] }
@@ -64,22 +73,34 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_specs_for_all_single_file_types
-      it "runs the check_files powershell script" do
-        service.expects(:run_powershell_script).with { |script|
-          script =~ regexify("Function Get-MD5Sum($src) {") &&
-            script =~ regexify("Function Check-Files($hash) {") &&
-            script =~ regexify(
-              "Check-Files $files | ConvertTo-Csv -NoTypeInformation")
-        }.returns(check_output)
+      it "truncates a zero-byte hash_file for check_files" do
+        service.expects(:run_cmd).with { |cmd, *_|
+          cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-alpha.txt"})
+        }.returns(cmd_output)
 
         upload
       end
 
-      it "sets a powershell files hash in the check_files script" do
+      it "uploads the hash_file in chunks for check_files" do
+        hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+          @{
+            "#{dst}" = "#{src_md5}"
+          }
+        HASH
+
+        service.expects(:run_cmd).
+          with(%{echo #{base64(hash)} >> "%TEMP%\\hash-alpha.txt"}).
+          returns(cmd_output).times(1)
+
+        upload
+      end
+
+      it "sets hash_file and runs the check_files powershell script" do
         service.expects(:run_powershell_script).with { |script|
-          script =~ regexify(%[$files = @{ "#{dst}" = "#{src_md5}" }]) &&
+          script =~ regexify(%{$hash_file = "$env:TEMP\\hash-alpha.txt"}) &&
             script =~ regexify(
-              "Check-Files $files | ConvertTo-Csv -NoTypeInformation")
+              "Check-Files (Invoke-Input $hash_file) | " \
+              "ConvertTo-Csv -NoTypeInformation")
         }.returns(check_output)
 
         upload
@@ -121,22 +142,36 @@ describe Kitchen::Transport::Winrm::FileTransporter do
         end
       end
 
-      it "runs the decode_files powershell script" do
-        service.expects(:run_powershell_script).with { |script|
-          script =~ regexify("Function Get-MD5Sum($src) {") &&
-            script =~ regexify("Function Decode-Files($hash) {") &&
-            script =~ regexify(
-              "Decode-Files $files | ConvertTo-Csv -NoTypeInformation")
-        }.returns(check_output)
+      it "truncates a zero-byte hash_file for decode_files" do
+        service.expects(:run_cmd).with { |cmd, *_|
+          cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-beta.txt"})
+        }.returns(cmd_output)
 
         upload
       end
 
-      it "sets a powershell files hash in the decode_files script" do
+      it "uploads the hash_file in chunks for decode_files" do
+        hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+          @{
+            "#{ps_tmpfile}" = @{
+              "dst" = "#{dst}"
+            }
+          }
+        HASH
+
+        service.expects(:run_cmd).
+          with(%{echo #{base64(hash)} >> "%TEMP%\\hash-beta.txt"}).
+          returns(cmd_output).times(1)
+
+        upload
+      end
+
+      it "sets hash_file and runs the decode_files powershell script" do
         service.expects(:run_powershell_script).with { |script|
-          script =~ regexify(%[$files = @{ "#{ps_tmpfile}" = "#{dst}" }]) &&
+          script =~ regexify(%{$hash_file = "$env:TEMP\\hash-beta.txt"}) &&
             script =~ regexify(
-              "Decode-Files $files | ConvertTo-Csv -NoTypeInformation")
+              "Decode-Files (Invoke-Input $hash_file) | " \
+              "ConvertTo-Csv -NoTypeInformation")
         }.returns(check_output)
 
         upload
@@ -146,9 +181,10 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
     describe "for a new file" do
 
-      let(:check_output) do
+      # let(:check_output) do
+      def check_output
         create_check_output([
-          CheckEntry.new(dst, "False", src_md5, nil, "True", "False")
+          CheckEntry.new("False", src_md5, nil, "True", "False")
         ])
       end
 
@@ -158,22 +194,23 @@ describe Kitchen::Transport::Winrm::FileTransporter do
         o
       end
 
-      let(:decode_output) do
+      # let(:decode_output) do
+      def decode_output
         create_decode_output([
-          DecodeEntry.new(dst, "True", src_md5, src_md5, ps_tmpfile)
+          DecodeEntry.new(dst, "True", src_md5, src_md5, ps_tmpfile, nil)
         ])
       end
 
       before do
-        service.stubs(:run_powershell_script).
-          with { |script| script =~ /^Check-Files \$files / }.
-          returns(check_output)
-
         service.stubs(:run_cmd).
           returns(cmd_output)
 
         service.stubs(:run_powershell_script).
-          with { |script| script =~ /^Decode-Files \$files / }.
+          with { |script| script =~ /^Check-Files .+ \| ConvertTo-Csv/ }.
+          returns(check_output)
+
+        service.stubs(:run_powershell_script).
+          with { |script| script =~ /^Decode-Files .+ \| ConvertTo-Csv/ }.
           returns(decode_output)
       end
 
@@ -187,6 +224,7 @@ describe Kitchen::Transport::Winrm::FileTransporter do
             "src"         => local,
             "dst"         => dst,
             "tmpfile"     => ps_tmpfile,
+            "tmpzip"      => nil,
             "src_md5"     => src_md5,
             "dst_md5"     => src_md5,
             "chk_exists"  => "False",
@@ -204,7 +242,7 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
       let(:check_output) do
         create_check_output([
-          CheckEntry.new(dst, "True", src_md5, "aabbcc", "True", "False")
+          CheckEntry.new("True", src_md5, "aabbcc", "True", "False")
         ])
       end
 
@@ -216,20 +254,20 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
       let(:decode_output) do
         create_decode_output([
-          DecodeEntry.new(dst, "True", src_md5, src_md5, ps_tmpfile)
+          DecodeEntry.new(dst, "True", src_md5, src_md5, ps_tmpfile, nil)
         ])
       end
 
       before do
-        service.stubs(:run_powershell_script).
-          with { |script| script =~ /^Check-Files \$files / }.
-          returns(check_output)
-
         service.stubs(:run_cmd).
           returns(cmd_output)
 
         service.stubs(:run_powershell_script).
-          with { |script| script =~ /^Decode-Files \$files / }.
+          with { |script| script =~ /^Check-Files .+ \| ConvertTo-Csv/ }.
+          returns(check_output)
+
+        service.stubs(:run_powershell_script).
+          with { |script| script =~ /^Decode-Files .+ \| ConvertTo-Csv/ }.
           returns(decode_output)
       end
 
@@ -243,6 +281,7 @@ describe Kitchen::Transport::Winrm::FileTransporter do
             "src"         => local,
             "dst"         => dst,
             "tmpfile"     => ps_tmpfile,
+            "tmpzip"      => nil,
             "src_md5"     => src_md5,
             "dst_md5"     => src_md5,
             "chk_exists"  => "True",
@@ -260,13 +299,22 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
       let(:check_output) do
         create_check_output([
-          CheckEntry.new(dst, "True", src_md5, src_md5, "False", "True")
+          CheckEntry.new("True", src_md5, src_md5, "False", "True")
         ])
       end
 
+      let(:cmd_output) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o
+      end
+
       before do
+        service.stubs(:run_cmd).
+          returns(cmd_output)
+
         service.stubs(:run_powershell_script).
-          with { |script| script =~ /^Check-Files \$files / }.
+          with { |script| script =~ /^Check-Files .+ \| ConvertTo-Csv/ }.
           returns(check_output)
       end
 
@@ -304,6 +352,187 @@ describe Kitchen::Transport::Winrm::FileTransporter do
     end
   end
 
+  describe "when uploading a single directory" do
+
+    let(:content)     { "I'm a fake zip file" }
+    let(:local)       { Dir.mktmpdir("input") }
+    let(:remote)      { "C:\\dest" }
+    let(:src_zip)     { create_tempfile("fake.zip", content) }
+    let(:dst)         { remote }
+    let(:src_md5)     { md5sum(src_zip) }
+    let(:size)        { File.size(src_zip) }
+    let(:cmd_tmpfile) { "%TEMP%\\b64-#{src_md5}.txt" }
+    let(:ps_tmpfile)  { "$env:TEMP\\b64-#{src_md5}.txt" }
+    let(:ps_tmpzip)   { "$env:TEMP\\tmpzip-#{src_md5}.zip" }
+
+    let(:tmp_zip) do
+      s = mock("tmp_zip")
+      s.responds_like_instance_of(Kitchen::Transport::Winrm::TmpZip)
+      s.stubs(:path).returns(Pathname(src_zip))
+      s.stubs(:unlink)
+      s
+    end
+
+    let(:cmd_output) do
+      o = WinRM::Output.new
+      o[:exitcode] = 0
+      o
+    end
+
+    let(:check_output) do
+      create_check_output([
+        CheckEntry.new("False", src_md5, nil, "True", "False")
+      ])
+    end
+
+    let(:decode_output) do
+      create_decode_output([
+        DecodeEntry.new(dst, "True", src_md5, src_md5, ps_tmpfile, ps_tmpzip)
+      ])
+    end
+
+    before do
+      Kitchen::Transport::Winrm::TmpZip.stubs(:new).with("#{local}/", logger).
+        returns(tmp_zip)
+
+      service.stubs(:run_cmd).
+        returns(cmd_output)
+
+      # service.stubs(:run_cmd).with { |cmd, *_|
+      #   if match = %r{^echo (\w+) >> "%TEMP%\\hash-alpha.txt"$}.match(cmd)
+      #     hash = Base64.strict_decode64(match[1])
+      #     zip_info[:tmpzip] = %r{"(\$env:TEMP\\tmpzip-\w+\.zip)"}.match(hash)[1]
+      #     zip_info[:src_md5] = %r{tmpzip-(\w+)\.zip$}.match(zip_info[:tmpzip])[1]
+      #   end
+      # }.returns(cmd_output)
+
+      service.stubs(:run_powershell_script).
+        with { |script| script =~ /^Check-Files .+ \| ConvertTo-Csv/ }.
+        returns(check_output)
+
+      service.stubs(:run_powershell_script).
+        with { |script| script =~ /^Decode-Files .+ \| ConvertTo-Csv/ }.
+        returns(decode_output)
+    end
+
+    after do
+      FileUtils.rm_rf(local)
+    end
+
+    let(:upload) { transporter.upload("#{local}/", remote) }
+
+    it "truncates a zero-byte hash_file for check_files" do
+      service.expects(:run_cmd).with { |cmd, *_|
+        cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-alpha.txt"})
+      }.returns(cmd_output)
+
+      upload
+    end
+
+    it "uploads the hash_file in chunks for check_files" do
+      hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+        @{
+          "#{ps_tmpzip}" = "#{src_md5}"
+        }
+      HASH
+
+      service.expects(:run_cmd).
+        with(%{echo #{base64(hash)} >> "%TEMP%\\hash-alpha.txt"}).
+        returns(cmd_output).times(1)
+
+      upload
+    end
+
+    it "sets hash_file and runs the check_files powershell script" do
+      service.expects(:run_powershell_script).with { |script|
+        script =~ regexify(%{$hash_file = "$env:TEMP\\hash-alpha.txt"}) &&
+          script =~ regexify(
+            "Check-Files (Invoke-Input $hash_file) | " \
+            "ConvertTo-Csv -NoTypeInformation")
+      }.returns(check_output)
+
+      upload
+    end
+
+    it "truncates a zero-byte tempfile" do
+      service.expects(:run_cmd).with { |cmd, *_|
+        cmd =~ regexify(%{echo|set /p=>"#{cmd_tmpfile}"})
+      }.returns(cmd_output)
+
+      upload
+    end
+
+    it "uploads the zip file in base64 encoding" do
+      service.expects(:run_cmd).
+        with(%{echo #{base64(content)} >> "#{cmd_tmpfile}"}).
+        returns(cmd_output)
+
+      upload
+    end
+
+    it "truncates a zero-byte hash_file for decode_files" do
+      service.expects(:run_cmd).with { |cmd, *_|
+        cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-beta.txt"})
+      }.returns(cmd_output)
+
+      upload
+    end
+
+    it "uploads the hash_file in chunks for decode_files" do
+      hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+        @{
+          "#{ps_tmpfile}" = @{
+            "dst" = "#{dst}"
+            "tmpzip" = "#{ps_tmpzip}"
+          }
+        }
+      HASH
+
+      service.expects(:run_cmd).
+        with(%{echo #{base64(hash)} >> "%TEMP%\\hash-beta.txt"}).
+        returns(cmd_output).times(1)
+
+      upload
+    end
+
+    it "sets hash_file and runs the decode_files powershell script" do
+      service.expects(:run_powershell_script).with { |script|
+        script =~ regexify(%{$hash_file = "$env:TEMP\\hash-beta.txt"}) &&
+          script =~ regexify(
+            "Decode-Files (Invoke-Input $hash_file) | " \
+            "ConvertTo-Csv -NoTypeInformation")
+      }.returns(check_output)
+
+      upload
+    end
+
+    it "returns a report hash" do
+      upload.must_equal(
+        src_md5 => {
+          "src"         => "#{local}/",
+          "src_zip"     => src_zip,
+          "dst"         => dst,
+          "tmpfile"     => ps_tmpfile,
+          "tmpzip"      => ps_tmpzip,
+          "src_md5"     => src_md5,
+          "dst_md5"     => src_md5,
+          "chk_exists"  => "False",
+          "chk_dirty"   => "True",
+          "verifies"    => "True",
+          "size"        => size,
+          "xfered"      => size / 3 * 4,
+          "chunks"      => (size / 6000.to_f).ceil
+        }
+      )
+    end
+
+    it "cleans up the zip file" do
+      tmp_zip.expects(:unlink)
+
+      upload
+    end
+  end
+
   describe "when uploading multiple files" do
 
     let(:remote) { "C:\\Program Files" }
@@ -319,9 +548,12 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
     let(:check_output) do
       create_check_output([
-        CheckEntry.new(dst1, "False", src1_md5, nil, "True", "False"),      # new
-        CheckEntry.new(dst2, "True", src2_md5, "aabbcc", "True", "False"),  # out-of-date
-        CheckEntry.new(dst3, "True", src3_md5, src3_md5, "False", "True")   # current
+        # new
+        CheckEntry.new("False", src1_md5, nil, "True", "False"),
+        # out-of-date
+        CheckEntry.new("True", src2_md5, "aabbcc", "True", "False"),
+        # current
+        CheckEntry.new("True", src3_md5, src3_md5, "False", "True")
       ])
     end
 
@@ -333,37 +565,56 @@ describe Kitchen::Transport::Winrm::FileTransporter do
 
     let(:decode_output) do
       create_decode_output([
-        DecodeEntry.new(dst1, "True", src1_md5, src1_md5, ps1_tmpfile),
-        DecodeEntry.new(dst2, "True", src2_md5, src2_md5, ps2_tmpfile)
+        DecodeEntry.new(dst1, "True", src1_md5, src1_md5, ps1_tmpfile, nil),
+        DecodeEntry.new(dst2, "True", src2_md5, src2_md5, ps2_tmpfile, nil)
       ])
     end
 
     let(:upload) { transporter.upload([local1, local2, local3], remote) }
 
     before do
-      service.stubs(:run_powershell_script).
-        with { |script| script =~ /^Check-Files \$files / }.
-        returns(check_output)
-
       service.stubs(:run_cmd).
         returns(cmd_output)
 
       service.stubs(:run_powershell_script).
-        with { |script| script =~ /^Decode-Files \$files / }.
+        with { |script| script =~ /^Check-Files .+ \| ConvertTo-Csv/ }.
+        returns(check_output)
+
+      service.stubs(:run_powershell_script).
+        with { |script| script =~ /^Decode-Files .+ \| ConvertTo-Csv/ }.
         returns(decode_output)
     end
 
-    it "sets a powershell files hash in the check_files script" do
-      files = [
-        %{"#{dst1}" = "#{src1_md5}"},
-        %{"#{dst2}" = "#{src2_md5}"},
-        %{"#{dst3}" = "#{src3_md5}"}
-      ]
+    it "truncates a zero-byte hash_file for check_files" do
+      service.expects(:run_cmd).with { |cmd, *_|
+        cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-alpha.txt"})
+      }.returns(cmd_output)
 
+      upload
+    end
+
+    it "uploads the hash_file in chunks for check_files" do
+      hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+        @{
+          "#{dst1}" = "#{src1_md5}"
+          "#{dst2}" = "#{src2_md5}"
+          "#{dst3}" = "#{src3_md5}"
+        }
+      HASH
+
+      service.expects(:run_cmd).
+        with(%{echo #{base64(hash)} >> "%TEMP%\\hash-alpha.txt"}).
+        returns(cmd_output).times(1)
+
+      upload
+    end
+
+    it "sets hash_file and runs the check_files powershell script" do
       service.expects(:run_powershell_script).with { |script|
-        script =~ regexify(%[$files = @{ #{files.join("; ")} }]) &&
+        script =~ regexify(%{$hash_file = "$env:TEMP\\hash-alpha.txt"}) &&
           script =~ regexify(
-            "Check-Files $files | ConvertTo-Csv -NoTypeInformation")
+            "Check-Files (Invoke-Input $hash_file) | " \
+            "ConvertTo-Csv -NoTypeInformation")
       }.returns(check_output)
 
       upload
@@ -381,16 +632,39 @@ describe Kitchen::Transport::Winrm::FileTransporter do
       upload
     end
 
-    it "sets a powershell files hash in the check_files script" do
-      files = [
-        %{"#{ps1_tmpfile}" = "#{dst1}"},
-        %{"#{ps2_tmpfile}" = "#{dst2}"}
-      ]
+    it "truncates a zero-byte hash_file for decode_files" do
+      service.expects(:run_cmd).with { |cmd, *_|
+        cmd =~ regexify(%{echo|set /p=>"%TEMP%\\hash-beta.txt"})
+      }.returns(cmd_output)
 
+      upload
+    end
+
+    it "uploads the hash_file in chunks for decode_files" do
+      hash = Kitchen::Util.outdent!(<<-HASH.chomp)
+        @{
+          "#{ps1_tmpfile}" = @{
+            "dst" = "#{dst1}"
+          }
+          "#{ps2_tmpfile}" = @{
+            "dst" = "#{dst2}"
+          }
+        }
+      HASH
+
+      service.expects(:run_cmd).
+        with(%{echo #{base64(hash)} >> "%TEMP%\\hash-beta.txt"}).
+        returns(cmd_output).times(1)
+
+      upload
+    end
+
+    it "sets hash_file and runs the decode_files powershell script" do
       service.expects(:run_powershell_script).with { |script|
-        script =~ regexify(%[$files = @{ #{files.join("; ")} }]) &&
+        script =~ regexify(%{$hash_file = "$env:TEMP\\hash-beta.txt"}) &&
           script =~ regexify(
-            "Decode-Files $files | ConvertTo-Csv -NoTypeInformation")
+            "Decode-Files (Invoke-Input $hash_file) | " \
+            "ConvertTo-Csv -NoTypeInformation")
       }.returns(check_output)
 
       upload
@@ -403,6 +677,7 @@ describe Kitchen::Transport::Winrm::FileTransporter do
         "src"         => local1,
         "dst"         => dst1,
         "tmpfile"     => ps1_tmpfile,
+        "tmpzip"      => nil,
         "src_md5"     => src1_md5,
         "dst_md5"     => src1_md5,
         "chk_exists"  => "False",
@@ -416,6 +691,7 @@ describe Kitchen::Transport::Winrm::FileTransporter do
         "src"         => local2,
         "dst"         => dst2,
         "tmpfile"     => ps2_tmpfile,
+        "tmpzip"      => nil,
         "src_md5"     => src2_md5,
         "dst_md5"     => src2_md5,
         "chk_exists"  => "True",
@@ -436,6 +712,11 @@ describe Kitchen::Transport::Winrm::FileTransporter do
         "size"        => size3
       )
     end
+  end
+
+  it "raises an exception when local file or directory is not found" do
+    proc { transporter.upload("/a/b/c/nope", "C:\\nopeland") }.
+      must_raise Errno::ENOENT
   end
 
   def base64(string)
