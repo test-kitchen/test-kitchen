@@ -1,6 +1,0 @@
-$result = @()
-<%= commands %>
-"__JSON__"
-"{"
-$result | % { ++$idx;write-output "`"$idx`": `"$_`",".Replace('\','\\') }
-"}"

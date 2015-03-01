@@ -33,8 +33,6 @@ require "uri"
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
 require "kitchen/transport/winrm/file_transporter"
-require "kitchen/transport/winrm_file_transfer/remote_file"
-require "kitchen/transport/winrm_file_transfer/remote_zip_file"
 
 module Kitchen
 

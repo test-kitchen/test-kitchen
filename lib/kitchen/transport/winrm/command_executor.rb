@@ -16,11 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "json"
-require "ostruct"
-
 require "kitchen/transport/winrm/logging"
-require "kitchen/transport/winrm/template"
 
 module Kitchen
 
@@ -103,42 +99,6 @@ module Kitchen
           result
         end
 
-        # Runs a series of Powershell commands in one Powershell session, using
-        # `Invoke-Command` cmdlets. The resulting output object is augmented
-        # with a `:results` key containing an Array of the return values of
-        # `Invoke-Command` blocks which have return values.
-        #
-        # @example Running multiple commands
-        #
-        #   result = executor.run_invoke_commands do |builder|
-        #     builder << "return $true"
-        #     builder << "return $false"
-        #   end
-        #   result[:returns] # => ["True", "False"]
-        #
-        # @yield [commands] gives the Array of commands to the block so that
-        #   additional commands can be appended
-        # @return [WinRM::Output] output object with an additional `:results`
-        #   key
-        def run_invoke_commands
-          commands = []
-          yield commands
-          return [] if commands.empty?
-
-          @batch_template ||= Template.new(File.join(
-            File.dirname(__FILE__),
-            %W[.. .. .. .. support powershell_batch.ps1.erb]
-          ))
-
-          commands = commands.
-            map { |entry| "$result += Invoke-Command { #{entry} }" }.join("\n")
-
-          output = run_powershell_script(
-            @batch_template % { :commands => commands })
-
-          invoke_commands_response(output)
-        end
-
         # Run a Powershell script that resides on the local box.
         #
         # @param script_file [IO,String] an IO reference for reading the
@@ -213,32 +173,13 @@ module Kitchen
           @max_commands -= 2 # to be safe
         end
 
-        # Parses the output of a script containing a `__JSON__` delimiter
-        # and extracts the returns values from that JSON data.
-        #
-        # @param output [WinRM::Output] output object to augment
-        # @return [WinRM::Output] output object with an additional `:results`
-        #   key
-        # @raise [WinRM::WinRMError] if the JSON document could not be parsed
-        # @api private
-        def invoke_commands_response(output)
-          _, _, json = output.stdout.
-            sub(",\r\n}", "\n}").partition("__JSON__\r\n")
-
-          output[:returns] = JSON.parse(json).to_a.
-            sort { |a, b| a.first <=> b.first }.map(&:last)
-
-          output
-        rescue JSON::JSONError => e
-          raise WinRM::WinRMError,
-            "Failed to parse JSON in response: #{e.inspect} for #{json}"
-        end
-
         # Closes the remote shell session and opens a new one.
         #
         # @api private
         def reset
-          debug { "Resetting WinRM shell (Max command limit is #{max_commands})"}
+          debug {
+            "Resetting WinRM shell (Max command limit is #{max_commands})"
+          }
           open
         end
       end
