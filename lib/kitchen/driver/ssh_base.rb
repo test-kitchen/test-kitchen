@@ -37,35 +37,43 @@ module Kitchen
       end
 
       # (see Base#converge)
-      def converge(state)
+      def converge(state) # rubocop:disable Metrics/AbcSize
         provisioner = instance.provisioner
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
 
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(provisioner.install_command, conn)
-          run_remote(provisioner.init_command, conn)
-          transfer_path(sandbox_dirs, provisioner[:root_path], conn)
-          run_remote(provisioner.prepare_command, conn)
-          run_remote(provisioner.run_command, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(provisioner.install_command))
+          conn.execute(env_cmd(provisioner.init_command))
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, provisioner[:root_path])
+          debug("Transfer complete")
+          conn.execute(env_cmd(provisioner.prepare_command))
+          conn.execute(env_cmd(provisioner.run_command))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       ensure
-        provisioner && provisioner.cleanup_sandbox
+        instance.provisioner.cleanup_sandbox
       end
 
       # (see Base#setup)
       def setup(state)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser.setup_cmd, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(busser.setup_cmd))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       end
 
       # (see Base#verify)
       def verify(state)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser.sync_cmd, conn)
-          run_remote(busser.run_cmd, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(busser.sync_cmd))
+          conn.execute(env_cmd(busser.run_cmd))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       end
 
       # (see Base#destroy)
@@ -75,7 +83,8 @@ module Kitchen
 
       # (see Base#login_command)
       def login_command(state)
-        SSH.new(*build_ssh_args(state)).login_command
+        instance.transport.connection(backcompat_merged_state(state)).
+          login_command
       end
 
       # Executes an arbitrary command on an instance over an SSH connection.
@@ -84,8 +93,8 @@ module Kitchen
       # @param command [String] the command to be executed
       # @raise [ActionFailed] if the command could not be successfully completed
       def remote_command(state, command)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(command, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(command))
         end
       end
 
@@ -96,12 +105,23 @@ module Kitchen
       # @deprecated This method should no longer be called directly and exists
       #   to support very old drivers. This will be removed in the future.
       def ssh(ssh_args, command)
-        Kitchen::SSH.new(*ssh_args) do |conn|
-          run_remote(command, conn)
+        pseudo_state = { :hostname => ssh_args[0], :username => ssh_args[1] }
+        pseudo_state.merge!(ssh_args[2])
+        connection_state = backcompat_merged_state(pseudo_state)
+
+        instance.transport.connection(connection_state) do |conn|
+          conn.execute(env_cmd(command))
         end
       end
 
       private
+
+      def backcompat_merged_state(state)
+        driver_ssh_keys = %w[
+          forward_agent hostname password port ssh_key username
+        ].map(&:to_sym)
+        config.select { |key, _| driver_ssh_keys.include?(key) }.rmerge(state)
+      end
 
       # Builds arguments for constructing a `Kitchen::SSH` instance.
       #
@@ -131,6 +151,7 @@ module Kitchen
       # @return [String] command string
       # @api private
       def env_cmd(cmd)
+        return if cmd.nil?
         env = "env"
         env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
         env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
@@ -177,7 +198,12 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_sshd(hostname, username = nil, options = {})
-        SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
+        pseudo_state = { :hostname => hostname }
+        pseudo_state[:username] = username if username
+        pseudo_state.merge!(options)
+
+        instance.transport.connection(backcompat_merged_state(pseudo_state)).
+          wait_until_ready
       end
     end
   end
