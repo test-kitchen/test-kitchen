@@ -21,16 +21,36 @@ require_relative "../../spec_helper"
 require "kitchen"
 require "kitchen/transport/ssh"
 
-class BackCompatDriver < Kitchen::Driver::SSHBase
+module Kitchen
 
-  def use_run_remote(state, command)
-    connection = Kitchen::SSH.new(*build_ssh_args(state))
-    run_remote(command, connection)
-  end
+  module Driver
 
-  def use_transfer_path(state, locals, remote)
-    connection = Kitchen::SSH.new(*build_ssh_args(state))
-    transfer_path(locals, remote, connection)
+    class BackCompat < Kitchen::Driver::SSHBase
+
+      def use_run_remote(state, command)
+        connection = Kitchen::SSH.new(*build_ssh_args(state))
+        run_remote(command, connection)
+      end
+
+      def use_transfer_path(state, locals, remote)
+        connection = Kitchen::SSH.new(*build_ssh_args(state))
+        transfer_path(locals, remote, connection)
+      end
+    end
+
+    class Speedy < Base
+    end
+
+    class Dodgy < Base
+
+      no_parallel_for :converge
+    end
+
+    class Slow < Base
+
+      no_parallel_for :create, :destroy
+      no_parallel_for :verify
+    end
   end
 end
 
@@ -557,7 +577,81 @@ describe Kitchen::Driver::SSHBase do
   describe "to maintain backwards compatibility" do
 
     let(:driver) do
-      BackCompatDriver.new(config).finalize_config!(instance)
+      Kitchen::Driver::BackCompat.new(config).finalize_config!(instance)
+    end
+
+    it "#instance returns its instance" do
+      driver.instance.must_equal instance
+    end
+
+    it "#name returns the name of the driver" do
+      driver.name.must_equal "BackCompat"
+    end
+
+    describe "#logger" do
+
+      before  { @klog = Kitchen.logger }
+      after   { Kitchen.logger = @klog }
+
+      it "returns the instance's logger if defined" do
+        driver.send(:logger).must_equal logger
+      end
+
+      it "returns the default logger if instance's logger is not set" do
+        driver = Kitchen::Driver::BackCompat.new(config)
+        Kitchen.logger = "yep"
+
+        driver.send(:logger).must_equal Kitchen.logger
+      end
+    end
+
+    it "#puts calls logger.info" do
+      driver.send(:puts, "yo")
+
+      logged_output.string.must_match(/I, /)
+      logged_output.string.must_match(/yo\n/)
+    end
+
+    it "#print calls logger.info" do
+      driver.send(:print, "yo")
+
+      logged_output.string.must_match(/I, /)
+      logged_output.string.must_match(/yo\n/)
+    end
+
+    it "has a default verify dependencies method" do
+      driver.verify_dependencies.must_be_nil
+    end
+
+    it "#busser returns the instance's busser" do
+      driver.send(:busser).must_equal busser
+    end
+
+    describe ".no_parallel_for" do
+
+      it "registers no serial actions when none are declared" do
+        Kitchen::Driver::Speedy.serial_actions.must_equal nil
+      end
+
+      it "registers a single serial action method" do
+        Kitchen::Driver::Dodgy.serial_actions.must_equal [:converge]
+      end
+
+      it "registers multiple serial action methods" do
+        actions = Kitchen::Driver::Slow.serial_actions
+
+        actions.must_include :create
+        actions.must_include :verify
+        actions.must_include :destroy
+      end
+
+      it "raises a ClientError if value is not an action method" do
+        proc {
+          Class.new(Kitchen::Driver::BackCompat) {
+            no_parallel_for :telling_stories
+          }
+        }.must_raise Kitchen::ClientError
+      end
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize

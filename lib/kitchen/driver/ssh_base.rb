@@ -16,6 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "thor/util"
+
+require "kitchen/lazy_hash"
+
 module Kitchen
 
   module Driver
@@ -26,10 +30,29 @@ module Kitchen
     # * #destroy(state)
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class SSHBase < Base
+    class SSHBase
+
+      include ShellOut
+      include Configurable
+      include Logging
 
       default_config :sudo, true
       default_config :port, 22
+
+      # Creates a new Driver object using the provided configuration data
+      # which will be merged with any default configuration.
+      #
+      # @param config [Hash] provided driver configuration
+      def initialize(config = {})
+        init_config(config)
+      end
+
+      # Returns the name of this driver, suitable for display in a CLI.
+      #
+      # @return [String] name of this driver
+      def name
+        self.class.name.split("::").last
+      end
 
       # (see Base#create)
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
@@ -112,6 +135,53 @@ module Kitchen
         instance.transport.connection(connection_state) do |conn|
           conn.execute(env_cmd(command))
         end
+      end
+
+      # Performs whatever tests that may be required to ensure that this driver
+      # will be able to function in the current environment. This may involve
+      # checking for the presence of certain directories, software installed,
+      # etc.
+      #
+      # @raise [UserError] if the driver will not be able to perform or if a
+      #   documented dependency is missing from the system
+      def verify_dependencies
+      end
+
+      class << self
+        # @return [Array<Symbol>] an array of action method names that cannot
+        #   be run concurrently and must be run in serial via a shared mutex
+        attr_reader :serial_actions
+      end
+
+      # Registers certain driver actions that cannot be safely run concurrently
+      # in threads across multiple instances. Typically this might be used
+      # for create or destroy actions that use an underlying resource that
+      # cannot be used at the same time.
+      #
+      # A shared mutex for this driver object will be used to synchronize all
+      # registered methods.
+      #
+      # @example a single action method that cannot be run concurrently
+      #
+      #   no_parallel_for :create
+      #
+      # @example multiple action methods that cannot be run concurrently
+      #
+      #   no_parallel_for :create, :destroy
+      #
+      # @param methods [Array<Symbol>] one or more actions as symbols
+      # @raise [ClientError] if any method is not a valid action method name
+      def self.no_parallel_for(*methods)
+        action_methods = [:create, :converge, :setup, :verify, :destroy]
+
+        Array(methods).each do |meth|
+          next if action_methods.include?(meth)
+
+          raise ClientError, "##{meth} is not a valid no_parallel_for method"
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
       end
 
       private
@@ -204,6 +274,53 @@ module Kitchen
 
         instance.transport.connection(backcompat_merged_state(pseudo_state)).
           wait_until_ready
+      end
+
+      # Returns a suitable logger to use for output.
+      #
+      # @return [Kitchen::Logger] a logger
+      def logger
+        instance ? instance.logger : Kitchen.logger
+      end
+
+      # Intercepts any bare #puts calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
+      def puts(msg)
+        info(msg)
+      end
+
+      # Intercepts any bare #print calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
+      def print(msg)
+        info(msg)
+      end
+
+      # Delegates to Kitchen::ShellOut.run_command, overriding some default
+      # options:
+      #
+      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
+      #   Driver object
+      # * `:log_subject` defaults to a String representation of the Driver's
+      #   class name
+      #
+      # @see ShellOut#run_command
+      def run_command(cmd, options = {})
+        base_options = {
+          :use_sudo => config[:use_sudo],
+          :log_subject => Thor::Util.snake_case(self.class.to_s)
+        }.merge(options)
+        super(cmd, base_options)
+      end
+
+      # Returns the Busser object associated with the driver.
+      #
+      # @return [Busser] a busser
+      def busser
+        instance.busser
       end
     end
   end
