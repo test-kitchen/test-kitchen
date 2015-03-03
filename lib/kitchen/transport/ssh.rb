@@ -76,6 +76,7 @@ module Kitchen
 
         # (see Base::Connection#execute)
         def execute(command)
+          return if command.nil?
           logger.debug("[SSH] #{self} (#{command})")
           exit_code = execute_with_exit_code(command)
 
@@ -83,6 +84,8 @@ module Kitchen
             raise Transport::SshFailed,
               "SSH exited (#{exit_code}) for command: [#{command}]"
           end
+        rescue Net::SSH::Exception => ex
+          raise SshFailed, "SSH command failed (#{ex.message})"
         end
 
         # (see Base::Connection#login_command)
@@ -110,6 +113,8 @@ module Kitchen
               logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
             end
           end
+        rescue Net::SSH::Exception => ex
+          raise SshFailed, "SCP upload failed (#{ex.message})"
         end
 
         # (see Base::Connection#wait_until_ready)
@@ -189,7 +194,7 @@ module Kitchen
             retry
           else
             logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
-            raise
+            raise SshFailed, "SSH session could not be established"
           end
         end
 

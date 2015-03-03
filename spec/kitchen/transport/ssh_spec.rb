@@ -581,8 +581,11 @@ describe Kitchen::Transport::Ssh::Connection do
           connection.stubs(:sleep)
         end
 
-        it "reraises the #{klass} exception" do
-          proc { connection.execute("nope") }.must_raise klass
+        it "raises an SshFailed exception" do
+          e = proc {
+            connection.execute("nope")
+          }.must_raise Kitchen::Transport::SshFailed
+          e.message.must_match regexify("SSH session could not be established")
         end
 
         it "attempts to connect :connection_retries times" do
@@ -785,6 +788,33 @@ describe Kitchen::Transport::Ssh::Connection do
           connection.execute("doit")
         }.must_raise Kitchen::Transport::SshFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
+      end
+    end
+
+    describe "for an interrupted command" do
+
+      let(:conn) { mock("session") }
+
+      before do
+        Net::SSH.stubs(:start).returns(conn)
+      end
+
+      it "raises SshFailed when an SSH exception is raised" do
+        conn.stubs(:open_channel).raises(Net::SSH::Exception)
+
+        e = proc {
+          connection.execute("nope")
+        }.must_raise Kitchen::Transport::SshFailed
+        e.message.must_match regexify("SSH command failed")
+      end
+    end
+
+    describe "for a nil command" do
+
+      it "does not log on debug" do
+        connection.execute(nil)
+
+        logged_output.string.must_equal ""
       end
     end
   end
@@ -990,6 +1020,24 @@ describe Kitchen::Transport::Ssh::Connection do
         logged_output.string.must_match debug_line(
           "Uploaded #{@dir}/zulu (14 bytes)"
         )
+      end
+    end
+
+    describe "for a failed upload" do
+
+      let(:conn) { mock("session") }
+
+      before do
+        Net::SSH.stubs(:start).returns(conn)
+      end
+
+      it "raises SshFailed when an SSH exception is raised" do
+        conn.stubs(:scp).raises(Net::SSH::Exception)
+
+        e = proc {
+          connection.upload("nope", "fail")
+        }.must_raise Kitchen::Transport::SshFailed
+        e.message.must_match regexify("SCP upload failed")
       end
     end
   end
