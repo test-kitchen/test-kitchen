@@ -1,5 +1,6 @@
 --abc-max 20
 --style-measure 100
 --abc-exclude Kitchen::ThorTasks#define
+--abc-exclude Kitchen::Driver::SSHBase#converge
 --style-exclude lib/vendor/**/*.rb
 --doc-exclude lib/vendor/**/.rb

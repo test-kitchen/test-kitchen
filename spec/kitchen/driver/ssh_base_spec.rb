@@ -38,15 +38,15 @@ module Kitchen
       end
     end
 
-    class Speedy < Base
+    class SpeedyCompat < Kitchen::Driver::SSHBase
     end
 
-    class Dodgy < Base
+    class DodgyCompat < Kitchen::Driver::SSHBase
 
       no_parallel_for :converge
     end
 
-    class Slow < Base
+    class SlowCompat < Kitchen::Driver::SSHBase
 
       no_parallel_for :create, :destroy
       no_parallel_for :verify
@@ -630,15 +630,15 @@ describe Kitchen::Driver::SSHBase do
     describe ".no_parallel_for" do
 
       it "registers no serial actions when none are declared" do
-        Kitchen::Driver::Speedy.serial_actions.must_equal nil
+        Kitchen::Driver::SpeedyCompat.serial_actions.must_equal nil
       end
 
       it "registers a single serial action method" do
-        Kitchen::Driver::Dodgy.serial_actions.must_equal [:converge]
+        Kitchen::Driver::DodgyCompat.serial_actions.must_equal [:converge]
       end
 
       it "registers multiple serial action methods" do
-        actions = Kitchen::Driver::Slow.serial_actions
+        actions = Kitchen::Driver::SlowCompat.serial_actions
 
         actions.must_include :create
         actions.must_include :verify
