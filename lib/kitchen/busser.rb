@@ -38,6 +38,8 @@ module Kitchen
     #   containing the Ruby binary on the remote instance
     # @option opts [TrueClass, FalseClass] :sudo whether or not to invoke
     #   sudo before commands requiring root access (default: `true`)
+    # @option opts [String] :sudo_command sudo command for the system
+    #   (default: 'sudo -E')
     def initialize(suite_name, opts = {})
       validate_options(suite_name)
 
@@ -49,6 +51,7 @@ module Kitchen
       @config[:test_base_path] = File.expand_path(test_base_path, kitchen_root)
       @config[:suite_name] = suite_name
       @config[:sudo] = opts.fetch(:sudo, true)
+      @config[:sudo_command] = opts.fetch(:sudo_command, "sudo -E")
       @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
       @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
       @config[:version] = opts.fetch(:version, "busser")
@@ -280,7 +283,7 @@ module Kitchen
     # @return [String] the command, conditionaly prefixed with sudo
     # @api private
     def sudo(command)
-      config[:sudo] ? "sudo -E #{command}" : command
+      config[:sudo] ? "#{config[:sudo_command]} #{command}" : command
     end
 
     # Returns a command string that sets appropriate environment variables for

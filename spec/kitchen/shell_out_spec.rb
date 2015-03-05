@@ -106,19 +106,17 @@ describe Kitchen::ShellOut do
     end
 
     it "prepends with sudo if :use_sudo is truthy" do
-      opts[:sudo_command] = "sudo"
       Mixlib::ShellOut.unstub(:new)
       Mixlib::ShellOut.expects(:new).with("sudo -E yo", opts).returns(command)
 
-      subject.run_command("yo", :use_sudo => true, :sudo_command => "sudo")
+      subject.run_command("yo", :use_sudo => true)
     end
 
     it "prepends with custom sudo command if :use_sudo is truthy and :sudo_command is specified" do
-      opts[:sudo_command] = "whodo"
       Mixlib::ShellOut.unstub(:new)
-      Mixlib::ShellOut.expects(:new).with("whodo -E yo", opts).returns(command)
+      Mixlib::ShellOut.expects(:new).with("/usr/bin/whodo -m -c yo", opts).returns(command)
 
-      subject.run_command("yo", :use_sudo => true, :sudo_command => "whodo")
+      subject.run_command("yo", :use_sudo => true, :sudo_command => "/usr/bin/whodo -m -c")
     end
 
     it "logs a debug BEGIN message" do
