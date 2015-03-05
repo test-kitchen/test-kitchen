@@ -38,6 +38,10 @@ describe Kitchen::Platform do
     klass.new(:name => "p", :os_type => nil).os_type.must_equal nil
   end
 
+  it "#os_type defaults to `unix` when not provided" do
+    klass.new(:name => "p").os_type.must_equal "unix"
+  end
+
   it "#diagnose returns a hash with sorted keys" do
     opts[:os_type] = "unikitty"
 

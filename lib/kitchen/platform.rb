@@ -40,7 +40,7 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Platform#new requires option :name"
       end
-      @os_type = options[:os_type]
+      @os_type = options.fetch(:os_type, "unix")
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
