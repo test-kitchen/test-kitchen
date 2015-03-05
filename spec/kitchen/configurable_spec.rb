@@ -530,57 +530,57 @@ describe Kitchen::Configurable do
     end
   end
 
-  describe "#os_windows?" do
+  describe "#windows_os?" do
 
     it "for windows type platform returns true" do
       platform.stubs(:os_type).returns("windows")
 
-      subject.os_windows?.must_equal true
+      subject.windows_os?.must_equal true
     end
 
     it "for unix type platform returns false" do
       platform.stubs(:os_type).returns("unix")
 
-      subject.os_windows?.must_equal false
+      subject.windows_os?.must_equal false
     end
 
     it "for newfangled type platform return false" do
       platform.stubs(:os_type).returns("internet_cat")
 
-      subject.os_windows?.must_equal false
+      subject.windows_os?.must_equal false
     end
 
     it "for unset type platform returns false" do
       platform.stubs(:os_type).returns(nil)
 
-      subject.os_windows?.must_equal false
+      subject.windows_os?.must_equal false
     end
   end
 
-  describe "#os_unix?" do
+  describe "#unix_os?" do
 
     it "for windows type platform returns false" do
       platform.stubs(:os_type).returns("windows")
 
-      subject.os_unix?.must_equal false
+      subject.unix_os?.must_equal false
     end
 
     it "for unix type platform returns true" do
       platform.stubs(:os_type).returns("unix")
 
-      subject.os_unix?.must_equal true
+      subject.unix_os?.must_equal true
     end
 
     it "for newfangled type platform return false" do
       platform.stubs(:os_type).returns("internet_cat")
 
-      subject.os_unix?.must_equal false
+      subject.unix_os?.must_equal false
     end
 
     it "for unset type platform returns true" do
       platform.stubs(:os_type).returns(nil)
 
-      subject.os_unix?.must_equal true
+      subject.unix_os?.must_equal true
     end
   end
 end

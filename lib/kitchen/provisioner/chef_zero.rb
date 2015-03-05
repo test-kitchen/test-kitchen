@@ -35,7 +35,7 @@ module Kitchen
       default_config :chef_client_path do |provisioner|
         provisioner.
           remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-client]).
-          tap { |path| path.concat(".bat") if provisioner.os_windows? }
+          tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       default_config :ruby_bindir do |provisioner|

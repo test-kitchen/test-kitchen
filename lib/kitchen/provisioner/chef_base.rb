@@ -46,7 +46,7 @@ module Kitchen
       ].join(",")
 
       default_config :chef_omnibus_root do |provisioner|
-        if provisioner.os_windows?
+        if provisioner.windows_os?
           "$env:systemdrive\\opscode\\chef"
         else
           "/opt/chef"

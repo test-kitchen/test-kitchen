@@ -29,11 +29,11 @@ module Kitchen
       include Logging
 
       default_config :root_path do |provisioner|
-        provisioner.os_windows? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
+        provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
       end
 
       default_config :sudo do |provisioner|
-        provisioner.os_windows? ? nil : true
+        provisioner.windows_os? ? nil : true
       end
 
       expand_path_for :test_base_path

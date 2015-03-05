@@ -119,12 +119,12 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true is `:os_type` is `"unix"` (or
     #   unset, for backwards compatibility)
-    def os_unix?
+    def unix_os?
       ["unix", nil].include?(instance.platform.os_type)
     end
 
     # @return [TrueClass,FalseClass] true is `:os_type` is `"windows"`
-    def os_windows?
+    def windows_os?
       ["windows"].include?(instance.platform.os_type)
     end
 
@@ -133,7 +133,7 @@ module Kitchen
     # @return [String] joined path for instance's os_type
     def remote_path_join(*parts)
       path = File.join(*parts)
-      os_windows? ? path.gsub("/", "\\") : path.gsub("\\", "/")
+      windows_os? ? path.gsub("/", "\\") : path.gsub("\\", "/")
     end
 
     private
