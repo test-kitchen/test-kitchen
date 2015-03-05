@@ -25,17 +25,20 @@ describe Kitchen::Provisioner::ChefBase do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform)        { stub(:os_type => nil) }
+  let(:suite)           { stub(:name => "fries") }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
   end
 
-  let(:suite) do
-    stub(:name => "fries")
-  end
-
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite)
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :suite => suite,
+      :platform => platform
+    )
   end
 
   let(:provisioner) do

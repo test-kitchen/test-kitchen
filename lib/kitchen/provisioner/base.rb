@@ -28,8 +28,13 @@ module Kitchen
       include Configurable
       include Logging
 
-      default_config :root_path, "/tmp/kitchen"
-      default_config :sudo, true
+      default_config :root_path do |provisioner|
+        provisioner.os_windows? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
+      end
+
+      default_config :sudo do |provisioner|
+        provisioner.os_windows? ? nil : true
+      end
 
       expand_path_for :test_base_path
 

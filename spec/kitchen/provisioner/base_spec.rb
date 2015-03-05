@@ -26,10 +26,11 @@ describe Kitchen::Provisioner::Base do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform)        { stub }
   let(:config)          { Hash.new }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger)
+    stub(:name => "coolbeans", :logger => logger, :platform => platform)
   end
 
   let(:provisioner) do
@@ -42,12 +43,30 @@ describe Kitchen::Provisioner::Base do
 
   describe "configuration" do
 
-    it ":root_path defaults to /tmp/kitchen" do
-      provisioner[:root_path].must_equal "/tmp/kitchen"
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it ":root_path defaults to /tmp/kitchen" do
+        provisioner[:root_path].must_equal "/tmp/kitchen"
+      end
+
+      it ":sudo defaults to true" do
+        provisioner[:sudo].must_equal true
+      end
     end
 
-    it ":sudo defaults to true" do
-      provisioner[:sudo].must_equal true
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":root_path defaults to $env:TEMP\\kitchen" do
+        provisioner[:root_path].must_equal "$env:TEMP\\kitchen"
+      end
+
+      it ":sudo defaults to nil" do
+        provisioner[:sudo].must_equal nil
+      end
     end
   end
 
