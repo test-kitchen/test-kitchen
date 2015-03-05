@@ -302,6 +302,20 @@ describe Kitchen::Instance do
       instance.diagnose.must_be_instance_of Hash
     end
 
+    it "sets :platform key to platform's diagnose info" do
+      platform.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose[:platform].must_equal(:a => "b")
+    end
+
+    it "sets :platform key to :unknown if obj can't respond to #diagnose" do
+      opts[:platform] = Class.new(platform.class) {
+        undef_method :diagnose
+      }.new(:name => "whoop")
+
+      instance.diagnose[:platform].must_equal :unknown
+    end
+
     it "sets :state_file key to state_file's diganose info" do
       state_file.stubs(:diagnose).returns(:a => "b")
 

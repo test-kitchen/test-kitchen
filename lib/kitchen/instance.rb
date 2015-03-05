@@ -229,7 +229,9 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = Hash.new
-      [:state_file, :driver, :provisioner, :transport, :busser].each do |sym|
+      [
+        :platform, :state_file, :driver, :provisioner, :transport, :busser
+      ].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
       end

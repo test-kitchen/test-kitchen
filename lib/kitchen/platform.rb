@@ -42,5 +42,12 @@ module Kitchen
       end
       @os_type = options[:os_type]
     end
+
+    # Returns a Hash of configuration and other useful diagnostic information.
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose
+      { :os_type => os_type }
+    end
   end
 end

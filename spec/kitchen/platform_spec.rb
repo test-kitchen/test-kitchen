@@ -37,4 +37,10 @@ describe Kitchen::Platform do
     klass.new(:name => "p", :os_type => "unicorn").os_type.must_equal "unicorn"
     klass.new(:name => "p", :os_type => nil).os_type.must_equal nil
   end
+
+  it "#diagnose returns a hash with sorted keys" do
+    opts[:os_type] = "unikitty"
+
+    klass.new(opts).diagnose.must_equal(:os_type => "unikitty")
+  end
 end
