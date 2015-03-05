@@ -43,8 +43,12 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Platform#new requires option :name"
       end
-      @os_type = options.fetch(:os_type, "unix")
-      @shell_type = options.fetch(:shell_type, "bourne")
+      @os_type = options.fetch(:os_type) do
+        @name.downcase =~ /^windows/ ? "windows" : "unix"
+      end
+      @shell_type = options.fetch(:shell_type) do
+        @name.downcase =~ /^windows/ ? "powershell" : "bourne"
+      end
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.

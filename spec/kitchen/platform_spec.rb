@@ -42,6 +42,13 @@ describe Kitchen::Platform do
     klass.new(:name => "p").os_type.must_equal "unix"
   end
 
+  it "#os_type defaults to `windows` if the name starts with 'windows'" do
+    klass.new(:name => "windows").os_type.must_equal "windows"
+    klass.new(:name => "Windows").os_type.must_equal "windows"
+    klass.new(:name => "windows81").os_type.must_equal "windows"
+    klass.new(:name => "windows-2012").os_type.must_equal "windows"
+  end
+
   it "#shell_type returns value passed into constructor with :shell_type" do
     klass.new(:name => "p", :shell_type => "bourne").
       shell_type.must_equal "bourne"
@@ -55,6 +62,13 @@ describe Kitchen::Platform do
 
   it "#shell_type defaults to `bourne` when not provided" do
     klass.new(:name => "p").shell_type.must_equal "bourne"
+  end
+
+  it "#shell_type defaults to `powershell` if the name starts with 'windows'" do
+    klass.new(:name => "windows").shell_type.must_equal "powershell"
+    klass.new(:name => "Windows").shell_type.must_equal "powershell"
+    klass.new(:name => "windows81").shell_type.must_equal "powershell"
+    klass.new(:name => "windows-2012").shell_type.must_equal "powershell"
   end
 
   it "#diagnose returns a hash with sorted keys" do
