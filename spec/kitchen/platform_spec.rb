@@ -24,10 +24,17 @@ require "kitchen/platform"
 describe Kitchen::Platform do
 
   let(:opts) do; { :name => "plata" }; end
-  let(:platform) { Kitchen::Platform.new(opts) }
+  let(:klass) { Kitchen::Platform }
 
   it "raises an ArgumentError if name is missing" do
     opts.delete(:name)
-    proc { Kitchen::Platform.new(opts) }.must_raise Kitchen::ClientError
+    proc { klass.new(opts) }.must_raise Kitchen::ClientError
+  end
+
+  it "#os_type returns value passed into constructor with :os_type" do
+    klass.new(:name => "p", :os_type => "unix").os_type.must_equal "unix"
+    klass.new(:name => "p", :os_type => "windows").os_type.must_equal "windows"
+    klass.new(:name => "p", :os_type => "unicorn").os_type.must_equal "unicorn"
+    klass.new(:name => "p", :os_type => nil).os_type.must_equal nil
   end
 end

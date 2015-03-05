@@ -28,6 +28,9 @@ module Kitchen
     # @return [String] logical name of this platform
     attr_reader :name
 
+    # @return [String] operating system type hint (default: `nil`)
+    attr_reader :os_type
+
     # Constructs a new platform.
     #
     # @param [Hash] options configuration for a new platform
@@ -37,6 +40,7 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Platform#new requires option :name"
       end
+      @os_type = options[:os_type]
     end
   end
 end
