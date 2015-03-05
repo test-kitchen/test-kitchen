@@ -117,6 +117,25 @@ module Kitchen
       result
     end
 
+    # @return [TrueClass,FalseClass] true is `:os_type` is `"unix"` (or
+    #   unset, for backwards compatibility)
+    def os_unix?
+      ["unix", nil].include?(instance.platform.os_type)
+    end
+
+    # @return [TrueClass,FalseClass] true is `:os_type` is `"windows"`
+    def os_windows?
+      ["windows"].include?(instance.platform.os_type)
+    end
+
+    # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
+    #
+    # @return [String] joined path for instance's os_type
+    def remote_path_join(*parts)
+      path = File.join(*parts)
+      os_windows? ? path.gsub("/", "\\") : path.gsub("\\", "/")
+    end
+
     private
 
     # @return [LzayHash] a configuration hash

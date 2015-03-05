@@ -90,7 +90,10 @@ end
 describe Kitchen::Configurable do
 
   let(:config)    { Hash.new }
-  let(:instance)  { stub(:name => "coolbeans", :to_str => "<instance>") }
+  let(:platform)  { stub }
+  let(:instance) do
+    stub(:name => "coolbeans", :to_str => "<instance>", :platform => platform)
+  end
 
   let(:subject) do
     Kitchen::Thing::Tiny.new(config).finalize_config!(instance)
@@ -485,6 +488,99 @@ describe Kitchen::Configurable do
         subject.calculate_path("winner", :type => :file, :base_path => "/custom").
           must_equal "/custom/ultimate/winner"
       end
+    end
+  end
+
+  describe "#remote_path_join" do
+
+    it "returns unix style path separators for unix os_type" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join("a", "b", "c").must_equal "a/b/c"
+    end
+
+    it "returns windows style path separators for windows os_type" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join("a", "b", "c").must_equal "a\\b\\c"
+    end
+
+    it "accepts combinations of strings and arrays" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join(%W[a b], "c", %W[d e]).must_equal "a/b/c/d/e"
+    end
+
+    it "accepts a single array" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join(%W[a b]).must_equal "a\\b"
+    end
+
+    it "converts all windows path separators to unix for unix os_type" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join("\\a\\b", "c/d").must_equal "/a/b/c/d"
+    end
+
+    it "converts all unix path separators to windows for windows os_type" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join("/a/b", "c\\d").must_equal "\\a\\b\\c\\d"
+    end
+  end
+
+  describe "#os_windows?" do
+
+    it "for windows type platform returns true" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.os_windows?.must_equal true
+    end
+
+    it "for unix type platform returns false" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.os_windows?.must_equal false
+    end
+
+    it "for newfangled type platform return false" do
+      platform.stubs(:os_type).returns("internet_cat")
+
+      subject.os_windows?.must_equal false
+    end
+
+    it "for unset type platform returns false" do
+      platform.stubs(:os_type).returns(nil)
+
+      subject.os_windows?.must_equal false
+    end
+  end
+
+  describe "#os_unix?" do
+
+    it "for windows type platform returns false" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.os_unix?.must_equal false
+    end
+
+    it "for unix type platform returns true" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.os_unix?.must_equal true
+    end
+
+    it "for newfangled type platform return false" do
+      platform.stubs(:os_type).returns("internet_cat")
+
+      subject.os_unix?.must_equal false
+    end
+
+    it "for unset type platform returns true" do
+      platform.stubs(:os_type).returns(nil)
+
+      subject.os_unix?.must_equal true
     end
   end
 end
