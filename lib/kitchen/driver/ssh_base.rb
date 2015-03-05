@@ -29,6 +29,7 @@ module Kitchen
     class SSHBase < Base
 
       default_config :sudo, true
+      default_config :sudo_command, "sudo"
       default_config :port, 22
 
       # (see Base#create)

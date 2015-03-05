@@ -30,6 +30,7 @@ module Kitchen
 
       default_config :root_path, "/tmp/kitchen"
       default_config :sudo, true
+      default_config :sudo_command, "sudo"
 
       expand_path_for :test_base_path
 
@@ -181,7 +182,7 @@ module Kitchen
       # @return [String] the command, conditionaly prefixed with sudo
       # @api private
       def sudo(script)
-        config[:sudo] ? "sudo -E #{script}" : script
+        config[:sudo] ? "#{config[:sudo_command]} -E #{script}" : script
       end
     end
   end

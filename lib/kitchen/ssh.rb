@@ -217,7 +217,10 @@ module Kitchen
     #
     # @api private
     def to_s
-      "#{username}@#{hostname}:#{port}<#{options.inspect}>"
+      # cleanse any password in the options
+      clean_options = options.dup
+      clean_options[:password] = "REDACTED" unless options[:password].nil?
+      "#{username}@#{hostname}:#{port}<#{clean_options.inspect}>"
     end
 
     # @return [Integer] SSH port (default: 22)

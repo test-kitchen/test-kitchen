@@ -56,7 +56,7 @@ module Kitchen
     # @raise [ShellCommandFailed] if the command fails
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
-      cmd = "sudo -E #{cmd}" if options.fetch(:use_sudo, false)
+      cmd = "#{options[:sudo_command]} -E #{cmd}" if options.fetch(:use_sudo, false)
       subject = "[#{options.fetch(:log_subject, "local")} command]"
 
       debug("#{subject} BEGIN (#{cmd})")
