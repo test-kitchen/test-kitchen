@@ -47,14 +47,31 @@ describe Kitchen::Provisioner::ChefSolo do
 
   describe "default config" do
 
-    it "sets :solo_rb to an empty Hash" do
-      provisioner[:solo_rb].must_equal Hash.new
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it "sets :chef_solo_path to a path using :chef_omnibus_root" do
+        config[:chef_omnibus_root] = "/nice/place"
+
+        provisioner[:chef_solo_path].must_equal "/nice/place/bin/chef-solo"
+      end
     end
 
-    it "sets :chef_solo_path to a path using :chef_omnibus_root" do
-      config[:chef_omnibus_root] = "/nice/place"
+    describe "for windows operating systems" do
 
-      provisioner[:chef_solo_path].must_equal "/nice/place/bin/chef-solo"
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it "sets :chef_solo_path to a path using :chef_omnibus_root" do
+        config[:chef_omnibus_root] = "$env:systemdrive\\nice\\place"
+
+        provisioner[:chef_solo_path].
+          must_equal "$env:systemdrive\\nice\\place\\bin\\chef-solo.bat"
+      end
+    end
+
+    it "sets :solo_rb to an empty Hash" do
+      provisioner[:solo_rb].must_equal Hash.new
     end
   end
 

@@ -30,7 +30,9 @@ module Kitchen
       default_config :solo_rb, {}
 
       default_config :chef_solo_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-solo])
+        provisioner.
+          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-solo]).
+          tap { |path| path.concat(".bat") if provisioner.os_windows? }
       end
 
       # (see Base#create_sandbox)
