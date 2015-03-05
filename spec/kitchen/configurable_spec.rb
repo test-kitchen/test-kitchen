@@ -583,4 +583,58 @@ describe Kitchen::Configurable do
       subject.unix_os?.must_equal true
     end
   end
+
+  describe "#powershell_shell?" do
+
+    it "for powershell type shell returns true" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.powershell_shell?.must_equal true
+    end
+
+    it "for bourne type shell returns false" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.powershell_shell?.must_equal false
+    end
+
+    it "for newfangled type shell return false" do
+      platform.stubs(:shell_type).returns("internet_cat")
+
+      subject.powershell_shell?.must_equal false
+    end
+
+    it "for unset type shell returns false" do
+      platform.stubs(:shell_type).returns(nil)
+
+      subject.powershell_shell?.must_equal false
+    end
+  end
+
+  describe "#bourne_shell?" do
+
+    it "for powershell type shell returns false" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.bourne_shell?.must_equal false
+    end
+
+    it "for bourne type shell returns true" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.bourne_shell?.must_equal true
+    end
+
+    it "for newfangled type shell return false" do
+      platform.stubs(:shell_type).returns("internet_cat")
+
+      subject.bourne_shell?.must_equal false
+    end
+
+    it "for unset type shell returns true" do
+      platform.stubs(:shell_type).returns(nil)
+
+      subject.bourne_shell?.must_equal true
+    end
+  end
 end

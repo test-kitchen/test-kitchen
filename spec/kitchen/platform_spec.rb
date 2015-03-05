@@ -42,9 +42,28 @@ describe Kitchen::Platform do
     klass.new(:name => "p").os_type.must_equal "unix"
   end
 
+  it "#shell_type returns value passed into constructor with :shell_type" do
+    klass.new(:name => "p", :shell_type => "bourne").
+      shell_type.must_equal "bourne"
+    klass.new(:name => "p", :shell_type => "powershell").
+      shell_type.must_equal "powershell"
+    klass.new(:name => "p", :shell_type => "unicorn").
+      shell_type.must_equal "unicorn"
+    klass.new(:name => "p", :shell_type => nil).
+      shell_type.must_equal nil
+  end
+
+  it "#shell_type defaults to `bourne` when not provided" do
+    klass.new(:name => "p").shell_type.must_equal "bourne"
+  end
+
   it "#diagnose returns a hash with sorted keys" do
     opts[:os_type] = "unikitty"
+    opts[:shell_type] = "wundershell"
 
-    klass.new(opts).diagnose.must_equal(:os_type => "unikitty")
+    klass.new(opts).diagnose.must_equal(
+      :os_type => "unikitty",
+      :shell_type => "wundershell"
+    )
   end
 end

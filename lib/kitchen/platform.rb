@@ -28,8 +28,11 @@ module Kitchen
     # @return [String] logical name of this platform
     attr_reader :name
 
-    # @return [String] operating system type hint (default: `nil`)
+    # @return [String] operating system type hint (default: `"unix"`)
     attr_reader :os_type
+
+    # @return [String] shell command flavor hint (default: `"bourne"`)
+    attr_reader :shell_type
 
     # Constructs a new platform.
     #
@@ -41,13 +44,14 @@ module Kitchen
         raise ClientError, "Platform#new requires option :name"
       end
       @os_type = options.fetch(:os_type, "unix")
+      @shell_type = options.fetch(:shell_type, "bourne")
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      { :os_type => os_type }
+      { :os_type => os_type, :shell_type => shell_type }
     end
   end
 end

@@ -65,6 +65,12 @@ module Kitchen
       config[attr]
     end
 
+    # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
+    #   unset, for backwards compatability)
+    def bourne_shell?
+      ["bourne", nil].include?(instance.platform.shell_type)
+    end
+
     # Find an appropriate path to a file or directory, based on graceful
     # fallback rules or returns nil if path cannot be determined.
     #
@@ -117,15 +123,9 @@ module Kitchen
       result
     end
 
-    # @return [TrueClass,FalseClass] true is `:os_type` is `"unix"` (or
-    #   unset, for backwards compatibility)
-    def unix_os?
-      ["unix", nil].include?(instance.platform.os_type)
-    end
-
-    # @return [TrueClass,FalseClass] true is `:os_type` is `"windows"`
-    def windows_os?
-      ["windows"].include?(instance.platform.os_type)
+    # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
+    def powershell_shell?
+      ["powershell"].include?(instance.platform.shell_type)
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -134,6 +134,17 @@ module Kitchen
     def remote_path_join(*parts)
       path = File.join(*parts)
       windows_os? ? path.gsub("/", "\\") : path.gsub("\\", "/")
+    end
+
+    # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
+    #   unset, for backwards compatibility)
+    def unix_os?
+      ["unix", nil].include?(instance.platform.os_type)
+    end
+
+    # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
+    def windows_os?
+      ["windows"].include?(instance.platform.os_type)
     end
 
     private
