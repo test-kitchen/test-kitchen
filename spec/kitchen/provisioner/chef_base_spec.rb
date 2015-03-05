@@ -51,6 +51,25 @@ describe Kitchen::Provisioner::ChefBase do
 
   describe "configuration" do
 
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it ":chef_omnibus_root has a default" do
+        provisioner[:chef_omnibus_root].must_equal "/opt/chef"
+      end
+    end
+
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":chef_omnibus_root has a default" do
+        provisioner[:chef_omnibus_root].
+          must_equal "$env:systemdrive\\opscode\\chef"
+      end
+    end
+
     it ":require_chef_omnibus defaults to true" do
       provisioner[:require_chef_omnibus].must_equal true
     end
@@ -58,10 +77,6 @@ describe Kitchen::Provisioner::ChefBase do
     it ":chef_omnibus_url has a default" do
       provisioner[:chef_omnibus_url].
         must_equal "https://www.chef.io/chef/install.sh"
-    end
-
-    it ":chef_omnibus_root has a default" do
-      provisioner[:chef_omnibus_root].must_equal "/opt/chef"
     end
 
     it ":chef_omnibus_install_options defaults to nil" do

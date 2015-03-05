@@ -35,7 +35,6 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.chef.io/chef/install.sh"
-      default_config :chef_omnibus_root, "/opt/chef"
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -45,6 +44,14 @@ module Kitchen
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
+
+      default_config :chef_omnibus_root do |provisioner|
+        if provisioner.os_windows?
+          "$env:systemdrive\\opscode\\chef"
+        else
+          "/opt/chef"
+        end
+      end
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
