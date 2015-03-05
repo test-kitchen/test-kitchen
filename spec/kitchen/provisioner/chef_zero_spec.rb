@@ -47,18 +47,44 @@ describe Kitchen::Provisioner::ChefZero do
 
   describe "default config" do
 
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it "sets :chef_client_path to a path using :chef_omnibus_root" do
+        config[:chef_omnibus_root] = "/nice/place"
+
+        provisioner[:chef_client_path].
+          must_equal "/nice/place/bin/chef-client"
+      end
+
+      it "sets :ruby_bindir to use an Omnibus Ruby" do
+        config[:chef_omnibus_root] = "/nice"
+
+        provisioner[:ruby_bindir].must_equal "/nice/embedded/bin"
+      end
+    end
+
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it "sets :chef_client_path to a path using :chef_omnibus_root" do
+        config[:chef_omnibus_root] = "$env:systemdrive\\nice\\place"
+
+        provisioner[:chef_client_path].
+          must_equal "$env:systemdrive\\nice\\place\\bin\\chef-client.bat"
+      end
+
+      it "sets :ruby_bindir to use an Omnibus Ruby" do
+        config[:chef_omnibus_root] = "c:\\nice"
+
+        provisioner[:ruby_bindir].must_equal "c:\\nice\\embedded\\bin"
+      end
+    end
+
     it "sets :client_rb to an empty Hash" do
       provisioner[:client_rb].must_equal Hash.new
-    end
-
-    it "sets :chef_client_path to a path using :chef_omnibus_root" do
-      config[:chef_omnibus_root] = "/nice/place"
-
-      provisioner[:chef_client_path].must_equal "/nice/place/bin/chef-client"
-    end
-
-    it "sets :ruby_bindir to use an Omnibus Ruby" do
-      provisioner[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
     end
 
     it "sets :json_attributes to true" do

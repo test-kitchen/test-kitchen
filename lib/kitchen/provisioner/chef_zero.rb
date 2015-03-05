@@ -28,13 +28,19 @@ module Kitchen
     class ChefZero < ChefBase
 
       default_config :client_rb, {}
-      default_config :ruby_bindir, "/opt/chef/embedded/bin"
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
 
       default_config :chef_client_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-client])
+        provisioner.
+          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-client]).
+          tap { |path| path.concat(".bat") if provisioner.os_windows? }
+      end
+
+      default_config :ruby_bindir do |provisioner|
+        provisioner.
+          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} embedded bin])
       end
 
       # (see Base#create_sandbox)
