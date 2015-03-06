@@ -93,6 +93,7 @@ module Kitchen
 
         # (see Base::Connection#execute)
         def execute(command)
+          return if command.nil?
           logger.debug("[WinRM] #{self} (#{command})")
           exit_code, stderr = execute_with_exit_code(command)
 

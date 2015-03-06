@@ -609,6 +609,16 @@ MSG
       end
     end
 
+    describe "for a nil command" do
+
+      it "does not log on debug" do
+        executor.expects(:open).never
+        connection.execute(nil)
+
+        logged_output.string.must_equal ""
+      end
+    end
+
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
