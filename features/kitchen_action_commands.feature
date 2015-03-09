@@ -64,8 +64,8 @@ Feature: Running instance actions
     Given a file named ".kitchen.local.yml" with:
     """
     ---
-    driver:
-      fail_converge: true
+    provisioner:
+      fail: true
     """
     When I successfully run `kitchen create client-beans`
     And I successfully run `kitchen list client-beans`

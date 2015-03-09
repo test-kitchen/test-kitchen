@@ -31,7 +31,7 @@ module Kitchen
 
     class Dodgy < Base
 
-      no_parallel_for :converge
+      no_parallel_for :setup
     end
 
     class Slow < Base
@@ -105,7 +105,7 @@ describe Kitchen::Driver::Base do
     logged_output.string.must_match(/yo\n/)
   end
 
-  [:create, :converge, :setup, :verify, :destroy].each do |action|
+  [:create, :setup, :verify, :destroy].each do |action|
 
     it "has a #{action} method that takes state" do
       state = Hash.new
@@ -132,7 +132,7 @@ describe Kitchen::Driver::Base do
     end
 
     it "registers a single serial action method" do
-      Kitchen::Driver::Dodgy.serial_actions.must_equal [:converge]
+      Kitchen::Driver::Dodgy.serial_actions.must_equal [:setup]
     end
 
     it "registers multiple serial action methods" do

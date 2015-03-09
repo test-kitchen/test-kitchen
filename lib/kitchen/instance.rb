@@ -128,7 +128,7 @@ module Kitchen
 
     # Converges this running instance.
     #
-    # @see Driver::Base#converge
+    # @see Provisioner::Base#call
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
@@ -323,11 +323,20 @@ module Kitchen
 
     # Perform the converge action.
     #
-    # @see Driver::Base#converge
+    # @see Provisioner::Base#call
     # @return [self] this instance, used to chain actions
     # @api private
     def converge_action
-      perform_action(:converge, "Converging")
+      banner "Converging #{to_str}..."
+      elapsed = action(:converge) do |state|
+        if legacy_ssh_base_driver?
+          legacy_ssh_base_converge(state)
+        else
+          provisioner.call(state)
+        end
+      end
+      info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the setup action.
@@ -470,6 +479,29 @@ module Kitchen
     # @api private
     def failure_message(what)
       "#{what.capitalize} failed on instance #{to_str}."
+    end
+
+    # Invokes `Driver#converge` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#converge` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_converge(state)
+      warn("Running legacy converge for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.converge(state)
+    end
+
+    # @return [TrueClass,FalseClass] whether or not the Driver inherits from
+    #   `Kitchen::Driver::SSHBase`
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#converge` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_driver?
+      driver.class < Kitchen::Driver::SSHBase
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

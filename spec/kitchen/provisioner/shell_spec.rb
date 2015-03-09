@@ -25,7 +25,7 @@ describe Kitchen::Provisioner::Shell do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil) }
+  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
   let(:suite)           { stub(:name => "fries") }
 
   let(:config) do

@@ -55,13 +55,6 @@ module Kitchen
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
-      # Converges a running instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @raise [ActionFailed] if the action could not be completed
-      def converge(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
       # Sets up an instance.
       #
       # @param state [Hash] mutable instance and driver state
@@ -128,7 +121,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = [:create, :converge, :setup, :verify, :destroy]
+        action_methods = [:create, :setup, :verify, :destroy]
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)

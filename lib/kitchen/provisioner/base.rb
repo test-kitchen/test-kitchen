@@ -45,6 +45,29 @@ module Kitchen
         init_config(config)
       end
 
+      # Runs the provisioner on the instance.
+      #
+      # @param state [Hash] mutable instance state
+      # @raise [ActionFailed] if the action could not be completed
+      def call(state)
+        create_sandbox
+        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
+
+        instance.transport.connection(state) do |conn|
+          conn.execute(install_command)
+          conn.execute(init_command)
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, config[:root_path])
+          debug("Transfer complete")
+          conn.execute(prepare_command)
+          conn.execute(run_command)
+        end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
+      ensure
+        cleanup_sandbox
+      end
+
       # Performs any final configuration required for the provisioner to do its
       # work. A reference to an Instance is required as configuration dependant
       # data may need access through an Instance. This also acts as a hook
