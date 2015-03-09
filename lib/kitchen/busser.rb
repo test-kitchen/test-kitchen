@@ -294,7 +294,7 @@ module Kitchen
       [
         "if [ ! -d #{config[:ruby_bindir]} ] ; then",
         omnibus_chef_install_command,
-        'fi ;',
+        "fi ;",
         %{BUSSER_ROOT="#{config[:root_path]}"},
         %{GEM_HOME="#{config[:root_path]}/gems"},
         %{GEM_PATH="#{config[:root_path]}/gems"},
@@ -321,7 +321,7 @@ module Kitchen
     # (see ChefBase#install_command)
     def omnibus_chef_install_command
       lines = Kitchen::Provisioner::ChefBase.new.instance_eval(
-         '[Util.shell_helpers, chef_shell_helpers, chef_install_function]'
+         "[Util.shell_helpers, chef_shell_helpers, chef_install_function]"
       )
       lines.join("\n")
     end
