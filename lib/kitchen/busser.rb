@@ -18,7 +18,8 @@
 
 require "base64"
 require "digest"
-require "Kitchen/provisioner/chef_base"
+require "kitchen"
+require "kitchen/provisioner/chef_base"
 
 module Kitchen
 
