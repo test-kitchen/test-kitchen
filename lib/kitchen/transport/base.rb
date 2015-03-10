@@ -73,13 +73,6 @@ module Kitchen
         self
       end
 
-      # Returns the name of this transport, suitable for display in a CLI.
-      #
-      # @return [String] name of this transport
-      def name
-        self.class.name.split("::").last
-      end
-
       # Performs whatever tests that may be required to ensure that this
       # transport will be able to function in the current environment. This may
       # involve checking for the presence of certain directories, software

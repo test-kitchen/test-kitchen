@@ -47,13 +47,6 @@ module Kitchen
         init_config(config)
       end
 
-      # Returns the name of this driver, suitable for display in a CLI.
-      #
-      # @return [String] name of this driver
-      def name
-        self.class.name.split("::").last
-      end
-
       # (see Base#create)
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ClientError, "#{self.class}#create must be implemented"

@@ -365,6 +365,10 @@ describe Kitchen::Configurable do
     end
   end
 
+  it "#name returns the name of the plugin" do
+    subject.name.must_equal "Tiny"
+  end
+
   describe "#diagnose" do
 
     it "returns an empty hash for no config" do

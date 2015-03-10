@@ -34,10 +34,6 @@ describe Kitchen::Transport::Base do
     Kitchen::Transport::Base.new(config).finalize_config!(instance)
   end
 
-  it "#name returns the name of the transport" do
-    transport.name.must_equal "Base"
-  end
-
   it "has an #connection method which raises a ClientError" do
     proc { transport.connection({}) }.must_raise Kitchen::ClientError
   end

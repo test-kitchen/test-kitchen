@@ -70,10 +70,6 @@ describe Kitchen::Driver::Base do
     driver.instance.must_equal instance
   end
 
-  it "#name returns the name of the driver" do
-    driver.name.must_equal "Base"
-  end
-
   describe "#logger" do
 
     before  { @klog = Kitchen.logger }

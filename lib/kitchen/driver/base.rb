@@ -40,13 +40,6 @@ module Kitchen
         init_config(config)
       end
 
-      # Returns the name of this driver, suitable for display in a CLI.
-      #
-      # @return [String] name of this driver
-      def name
-        self.class.name.split("::").last
-      end
-
       # Creates an instance.
       #
       # @param state [Hash] mutable instance and driver state

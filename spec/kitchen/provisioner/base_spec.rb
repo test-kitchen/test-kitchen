@@ -88,10 +88,6 @@ describe Kitchen::Provisioner::Base do
     Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
   end
 
-  it "#name returns the name of the provisioner" do
-    provisioner.name.must_equal "Base"
-  end
-
   describe "configuration" do
 
     describe "for unix operating systems" do

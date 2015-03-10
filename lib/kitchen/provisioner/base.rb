@@ -83,13 +83,6 @@ module Kitchen
         self
       end
 
-      # Returns the name of this driver, suitable for display in a CLI.
-      #
-      # @return [String] name of this driver
-      def name
-        self.class.name.split("::").last
-      end
-
       # Generates a command string which will install and configure the
       # provisioner software on an instance. If no work is required, then `nil`
       # will be returned.

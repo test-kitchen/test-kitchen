@@ -123,6 +123,13 @@ module Kitchen
       result
     end
 
+    # Returns the name of this driver, suitable for display in a CLI.
+    #
+    # @return [String] name of this driver
+    def name
+      self.class.name.split("::").last
+    end
+
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
       ["powershell"].include?(instance.platform.shell_type)
