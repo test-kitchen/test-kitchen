@@ -70,23 +70,6 @@ describe Kitchen::Driver::Base do
     driver.instance.must_equal instance
   end
 
-  describe "#logger" do
-
-    before  { @klog = Kitchen.logger }
-    after   { Kitchen.logger = @klog }
-
-    it "returns the instance's logger if defined" do
-      driver.send(:logger).must_equal logger
-    end
-
-    it "returns the default logger if instance's logger is not set" do
-      driver = Kitchen::Driver::Base.new(config)
-      Kitchen.logger = "yep"
-
-      driver.send(:logger).must_equal Kitchen.logger
-    end
-  end
-
   it "#puts calls logger.info" do
     driver.send(:puts, "yo")
 

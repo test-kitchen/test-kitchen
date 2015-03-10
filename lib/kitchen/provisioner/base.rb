@@ -189,13 +189,6 @@ module Kitchen
       def load_needed_dependencies!
       end
 
-      # @return [Logger] the instance's logger or Test Kitchen's common logger
-      #   otherwise
-      # @api private
-      def logger
-        instance ? instance.logger : Kitchen.logger
-      end
-
       # Conditionally prefixes a command with a sudo command.
       #
       # @param command [String] command to be prefixed

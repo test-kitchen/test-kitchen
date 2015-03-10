@@ -86,21 +86,4 @@ describe Kitchen::Transport::Base::Connection do
   it "has a #wait_until_ready method that does nothing" do
     connection.wait_until_ready.must_be_nil
   end
-
-  describe "#logger" do
-
-    before  { @klog = Kitchen.logger }
-    after   { Kitchen.logger = @klog }
-
-    it "returns the provided logger" do
-      connection.send(:logger).must_equal logger
-    end
-
-    it "returns the default logger if provided logger is not set" do
-      Kitchen.logger = "yep"
-      connection = Kitchen::Transport::Base::Connection.new({})
-
-      connection.send(:logger).must_equal Kitchen.logger
-    end
-  end
 end

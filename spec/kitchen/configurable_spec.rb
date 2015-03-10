@@ -19,6 +19,7 @@
 require_relative "../spec_helper"
 require "stringio"
 
+require "kitchen"
 require "kitchen/errors"
 require "kitchen/configurable"
 
@@ -30,8 +31,11 @@ module Kitchen
 
       include Kitchen::Configurable
 
+      attr_reader :instance
+
       def initialize(config = {})
         init_config(config)
+        @instance = config[:instance]
       end
     end
 
@@ -652,5 +656,25 @@ describe Kitchen::Configurable do
 
   it "has a default verify dependencies method" do
     subject.verify_dependencies.must_be_nil
+  end
+
+  describe "#logger" do
+
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger" do
+      logger = stub("logger")
+      instance = stub(:logger => logger)
+      subject = Kitchen::Thing::Tiny.new(config.merge(:instance => instance))
+      subject.send(:logger).must_equal logger
+    end
+
+    it "returns the default logger if instance's logger is not set" do
+      subject = Kitchen::Thing::Tiny.new(config)
+      Kitchen.logger = "yep"
+
+      subject.send(:logger).must_equal Kitchen.logger
+    end
   end
 end

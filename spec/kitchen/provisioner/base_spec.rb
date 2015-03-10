@@ -117,23 +117,6 @@ describe Kitchen::Provisioner::Base do
     end
   end
 
-  describe "#logger" do
-
-    before  { @klog = Kitchen.logger }
-    after   { Kitchen.logger = @klog }
-
-    it "returns the instance's logger" do
-      provisioner.send(:logger).must_equal logger
-    end
-
-    it "returns the default logger if instance's logger is not set" do
-      provisioner = Kitchen::Provisioner::Base.new(config)
-      Kitchen.logger = "yep"
-
-      provisioner.send(:logger).must_equal Kitchen.logger
-    end
-  end
-
   describe "#call" do
 
     let(:state) { Hash.new }

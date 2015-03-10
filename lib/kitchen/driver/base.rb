@@ -115,13 +115,6 @@ module Kitchen
 
       private
 
-      # Returns a suitable logger to use for output.
-      #
-      # @return [Kitchen::Logger] a logger
-      def logger
-        instance ? instance.logger : Kitchen.logger
-      end
-
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
       # event instead.
       #

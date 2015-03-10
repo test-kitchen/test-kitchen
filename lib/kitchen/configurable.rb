@@ -204,6 +204,13 @@ module Kitchen
       end
     end
 
+    # @return [Logger] the instance's logger or Test Kitchen's common logger
+    #   otherwise
+    # @api private
+    def logger
+      instance ? instance.logger : Kitchen.logger
+    end
+
     # Runs all validations set up for the included class. Each validation is
     # for a specific configuration attribute and has an associated callable
     # block. Each validation block is called with the attribute, its value,

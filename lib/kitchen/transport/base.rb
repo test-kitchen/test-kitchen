@@ -182,14 +182,6 @@ module Kitchen
       def load_needed_dependencies!
         # this method may be left unimplemented if that is applicable
       end
-
-      # Returns a suitable logger to use for output.
-      #
-      # @return [Kitchen::Logger] a logger
-      # @api private
-      def logger
-        instance ? instance.logger : Kitchen.logger
-      end
     end
   end
 end
