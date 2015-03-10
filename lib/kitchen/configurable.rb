@@ -178,7 +178,11 @@ module Kitchen
       expanded_paths.each do |key, should_expand|
         next if !should_expand || config[key].nil?
 
-        config[key] = File.expand_path(config[key], root_path)
+        config[key] = if config[key].is_a?(Array)
+          config[key].map { |path| File.expand_path(path, root_path) }
+        else
+          File.expand_path(config[key], root_path)
+        end
       end
     end
 

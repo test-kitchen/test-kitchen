@@ -44,6 +44,7 @@ module Kitchen
       default_config :edible, true
       default_config :fetch_command, "curl"
       default_config :success_path, "./success"
+      default_config :bunch_of_paths, %W[./a ./b ./c]
       default_config :beans_url do |subject|
         "http://gim.me/#{subject[:beans]}"
       end
@@ -61,6 +62,7 @@ module Kitchen
       end
 
       expand_path_for :success_path
+      expand_path_for :bunch_of_paths
       expand_path_for :relative_path, false
       expand_path_for :another_path
       expand_path_for :complex_path do |subject|
@@ -313,6 +315,12 @@ describe Kitchen::Configurable do
         config[:success_path] = "/the/other/one"
 
         subject[:success_path].must_equal "/the/other/one"
+      end
+
+      it "expands all items if path is an array" do
+        subject[:bunch_of_paths].must_equal %W[
+          /tmp/yo/self/a /tmp/yo/self/b /tmp/yo/self/c
+        ]
       end
 
       it "doesn't expand path with a falsy expand_path_for value" do
