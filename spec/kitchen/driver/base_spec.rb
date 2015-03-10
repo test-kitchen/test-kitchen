@@ -113,10 +113,6 @@ describe Kitchen::Driver::Base do
     proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
   end
 
-  it "has a default verify dependencies method" do
-    driver.verify_dependencies.must_be_nil
-  end
-
   describe ".no_parallel_for" do
 
     it "registers no serial actions when none are declared" do

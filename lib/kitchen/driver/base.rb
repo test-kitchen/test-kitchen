@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
-
 require "kitchen/lazy_hash"
 
 module Kitchen
@@ -76,16 +74,6 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
         raise ActionFailed, "Remote login is not supported in this driver."
-      end
-
-      # Performs whatever tests that may be required to ensure that this driver
-      # will be able to function in the current environment. This may involve
-      # checking for the presence of certain directories, software installed,
-      # etc.
-      #
-      # @raise [UserError] if the driver will not be able to perform or if a
-      #   documented dependency is missing from the system
-      def verify_dependencies
       end
 
       class << self

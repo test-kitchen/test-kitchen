@@ -37,11 +37,13 @@ module Kitchen
     # @return [Provisioner::Base] a provisioner instance
     # @raise [ClientError] if a provisioner instance could not be created
     def self.for_plugin(plugin, config)
-      require("kitchen/provisioner/#{plugin}")
+      first_load = require("kitchen/provisioner/#{plugin}")
 
       str_const = Thor::Util.camel_case(plugin)
       klass = const_get(str_const)
-      klass.new(config)
+      object = klass.new(config)
+      object.verify_dependencies if first_load
+      object
     rescue LoadError, NameError
       raise ClientError,
         "Could not load the '#{plugin}' provisioner from the load path." \

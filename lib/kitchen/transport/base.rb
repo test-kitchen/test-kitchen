@@ -73,17 +73,6 @@ module Kitchen
         self
       end
 
-      # Performs whatever tests that may be required to ensure that this
-      # transport will be able to function in the current environment. This may
-      # involve checking for the presence of certain directories, software
-      # installed, etc.
-      #
-      # @raise [UserError] if the transport will not be able to perform or if
-      #   a documented dependency is missing from the system
-      def verify_dependencies
-        # this method may be left unimplemented if that is applicable
-      end
-
       # A Connection instance can be generated and re-generated, given new
       # connection details such as connection port, hostname, credentials, etc.
       # This object is responsible for carrying out the actions on the remote

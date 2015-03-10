@@ -649,4 +649,8 @@ describe Kitchen::Configurable do
       subject.bourne_shell?.must_equal true
     end
   end
+
+  it "has a default verify dependencies method" do
+    subject.verify_dependencies.must_be_nil
+  end
 end

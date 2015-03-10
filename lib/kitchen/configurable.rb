@@ -123,9 +123,9 @@ module Kitchen
       result
     end
 
-    # Returns the name of this driver, suitable for display in a CLI.
+    # Returns the name of this plugin, suitable for display in a CLI.
     #
-    # @return [String] name of this driver
+    # @return [String] name of this plugin
     def name
       self.class.name.split("::").last
     end
@@ -147,6 +147,17 @@ module Kitchen
     #   unset, for backwards compatibility)
     def unix_os?
       ["unix", nil].include?(instance.platform.os_type)
+    end
+
+    # Performs whatever tests that may be required to ensure that this plugin
+    # will be able to function in the current environment. This may involve
+    # checking for the presence of certain directories, software installed,
+    # etc.
+    #
+    # @raise [UserError] if the plugin will not be able to perform or if a
+    #   documented dependency is missing from the system
+    def verify_dependencies
+      # this method may be left unimplemented if that is applicable
     end
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
