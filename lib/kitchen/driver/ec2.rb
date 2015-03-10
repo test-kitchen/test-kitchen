@@ -33,8 +33,8 @@ module Kitchen
       include Fog::AWS::CredentialFetcher::ServiceMethods
 
       iam_creds = Fog::AWS::CredentialFetcher::ServiceMethods.fetch_credentials(
-                    use_iam_profile: true
-                  ) rescue {}
+        use_iam_profile: true
+      ) rescue {}
 
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
