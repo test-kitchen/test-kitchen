@@ -29,7 +29,6 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
 
-      include ShellOut
       include Configurable
       include Logging
 
@@ -156,30 +155,6 @@ module Kitchen
       # @param msg [String] message string
       def print(msg)
         info(msg)
-      end
-
-      # Delegates to Kitchen::ShellOut.run_command, overriding some default
-      # options:
-      #
-      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
-      #   Driver object
-      # * `:log_subject` defaults to a String representation of the Driver's
-      #   class name
-      #
-      # @see ShellOut#run_command
-      def run_command(cmd, options = {})
-        base_options = {
-          :use_sudo => config[:use_sudo],
-          :log_subject => Thor::Util.snake_case(self.class.to_s)
-        }.merge(options)
-        super(cmd, base_options)
-      end
-
-      # Returns the Busser object associated with the driver.
-      #
-      # @return [Busser] a busser
-      def busser
-        instance.busser
       end
     end
   end

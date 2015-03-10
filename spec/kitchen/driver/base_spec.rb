@@ -121,10 +121,6 @@ describe Kitchen::Driver::Base do
     driver.verify_dependencies.must_be_nil
   end
 
-  it "#busser returns the instance's busser" do
-    driver.send(:busser).must_equal busser
-  end
-
   describe ".no_parallel_for" do
 
     it "registers no serial actions when none are declared" do
