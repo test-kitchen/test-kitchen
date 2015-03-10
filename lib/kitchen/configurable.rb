@@ -53,6 +53,7 @@ module Kitchen
       @instance = instance
       expand_paths!
       validate_config!
+      load_needed_dependencies!
 
       self
     end
@@ -202,6 +203,30 @@ module Kitchen
           File.expand_path(config[key], root_path)
         end
       end
+    end
+
+    # Loads any required third party Ruby libraries or runs any shell out
+    # commands to prepare the plugin. This method will be called in the
+    # context of the main thread of execution and so does not necessarily
+    # have to be thread safe.
+    #
+    # **Note:** any subclasses overriding this method would be well advised
+    # to call super when overriding this method, for example:
+    #
+    # @example overriding `#load_needed_dependencies!`
+    #
+    #   class MyProvisioner < Kitchen::Provisioner::Base
+    #     def load_needed_dependencies!
+    #       super
+    #       # any further work
+    #     end
+    #   end
+    #
+    # @raise [ClientError] if any library loading fails or any of the
+    #   dependency requirements cannot be satisfied
+    # @api private
+    def load_needed_dependencies!
+      # this method may be left unimplemented if that is applicable
     end
 
     # @return [Logger] the instance's logger or Test Kitchen's common logger

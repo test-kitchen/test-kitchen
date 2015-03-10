@@ -131,6 +131,7 @@ module Kitchen
       #
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
+        super
         if File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger)
