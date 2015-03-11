@@ -46,6 +46,10 @@ module Kitchen
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
 
+      default_config :chef_metadata_url do |provisioner|
+        provisioner.default_windows_chef_metadata_url if provisioner.windows_os?
+      end
+
       default_config :chef_omnibus_root do |provisioner|
         if provisioner.windows_os?
           "$env:systemdrive\\opscode\\chef"
@@ -88,6 +92,24 @@ module Kitchen
         provisioner.calculate_path("encrypted_data_bag_secret_key", :type => :file)
       end
       expand_path_for :encrypted_data_bag_secret_key_path
+
+      # @return [String] a metadata URL for the Chef Omnitruck API suitable
+      #   for installing a Windows MSI package
+      def default_windows_chef_metadata_url
+        version = config[:require_chef_omnibus]
+        version = "latest" if version == true
+        base = if config[:chef_omnibus_url] =~ %r{/install.sh$}
+          "#{File.dirname(config[:chef_omnibus_url])}/"
+        else
+          "https://www.chef.io/chef/"
+        end
+
+        url = base
+        url << metadata_project_from_options
+        url << "?p=windows&m=x86_64&pv=2008r2"
+        url << "&v=#{version.to_s.downcase}"
+        url
+      end
 
       # (see Base#install_command)
       def install_command

@@ -58,6 +58,15 @@ describe Kitchen::Provisioner::ChefBase do
       it ":chef_omnibus_root has a default" do
         provisioner[:chef_omnibus_root].must_equal "/opt/chef"
       end
+
+      it ":chef_omnibus_url has a default" do
+        provisioner[:chef_omnibus_url].
+          must_equal "https://www.chef.io/chef/install.sh"
+      end
+
+      it ":chef_metadata_url defaults to nil" do
+        provisioner[:chef_metadata_url].must_equal(nil)
+      end
     end
 
     describe "for windows operating systems" do
@@ -68,15 +77,101 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner[:chef_omnibus_root].
           must_equal "$env:systemdrive\\opscode\\chef"
       end
+
+      it ":chef_omnibus_url has a default" do
+        provisioner[:chef_omnibus_url].
+          must_equal "https://www.chef.io/chef/install.sh"
+      end
+
+      describe ":chef_metadata_url" do
+
+        let(:base_url) { "https://www.chef.io/chef/metadata" }
+
+        it "uses :chef_omnibus_url as url base if it ends in install.sh" do
+          config[:chef_omnibus_url] = "https://woot/install.sh"
+
+          provisioner[:chef_metadata_url].must_equal(
+            "https://woot/metadata?p=windows&m=x86_64&pv=2008r2&v=latest"
+          )
+        end
+
+        it "ignores :chef_omnibus_url if it doesn't end in install.sh" do
+          config[:chef_omnibus_url] = "https://woot/other"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=latest"
+        end
+
+        it "defaults to latest package with :require_chef_omnibus = true" do
+          config[:require_chef_omnibus] = true
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=latest"
+        end
+
+        it "defaults to latest package with :require_chef_omnibus = latest" do
+          config[:require_chef_omnibus] = "latest"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=latest"
+        end
+
+        it "defaults to a specific package from :require_chef_omnibus" do
+          config[:require_chef_omnibus] = "11.12.13"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=11.12.13"
+        end
+
+        it "defaults to a maj/min version package from :require_chef_omnibus" do
+          config[:require_chef_omnibus] = 12.1
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=12.1"
+        end
+
+        it "defaults to a major package version from :require_chef_omnibus" do
+          config[:require_chef_omnibus] = "16"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=16"
+        end
+
+        it "defaults to a prerelease package from :require_chef_omnibus" do
+          config[:require_chef_omnibus] = "11.6.0.RC.1"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=11.6.0.rc.1"
+        end
+
+        it "defaults to a chefdk package from :chef_omnibus_install_options" do
+          config[:require_chef_omnibus] = true
+          config[:chef_omnibus_install_options] = "-P chefdk"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}-chefdk?p=windows&m=x86_64&pv=2008r2&v=latest"
+        end
+
+        it "defaults to a specfic chefdk from :chef_omnibus_install_options" do
+          config[:require_chef_omnibus] = "0.3.6"
+          config[:chef_omnibus_install_options] = "-a other -P chefdk -B okay"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}-chefdk?p=windows&m=x86_64&pv=2008r2&v=0.3.6"
+        end
+
+        it "defaults to a maj/min chefdk from :chef_omnibus_install_options" do
+          config[:require_chef_omnibus] = "0.3"
+          config[:chef_omnibus_install_options] = "-P chefdk -B okay"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}-chefdk?p=windows&m=x86_64&pv=2008r2&v=0.3"
+        end
+      end
     end
 
     it ":require_chef_omnibus defaults to true" do
       provisioner[:require_chef_omnibus].must_equal true
-    end
-
-    it ":chef_omnibus_url has a default" do
-      provisioner[:chef_omnibus_url].
-        must_equal "https://www.chef.io/chef/install.sh"
     end
 
     it ":chef_omnibus_install_options defaults to nil" do
