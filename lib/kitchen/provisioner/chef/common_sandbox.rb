@@ -22,15 +22,21 @@ module Kitchen
 
     module Chef
 
+      # Internal object to manage common sandbox preparation for
+      # Chef-related provisioners.
+      #
+      # @author Fletcher Nichol <fnichol@nichol.ca>
+      # @api private
       class CommonSandbox
 
         include Logging
 
-        # Internal object to manage common sandbox preparation for
-        # Chef-related provisioners.
+        # Constructs a new object, taking config, a sandbox path, and an
+        # instance.
         #
-        # @author Fletcher Nichol <fnichol@nichol.ca>
-        # @api private
+        # @param config [Hash] configuration hash
+        # @param sandbox_path [String] path to local sandbox directory
+        # @param instance [Instance] an instance
         def initialize(config, sandbox_path, instance)
           @config = config
           @sandbox_path = sandbox_path
