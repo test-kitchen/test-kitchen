@@ -150,72 +150,70 @@ describe Kitchen::Provisioner::ChefBase do
       config[:chef_omnibus_url] = "FROM_HERE"
 
       provisioner.install_command.must_match regexify(
-        "do_download FROM_HERE /tmp/install.sh")
+        %{chef_omnibus_url="FROM_HERE"})
     end
 
     it "will install a specific version of chef, if necessary" do
       config[:require_chef_omnibus] = "1.2.3"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 1.2.3")
+        %{install_flags="-v 1.2.3"})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (1.2.3)", :partial_line)
+        %{pretty_version="1.2.3"})
     end
 
     it "will install a major/minor version of chef, if necessary" do
       config[:require_chef_omnibus] = "11.10"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11.10")
+        %{install_flags="-v 11.10"})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (11.10)", :partial_line)
+        %{pretty_version="11.10"})
     end
 
     it "will install a major version of chef, if necessary" do
       config[:require_chef_omnibus] = "12"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 12")
+        %{install_flags="-v 12"})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (12)", :partial_line)
+        %{pretty_version="12"})
     end
 
     it "will install a downcaased version string of chef, if necessary" do
       config[:require_chef_omnibus] = "10.1.0.RC.1"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 10.1.0.rc.1")
+        %{install_flags="-v 10.1.0.rc.1"})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (10.1.0.rc.1)", :partial_line)
+        %{pretty_version="10.1.0.rc.1"})
     end
 
     it "will install the latest of chef, if necessary" do
       config[:require_chef_omnibus] = "latest"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
+        %{install_flags=""})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (always install latest version)",
-        :partial_line
-      )
+        %{pretty_version="always install latest version"})
     end
 
     it "will install a of chef, unless it exists" do
       config[:require_chef_omnibus] = true
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
+        %{install_flags=""})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (install only if missing)", :partial_line)
+        %{pretty_version="install only if missing"})
     end
 
     it "will pass install options, when given" do
       config[:chef_omnibus_install_options] = "-P chefdk"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -P chefdk")
+        %{install_flags="-P chefdk"})
       provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (install only if missing)", :partial_line)
+        %{pretty_version="install only if missing"})
     end
 
     it "will pass install options and version info, when given" do
@@ -223,7 +221,7 @@ describe Kitchen::Provisioner::ChefBase do
       config[:chef_omnibus_install_options] = "-d /tmp/place"
 
       provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11 -d /tmp/place")
+        %{install_flags="-v 11 -d /tmp/place"})
     end
   end
 

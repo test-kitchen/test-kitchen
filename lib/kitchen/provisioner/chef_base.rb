@@ -93,7 +93,7 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus]
 
-        lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
+        lines = [install_bourne_variables, Util.shell_helpers, chef_shell_helpers]
         Util.wrap_command(lines.join("\n"))
       end
 
@@ -138,12 +138,12 @@ module Kitchen
         ))
       end
 
-      # Generates the shell code to conditionally install a Chef Omnibus
-      # package onto an instance.
+      # Generates the shell code variables to conditionally install a Chef
+      # Omnibus package onto an instance.
       #
       # @return [String] shell code
       # @api private
-      def chef_install_function
+      def install_bourne_variables
         version = config[:require_chef_omnibus].to_s.downcase
         pretty_version = case version
                          when "true" then "install only if missing"
@@ -155,15 +155,14 @@ module Kitchen
           install_flags << " " << config[:chef_omnibus_install_options]
         end
 
-        <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
-            echo "-----> Installing Chef Omnibus (#{pretty_version})"
-            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
-          else
-            echo "-----> Chef Omnibus installation detected (#{pretty_version})"
-          fi
-        INSTALL
+        Util.outdent!(<<-BOURNE_VARS)
+          chef_omnibus_root="#{config[:chef_omnibus_root]}"
+          chef_omnibus_url="#{config[:chef_omnibus_url]}"
+          install_flags="#{install_flags.strip}"
+          pretty_version="#{pretty_version}"
+          sudo_sh="#{sudo("sh")}"
+          version="#{version}"
+        BOURNE_VARS
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
