@@ -66,16 +66,6 @@ module Kitchen
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
-      # Returns the shell command that will log into an instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @return [LoginCommand] an object containing the array of command line
-      #   tokens and exec options to be used in a fork/exec
-      # @raise [ActionFailed] if the action could not be completed
-      def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
-        raise ActionFailed, "Remote login is not supported in this driver."
-      end
-
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot
         #   be run concurrently and must be run in serial via a shared mutex

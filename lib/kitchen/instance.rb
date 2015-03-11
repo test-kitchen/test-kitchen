@@ -195,23 +195,27 @@ module Kitchen
     end
 
     # Logs in to this instance by invoking a system command, provided by the
-    # instance's driver. This could be an SSH command, telnet, or serial
+    # instance's transport. This could be an SSH command, telnet, or serial
     # console session.
     #
     # **Note** This method calls exec and will not return.
     #
-    # @see Driver::LoginCommand
-    # @see Driver::Base#login_command
+    # @see Kitchen::LoginCommand
+    # @see Transport::Base::Connection#login_command
     def login
       state = state_file.read
       if state[:last_action].nil?
         raise UserError, "Instance #{to_str} has not yet been created"
       end
 
-      lc = driver.login_command(state)
+      lc = if legacy_ssh_base_driver?
+        legacy_ssh_base_login(state)
+      else
+        transport.connection(state).login_command
+      end
 
-      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} " \
-        "(Options: #{lc.options})})
+      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} } \
+        "(Options: #{lc.options})")
       Kernel.exec(*lc.exec_args)
     end
 
@@ -493,6 +497,20 @@ module Kitchen
       # TODO: Document upgrade path and provide link
       # warn("Driver authors: please read http://example.com for more details.")
       driver.converge(state)
+    end
+
+    # Invokes `Driver#login_command` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#login_command` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_login(state)
+      warn("Running legacy login for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.login_command(state)
     end
 
     # @return [TrueClass,FalseClass] whether or not the Driver inherits from

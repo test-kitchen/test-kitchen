@@ -285,9 +285,12 @@ describe Kitchen::Instance do
     instance.to_str.must_equal "<suite-platform>"
   end
 
-  it "#login executes the driver's login_command" do
+  it "#login executes the transport's login_command" do
+    conn = stub("connection")
     state_file.write(:last_action => "create")
-    driver.stubs(:login_command).with(:last_action => "create").
+    transport.stubs(:connection).with(:last_action => "create").
+      returns(conn)
+    conn.stubs(:login_command).
       returns(Kitchen::LoginCommand.new("echo", ["hello"], :purple => true))
     Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
@@ -1162,6 +1165,15 @@ describe Kitchen::Instance do
             end
           end
         end
+      end
+
+      it "#login executes the driver's login_command" do
+        state_file.write(:last_action => "create")
+        driver.stubs(:login_command).with(:last_action => "create").
+          returns(Kitchen::LoginCommand.new("echo", ["hello"], :purple => true))
+        Kernel.expects(:exec).with("echo", "hello", :purple => true)
+
+        instance.login
       end
     end
   end

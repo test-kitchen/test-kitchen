@@ -30,7 +30,7 @@ Feature: Logging into a Kitchen instance
     When I run `kitchen login default-flebian`
     Then the output should contain:
     """
-    Remote login is not supported in this driver.
+    Remote login not supported in Kitchen::Transport::Dummy::Connection.
     """
     And the exit status should not be 0
 

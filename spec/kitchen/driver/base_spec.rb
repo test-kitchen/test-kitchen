@@ -92,10 +92,6 @@ describe Kitchen::Driver::Base do
     end
   end
 
-  it "has a login command that raises ActionFailed by default" do
-    proc { driver.login_command(Hash.new) }.must_raise Kitchen::ActionFailed
-  end
-
   describe ".no_parallel_for" do
 
     it "registers no serial actions when none are declared" do
