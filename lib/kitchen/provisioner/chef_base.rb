@@ -187,6 +187,20 @@ module Kitchen
         BOURNE_VARS
       end
 
+      # @return the correct Chef Omnitruck API metadata endpoint, based on
+      #   project type which could live in
+      #   `config[:chef_omnibus_install_options]`
+      # @api private
+      def metadata_project_from_options
+        match = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
+
+        if match.nil? || match[1].downcase == "chef"
+          "metadata"
+        else
+          "metadata-#{match[1].downcase}"
+        end
+      end
+
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
       # String.
       #
