@@ -64,6 +64,8 @@ module Kitchen
     # high
     MAX_CONCURRENCY = 9999
 
+    attr_reader :config
+
     # Constructs a new instance.
     def initialize(*args)
       super
@@ -76,8 +78,8 @@ module Kitchen
       @config = Kitchen::Config.new(
         :loader     => @loader
       )
-      @config[:log_level] = Kitchen.env_log unless Kitchen.env_log.nil?
-      @config[:log_overwrite] = Kitchen.env_log_overwrite unless Kitchen.env_log_overwrite.nil?
+      @config.log_level = Kitchen.env_log unless Kitchen.env_log.nil?
+      @config.log_overwrite = Kitchen.env_log_overwrite unless Kitchen.env_log_overwrite.nil?
     end
 
     # Sets the logging method_options
