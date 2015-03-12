@@ -1092,15 +1092,22 @@ describe Kitchen::Transport::Ssh::Connection do
         story do |script|
           channel = script.opens_channel
           channel.sends_request_pty
-          channel.sends_exec("")
+          channel.sends_exec("echo '[SSH] Established'")
+          channel.gets_data("[SSH] Established\n")
           channel.gets_exit_status(0)
           channel.gets_close
           channel.sends_close
         end
       end
 
-      it "executes an empty command string to ensure working" do
+      it "executes an ping command string to ensure working" do
         assert_scripted { connection.wait_until_ready }
+      end
+
+      it "logger captures stdout" do
+        assert_scripted { connection.wait_until_ready }
+
+        logged_output.string.must_match(/^\[SSH\] Established$/)
       end
     end
   end

@@ -126,10 +126,12 @@ module Kitchen
             :message  => "Waiting for SSH service on #{hostname}:#{port}, " \
               "retrying in #{delay} seconds"
           )
-          execute("")
+          execute(PING_COMMAND.dup)
         end
 
         private
+
+        PING_COMMAND = "echo '[SSH] Established'".freeze
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
