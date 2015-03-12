@@ -93,6 +93,12 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
+      # (see Base#create_sandbox)
+      def create_sandbox
+        super
+        Chef::CommonSandbox.new(config, sandbox_path, instance).populate
+      end
+
       # @return [String] a metadata URL for the Chef Omnitruck API suitable
       #   for installing a Windows MSI package
       def default_windows_chef_metadata_url
@@ -104,37 +110,182 @@ module Kitchen
           "https://www.chef.io/chef/"
         end
 
-        url = base
-        url << metadata_project_from_options
-        url << "?p=windows&m=x86_64&pv=2008r2"
+        url = "#{base}#{metadata_project_from_options}"
+        url << "?p=windows&m=x86_64&pv=2008r2" # same pacakge for all versions
         url << "&v=#{version.to_s.downcase}"
         url
+      end
+
+      # (see Base#init_command)
+      def init_command
+        dirs = %w[cookbooks data data_bags environments roles clients].
+          sort.map { |dir| remote_path_join(config[:root_path], dir) }
+
+        if powershell_shell?
+          init_command_for_powershell(dirs)
+        else
+          init_command_for_bourne(dirs)
+        end
       end
 
       # (see Base#install_command)
       def install_command
         return unless config[:require_chef_omnibus]
 
-        lines = [install_bourne_variables, Util.shell_helpers, chef_shell_helpers]
-        Util.wrap_command(lines.join("\n"))
-      end
-
-      # (see Base#init_command)
-      def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
-
-        Util.wrap_command(lines.join("\n"))
-      end
-
-      # (see Base#create_sandbox)
-      def create_sandbox
-        super
-        Chef::CommonSandbox.new(config, sandbox_path, instance).populate
+        if powershell_shell?
+          install_command_for_powershell
+        else
+          install_command_for_bourne
+        end
       end
 
       private
+
+      # @return [String] an absolute path to a Berksfile, relative to the
+      #   kitchen root
+      # @api private
+      def berksfile
+        File.join(config[:kitchen_root], "Berksfile")
+      end
+
+      # @return [String] an absolute path to a Cheffile, relative to the
+      #   kitchen root
+      # @api private
+      def cheffile
+        File.join(config[:kitchen_root], "Cheffile")
+      end
+
+      # Generates a Hash with default values for a solo.rb or client.rb Chef
+      # configuration file.
+      #
+      # @return [Hash] a configuration hash
+      # @api private
+      def default_config_rb # rubocop:disable Metrics/MethodLength
+        root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']\}")
+
+        {
+          :node_name        => instance.name,
+          :checksum_path    => remote_path_join(root, "checksums"),
+          :file_cache_path  => remote_path_join(root, "cache"),
+          :file_backup_path => remote_path_join(root, "backup"),
+          :cookbook_path    => [
+            remote_path_join(root, "cookbooks"),
+            remote_path_join(root, "site-cookbooks")
+          ],
+          :data_bag_path    => remote_path_join(root, "data_bags"),
+          :environment_path => remote_path_join(root, "environments"),
+          :node_path        => remote_path_join(root, "nodes"),
+          :role_path        => remote_path_join(root, "roles"),
+          :client_path      => remote_path_join(root, "clients"),
+          :user_path        => remote_path_join(root, "users"),
+          :validation_key   => remote_path_join(root, "validation.pem"),
+          :client_key       => remote_path_join(root, "client.pem"),
+          :chef_server_url  => "http://127.0.0.1:8889",
+          :encrypted_data_bag_secret => remote_path_join(
+            root, "encrypted_data_bag_secret"
+          )
+        }
+      end
+
+      # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
+      # String.
+      #
+      # @param data [Hash] a key/value pair hash of configuration
+      # @return [String] a rendered Chef config file as a String
+      # @api private
+      def format_config_file(data)
+        data.each.map { |attr, value|
+          [attr, format_value(value)].join(" ")
+        }.join("\n")
+      end
+
+      # Converts a Ruby object to a String interpretation suitable for writing
+      # out to a client.rb/solo.rb/knife.rb file.
+      #
+      # @param obj [Object] an object
+      # @return [String] a string representation
+      # @api private
+      def format_value(obj)
+        if obj.is_a?(String)
+          %{"#{obj.gsub(/\\/, "\\\\\\\\")}"}
+        elsif obj.is_a?(Array)
+          %{[#{obj.map { |i| format_value(i) }.join(", ")}]}
+        else
+          obj.inspect
+        end
+      end
+
+      # Generates the init command for Bourne shell-based platforms.
+      #
+      # @param dirs [Array<String>] directories
+      # @return [String] command
+      # @api private
+      def init_command_for_bourne(dirs)
+        vars = Util.outdent!(<<-VARS)
+          sudo_rm="#{sudo("rm")}"
+          dirs="#{dirs.join(" ")}"
+          root_path="#{config[:root_path]}"
+        VARS
+
+        Util.wrap_command(shell_code(vars, "chef_base_init_command.sh"))
+      end
+
+      # Generates the init command for PowerShell-based platforms.
+      #
+      # @param dirs [Array<String>] directories
+      # @return [String] command
+      # @api private
+      def init_command_for_powershell(dirs)
+        vars = Util.outdent!(<<-VARS)
+          $dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})
+          $root_path = "#{config[:root_path]}"
+        VARS
+
+        shell_code(vars, "chef_base_init_command.ps1")
+      end
+
+      # Generates the install command for Bourne shell-based platforms.
+      #
+      # @return [String] command
+      # @api private
+      def install_command_for_bourne
+        version = config[:require_chef_omnibus].to_s.downcase
+        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        if config[:chef_omnibus_install_options]
+          install_flags << " " << config[:chef_omnibus_install_options]
+        end
+
+        vars = Util.outdent!(<<-BOURNE_VARS)
+          chef_omnibus_root="#{config[:chef_omnibus_root]}"
+          chef_omnibus_url="#{config[:chef_omnibus_url]}"
+          install_flags="#{install_flags.strip}"
+          pretty_version="#{pretty_version(version)}"
+          sudo_sh="#{sudo("sh")}"
+          version="#{version}"
+        BOURNE_VARS
+
+        Util.wrap_command(shell_code(vars, "chef_base_install_command.sh"))
+      end
+
+      # Generates the install command for PowerShell-based platforms.
+      #
+      # @return [String] command
+      # @api private
+      def install_command_for_powershell
+        version = config[:require_chef_omnibus].to_s.downcase
+
+        vars = Util.outdent!(<<-POWERSHELL_VARS)
+          $env:http_proxy = "#{config[:http_proxy]}"
+          $env:https_proxy = "#{config[:https_proxy]}"
+          $chef_metadata_url = "#{config[:chef_metadata_url]}"
+          $chef_omnibus_root = "#{config[:chef_omnibus_root]}"
+          $msi = "$env:TEMP\\chef-#{version}.msi"
+          $pretty_version = "#{pretty_version(version)}"
+          $version = "#{version}"
+        POWERSHELL_VARS
+
+        shell_code(vars, "chef_base_install_command.ps1")
+      end
 
       # Load cookbook dependency resolver code, if required.
       #
@@ -148,43 +299,6 @@ module Kitchen
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
         end
-      end
-
-      # Returns shell code with chef-related functions.
-      #
-      # @return [String] shell code
-      # @api private
-      def chef_shell_helpers
-        IO.read(File.join(
-          File.dirname(__FILE__), %w[.. .. .. support chef_helpers.sh]
-        ))
-      end
-
-      # Generates the shell code variables to conditionally install a Chef
-      # Omnibus package onto an instance.
-      #
-      # @return [String] shell code
-      # @api private
-      def install_bourne_variables
-        version = config[:require_chef_omnibus].to_s.downcase
-        pretty_version = case version
-                         when "true" then "install only if missing"
-                         when "latest" then "always install latest version"
-                         else version
-                         end
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
-        if config[:chef_omnibus_install_options]
-          install_flags << " " << config[:chef_omnibus_install_options]
-        end
-
-        Util.outdent!(<<-BOURNE_VARS)
-          chef_omnibus_root="#{config[:chef_omnibus_root]}"
-          chef_omnibus_url="#{config[:chef_omnibus_url]}"
-          install_flags="#{install_flags.strip}"
-          pretty_version="#{pretty_version}"
-          sudo_sh="#{sudo("sh")}"
-          version="#{version}"
-        BOURNE_VARS
       end
 
       # @return the correct Chef Omnitruck API metadata endpoint, based on
@@ -201,57 +315,30 @@ module Kitchen
         end
       end
 
-      # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
-      # String.
+      # @return [String] a pretty/helpful representation of a Chef Omnibus
+      #   package version
+      # @api private
+      def pretty_version(version)
+        case version
+        when "true" then "install only if missing"
+        when "latest" then "always install latest version"
+        else version
+        end
+      end
+
+      # Builds a complete command given a variables String preamble and a file
+      # containing shell code.
       #
-      # @param data [Hash] a key/value pair hash of configuration
-      # @return [String] a rendered Chef config file as a String
+      # @param vars [String] shell variables, as a String
+      # @param file [String] file basename containing shell code
+      # @return [String] command
       # @api private
-      def format_config_file(data)
-        data.each.map { |attr, value|
-          [attr, value.inspect].join(" ")
-        }.join("\n")
-      end
-
-      # Generates a Hash with default values for a solo.rb or client.rb Chef
-      # configuration file.
-      #
-      # @return [Hash] a configuration hash
-      # @api private
-      def default_config_rb
-        root = config[:root_path]
-
-        {
-          :node_name        => instance.name,
-          :checksum_path    => "#{root}/checksums",
-          :file_cache_path  => "#{root}/cache",
-          :file_backup_path => "#{root}/backup",
-          :cookbook_path    => ["#{root}/cookbooks", "#{root}/site-cookbooks"],
-          :data_bag_path    => "#{root}/data_bags",
-          :environment_path => "#{root}/environments",
-          :node_path        => "#{root}/nodes",
-          :role_path        => "#{root}/roles",
-          :client_path      => "#{root}/clients",
-          :user_path        => "#{root}/users",
-          :validation_key   => "#{root}/validation.pem",
-          :client_key       => "#{root}/client.pem",
-          :chef_server_url  => "http://127.0.0.1:8889",
-          :encrypted_data_bag_secret => "#{root}/encrypted_data_bag_secret"
-        }
-      end
-
-      # @return [String] an absolute path to a Berksfile, relative to the
-      #   kitchen root
-      # @api private
-      def berksfile
-        File.join(config[:kitchen_root], "Berksfile")
-      end
-
-      # @return [String] an absolute path to a Cheffile, relative to the
-      #   kitchen root
-      # @api private
-      def cheffile
-        File.join(config[:kitchen_root], "Cheffile")
+      def shell_code(vars, file)
+        [
+          "",
+          vars,
+          IO.read(File.join(File.dirname(__FILE__), %w[.. .. .. support], file))
+        ].join("\n")
       end
     end
   end

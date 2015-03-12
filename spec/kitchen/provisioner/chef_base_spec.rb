@@ -227,134 +227,253 @@ describe Kitchen::Provisioner::ChefBase do
 
   describe "#install_command" do
 
-    it "returns nil if :require_chef_omnibus is falsey" do
-      config[:require_chef_omnibus] = false
+    let(:cmd) { provisioner.install_command }
 
-      provisioner.install_command.must_equal nil
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "returns nil if :require_chef_omnibus is falsey" do
+        config[:require_chef_omnibus] = false
+
+        cmd.must_equal nil
+      end
+
+      it "uses bourne shell (sh)" do
+        cmd.must_match(/\Ash -c '$/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "installs chef using :chef_omnibus_url, if necessary" do
+        config[:chef_omnibus_url] = "FROM_HERE"
+
+        cmd.must_match regexify(%{chef_omnibus_url="FROM_HERE"})
+      end
+
+      it "will install a specific version of chef, if necessary" do
+        config[:require_chef_omnibus] = "1.2.3"
+
+        cmd.must_match regexify(%{install_flags="-v 1.2.3"})
+        cmd.must_match regexify(%{pretty_version="1.2.3"})
+        cmd.must_match regexify(%{version="1.2.3"})
+      end
+
+      it "will install a major/minor version of chef, if necessary" do
+        config[:require_chef_omnibus] = "11.10"
+
+        cmd.must_match regexify(%{install_flags="-v 11.10"})
+        cmd.must_match regexify(%{pretty_version="11.10"})
+        cmd.must_match regexify(%{version="11.10"})
+      end
+
+      it "will install a major version of chef, if necessary" do
+        config[:require_chef_omnibus] = "12"
+
+        cmd.must_match regexify(%{install_flags="-v 12"})
+        cmd.must_match regexify(%{pretty_version="12"})
+        cmd.must_match regexify(%{version="12"})
+      end
+
+      it "will install a downcaased version string of chef, if necessary" do
+        config[:require_chef_omnibus] = "10.1.0.RC.1"
+
+        cmd.must_match regexify(%{install_flags="-v 10.1.0.rc.1"})
+        cmd.must_match regexify(%{pretty_version="10.1.0.rc.1"})
+        cmd.must_match regexify(%{version="10.1.0.rc.1"})
+      end
+
+      it "will install the latest of chef, if necessary" do
+        config[:require_chef_omnibus] = "latest"
+
+        cmd.must_match regexify(%{install_flags=""})
+        cmd.must_match regexify(%{pretty_version="always install latest version"})
+        cmd.must_match regexify(%{version="latest"})
+      end
+
+      it "will install a of chef, unless it exists" do
+        config[:require_chef_omnibus] = true
+
+        cmd.must_match regexify(%{install_flags=""})
+        cmd.must_match regexify(%{pretty_version="install only if missing"})
+        cmd.must_match regexify(%{version="true"})
+      end
+
+      it "will pass install options, when given" do
+        config[:chef_omnibus_install_options] = "-P chefdk"
+
+        cmd.must_match regexify(%{install_flags="-P chefdk"})
+        cmd.must_match regexify(%{pretty_version="install only if missing"})
+        cmd.must_match regexify(%{version="true"})
+      end
+
+      it "will pass install options and version info, when given" do
+        config[:require_chef_omnibus] = "11"
+        config[:chef_omnibus_install_options] = "-d /tmp/place"
+
+        cmd.must_match regexify(%{install_flags="-v 11 -d /tmp/place"})
+        cmd.must_match regexify(%{pretty_version="11"})
+        cmd.must_match regexify(%{version="11"})
+      end
+
+      it "prepends sudo for sh commands when :sudo is set" do
+        config[:sudo] = true
+
+        cmd.must_match regexify(%{sudo_sh="sudo -E sh"})
+      end
+
+      it "does not sudo for sh commands when :sudo is falsey" do
+        config[:sudo] = false
+
+        cmd.must_match regexify(%{sudo_sh="sh"})
+      end
     end
 
-    it "uses bourne shell (sh)" do
-      provisioner.install_command.must_match(/\Ash -c '$/)
-    end
+    describe "for powershell shells on windows os types" do
 
-    it "ends with a single quote" do
-      provisioner.install_command.must_match(/'\Z/)
-    end
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
 
-    it "installs chef using :chef_omnibus_url, if necessary" do
-      config[:chef_omnibus_url] = "FROM_HERE"
+      it "returns nil if :require_chef_omnibus is falsey" do
+        config[:require_chef_omnibus] = false
 
-      provisioner.install_command.must_match regexify(
-        %{chef_omnibus_url="FROM_HERE"})
-    end
+        cmd.must_equal nil
+      end
 
-    it "will install a specific version of chef, if necessary" do
-      config[:require_chef_omnibus] = "1.2.3"
+      it "installs chef using :chef_metadata_url, if necessary" do
+        config[:chef_metadata_url] = "FROM_HERE"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-v 1.2.3"})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="1.2.3"})
-    end
+        cmd.must_match regexify(%{$chef_metadata_url = "FROM_HERE"})
+      end
 
-    it "will install a major/minor version of chef, if necessary" do
-      config[:require_chef_omnibus] = "11.10"
+      it "sets an root path from :chef_omnibus_root" do
+        config[:chef_omnibus_root] = "\\a\\b"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-v 11.10"})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="11.10"})
-    end
+        cmd.must_match regexify(%{$chef_omnibus_root = "\\a\\b"})
+      end
 
-    it "will install a major version of chef, if necessary" do
-      config[:require_chef_omnibus] = "12"
+      it "sets a path for the msi pacakge based on version" do
+        config[:require_chef_omnibus] = "1.2.3"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-v 12"})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="12"})
-    end
+        cmd.must_match regexify(%{$msi = "$env:TEMP\\chef-1.2.3.msi"})
+      end
 
-    it "will install a downcaased version string of chef, if necessary" do
-      config[:require_chef_omnibus] = "10.1.0.RC.1"
+      it "will install a specific version of chef, if necessary" do
+        config[:require_chef_omnibus] = "1.2.3"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-v 10.1.0.rc.1"})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="10.1.0.rc.1"})
-    end
+        cmd.must_match regexify(%{$pretty_version = "1.2.3"})
+        cmd.must_match regexify(%{$version = "1.2.3"})
+      end
 
-    it "will install the latest of chef, if necessary" do
-      config[:require_chef_omnibus] = "latest"
+      it "will install a major/minor version of chef, if necessary" do
+        config[:require_chef_omnibus] = "11.10"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags=""})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="always install latest version"})
-    end
+        cmd.must_match regexify(%{$pretty_version = "11.10"})
+        cmd.must_match regexify(%{$version = "11.10"})
+      end
 
-    it "will install a of chef, unless it exists" do
-      config[:require_chef_omnibus] = true
+      it "will install a major version of chef, if necessary" do
+        config[:require_chef_omnibus] = "12"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags=""})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="install only if missing"})
-    end
+        cmd.must_match regexify(%{$pretty_version = "12"})
+        cmd.must_match regexify(%{$version = "12"})
+      end
 
-    it "will pass install options, when given" do
-      config[:chef_omnibus_install_options] = "-P chefdk"
+      it "will install a downcaased version string of chef, if necessary" do
+        config[:require_chef_omnibus] = "10.1.0.RC.1"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-P chefdk"})
-      provisioner.install_command.must_match regexify(
-        %{pretty_version="install only if missing"})
-    end
+        cmd.must_match regexify(%{$pretty_version = "10.1.0.rc.1"})
+        cmd.must_match regexify(%{$version = "10.1.0.rc.1"})
+      end
 
-    it "will pass install options and version info, when given" do
-      config[:require_chef_omnibus] = "11"
-      config[:chef_omnibus_install_options] = "-d /tmp/place"
+      it "will install the latest of chef, if necessary" do
+        config[:require_chef_omnibus] = "latest"
 
-      provisioner.install_command.must_match regexify(
-        %{install_flags="-v 11 -d /tmp/place"})
+        cmd.must_match regexify(%{$pretty_version = "always install latest version"})
+        cmd.must_match regexify(%{$version = "latest"})
+      end
+
+      it "will install a of chef, unless it exists" do
+        config[:require_chef_omnibus] = true
+
+        cmd.must_match regexify(%{$pretty_version = "install only if missing"})
+        cmd.must_match regexify(%{$version = "true"})
+      end
     end
   end
 
   describe "#init_command" do
 
-    it "uses bourne shell" do
-      provisioner.init_command.must_match(/\Ash -c '$/)
-      provisioner.init_command.must_match(/'\Z/)
-    end
+    let(:cmd) { provisioner.init_command }
 
-    it "uses sudo for rm when configured" do
-      config[:sudo] = true
+    describe "for bourne shells" do
 
-      provisioner.init_command.
-        must_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+      before { platform.stubs(:shell_type).returns("bourne") }
 
-    it "does not use sudo for rm when configured" do
-      config[:sudo] = false
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
 
-      provisioner.init_command.
-        must_match regexify("rm -rf ", :partial_line)
-      provisioner.init_command.
-        wont_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
 
-    %w[cookbooks data data_bags environments roles clients].each do |dir|
-      it "removes the #{dir} directory" do
+      it "prepends sudo for rm when :sudo is set" do
+        config[:sudo] = true
+
+        cmd.must_match regexify(%{sudo_rm="sudo -E rm"})
+      end
+
+      it "does not sudo for sh commands when :sudo is falsey" do
+        config[:sudo] = false
+
+        cmd.must_match regexify(%{sudo_rm="rm"})
+      end
+
+      it "sets chef component dirs for deletion" do
         config[:root_path] = "/route"
+        dirs = %W[
+          /route/clients /route/cookbooks /route/data /route/data_bags
+          /route/environments /route/roles
+        ].join(" ")
 
-        provisioner.init_command.must_match %r{rm -rf\b.*\s+/route/#{dir}\s+}
+        cmd.must_match regexify(%{dirs="#{dirs}"})
+      end
+
+      it "sets the root_path from :root_path" do
+        config[:root_path] = "RIGHT_HERE"
+
+        cmd.must_match regexify(%{root_path="RIGHT_HERE"})
       end
     end
 
-    it "creates :root_path directory" do
-      config[:root_path] = "/root/path"
+    describe "for powershell shells on windows os types" do
 
-      provisioner.init_command.must_match regexify("mkdir -p /root/path")
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
+
+      it "sets chef component dirs for deletion" do
+        config[:root_path] = "\\route"
+        dirs = %W[
+          "\\route\\clients" "\\route\\cookbooks" "\\route\\data"
+          "\\route\\data_bags" "\\route\\environments" "\\route\\roles"
+        ].join(", ")
+
+        cmd.must_match regexify(%{$dirs = @(#{dirs})})
+      end
+
+      it "sets the root_path from :root_path" do
+        config[:root_path] = "RIGHT_HERE"
+
+        cmd.must_match regexify(%{$root_path = "RIGHT_HERE"})
+      end
     end
   end
 

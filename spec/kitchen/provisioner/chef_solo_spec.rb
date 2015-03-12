@@ -117,64 +117,108 @@ describe Kitchen::Provisioner::ChefSolo do
 
       describe "defaults" do
 
-        before { provisioner.create_sandbox }
+        # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+        def self.common_solo_rb_specs
+          it "sets node_name to the instance name" do
+            file.must_include %{node_name "#{instance.name}"}
+          end
 
-        it "sets node_name to the instance name" do
-          file.must_include %{node_name "#{instance.name}"}
+          it "sets checksum_path" do
+            file.must_include %{checksum_path "#{base}checksums"}
+          end
+
+          it "sets file_backup_path" do
+            file.must_include %{file_backup_path "#{base}backup"}
+          end
+
+          it "sets cookbook_path" do
+            file.must_include %{cookbook_path } +
+              %{["#{base}cookbooks", "#{base}site-cookbooks"]}
+          end
+
+          it "sets data_bag_path" do
+            file.must_include %{data_bag_path "#{base}data_bags"}
+          end
+
+          it "sets environment_path" do
+            file.must_include %{environment_path "#{base}environments"}
+          end
+
+          it "sets node_path" do
+            file.must_include %{node_path "#{base}nodes"}
+          end
+
+          it "sets role_path" do
+            file.must_include %{role_path "#{base}roles"}
+          end
+
+          it "sets client_path" do
+            file.must_include %{client_path "#{base}clients"}
+          end
+
+          it "sets user_path" do
+            file.must_include %{user_path "#{base}users"}
+          end
+
+          it "sets validation_key" do
+            file.must_include %{validation_key "#{base}validation.pem"}
+          end
+
+          it "sets client_key" do
+            file.must_include %{client_key "#{base}client.pem"}
+          end
+
+          it "sets chef_server_url" do
+            file.must_include %{chef_server_url "http://127.0.0.1:8889"}
+          end
+
+          it "sets encrypted_data_bag_secret" do
+            file.must_include %{encrypted_data_bag_secret } +
+              %{"#{base}encrypted_data_bag_secret"}
+          end
+        end
+        # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+        describe "for unix os types" do
+
+          before do
+            platform.stubs(:os_type).returns("unix")
+            provisioner.create_sandbox
+          end
+
+          let(:base) { "/tmp/kitchen/" }
+
+          common_solo_rb_specs
         end
 
-        it "sets checksum_path" do
-          file.must_include %{checksum_path "/tmp/kitchen/checksums"}
+        describe "for windows os types with full path" do
+
+          before do
+            platform.stubs(:os_type).returns("windows")
+            config[:root_path] = "\\a\\b"
+            provisioner.create_sandbox
+          end
+
+          let(:base) { "\\\\a\\\\b\\\\" }
+
+          common_solo_rb_specs
         end
 
-        it "sets file_backup_path" do
-          file.must_include %{file_backup_path "/tmp/kitchen/backup"}
-        end
+        describe "for windows os types with $env:TEMP prefixed paths" do
 
-        it "sets cookbook_path" do
-          file.must_include %{cookbook_path } +
-            %{["/tmp/kitchen/cookbooks", "/tmp/kitchen/site-cookbooks"]}
-        end
+          before do
+            platform.stubs(:os_type).returns("windows")
+            config[:root_path] = "$env:TEMP\\a"
+            provisioner.create_sandbox
+          end
 
-        it "sets data_bag_path" do
-          file.must_include %{data_bag_path "/tmp/kitchen/data_bags"}
-        end
+          let(:base) { "\#{ENV['TEMP']}\\\\a\\\\" }
 
-        it "sets environment_path" do
-          file.must_include %{environment_path "/tmp/kitchen/environments"}
-        end
+          it "sets node_name to the instance name" do
+            file.must_include %{node_name "#{instance.name}"}
+          end
 
-        it "sets node_path" do
-          file.must_include %{node_path "/tmp/kitchen/nodes"}
-        end
-
-        it "sets role_path" do
-          file.must_include %{role_path "/tmp/kitchen/roles"}
-        end
-
-        it "sets client_path" do
-          file.must_include %{client_path "/tmp/kitchen/clients"}
-        end
-
-        it "sets user_path" do
-          file.must_include %{user_path "/tmp/kitchen/users"}
-        end
-
-        it "sets validation_key" do
-          file.must_include %{validation_key "/tmp/kitchen/validation.pem"}
-        end
-
-        it "sets client_key" do
-          file.must_include %{client_key "/tmp/kitchen/client.pem"}
-        end
-
-        it "sets chef_server_url" do
-          file.must_include %{chef_server_url "http://127.0.0.1:8889"}
-        end
-
-        it "sets encrypted_data_bag_secret" do
-          file.must_include %{encrypted_data_bag_secret } +
-            %{"/tmp/kitchen/encrypted_data_bag_secret"}
+          common_solo_rb_specs
         end
       end
 
@@ -191,7 +235,7 @@ describe Kitchen::Provisioner::ChefSolo do
         file.must_include %{client_key "lol"}
       end
 
-      it " supports adding new configuration" do
+      it "supports adding new configuration" do
         config[:solo_rb] = {
           :dark_secret => "golang"
         }
@@ -242,81 +286,155 @@ describe Kitchen::Provisioner::ChefSolo do
     def sandbox_path(path)
       Pathname.new(provisioner.sandbox_path).join(path)
     end
-
   end
 
   describe "#run_command" do
 
     let(:cmd) { provisioner.run_command }
 
-    it "uses bourne shell" do
-      cmd.must_match(/\Ash -c '$/)
-      cmd.must_match(/'\Z/)
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "uses sudo for chef-solo when configured" do
+        config[:chef_omnibus_root] = "/c"
+        config[:sudo] = true
+
+        cmd.must_match regexify("sudo -E /c/bin/chef-solo ", :partial_line)
+      end
+
+      it "does not use sudo for chef-solo when configured" do
+        config[:chef_omnibus_root] = "/c"
+        config[:sudo] = false
+
+        cmd.must_match regexify("chef-solo ", :partial_line)
+        cmd.wont_match regexify("sudo -E /c/bin/chef-solo ", :partial_line)
+      end
+
+      it "sets config flag on chef-solo" do
+        cmd.must_match regexify(" --config /tmp/kitchen/solo.rb", :partial_line)
+      end
+
+      it "sets config flag for custom root_path" do
+        config[:root_path] = "/a/b"
+
+        cmd.must_match regexify(" --config /a/b/solo.rb", :partial_line)
+      end
+
+      it "sets json attributes flag on chef-solo" do
+        cmd.must_match regexify(
+          " --json-attributes /tmp/kitchen/dna.json", :partial_line)
+      end
+
+      it "sets json attribtes flag for custom root_path" do
+        config[:root_path] = "/booyah"
+
+        cmd.must_match regexify(
+          " --json-attributes /booyah/dna.json", :partial_line)
+      end
+
+      it "sets log level flag on chef-solo to auto by default" do
+        cmd.must_match regexify(" --log_level auto", :partial_line)
+      end
+
+      it "set log level flag for custom level" do
+        config[:log_level] = :extreme
+
+        cmd.must_match regexify(" --log_level extreme", :partial_line)
+      end
+
+      it "sets force formatter flag on chef-solo" do
+        cmd.must_match regexify(" --force-formatter", :partial_line)
+      end
+
+      it "sets no color flag on chef-solo" do
+        cmd.must_match regexify(" --no-color", :partial_line)
+      end
+
+      it "does not set logfile flag by default" do
+        cmd.wont_match regexify(" --logfile ", :partial_line)
+      end
+
+      it "sets logfile flag for custom value" do
+        config[:log_file] = "/a/out.log"
+
+        cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
+      end
     end
 
-    it "uses sudo for chef-solo when configured" do
-      config[:chef_omnibus_root] = "/c"
-      config[:sudo] = true
+    describe "for powershell shells on windows os types" do
 
-      cmd.must_match regexify("sudo -E /c/bin/chef-solo ", :partial_line)
-    end
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
 
-    it "does not use sudo for chef-solo when configured" do
-      config[:chef_omnibus_root] = "/c"
-      config[:sudo] = false
+      it "calls the chef-solo command from :chef_solo_path" do
+        config[:chef_solo_path] = "\\r\\chef-solo.bat"
 
-      cmd.must_match regexify("chef-solo ", :partial_line)
-      cmd.wont_match regexify("sudo -E /c/bin/chef-solo ", :partial_line)
-    end
+        cmd.must_match regexify("& \\r\\chef-solo.bat ", :partial_line)
+      end
 
-    it "sets config flag on chef-solo" do
-      cmd.must_match regexify(" --config /tmp/kitchen/solo.rb", :partial_line)
-    end
+      it "sets config flag on chef-solo" do
+        cmd.must_match regexify(
+          " --config $env:TEMP\\kitchen\\solo.rb", :partial_line)
+      end
 
-    it "sets config flag for custom root_path" do
-      config[:root_path] = "/a/b"
+      it "sets config flag for custom root_path" do
+        config[:root_path] = "\\a\\b"
 
-      cmd.must_match regexify(" --config /a/b/solo.rb", :partial_line)
-    end
+        cmd.must_match regexify(
+          " --config \\a\\b\\solo.rb", :partial_line)
+      end
 
-    it "sets json attributes flag on chef-solo" do
-      cmd.must_match regexify(
-        " --json-attributes /tmp/kitchen/dna.json", :partial_line)
-    end
+      it "sets json attributes flag on chef-solo" do
+        cmd.must_match regexify(
+          " --json-attributes $env:TEMP\\kitchen\\dna.json", :partial_line)
+      end
 
-    it "sets json attribtes flag for custom root_path" do
-      config[:root_path] = "/booyah"
+      it "sets json attribtes flag for custom root_path" do
+        config[:root_path] = "\\booyah"
 
-      cmd.must_match regexify(
-        " --json-attributes /booyah/dna.json", :partial_line)
-    end
+        cmd.must_match regexify(
+          " --json-attributes \\booyah\\dna.json", :partial_line)
+      end
 
-    it "sets log level flag on chef-solo to auto by default" do
-      cmd.must_match regexify(" --log_level auto", :partial_line)
-    end
+      it "sets log level flag on chef-solo to auto by default" do
+        cmd.must_match regexify(" --log_level auto", :partial_line)
+      end
 
-    it "set log level flag for custom level" do
-      config[:log_level] = :extreme
+      it "set log level flag for custom level" do
+        config[:log_level] = :extreme
 
-      cmd.must_match regexify(" --log_level extreme", :partial_line)
-    end
+        cmd.must_match regexify(" --log_level extreme", :partial_line)
+      end
 
-    it "sets force formatter flag on chef-solo" do
-      cmd.must_match regexify(" --force-formatter", :partial_line)
-    end
+      it "sets force formatter flag on chef-solo" do
+        cmd.must_match regexify(" --force-formatter", :partial_line)
+      end
 
-    it "sets no color flag on chef-solo" do
-      cmd.must_match regexify(" --no-color", :partial_line)
-    end
+      it "sets no color flag on chef-solo" do
+        cmd.must_match regexify(" --no-color", :partial_line)
+      end
 
-    it "does not set logfile flag by default" do
-      cmd.wont_match regexify(" --logfile ", :partial_line)
-    end
+      it "does not set logfile flag by default" do
+        cmd.wont_match regexify(" --logfile ", :partial_line)
+      end
 
-    it "sets logfile flag for custom value" do
-      config[:log_file] = "/a/out.log"
+      it "sets logfile flag for custom value" do
+        config[:log_file] = "\\a\\out.log"
 
-      cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
+        cmd.must_match regexify(" --logfile \\a\\out.log", :partial_line)
+      end
     end
   end
 

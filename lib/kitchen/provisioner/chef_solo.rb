@@ -47,15 +47,19 @@ module Kitchen
 
         cmd = sudo(config[:chef_solo_path])
         args = [
-          "--config #{config[:root_path]}/solo.rb",
+          "--config #{remote_path_join(config[:root_path], "solo.rb")}",
           "--log_level #{level}",
           "--force-formatter",
           "--no-color",
-          "--json-attributes #{config[:root_path]}/dna.json"
+          "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        Util.wrap_command([cmd, *args].join(" "))
+        if powershell_shell?
+          "& " + [cmd, *args].join(" ")
+        else
+          Util.wrap_command([cmd, *args].join(" "))
+        end
       end
 
       private
