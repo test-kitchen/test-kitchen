@@ -135,13 +135,7 @@ module Kitchen
             :message  => "Waiting for WinRM service on #{endpoint}, " \
               "retrying in #{delay} seconds"
           )
-          exit_code, stderr = execute_with_exit_code(PING_COMMAND)
-
-          if exit_code != 0
-            log_stderr_on_warn(stderr)
-            raise Transport::WinrmFailed,
-              "WinRM exited (#{exit_code}) for command: [#{PING_COMMAND}]"
-          end
+          execute(PING_COMMAND.dup)
         end
 
         private
