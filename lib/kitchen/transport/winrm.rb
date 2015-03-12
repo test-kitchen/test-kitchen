@@ -97,15 +97,12 @@ module Kitchen
           logger.debug("[WinRM] #{self} (#{command})")
           exit_code, stderr = execute_with_exit_code(command)
 
-          if exit_code != 0
+          if logger.debug? && exit_code == 0
+            log_stderr_on_warn(stderr)
+          elsif exit_code != 0
             log_stderr_on_warn(stderr)
             raise Transport::WinrmFailed,
               "WinRM exited (#{exit_code}) for command: [#{command}]"
-          elsif !stderr.empty?
-            log_stderr_on_warn(stderr)
-            raise Transport::WinrmFailed,
-              "WinRM exited (#{exit_code}) but contained a STDERR stream " \
-              "for command: [#{command}]"
           end
         end
 

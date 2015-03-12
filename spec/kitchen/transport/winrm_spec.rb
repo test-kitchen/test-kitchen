@@ -444,7 +444,10 @@ describe Kitchen::Transport::Winrm::Connection do
       let(:response) do
         o = WinRM::Output.new
         o[:exitcode] = 0
-        o[:data].concat([{ :stdout => "ok\r\n" }])
+        o[:data].concat([
+          { :stdout => "ok\r\n" },
+          { :stderr => "congrats\r\n" }
+        ])
         o
       end
 
@@ -476,6 +479,20 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         logged_output.string.must_match(/^ok$/)
+      end
+
+      it "logger captures stderr on warn if logger is at debug level" do
+        logger.level = Logger::DEBUG
+        connection.execute("doit")
+
+        logged_output.string.must_match warn_line("congrats")
+      end
+
+      it "logger does not log stderr on warn if logger is below debug level" do
+        logger.level = Logger::INFO
+        connection.execute("doit")
+
+        logged_output.string.wont_match warn_line("congrats")
       end
     end
 
@@ -588,23 +605,6 @@ MSG
             connection.execute("doit")
           }.must_raise Kitchen::Transport::WinrmFailed
           err.message.must_equal "WinRM exited (1) for command: [doit]"
-        end
-      end
-
-      describe "when a zero exit code is returned but with buffered stderr" do
-
-        before do
-          response[:exitcode] = 0
-        end
-
-        common_failed_command_specs
-
-        it "raises a WinrmFailed exception" do
-          err = proc {
-            connection.execute("doit")
-          }.must_raise Kitchen::Transport::WinrmFailed
-          err.message.must_equal "WinRM exited (0) but contained " \
-            "a STDERR stream for command: [doit]"
         end
       end
     end
@@ -1045,6 +1045,10 @@ MSG
 
   def debug_line_with(msg)
     %r{^D, .* : #{Regexp.escape(msg)}}
+  end
+
+  def info_line(msg)
+    %r{^I, .* : #{Regexp.escape(msg)}$}
   end
 
   def info_line_with(msg)
