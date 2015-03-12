@@ -47,13 +47,13 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || iam_creds[:aws_access_key_id] 
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] || iam_creds[:aws_secret_access_key] 
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] || iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || iam_creds[:aws_session_token] 
+        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || iam_creds[:aws_session_token]
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
