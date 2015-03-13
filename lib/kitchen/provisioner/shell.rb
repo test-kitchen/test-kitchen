@@ -52,6 +52,13 @@ module Kitchen
         Util.wrap_command(cmd)
       end
 
+      # (see Base#prepare_command)
+      def prepare_command
+        Util.wrap_command(
+          sudo("chmod +x #{File.join(config[:root_path], File.basename(config[:script]))}")
+        )
+      end
+
       # (see Base#run_command)
       def run_command
         Util.wrap_command(
@@ -94,9 +101,6 @@ module Kitchen
             file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
           end
         end
-
-        FileUtils.chmod(0755,
-          File.join(sandbox_path, File.basename(config[:script])))
       end
     end
   end

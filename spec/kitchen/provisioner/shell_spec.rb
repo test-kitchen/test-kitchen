@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: Ringo De Smet (<ringo@automate-dev.com>)
 #
 # Copyright (C) 2014, Fletcher Nichol
 #
@@ -91,6 +92,24 @@ describe Kitchen::Provisioner::Shell do
       config[:root_path] = "/root/path"
 
       cmd.must_match regexify("mkdir -p /root/path", :partial_line)
+    end
+  end
+
+  describe "#prepare_command" do
+
+    let(:cmd) { provisioner.prepare_command }
+
+    it "uses sudo for script when configured" do
+      config[:sudo] = true
+
+      cmd.must_match regexify("sudo -E chmod +x", :partial_line)
+    end
+
+    it "does not use sudo for script when configured" do
+      config[:sudo] = false
+
+      cmd.must_match regexify("chmod +x", :partial_line)
+      cmd.wont_match regexify("sudo -E chmod +x", :partial_line)
     end
   end
 
@@ -191,7 +210,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          sandbox_path("my_script").executable?.must_equal true
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 
@@ -231,7 +249,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("bootstrap.sh").file?.must_equal true
-          sandbox_path("bootstrap.sh").executable?.must_equal true
           IO.read(sandbox_path("bootstrap.sh")).
             must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
         end
