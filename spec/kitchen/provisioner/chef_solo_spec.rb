@@ -214,10 +214,6 @@ describe Kitchen::Provisioner::ChefSolo do
 
           let(:base) { "\#{ENV['TEMP']}\\\\a\\\\" }
 
-          it "sets node_name to the instance name" do
-            file.must_include %{node_name "#{instance.name}"}
-          end
-
           common_solo_rb_specs
         end
       end
@@ -305,6 +301,36 @@ describe Kitchen::Provisioner::ChefSolo do
         cmd.must_match(/'\Z/)
       end
 
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
       it "uses sudo for chef-solo when configured" do
         config[:chef_omnibus_root] = "/c"
         config[:sudo] = true
@@ -376,6 +402,36 @@ describe Kitchen::Provisioner::ChefSolo do
       before do
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
       end
 
       it "calls the chef-solo command from :chef_solo_path" do

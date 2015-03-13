@@ -247,6 +247,36 @@ describe Kitchen::Provisioner::ChefBase do
         cmd.must_match(/'\Z/)
       end
 
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
       it "installs chef using :chef_omnibus_url, if necessary" do
         config[:chef_omnibus_url] = "FROM_HERE"
 
@@ -338,6 +368,36 @@ describe Kitchen::Provisioner::ChefBase do
         platform.stubs(:os_type).returns("windows")
       end
 
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
       it "returns nil if :require_chef_omnibus is falsey" do
         config[:require_chef_omnibus] = false
 
@@ -423,6 +483,36 @@ describe Kitchen::Provisioner::ChefBase do
         cmd.must_match(/'\Z/)
       end
 
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
       it "prepends sudo for rm when :sudo is set" do
         config[:sudo] = true
 
@@ -457,6 +547,36 @@ describe Kitchen::Provisioner::ChefBase do
       before do
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
       end
 
       it "sets chef component dirs for deletion" do

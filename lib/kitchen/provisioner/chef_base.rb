@@ -121,22 +121,28 @@ module Kitchen
         dirs = %w[cookbooks data data_bags environments roles clients].
           sort.map { |dir| remote_path_join(config[:root_path], dir) }
 
-        if powershell_shell?
-          init_command_for_powershell(dirs)
+        vars = if powershell_shell?
+          init_command_vars_for_powershell(dirs)
         else
-          init_command_for_bourne(dirs)
+          init_command_vars_for_bourne(dirs)
         end
+
+        shell_code_from_file(vars, "chef_base_init_command")
       end
 
       # (see Base#install_command)
       def install_command
         return unless config[:require_chef_omnibus]
 
-        if powershell_shell?
-          install_command_for_powershell
+        version = config[:require_chef_omnibus].to_s.downcase
+
+        vars = if powershell_shell?
+          install_command_vars_for_powershell(version)
         else
-          install_command_for_bourne
+          install_command_vars_for_bourne(version)
         end
+
+        shell_code_from_file(vars, "chef_base_install_command")
       end
 
       private
@@ -187,6 +193,21 @@ module Kitchen
         }
       end
 
+      # Builds a shell environment variable assignment string for the
+      # required shell type.
+      #
+      # @param name [String] variable name
+      # @param value [String] variable value
+      # @return [String] shell variable assignment
+      # @api private
+      def env_var(name, value)
+        if powershell_shell?
+          shell_var("env:#{name}", value)
+        else
+          "#{shell_var(name, value)}; export #{name}"
+        end
+      end
+
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
       # String.
       #
@@ -215,76 +236,66 @@ module Kitchen
         end
       end
 
-      # Generates the init command for Bourne shell-based platforms.
+      # Generates the init command variables for Bourne shell-based platforms.
       #
       # @param dirs [Array<String>] directories
-      # @return [String] command
+      # @return [String] shell variable lines
       # @api private
-      def init_command_for_bourne(dirs)
-        vars = Util.outdent!(<<-VARS)
-          sudo_rm="#{sudo("rm")}"
-          dirs="#{dirs.join(" ")}"
-          root_path="#{config[:root_path]}"
-        VARS
-
-        Util.wrap_command(shell_code(vars, "chef_base_init_command.sh"))
+      def init_command_vars_for_bourne(dirs)
+        [
+          shell_var("sudo_rm", sudo("rm")),
+          shell_var("dirs", dirs.join(" ")),
+          shell_var("root_path", config[:root_path])
+        ].join("\n")
       end
 
-      # Generates the init command for PowerShell-based platforms.
+      # Generates the init command variables for PowerShell-based platforms.
       #
       # @param dirs [Array<String>] directories
-      # @return [String] command
+      # @return [String] shell variable lines
       # @api private
-      def init_command_for_powershell(dirs)
-        vars = Util.outdent!(<<-VARS)
-          $dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})
-          $root_path = "#{config[:root_path]}"
-        VARS
-
-        shell_code(vars, "chef_base_init_command.ps1")
+      def init_command_vars_for_powershell(dirs)
+        [
+          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})},
+          shell_var("root_path", config[:root_path])
+        ].join("\n")
       end
 
-      # Generates the install command for Bourne shell-based platforms.
+      # Generates the install command variables for Bourne shell-based
+      # platforms.
       #
-      # @return [String] command
+      # @param version [String] version string
+      # @return [String] shell variable lines
       # @api private
-      def install_command_for_bourne
-        version = config[:require_chef_omnibus].to_s.downcase
+      def install_command_vars_for_bourne(version)
         install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
         if config[:chef_omnibus_install_options]
           install_flags << " " << config[:chef_omnibus_install_options]
         end
 
-        vars = Util.outdent!(<<-BOURNE_VARS)
-          chef_omnibus_root="#{config[:chef_omnibus_root]}"
-          chef_omnibus_url="#{config[:chef_omnibus_url]}"
-          install_flags="#{install_flags.strip}"
-          pretty_version="#{pretty_version(version)}"
-          sudo_sh="#{sudo("sh")}"
-          version="#{version}"
-        BOURNE_VARS
-
-        Util.wrap_command(shell_code(vars, "chef_base_install_command.sh"))
+        [
+          shell_var("chef_omnibus_root", config[:chef_omnibus_root]),
+          shell_var("chef_omnibus_url", config[:chef_omnibus_url]),
+          shell_var("install_flags", install_flags.strip),
+          shell_var("pretty_version", pretty_version(version)),
+          shell_var("sudo_sh", sudo("sh")),
+          shell_var("version", version)
+        ].join("\n")
       end
 
-      # Generates the install command for PowerShell-based platforms.
+      # Generates the install command variables for PowerShell-based platforms.
       #
-      # @return [String] command
+      # @param version [String] version string
+      # @return [String] shell variable lines
       # @api private
-      def install_command_for_powershell
-        version = config[:require_chef_omnibus].to_s.downcase
-
-        vars = Util.outdent!(<<-POWERSHELL_VARS)
-          $env:http_proxy = "#{config[:http_proxy]}"
-          $env:https_proxy = "#{config[:https_proxy]}"
-          $chef_metadata_url = "#{config[:chef_metadata_url]}"
-          $chef_omnibus_root = "#{config[:chef_omnibus_root]}"
-          $msi = "$env:TEMP\\chef-#{version}.msi"
-          $pretty_version = "#{pretty_version(version)}"
-          $version = "#{version}"
-        POWERSHELL_VARS
-
-        shell_code(vars, "chef_base_install_command.ps1")
+      def install_command_vars_for_powershell(version)
+        [
+          shell_var("chef_metadata_url", config[:chef_metadata_url]),
+          shell_var("chef_omnibus_root", config[:chef_omnibus_root]),
+          shell_var("msi", "$env:TEMP\\chef-#{version}.msi"),
+          shell_var("pretty_version", pretty_version(version)),
+          shell_var("version", version)
+        ].join("\n")
       end
 
       # Load cookbook dependency resolver code, if required.
@@ -330,15 +341,55 @@ module Kitchen
       # containing shell code.
       #
       # @param vars [String] shell variables, as a String
-      # @param file [String] file basename containing shell code
+      # @param file [String] file basename (without extension) containing
+      #   shell code
       # @return [String] command
       # @api private
-      def shell_code(vars, file)
-        [
-          "",
-          vars,
-          IO.read(File.join(File.dirname(__FILE__), %w[.. .. .. support], file))
-        ].join("\n")
+      def shell_code_from_file(vars, file)
+        src_file = File.join(
+          File.dirname(__FILE__),
+          %w[.. .. .. support],
+          file + (powershell_shell? ? ".ps1" : ".sh")
+        )
+
+        wrap_shell_code([vars, "", IO.read(src_file)].join("\n"))
+      end
+
+      # Builds a shell variable assignment string for the required shell type.
+      #
+      # @param name [String] variable name
+      # @param value [String] variable value
+      # @return [String] shell variable assignment
+      # @api private
+      def shell_var(name, value)
+        if powershell_shell?
+          %{$#{name} = "#{value}"}
+        else
+          %{#{name}="#{value}"}
+        end
+      end
+
+      # Wraps a body of shell code with common context appropriate for the type
+      # of shell.
+      #
+      # @param code [String] the shell code to be wrapped
+      # @return [String] wrapped shell code
+      # @api private
+      def wrap_shell_code(code)
+        env = []
+        if config[:http_proxy]
+          env << env_var("http_proxy", config[:http_proxy])
+          env << env_var("HTTP_PROXY", config[:http_proxy])
+        end
+        if config[:https_proxy]
+          env << env_var("https_proxy", config[:https_proxy])
+          env << env_var("HTTPS_PROXY", config[:https_proxy])
+        end
+        if powershell_shell?
+          env.join("\n").concat("\n").concat(code)
+        else
+          Util.wrap_command(env.join("\n").concat("\n").concat(code))
+        end
       end
     end
   end

@@ -45,7 +45,8 @@ module Kitchen
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
-        cmd = sudo(config[:chef_solo_path])
+        cmd = sudo(config[:chef_solo_path]).dup.
+          tap { |str| str.insert(0, "& ") if powershell_shell? }
         args = [
           "--config #{remote_path_join(config[:root_path], "solo.rb")}",
           "--log_level #{level}",
@@ -55,11 +56,7 @@ module Kitchen
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        if powershell_shell?
-          "& " + [cmd, *args].join(" ")
-        else
-          Util.wrap_command([cmd, *args].join(" "))
-        end
+        wrap_shell_code([cmd, *args].join(" "))
       end
 
       private
