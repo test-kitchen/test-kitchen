@@ -62,7 +62,7 @@ module Kitchen
     # @return [Provisioner::Base] provisioner object which will the setup
     #   and invocation instructions for configuration management and other
     #   automation tools
-    attr_reader :provisioner
+    attr_reader :provisioners
 
     # @return [Busser] busser object for instance to manage the busser
     #   installation on this instance
@@ -77,7 +77,7 @@ module Kitchen
     # @option options [Suite] :suite the suite (**Required**)
     # @option options [Platform] :platform the platform (**Required**)
     # @option options [Driver::Base] :driver the driver (**Required**)
-    # @option options [Provisioner::Base] :provisioner the provisioner
+    # @option options Array[Provisioner::Base] :provisioner the provisioner
     #   (**Required**)
     # @option options [Busser] :busser the busser logger (**Required**)
     # @option options [Logger] :logger the instance logger
@@ -92,13 +92,13 @@ module Kitchen
       @platform     = options.fetch(:platform)
       @name         = self.class.name_for(@suite, @platform)
       @driver       = options.fetch(:driver)
-      @provisioner  = options.fetch(:provisioner)
+      @provisioners = options.fetch(:provisioners)
       @busser       = options.fetch(:busser)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
 
       setup_driver
-      setup_provisioner
+      setup_provisioners
     end
 
     # Returns a displayable representation of the instance.
@@ -221,9 +221,17 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = Hash.new
-      [:state_file, :driver, :provisioner, :busser].each do |sym|
+      [:state_file, :driver, :busser].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
+      end
+      result[:provisioners] = provisioners.inject([]) do |rslts, obj|
+        if obj.respond_to?(:diagnose)
+          rslts << obj.send(:diagnose)
+        else
+          rslts << :unknown
+        end
+        rslts
       end
       result
     end
@@ -250,7 +258,7 @@ module Kitchen
     # @api private
     def validate_options(options)
       [
-        :suite, :platform, :driver, :provisioner, :busser, :state_file
+        :suite, :platform, :driver, :provisioners, :busser, :state_file
       ].each do |k|
         next if options.key?(k)
 
@@ -273,12 +281,14 @@ module Kitchen
       end
     end
 
-    # Perform any final configuration or preparation needed for the provisioner
-    # object carry out its duties.
+    # Perform any final configuration or preparation needed for the provisioners
+    # objects to carry out their duties.
     #
     # @api private
-    def setup_provisioner
-      @provisioner.finalize_config!(self)
+    def setup_provisioners
+      @provisioners.each do |provisioner|
+        provisioner.finalize_config!(self)
+      end
     end
 
     # Perform all actions in order from last state to desired state.

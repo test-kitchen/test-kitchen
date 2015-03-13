@@ -93,13 +93,13 @@ describe Kitchen::Instance do
   let(:logger_io)   { StringIO.new }
   let(:logger)      { Kitchen::Logger.new(:logdev => logger_io) }
   let(:instance)    { Kitchen::Instance.new(opts) }
-  let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
+  let(:provisioners) { [Kitchen::Provisioner::Dummy.new({})] }
   let(:state_file)  { DummyStateFile.new }
   let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
-      :provisioner => provisioner, :busser => busser,
+      :provisioners => provisioners, :busser => busser,
       :logger => logger, :state_file => state_file }
   end
 
@@ -217,20 +217,22 @@ describe Kitchen::Instance do
     end
   end
 
-  describe "#provisioner" do
+  describe "#provisioners" do
 
-    it "returns its provisioner" do
-      instance.provisioner.must_equal provisioner
+    it "returns its provisioners" do
+      instance.provisioners.must_equal provisioners
     end
 
     it "raises an ArgumentError if missing" do
-      opts.delete(:provisioner)
+      opts.delete(:provisioners)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
     it "sets Provisioner#instance to itself" do
       # it's mind-bottling
-      instance.provisioner.instance.must_equal instance
+      instance.provisioners.each do |provisioner|
+        provisioner.instance.must_equal instance
+      end
     end
   end
 
@@ -297,18 +299,22 @@ describe Kitchen::Instance do
       instance.diagnose[:state_file].must_equal :unknown
     end
 
-    it "sets :provisioner key to provisioner's diganose info" do
+    it "sets :provisioners key to provisioner's diganose info" do
+      provisioner = provisioners.first
       provisioner.stubs(:diagnose).returns(:a => "b")
+      provisioners.stubs(:[]).returns(provisioner)
 
-      instance.diagnose[:provisioner].must_equal(:a => "b")
+      instance.diagnose[:provisioners].first.must_equal(:a => "b")
     end
 
-    it "sets :provisioner key to :unknown if obj can't respond to #diagnose" do
-      opts[:provisioner] = Class.new(provisioner.class) {
-        undef_method :diagnose
-      }.new
+    it "sets :provisioners key to :unknown if obj can't respond to #diagnose" do
+      opts[:provisioners] = [
+        Class.new(provisioners.first.class) {
+          undef_method :diagnose
+        }.new
+      ]
 
-      instance.diagnose[:provisioner].must_equal :unknown
+      instance.diagnose[:provisioners].first.must_equal :unknown
     end
 
     it "sets :busser key to busser's diganose info" do

@@ -61,7 +61,7 @@ module Kitchen
         [
           color_pad(instance.name),
           color_pad(instance.driver.name),
-          color_pad(instance.provisioner.name),
+          color_pad(instance.provisioners.last.name),
           format_last_action(instance.last_action)
         ]
       end
