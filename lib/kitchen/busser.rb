@@ -18,6 +18,8 @@
 
 require "base64"
 require "digest"
+require "kitchen"
+require "kitchen/provisioner/chef_base"
 
 module Kitchen
 
@@ -290,6 +292,9 @@ module Kitchen
     # @api private
     def busser_setup_env
       [
+        "if [ ! -d #{config[:ruby_bindir]} ] ; then",
+        omnibus_chef_install_command,
+        "fi ;",
         %{BUSSER_ROOT="#{config[:root_path]}"},
         %{GEM_HOME="#{config[:root_path]}/gems"},
         %{GEM_PATH="#{config[:root_path]}/gems"},
@@ -311,6 +316,14 @@ module Kitchen
       args += " --version #{version}" if version
       args += " --no-rdoc --no-ri"
       args
+    end
+
+    # (see ChefBase#install_command)
+    def omnibus_chef_install_command
+      lines = Kitchen::Provisioner::ChefBase.new.instance_eval(
+         "[Util.shell_helpers, chef_shell_helpers, chef_install_function]"
+      )
+      lines.join("\n")
     end
   end
 end
