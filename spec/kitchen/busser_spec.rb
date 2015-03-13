@@ -52,7 +52,7 @@ describe Kitchen::Busser do
 
   it "#config_keys returns an array of config key names" do
     busser.config_keys.sort.must_equal [
-      :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
+      :busser_bin, :kitchen_root, :plugins, :root_path, :ruby_bindir, :sudo,
       :suite_name, :test_base_path, :version
     ]
   end
@@ -92,13 +92,17 @@ describe Kitchen::Busser do
 
       busser[:busser_bin].must_equal "/beep/bin/busser"
     end
+
+    it ":plugins defaults to an empty array" do
+      busser[:plugins].must_equal []
+    end
   end
 
   describe "#diagnose" do
 
     it "returns a hash with sorted keys" do
       busser.diagnose.keys.must_equal [
-        :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
+        :busser_bin, :kitchen_root, :plugins, :root_path, :ruby_bindir, :sudo,
         :suite_name, :test_base_path, :version
       ]
     end
@@ -227,6 +231,14 @@ describe Kitchen::Busser do
         cmd.must_match regexify(
           %{sudo -E /b/b plugin install } +
             %{busser-abba busser-minispec busser-mondospec},
+          :partial_line)
+      end
+
+      it "runs busser plugin install with config[:plugins]" do
+        config[:plugins] = ["minispec@1.2.3"]
+
+        cmd.must_match regexify(
+          %{busser-abba busser-minispec@1.2.3 busser-mondospec},
           :partial_line)
       end
     end
