@@ -100,7 +100,7 @@ describe Kitchen::Instance do
   let(:instance)    { Kitchen::Instance.new(opts) }
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
-  let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
+  let(:busser)      { Kitchen::Busser.new({}) }
   let(:transport)   { Kitchen::Transport::Dummy.new({}) }
 
   let(:opts) do
@@ -267,6 +267,11 @@ describe Kitchen::Instance do
       opts.delete(:busser)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
+
+    it "sets Busser#instance to itself" do
+      # it's mind-bottling
+      instance.busser.instance.must_equal instance
+    end
   end
 
   describe "#state_file" do
@@ -360,7 +365,7 @@ describe Kitchen::Instance do
     it "sets :busser key to :unknown if obj can't respond to #diagnose" do
       opts[:busser] = Class.new(busser.class) {
         undef_method :diagnose
-      }.new(suite.name, {})
+      }.new({})
 
       instance.diagnose[:busser].must_equal :unknown
     end

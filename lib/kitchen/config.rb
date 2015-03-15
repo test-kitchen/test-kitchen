@@ -213,7 +213,7 @@ module Kitchen
     # @api private
     def new_busser(suite, platform)
       bdata = data.busser_data_for(suite.name, platform.name)
-      Busser.new(suite.name, bdata)
+      Busser.new(bdata)
     end
 
     # Builds a newly configured Driver object, for a given Suite and Platform.

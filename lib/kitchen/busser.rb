@@ -28,31 +28,30 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Busser
 
-    # Constructs a new Busser command generator, given a suite name.
+    include Configurable
+
+    default_config :busser_bin do |busser|
+      File.join(busser[:root_path], %W[bin busser])
+    end
+
+    default_config :root_path, "/tmp/busser"
+
+    default_config :ruby_bindir, "/opt/chef/embedded/bin"
+
+    default_config :sudo, true
+
+    default_config(:suite_name) { |busser| busser.instance.suite.name }
+
+    default_config :version, "busser"
+
+    expand_path_for :test_base_path
+
+    # Creates a new Busser object using the provided configuration data
+    # which will be merged with any default configuration.
     #
-    # @param [String] suite_name name of suite on which to operate
-    #   (**Required**)
-    # @param [Hash] opts optional configuration
-    # @option opts [String] :kitchen_root local path to the root of the project
-    # @option opts [String] :instance_ruby_bindir path to the directory
-    #   containing the Ruby binary on the remote instance
-    # @option opts [TrueClass, FalseClass] :sudo whether or not to invoke
-    #   sudo before commands requiring root access (default: `true`)
-    def initialize(suite_name, opts = {})
-      validate_options(suite_name)
-
-      kitchen_root = opts.fetch(:kitchen_root) { Dir.pwd }
-      test_base_path = opts.fetch(:test_base_path, Kitchen::DEFAULT_TEST_DIR)
-
-      @config = Hash.new
-      @config[:kitchen_root] = kitchen_root
-      @config[:test_base_path] = File.expand_path(test_base_path, kitchen_root)
-      @config[:suite_name] = suite_name
-      @config[:sudo] = opts.fetch(:sudo, true)
-      @config[:ruby_bindir] = opts.fetch(:ruby_bindir, DEFAULT_RUBY_BINDIR)
-      @config[:root_path] = opts.fetch(:root_path, DEFAULT_ROOT_PATH)
-      @config[:version] = opts.fetch(:version, "busser")
-      @config[:busser_bin] = opts.fetch(:busser_bin, File.join(@config[:root_path], "bin/busser"))
+    # @param config [Hash] provided driver configuration
+    def initialize(config = {})
+      init_config(config)
     end
 
     # Returns the name of this busser, suitable for display in a CLI.
@@ -60,30 +59,6 @@ module Kitchen
     # @return [String] name of this busser
     def name
       config[:suite_name]
-    end
-
-    # Returns an array of configuration keys.
-    #
-    # @return [Array] array of configuration keys
-    def config_keys
-      config.keys
-    end
-
-    # Provides hash-like access to configuration keys.
-    #
-    # @param attr [Object] configuration key
-    # @return [Object] value at configuration key
-    def [](attr)
-      config[attr]
-    end
-
-    # Returns a Hash of configuration and other useful diagnostic information.
-    #
-    # @return [Hash] a diagnostic hash
-    def diagnose
-      result = Hash.new
-      config_keys.sort.each { |k| result[k] = config[k] }
-      result
     end
 
     # Returns a command string which installs Busser, and installs all
@@ -161,31 +136,6 @@ module Kitchen
     end
 
     private
-
-    DEFAULT_RUBY_BINDIR = "/opt/chef/embedded/bin".freeze
-    DEFAULT_ROOT_PATH = "/tmp/busser".freeze
-
-    # @return [Hash] a configuration hash
-    # @api private
-    attr_reader :config
-
-    # Ensures that the object is internally consistent and otherwise raising
-    # an exception.
-    #
-    # @param suite_name [String] the suite name
-    # @raise [ClientError] if a suite name is missing
-    # @raise [UserError] if the suite name is invalid
-    # @api private
-    def validate_options(suite_name)
-      if suite_name.nil?
-        raise ClientError, "Busser#new requires a suite_name"
-      end
-
-      if suite_name == "helper"
-        raise UserError,
-          "Suite name invalid: 'helper' is a reserved directory name."
-      end
-    end
 
     # Returns a uniquely sorted Array of Busser plugin gems that need to
     # be installed for the related suite.

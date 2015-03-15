@@ -273,7 +273,7 @@ describe Kitchen::Config do
     it "constructs a Busser object" do
       munger.expects(:busser_data_for).with("tiny", "unax").returns("datum")
       Kitchen::Busser.unstub(:new)
-      Kitchen::Busser.expects(:new).with("tiny", "datum")
+      Kitchen::Busser.expects(:new).with("datum")
 
       config.instances
     end

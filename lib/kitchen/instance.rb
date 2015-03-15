@@ -106,6 +106,7 @@ module Kitchen
       setup_driver
       setup_provisioner
       setup_transport
+      setup_busser
     end
 
     # Returns a displayable representation of the instance.
@@ -270,6 +271,14 @@ module Kitchen
 
         raise ClientError, "Instance#new requires option :#{k}"
       end
+    end
+
+    # Perform any final configuration or preparation needed for the busser
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_busser
+      busser.finalize_config!(self)
     end
 
     # Perform any final configuration or preparation needed for the driver

@@ -18,54 +18,46 @@
 
 require_relative "../spec_helper"
 
-require "kitchen/busser"
-# @TODO: this can be remove once Kitchen::DEFAULT_TEST_DIR is removed
 require "kitchen"
+require "kitchen/busser"
 
 describe Kitchen::Busser do
 
-  let(:suite_name)  { "germany" }
-  let(:config)      { Hash.new }
+  let(:logged_output) { StringIO.new }
+  let(:logger)        { Logger.new(logged_output) }
+  let(:config)        { Hash.new }
+  let(:platform)      { stub(:os_type => nil, :shell_type => nil) }
+  let(:suite)         { stub(:name => "germany") }
+
+  let(:instance) do
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :platform => platform,
+      :suite => suite,
+      :to_str => "instance"
+    )
+  end
 
   let(:busser) do
-    Kitchen::Busser.new(suite_name, config)
+    Kitchen::Busser.new(config).finalize_config!(instance)
   end
 
   describe ".new" do
 
-    it "raises a ClientError if a suite name is not provided" do
-      proc {
-        Kitchen::Busser.new(nil, config)
-      }.must_raise Kitchen::ClientError
-    end
-
-    it "raises a UserError if the suite name is 'helper'" do
-      proc {
-        Kitchen::Busser.new("helper", config)
-      }.must_raise Kitchen::UserError
-    end
+    # TODO: deal
+    # it "raises a UserError if the suite name is 'helper'" do
+    #   proc {
+    #     Kitchen::Busser.new("helper", config)
+    #   }.must_raise Kitchen::UserError
+    # end
   end
 
   it "#name returns the name of the suite" do
     busser.name.must_equal "germany"
   end
 
-  it "#config_keys returns an array of config key names" do
-    busser.config_keys.sort.must_equal [
-      :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-      :suite_name, :test_base_path, :version
-    ]
-  end
-
   describe "configuration" do
-
-    it ":kitchen_root defaults to current directory" do
-      busser[:kitchen_root].must_equal Dir.pwd
-    end
-
-    it ":test_base_path defaults to an expanded path" do
-      busser[:test_base_path].must_equal File.join(Dir.pwd, "test/integration")
-    end
 
     it ":suite_name defaults to the passed in suite name" do
       busser[:suite_name].must_equal "germany"
@@ -91,16 +83,6 @@ describe Kitchen::Busser do
       config[:root_path] = "/beep"
 
       busser[:busser_bin].must_equal "/beep/bin/busser"
-    end
-  end
-
-  describe "#diagnose" do
-
-    it "returns a hash with sorted keys" do
-      busser.diagnose.keys.must_equal [
-        :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-        :suite_name, :test_base_path, :version
-      ]
     end
   end
 
