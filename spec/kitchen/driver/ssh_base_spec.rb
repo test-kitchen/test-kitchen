@@ -91,7 +91,7 @@ describe Kitchen::Driver::SSHBase do
     stub(
       :name         => "coolbeans",
       :logger       => logger,
-      :busser       => busser,
+      :verifier     => busser,
       :provisioner  => provisioner,
       :transport    => transport,
       :to_str       => "instance"

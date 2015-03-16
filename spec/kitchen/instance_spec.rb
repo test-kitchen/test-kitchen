@@ -28,6 +28,7 @@ require "kitchen/provisioner"
 require "kitchen/provisioner/dummy"
 require "kitchen/suite"
 require "kitchen/transport/dummy"
+require "kitchen/verifier/dummy"
 
 class DummyStateFile
 
@@ -100,12 +101,12 @@ describe Kitchen::Instance do
   let(:instance)    { Kitchen::Instance.new(opts) }
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
-  let(:busser)      { Kitchen::Busser.new({}) }
   let(:transport)   { Kitchen::Transport::Dummy.new({}) }
+  let(:verifier)    { Kitchen::Verifier::Dummy.new({}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
-      :provisioner => provisioner, :busser => busser,
+      :provisioner => provisioner, :verifier => verifier,
       :logger => logger, :state_file => state_file, :transport => transport }
   end
 
@@ -257,20 +258,20 @@ describe Kitchen::Instance do
     end
   end
 
-  describe "#busser" do
+  describe "#verifier" do
 
-    it "returns its busser" do
-      instance.busser.must_equal busser
+    it "returns its verifier" do
+      instance.verifier.must_equal verifier
     end
 
     it "raises and ArgumentError if missing" do
-      opts.delete(:busser)
+      opts.delete(:verifier)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
-    it "sets Busser#instance to itself" do
+    it "sets Verifier#instance to itself" do
       # it's mind-bottling
-      instance.busser.instance.must_equal instance
+      instance.verifier.instance.must_equal instance
     end
   end
 
@@ -356,18 +357,18 @@ describe Kitchen::Instance do
       instance.diagnose[:provisioner].must_equal :unknown
     end
 
-    it "sets :busser key to busser's diganose info" do
-      busser.stubs(:diagnose).returns(:a => "b")
+    it "sets :verifier key to verifier's diganose info" do
+      verifier.stubs(:diagnose).returns(:a => "b")
 
-      instance.diagnose[:busser].must_equal(:a => "b")
+      instance.diagnose[:verifier].must_equal(:a => "b")
     end
 
-    it "sets :busser key to :unknown if obj can't respond to #diagnose" do
-      opts[:busser] = Class.new(busser.class) {
+    it "sets :verifier key to :unknown if obj can't respond to #diagnose" do
+      opts[:verifier] = Class.new(verifier.class) {
         undef_method :diagnose
       }.new({})
 
-      instance.diagnose[:busser].must_equal :unknown
+      instance.diagnose[:verifier].must_equal :unknown
     end
 
     it "sets :transport key to transport's diganose info" do

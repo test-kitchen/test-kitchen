@@ -197,23 +197,13 @@ module Kitchen
         :defaults => {
           :driver       => Driver::DEFAULT_PLUGIN,
           :provisioner  => Provisioner::DEFAULT_PLUGIN,
-          :transport    => Transport::DEFAULT_PLUGIN
+          :transport    => Transport::DEFAULT_PLUGIN,
+          :verifier     => Verifier::DEFAULT_PLUGIN
         },
         :kitchen_root   => kitchen_root,
         :test_base_path => test_base_path,
         :log_level      => log_level
       }
-    end
-
-    # Builds a newly configured Busser object, for a given a Suite and Platform.
-    #
-    # @param suite [Suite,#name] a Suite
-    # @param platform [Platform,#name] a Platform
-    # @return [Busser] a new Busser object
-    # @api private
-    def new_busser(suite, platform)
-      bdata = data.busser_data_for(suite.name, platform.name)
-      Busser.new(bdata)
     end
 
     # Builds a newly configured Driver object, for a given Suite and Platform.
@@ -237,13 +227,13 @@ module Kitchen
     # @api private
     def new_instance(suite, platform, index)
       Instance.new(
-        :busser       => new_busser(suite, platform),
         :driver       => new_driver(suite, platform),
         :logger       => new_logger(suite, platform, index),
         :suite        => suite,
         :platform     => platform,
         :provisioner  => new_provisioner(suite, platform),
         :transport    => new_transport(suite, platform),
+        :verifier     => new_verifier(suite, platform),
         :state_file   => new_state_file(suite, platform)
       )
     end
@@ -300,6 +290,18 @@ module Kitchen
     def new_transport(suite, platform)
       tdata = data.transport_data_for(suite.name, platform.name)
       Transport.for_plugin(tdata[:name], tdata)
+    end
+
+    # Builds a newly configured Verifier object, for a given a Suite and
+    # Platform.
+    #
+    # @param suite [Suite,#name] a Suite
+    # @param platform [Platform,#name] a Platform
+    # @return [Verifier] a new Verifier object
+    # @api private
+    def new_verifier(suite, platform)
+      vdata = data.verifier_data_for(suite.name, platform.name)
+      Verifier.for_plugin(vdata[:name], vdata)
     end
   end
 end

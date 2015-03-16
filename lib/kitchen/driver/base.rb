@@ -50,6 +50,11 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def setup(state) # rubocop:disable Lint/UnusedMethodArgument
+        instance.transport.connection(state) do |conn|
+          conn.execute(instance.verifier.setup_cmd)
+        end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       end
 
       # Verifies a converged instance.
@@ -57,6 +62,12 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def verify(state) # rubocop:disable Lint/UnusedMethodArgument
+        instance.transport.connection(state) do |conn|
+          conn.execute(instance.verifier.sync_cmd)
+          conn.execute(instance.verifier.run_cmd)
+        end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       end
 
       # Destroys an instance.

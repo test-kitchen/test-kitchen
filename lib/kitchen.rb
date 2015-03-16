@@ -28,7 +28,6 @@ require "kitchen/util"
 
 require "kitchen/provisioner"
 require "kitchen/provisioner/base"
-require "kitchen/busser"
 require "kitchen/color"
 require "kitchen/collection"
 require "kitchen/config"
@@ -48,6 +47,8 @@ require "kitchen/shell/base"
 require "kitchen/state_file"
 require "kitchen/ssh"
 require "kitchen/suite"
+require "kitchen/verifier"
+require "kitchen/verifier/base"
 require "kitchen/version"
 
 # Test Kitchen base module.

@@ -29,6 +29,7 @@ require "kitchen/provisioner"
 require "kitchen/suite"
 require "kitchen/transport"
 require "kitchen/util"
+require "kitchen/verifier"
 
 module Kitchen
 
@@ -62,7 +63,8 @@ describe Kitchen::Config do
       :defaults => {
         :driver => "dummy",
         :provisioner => "chef_solo",
-        :transport => "ssh"
+        :transport => "ssh",
+        :verifier => "busser"
       },
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
@@ -249,33 +251,25 @@ describe Kitchen::Config do
 
     let(:munger) do
       stub(
-        :busser_data_for => { "junk" => true },
         :driver_data_for => { "junk" => true },
         :provisioner_data_for => { "junk" => true },
-        :transport_data_for => { "junk" => true }
+        :transport_data_for => { "junk" => true },
+        :verifier_data_for => { "junk" => true }
       )
     end
 
     before do
       Kitchen::Instance.stubs(:new).returns("instance")
-      Kitchen::Busser.stubs(:new).returns("busser")
       Kitchen::Driver.stubs(:for_plugin).returns("driver")
       Kitchen::Provisioner.stubs(:for_plugin).returns("provisioner")
       Kitchen::Transport.stubs(:for_plugin).returns("transport")
+      Kitchen::Verifier.stubs(:for_plugin).returns("verifier")
       Kitchen::Logger.stubs(:new).returns("logger")
       Kitchen::StateFile.stubs(:new).returns("state_file")
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
-    end
-
-    it "constructs a Busser object" do
-      munger.expects(:busser_data_for).with("tiny", "unax").returns("datum")
-      Kitchen::Busser.unstub(:new)
-      Kitchen::Busser.expects(:new).with("datum")
-
-      config.instances
     end
 
     it "constructs a Driver object" do
@@ -308,6 +302,16 @@ describe Kitchen::Config do
       config.instances
     end
 
+    it "constructs a Verifier object" do
+      munger.expects(:verifier_data_for).with("tiny", "unax").
+        returns(:name => "vervey", :datum => "lots")
+      Kitchen::Verifier.unstub(:for_plugin)
+      Kitchen::Verifier.expects(:for_plugin).
+        with("vervey", :name => "vervey", :datum => "lots")
+
+      config.instances
+    end
+
     it "constructs a Logger object" do
       Kitchen::Logger.unstub(:new)
       Kitchen::Logger.expects(:new).with(
@@ -332,13 +336,13 @@ describe Kitchen::Config do
       Kitchen::Instance.unstub(:new)
 
       Kitchen::Instance.expects(:new).with(
-        :busser => "busser",
         :driver => "driver",
         :logger => "logger",
         :suite => suites.first,
         :platform => platforms.first,
         :provisioner => "provisioner",
         :transport => "transport",
+        :verifier => "verifier",
         :state_file => "state_file"
       )
 

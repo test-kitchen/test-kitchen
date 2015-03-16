@@ -16,12 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative "../../spec_helper"
 
 require "kitchen"
-require "kitchen/busser"
+require "kitchen/verifier/busser"
 
-describe Kitchen::Busser do
+describe Kitchen::Verifier::Busser do
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
@@ -40,7 +40,7 @@ describe Kitchen::Busser do
   end
 
   let(:busser) do
-    Kitchen::Busser.new(config).finalize_config!(instance)
+    Kitchen::Verifier::Busser.new(config).finalize_config!(instance)
   end
 
   describe ".new" do
@@ -59,20 +59,8 @@ describe Kitchen::Busser do
 
   describe "configuration" do
 
-    it ":suite_name defaults to the passed in suite name" do
-      busser[:suite_name].must_equal "germany"
-    end
-
-    it ":sudo defaults to true" do
-      busser[:sudo].must_equal true
-    end
-
     it ":ruby_bindir defaults the an Omnibus Chef installation" do
       busser[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
-    end
-
-    it ":root_path defaults to '/tmp/busser'" do
-      busser[:root_path].must_equal "/tmp/busser"
     end
 
     it ":version defaults to 'busser'" do

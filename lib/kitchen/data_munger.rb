@@ -44,22 +44,8 @@ module Kitchen
       convert_legacy_driver_format!
       convert_legacy_chef_paths_format!
       convert_legacy_require_chef_omnibus_format!
+      convert_legacy_busser_format!
       move_chef_data_to_provisioner!
-    end
-
-    # Generate a new Hash of configuration data that can be used to construct
-    # a new Busser object.
-    #
-    # @param suite [String] a suite name
-    # @param platform [String] a platform name
-    # @return [Hash] a new configuration Hash that can be used to construct a
-    #   new Busser
-    def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
-        set_kitchen_config_at!(bdata, :kitchen_root)
-        set_kitchen_config_at!(bdata, :test_base_path)
-        set_kitchen_config_at!(bdata, :log_level)
-      end
     end
 
     # Generate a new Hash of configuration data that can be used to construct
@@ -122,6 +108,21 @@ module Kitchen
       end
     end
 
+    # Generate a new Hash of configuration data that can be used to construct
+    # a new Verifier object.
+    #
+    # @param suite [String] a suite name
+    # @param platform [String] a platform name
+    # @return [Hash] a new configuration Hash that can be used to construct a
+    #   new Verifier
+    def verifier_data_for(suite, platform)
+      merged_data_for(:verifier, suite, platform).tap do |vdata|
+        set_kitchen_config_at!(vdata, :kitchen_root)
+        set_kitchen_config_at!(vdata, :test_base_path)
+        set_kitchen_config_at!(vdata, :log_level)
+      end
+    end
+
     private
 
     # @return [Hash] the user data hash
@@ -137,6 +138,93 @@ module Kitchen
         root[key] = namespaces.
           map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
           compact
+      end
+    end
+
+    # Destructively moves old-style `:busser` configuration hashes into the
+    # correct `:verifier` hash.
+    #
+    # This method converts the following:
+    #
+    #   {
+    #     :busser => { :one => "two" },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :busser => "bar"
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :busser => { :three => "four" }
+    #       }
+    #     ]
+    #   }
+    #
+    # into the following:
+    #
+    #   {
+    #     :verifier => {
+    #       :name => "busser",
+    #       :one => "two"
+    #     }
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :verifier => {
+    #           :name => "busser",
+    #           :version => "bar
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :verifier => {
+    #           :name => "busser",
+    #           :three => "four"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # @deprecated The following configuration hashes should no longer be
+    #   created in a `:platform`, `:suite`, or common location:
+    #   `:busser`. Use a `:verifier` hash block in their place.
+    # @api private
+    def convert_legacy_busser_format!
+      convert_legacy_busser_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_busser_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_busser_format_at!(suite)
+      end
+    end
+
+    # Destructively moves old-style `:busser` configuration hashes into the
+    # correct `:verifier` hashes. This method has no knowledge of suites,
+    # platforms, or the like, just a vanilla hash.
+    #
+    # @param root [Hash] a hash to use as the root of the conversion
+    # @deprecated The following configuration hashses should no longer be
+    #   created in a Test Kitchen hash: `:busser`. Use a `:verifier` hash
+    #   block in their place.
+    # @api private
+    def convert_legacy_busser_format_at!(root)
+      if root.key?(:busser)
+        bdata = root.delete(:busser)
+        bdata = { :version => bdata } if bdata.is_a?(String)
+        bdata[:name] = "busser" if bdata[:name].nil?
+
+        vdata = root.fetch(:verifier, Hash.new)
+        vdata = { :name => vdata } if vdata.is_a?(String)
+        root[:verifier] = bdata.rmerge(vdata)
       end
     end
 

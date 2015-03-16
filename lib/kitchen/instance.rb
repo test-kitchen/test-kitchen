@@ -68,9 +68,9 @@ module Kitchen
     #   an instance.
     attr_reader :transport
 
-    # @return [Busser] busser object for instance to manage the busser
+    # @return [Verifier] verifier object for instance to manage the verifier
     #   installation on this instance
-    attr_reader :busser
+    attr_reader :verifier
 
     # @return [Logger] the logger for this instance
     attr_reader :logger
@@ -84,7 +84,7 @@ module Kitchen
     # @option options [Provisioner::Base] :provisioner the provisioner
     # @option options [Transport::Base] :transport the transport
     #   (**Required**)
-    # @option options [Busser] :busser the busser logger (**Required**)
+    # @option options [Verifier] :verifier the verifier logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
     # @option options [StateFile] :state_file the state file object to use
@@ -99,14 +99,14 @@ module Kitchen
       @driver       = options.fetch(:driver)
       @provisioner  = options.fetch(:provisioner)
       @transport    = options.fetch(:transport)
-      @busser       = options.fetch(:busser)
+      @verifier     = options.fetch(:verifier)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
 
       setup_driver
       setup_provisioner
       setup_transport
-      setup_busser
+      setup_verifier
     end
 
     # Returns a displayable representation of the instance.
@@ -235,7 +235,7 @@ module Kitchen
     def diagnose
       result = Hash.new
       [
-        :platform, :state_file, :driver, :provisioner, :transport, :busser
+        :platform, :state_file, :driver, :provisioner, :transport, :verifier
       ].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
@@ -265,20 +265,13 @@ module Kitchen
     # @api private
     def validate_options(options)
       [
-        :suite, :platform, :driver, :provisioner, :transport, :busser, :state_file
+        :suite, :platform, :driver, :provisioner,
+        :transport, :verifier, :state_file
       ].each do |k|
         next if options.key?(k)
 
         raise ClientError, "Instance#new requires option :#{k}"
       end
-    end
-
-    # Perform any final configuration or preparation needed for the busser
-    # object carry out its duties.
-    #
-    # @api private
-    def setup_busser
-      busser.finalize_config!(self)
     end
 
     # Perform any final configuration or preparation needed for the driver
@@ -310,6 +303,14 @@ module Kitchen
     # @api private
     def setup_transport
       transport.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for the verifier
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_verifier
+      verifier.finalize_config!(self)
     end
 
     # Perform all actions in order from last state to desired state.

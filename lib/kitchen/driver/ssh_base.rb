@@ -306,7 +306,7 @@ module Kitchen
       #
       # @return [Busser] a busser
       def busser
-        instance.busser
+        instance.verifier
       end
     end
   end

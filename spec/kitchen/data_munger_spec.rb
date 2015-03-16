@@ -90,7 +90,7 @@ module Kitchen
       :driver => :name,
       :provisioner => :name,
       :transport => :name,
-      :busser => :version
+      :verifier => :name
     }
 
     DATA_KEYS.each_pair do |key, default_key|
@@ -1050,12 +1050,12 @@ module Kitchen
             end
           end
 
-          describe "for #busser_data_for" do
+          describe "for #verifier_data_for" do
 
             it "is returned when provided" do
               DataMunger.new(
                 {
-                  :busser => "chefy",
+                  :verifier => "chefy",
                   :platforms => [
                     { :name => "plat" }
                   ],
@@ -1066,8 +1066,8 @@ module Kitchen
                 {
                   key => "datvalue"
                 }
-              ).busser_data_for("sweet", "plat").must_equal(
-                :version => "chefy",
+              ).verifier_data_for("sweet", "plat").must_equal(
+                :name => "chefy",
                 key => "datvalue"
               )
             end
@@ -1078,7 +1078,7 @@ module Kitchen
                   :kitchen => {
                     key => "datvalue"
                   },
-                  :busser => "chefy",
+                  :verifier => "chefy",
                   :platforms => [
                     { :name => "plat" }
                   ],
@@ -1087,8 +1087,8 @@ module Kitchen
                   ]
                 },
                 {}
-              ).busser_data_for("sweet", "plat").must_equal(
-                :version => "chefy",
+              ).verifier_data_for("sweet", "plat").must_equal(
+                :name => "chefy",
                 key => "datvalue"
               )
             end
@@ -1099,7 +1099,7 @@ module Kitchen
                   :kitchen => {
                     key => "datvalue"
                   },
-                  :busser => "chefy",
+                  :verifier => "chefy",
                   :platforms => [
                     { :name => "plat" }
                   ],
@@ -1110,16 +1110,16 @@ module Kitchen
                 {
                   key => "ilose"
                 }
-              ).busser_data_for("sweet", "plat").must_equal(
-                :version => "chefy",
+              ).verifier_data_for("sweet", "plat").must_equal(
+                :name => "chefy",
                 key => "datvalue"
               )
             end
 
-            it "rejects any value in busser data" do
+            it "rejects any value in verifier data" do
               DataMunger.new(
                 {
-                  :busser => {
+                  :verifier => {
                     :version => "chefy",
                     key => "imevil"
                   },
@@ -1131,7 +1131,7 @@ module Kitchen
                   ]
                 },
                 {}
-              ).busser_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat").must_equal(
                 :version => "chefy"
               )
             end
@@ -1700,6 +1700,318 @@ module Kitchen
           ).provisioner_data_for("suite", "plat").must_equal(
             :name => "chefy",
             :require_chef_omnibus => "it's probably fine"
+          )
+        end
+      end
+    end
+
+    describe "legacy busser blocks to verifier" do
+
+      describe "from a single source" do
+
+        it "merges old common busser name to version into verifier" do
+          DataMunger.new(
+            {
+              :busser => "starship"
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "busser",
+            :version => "starship"
+          )
+        end
+
+        it "merges old common busser name to version with exising verifier" do
+          DataMunger.new(
+            {
+              :busser => "starship",
+              :verifier => {
+                :a => "b"
+              }
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "busser",
+            :version => "starship",
+            :a => "b"
+          )
+        end
+
+        it "merges old common busser name to version into verifier with name" do
+          DataMunger.new(
+            {
+              :busser => "starship",
+              :verifier => "stellar"
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "stellar",
+            :version => "starship"
+          )
+        end
+
+        it "merges old busser data into verifier with name" do
+          DataMunger.new(
+            {
+              :busser => {
+                :a => "b"
+              },
+              :verifier => "stellar"
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "stellar",
+            :a => "b"
+          )
+        end
+
+        it "merges old busser data into verifier data" do
+          DataMunger.new(
+            {
+              :busser => {
+                :a => "b",
+                :both => "legacy"
+              },
+              :verifier => {
+                :name => "stellar",
+                :c => "d",
+                :both => "modern"
+              }
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "stellar",
+            :a => "b",
+            :c => "d",
+            :both => "modern"
+          )
+        end
+
+        it "returns platform verifier name" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :busser => "flip"
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("suite", "plat").must_equal(
+            :name => "busser",
+            :version => "flip"
+          )
+        end
+
+        it "return platform config containing verifier hash" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :busser => "flip",
+                  :verifier => {
+                    :flop => "yep"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("suite", "plat").must_equal(
+            :name => "busser",
+            :version => "flip",
+            :flop => "yep"
+          )
+        end
+
+        it "returns suite driver name" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :busser => "waz"
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "platform").must_equal(
+            :name => "busser",
+            :version => "waz"
+          )
+        end
+
+        it "returns suite config containing verifier hash" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :busser => "waz",
+                  :verifier => {
+                    :up => "nope"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "platform").must_equal(
+            :name => "busser",
+            :version => "waz",
+            :up => "nope"
+          )
+        end
+      end
+
+      describe "from multiple sources" do
+
+        it "suite into platform into common" do
+          DataMunger.new(
+            {
+              :busser => {
+                :version => "commony",
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :platforms => [
+                {
+                  :name => "plat",
+                  :busser => {
+                    :version => "platformy",
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
+                }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :busser => {
+                    :version => "suitey",
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "plat").must_equal(
+            :name => "busser",
+            :version => "suitey",
+            :color => "purple",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :platform => "stuff",
+              :suite => "things"
+            }
+          )
+        end
+
+        it "platform into common" do
+          DataMunger.new(
+            {
+              :busser => {
+                :version => "commony",
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :platforms => [
+                {
+                  :name => "plat",
+                  :busser => {
+                    :version => "platformy",
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "plat").must_equal(
+            :name => "busser",
+            :version => "platformy",
+            :color => "purple",
+            :fruit => ["banana"],
+            :deep => {
+              :common => "junk",
+              :platform => "stuff"
+            }
+          )
+        end
+
+        it "suite into common" do
+          DataMunger.new(
+            {
+              :busser => {
+                :version => "commony",
+                :color => "purple",
+                :fruit => %w[apple pear],
+                :deep => { :common => "junk" }
+              },
+              :suites => [
+                {
+                  :name => "sweet",
+                  :busser => {
+                    :version => "suitey",
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "plat").must_equal(
+            :name => "busser",
+            :version => "suitey",
+            :color => "purple",
+            :fruit => %w[apple pear],
+            :vehicle => "car",
+            :deep => {
+              :common => "junk",
+              :suite => "things"
+            }
+          )
+        end
+
+        it "suite into platform" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :busser => {
+                    :version => "platformy",
+                    :fruit => ["banana"],
+                    :deep => { :platform => "stuff" }
+                  }
+                }
+              ],
+              :suites => [
+                {
+                  :name => "sweet",
+                  :busser => {
+                    :version => "suitey",
+                    :vehicle => "car",
+                    :deep => { :suite => "things" }
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "plat").must_equal(
+            :name => "busser",
+            :version => "suitey",
+            :fruit => ["banana"],
+            :vehicle => "car",
+            :deep => {
+              :platform => "stuff",
+              :suite => "things"
+            }
           )
         end
       end
