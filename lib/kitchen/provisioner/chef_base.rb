@@ -193,21 +193,6 @@ module Kitchen
         }
       end
 
-      # Builds a shell environment variable assignment string for the
-      # required shell type.
-      #
-      # @param name [String] variable name
-      # @param value [String] variable value
-      # @return [String] shell variable assignment
-      # @api private
-      def env_var(name, value)
-        if powershell_shell?
-          shell_var("env:#{name}", value)
-        else
-          "#{shell_var(name, value)}; export #{name}"
-        end
-      end
-
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
       # String.
       #
@@ -334,61 +319,6 @@ module Kitchen
         when "true" then "install only if missing"
         when "latest" then "always install latest version"
         else version
-        end
-      end
-
-      # Builds a complete command given a variables String preamble and a file
-      # containing shell code.
-      #
-      # @param vars [String] shell variables, as a String
-      # @param file [String] file basename (without extension) containing
-      #   shell code
-      # @return [String] command
-      # @api private
-      def shell_code_from_file(vars, file)
-        src_file = File.join(
-          File.dirname(__FILE__),
-          %w[.. .. .. support],
-          file + (powershell_shell? ? ".ps1" : ".sh")
-        )
-
-        wrap_shell_code([vars, "", IO.read(src_file)].join("\n"))
-      end
-
-      # Builds a shell variable assignment string for the required shell type.
-      #
-      # @param name [String] variable name
-      # @param value [String] variable value
-      # @return [String] shell variable assignment
-      # @api private
-      def shell_var(name, value)
-        if powershell_shell?
-          %{$#{name} = "#{value}"}
-        else
-          %{#{name}="#{value}"}
-        end
-      end
-
-      # Wraps a body of shell code with common context appropriate for the type
-      # of shell.
-      #
-      # @param code [String] the shell code to be wrapped
-      # @return [String] wrapped shell code
-      # @api private
-      def wrap_shell_code(code)
-        env = []
-        if config[:http_proxy]
-          env << env_var("http_proxy", config[:http_proxy])
-          env << env_var("HTTP_PROXY", config[:http_proxy])
-        end
-        if config[:https_proxy]
-          env << env_var("https_proxy", config[:https_proxy])
-          env << env_var("HTTPS_PROXY", config[:https_proxy])
-        end
-        if powershell_shell?
-          env.join("\n").concat("\n").concat(code)
-        else
-          Util.wrap_command(env.join("\n").concat("\n").concat(code))
         end
       end
     end

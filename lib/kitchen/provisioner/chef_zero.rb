@@ -127,10 +127,10 @@ module Kitchen
         gem_cache = remote_path_join(gem_home, "cache")
 
         [
-          env_var("CHEF_REPO_PATH", root),
-          env_var("GEM_HOME", gem_home),
-          env_var("GEM_PATH", gem_path),
-          env_var("GEM_CACHE", gem_cache)
+          shell_env_var("CHEF_REPO_PATH", root),
+          shell_env_var("GEM_HOME", gem_home),
+          shell_env_var("GEM_PATH", gem_path),
+          shell_env_var("GEM_CACHE", gem_cache)
         ].join("\n").concat("\n")
       end
 

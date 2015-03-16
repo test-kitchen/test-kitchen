@@ -654,6 +654,138 @@ describe Kitchen::Configurable do
     end
   end
 
+  describe "#shell_env_var" do
+
+    it "for powershell type shells returns a powershell environment variable" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.send(:shell_env_var, "foo", "bar").
+        must_equal %{$env:foo = "bar"}
+    end
+
+    it "for bourne type shells returns a bourne environment variable" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.send(:shell_env_var, "foo", "bar").
+        must_equal %{foo="bar"; export foo}
+    end
+  end
+
+  describe "#shell_var" do
+
+    it "for powershell type shells returns a powershell variable" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.send(:shell_var, "foo", "bar").must_equal %{$foo = "bar"}
+    end
+
+    it "for bourne type shells returns a bourne variable" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.send(:shell_var, "foo", "bar").must_equal %{foo="bar"}
+    end
+  end
+
+  describe "#wrap_shell_code" do
+
+    let(:cmd) { subject.send(:wrap_shell_code, "mkdir foo") }
+
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell (sh)" do
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+    end
+
+    describe "for powershell shells" do
+
+      before { platform.stubs(:shell_type).returns("powershell") }
+
+      it "uses powershell shell" do
+        cmd.must_equal("\nmkdir foo")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+    end
+  end
+
   it "has a default verify dependencies method" do
     subject.verify_dependencies.must_be_nil
   end
@@ -676,5 +808,9 @@ describe Kitchen::Configurable do
 
       subject.send(:logger).must_equal Kitchen.logger
     end
+  end
+
+  def outdent!(*args)
+    Kitchen::Util.outdent!(*args)
   end
 end

@@ -236,6 +236,35 @@ module Kitchen
       instance ? instance.logger : Kitchen.logger
     end
 
+    # Builds a shell environment variable assignment string for the
+    # required shell type.
+    #
+    # @param name [String] variable name
+    # @param value [String] variable value
+    # @return [String] shell variable assignment
+    # @api private
+    def shell_env_var(name, value)
+      if powershell_shell?
+        shell_var("env:#{name}", value)
+      else
+        "#{shell_var(name, value)}; export #{name}"
+      end
+    end
+
+    # Builds a shell variable assignment string for the required shell type.
+    #
+    # @param name [String] variable name
+    # @param value [String] variable value
+    # @return [String] shell variable assignment
+    # @api private
+    def shell_var(name, value)
+      if powershell_shell?
+        %{$#{name} = "#{value}"}
+      else
+        %{#{name}="#{value}"}
+      end
+    end
+
     # Runs all validations set up for the included class. Each validation is
     # for a specific configuration attribute and has an associated callable
     # block. Each validation block is called with the attribute, its value,
@@ -245,6 +274,29 @@ module Kitchen
     def validate_config!
       self.class.validations.each do |attr, block|
         block.call(attr, config[attr], self)
+      end
+    end
+
+    # Wraps a body of shell code with common context appropriate for the type
+    # of shell.
+    #
+    # @param code [String] the shell code to be wrapped
+    # @return [String] wrapped shell code
+    # @api private
+    def wrap_shell_code(code)
+      env = []
+      if config[:http_proxy]
+        env << shell_env_var("http_proxy", config[:http_proxy])
+        env << shell_env_var("HTTP_PROXY", config[:http_proxy])
+      end
+      if config[:https_proxy]
+        env << shell_env_var("https_proxy", config[:https_proxy])
+        env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
+      end
+      if powershell_shell?
+        env.join("\n").concat("\n").concat(code)
+      else
+        Util.wrap_command(env.join("\n").concat("\n").concat(code))
       end
     end
 
