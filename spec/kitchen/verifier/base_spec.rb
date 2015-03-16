@@ -30,6 +30,8 @@ module Kitchen
 
     class TestingDummy < Kitchen::Verifier::Base
 
+      attr_reader :called_create_sandbox, :called_cleanup_sandbox
+
       def install_command
         "install"
       end
@@ -44,6 +46,18 @@ module Kitchen
 
       def run_command
         "run"
+      end
+
+      def create_sandbox
+        @called_create_sandbox = true
+      end
+
+      def cleanup_sandbox
+        @called_cleanup_sandbox = true
+      end
+
+      def sandbox_path
+        "/tmp/sandbox"
       end
     end
   end
@@ -114,8 +128,32 @@ describe Kitchen::Verifier::Base do
     end
 
     before do
+      FakeFS.activate!
+      FileUtils.mkdir_p(File.join(verifier.sandbox_path, "stuff"))
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute)
+      connection.stubs(:upload)
+    end
+
+    after do
+      FakeFS.deactivate!
+      FakeFS::FileSystem.clear
+    end
+
+    it "creates the sandbox" do
+      verifier.expects(:create_sandbox)
+
+      cmd
+    end
+
+    it "ensures that the sandbox is cleanup up" do
+      transport.stubs(:connection).raises
+      verifier.expects(:cleanup_sandbox)
+
+      begin
+        cmd
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
     end
 
     it "yields a connection given the state" do
@@ -135,6 +173,32 @@ describe Kitchen::Verifier::Base do
       cmd
     end
 
+    it "logs to info" do
+      cmd
+
+      logged_output.string.
+        must_match(/INFO -- : Transferring files to instance$/)
+    end
+
+    it "uploads sandbox files" do
+      connection.expects(:upload).with(["/tmp/sandbox/stuff"], "/tmp/verifier")
+
+      cmd
+    end
+
+    it "logs to debug" do
+      cmd
+
+      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+    end
+
+    it "raises an ActionFailed on transfer when TransportFailed is raised" do
+      connection.stubs(:upload).
+        raises(Kitchen::Transport::TransportFailed.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
+    end
+
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute).
         raises(Kitchen::Transport::TransportFailed.new("dang"))
@@ -147,6 +211,64 @@ describe Kitchen::Verifier::Base do
 
     it "has a #{cmd} method" do
       verifier.public_send(cmd).must_be_nil
+    end
+  end
+
+  describe "sandbox" do
+
+    after do
+      begin
+        verifier.cleanup_sandbox
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
+    end
+
+    it "raises ClientError if #sandbox_path is called before #create_sandbox" do
+      proc { verifier.sandbox_path }.must_raise Kitchen::ClientError
+    end
+
+    it "#create_sandbox creates a temporary directory" do
+      verifier.create_sandbox
+
+      File.directory?(verifier.sandbox_path).must_equal true
+      format("%o", File.stat(verifier.sandbox_path).mode)[1, 4].
+        must_equal "0755"
+    end
+
+    it "#create_sandbox logs an info message" do
+      verifier.create_sandbox
+
+      logged_output.string.must_match info_line("Preparing files for transfer")
+    end
+
+    it "#create_sandbox logs a debug message" do
+      verifier.create_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Creating local sandbox in ")
+    end
+
+    it "#cleanup_sandbox deletes the sandbox directory" do
+      verifier.create_sandbox
+      verifier.cleanup_sandbox
+
+      File.directory?(verifier.sandbox_path).must_equal false
+    end
+
+    it "#cleanup_sandbox logs a debug message" do
+      verifier.create_sandbox
+      verifier.cleanup_sandbox
+
+      logged_output.string.
+        must_match debug_line_starting_with("Cleaning up local sandbox in ")
+    end
+
+    def info_line(msg)
+      %r{^I, .* : #{Regexp.escape(msg)}$}
+    end
+
+    def debug_line_starting_with(msg)
+      %r{^D, .* : #{Regexp.escape(msg)}}
     end
   end
 

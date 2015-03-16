@@ -20,6 +20,7 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/transport/ssh"
+require "kitchen/verifier/busser"
 
 module Kitchen
 
@@ -61,12 +62,18 @@ describe Kitchen::Driver::SSHBase do
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
-  let(:busser) do
-    stub(
-      :setup_cmd  => "setup",
-      :sync_cmd   => "sync",
-      :run_cmd    => "run"
-    )
+  let(:verifier) do
+    v = mock("busser")
+    v.responds_like_instance_of(Kitchen::Verifier::Busser)
+    v.stubs(:install_command).returns("install")
+    v.stubs(:init_command).returns("init")
+    v.stubs(:prepare_command).returns("prepare")
+    v.stubs(:run_command).returns("run")
+    v.stubs(:create_sandbox).returns(true)
+    v.stubs(:cleanup_sandbox).returns(true)
+    v.stubs(:sandbox_path).returns("/tmp/sandbox")
+    v.stubs(:[]).with(:root_path).returns("/tmp/verifier")
+    v
   end
 
   let(:provisioner) do
@@ -91,7 +98,7 @@ describe Kitchen::Driver::SSHBase do
     stub(
       :name         => "coolbeans",
       :logger       => logger,
-      :verifier     => busser,
+      :verifier     => verifier,
       :provisioner  => provisioner,
       :transport    => transport,
       :to_str       => "instance"
@@ -394,35 +401,35 @@ describe Kitchen::Driver::SSHBase do
 
     constructs_an_ssh_connection
 
-    it "invokes the busser#setup_cmd over ssh" do
+    it "invokes the Verifier#install_command over ssh" do
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("setup")
+      connection.expects(:execute).with("install")
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :http_proxy set in config" do
+    it "invokes the Verifier#install_command with :http_proxy set in config" do
       config[:http_proxy] = "http://proxy"
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env http_proxy=http://proxy setup")
+      connection.expects(:execute).with("env http_proxy=http://proxy install")
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :https_proxy set in config" do
+    it "invokes the Verifier#install_command with :https_proxy set in config" do
       config[:https_proxy] = "https://proxy"
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env https_proxy=https://proxy setup")
+      connection.expects(:execute).with("env https_proxy=https://proxy install")
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :http_proxy & :https_proxy set" do
+    it "invokes the Verifier#install_command with :http_proxy & :https_proxy set" do
       config[:http_proxy] = "http://proxy"
       config[:https_proxy] = "https://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy setup")
+        "env http_proxy=http://proxy https_proxy=https://proxy install")
 
       cmd
     end
@@ -438,57 +445,99 @@ describe Kitchen::Driver::SSHBase do
   describe "#verify" do
 
     let(:cmd)         { driver.verify(state) }
-    let(:connection)  { mock }
+    let(:connection)  { stub(:execute => true, :upload => true) }
 
     before do
       state[:hostname] = "fizzy"
       state[:username] = "bork"
+      transport.stubs(:connection).yields(connection)
     end
 
     constructs_an_ssh_connection
 
-    it "invokes the busser#sync_cmd & #run_cmd over ssh" do
-      transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("sync")
-      connection.expects(:execute).with("run")
+    it "creates the sandbox" do
+      verifier.expects(:create_sandbox)
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :http_proxy set in config" do
-      busser.stubs(:run_cmd).returns(nil)
-      config[:http_proxy] = "http://proxy"
-      transport.stubs(:connection).yields(connection)
-      connection.stubs(:execute).with(nil)
-      connection.expects(:execute).with("env http_proxy=http://proxy sync")
+    it "ensures that the sandbox is cleanup up" do
+      transport.stubs(:connection).raises
+      verifier.expects(:cleanup_sandbox)
+
+      begin
+        cmd
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
+    end
+
+    it "invokes the verifier commands over the transport" do
+      order = sequence("order")
+      connection.expects(:execute).with("init").in_sequence(order)
+      connection.expects(:execute).with("prepare").in_sequence(order)
+      connection.expects(:execute).with("run").in_sequence(order)
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :https_proxy set in config" do
-      busser.stubs(:run_cmd).returns(nil)
-      config[:https_proxy] = "https://proxy"
-      transport.stubs(:connection).yields(connection)
-      connection.stubs(:execute).with(nil)
-      connection.expects(:execute).with("env https_proxy=https://proxy sync")
+    %W[init prepare run].each do |phase|
+      it "invokes Verifier##{phase}_command over ssh" do
+        connection.expects(:execute).with(phase)
+
+        cmd
+      end
+
+      it "invokes Verifier##{phase}_command with :http_proxy set in config" do
+        config[:http_proxy] = "http://proxy"
+        connection.expects(:execute).with("env http_proxy=http://proxy #{phase}")
+
+        cmd
+      end
+
+      it "invokes Verifier##{phase}_command with :https_proxy set in config" do
+        config[:https_proxy] = "https://proxy"
+        connection.expects(:execute).with("env https_proxy=https://proxy #{phase}")
+
+        cmd
+      end
+
+      it "invokes Verifier##{phase}_command with :http_proxy & :https_proxy set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        connection.expects(:execute).with(
+          "env http_proxy=http://proxy https_proxy=https://proxy #{phase}")
+
+        cmd
+      end
+    end
+
+    it "logs to info" do
+      cmd
+
+      logged_output.string.
+        must_match(/INFO -- : Transferring files to instance$/)
+    end
+
+    it "uploads sandbox files" do
+      connection.expects(:upload).with([], "/tmp/verifier")
 
       cmd
     end
 
-    it "invokes the busser#setup_cmd with :http_proxy & :https_proxy set" do
-      busser.stubs(:run_cmd).returns(nil)
-      config[:http_proxy] = "http://proxy"
-      config[:https_proxy] = "https://proxy"
-      transport.stubs(:connection).yields(connection)
-      connection.stubs(:execute).with(nil)
-      connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy sync")
-
+    it "logs to debug" do
       cmd
+
+      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+    end
+
+    it "raises an ActionFailed on transfer when TransportFailed is raised" do
+      connection.stubs(:upload).
+        raises(Kitchen::Transport::TransportFailed.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed when SSHFailed is raised" do
-      transport.stubs(:connection).yields(connection)
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
@@ -623,8 +672,8 @@ describe Kitchen::Driver::SSHBase do
       driver.verify_dependencies.must_be_nil
     end
 
-    it "#busser returns the instance's busser" do
-      driver.send(:busser).must_equal busser
+    it "#busser returns the instance's verifier" do
+      driver.send(:busser).must_equal verifier
     end
 
     describe ".no_parallel_for" do

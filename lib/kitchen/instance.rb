@@ -359,7 +359,12 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def setup_action
-      perform_action(:setup, "Setting up")
+      banner "Setting up #{to_str}..."
+      elapsed = action(:setup) do |state|
+        legacy_ssh_base_setup(state) if legacy_ssh_base_driver?
+      end
+      info("Finished setting up #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the verify action.
@@ -368,7 +373,16 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def verify_action
-      perform_action(:verify, "Verifying")
+      banner "Verifying #{to_str}..."
+      elapsed = action(:verify) do |state|
+        if legacy_ssh_base_driver?
+          legacy_ssh_base_verify(state)
+        else
+          verifier.call(state)
+        end
+      end
+      info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the destroy action.
@@ -509,6 +523,15 @@ module Kitchen
       driver.converge(state)
     end
 
+    # @return [TrueClass,FalseClass] whether or not the Driver inherits from
+    #   `Kitchen::Driver::SSHBase`
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#converge` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_driver?
+      driver.class < Kitchen::Driver::SSHBase
+    end
+
     # Invokes `Driver#login_command` on a legacy Driver, which inherits from
     # `Kitchen::Driver::SSHBase`.
     #
@@ -523,13 +546,32 @@ module Kitchen
       driver.login_command(state)
     end
 
-    # @return [TrueClass,FalseClass] whether or not the Driver inherits from
-    #   `Kitchen::Driver::SSHBase`
+    # Invokes `Driver#setup` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
     # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#converge` method will no longer be called on the Driver.
+    #   `#setup` method will no longer be called on the Driver.
     # @api private
-    def legacy_ssh_base_driver?
-      driver.class < Kitchen::Driver::SSHBase
+    def legacy_ssh_base_setup(state)
+      warn("Running legacy setup for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.setup(state)
+    end
+
+    # Invokes `Driver#verify` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#verify` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_verify(state)
+      warn("Running legacy verify for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.verify(state)
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

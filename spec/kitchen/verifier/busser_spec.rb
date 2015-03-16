@@ -39,53 +39,76 @@ describe Kitchen::Verifier::Busser do
     )
   end
 
-  let(:busser) do
+  let(:verifier) do
     Kitchen::Verifier::Busser.new(config).finalize_config!(instance)
   end
 
-  describe ".new" do
-
-    # TODO: deal
-    # it "raises a UserError if the suite name is 'helper'" do
-    #   proc {
-    #     Kitchen::Busser.new("helper", config)
-    #   }.must_raise Kitchen::UserError
-    # end
+  let(:files) do
+    {
+      "mondospec/charlie" => {
+        :content => "charlie",
+        :perms => "0764"
+      },
+      "minispec/beta" => {
+        :content => "beta",
+        :perms => "0644"
+      },
+      "abba/alpha" => {
+        :content => "alpha",
+        :perms => "0440"
+      }
+    }
   end
 
-  it "#name returns the name of the suite" do
-    busser.name.must_equal "germany"
+  let(:helper_files) do
+    {
+      "minispec/spec_helper" => {
+        :content => "helping",
+        :perms => "0644"
+      },
+      "abba/common" => {
+        :content => "yeppers",
+        :perms => "0664"
+      }
+    }
   end
+
+  before do
+    @root = Dir.mktmpdir
+    config[:test_base_path] = @root
+  end
+
+  after do
+    FileUtils.remove_entry(@root)
+  end
+
+  # TODO: deal with this:
+  # it "raises a UserError if the suite name is 'helper'" do
+  #   proc {
+  #     Kitchen::Busser.new("helper", config)
+  #   }.must_raise Kitchen::UserError
+  # end
 
   describe "configuration" do
 
     it ":ruby_bindir defaults the an Omnibus Chef installation" do
-      busser[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
+      verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
     end
 
     it ":version defaults to 'busser'" do
-      busser[:version].must_equal "busser"
+      verifier[:version].must_equal "busser"
     end
 
     it ":busser_bin defaults to a binstub under :root_path" do
       config[:root_path] = "/beep"
 
-      busser[:busser_bin].must_equal "/beep/bin/busser"
+      verifier[:busser_bin].must_equal "/beep/bin/busser"
     end
   end
 
-  describe "#setup_cmd" do
+  describe "#install_command" do
 
-    before do
-      @root = Dir.mktmpdir
-      config[:test_base_path] = @root
-    end
-
-    after do
-      FileUtils.remove_entry(@root)
-    end
-
-    let(:cmd) { busser.setup_cmd }
+    let(:cmd) { verifier.install_command }
 
     describe "with no suite test files" do
 
@@ -97,20 +120,16 @@ describe Kitchen::Verifier::Busser do
     describe "with suite test files" do
 
       before do
-        base = "#{config[:test_base_path]}/germany"
-
-        FileUtils.mkdir_p "#{base}/mondospec"
-        File.open("#{base}/mondospec/charlie", "wb") { |f| f.write("charlie") }
-        FileUtils.mkdir_p "#{base}/minispec"
-        File.open("#{base}/minispec/beta", "wb") { |f| f.write("beta") }
-        FileUtils.mkdir_p "#{base}/abba"
-        File.open("#{base}/abba/alpha", "wb") { |f| f.write("alpha") }
-
+        create_test_files
         config[:ruby_bindir] = "/r"
       end
 
       it "uses bourne shell" do
         cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
         cmd.must_match(/'\Z/)
       end
 
@@ -145,21 +164,21 @@ describe Kitchen::Verifier::Busser do
 
       it "checks if busser is installed" do
         cmd.must_match regexify(
-          %{if ! sudo -E /r/gem list busser -i >/dev/null;}, :partial_line)
+          %{if ! /r/gem list busser -i >/dev/null;}, :partial_line)
       end
 
       describe "installing busser" do
 
         it "installs the latest busser gem by default" do
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --no-rdoc --no-ri}, :partial_line)
+            %{/r/gem install busser --no-rdoc --no-ri}, :partial_line)
         end
 
         it "installs a specific busser version gem" do
           config[:version] = "4.0.7"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --version 4.0.7 --no-rdoc --no-ri},
+            %{/r/gem install busser --version 4.0.7 --no-rdoc --no-ri},
             :partial_line)
         end
 
@@ -167,7 +186,7 @@ describe Kitchen::Verifier::Busser do
           config[:version] = "busser@1.2.3"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install busser --version 1.2.3 --no-rdoc --no-ri},
+            %{/r/gem install busser --version 1.2.3 --no-rdoc --no-ri},
             :partial_line)
         end
 
@@ -175,7 +194,7 @@ describe Kitchen::Verifier::Busser do
           config[:version] = "foo@9.0.1"
 
           cmd.must_match regexify(
-            %{sudo -E /r/gem install foo --version 9.0.1 --no-rdoc --no-ri},
+            %{/r/gem install foo --version 9.0.1 --no-rdoc --no-ri},
             :partial_line)
         end
       end
@@ -188,7 +207,7 @@ describe Kitchen::Verifier::Busser do
 
       it "runs busser setup from the installed gem_bindir binstub" do
         cmd.must_match regexify(
-          %{sudo -E ${gem_bindir}/busser setup}, :partial_line)
+          %{${gem_bindir}/busser setup}, :partial_line)
       end
 
       it "runs busser plugin install with the :busser_bindir command" do
@@ -202,18 +221,9 @@ describe Kitchen::Verifier::Busser do
     end
   end
 
-  describe "#sync_cmd" do
+  describe "#init_command" do
 
-    before do
-      @root = Dir.mktmpdir
-      config[:test_base_path] = @root
-    end
-
-    after do
-      FileUtils.remove_entry(@root)
-    end
-
-    let(:cmd) { busser.sync_cmd }
+    let(:cmd) { verifier.init_command }
 
     describe "with no suite test files" do
 
@@ -225,61 +235,16 @@ describe Kitchen::Verifier::Busser do
     describe "with suite test files" do
 
       before do
-        base = "#{config[:test_base_path]}/germany"
-        hbase = "#{config[:test_base_path]}/helpers"
-
-        files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
-          create_file(f, md[:content], md[:perms])
-        end
-        helper_files.map { |f, md| [File.join(hbase, f), md] }.each do |f, md|
-          create_file(f, md[:content], md[:perms])
-        end
-
+        create_test_files
         config[:ruby_bindir] = "/r"
-      end
-
-      let(:files) do
-        {
-          "mondospec/charlie" => {
-            :content => "charlie",
-            :perms => "0764",
-            :base64 => "Y2hhcmxpZQ==",
-            :md5 => "bf779e0933a882808585d19455cd7937"
-          },
-          "minispec/beta" => {
-            :content => "beta",
-            :perms => "0644",
-            :base64 => "YmV0YQ==",
-            :md5 => "987bcab01b929eb2c07877b224215c92"
-          },
-          "abba/alpha" => {
-            :content => "alpha",
-            :perms => "0440",
-            :base64 => "YWxwaGE=",
-            :md5 => "2c1743a391305fbf367df8e4f069f9f9"
-          }
-        }
-      end
-
-      let(:helper_files) do
-        {
-          "minispec/spec_helper" => {
-            :content => "helping",
-            :perms => "0644",
-            :base64 => "aGVscGluZw==",
-            :md5 => "111c081293c11cb7c2ac6fbf841805cb"
-          },
-          "abba/common" => {
-            :content => "yeppers",
-            :perms => "0664",
-            :base64 => "eWVwcGVycw==",
-            :md5 => "7c3157de4890b1abcb7a6a3695eb6dd2"
-          }
-        }
       end
 
       it "uses bourne shell" do
         cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
         cmd.must_match(/'\Z/)
       end
 
@@ -312,72 +277,26 @@ describe Kitchen::Verifier::Busser do
           "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
       end
 
-      it "logs a message for each file" do
-        config[:busser_bin] = "/b/busser"
+      it "runs busser's suite cleanup with sudo, if set" do
+        config[:root_path] = "/b"
+        config[:sudo] = true
 
-        files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-            %{(mode=#{md[:perms]})"}
-          ].join(" "))
-        end
+        cmd.must_match regexify(%{sudo -E /b/bin/busser suite cleanup})
       end
 
-      it "logs a message for each helper file" do
-        config[:busser_bin] = "/b/busser"
+      it "runs busser's suite cleanup without sudo, if falsey" do
+        config[:root_path] = "/b"
+        config[:sudo] = false
 
-        helper_files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "Uploading `sudo -E /b/busser suite path`/#{f}},
-            %{(mode=#{md[:perms]})"}
-          ].join(" "))
-        end
-      end
-
-      it "base64 encodes each file for deserializing with busser" do
-        config[:busser_bin] = "/b/busser"
-
-        files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-          ].join(" "))
-        end
-      end
-
-      it "base64 encodes each helper file for deserializing with busser" do
-        config[:busser_bin] = "/b/busser"
-
-        helper_files.each do |f, md|
-          cmd.must_match regexify([
-            %{echo "#{md[:base64]}" | sudo -E /b/busser deserialize},
-            %{--destination=`sudo -E /b/busser suite path`/#{f}},
-            %{--md5sum=#{md[:md5]} --perms=#{md[:perms]}}
-          ].join(" "))
-        end
-      end
-
-      def create_file(file, content, perms)
-        FileUtils.mkdir_p(File.dirname(file))
-        File.open(file, "wb") { |f| f.write(content) }
-        FileUtils.chmod(perms.to_i(8), file)
+        cmd.wont_match regexify(%{sudo -E /b/bin/busser suite cleanup})
+        cmd.must_match regexify(%{/b/bin/busser suite cleanup})
       end
     end
   end
 
-  describe "#run_cmd" do
+  describe "#run_command" do
 
-    before do
-      @root = Dir.mktmpdir
-      config[:test_base_path] = @root
-    end
-
-    after do
-      FileUtils.remove_entry(@root)
-    end
-
-    let(:cmd) { busser.run_cmd }
+    let(:cmd) { verifier.run_command }
 
     describe "with no suite test files" do
 
@@ -389,20 +308,16 @@ describe Kitchen::Verifier::Busser do
     describe "with suite test files" do
 
       before do
-        base = "#{config[:test_base_path]}/germany"
-
-        FileUtils.mkdir_p "#{base}/mondospec"
-        File.open("#{base}/mondospec/charlie", "wb") { |f| f.write("charlie") }
-        FileUtils.mkdir_p "#{base}/minispec"
-        File.open("#{base}/minispec/beta", "wb") { |f| f.write("beta") }
-        FileUtils.mkdir_p "#{base}/abba"
-        File.open("#{base}/abba/alpha", "wb") { |f| f.write("alpha") }
-
+        create_test_files
         config[:ruby_bindir] = "/r"
       end
 
       it "uses bourne shell" do
         cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
         cmd.must_match(/'\Z/)
       end
 
@@ -449,6 +364,59 @@ describe Kitchen::Verifier::Busser do
         cmd.must_match regexify("/p/b test", :partial_line)
         cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
       end
+    end
+  end
+
+  describe "#create_sandbox" do
+
+    before do
+      create_test_files
+    end
+
+    it "copies each suite file into the suites directory in sandbox" do
+      verifier.create_sandbox
+
+      files.each do |f, md|
+        file = sandbox_path("suites/#{f}")
+
+        file.file?.must_equal true
+        file.stat.mode.to_s(8)[2, 4].must_equal md[:perms]
+        IO.read(file).must_equal md[:content]
+      end
+    end
+
+    it "copies each helper file into the suites directory in sandbox" do
+      verifier.create_sandbox
+
+      helper_files.each do |f, md|
+        file = sandbox_path("suites/#{f}")
+
+        file.file?.must_equal true
+        file.stat.mode.to_s(8)[2, 4].must_equal md[:perms]
+        IO.read(file).must_equal md[:content]
+      end
+    end
+
+    def sandbox_path(path)
+      Pathname.new(verifier.sandbox_path).join(path)
+    end
+  end
+
+  def create_file(file, content, perms)
+    FileUtils.mkdir_p(File.dirname(file))
+    File.open(file, "wb") { |f| f.write(content) }
+    FileUtils.chmod(perms.to_i(8), file)
+  end
+
+  def create_test_files
+    base = "#{config[:test_base_path]}/germany"
+    hbase = "#{config[:test_base_path]}/helpers"
+
+    files.map { |f, md| [File.join(base, f), md] }.each do |f, md|
+      create_file(f, md[:content], md[:perms])
+    end
+    helper_files.map { |f, md| [File.join(hbase, f), md] }.each do |f, md|
+      create_file(f, md[:content], md[:perms])
     end
   end
 

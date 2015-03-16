@@ -51,15 +51,57 @@ module Kitchen
       # @param state [Hash] mutable instance state
       # @raise [ActionFailed] if the action could not be completed
       def call(state)
+        create_sandbox
+        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
+
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
           conn.execute(init_command)
-          # transfer files
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, config[:root_path])
+          debug("Transfer complete")
           conn.execute(prepare_command)
           conn.execute(run_command)
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
+      ensure
+        cleanup_sandbox
+      end
+
+      # Deletes the sandbox path. Without calling this method, the sandbox path
+      # will persist after the process terminates. In other words, cleanup is
+      # explicit. This method is safe to call multiple times.
+      def cleanup_sandbox
+        return if sandbox_path.nil?
+
+        debug("Cleaning up local sandbox in #{sandbox_path}")
+        FileUtils.rmtree(sandbox_path)
+      end
+
+      # Creates a temporary directory on the local workstation into which
+      # verifier related files and directories can be copied or created. The
+      # contents of this directory will be copied over to the instance before
+      # invoking the verifier's run command. After this method completes, it
+      # is expected that the contents of the sandbox is complete and ready for
+      # copy to the remote instance.
+      #
+      # **Note:** any subclasses would be well advised to call super first when
+      # overriding this method, for example:
+      #
+      # @example overriding `#create_sandbox`
+      #
+      #   class MyVerifier < Kitchen::Verifier::Base
+      #     def create_sandbox
+      #       super
+      #       # any further file copies, preparations, etc.
+      #     end
+      #   end
+      def create_sandbox
+        @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
+        File.chmod(0755, sandbox_path)
+        info("Preparing files for transfer")
+        debug("Creating local sandbox in #{sandbox_path}")
       end
 
       # Generates a command string which will install and configure the
@@ -94,6 +136,18 @@ module Kitchen
       #
       # @return [String] a command string
       def run_command
+      end
+
+      # Returns the absolute path to the sandbox directory or raises an
+      # exception if `#create_sandbox` has not yet been called.
+      #
+      # @return [String] the absolute path to the sandbox directory
+      # @raise [ClientError] if the sandbox directory has no yet been created
+      #   by calling `#create_sandbox`
+      def sandbox_path
+        @sandbox_path || (raise ClientError, "Sandbox directory has not yet " \
+          "been created. Please run #{self.class}#create_sandox before " \
+          "trying to access the path.")
       end
 
       private

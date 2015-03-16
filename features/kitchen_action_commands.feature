@@ -13,6 +13,9 @@ Feature: Running instance actions
     provisioner:
       name: dummy
 
+    verifier:
+      name: dummy
+
     platforms:
       - name: cool
       - name: beans
@@ -92,17 +95,17 @@ Feature: Running instance actions
     Given a file named ".kitchen.local.yml" with:
     """
     ---
-    driver:
-      fail_setup: true
+    verifier:
+      fail: true
     """
     When I successfully run `kitchen converge client-beans`
     And I successfully run `kitchen list client-beans`
     Then the stdout should match /^client-beans\s+.+\s+Converged\Z/
-    When I run `kitchen setup client-beans`
-    Then the output should contain "Setup failed on instance <client-beans>"
+    When I run `kitchen verify client-beans`
+    Then the output should contain "Verify failed on instance <client-beans>"
     And the exit status should not be 0
     When I successfully run `kitchen list client-beans`
-    Then the stdout should match /^client-beans\s+.+\s+Converged\Z/
+    Then the stdout should match /^client-beans\s+.+\s+Set Up\Z/
 
   @spawn
   Scenario: Verifying a single instance
@@ -120,8 +123,8 @@ Feature: Running instance actions
     Given a file named ".kitchen.local.yml" with:
     """
     ---
-    driver:
-      fail_verify: true
+    verifier:
+      fail: true
     """
     When I successfully run `kitchen setup client-beans`
     And I successfully run `kitchen list client-beans`
