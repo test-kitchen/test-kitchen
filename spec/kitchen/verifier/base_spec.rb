@@ -123,6 +123,14 @@ describe Kitchen::Verifier::Base do
     it ":suite_name defaults to the passed in suite name" do
       verifier[:suite_name].must_equal "germany"
     end
+
+    it ":http_proxy defaults to nil" do
+      verifier[:http_proxy].must_equal nil
+    end
+
+    it ":http_proxys defaults to nil" do
+      verifier[:https_proxy].must_equal nil
+    end
   end
 
   describe "#call" do

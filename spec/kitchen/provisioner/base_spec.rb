@@ -115,6 +115,14 @@ describe Kitchen::Provisioner::Base do
         provisioner[:sudo].must_equal nil
       end
     end
+
+    it ":http_proxy defaults to nil" do
+      provisioner[:http_proxy].must_equal nil
+    end
+
+    it ":http_proxys defaults to nil" do
+      provisioner[:https_proxy].must_equal nil
+    end
   end
 
   describe "#call" do

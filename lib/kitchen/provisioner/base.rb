@@ -28,6 +28,10 @@ module Kitchen
       include Configurable
       include Logging
 
+      default_config :http_proxy, nil
+
+      default_config :https_proxy, nil
+
       default_config :root_path do |provisioner|
         provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
       end

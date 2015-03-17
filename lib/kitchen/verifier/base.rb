@@ -32,6 +32,10 @@ module Kitchen
       include Configurable
       include Logging
 
+      default_config :http_proxy, nil
+
+      default_config :https_proxy, nil
+
       default_config :root_path do |verifier|
         verifier.windows_os? ? "$env:TEMP\\verifier" : "/tmp/verifier"
       end
