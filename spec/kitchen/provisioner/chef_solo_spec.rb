@@ -304,7 +304,7 @@ describe Kitchen::Provisioner::ChefSolo do
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
-        cmd.lines[1..2].must_equal([
+        cmd.lines.to_a[1..2].must_equal([
           %{http_proxy="http://proxy"; export http_proxy\n},
           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
         ])
@@ -313,7 +313,7 @@ describe Kitchen::Provisioner::ChefSolo do
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines[1..2].must_equal([
+        cmd.lines.to_a[1..2].must_equal([
           %{https_proxy="https://proxy"; export https_proxy\n},
           %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
         ])
@@ -323,7 +323,7 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines[1..4].must_equal([
+        cmd.lines.to_a[1..4].must_equal([
           %{http_proxy="http://proxy"; export http_proxy\n},
           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
           %{https_proxy="https://proxy"; export https_proxy\n},
@@ -407,7 +407,7 @@ describe Kitchen::Provisioner::ChefSolo do
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
-        cmd.lines[0..1].must_equal([
+        cmd.lines.to_a[0..1].must_equal([
           %{$env:http_proxy = "http://proxy"\n},
           %{$env:HTTP_PROXY = "http://proxy"\n}
         ])
@@ -416,7 +416,7 @@ describe Kitchen::Provisioner::ChefSolo do
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines[0..1].must_equal([
+        cmd.lines.to_a[0..1].must_equal([
           %{$env:https_proxy = "https://proxy"\n},
           %{$env:HTTPS_PROXY = "https://proxy"\n}
         ])
@@ -426,7 +426,7 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines[0..3].must_equal([
+        cmd.lines.to_a[0..3].must_equal([
           %{$env:http_proxy = "http://proxy"\n},
           %{$env:HTTP_PROXY = "http://proxy"\n},
           %{$env:https_proxy = "https://proxy"\n},
