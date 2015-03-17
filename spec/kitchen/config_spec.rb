@@ -54,7 +54,8 @@ describe Kitchen::Config do
       :kitchen_root   => "/tmp/that/place",
       :log_root       => "/tmp/logs",
       :test_base_path => "/testing/yo",
-      :log_level      => :debug
+      :log_level      => :debug,
+      :log_overwrite  => false
     }
   end
 
@@ -68,7 +69,8 @@ describe Kitchen::Config do
       },
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
-      :log_level => :debug
+      :log_level => :debug,
+      :log_overwrite  => false
     }
   end
 
@@ -134,6 +136,19 @@ describe Kitchen::Config do
       opts.delete(:log_level)
 
       config.log_level.must_equal :info
+    end
+  end
+
+  describe "#log_overwrite" do
+
+    it "returns its log level" do
+      config.log_overwrite.must_equal false
+    end
+
+    it "uses :info by default" do
+      opts.delete(:log_overwrite)
+
+      config.log_overwrite.must_equal true
     end
   end
 
@@ -318,6 +333,7 @@ describe Kitchen::Config do
         :stdout => STDOUT,
         :color => :cyan,
         :logdev => "/tmp/logs/tiny-unax.log",
+        :log_overwrite => false,
         :level => 0,
         :progname => "tiny-unax"
       )

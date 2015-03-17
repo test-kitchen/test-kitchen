@@ -19,8 +19,8 @@
 require_relative "../spec_helper"
 
 require "net/ssh/test"
-
 require "kitchen/ssh"
+require "tmpdir"
 
 # Hack to sort results in `Dir.entries` only within the yielded block, to limit
 # the "behavior pollution" to other code. This was needed for Net::SCP, as
@@ -406,7 +406,7 @@ describe Kitchen::SSH do
     end
 
     it "logs upload progress to debug" do
-      remote_base = "/tmp/#{File.basename(@dir)}"
+      remote_base = "#{Dir.tmpdir}/#{File.basename(@dir)}"
 
       with_sorted_dir_entries do
         assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }

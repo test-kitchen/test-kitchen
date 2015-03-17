@@ -97,6 +97,13 @@ describe "Kitchen" do
       must_match %r{ -- Kitchen: uhoh$}
   end
 
+  it ".default_file_logger accepts a level and log_overwrite" do
+    l = Kitchen.default_file_logger(:error, false)
+
+    l.level.must_equal 3
+    l.log_overwrite.must_equal false
+  end
+
   it "sets Kitchen.logger to a Kitchen::Logger" do
     Kitchen.default_logger.must_be_instance_of Kitchen::Logger
   end

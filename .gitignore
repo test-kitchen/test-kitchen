@@ -20,3 +20,6 @@ tmp
 .ruby-version
 .project
 .DS_Store
+.kitchen/
+.kitchen.yml
+.kitchen.local.yml

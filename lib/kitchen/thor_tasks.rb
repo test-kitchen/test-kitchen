@@ -35,7 +35,7 @@ module Kitchen
     def initialize(*args)
       super
       @config = Kitchen::Config.new
-      Kitchen.logger = Kitchen.default_file_logger
+      Kitchen.logger = Kitchen.default_file_logger(nil, false)
       yield self if block_given?
       define
     end

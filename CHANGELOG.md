@@ -1,3 +1,9 @@
+## 1.4.0 / unreleased
+
+### Improvements
+
+* Add --log-overwrite flag to CLI anywhere --log-level is accepted.  By default it is true and will clear out the log every time Test Kitchen runs.  To disable this behavior pas --log-overwrite=false or --no-log-overwrite.  You can also configure this with the environment variable `KITCHEN_LOG_OVERWRITE`. ([@tyler-ball])
+
 ## 1.3.1 / 2015-01-16
 
 ### Bug fixes

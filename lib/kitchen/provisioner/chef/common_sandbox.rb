@@ -158,6 +158,8 @@ module Kitchen
         def filter_only_cookbook_files
           info("Removing non-cookbook files before transfer")
           FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
+          Dir.glob(File.join(tmpbooks_dir, "**/"), File::FNM_PATHNAME).
+            reverse_each { |fn| FileUtils.rmdir(fn) if Dir.entries(fn).size == 2 }
         end
 
         # @return [Logger] the instance's logger or Test Kitchen's common
