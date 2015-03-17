@@ -45,6 +45,7 @@ module Kitchen
       convert_legacy_chef_paths_format!
       convert_legacy_require_chef_omnibus_format!
       convert_legacy_busser_format!
+      convert_legacy_driver_http_proxy_format!
       move_chef_data_to_provisioner!
     end
 
@@ -373,6 +374,130 @@ module Kitchen
         ddata = root.fetch(:driver, Hash.new)
         ddata = { :name => ddata } if ddata.is_a?(String)
         root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
+      end
+    end
+
+    # Copies `:http_proxy` and `:https_proxy` values in a driver hash into the
+    # provisioner and verifier hashes. For backwards compatibility with legacy
+    # Drivers (those inheriting directly from `SSHBase`), the original
+    # values are maintained in the driver hash.
+    #
+    # This method converts the following:
+    #
+    #   {
+    #     :driver => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :driver => {
+    #           :http_proxy => "foo"
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :driver => {
+    #           :https_proxy => "bar"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # into the following:
+    #
+    #   {
+    #     :driver => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :provisioner => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :verifier => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :driver => {
+    #           :http_proxy => "foo"
+    #         },
+    #         :provisioner => {
+    #           :http_proxy => "foo"
+    #         },
+    #         :verifier => {
+    #           :http_proxy => "foo"
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :driver => {
+    #           :https_proxy => "bar"
+    #         },
+    #         :provisioner => {
+    #           :https_proxy => "bar"
+    #         },
+    #         :verifier => {
+    #           :https_proxy => "bar"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
+    #   used in driver blocks, they should be added to the provisioner and
+    #   verifier blocks so that they can be independantly configured.
+    #   Provisioners and Verifiers are responsible for HTTP proxying and no
+    #   longer are Drivers responsible for this.
+    # @api private
+    def convert_legacy_driver_http_proxy_format!
+      convert_legacy_driver_http_proxy_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_driver_http_proxy_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_driver_http_proxy_format_at!(suite)
+      end
+    end
+
+    # Copies `:http_proxy` and `:https_proxy` values in a driver hash into
+    # the provisioner and verifier hashes. This method has no knowledge of
+    # suites, platforms, or the like, just a vanilla hash.
+    #
+    # @param root [Hash] a hash to use as the root of the conversion
+    # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
+    #   used in driver blocks, they should be added to the provisioner and
+    #   verifier blocks so that they can be independantly configured.
+    #   Provisioners and Verifiers are responsible for HTTP proxying and no
+    #   longer are Drivers responsible for this.
+    # @api private
+    def convert_legacy_driver_http_proxy_format_at!(root)
+      ddata = root.fetch(:driver, Hash.new)
+
+      [:http_proxy, :https_proxy].each do |key|
+        next unless ddata.is_a?(Hash) && ddata.key?(key)
+
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] = { key => ddata.fetch(key) }.rmerge(pdata)
+
+        vdata = root.fetch(:verifier, Hash.new)
+        vdata = { :name => vdata } if vdata.is_a?(String)
+        root[:verifier] = { key => ddata.fetch(key) }.rmerge(vdata)
       end
     end
 

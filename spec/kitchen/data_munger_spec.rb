@@ -1705,6 +1705,356 @@ module Kitchen
       end
     end
 
+    describe "legacy http_proxy & https_proxy from driver" do
+
+      describe "from a single source" do
+
+        it "common driver value remains in driver" do
+          DataMunger.new(
+            {
+              :provisioner => "chefy",
+              :driver => {
+                :name => "starship",
+                :http_proxy => "http://proxy",
+                :https_proxy => "https://proxy"
+              }
+            },
+            {}
+          ).driver_data_for("suite", "platform").must_equal(
+            :name => "starship",
+            :http_proxy => "http://proxy",
+            :https_proxy => "https://proxy"
+          )
+        end
+
+        it "common driver value copies into provisioner" do
+          DataMunger.new(
+            {
+              :provisioner => "chefy",
+              :driver => {
+                :name => "starship",
+                :http_proxy => "http://proxy",
+                :https_proxy => "https://proxy"
+              }
+            },
+            {}
+          ).provisioner_data_for("suite", "platform").must_equal(
+            :name => "chefy",
+            :http_proxy => "http://proxy",
+            :https_proxy => "https://proxy"
+          )
+        end
+
+        it "common driver value copies into verifier" do
+          DataMunger.new(
+            {
+              :verifier => "bussy",
+              :driver => {
+                :name => "starship",
+                :http_proxy => "http://proxy",
+                :https_proxy => "https://proxy"
+              }
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "bussy",
+            :http_proxy => "http://proxy",
+            :https_proxy => "https://proxy"
+          )
+        end
+
+        it "common driver value loses to existing provisioner value" do
+          DataMunger.new(
+            {
+              :provisioner => {
+                :name => "chefy",
+                :http_proxy => "it's probably fine",
+                :https_proxy => "la quinta"
+              },
+              :driver => {
+                :name => "starship",
+                :http_proxy => "dragons",
+                :https_proxy => "cats"
+              }
+            },
+            {}
+          ).provisioner_data_for("suite", "platform").must_equal(
+            :name => "chefy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "common driver value loses to existing verifier value" do
+          DataMunger.new(
+            {
+              :verifier => {
+                :name => "bussy",
+                :http_proxy => "it's probably fine",
+                :https_proxy => "la quinta"
+              },
+              :driver => {
+                :name => "starship",
+                :http_proxy => "dragons",
+                :https_proxy => "cats"
+              }
+            },
+            {}
+          ).verifier_data_for("suite", "platform").must_equal(
+            :name => "bussy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "suite driver value remains in driver" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).driver_data_for("sweet", "platform").must_equal(
+            :name => "starship",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "suite driver value copies into provisioner" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "platform").must_equal(
+            :name => "chefy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "suite driver value copies into verifier" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :verifier => "bussy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "platform").must_equal(
+            :name => "bussy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "suite driver value loses to existing provisioner value" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :provisioner => {
+                    :name => "chefy",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "dragons",
+                    :https_proxy => "cats"
+                  }
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "platform").must_equal(
+            :name => "chefy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "suite driver value loses to existing verifier value" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :verifier => {
+                    :name => "bussy",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "dragons",
+                    :https_proxy => "cats"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("sweet", "platform").must_equal(
+            :name => "bussy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "platform driver value remains in driver" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).driver_data_for("suite", "plat").must_equal(
+            :name => "starship",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "platform driver value copies into provisioner" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => "chefy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("suite", "plat").must_equal(
+            :name => "chefy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "platform driver value copies into verifier" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :verifier => "bussy",
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("suite", "plat").must_equal(
+            :name => "bussy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "platform driver value loses to existing provisioner value" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :provisioner => {
+                    :name => "chefy",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "dragons",
+                    :https_proxy => "cats"
+                  }
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("suite", "plat").must_equal(
+            :name => "chefy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+
+        it "platform driver value loses to existing verifier value" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :verifier => {
+                    :name => "bussy",
+                    :http_proxy => "it's probably fine",
+                    :https_proxy => "la quinta"
+                  },
+                  :driver => {
+                    :name => "starship",
+                    :http_proxy => "dragons",
+                    :https_proxy => "cats"
+                  }
+                }
+              ]
+            },
+            {}
+          ).verifier_data_for("suite", "plat").must_equal(
+            :name => "bussy",
+            :http_proxy => "it's probably fine",
+            :https_proxy => "la quinta"
+          )
+        end
+      end
+    end
+
     describe "legacy busser blocks to verifier" do
 
       describe "from a single source" do
