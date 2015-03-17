@@ -91,20 +91,90 @@ describe Kitchen::Verifier::Busser do
 
   describe "configuration" do
 
-    it ":ruby_bindir defaults the an Omnibus Chef installation" do
-      verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it ":ruby_bindir defaults the an Omnibus Chef installation" do
+        verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
+      end
+
+      it ":busser_bin defaults to a binstub under :root_path" do
+        config[:root_path] = "/beep"
+
+        verifier[:busser_bin].must_equal "/beep/bin/busser"
+      end
+    end
+
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":ruby_bindir defaults the an Omnibus Chef installation" do
+        verifier[:ruby_bindir].
+          must_equal "$env:systemdrive\\opscode\\chef\\embedded\\bin"
+      end
+
+      it ":busser_bin defaults to a binstub under :root_path" do
+        config[:root_path] = "\\beep"
+
+        verifier[:busser_bin].must_equal "\\beep\\bin\\busser.bat"
+      end
     end
 
     it ":version defaults to 'busser'" do
       verifier[:version].must_equal "busser"
     end
+  end
 
-    it ":busser_bin defaults to a binstub under :root_path" do
-      config[:root_path] = "/beep"
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def self.common_bourne_variable_specs
+    it "uses bourne shell" do
+      cmd.must_match(/\Ash -c '$/)
+      cmd.must_match(/'\Z/)
+    end
 
-      verifier[:busser_bin].must_equal "/beep/bin/busser"
+    it "ends with a single quote" do
+      cmd.must_match(/'\Z/)
+    end
+
+    it "sets the BUSSER_ROOT environment variable" do
+      cmd.must_match regexify(%{BUSSER_ROOT="/r"; export BUSSER_ROOT})
+    end
+
+    it "sets the GEM_HOME environment variable" do
+      cmd.must_match regexify(%{GEM_HOME="/r/gems"; export GEM_HOME})
+    end
+
+    it "sets the GEM_PATH environment variable" do
+      cmd.must_match regexify(%{GEM_PATH="/r/gems"; export GEM_PATH})
+    end
+
+    it "sets the GEM_CACHE environment variable" do
+      cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"; export GEM_CACHE})
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def self.common_powershell_variable_specs
+    it "sets the BUSSER_ROOT environment variable" do
+      cmd.must_match regexify(%{$env:BUSSER_ROOT = "\\r"})
+    end
+
+    it "sets the GEM_HOME environment variable" do
+      cmd.must_match regexify(%{$env:GEM_HOME = "\\r\\gems"})
+    end
+
+    it "sets the GEM_PATH environment variable" do
+      cmd.must_match regexify(%{$env:GEM_PATH = "\\r\\gems"})
+    end
+
+    it "sets the GEM_CACHE environment variable" do
+      cmd.must_match regexify(%{$env:GEM_CACHE = "\\r\\gems\\cache"})
+    end
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   describe "#install_command" do
 
@@ -112,111 +182,115 @@ describe Kitchen::Verifier::Busser do
 
     describe "with no suite test files" do
 
-      it "returns nil" do
-        cmd.must_equal nil
+      describe "for bourne shells" do
+
+        before { platform.stubs(:shell_type).returns("bourne") }
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
+      end
+
+      describe "for powershell shells on windows os types" do
+
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+        end
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
       end
     end
 
     describe "with suite test files" do
 
-      before do
-        create_test_files
-        config[:ruby_bindir] = "/r"
-      end
+      describe "for bourne shells" do
 
-      it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
-      end
-
-      it "ends with a single quote" do
-        cmd.must_match(/'\Z/)
-      end
-
-      it "sets the BUSSER_ROOT environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{BUSSER_ROOT="/r"}, :partial_line)
-      end
-
-      it "sets the GEM_HOME environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_PATH environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_CACHE environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
-      end
-
-      it "checks if busser is installed" do
-        cmd.must_match regexify(
-          %{if ! /r/gem list busser -i >/dev/null;}, :partial_line)
-      end
-
-      describe "installing busser" do
-
-        it "installs the latest busser gem by default" do
-          cmd.must_match regexify(
-            %{/r/gem install busser --no-rdoc --no-ri}, :partial_line)
+        before do
+          platform.stubs(:shell_type).returns("bourne")
+          create_test_files
+          config[:ruby_bindir] = "/rbd"
+          config[:root_path] = "/r"
         end
 
-        it "installs a specific busser version gem" do
-          config[:version] = "4.0.7"
+        common_bourne_variable_specs
 
-          cmd.must_match regexify(
-            %{/r/gem install busser --version 4.0.7 --no-rdoc --no-ri},
-            :partial_line)
+        it "sets path to ruby command" do
+          cmd.must_match regexify(%{ruby="/rbd/ruby"})
         end
 
-        it "installs a specific busser version gem with @ syntax" do
-          config[:version] = "busser@1.2.3"
-
-          cmd.must_match regexify(
-            %{/r/gem install busser --version 1.2.3 --no-rdoc --no-ri},
-            :partial_line)
+        it "sets path to gem command" do
+          cmd.must_match regexify(%{gem="/rbd/gem"})
         end
 
-        it "installs an arbitrary gem and version with @ syntax" do
-          config[:version] = "foo@9.0.1"
+        it "sets version for busser" do
+          config[:version] = "the_best"
 
+          cmd.must_match regexify(%{version="the_best"})
+        end
+
+        it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{/r/gem install foo --version 9.0.1 --no-rdoc --no-ri},
-            :partial_line)
+            %{gem_install_args="busser --no-rdoc --no-ri"})
+        end
+
+        it "prepends sudo for busser binstub command when :sudo is set" do
+          cmd.must_match regexify(%{busser="sudo -E /r/bin/busser"})
+        end
+
+        it "does not sudo for busser binstub command when :sudo is falsey" do
+          config[:sudo] = false
+
+          cmd.must_match regexify(%{busser="/r/bin/busser"})
+        end
+
+        it "sets the busser plugins list" do
+          cmd.must_match regexify(
+            %{plugins="busser-abba busser-minispec busser-mondospec"})
         end
       end
 
-      it "calculates RubyGem's bindir" do
-        cmd.must_match regexify(
-          %{gem_bindir=`/r/ruby -rrubygems -e "puts Gem.bindir"`},
-          :partial_line)
-      end
+      describe "for powershell shells on windows os types" do
 
-      it "runs busser setup from the installed gem_bindir binstub" do
-        cmd.must_match regexify(
-          %{${gem_bindir}/busser setup}, :partial_line)
-      end
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+          create_test_files
+          config[:ruby_bindir] = "\\rbd"
+          config[:root_path] = "\\r"
+        end
 
-      it "runs busser plugin install with the :busser_bindir command" do
-        config[:busser_bin] = "/b/b"
+        common_powershell_variable_specs
 
-        cmd.must_match regexify(
-          %{sudo -E /b/b plugin install } +
-            %{busser-abba busser-minispec busser-mondospec},
-          :partial_line)
+        it "sets path to ruby command" do
+          cmd.must_match regexify(%{$ruby = "\\rbd\\ruby.exe"})
+        end
+
+        it "sets path to gem command" do
+          cmd.must_match regexify(%{$gem = "\\rbd\\gem.bat"})
+        end
+
+        it "sets version for busser" do
+          config[:version] = "the_best"
+
+          cmd.must_match regexify(%{$version = "the_best"})
+        end
+
+        it "sets gem install arguments" do
+          cmd.must_match regexify(
+            %{$gem_install_args = "busser --no-rdoc --no-ri"})
+        end
+
+        it "sets path to busser binstub command" do
+          cmd.must_match regexify(%{$busser = "\\r\\bin\\busser.bat"})
+        end
+
+        it "sets the busser plugins list" do
+          cmd.must_match regexify(
+            %{$plugins = "busser-abba busser-minispec busser-mondospec"})
+        end
       end
     end
   end
@@ -227,69 +301,74 @@ describe Kitchen::Verifier::Busser do
 
     describe "with no suite test files" do
 
-      it "returns nil" do
-        cmd.must_equal nil
+      describe "for bourne shells" do
+
+        before { platform.stubs(:shell_type).returns("bourne") }
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
+      end
+
+      describe "for powershell shells on windows os types" do
+
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+        end
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
       end
     end
 
     describe "with suite test files" do
 
-      before do
-        create_test_files
-        config[:ruby_bindir] = "/r"
+      describe "for bourne shells" do
+
+        before do
+          platform.stubs(:shell_type).returns("bourne")
+          create_test_files
+          config[:ruby_bindir] = "/rbd"
+          config[:root_path] = "/r"
+        end
+
+        common_bourne_variable_specs
+
+        it "runs busser's suite cleanup with sudo, if set" do
+          config[:root_path] = "/b"
+          config[:sudo] = true
+
+          cmd.must_match regexify(%{sudo -E /b/bin/busser suite cleanup})
+        end
+
+        it "runs busser's suite cleanup without sudo, if falsey" do
+          config[:root_path] = "/b"
+          config[:sudo] = false
+
+          cmd.wont_match regexify(%{sudo -E /b/bin/busser suite cleanup})
+          cmd.must_match regexify(%{/b/bin/busser suite cleanup})
+        end
       end
 
-      it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
-      end
+      describe "for powershell shells on windows os types" do
 
-      it "ends with a single quote" do
-        cmd.must_match(/'\Z/)
-      end
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+          create_test_files
+          config[:ruby_bindir] = "\\rbd"
+          config[:root_path] = "\\r"
+        end
 
-      it "sets the BUSSER_ROOT environment variable" do
-        config[:root_path] = "/r"
+        common_powershell_variable_specs
 
-        cmd.must_match regexify(%{BUSSER_ROOT="/r"}, :partial_line)
-      end
+        it "runs busser's suite cleanup" do
+          config[:root_path] = "\\b"
 
-      it "sets the GEM_HOME environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_PATH environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_CACHE environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
-      end
-
-      it "runs busser's suite cleanup with sudo, if set" do
-        config[:root_path] = "/b"
-        config[:sudo] = true
-
-        cmd.must_match regexify(%{sudo -E /b/bin/busser suite cleanup})
-      end
-
-      it "runs busser's suite cleanup without sudo, if falsey" do
-        config[:root_path] = "/b"
-        config[:sudo] = false
-
-        cmd.wont_match regexify(%{sudo -E /b/bin/busser suite cleanup})
-        cmd.must_match regexify(%{/b/bin/busser suite cleanup})
+          cmd.must_match regexify(%{& \\b\\bin\\busser.bat suite cleanup})
+        end
       end
     end
   end
@@ -300,69 +379,74 @@ describe Kitchen::Verifier::Busser do
 
     describe "with no suite test files" do
 
-      it "returns nil" do
-        cmd.must_equal nil
+      describe "for bourne shells" do
+
+        before { platform.stubs(:shell_type).returns("bourne") }
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
+      end
+
+      describe "for powershell shells on windows os types" do
+
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+        end
+
+        it "returns nil" do
+          cmd.must_equal nil
+        end
       end
     end
 
     describe "with suite test files" do
 
-      before do
-        create_test_files
-        config[:ruby_bindir] = "/r"
+      describe "for bourne shells" do
+
+        before do
+          platform.stubs(:shell_type).returns("bourne")
+          create_test_files
+          config[:ruby_bindir] = "/rbd"
+          config[:root_path] = "/r"
+        end
+
+        common_bourne_variable_specs
+
+        it "uses sudo for busser test when configured" do
+          config[:sudo] = true
+          config[:busser_bin] = "/p/b"
+
+          cmd.must_match regexify("sudo -E /p/b test", :partial_line)
+        end
+
+        it "does not use sudo for busser test when configured" do
+          config[:sudo] = false
+          config[:busser_bin] = "/p/b"
+
+          cmd.must_match regexify("/p/b test", :partial_line)
+          cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
+        end
       end
 
-      it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
-      end
+      describe "for powershell shells on windows os types" do
 
-      it "ends with a single quote" do
-        cmd.must_match(/'\Z/)
-      end
+        before do
+          platform.stubs(:shell_type).returns("powershell")
+          platform.stubs(:os_type).returns("windows")
+          create_test_files
+          config[:ruby_bindir] = "\\rbd"
+          config[:root_path] = "\\r"
+        end
 
-      it "sets the BUSSER_ROOT environment variable" do
-        config[:root_path] = "/r"
+        common_powershell_variable_specs
 
-        cmd.must_match regexify(%{BUSSER_ROOT="/r"}, :partial_line)
-      end
+        it "runs busser's test" do
+          config[:root_path] = "\\b"
 
-      it "sets the GEM_HOME environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_HOME="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_PATH environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_PATH="/r/gems" }, :partial_line)
-      end
-
-      it "sets the GEM_CACHE environment variable" do
-        config[:root_path] = "/r"
-
-        cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache" }, :partial_line)
-      end
-
-      it "exports all the environment variables" do
-        cmd.must_match regexify(
-          "export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE", :partial_line)
-      end
-
-      it "uses sudo for busser test when configured" do
-        config[:sudo] = true
-        config[:busser_bin] = "/p/b"
-
-        cmd.must_match regexify("sudo -E /p/b test", :partial_line)
-      end
-
-      it "does not use sudo for busser test when configured" do
-        config[:sudo] = false
-        config[:busser_bin] = "/p/b"
-
-        cmd.must_match regexify("/p/b test", :partial_line)
-        cmd.wont_match regexify("sudo -E /p/b test", :partial_line)
+          cmd.must_match regexify(%{& \\b\\bin\\busser.bat test})
+        end
       end
     end
   end

@@ -32,11 +32,19 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Busser < Kitchen::Verifier::Base
 
-      default_config :busser_bin do |busser|
-        File.join(busser[:root_path], %W[bin busser])
+      default_config :busser_bin do |verifier|
+        verifier.
+          remote_path_join(%W[#{verifier[:root_path]} bin busser]).
+          tap { |path| path.concat(".bat") if verifier.windows_os? }
       end
 
-      default_config :ruby_bindir, "/opt/chef/embedded/bin"
+      default_config :ruby_bindir do |verifier|
+        if verifier.windows_os?
+          "$env:systemdrive\\opscode\\chef\\embedded\\bin"
+        else
+          "/opt/chef/embedded/bin"
+        end
+      end
 
       default_config :version, "busser"
 
@@ -61,48 +69,37 @@ module Kitchen
       def init_command
         return if local_suite_files.empty?
 
-        cmd = Util.outdent!(<<-CMD)
-          #{busser_setup_env}
+        cmd = sudo(config[:busser_bin]).dup.
+          tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-          #{sudo(config[:busser_bin])} suite cleanup
+        wrap_shell_code(Util.outdent!(<<-CMD))
+          #{busser_env}
+
+          #{cmd} suite cleanup
         CMD
-        Util.wrap_command(cmd)
       end
 
       # (see Base#install_command)
       def install_command
         return if local_suite_files.empty?
 
-        ruby    = "#{config[:ruby_bindir]}/ruby"
-        gem     = "#{config[:ruby_bindir]}/gem"
-        busser  = sudo(config[:busser_bin])
+        vars = install_command_vars
 
-        cmd = Util.outdent!(<<-CMD)
-          #{busser_setup_env}
-          gem_bindir=`#{ruby} -rrubygems -e "puts Gem.bindir"`
-
-          if ! #{gem} list busser -i >/dev/null; then
-            #{gem} install #{gem_install_args}
-          fi
-          if [ ! -f "$BUSSER_ROOT/bin/busser" ]; then
-            ${gem_bindir}/busser setup
-          fi
-          #{busser} plugin install #{plugins.join(" ")}
-        CMD
-        Util.wrap_command(cmd)
+        shell_code_from_file(vars, "busser_install_command")
       end
 
       # (see Base#run_command)
       def run_command
         return if local_suite_files.empty?
 
-        cmd = <<-CMD.gsub(/^ {8}/, "")
-          #{busser_setup_env}
+        cmd = sudo(config[:busser_bin]).dup.
+          tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-          #{sudo(config[:busser_bin])} test
+        wrap_shell_code(Util.outdent!(<<-CMD))
+          #{busser_env}
+
+          #{cmd} test
         CMD
-
-        Util.wrap_command(cmd)
       end
 
       private
@@ -112,14 +109,17 @@ module Kitchen
       #
       # @return [String] command string
       # @api private
-      def busser_setup_env
+      def busser_env
+        root = config[:root_path]
+        gem_home = gem_path = remote_path_join(root, "gems")
+        gem_cache = remote_path_join(gem_home, "cache")
+
         [
-          %{BUSSER_ROOT="#{config[:root_path]}"},
-          %{GEM_HOME="#{config[:root_path]}/gems"},
-          %{GEM_PATH="#{config[:root_path]}/gems"},
-          %{GEM_CACHE="#{config[:root_path]}/gems/cache"},
-          %{\nexport BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE}
-        ].join(" ")
+          shell_env_var("BUSSER_ROOT", root),
+          shell_env_var("GEM_HOME", gem_home),
+          shell_env_var("GEM_PATH", gem_path),
+          shell_env_var("GEM_CACHE", gem_cache)
+        ].join("\n")
       end
 
       # Determines whether or not a local workstation file exists under a
@@ -155,6 +155,23 @@ module Kitchen
       def helper_files
         glob = File.join(config[:test_base_path], "helpers", "*/**/*")
         Dir.glob(glob).reject { |f| File.directory?(f) }
+      end
+
+      def install_command_vars
+        ruby = remote_path_join(config[:ruby_bindir], "ruby").
+          tap { |path| path.concat(".exe") if windows_os? }
+        gem = remote_path_join(config[:ruby_bindir], "gem").
+          tap { |path| path.concat(".bat") if windows_os? }
+
+        [
+          busser_env,
+          shell_var("ruby", ruby),
+          shell_var("gem", gem),
+          shell_var("version", config[:version]),
+          shell_var("gem_install_args", gem_install_args),
+          shell_var("busser", sudo(config[:busser_bin])),
+          shell_var("plugins", plugins.join(" "))
+        ].join("\n")
       end
 
       # Returns an Array of test suite filenames for the related suite currently

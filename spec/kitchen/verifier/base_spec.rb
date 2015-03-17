@@ -98,10 +98,6 @@ describe Kitchen::Verifier::Base do
 
       before { platform.stubs(:os_type).returns("unix") }
 
-      it ":suite_name defaults to the passed in suite name" do
-        verifier[:suite_name].must_equal "germany"
-      end
-
       it ":sudo defaults to true" do
         verifier[:sudo].must_equal true
       end
@@ -109,6 +105,23 @@ describe Kitchen::Verifier::Base do
       it ":root_path defaults to '/tmp/verifier'" do
         verifier[:root_path].must_equal "/tmp/verifier"
       end
+    end
+
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":sudo defaults to nil" do
+        verifier[:sudo].must_equal nil
+      end
+
+      it ":root_path defaults to $env:TEMP\\verifier" do
+        verifier[:root_path].must_equal "$env:TEMP\\verifier"
+      end
+    end
+
+    it ":suite_name defaults to the passed in suite name" do
+      verifier[:suite_name].must_equal "germany"
     end
   end
 

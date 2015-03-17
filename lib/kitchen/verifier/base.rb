@@ -32,9 +32,13 @@ module Kitchen
       include Configurable
       include Logging
 
-      default_config :root_path, "/tmp/verifier"
+      default_config :root_path do |verifier|
+        verifier.windows_os? ? "$env:TEMP\\verifier" : "/tmp/verifier"
+      end
 
-      default_config :sudo, true
+      default_config :sudo do |verifier|
+        verifier.windows_os? ? nil : true
+      end
 
       default_config(:suite_name) { |busser| busser.instance.suite.name }
 
@@ -151,6 +155,24 @@ module Kitchen
       end
 
       private
+
+      # Builds a complete command given a variables String preamble and a file
+      # containing shell code.
+      #
+      # @param vars [String] shell variables, as a String
+      # @param file [String] file basename (without extension) containing
+      #   shell code
+      # @return [String] command
+      # @api private
+      def shell_code_from_file(vars, file)
+        src_file = File.join(
+          File.dirname(__FILE__),
+          %w[.. .. .. support],
+          file + (powershell_shell? ? ".ps1" : ".sh")
+        )
+
+        wrap_shell_code([vars, "", IO.read(src_file)].join("\n"))
+      end
 
       # Conditionally prefixes a command with a sudo command.
       #
