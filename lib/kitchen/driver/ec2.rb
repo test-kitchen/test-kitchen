@@ -20,6 +20,7 @@ require 'benchmark'
 require 'json'
 require 'fog'
 require 'kitchen'
+include Fog::AWS::CredentialFetcher::ServiceMethods
 
 module Kitchen
 
@@ -30,7 +31,6 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
 
-      include Fog::AWS::CredentialFetcher::ServiceMethods
 
       iam_creds = Fog::AWS::CredentialFetcher::ServiceMethods.fetch_credentials(
         use_iam_profile: true
