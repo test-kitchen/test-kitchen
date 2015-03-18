@@ -331,6 +331,10 @@ describe Kitchen::Provisioner::ChefSolo do
         ])
       end
 
+      it "does no powershell PATH reloading for older chef omnibus packages" do
+        cmd.wont_match regexify(%{[System.Environment]::})
+      end
+
       it "uses sudo for chef-solo when configured" do
         config[:chef_omnibus_root] = "/c"
         config[:sudo] = true
@@ -432,6 +436,11 @@ describe Kitchen::Provisioner::ChefSolo do
           %{$env:https_proxy = "https://proxy"\n},
           %{$env:HTTPS_PROXY = "https://proxy"\n}
         ])
+      end
+
+      it "reloads PATH for older chef omnibus packages" do
+        cmd.must_match regexify("$env:PATH = " +
+          %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
       end
 
       it "calls the chef-solo command from :chef_solo_path" do

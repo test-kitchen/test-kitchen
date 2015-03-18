@@ -705,6 +705,10 @@ describe Kitchen::Provisioner::ChefZero do
           ])
         end
 
+        it "does no powershell PATH reloading for older chef omnibus packages" do
+          cmd.wont_match regexify(%{[System.Environment]::})
+        end
+
         it "uses sudo for chef-client when configured" do
           config[:chef_omnibus_root] = "/c"
           config[:sudo] = true
@@ -763,6 +767,11 @@ describe Kitchen::Provisioner::ChefZero do
             %{$env:https_proxy = "https://proxy"\n},
             %{$env:HTTPS_PROXY = "https://proxy"\n}
           ])
+        end
+
+        it "reloads PATH for older chef omnibus packages" do
+          cmd.must_match regexify("$env:PATH = " +
+            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
         end
 
         it "calls the chef-client command from :chef_client_path" do
@@ -866,6 +875,10 @@ describe Kitchen::Provisioner::ChefZero do
           cmd.must_match regexify(
             %{GEM_CACHE="/r/chef-client-zero-gems/cache"; export GEM_CACHE})
         end
+
+        it "does no powershell PATH reloading for older chef omnibus packages" do
+          cmd.wont_match regexify(%{[System.Environment]::})
+        end
       end
 
       describe "for powershell shells on windows os types" do
@@ -916,6 +929,11 @@ describe Kitchen::Provisioner::ChefZero do
 
           cmd.must_match regexify(
             %{$env:GEM_CACHE = "\\r\\chef-client-zero-gems\\cache"})
+        end
+
+        it "reloads PATH for older chef omnibus packages" do
+          cmd.must_match regexify("$env:PATH = " +
+            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
         end
       end
     end

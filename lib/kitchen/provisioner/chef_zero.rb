@@ -69,7 +69,10 @@ module Kitchen
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        wrap_shell_code([cmd, *chef_client_args].join(" "))
+        wrap_shell_code(
+          [cmd, *chef_client_args].join(" ").
+          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        )
       end
 
       private
