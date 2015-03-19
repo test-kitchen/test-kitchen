@@ -53,7 +53,7 @@ describe Kitchen::Busser do
   it "#config_keys returns an array of config key names" do
     busser.config_keys.sort.must_equal [
       :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-      :suite_name, :test_base_path, :version
+      :sudo_command, :suite_name, :test_base_path, :version
     ]
   end
 
@@ -73,6 +73,10 @@ describe Kitchen::Busser do
 
     it ":sudo defaults to true" do
       busser[:sudo].must_equal true
+    end
+
+    it ":sudo_command defaults to 'sudo -E'" do
+      busser[:sudo_command].must_equal "sudo -E"
     end
 
     it ":ruby_bindir defaults the an Omnibus Chef installation" do
@@ -99,7 +103,7 @@ describe Kitchen::Busser do
     it "returns a hash with sorted keys" do
       busser.diagnose.keys.must_equal [
         :busser_bin, :kitchen_root, :root_path, :ruby_bindir, :sudo,
-        :suite_name, :test_base_path, :version
+        :sudo_command, :suite_name, :test_base_path, :version
       ]
     end
   end
