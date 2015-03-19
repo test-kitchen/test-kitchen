@@ -7,7 +7,7 @@ should_update_chef() {
   elif test "$2" = "latest" ; then return 0
   fi
 
-  local version="`$1/bin/chef-solo -v | cut -d " " -f 2`"
+  version="`$1/bin/chef-solo -v | cut -d \" \" -f 2`"
   if echo "$version" | grep "^$2" 2>&1 >/dev/null; then
     return 1
   else
