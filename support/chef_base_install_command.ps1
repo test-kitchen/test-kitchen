@@ -23,7 +23,7 @@ Function Get-MD5Sum($src) {
     $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
     return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
-  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
+  } Finally { if (($c -ne $null) -and ($c.GetType().GetMethod("Dispose") -ne $null)) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
 }
 
 Function Download-Chef($md_url, $dst) {

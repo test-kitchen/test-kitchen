@@ -6,8 +6,13 @@ Function Decode-Base64File($src, $dst) {
     $b64 = New-Object -TypeName System.Security.Cryptography.FromBase64Transform
     $mode = [System.Security.Cryptography.CryptoStreamMode]::Read
     $d = New-Object -TypeName System.Security.Cryptography.CryptoStream $in,$b64,$mode
-    $d.CopyTo(($out = [System.IO.File]::OpenWrite($dst)))
-  } Finally { if ($in -ne $null) { $in.Dispose() }; if ($out -ne $null) { $out.Dispose() }; if ($d -ne $null) { $d.Dispose() } }
+    Copy-Stream $d ($out = [System.IO.File]::OpenWrite($dst))
+  } Finally { if ($in -ne $null) { $in.Dispose() }; if ($out -ne $null) { $out.Dispose() }; if (($d -ne $null) -and ($d.GetType().GetMethod("Dispose") -ne $null)) { $d.Dispose() } }
+}
+
+Function Copy-Stream($src, $dst) {
+  $buf = New-Object Byte[] 4096
+  while (($count = $src.Read($buf, 0, $buf.Length)) -ne 0) { $dst.Write($buf, 0, $count) }
 }
 
 Function Check-Files($hash) {
@@ -28,7 +33,7 @@ Function Get-MD5Sum($src) {
     $c = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $bytes = $c.ComputeHash(($in = (Get-Item $src).OpenRead()))
     return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
-  } Finally { if ($c -ne $null) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
+  } Finally { if (($c -ne $null) -and ($c.GetType().GetMethod("Dispose") -ne $null)) { $c.Dispose() }; if ($in -ne $null) { $in.Dispose() } }
 }
 
 Function Invoke-Input($infile) {
