@@ -269,7 +269,7 @@ describe Kitchen::Verifier::Busser do
         end
 
         it "sets path to gem command" do
-          cmd.must_match regexify(%{$gem = "\\rbd\\gem.bat"})
+          cmd.must_match regexify(%{$gem = "\\rbd\\gem"})
         end
 
         it "sets version for busser" do

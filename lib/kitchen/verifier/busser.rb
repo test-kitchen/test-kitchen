@@ -160,8 +160,7 @@ module Kitchen
       def install_command_vars
         ruby = remote_path_join(config[:ruby_bindir], "ruby").
           tap { |path| path.concat(".exe") if windows_os? }
-        gem = remote_path_join(config[:ruby_bindir], "gem").
-          tap { |path| path.concat(".bat") if windows_os? }
+        gem = remote_path_join(config[:ruby_bindir], "gem")
 
         [
           busser_env,
