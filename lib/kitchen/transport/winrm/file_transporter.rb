@@ -32,6 +32,11 @@ module Kitchen
 
     class Winrm < Kitchen::Transport::Base
 
+      # Wrapped exception for any internally raised WinRM-related errors.
+      #
+      # @author Fletcher Nichol <fnichol@nichol.ca>
+      class FileTransporterFailed < ::WinRM::WinRMError; end
+
       # Object which can upload one or more files or directories to a remote
       # host over WinRM using PowerShell scripts and CMD commands. Note that
       # this form of file transfer is *not* ideal and extremely costly on both
@@ -334,6 +339,10 @@ module Kitchen
         # @return [Hash] report hash, keyed by the local MD5 digest
         # @api private
         def parse_response(output)
+          if output[:exitcode] != 0
+            raise FileTransporterFailed, "[#{self.class}] Upload failed " \
+              "(exitcode: #{output[:exitcode]})\n#{output.stderr}"
+          end
           array = CSV.parse(output.stdout, :headers => true).map(&:to_hash)
           array.each { |h| h.each { |key, value| h[key] = nil if value == "" } }
           Hash[array.map { |entry| [entry.fetch("src_md5"), entry] }]
