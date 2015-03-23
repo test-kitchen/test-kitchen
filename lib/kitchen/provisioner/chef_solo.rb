@@ -30,7 +30,9 @@ module Kitchen
       default_config :solo_rb, {}
 
       default_config :chef_solo_path do |provisioner|
-        File.join(provisioner[:chef_omnibus_root], %w[bin chef-solo])
+        provisioner.
+          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-solo]).
+          tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       # (see Base#create_sandbox)
@@ -43,17 +45,21 @@ module Kitchen
       def run_command
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
-        cmd = sudo(config[:chef_solo_path])
+        cmd = sudo(config[:chef_solo_path]).dup.
+          tap { |str| str.insert(0, "& ") if powershell_shell? }
         args = [
-          "--config #{config[:root_path]}/solo.rb",
+          "--config #{remote_path_join(config[:root_path], "solo.rb")}",
           "--log_level #{level}",
           "--force-formatter",
           "--no-color",
-          "--json-attributes #{config[:root_path]}/dna.json"
+          "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        Util.wrap_command([cmd, *args].join(" "))
+        wrap_shell_code(
+          [cmd, *args].join(" ").
+          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        )
       end
 
       private

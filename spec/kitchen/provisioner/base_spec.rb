@@ -22,49 +22,201 @@ require "stringio"
 
 require "kitchen"
 
+module Kitchen
+
+  module Provisioner
+
+    class TestingDummy < Kitchen::Provisioner::Base
+
+      attr_reader :called_create_sandbox, :called_cleanup_sandbox
+
+      def install_command
+        "install"
+      end
+
+      def init_command
+        "init"
+      end
+
+      def prepare_command
+        "prepare"
+      end
+
+      def run_command
+        "run"
+      end
+
+      def create_sandbox
+        @called_create_sandbox = true
+      end
+
+      def cleanup_sandbox
+        @called_cleanup_sandbox = true
+      end
+
+      def sandbox_path
+        "/tmp/sandbox"
+      end
+    end
+  end
+end
+
 describe Kitchen::Provisioner::Base do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
   let(:config)          { Hash.new }
 
+  let(:transport) do
+    t = mock("transport")
+    t.responds_like_instance_of(Kitchen::Transport::Base)
+    t
+  end
+
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger)
+    stub(
+      :name => "coolbeans",
+      :to_str => "instance",
+      :logger => logger,
+      :platform => platform,
+      :transport => transport
+    )
   end
 
   let(:provisioner) do
     Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
   end
 
-  it "#name returns the name of the provisioner" do
-    provisioner.name.must_equal "Base"
-  end
-
   describe "configuration" do
 
-    it ":root_path defaults to /tmp/kitchen" do
-      provisioner[:root_path].must_equal "/tmp/kitchen"
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it ":root_path defaults to /tmp/kitchen" do
+        provisioner[:root_path].must_equal "/tmp/kitchen"
+      end
+
+      it ":sudo defaults to true" do
+        provisioner[:sudo].must_equal true
+      end
     end
 
-    it ":sudo defaults to true" do
-      provisioner[:sudo].must_equal true
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":root_path defaults to $env:TEMP\\kitchen" do
+        provisioner[:root_path].must_equal "$env:TEMP\\kitchen"
+      end
+
+      it ":sudo defaults to nil" do
+        provisioner[:sudo].must_equal nil
+      end
+    end
+
+    it ":http_proxy defaults to nil" do
+      provisioner[:http_proxy].must_equal nil
+    end
+
+    it ":http_proxys defaults to nil" do
+      provisioner[:https_proxy].must_equal nil
     end
   end
 
-  describe "#logger" do
+  describe "#call" do
 
-    before  { @klog = Kitchen.logger }
-    after   { Kitchen.logger = @klog }
+    let(:state) { Hash.new }
+    let(:cmd)   { provisioner.call(state) }
 
-    it "returns the instance's logger" do
-      provisioner.send(:logger).must_equal logger
+    let(:connection) do
+      c = mock("transport_connection")
+      c.responds_like_instance_of(Kitchen::Transport::Base::Connection)
+      c
     end
 
-    it "returns the default logger if instance's logger is not set" do
-      provisioner = Kitchen::Provisioner::Base.new(config)
-      Kitchen.logger = "yep"
+    let(:provisioner) do
+      Kitchen::Provisioner::TestingDummy.new(config).finalize_config!(instance)
+    end
 
-      provisioner.send(:logger).must_equal Kitchen.logger
+    before do
+      FakeFS.activate!
+      FileUtils.mkdir_p(File.join(provisioner.sandbox_path, "stuff"))
+      transport.stubs(:connection).yields(connection)
+      connection.stubs(:execute)
+      connection.stubs(:upload)
+    end
+
+    after do
+      FakeFS.deactivate!
+      FakeFS::FileSystem.clear
+    end
+
+    it "creates the sandbox" do
+      provisioner.expects(:create_sandbox)
+
+      cmd
+    end
+
+    it "ensures that the sandbox is cleanup up" do
+      transport.stubs(:connection).raises
+      provisioner.expects(:cleanup_sandbox)
+
+      begin
+        cmd
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
+    end
+
+    it "yields a connection given the state" do
+      state[:a] = "b"
+      transport.expects(:connection).with(state).yields(connection)
+
+      cmd
+    end
+
+    it "invokes the provisioner commands over the transport" do
+      order = sequence("order")
+      connection.expects(:execute).with("install").in_sequence(order)
+      connection.expects(:execute).with("init").in_sequence(order)
+      connection.expects(:execute).with("prepare").in_sequence(order)
+      connection.expects(:execute).with("run").in_sequence(order)
+
+      cmd
+    end
+
+    it "logs to info" do
+      cmd
+
+      logged_output.string.
+        must_match(/INFO -- : Transferring files to instance$/)
+    end
+
+    it "uploads sandbox files" do
+      connection.expects(:upload).with(["/tmp/sandbox/stuff"], "/tmp/kitchen")
+
+      cmd
+    end
+
+    it "logs to debug" do
+      cmd
+
+      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+    end
+
+    it "raises an ActionFailed on transfer when TransportFailed is raised" do
+      connection.stubs(:upload).
+        raises(Kitchen::Transport::TransportFailed.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
+    end
+
+    it "raises an ActionFailed on execute when TransportFailed is raised" do
+      connection.stubs(:execute).
+        raises(Kitchen::Transport::TransportFailed.new("dang"))
+
+      proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 

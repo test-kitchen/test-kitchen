@@ -44,22 +44,9 @@ module Kitchen
       convert_legacy_driver_format!
       convert_legacy_chef_paths_format!
       convert_legacy_require_chef_omnibus_format!
+      convert_legacy_busser_format!
+      convert_legacy_driver_http_proxy_format!
       move_chef_data_to_provisioner!
-    end
-
-    # Generate a new Hash of configuration data that can be used to construct
-    # a new Busser object.
-    #
-    # @param suite [String] a suite name
-    # @param platform [String] a platform name
-    # @return [Hash] a new configuration Hash that can be used to construct a
-    #   new Busser
-    def busser_data_for(suite, platform)
-      merged_data_for(:busser, suite, platform, :version).tap do |bdata|
-        set_kitchen_config_at!(bdata, :kitchen_root)
-        set_kitchen_config_at!(bdata, :test_base_path)
-        set_kitchen_config_at!(bdata, :log_level)
-      end
     end
 
     # Generate a new Hash of configuration data that can be used to construct
@@ -107,6 +94,36 @@ module Kitchen
       data.fetch(:suites, [])
     end
 
+    # Generate a new Hash of configuration data that can be used to construct
+    # a new Transport object.
+    #
+    # @param suite [String] a suite name
+    # @param platform [String] a platform name
+    # @return [Hash] a new configuration Hash that can be used to construct a
+    #   new Transport
+    def transport_data_for(suite, platform)
+      merged_data_for(:transport, suite, platform).tap do |tdata|
+        set_kitchen_config_at!(tdata, :kitchen_root)
+        set_kitchen_config_at!(tdata, :test_base_path)
+        set_kitchen_config_at!(tdata, :log_level)
+      end
+    end
+
+    # Generate a new Hash of configuration data that can be used to construct
+    # a new Verifier object.
+    #
+    # @param suite [String] a suite name
+    # @param platform [String] a platform name
+    # @return [Hash] a new configuration Hash that can be used to construct a
+    #   new Verifier
+    def verifier_data_for(suite, platform)
+      merged_data_for(:verifier, suite, platform).tap do |vdata|
+        set_kitchen_config_at!(vdata, :kitchen_root)
+        set_kitchen_config_at!(vdata, :test_base_path)
+        set_kitchen_config_at!(vdata, :log_level)
+      end
+    end
+
     private
 
     # @return [Hash] the user data hash
@@ -122,6 +139,93 @@ module Kitchen
         root[key] = namespaces.
           map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
           compact
+      end
+    end
+
+    # Destructively moves old-style `:busser` configuration hashes into the
+    # correct `:verifier` hash.
+    #
+    # This method converts the following:
+    #
+    #   {
+    #     :busser => { :one => "two" },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :busser => "bar"
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :busser => { :three => "four" }
+    #       }
+    #     ]
+    #   }
+    #
+    # into the following:
+    #
+    #   {
+    #     :verifier => {
+    #       :name => "busser",
+    #       :one => "two"
+    #     }
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :verifier => {
+    #           :name => "busser",
+    #           :version => "bar
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :verifier => {
+    #           :name => "busser",
+    #           :three => "four"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # @deprecated The following configuration hashes should no longer be
+    #   created in a `:platform`, `:suite`, or common location:
+    #   `:busser`. Use a `:verifier` hash block in their place.
+    # @api private
+    def convert_legacy_busser_format!
+      convert_legacy_busser_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_busser_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_busser_format_at!(suite)
+      end
+    end
+
+    # Destructively moves old-style `:busser` configuration hashes into the
+    # correct `:verifier` hashes. This method has no knowledge of suites,
+    # platforms, or the like, just a vanilla hash.
+    #
+    # @param root [Hash] a hash to use as the root of the conversion
+    # @deprecated The following configuration hashses should no longer be
+    #   created in a Test Kitchen hash: `:busser`. Use a `:verifier` hash
+    #   block in their place.
+    # @api private
+    def convert_legacy_busser_format_at!(root)
+      if root.key?(:busser)
+        bdata = root.delete(:busser)
+        bdata = { :version => bdata } if bdata.is_a?(String)
+        bdata[:name] = "busser" if bdata[:name].nil?
+
+        vdata = root.fetch(:verifier, Hash.new)
+        vdata = { :name => vdata } if vdata.is_a?(String)
+        root[:verifier] = bdata.rmerge(vdata)
       end
     end
 
@@ -273,6 +377,130 @@ module Kitchen
       end
     end
 
+    # Copies `:http_proxy` and `:https_proxy` values in a driver hash into the
+    # provisioner and verifier hashes. For backwards compatibility with legacy
+    # Drivers (those inheriting directly from `SSHBase`), the original
+    # values are maintained in the driver hash.
+    #
+    # This method converts the following:
+    #
+    #   {
+    #     :driver => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :driver => {
+    #           :http_proxy => "foo"
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :driver => {
+    #           :https_proxy => "bar"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # into the following:
+    #
+    #   {
+    #     :driver => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :provisioner => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :verifier => {
+    #       :http_proxy => "http://proxy",
+    #       :https_proxy => "https://proxy"
+    #     },
+    #
+    #     :platforms => [
+    #       {
+    #         :name => "ubuntu-12.04",
+    #         :driver => {
+    #           :http_proxy => "foo"
+    #         },
+    #         :provisioner => {
+    #           :http_proxy => "foo"
+    #         },
+    #         :verifier => {
+    #           :http_proxy => "foo"
+    #         }
+    #       }
+    #     ],
+    #
+    #     :suites => [
+    #       {
+    #         :name => "alpha",
+    #         :driver => {
+    #           :https_proxy => "bar"
+    #         },
+    #         :provisioner => {
+    #           :https_proxy => "bar"
+    #         },
+    #         :verifier => {
+    #           :https_proxy => "bar"
+    #         }
+    #       }
+    #     ]
+    #   }
+    #
+    # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
+    #   used in driver blocks, they should be added to the provisioner and
+    #   verifier blocks so that they can be independantly configured.
+    #   Provisioners and Verifiers are responsible for HTTP proxying and no
+    #   longer are Drivers responsible for this.
+    # @api private
+    def convert_legacy_driver_http_proxy_format!
+      convert_legacy_driver_http_proxy_format_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_driver_http_proxy_format_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_driver_http_proxy_format_at!(suite)
+      end
+    end
+
+    # Copies `:http_proxy` and `:https_proxy` values in a driver hash into
+    # the provisioner and verifier hashes. This method has no knowledge of
+    # suites, platforms, or the like, just a vanilla hash.
+    #
+    # @param root [Hash] a hash to use as the root of the conversion
+    # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
+    #   used in driver blocks, they should be added to the provisioner and
+    #   verifier blocks so that they can be independantly configured.
+    #   Provisioners and Verifiers are responsible for HTTP proxying and no
+    #   longer are Drivers responsible for this.
+    # @api private
+    def convert_legacy_driver_http_proxy_format_at!(root)
+      ddata = root.fetch(:driver, Hash.new)
+
+      [:http_proxy, :https_proxy].each do |key|
+        next unless ddata.is_a?(Hash) && ddata.key?(key)
+
+        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = { :name => pdata } if pdata.is_a?(String)
+        root[:provisioner] = { key => ddata.fetch(key) }.rmerge(pdata)
+
+        vdata = root.fetch(:verifier, Hash.new)
+        vdata = { :name => vdata } if vdata.is_a?(String)
+        root[:verifier] = { key => ddata.fetch(key) }.rmerge(vdata)
+      end
+    end
+
     # Destructively moves a `:require_chef_omnibus` key/value pair from a
     # `:driver` hash block to a `:provisioner` hash block.
     #
@@ -386,7 +614,7 @@ module Kitchen
     # @return [Hash] a new merged Hash
     # @api private
     def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = normalized_default_data(key, default_key)
+      ddata = normalized_default_data(key, default_key, suite, platform)
       cdata = normalized_common_data(key, default_key)
       pdata = normalized_platform_data(key, default_key, platform)
       sdata = normalized_suite_data(key, default_key, suite)
@@ -563,11 +791,14 @@ module Kitchen
     # @param key [Symbol] the value to normalize
     # @param default_key [Symbol] the implicit default key if a String value
     #   is given
+    # @param suite [String] name of a suite
+    # @param platform [String] name of a platform
     # @return [Hash] a shallow Hash copy of the original if not modified, or a
     #   new Hash otherwise
     # @api private
-    def normalized_default_data(key, default_key)
+    def normalized_default_data(key, default_key, suite, platform)
       ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new).dup
+      ddata = { default_key => ddata.call(suite, platform) } if ddata.is_a?(Proc)
       ddata = { default_key => ddata } if ddata.is_a?(String)
       ddata
     end

@@ -50,3 +50,18 @@ require "yard"
 YARD::Rake::YardocTask.new
 
 task :default => [:test, :quality]
+
+task :deploy_over_dk do
+  if RUBY_PLATFORM =~ /mswin|mingw|windows/
+    dk_path = File.join(ENV["SYSTEMDRIVE"], "opscode", "chefdk")
+  else
+    dk_path = "/opt/chefdk"
+  end
+
+  dk_app_path = File.join(dk_path, %w[embedded apps test-kitchen])
+  FileUtils.copy_entry(File.dirname(__FILE__), dk_app_path)
+  git_dir = File.join(dk_app_path, ".git")
+  FileUtils.rm_rf(git_dir) if Dir.exist?(git_dir)
+end
+
+task :dk_install => [:deploy_over_dk, :install]

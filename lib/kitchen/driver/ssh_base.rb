@@ -16,6 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "thor/util"
+
+require "kitchen/lazy_hash"
+
 module Kitchen
 
   module Driver
@@ -26,10 +30,22 @@ module Kitchen
     # * #destroy(state)
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class SSHBase < Base
+    class SSHBase
+
+      include ShellOut
+      include Configurable
+      include Logging
 
       default_config :sudo, true
       default_config :port, 22
+
+      # Creates a new Driver object using the provided configuration data
+      # which will be merged with any default configuration.
+      #
+      # @param config [Hash] provided driver configuration
+      def initialize(config = {})
+        init_config(config)
+      end
 
       # (see Base#create)
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
@@ -37,35 +53,55 @@ module Kitchen
       end
 
       # (see Base#converge)
-      def converge(state)
+      def converge(state) # rubocop:disable Metrics/AbcSize
         provisioner = instance.provisioner
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
 
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(provisioner.install_command, conn)
-          run_remote(provisioner.init_command, conn)
-          transfer_path(sandbox_dirs, provisioner[:root_path], conn)
-          run_remote(provisioner.prepare_command, conn)
-          run_remote(provisioner.run_command, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(provisioner.install_command))
+          conn.execute(env_cmd(provisioner.init_command))
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, provisioner[:root_path])
+          debug("Transfer complete")
+          conn.execute(env_cmd(provisioner.prepare_command))
+          conn.execute(env_cmd(provisioner.run_command))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       ensure
-        provisioner && provisioner.cleanup_sandbox
+        instance.provisioner.cleanup_sandbox
       end
 
       # (see Base#setup)
       def setup(state)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser.setup_cmd, conn)
+        verifier = instance.verifier
+
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(verifier.install_command))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
       end
 
       # (see Base#verify)
-      def verify(state)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(busser.sync_cmd, conn)
-          run_remote(busser.run_cmd, conn)
+      def verify(state) # rubocop:disable Metrics/AbcSize
+        verifier = instance.verifier
+        verifier.create_sandbox
+        sandbox_dirs = Dir.glob(File.join(verifier.sandbox_path, "*"))
+
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(verifier.init_command))
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, verifier[:root_path])
+          debug("Transfer complete")
+          conn.execute(env_cmd(verifier.prepare_command))
+          conn.execute(env_cmd(verifier.run_command))
         end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
+      ensure
+        instance.verifier.cleanup_sandbox
       end
 
       # (see Base#destroy)
@@ -75,7 +111,8 @@ module Kitchen
 
       # (see Base#login_command)
       def login_command(state)
-        SSH.new(*build_ssh_args(state)).login_command
+        instance.transport.connection(backcompat_merged_state(state)).
+          login_command
       end
 
       # Executes an arbitrary command on an instance over an SSH connection.
@@ -84,8 +121,8 @@ module Kitchen
       # @param command [String] the command to be executed
       # @raise [ActionFailed] if the command could not be successfully completed
       def remote_command(state, command)
-        Kitchen::SSH.new(*build_ssh_args(state)) do |conn|
-          run_remote(command, conn)
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          conn.execute(env_cmd(command))
         end
       end
 
@@ -96,12 +133,70 @@ module Kitchen
       # @deprecated This method should no longer be called directly and exists
       #   to support very old drivers. This will be removed in the future.
       def ssh(ssh_args, command)
-        Kitchen::SSH.new(*ssh_args) do |conn|
-          run_remote(command, conn)
+        pseudo_state = { :hostname => ssh_args[0], :username => ssh_args[1] }
+        pseudo_state.merge!(ssh_args[2])
+        connection_state = backcompat_merged_state(pseudo_state)
+
+        instance.transport.connection(connection_state) do |conn|
+          conn.execute(env_cmd(command))
         end
       end
 
+      # Performs whatever tests that may be required to ensure that this driver
+      # will be able to function in the current environment. This may involve
+      # checking for the presence of certain directories, software installed,
+      # etc.
+      #
+      # @raise [UserError] if the driver will not be able to perform or if a
+      #   documented dependency is missing from the system
+      def verify_dependencies
+      end
+
+      class << self
+        # @return [Array<Symbol>] an array of action method names that cannot
+        #   be run concurrently and must be run in serial via a shared mutex
+        attr_reader :serial_actions
+      end
+
+      # Registers certain driver actions that cannot be safely run concurrently
+      # in threads across multiple instances. Typically this might be used
+      # for create or destroy actions that use an underlying resource that
+      # cannot be used at the same time.
+      #
+      # A shared mutex for this driver object will be used to synchronize all
+      # registered methods.
+      #
+      # @example a single action method that cannot be run concurrently
+      #
+      #   no_parallel_for :create
+      #
+      # @example multiple action methods that cannot be run concurrently
+      #
+      #   no_parallel_for :create, :destroy
+      #
+      # @param methods [Array<Symbol>] one or more actions as symbols
+      # @raise [ClientError] if any method is not a valid action method name
+      def self.no_parallel_for(*methods)
+        action_methods = [:create, :converge, :setup, :verify, :destroy]
+
+        Array(methods).each do |meth|
+          next if action_methods.include?(meth)
+
+          raise ClientError, "##{meth} is not a valid no_parallel_for method"
+        end
+
+        @serial_actions ||= []
+        @serial_actions += methods
+      end
+
       private
+
+      def backcompat_merged_state(state)
+        driver_ssh_keys = %w[
+          forward_agent hostname password port ssh_key username
+        ].map(&:to_sym)
+        config.select { |key, _| driver_ssh_keys.include?(key) }.rmerge(state)
+      end
 
       # Builds arguments for constructing a `Kitchen::SSH` instance.
       #
@@ -131,6 +226,7 @@ module Kitchen
       # @return [String] command string
       # @api private
       def env_cmd(cmd)
+        return if cmd.nil?
         env = "env"
         env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
         env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
@@ -177,7 +273,52 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_sshd(hostname, username = nil, options = {})
-        SSH.new(hostname, username, { :logger => logger }.merge(options)).wait
+        pseudo_state = { :hostname => hostname }
+        pseudo_state[:username] = username if username
+        pseudo_state.merge!(options)
+
+        instance.transport.connection(backcompat_merged_state(pseudo_state)).
+          wait_until_ready
+      end
+
+      # Intercepts any bare #puts calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
+      def puts(msg)
+        info(msg)
+      end
+
+      # Intercepts any bare #print calls in subclasses and issues an INFO log
+      # event instead.
+      #
+      # @param msg [String] message string
+      def print(msg)
+        info(msg)
+      end
+
+      # Delegates to Kitchen::ShellOut.run_command, overriding some default
+      # options:
+      #
+      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
+      #   Driver object
+      # * `:log_subject` defaults to a String representation of the Driver's
+      #   class name
+      #
+      # @see ShellOut#run_command
+      def run_command(cmd, options = {})
+        base_options = {
+          :use_sudo => config[:use_sudo],
+          :log_subject => Thor::Util.snake_case(self.class.to_s)
+        }.merge(options)
+        super(cmd, base_options)
+      end
+
+      # Returns the Busser object associated with the driver.
+      #
+      # @return [Busser] a busser
+      def busser
+        instance.verifier
       end
     end
   end

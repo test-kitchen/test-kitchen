@@ -27,6 +27,8 @@ require "kitchen/platform"
 require "kitchen/provisioner"
 require "kitchen/provisioner/dummy"
 require "kitchen/suite"
+require "kitchen/transport/dummy"
+require "kitchen/verifier/dummy"
 
 class DummyStateFile
 
@@ -52,7 +54,7 @@ end
 
 class SerialDummyDriver < Kitchen::Driver::Dummy
 
-  no_parallel_for :create, :verify, :destroy
+  no_parallel_for :create, :destroy
 
   attr_reader :action_in_mutex
 
@@ -66,24 +68,26 @@ class SerialDummyDriver < Kitchen::Driver::Dummy
     super
   end
 
-  def converge(state)
-    track_locked(:converge)
-    super
-  end
-
-  def setup(state)
-    track_locked(:setup)
-    super
-  end
-
-  def verify(state)
-    track_locked(:verify)
-    super
-  end
-
   def destroy(state)
     track_locked(:destroy)
     super
+  end
+end
+
+class LegacyDriver < Kitchen::Driver::SSHBase
+
+  attr_reader :called_converge, :called_setup, :called_verify
+
+  def converge(_)
+    @called_converge
+  end
+
+  def setup(_)
+    @called_setup
+  end
+
+  def verify(_)
+    @called_verify
   end
 end
 
@@ -95,12 +99,13 @@ describe Kitchen::Instance do
   let(:instance)    { Kitchen::Instance.new(opts) }
   let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)  { DummyStateFile.new }
-  let(:busser)      { Kitchen::Busser.new(suite.name, {}) }
+  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
+  let(:verifier)    { Kitchen::Verifier::Dummy.new({}) }
 
   let(:opts) do
     { :suite => suite, :platform => platform, :driver => driver,
-      :provisioner => provisioner, :busser => busser,
-      :logger => logger, :state_file => state_file }
+      :provisioner => provisioner, :verifier => verifier,
+      :logger => logger, :state_file => state_file, :transport => transport }
   end
 
   def suite(name = "suite")
@@ -234,15 +239,37 @@ describe Kitchen::Instance do
     end
   end
 
-  describe "#busser" do
+  describe "#transport" do
 
-    it "returns its busser" do
-      instance.busser.must_equal busser
+    it "returns its transport" do
+      instance.transport.must_equal transport
+    end
+
+    it "raises an ArgumentError if missing" do
+      opts.delete(:transport)
+      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+    end
+
+    it "sets Transport#instance to itself" do
+      # it's mind-bottling
+      instance.transport.instance.must_equal instance
+    end
+  end
+
+  describe "#verifier" do
+
+    it "returns its verifier" do
+      instance.verifier.must_equal verifier
     end
 
     it "raises and ArgumentError if missing" do
-      opts.delete(:busser)
+      opts.delete(:verifier)
       proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+    end
+
+    it "sets Verifier#instance to itself" do
+      # it's mind-bottling
+      instance.verifier.instance.must_equal instance
     end
   end
 
@@ -262,10 +289,13 @@ describe Kitchen::Instance do
     instance.to_str.must_equal "<suite-platform>"
   end
 
-  it "#login executes the driver's login_command" do
+  it "#login executes the transport's login_command" do
+    conn = stub("connection")
     state_file.write(:last_action => "create")
-    driver.stubs(:login_command).with(:last_action => "create").
-      returns(Kitchen::LoginCommand.new(%w[echo hello], :purple => true))
+    transport.stubs(:connection).with(:last_action => "create").
+      returns(conn)
+    conn.stubs(:login_command).
+      returns(Kitchen::LoginCommand.new("echo", ["hello"], :purple => true))
     Kernel.expects(:exec).with("echo", "hello", :purple => true)
 
     instance.login
@@ -281,6 +311,20 @@ describe Kitchen::Instance do
 
     it "returns a hash" do
       instance.diagnose.must_be_instance_of Hash
+    end
+
+    it "sets :platform key to platform's diagnose info" do
+      platform.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose[:platform].must_equal(:a => "b")
+    end
+
+    it "sets :platform key to :unknown if obj can't respond to #diagnose" do
+      opts[:platform] = Class.new(platform.class) {
+        undef_method :diagnose
+      }.new(:name => "whoop")
+
+      instance.diagnose[:platform].must_equal :unknown
     end
 
     it "sets :state_file key to state_file's diganose info" do
@@ -311,18 +355,32 @@ describe Kitchen::Instance do
       instance.diagnose[:provisioner].must_equal :unknown
     end
 
-    it "sets :busser key to busser's diganose info" do
-      busser.stubs(:diagnose).returns(:a => "b")
+    it "sets :verifier key to verifier's diganose info" do
+      verifier.stubs(:diagnose).returns(:a => "b")
 
-      instance.diagnose[:busser].must_equal(:a => "b")
+      instance.diagnose[:verifier].must_equal(:a => "b")
     end
 
-    it "sets :busser key to :unknown if obj can't respond to #diagnose" do
-      opts[:busser] = Class.new(busser.class) {
+    it "sets :verifier key to :unknown if obj can't respond to #diagnose" do
+      opts[:verifier] = Class.new(verifier.class) {
         undef_method :diagnose
-      }.new(suite.name, {})
+      }.new({})
 
-      instance.diagnose[:busser].must_equal :unknown
+      instance.diagnose[:verifier].must_equal :unknown
+    end
+
+    it "sets :transport key to transport's diganose info" do
+      transport.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose[:transport].must_equal(:a => "b")
+    end
+
+    it "sets :transport key to :unknown if obj can't respond to #diagnose" do
+      opts[:transport] = Class.new(transport.class) {
+        undef_method :diagnose
+      }.new
+
+      instance.diagnose[:transport].must_equal :unknown
     end
   end
 
@@ -382,9 +440,9 @@ describe Kitchen::Instance do
 
       describe "with no state" do
 
-        it "calls Driver#create and converge with empty state hash" do
+        it "calls Driver#create and Provisioner#call with empty state hash" do
           driver.expects(:create).with(Hash.new)
-          driver.expects(:converge).
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
 
           instance.converge
@@ -414,8 +472,8 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "create") }
 
-        it "calls Driver#converge with state hash" do
-          driver.expects(:converge).
+        it "calls Provisioner#call with state hash" do
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
 
           instance.converge
@@ -432,8 +490,8 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "converge") }
 
-        it "calls Driver#converge with state hash" do
-          driver.expects(:converge).
+        it "calls Provisioner#call with state hash" do
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "converge" }
 
           instance.converge
@@ -451,12 +509,13 @@ describe Kitchen::Instance do
 
       describe "with no state" do
 
-        it "calls Driver#create, converge, and setup with empty state hash" do
+        it "calls create and converge with empty state hash" do
           driver.expects(:create).with(Hash.new)
-          driver.expects(:converge).
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
+            with { |state| state[:last_action] == "converge" }.
+            never
 
           instance.setup
         end
@@ -485,11 +544,12 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "create") }
 
-        it "calls Driver#converge and setup with state hash" do
-          driver.expects(:converge).
+        it "calls Provisioner#call with state hash" do
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
+            with { |state| state[:last_action] == "converge" }.
+            never
 
           instance.setup
         end
@@ -505,9 +565,10 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "converge") }
 
-        it "calls Driver#setup with state hash" do
+        it "calls nothing with state hash" do
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
+            with { |state| state[:last_action] == "converge" }.
+            never
 
           instance.setup
         end
@@ -523,9 +584,10 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "setup") }
 
-        it "calls Driver#setup with state hash" do
+        it "calls nothing with state hash" do
           driver.expects(:setup).
-            with { |state| state[:last_action] == "setup" }
+            with { |state| state[:last_action] == "setup" }.
+            never
 
           instance.setup
         end
@@ -542,13 +604,14 @@ describe Kitchen::Instance do
 
       describe "with no state" do
 
-        it "calls Driver#create, converge, setup, and verify with empty state hash" do
+        it "calls create, converge, and verify with empty state hash" do
           driver.expects(:create).with(Hash.new)
-          driver.expects(:converge).
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
-          driver.expects(:verify).
+            with { |state| state[:last_action] == "converge" }.
+            never
+          verifier.expects(:call).
             with { |state| state[:last_action] == "setup" }
 
           instance.verify
@@ -578,12 +641,13 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "create") }
 
-        it "calls Driver#converge, setup, and verify with state hash" do
-          driver.expects(:converge).
+        it "calls converge, and verify with state hash" do
+          provisioner.expects(:call).
             with { |state| state[:last_action] == "create" }
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
-          driver.expects(:verify).
+            with { |state| state[:last_action] == "converge" }.
+            never
+          verifier.expects(:call).
             with { |state| state[:last_action] == "setup" }
 
           instance.verify
@@ -600,10 +664,11 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "converge") }
 
-        it "calls Driver#setup, and verify with state hash" do
+        it "calls Verifier#call with state hash" do
           driver.expects(:setup).
-            with { |state| state[:last_action] == "converge" }
-          driver.expects(:verify).
+            with { |state| state[:last_action] == "converge" }.
+            never
+          verifier.expects(:call).
             with { |state| state[:last_action] == "setup" }
 
           instance.verify
@@ -620,8 +685,8 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "setup") }
 
-        it "calls Driver#verify with state hash" do
-          driver.expects(:verify).
+        it "calls Verifier#call with state hash" do
+          verifier.expects(:call).
             with { |state| state[:last_action] == "setup" }
 
           instance.verify
@@ -638,8 +703,8 @@ describe Kitchen::Instance do
 
         before { state_file.write(:last_action => "verify") }
 
-        it "calls Driver#verify with state hash" do
-          driver.expects(:verify).
+        it "calls Verifier#call with state hash" do
+          verifier.expects(:call).
             with { |state| state[:last_action] == "verify" }
 
           instance.verify
@@ -710,12 +775,11 @@ describe Kitchen::Instance do
 
       describe "with no state" do
 
-        it "calls Driver#destroy, create, converge, setup, verify, destroy" do
+        it "calls destroy, create, converge, setup, verify, destroy" do
           driver.expects(:destroy)
           driver.expects(:create)
-          driver.expects(:converge)
-          driver.expects(:setup)
-          driver.expects(:verify)
+          provisioner.expects(:call)
+          verifier.expects(:call)
           driver.expects(:destroy)
 
           instance.test
@@ -741,12 +805,11 @@ describe Kitchen::Instance do
 
           before { state_file.write(:last_action => action) }
 
-          it "calls Driver#destroy, create, converge, setup, verify, destroy" do
+          it "calls destroy, create, converge, setup, verify, destroy" do
             driver.expects(:destroy)
             driver.expects(:create)
-            driver.expects(:converge)
-            driver.expects(:setup)
-            driver.expects(:verify)
+            provisioner.expects(:call)
+            verifier.expects(:call)
             driver.expects(:destroy)
 
             instance.test
@@ -756,12 +819,11 @@ describe Kitchen::Instance do
 
       describe "with destroy mode of never" do
 
-        it "calls Driver#destroy, create, converge, setup, verify" do
+        it "calls destroy, create, converge, setup, verify" do
           driver.expects(:destroy).once
           driver.expects(:create)
-          driver.expects(:converge)
-          driver.expects(:setup)
-          driver.expects(:verify)
+          provisioner.expects(:call)
+          verifier.expects(:call)
 
           instance.test(:never)
         end
@@ -769,10 +831,10 @@ describe Kitchen::Instance do
 
       describe "with destroy mode of always" do
 
-        it "calls Driver#destroy at even when action fails" do
+        it "calls destroy at even when action fails" do
           driver.expects(:destroy)
           driver.expects(:create)
-          driver.expects(:converge).raises(Kitchen::ActionFailed)
+          provisioner.expects(:call).raises(Kitchen::ActionFailed)
           driver.expects(:destroy)
 
           begin
@@ -801,11 +863,10 @@ describe Kitchen::Instance do
 
       before { state_file.write(:last_action => "create") }
 
-      it "calls Driver#remote_command with state and command" do
-        driver.expects(:remote_command).with do |state, command|
-          state.must_equal(:last_action => "create")
-          command.must_equal "uptime"
-        end
+      it "calls Transport#execute with command" do
+        connection = mock("connection")
+        connection.expects(:execute).with("uptime")
+        transport.stubs(:connection).yields(connection)
 
         instance.remote_exec("uptime")
       end
@@ -901,7 +962,7 @@ describe Kitchen::Instance do
     describe "crashes preserve last action for desired verify action" do
 
       before do
-        driver.stubs(:verify).raises(Kitchen::ActionFailed, "death")
+        verifier.stubs(:call).raises(Kitchen::ActionFailed, "death")
       end
 
       [:create, :converge, :setup].each do |action|
@@ -938,10 +999,249 @@ describe Kitchen::Instance do
         instance.test
 
         driver.action_in_mutex[:create].must_equal true
-        driver.action_in_mutex[:converge].must_equal false
-        driver.action_in_mutex[:setup].must_equal false
-        driver.action_in_mutex[:verify].must_equal true
         driver.action_in_mutex[:destroy].must_equal true
+      end
+    end
+
+    describe "with legacy Driver::SSHBase subclasses" do
+
+      let(:driver) { LegacyDriver.new({}) }
+
+      describe "#converge" do
+
+        describe "with no state" do
+
+          it "calls Driver#create and Driver#converge with empty state hash" do
+            driver.expects(:create).with(Hash.new)
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+
+            instance.converge
+          end
+        end
+
+        describe "with last action of create" do
+
+          before { state_file.write(:last_action => "create") }
+
+          it "calls Driver#converge with state hash" do
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+
+            instance.converge
+          end
+        end
+
+        describe "with last action of converge" do
+
+          before { state_file.write(:last_action => "converge") }
+
+          it "calls Driver#converge with state hash" do
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "converge" }
+
+            instance.converge
+          end
+        end
+      end
+
+      describe "#setup" do
+
+        describe "with no state" do
+
+          it "calls create, converge, and setup with empty state hash" do
+            driver.expects(:create).with(Hash.new)
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+
+            instance.setup
+          end
+        end
+
+        describe "with last action of create" do
+
+          before { state_file.write(:last_action => "create") }
+
+          it "calls Provisioner#call and setup with state hash" do
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+
+            instance.setup
+          end
+        end
+
+        describe "with last action of converge" do
+
+          before { state_file.write(:last_action => "converge") }
+
+          it "calls Driver#setup with state hash" do
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+
+            instance.setup
+          end
+        end
+
+        describe "with last action of setup" do
+
+          before { state_file.write(:last_action => "setup") }
+
+          it "calls Driver#setup with state hash" do
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "setup" }
+
+            instance.setup
+          end
+        end
+      end
+
+      describe "#verify" do
+
+        describe "with no state" do
+
+          it "calls create, converge, setup, and verify with empty state hash" do
+            driver.expects(:create).with(Hash.new)
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+            driver.expects(:verify).
+              with { |state| state[:last_action] == "setup" }
+
+            instance.verify
+          end
+        end
+
+        describe "with last of create" do
+
+          before { state_file.write(:last_action => "create") }
+
+          it "calls converge, setup, and verify with state hash" do
+            driver.expects(:converge).
+              with { |state| state[:last_action] == "create" }
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+            driver.expects(:verify).
+              with { |state| state[:last_action] == "setup" }
+
+            instance.verify
+          end
+        end
+
+        describe "with last of converge" do
+
+          before { state_file.write(:last_action => "converge") }
+
+          it "calls Driver#setup, and verify with state hash" do
+            driver.expects(:setup).
+              with { |state| state[:last_action] == "converge" }
+            driver.expects(:verify).
+              with { |state| state[:last_action] == "setup" }
+
+            instance.verify
+          end
+        end
+
+        describe "with last of setup" do
+
+          before { state_file.write(:last_action => "setup") }
+
+          it "calls Driver#verify with state hash" do
+            driver.expects(:verify).
+              with { |state| state[:last_action] == "setup" }
+
+            instance.verify
+          end
+        end
+
+        describe "with last of verify" do
+
+          before { state_file.write(:last_action => "verify") }
+
+          it "calls Driver#verify with state hash" do
+            driver.expects(:verify).
+              with { |state| state[:last_action] == "verify" }
+
+            instance.verify
+          end
+        end
+      end
+
+      describe "#test" do
+
+        describe "with no state" do
+
+          it "calls destroy, create, converge, setup, verify, destroy" do
+            driver.expects(:destroy)
+            driver.expects(:create)
+            driver.expects(:converge)
+            driver.expects(:setup)
+            driver.expects(:verify)
+            driver.expects(:destroy)
+
+            instance.test
+          end
+        end
+
+        [:create, :converge, :setup, :verify].each do |action|
+
+          describe "with last action of #{action}" do
+
+            before { state_file.write(:last_action => action) }
+
+            it "calls destroy, create, converge, setup, verify, destroy" do
+              driver.expects(:destroy)
+              driver.expects(:create)
+              driver.expects(:converge)
+              driver.expects(:setup)
+              driver.expects(:verify)
+              driver.expects(:destroy)
+
+              instance.test
+            end
+          end
+        end
+
+        describe "with destroy mode of never" do
+
+          it "calls destroy, create, converge, setup, verify" do
+            driver.expects(:destroy).once
+            driver.expects(:create)
+            driver.expects(:converge)
+            driver.expects(:setup)
+            driver.expects(:verify)
+
+            instance.test(:never)
+          end
+        end
+
+        describe "with destroy mode of always" do
+
+          it "calls destroy at even when action fails" do
+            driver.expects(:destroy)
+            driver.expects(:create)
+            driver.expects(:converge).raises(Kitchen::ActionFailed)
+            driver.expects(:destroy)
+
+            begin
+              instance.test(:always)
+            rescue # rubocop:disable Lint/HandleExceptions
+            end
+          end
+        end
+      end
+
+      it "#login executes the driver's login_command" do
+        state_file.write(:last_action => "create")
+        driver.stubs(:login_command).with(:last_action => "create").
+          returns(Kitchen::LoginCommand.new("echo", ["hello"], :purple => true))
+        Kernel.expects(:exec).with("echo", "hello", :purple => true)
+
+        instance.login
       end
     end
   end

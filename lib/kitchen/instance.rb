@@ -64,9 +64,13 @@ module Kitchen
     #   automation tools
     attr_reader :provisioner
 
-    # @return [Busser] busser object for instance to manage the busser
+    # @return [Transport::Base] transport object which will communicate with
+    #   an instance.
+    attr_reader :transport
+
+    # @return [Verifier] verifier object for instance to manage the verifier
     #   installation on this instance
-    attr_reader :busser
+    attr_reader :verifier
 
     # @return [Logger] the logger for this instance
     attr_reader :logger
@@ -78,8 +82,9 @@ module Kitchen
     # @option options [Platform] :platform the platform (**Required**)
     # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
+    # @option options [Transport::Base] :transport the transport
     #   (**Required**)
-    # @option options [Busser] :busser the busser logger (**Required**)
+    # @option options [Verifier] :verifier the verifier logger (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
     # @option options [StateFile] :state_file the state file object to use
@@ -93,12 +98,15 @@ module Kitchen
       @name         = self.class.name_for(@suite, @platform)
       @driver       = options.fetch(:driver)
       @provisioner  = options.fetch(:provisioner)
-      @busser       = options.fetch(:busser)
+      @transport    = options.fetch(:transport)
+      @verifier     = options.fetch(:verifier)
       @logger       = options.fetch(:logger) { Kitchen.logger }
       @state_file   = options.fetch(:state_file)
 
       setup_driver
       setup_provisioner
+      setup_transport
+      setup_verifier
     end
 
     # Returns a displayable representation of the instance.
@@ -121,7 +129,7 @@ module Kitchen
 
     # Converges this running instance.
     #
-    # @see Driver::Base#converge
+    # @see Provisioner::Base#call
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
@@ -188,32 +196,37 @@ module Kitchen
     end
 
     # Logs in to this instance by invoking a system command, provided by the
-    # instance's driver. This could be an SSH command, telnet, or serial
+    # instance's transport. This could be an SSH command, telnet, or serial
     # console session.
     #
     # **Note** This method calls exec and will not return.
     #
-    # @see Driver::LoginCommand
-    # @see Driver::Base#login_command
+    # @see Kitchen::LoginCommand
+    # @see Transport::Base::Connection#login_command
     def login
       state = state_file.read
       if state[:last_action].nil?
         raise UserError, "Instance #{to_str} has not yet been created"
       end
 
-      login_command = driver.login_command(state)
-      cmd, *args = login_command.cmd_array
-      options = login_command.options
+      lc = if legacy_ssh_base_driver?
+        legacy_ssh_base_login(state)
+      else
+        transport.connection(state).login_command
+      end
 
-      debug(%{Login command: #{cmd} #{args.join(" ")} (Options: #{options})})
-      Kernel.exec(cmd, *args, options)
+      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} } \
+        "(Options: #{lc.options})")
+      Kernel.exec(*lc.exec_args)
     end
 
     # Executes an arbitrary command on this instance.
     #
     # @param command [String] a command string to execute
     def remote_exec(command)
-      driver.remote_command(state_file.read, command)
+      transport.connection(state_file.read) do |conn|
+        conn.execute(command)
+      end
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
@@ -221,7 +234,9 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = Hash.new
-      [:state_file, :driver, :provisioner, :busser].each do |sym|
+      [
+        :platform, :state_file, :driver, :provisioner, :transport, :verifier
+      ].each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
       end
@@ -250,7 +265,8 @@ module Kitchen
     # @api private
     def validate_options(options)
       [
-        :suite, :platform, :driver, :provisioner, :busser, :state_file
+        :suite, :platform, :driver, :provisioner,
+        :transport, :verifier, :state_file
       ].each do |k|
         next if options.key?(k)
 
@@ -281,6 +297,22 @@ module Kitchen
       @provisioner.finalize_config!(self)
     end
 
+    # Perform any final configuration or preparation needed for the transport
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_transport
+      transport.finalize_config!(self)
+    end
+
+    # Perform any final configuration or preparation needed for the verifier
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_verifier
+      verifier.finalize_config!(self)
+    end
+
     # Perform all actions in order from last state to desired state.
     #
     # @param desired [Symbol] a symbol representing the desired action state
@@ -305,11 +337,20 @@ module Kitchen
 
     # Perform the converge action.
     #
-    # @see Driver::Base#converge
+    # @see Provisioner::Base#call
     # @return [self] this instance, used to chain actions
     # @api private
     def converge_action
-      perform_action(:converge, "Converging")
+      banner "Converging #{to_str}..."
+      elapsed = action(:converge) do |state|
+        if legacy_ssh_base_driver?
+          legacy_ssh_base_converge(state)
+        else
+          provisioner.call(state)
+        end
+      end
+      info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the setup action.
@@ -318,7 +359,12 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def setup_action
-      perform_action(:setup, "Setting up")
+      banner "Setting up #{to_str}..."
+      elapsed = action(:setup) do |state|
+        legacy_ssh_base_setup(state) if legacy_ssh_base_driver?
+      end
+      info("Finished setting up #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the verify action.
@@ -327,7 +373,16 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def verify_action
-      perform_action(:verify, "Verifying")
+      banner "Verifying #{to_str}..."
+      elapsed = action(:verify) do |state|
+        if legacy_ssh_base_driver?
+          legacy_ssh_base_verify(state)
+        else
+          verifier.call(state)
+        end
+      end
+      info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
+      self
     end
 
     # Perform the destroy action.
@@ -452,6 +507,71 @@ module Kitchen
     # @api private
     def failure_message(what)
       "#{what.capitalize} failed on instance #{to_str}."
+    end
+
+    # Invokes `Driver#converge` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#converge` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_converge(state)
+      warn("Running legacy converge for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.converge(state)
+    end
+
+    # @return [TrueClass,FalseClass] whether or not the Driver inherits from
+    #   `Kitchen::Driver::SSHBase`
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#converge` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_driver?
+      driver.class < Kitchen::Driver::SSHBase
+    end
+
+    # Invokes `Driver#login_command` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#login_command` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_login(state)
+      warn("Running legacy login for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.login_command(state)
+    end
+
+    # Invokes `Driver#setup` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#setup` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_setup(state)
+      warn("Running legacy setup for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.setup(state)
+    end
+
+    # Invokes `Driver#verify` on a legacy Driver, which inherits from
+    # `Kitchen::Driver::SSHBase`.
+    #
+    # @param state [Hash] mutable instance state
+    # @deprecated When legacy Driver::SSHBase support is removed, the
+    #   `#verify` method will no longer be called on the Driver.
+    # @api private
+    def legacy_ssh_base_verify(state)
+      warn("Running legacy verify for '#{driver.name}' Driver")
+      # TODO: Document upgrade path and provide link
+      # warn("Driver authors: please read http://example.com for more details.")
+      driver.verify(state)
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

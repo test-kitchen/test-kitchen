@@ -39,11 +39,6 @@ module Kitchen
         report(:create, state)
       end
 
-      # (see Base#converge)
-      def converge(state)
-        report(:converge, state)
-      end
-
       # (see Base#setup)
       def setup(state)
         report(:setup, state)

@@ -28,8 +28,17 @@ module Kitchen
       include Configurable
       include Logging
 
-      default_config :root_path, "/tmp/kitchen"
-      default_config :sudo, true
+      default_config :http_proxy, nil
+
+      default_config :https_proxy, nil
+
+      default_config :root_path do |provisioner|
+        provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
+      end
+
+      default_config :sudo do |provisioner|
+        provisioner.windows_os? ? nil : true
+      end
 
       expand_path_for :test_base_path
 
@@ -40,26 +49,27 @@ module Kitchen
         init_config(config)
       end
 
-      # Performs any final configuration required for the provisioner to do its
-      # work. A reference to an Instance is required as configuration dependant
-      # data may need access through an Instance. This also acts as a hook
-      # point where the object may wish to perform other last minute checks,
-      # valiations, or configuration expansions.
+      # Runs the provisioner on the instance.
       #
-      # @param instance [Instance] an associated instance
-      # @return [self] itself, used for chaining
-      # @raise [ClientError] if instance parameter is nil
-      def finalize_config!(instance)
-        super
-        load_needed_dependencies!
-        self
-      end
+      # @param state [Hash] mutable instance state
+      # @raise [ActionFailed] if the action could not be completed
+      def call(state)
+        create_sandbox
+        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
 
-      # Returns the name of this driver, suitable for display in a CLI.
-      #
-      # @return [String] name of this driver
-      def name
-        self.class.name.split("::").last
+        instance.transport.connection(state) do |conn|
+          conn.execute(install_command)
+          conn.execute(init_command)
+          info("Transferring files to #{instance.to_str}")
+          conn.upload(sandbox_dirs, config[:root_path])
+          debug("Transfer complete")
+          conn.execute(prepare_command)
+          conn.execute(run_command)
+        end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
+      ensure
+        cleanup_sandbox
       end
 
       # Generates a command string which will install and configure the
@@ -145,34 +155,22 @@ module Kitchen
 
       private
 
-      # Loads any required third party Ruby libraries or runs any shell out
-      # commands to prepare the provisioner. This method will be called in the
-      # context of the main thread of execution and so does not necessarily
-      # have to be thread safe.
+      # Builds a complete command given a variables String preamble and a file
+      # containing shell code.
       #
-      # **Note:** any subclasses overriding this method would be well advised
-      # to call super when overriding this method, for example:
-      #
-      # @example overriding `#load_needed_dependencies!`
-      #
-      #   class MyProvisioner < Kitchen::Provisioner::Base
-      #     def load_needed_dependencies!
-      #       super
-      #       # any further work
-      #     end
-      #   end
-      #
-      # @raise [ClientError] if any library loading fails or any of the
-      #   dependency requirements cannot be satisfied
+      # @param vars [String] shell variables, as a String
+      # @param file [String] file basename (without extension) containing
+      #   shell code
+      # @return [String] command
       # @api private
-      def load_needed_dependencies!
-      end
+      def shell_code_from_file(vars, file)
+        src_file = File.join(
+          File.dirname(__FILE__),
+          %w[.. .. .. support],
+          file + (powershell_shell? ? ".ps1" : ".sh")
+        )
 
-      # @return [Logger] the instance's logger or Test Kitchen's common logger
-      #   otherwise
-      # @api private
-      def logger
-        instance ? instance.logger : Kitchen.logger
+        wrap_shell_code([vars, "", IO.read(src_file)].join("\n"))
       end
 
       # Conditionally prefixes a command with a sudo command.

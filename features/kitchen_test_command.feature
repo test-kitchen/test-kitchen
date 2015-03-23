@@ -43,8 +43,8 @@ Feature: Running a full test instance test
     Given a file named ".kitchen.local.yml" with:
     """
     ---
-    driver:
-      fail_converge: true
+    provisioner:
+      fail: true
     """
     When I run `kitchen test client-beans --destroy=always`
     Then the exit status should not be 0
@@ -56,8 +56,8 @@ Feature: Running a full test instance test
     Given a file named ".kitchen.local.yml" with:
     """
     ---
-    driver:
-      fail_converge: true
+    provisioner:
+      fail: true
     """
     When I run `kitchen test client-beans --destroy=passing`
     Then the exit status should not be 0

@@ -19,6 +19,7 @@ tmp
 .rbenv-version
 .ruby-version
 .project
+.DS_Store
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml

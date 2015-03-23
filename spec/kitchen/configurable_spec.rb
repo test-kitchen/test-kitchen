@@ -19,6 +19,7 @@
 require_relative "../spec_helper"
 require "stringio"
 
+require "kitchen"
 require "kitchen/errors"
 require "kitchen/configurable"
 
@@ -30,8 +31,11 @@ module Kitchen
 
       include Kitchen::Configurable
 
+      attr_reader :instance
+
       def initialize(config = {})
         init_config(config)
+        @instance = config[:instance]
       end
     end
 
@@ -44,6 +48,7 @@ module Kitchen
       default_config :edible, true
       default_config :fetch_command, "curl"
       default_config :success_path, "./success"
+      default_config :bunch_of_paths, %W[./a ./b ./c]
       default_config :beans_url do |subject|
         "http://gim.me/#{subject[:beans]}"
       end
@@ -61,6 +66,7 @@ module Kitchen
       end
 
       expand_path_for :success_path
+      expand_path_for :bunch_of_paths
       expand_path_for :relative_path, false
       expand_path_for :another_path
       expand_path_for :complex_path do |subject|
@@ -90,7 +96,10 @@ end
 describe Kitchen::Configurable do
 
   let(:config)    { Hash.new }
-  let(:instance)  { stub(:name => "coolbeans", :to_str => "<instance>") }
+  let(:platform)  { stub }
+  let(:instance) do
+    stub(:name => "coolbeans", :to_str => "<instance>", :platform => platform)
+  end
 
   let(:subject) do
     Kitchen::Thing::Tiny.new(config).finalize_config!(instance)
@@ -312,6 +321,12 @@ describe Kitchen::Configurable do
         subject[:success_path].must_equal "/the/other/one"
       end
 
+      it "expands all items if path is an array" do
+        subject[:bunch_of_paths].must_equal %W[
+          /tmp/yo/self/a /tmp/yo/self/b /tmp/yo/self/c
+        ]
+      end
+
       it "doesn't expand path with a falsy expand_path_for value" do
         config[:relative_path] = "./rel"
 
@@ -352,6 +367,10 @@ describe Kitchen::Configurable do
 
       subject.config_keys.sort.must_equal [:ice_cream]
     end
+  end
+
+  it "#name returns the name of the plugin" do
+    subject.name.must_equal "Tiny"
   end
 
   describe "#diagnose" do
@@ -486,5 +505,312 @@ describe Kitchen::Configurable do
           must_equal "/custom/ultimate/winner"
       end
     end
+  end
+
+  describe "#remote_path_join" do
+
+    it "returns unix style path separators for unix os_type" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join("a", "b", "c").must_equal "a/b/c"
+    end
+
+    it "returns windows style path separators for windows os_type" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join("a", "b", "c").must_equal "a\\b\\c"
+    end
+
+    it "accepts combinations of strings and arrays" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join(%W[a b], "c", %W[d e]).must_equal "a/b/c/d/e"
+    end
+
+    it "accepts a single array" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join(%W[a b]).must_equal "a\\b"
+    end
+
+    it "converts all windows path separators to unix for unix os_type" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.remote_path_join("\\a\\b", "c/d").must_equal "/a/b/c/d"
+    end
+
+    it "converts all unix path separators to windows for windows os_type" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.remote_path_join("/a/b", "c\\d").must_equal "\\a\\b\\c\\d"
+    end
+  end
+
+  describe "#windows_os?" do
+
+    it "for windows type platform returns true" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.windows_os?.must_equal true
+    end
+
+    it "for unix type platform returns false" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.windows_os?.must_equal false
+    end
+
+    it "for newfangled type platform return false" do
+      platform.stubs(:os_type).returns("internet_cat")
+
+      subject.windows_os?.must_equal false
+    end
+
+    it "for unset type platform returns false" do
+      platform.stubs(:os_type).returns(nil)
+
+      subject.windows_os?.must_equal false
+    end
+  end
+
+  describe "#unix_os?" do
+
+    it "for windows type platform returns false" do
+      platform.stubs(:os_type).returns("windows")
+
+      subject.unix_os?.must_equal false
+    end
+
+    it "for unix type platform returns true" do
+      platform.stubs(:os_type).returns("unix")
+
+      subject.unix_os?.must_equal true
+    end
+
+    it "for newfangled type platform return false" do
+      platform.stubs(:os_type).returns("internet_cat")
+
+      subject.unix_os?.must_equal false
+    end
+
+    it "for unset type platform returns true" do
+      platform.stubs(:os_type).returns(nil)
+
+      subject.unix_os?.must_equal true
+    end
+  end
+
+  describe "#powershell_shell?" do
+
+    it "for powershell type shell returns true" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.powershell_shell?.must_equal true
+    end
+
+    it "for bourne type shell returns false" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.powershell_shell?.must_equal false
+    end
+
+    it "for newfangled type shell return false" do
+      platform.stubs(:shell_type).returns("internet_cat")
+
+      subject.powershell_shell?.must_equal false
+    end
+
+    it "for unset type shell returns false" do
+      platform.stubs(:shell_type).returns(nil)
+
+      subject.powershell_shell?.must_equal false
+    end
+  end
+
+  describe "#bourne_shell?" do
+
+    it "for powershell type shell returns false" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.bourne_shell?.must_equal false
+    end
+
+    it "for bourne type shell returns true" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.bourne_shell?.must_equal true
+    end
+
+    it "for newfangled type shell return false" do
+      platform.stubs(:shell_type).returns("internet_cat")
+
+      subject.bourne_shell?.must_equal false
+    end
+
+    it "for unset type shell returns true" do
+      platform.stubs(:shell_type).returns(nil)
+
+      subject.bourne_shell?.must_equal true
+    end
+  end
+
+  describe "#shell_env_var" do
+
+    it "for powershell type shells returns a powershell environment variable" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.send(:shell_env_var, "foo", "bar").
+        must_equal %{$env:foo = "bar"}
+    end
+
+    it "for bourne type shells returns a bourne environment variable" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.send(:shell_env_var, "foo", "bar").
+        must_equal %{foo="bar"; export foo}
+    end
+  end
+
+  describe "#shell_var" do
+
+    it "for powershell type shells returns a powershell variable" do
+      platform.stubs(:shell_type).returns("powershell")
+
+      subject.send(:shell_var, "foo", "bar").must_equal %{$foo = "bar"}
+    end
+
+    it "for bourne type shells returns a bourne variable" do
+      platform.stubs(:shell_type).returns("bourne")
+
+      subject.send(:shell_var, "foo", "bar").must_equal %{foo="bar"}
+    end
+  end
+
+  describe "#wrap_shell_code" do
+
+    let(:cmd) { subject.send(:wrap_shell_code, "mkdir foo") }
+
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell (sh)" do
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+    end
+
+    describe "for powershell shells" do
+
+      before { platform.stubs(:shell_type).returns("powershell") }
+
+      it "uses powershell shell" do
+        cmd.must_equal("\nmkdir foo")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+    end
+  end
+
+  it "has a default verify dependencies method" do
+    subject.verify_dependencies.must_be_nil
+  end
+
+  describe "#logger" do
+
+    before  { @klog = Kitchen.logger }
+    after   { Kitchen.logger = @klog }
+
+    it "returns the instance's logger" do
+      logger = stub("logger")
+      instance = stub(:logger => logger)
+      subject = Kitchen::Thing::Tiny.new(config.merge(:instance => instance))
+      subject.send(:logger).must_equal logger
+    end
+
+    it "returns the default logger if instance's logger is not set" do
+      subject = Kitchen::Thing::Tiny.new(config)
+      Kitchen.logger = "yep"
+
+      subject.send(:logger).must_equal Kitchen.logger
+    end
+  end
+
+  def outdent!(*args)
+    Kitchen::Util.outdent!(*args)
   end
 end

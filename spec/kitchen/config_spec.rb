@@ -27,7 +27,9 @@ require "kitchen/instance"
 require "kitchen/platform"
 require "kitchen/provisioner"
 require "kitchen/suite"
+require "kitchen/transport"
 require "kitchen/util"
+require "kitchen/verifier"
 
 module Kitchen
 
@@ -61,7 +63,9 @@ describe Kitchen::Config do
     {
       :defaults => {
         :driver => "dummy",
-        :provisioner => "chef_solo"
+        :provisioner => "chef_solo",
+        :transport => "ssh",
+        :verifier => "busser"
       },
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
@@ -167,11 +171,13 @@ describe Kitchen::Config do
       config.platforms
     end
 
-    it "constucts a munger with loader data and defaults" do
+    it "constructs a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
-        returns(munger)
+      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+        data.must_equal "datum"
+        kitchen_config.is_a?(Hash).must_equal true
+      }.returns(munger)
 
       config.platforms
     end
@@ -221,8 +227,10 @@ describe Kitchen::Config do
     it "constucts a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
-        returns(munger)
+      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+        data.must_equal "datum"
+        kitchen_config.is_a?(Hash).must_equal true
+      }.returns(munger)
 
       config.suites
     end
@@ -262,31 +270,25 @@ describe Kitchen::Config do
 
     let(:munger) do
       stub(
-        :busser_data_for => { "junk" => true },
         :driver_data_for => { "junk" => true },
-        :provisioner_data_for => { "junk" => true }
+        :provisioner_data_for => { "junk" => true },
+        :transport_data_for => { "junk" => true },
+        :verifier_data_for => { "junk" => true }
       )
     end
 
     before do
       Kitchen::Instance.stubs(:new).returns("instance")
-      Kitchen::Busser.stubs(:new).returns("busser")
       Kitchen::Driver.stubs(:for_plugin).returns("driver")
       Kitchen::Provisioner.stubs(:for_plugin).returns("provisioner")
+      Kitchen::Transport.stubs(:for_plugin).returns("transport")
+      Kitchen::Verifier.stubs(:for_plugin).returns("verifier")
       Kitchen::Logger.stubs(:new).returns("logger")
       Kitchen::StateFile.stubs(:new).returns("state_file")
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
       config.stubs(:platforms).returns(platforms)
       config.stubs(:suites).returns(suites)
-    end
-
-    it "constructs a Busser object" do
-      munger.expects(:busser_data_for).with("tiny", "unax").returns("datum")
-      Kitchen::Busser.unstub(:new)
-      Kitchen::Busser.expects(:new).with("tiny", "datum")
-
-      config.instances
     end
 
     it "constructs a Driver object" do
@@ -305,6 +307,26 @@ describe Kitchen::Config do
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin).
         with("provey", :name => "provey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs a Transport object" do
+      munger.expects(:transport_data_for).with("tiny", "unax").
+        returns(:name => "transey", :datum => "lots")
+      Kitchen::Transport.unstub(:for_plugin)
+      Kitchen::Transport.expects(:for_plugin).
+        with("transey", :name => "transey", :datum => "lots")
+
+      config.instances
+    end
+
+    it "constructs a Verifier object" do
+      munger.expects(:verifier_data_for).with("tiny", "unax").
+        returns(:name => "vervey", :datum => "lots")
+      Kitchen::Verifier.unstub(:for_plugin)
+      Kitchen::Verifier.expects(:for_plugin).
+        with("vervey", :name => "vervey", :datum => "lots")
 
       config.instances
     end
@@ -332,15 +354,18 @@ describe Kitchen::Config do
 
     it "constructs an Instance object from all built objects" do
       Kitchen::Instance.unstub(:new)
+
       Kitchen::Instance.expects(:new).with(
-        :busser => "busser",
         :driver => "driver",
         :logger => "logger",
         :suite => suites.first,
         :platform => platforms.first,
         :provisioner => "provisioner",
+        :transport => "transport",
+        :verifier => "verifier",
         :state_file => "state_file"
       )
+
       config.instances
     end
   end

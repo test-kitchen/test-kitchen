@@ -149,7 +149,7 @@ module Kitchen
       args += %W[ -p #{port} ]
       args += %W[ #{username}@#{hostname} ]
 
-      LoginCommand.new(["ssh", *args])
+      LoginCommand.new("ssh", args)
     end
 
     private
