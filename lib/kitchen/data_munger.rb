@@ -614,7 +614,7 @@ module Kitchen
     # @return [Hash] a new merged Hash
     # @api private
     def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = normalized_default_data(key, default_key)
+      ddata = normalized_default_data(key, default_key, suite, platform)
       cdata = normalized_common_data(key, default_key)
       pdata = normalized_platform_data(key, default_key, platform)
       sdata = normalized_suite_data(key, default_key, suite)
@@ -791,11 +791,14 @@ module Kitchen
     # @param key [Symbol] the value to normalize
     # @param default_key [Symbol] the implicit default key if a String value
     #   is given
+    # @param suite [String] name of a suite
+    # @param platform [String] name of a platform
     # @return [Hash] a shallow Hash copy of the original if not modified, or a
     #   new Hash otherwise
     # @api private
-    def normalized_default_data(key, default_key)
+    def normalized_default_data(key, default_key, suite, platform)
       ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new).dup
+      ddata = { default_key => ddata.call(suite, platform) } if ddata.is_a?(Proc)
       ddata = { default_key => ddata } if ddata.is_a?(String)
       ddata
     end

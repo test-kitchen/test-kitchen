@@ -203,8 +203,10 @@ module Kitchen
         :defaults => {
           :driver       => Driver::DEFAULT_PLUGIN,
           :provisioner  => Provisioner::DEFAULT_PLUGIN,
-          :transport    => Transport::DEFAULT_PLUGIN,
-          :verifier     => Verifier::DEFAULT_PLUGIN
+          :verifier     => Verifier::DEFAULT_PLUGIN,
+          :transport    => lambda { |_suite, platform|
+            platform =~ /^win/i ? "winrm" : Transport::DEFAULT_PLUGIN
+          }
         },
         :kitchen_root   => kitchen_root,
         :test_base_path => test_base_path,

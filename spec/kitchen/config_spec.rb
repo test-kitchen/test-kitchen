@@ -174,8 +174,10 @@ describe Kitchen::Config do
     it "constructs a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
-        returns(munger)
+      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+        data.must_equal "datum"
+        kitchen_config.is_a?(Hash).must_equal true
+      }.returns(munger)
 
       config.platforms
     end
@@ -225,8 +227,10 @@ describe Kitchen::Config do
     it "constucts a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with("datum", default_kitchen_config).
-        returns(munger)
+      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+        data.must_equal "datum"
+        kitchen_config.is_a?(Hash).must_equal true
+      }.returns(munger)
 
       config.suites
     end

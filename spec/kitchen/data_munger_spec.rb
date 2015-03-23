@@ -128,6 +128,19 @@ module Kitchen
             )
           end
 
+          it "returns kitchen config #{key} name from callable" do
+            DataMunger.new(
+              {},
+              {
+                :defaults => {
+                  key => -> (suite, platform) { "#{suite}++#{platform}" }
+                }
+              }
+            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
+              default_key => "suite++platform"
+            )
+          end
+
           it "returns common #{key} name" do
             DataMunger.new(
               {
