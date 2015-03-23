@@ -133,7 +133,7 @@ module Kitchen
               {},
               {
                 :defaults => {
-                  key => -> (suite, platform) { "#{suite}++#{platform}" }
+                  key => ->(suite, platform) { "#{suite}++#{platform}" }
                 }
               }
             ).public_send("#{key}_data_for", "suite", "platform").must_equal(
