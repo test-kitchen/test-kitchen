@@ -79,7 +79,7 @@ module Kitchen
           @dir = Pathname.new(dir)
           @method = ::Zip::Entry::DEFLATED
           @compression = Zlib::BEST_COMPRESSION
-          @zip_io = Tempfile.open(["tmpzip-", ".zip"])
+          @zip_io = Tempfile.open(["tmpzip-", ".zip"], :binmode => true)
           write_zip
           @zip_io.close
         end
