@@ -42,7 +42,10 @@ describe Kitchen::Platform do
     klass.new(:name => "p").os_type.must_equal "unix"
   end
 
-  it "#os_type defaults to `windows` if the name starts with 'windows'" do
+  it "#os_type defaults to `windows` if the name starts with 'win'" do
+    klass.new(:name => "win").os_type.must_equal "windows"
+    klass.new(:name => "Win").os_type.must_equal "windows"
+    klass.new(:name => "win7").os_type.must_equal "windows"
     klass.new(:name => "windows").os_type.must_equal "windows"
     klass.new(:name => "Windows").os_type.must_equal "windows"
     klass.new(:name => "windows81").os_type.must_equal "windows"
@@ -65,6 +68,9 @@ describe Kitchen::Platform do
   end
 
   it "#shell_type defaults to `powershell` if the name starts with 'windows'" do
+    klass.new(:name => "win").shell_type.must_equal "powershell"
+    klass.new(:name => "Win").shell_type.must_equal "powershell"
+    klass.new(:name => "win7").shell_type.must_equal "powershell"
     klass.new(:name => "windows").shell_type.must_equal "powershell"
     klass.new(:name => "Windows").shell_type.must_equal "powershell"
     klass.new(:name => "windows81").shell_type.must_equal "powershell"
