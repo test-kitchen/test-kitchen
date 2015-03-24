@@ -102,6 +102,34 @@ module Kitchen
         CMD
       end
 
+      # Legacy method stub for `#setup_cmd` which calls `#install_command`.
+      #
+      # @return [String] command string
+      # @deprecated When backwards compatibility for old Busser methods is
+      #   removed, this method will no longer be available. Use
+      #   `#install_command` in its place.
+      define_method(:setup_cmd) { install_command }
+
+      # Legacy method stub for `#run_cmd` which calls `#run_command`.
+      #
+      # @return [String] command string
+      # @deprecated When backwards compatibility for old Busser methods is
+      #   removed, this method will no longer be available. Use
+      #   `#run_command` in its place.
+      define_method(:run_cmd) { run_command }
+
+      # Legacy method stub for `#sync_cmd`.
+      #
+      # @deprecated When backwards compatibility for old Busser methods is
+      #   removed, this method will no longer be available. Use
+      #   `transport#upload` to transfer test files in its place.
+      def sync_cmd
+        warn("Legacy call to #sync_cmd cannot be preserved, meaning that " \
+          "test files will not be uploaded. " \
+          "Code that calls #sync_cmd can now use the transport#upload " \
+          "method to transfer files.")
+      end
+
       private
 
       # Returns a command string that sets appropriate environment variables for

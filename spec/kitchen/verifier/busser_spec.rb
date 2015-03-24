@@ -486,6 +486,30 @@ describe Kitchen::Verifier::Busser do
     end
   end
 
+  describe "Busser legacy behavior for code calling old method names" do
+
+    let(:busser) { verifier }
+
+    it "responds to #setup_cmd which calls #install_command" do
+      busser.stubs(:install_command).returns("install")
+
+      busser.setup_cmd.must_equal "install"
+    end
+
+    it "responds to #run_cmd which calls #run_command" do
+      busser.stubs(:run_command).returns("run")
+
+      busser.run_cmd.must_equal "run"
+    end
+
+    it "responds to #sync_cmd which logs a warning" do
+      busser.sync_cmd
+
+      logged_output.string.must_match warn_line_with(
+        "Legacy call to #sync_cmd cannot be preserved")
+    end
+  end
+
   def create_file(file, content, perms)
     FileUtils.mkdir_p(File.dirname(file))
     File.open(file, "wb") { |f| f.write(content) }
@@ -508,5 +532,9 @@ describe Kitchen::Verifier::Busser do
     r = Regexp.escape(str)
     r = "^\s*#{r}$" if line == :whole_line
     Regexp.new(r)
+  end
+
+  def warn_line_with(msg)
+    %r{^W, .* : #{Regexp.escape(msg)}}
   end
 end
