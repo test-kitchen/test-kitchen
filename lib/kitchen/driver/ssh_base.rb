@@ -24,12 +24,26 @@ module Kitchen
 
   module Driver
 
-    # Base class for a driver that uses SSH to communication with an instance.
+    # Legacy base class for a driver that uses SSH to communication with an
+    # instance. This class has been updated to use the Instance's Transport to
+    # issue commands and transfer files and no longer uses the `Kitchen:SSH`
+    # class directly.
+    #
+    # **NOTE:** Authors of new Drivers are encouraged to inherit from
+    # `Kitchen::Driver::Base` instead and existing Driver authors are
+    # encouraged to update their Driver class to inherit from
+    # `Kitchen::Driver::SSHBase`.
+    #
     # A subclass must implement the following methods:
     # * #create(state)
     # * #destroy(state)
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
+    # @deprecated While all possible effort has been made to preserve the
+    #   original behavior of this class, future improvements to the Driver,
+    #   Transport, and Verifier subsystems may not be picked up in these
+    #   Drivers. When legacy Driver::SSHBase support is removed, this class
+    #   will no longer be available.
     class SSHBase
 
       include ShellOut
