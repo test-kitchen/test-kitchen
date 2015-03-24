@@ -10,4 +10,6 @@ require "rubygems"
 require "kitchen/cli"
 require "kitchen/errors"
 
+Bundler.require if defined?(Bundler)
+
 Kitchen.with_friendly_errors { Kitchen::CLI.start }
