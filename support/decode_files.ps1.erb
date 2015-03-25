@@ -8,6 +8,7 @@ Function Decode-Base64File($src, $dst) {
     $b64 = New-Object -TypeName System.Security.Cryptography.FromBase64Transform
     $m = [System.Security.Cryptography.CryptoStreamMode]::Read
     $d = New-Object -TypeName System.Security.Cryptography.CryptoStream $in,$b64,$m
+    echo $null > $dst
     Copy-Stream $d ($out = [System.IO.File]::OpenWrite($dst))
   } Finally { Cleanup $in; Cleanup $out; Cleanup $d }
 }
