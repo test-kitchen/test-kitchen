@@ -236,6 +236,12 @@ The EC2 [subnet][subnet_docs] to use.
 
 The default is unset, or `nil`.
 
+### <a name="config-private-ip-address"></a> private\_ip\_address
+
+The primary private IP address of your instance. 
+
+If you don't set this it will default to whatever DHCP address EC2 hands out.
+
 ### <a name="config-tags"></a> tags
 
 The Hash of EC tag name/value pairs which will be applied to the instance.
