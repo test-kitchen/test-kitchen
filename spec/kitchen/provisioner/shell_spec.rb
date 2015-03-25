@@ -87,6 +87,40 @@ describe Kitchen::Provisioner::Shell do
         cmd.must_match(/'\Z/)
       end
 
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
       it "uses sudo for rm when configured" do
         config[:sudo] = true
 
@@ -120,6 +154,36 @@ describe Kitchen::Provisioner::Shell do
       before do
         platform.stubs(:os_type).returns("windows")
         platform.stubs(:shell_type).returns("powershell")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
       end
 
       it "removes the data directory" do
@@ -157,6 +221,40 @@ describe Kitchen::Provisioner::Shell do
         cmd.must_match(/'\Z/)
       end
 
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
       it "uses sudo for script when configured" do
         config[:root_path] = "/r"
         config[:sudo] = true
@@ -180,10 +278,40 @@ describe Kitchen::Provisioner::Shell do
         platform.stubs(:os_type).returns("windows")
       end
 
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
       it "invokes the bootstrap.ps1 script" do
         config[:root_path] = "\\r"
 
-        cmd.must_equal %{& "\\r\\bootstrap.ps1"}
+        cmd.must_match regexify(%{& "\\r\\bootstrap.ps1"})
       end
     end
   end

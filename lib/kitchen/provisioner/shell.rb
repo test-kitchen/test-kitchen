@@ -50,7 +50,7 @@ module Kitchen
         root = config[:root_path]
         data = remote_path_join(root, "data")
 
-        if powershell_shell?
+        code = if powershell_shell?
           Util.outdent!(<<-POWERSHELL)
             if (Test-Path "#{data}") {
               Remove-Item "#{data}" -Recurse -Force
@@ -60,10 +60,10 @@ module Kitchen
             }
           POWERSHELL
         else
-          cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{root}"
-
-          Util.wrap_command(cmd)
+          "#{sudo("rm")} -rf #{data} ; mkdir -p #{root}"
         end
+
+        wrap_shell_code(code)
       end
 
       # (see Base#run_command)
@@ -72,12 +72,9 @@ module Kitchen
           config[:root_path],
           File.basename(config[:script])
         )
+        code = powershell_shell? ? %{& "#{script}"} : sudo(script)
 
-        if powershell_shell?
-          %{& "#{script}"}
-        else
-          Util.wrap_command(sudo(script))
-        end
+        wrap_shell_code(code)
       end
 
       private
