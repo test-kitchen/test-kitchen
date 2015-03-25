@@ -1,3 +1,14 @@
+## 1.4.0.beta.2 / 2015-03-25
+
+### Potentially breaking changes
+
+* Pull request [#649][]: Preserve Busser's #setup_cmd, #run_cmd, & #sync_cmd for better backwards compatibility. ([@fnichol][])
+
+### Bug fixes
+
+* Pull request [#648][]: Transport::Winrm: Truncate destination file for overwriting. ([@fnichol][])
+
+
 ## 1.4.0.beta.1 / 2015-03-24
 
 ### Potentially breaking changes
@@ -615,6 +626,8 @@ The initial release.
 [#588]: https://github.com/test-kitchen/test-kitchen/issues/588
 [#600]: https://github.com/test-kitchen/test-kitchen/issues/600
 [#633]: https://github.com/test-kitchen/test-kitchen/issues/633
+[#648]: https://github.com/test-kitchen/test-kitchen/issues/648
+[#649]: https://github.com/test-kitchen/test-kitchen/issues/649
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@adamhjk]: https://github.com/adamhjk
