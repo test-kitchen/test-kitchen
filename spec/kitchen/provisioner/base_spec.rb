@@ -101,6 +101,10 @@ describe Kitchen::Provisioner::Base do
       it ":sudo defaults to true" do
         provisioner[:sudo].must_equal true
       end
+
+      it ":sudo_command defaults to sudo -E" do
+        provisioner[:sudo_command].must_equal "sudo -E"
+      end
     end
 
     describe "for windows operating systems" do
@@ -113,6 +117,10 @@ describe Kitchen::Provisioner::Base do
 
       it ":sudo defaults to nil" do
         provisioner[:sudo].must_equal nil
+      end
+
+      it ":sudo_command defaults to nil" do
+        provisioner[:sudo_command].must_equal nil
       end
     end
 
@@ -287,16 +295,34 @@ describe Kitchen::Provisioner::Base do
 
   describe "#sudo" do
 
-    it "if :sudo is set, prepend sudo command" do
-      config[:sudo] = true
+    describe "with :sudo set" do
 
-      provisioner.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      before { config[:sudo] = true }
+
+      it "prepends sudo command" do
+        provisioner.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      end
+
+      it "customizes sudo when :sudo_command is set" do
+        config[:sudo_command] = "blueto -Ohai"
+
+        provisioner.send(:sudo, "wakka").must_equal("blueto -Ohai wakka")
+      end
     end
 
-    it "if :sudo is falsy, do not include sudo command" do
-      config[:sudo] = false
+    describe "with :sudo falsey" do
 
-      provisioner.send(:sudo, "wakka").must_equal("wakka")
+      before { config[:sudo] = false }
+
+      it "does not include sudo command" do
+        provisioner.send(:sudo, "wakka").must_equal("wakka")
+      end
+
+      it "does not include sudo command, even when :sudo_command is set" do
+        config[:sudo_command] = "blueto -Ohai"
+
+        provisioner.send(:sudo, "wakka").must_equal("wakka")
+      end
     end
   end
 end

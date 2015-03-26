@@ -102,6 +102,10 @@ describe Kitchen::Verifier::Base do
         verifier[:sudo].must_equal true
       end
 
+      it ":sudo_command defaults to sudo -E" do
+        verifier[:sudo_command].must_equal "sudo -E"
+      end
+
       it ":root_path defaults to '/tmp/verifier'" do
         verifier[:root_path].must_equal "/tmp/verifier"
       end
@@ -113,6 +117,10 @@ describe Kitchen::Verifier::Base do
 
       it ":sudo defaults to nil" do
         verifier[:sudo].must_equal nil
+      end
+
+      it ":sudo_command defaults to nil" do
+        verifier[:sudo_command].must_equal nil
       end
 
       it ":root_path defaults to $env:TEMP\\verifier" do
@@ -295,16 +303,34 @@ describe Kitchen::Verifier::Base do
 
   describe "#sudo" do
 
-    it "if :sudo is set, prepend sudo command" do
-      config[:sudo] = true
+    describe "with :sudo set" do
 
-      verifier.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      before { config[:sudo] = true }
+
+      it "prepends sudo command" do
+        verifier.send(:sudo, "wakka").must_equal("sudo -E wakka")
+      end
+
+      it "customizes sudo when :sudo_command is set" do
+        config[:sudo_command] = "blueto -Ohai"
+
+        verifier.send(:sudo, "wakka").must_equal("blueto -Ohai wakka")
+      end
     end
 
-    it "if :sudo is falsy, do not include sudo command" do
-      config[:sudo] = false
+    describe "with :sudo falsey" do
 
-      verifier.send(:sudo, "wakka").must_equal("wakka")
+      before { config[:sudo] = false }
+
+      it "does not include sudo command" do
+        verifier.send(:sudo, "wakka").must_equal("wakka")
+      end
+
+      it "does not include sudo command, even when :sudo_command is set" do
+        config[:sudo_command] = "blueto -Ohai"
+
+        verifier.send(:sudo, "wakka").must_equal("wakka")
+      end
     end
   end
 end

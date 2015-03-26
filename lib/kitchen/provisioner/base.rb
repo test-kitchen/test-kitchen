@@ -40,6 +40,10 @@ module Kitchen
         provisioner.windows_os? ? nil : true
       end
 
+      default_config :sudo_command do |provisioner|
+        provisioner.windows_os? ? nil : "sudo -E"
+      end
+
       expand_path_for :test_base_path
 
       # Constructs a new provisioner by providing a configuration hash.
@@ -179,7 +183,7 @@ module Kitchen
       # @return [String] the command, conditionaly prefixed with sudo
       # @api private
       def sudo(script)
-        config[:sudo] ? "sudo -E #{script}" : script
+        config[:sudo] ? "#{config[:sudo_command]} #{script}" : script
       end
     end
   end

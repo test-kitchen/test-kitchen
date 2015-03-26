@@ -44,6 +44,10 @@ module Kitchen
         verifier.windows_os? ? nil : true
       end
 
+      default_config :sudo_command do |verifier|
+        verifier.windows_os? ? nil : "sudo -E"
+      end
+
       default_config(:suite_name) { |busser| busser.instance.suite.name }
 
       # Creates a new Verifier object using the provided configuration data
@@ -184,7 +188,7 @@ module Kitchen
       # @return [String] the command, conditionaly prefixed with sudo
       # @api private
       def sudo(script)
-        config[:sudo] ? "sudo -E #{script}" : script
+        config[:sudo] ? "#{config[:sudo_command]} #{script}" : script
       end
     end
   end

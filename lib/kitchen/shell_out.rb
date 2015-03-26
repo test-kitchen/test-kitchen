@@ -35,6 +35,8 @@ module Kitchen
     # @param options [Hash] additional configuration of command
     # @option options [TrueClass, FalseClass] :use_sudo whether or not to use
     #   sudo
+    # @option options [String] :sudo_command custom sudo command to use.
+    #   Default is "sudo -E".
     # @option options [String] :log_subject used in the output or log header
     #   for clarity and context. Default is "local".
     # @option options [String] :cwd the directory to chdir to before running
@@ -56,7 +58,9 @@ module Kitchen
     # @raise [ShellCommandFailed] if the command fails
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
-      cmd = "sudo -E #{cmd}" if options.fetch(:use_sudo, false)
+      if options.fetch(:use_sudo, false)
+        cmd = "#{options.fetch(:sudo_command, "sudo -E")} #{cmd}"
+      end
       subject = "[#{options.fetch(:log_subject, "local")} command]"
 
       debug("#{subject} BEGIN (#{cmd})")
@@ -81,7 +85,7 @@ module Kitchen
     # @api private
     def shell_opts(options)
       filtered_opts = options.reject do |key, _value|
-        [:use_sudo, :log_subject, :quiet].include?(key)
+        [:use_sudo, :sudo_command, :log_subject, :quiet].include?(key)
       end
       { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)
     end
