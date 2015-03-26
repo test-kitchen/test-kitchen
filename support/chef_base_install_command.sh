@@ -8,31 +8,44 @@ exists() {
   fi
 }
 
-# do_wget URL FILENAME
 do_wget() {
   echo "trying wget..."
   wget -O "$2" "$1" 2>/tmp/stderr
-  # check for bad return status
-  test $? -ne 0 && return 1
-  # check for 404 or empty file
+  rc=$?
+  # check for 404
   grep "ERROR 404" /tmp/stderr 2>&1 >/dev/null
-  if test $? -eq 0 || test ! -s "$2"; then
+  if test $? -eq 0; then
+    echo "ERROR 404"
+    http_404_error
+  fi
+
+  # check for bad return status or empty output
+  if test $rc -ne 0 || test ! -s "$2"; then
+    capture_tmp_stderr "wget"
     return 1
   fi
+
   return 0
 }
 
 # do_curl URL FILENAME
 do_curl() {
   echo "trying curl..."
-  curl -L "$1" > "$2"
-  # check for bad return status
-  [ $? -ne 0 ] && return 1
-  # check for bad output or empty file
-  grep "The specified key does not exist." "$2" 2>&1 >/dev/null
-  if test $? -eq 0 || test ! -s "$2"; then
+  curl -sL -D /tmp/stderr "$1" > "$2"
+  rc=$?
+  # check for 404
+  grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
+  if test $? -eq 0; then
+    echo "ERROR 404"
+    http_404_error
+  fi
+
+  # check for bad return status or empty output
+  if test $rc -ne 0 || test ! -s "$2"; then
+    capture_tmp_stderr "curl"
     return 1
   fi
+
   return 0
 }
 
@@ -45,39 +58,58 @@ do_fetch() {
   return 0
 }
 
-# do_perl URL FILENAME
+# do_curl URL FILENAME
 do_perl() {
   echo "trying perl..."
-  perl -e "use LWP::Simple; getprint($ARGV[0]);" "$1" > "$2"
-  # check for bad return status
-  test $? -ne 0 && return 1
-  # check for bad output or empty file
-  # grep "The specified key does not exist." "$2" 2>&1 >/dev/null
-  # if test $? -eq 0 || test ! -s "$2"; then
-  #   unable_to_retrieve_package
-  # fi
+  perl -e "use LWP::Simple; getprint($ARGV[0]);" "$1" > "$2" 2>/tmp/stderr
+  rc=$?
+  # check for 404
+  grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
+  if test $? -eq 0; then
+    echo "ERROR 404"
+    http_404_error
+  fi
+
+  # check for bad return status or empty output
+  if test $rc -ne 0 || test ! -s "$2"; then
+    capture_tmp_stderr "perl"
+    return 1
+  fi
+
   return 0
 }
 
-# do_python URL FILENAME
+# do_curl URL FILENAME
 do_python() {
   echo "trying python..."
-  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2"
-  # check for bad return status
-  test $? -ne 0 && return 1
-  # check for bad output or empty file
-  #grep "The specified key does not exist." "$2" 2>&1 >/dev/null
-  #if test $? -eq 0 || test ! -s "$2"; then
-  #  unable_to_retrieve_package
-  #fi
+  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>/tmp/stderr
+  rc=$?
+  # check for 404
+  grep "HTTP Error 404" /tmp/stderr 2>&1 >/dev/null
+  if test $? -eq 0; then
+    echo "ERROR 404"
+    http_404_error
+  fi
+
+  # check for bad return status or empty output
+  if test $rc -ne 0 || test ! -s "$2"; then
+    capture_tmp_stderr "python"
+    return 1
+  fi
   return 0
+}
+
+capture_tmp_stderr() {
+  # spool up /tmp/stderr from all the commands we called
+  if test -f "/tmp/stderr"; then
+    output=`cat /tmp/stderr`
+    stderr_results="${stderr_results}\nSTDERR from $1:\n\n$output\n"
+    rm /tmp/stderr
+  fi
 }
 
 # do_download URL FILENAME
 do_download() {
-  PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-  export PATH
-
   echo "downloading $1"
   echo "  to file $2"
 
@@ -104,8 +136,24 @@ do_download() {
     do_python $1 $2 && return 0
   fi
 
-  echo ">>>>>> wget, curl, fetch, perl or python not found on this instance."
-  return 16
+  unable_to_retrieve_installer
+}
+
+
+http_404_error() {
+  echo "FOUR OH FOUR"
+  # To Do
+  exit 1
+}
+
+unable_to_retrieve_installer() {
+  echo "Unable to retrieve a valid installer!"
+
+  if test "x$stderr_results" != "x"; then
+    echo "\nDEBUG OUTPUT FOLLOWS:\n$stderr_results"
+  fi
+
+  exit 1
 }
 
 # @param $1 the omnibus root directory
@@ -117,7 +165,7 @@ should_update_chef() {
   elif test "$2" = "latest" ; then return 0
   fi
 
-  local version="`$1/bin/chef-solo -v | cut -d " " -f 2`"
+  version="`$1/bin/chef-solo -v | cut -d \" \" -f 2`"
 
   echo "$version" | grep "^$2" 2>&1 >/dev/null
   if test $? -eq 0 ; then
@@ -127,10 +175,23 @@ should_update_chef() {
   fi
 }
 
+platform=`/usr/bin/uname -s`
+platform_version=`/usr/bin/uname -r`
+
 should_update_chef "$chef_omnibus_root" "$version"
 if test $? -eq 0 ; then
   echo "-----> Installing Chef Omnibus ($pretty_version)"
+
+  if test "x$platform" = "xSunOS" && test "x$platform_version" = "x5.10"; then
+    # solaris 10 lacks recent enough credentials - your base O/S is completely insecure, please upgrade
+    chef_omnibus_url=`echo $chef_omnibus_url | sed -e 's/https/http/'`
+  fi
+
   do_download "$chef_omnibus_url" /tmp/install.sh
+  if test $? -ne 0 ; then
+    echo ">>>>>>>> NO FREAKING DOWNLOAD THINGS FOUND - ABOOOOORRRRTTTT"
+    exit 1;
+  fi
   $sudo_sh /tmp/install.sh $install_flags
 else
   echo "-----> Chef Omnibus installation detected ($pretty_version)"
