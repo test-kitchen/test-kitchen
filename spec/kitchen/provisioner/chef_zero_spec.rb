@@ -337,6 +337,20 @@ describe Kitchen::Provisioner::ChefZero do
 
           sandbox_path("chef-client-zero.rb").file?.must_equal false
         end
+
+        it "a version of '11' is still considered modern" do
+          config[:require_chef_omnibus] = "11"
+          provisioner.create_sandbox
+
+          sandbox_path("chef-client-zero.rb").file?.must_equal false
+        end
+
+        it "a version of 11 is still considered modern" do
+          config[:require_chef_omnibus] = 11
+          provisioner.create_sandbox
+
+          sandbox_path("chef-client-zero.rb").file?.must_equal false
+        end
       end
 
       describe "for old Chef versions" do
