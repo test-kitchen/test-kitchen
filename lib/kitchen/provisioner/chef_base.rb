@@ -212,7 +212,9 @@ module Kitchen
       # @return [String] a string representation
       # @api private
       def format_value(obj)
-        if obj.is_a?(String)
+        if obj.is_a?(String) && obj =~ /^:/
+          obj
+        elsif obj.is_a?(String)
           %{"#{obj.gsub(/\\/, "\\\\\\\\")}"}
         elsif obj.is_a?(Array)
           %{[#{obj.map { |i| format_value(i) }.join(", ")}]}

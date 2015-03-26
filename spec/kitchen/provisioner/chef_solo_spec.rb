@@ -258,9 +258,9 @@ describe Kitchen::Provisioner::ChefSolo do
         file.must_include %{foo 7}
       end
 
-      it "formats symbol values correctly" do
+      it "formats symbol-looking string values correctly" do
         config[:solo_rb] = {
-          :foo => :bar
+          :foo => ":bar"
         }
         provisioner.create_sandbox
 
