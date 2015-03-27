@@ -33,6 +33,9 @@ do_curl() {
 
 # do_download URL FILENAME
 do_download() {
+  PATH="/opt/local/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin";
+  export PATH;
+
   echo "Downloading ${1} to file ${2}";
 
   exists wget;
