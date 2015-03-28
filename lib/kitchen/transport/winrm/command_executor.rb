@@ -50,9 +50,13 @@ module Kitchen
         # @param service [WinRM::WinRMWebService] a winrm web service object
         # @param logger [#debug,#info] an optional logger/ui object that
         #   responds to `#debug` and `#info` (default: `nil`)
-        def initialize(service, logger = nil)
+        # @param closer [ShellCloser] an optional object to automatically
+        #   close the active open remote shell when CommandExecutor garbarge
+        #   collects
+        def initialize(service, logger = nil, closer = nil)
           @service        = service
           @logger         = logger
+          @closer         = closer
           @command_count  = 0
         end
 
@@ -62,6 +66,7 @@ module Kitchen
           return if shell.nil?
 
           service.close_shell(shell)
+          remove_finalizer
           @shell = nil
         end
 
@@ -73,6 +78,7 @@ module Kitchen
         def open
           close
           @shell = service.open_shell
+          add_finalizer(shell)
           @command_count = 0
           determine_max_commands unless max_commands
           shell
@@ -145,6 +151,16 @@ module Kitchen
         # @api private
         attr_reader :service
 
+        # Creates a finalizer for this connection which will close the open
+        # remote shell session when the object is garabage collected or on
+        # Ruby VM shutdown.
+        #
+        # @param shell_id [String] the remote shell identifier
+        # @api private
+        def add_finalizer(shell_id)
+          ObjectSpace.define_finalizer(self, @closer.for(shell_id)) if @closer
+        end
+
         # @return [true,false] whether or not the number of exeecuted commands
         #   have exceeded the maxiumum threshold
         # @api private
@@ -171,6 +187,13 @@ module Kitchen
           os_version = run_powershell_script(PS1_OS_VERSION).stdout.chomp
           @max_commands = os_version < "6.2" ? LEGACY_LIMIT : MODERN_LIMIT
           @max_commands -= 2 # to be safe
+        end
+
+        # Removes any finalizers for this connection.
+        #
+        # @api private
+        def remove_finalizer
+          ObjectSpace.undefine_finalizer(self) if @closer
         end
 
         # Closes the remote shell session and opens a new one.
