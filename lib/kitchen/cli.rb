@@ -112,6 +112,9 @@ module Kitchen
     method_option :loader,
       :type => :boolean,
       :desc => "Include data loader diagnostics"
+    method_option :plugins,
+      :type => :boolean,
+      :desc => "Include plugin diagnostics"
     method_option :instances,
       :type => :boolean,
       :default => true,

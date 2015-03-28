@@ -13,6 +13,12 @@ Feature: Running a diagnosis command
     provisioner:
       name: dummy
 
+    transport:
+      name: dummy
+
+    verifier:
+      name: dummy
+
     platforms:
       - name: cool
       - name: beans
@@ -23,8 +29,19 @@ Feature: Running a diagnosis command
     """
 
   @spawn
+  Scenario: Displaying help
+    When I run `kitchen help diagnose`
+    Then the output should contain:
+    """
+    Usage:
+      kitchen diagnose
+    """
+    And the exit status should be 0
+
+  @spawn
   Scenario: Showing all instances
     When I run `kitchen diagnose`
+    Then the output should contain "timestamp: "
     Then the output should contain "kitchen_version: "
     Then the output should contain "  client-cool:"
     Then the output should contain "  client-beans:"
@@ -45,6 +62,16 @@ Feature: Running a diagnosis command
     And the exit status should be 0
 
   @spawn
+  Scenario: Showing all instances with plugin configuration
+    When I run `kitchen diagnose --plugins`
+    Then the output should contain "plugins:"
+    Then the output should contain "    class: Kitchen::Driver::Dummy"
+    Then the output should contain "    class: Kitchen::Provisioner::Dummy"
+    Then the output should contain "    class: Kitchen::Transport::Dummy"
+    Then the output should contain "    class: Kitchen::Verifier::Dummy"
+    And the exit status should be 0
+
+  @spawn
   Scenario: Coping with loading failure
     Given a file named ".kitchen.local.yml" with:
     """
@@ -59,6 +86,11 @@ Feature: Running a diagnosis command
     And the output should contain:
     """
     instances:
+      error:
+    """
+    And the output should contain:
+    """
+    plugins:
       error:
     """
     And the exit status should be 0

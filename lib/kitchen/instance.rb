@@ -243,6 +243,23 @@ module Kitchen
       result
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information
+    # associated with plugins (such as loaded version, class name, etc.).
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose_plugins
+      result = Hash.new
+      [:driver, :provisioner, :verifier, :transport].each do |sym|
+        obj = send(sym)
+        result[sym] = if obj.respond_to?(:diagnose_plugins)
+          obj.diagnose_plugins
+        else
+          :unknown
+        end
+      end
+      result
+    end
+
     # Returns the last successfully completed action state of the instance.
     #
     # @return [String] a named action which was last successfully completed

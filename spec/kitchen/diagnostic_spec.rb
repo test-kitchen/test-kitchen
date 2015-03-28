@@ -28,8 +28,26 @@ describe Kitchen::Diagnostic do
 
   let(:instances) do
     [
-      stub(:name => "i1", :diagnose => { :stuff => "sup" }),
-      stub(:name => "i2", :diagnose => { :stuff => "yo" })
+      stub(
+        :name => "i1",
+        :diagnose => { :stuff => "sup" },
+        :diagnose_plugins => {
+          :driver => { :name => "driva", :a => "b" },
+          :provisioner => { :name => "prov", :c => "d" },
+          :transport => { :name => "transa", :e => "f" },
+          :verifier => { :name => "verve", :g => "h" }
+        }
+      ),
+      stub(
+        :name => "i2",
+        :diagnose => { :stuff => "yo" },
+        :diagnose_plugins => {
+          :driver => { :name => "driva", :a => "b" },
+          :provisioner => { :name => "presto", :i => "j" },
+          :transport => { :name => "tressa", :k => "l" },
+          :verifier => { :name => "verve", :g => "h" }
+        }
+      )
     ]
   end
 
@@ -62,8 +80,40 @@ describe Kitchen::Diagnostic do
       read["loader"].must_equal("error" => "damn")
   end
 
-  it "#read returns an empty hash if no instances were given" do
+  it "#read returns the unique set of plugins' diagnose hash if :plugins is set" do
+    Kitchen::Diagnostic.new(:instances => instances, :plugins => true).
+      read["plugins"].
+      must_equal(
+        "driver" => {
+          "driva" => { "a" => "b" }
+        },
+        "provisioner" => {
+          "prov" => { "c" => "d" },
+          "presto" => { "i" => "j" }
+        },
+        "transport" => {
+          "transa" => { "e" => "f" },
+          "tressa" => { "k" => "l" }
+        },
+        "verifier" => {
+          "verve" => { "g" => "h" }
+        }
+      )
+  end
+
+  it "#read returns an empty plugins hash if no instances were given" do
+    Kitchen::Diagnostic.new(:plugins => true).
+      read["plugins"].must_equal Hash.new
+  end
+
+  it "#read returns an empty instances hash if no instances were given" do
     Kitchen::Diagnostic.new.read["instances"].must_equal Hash.new
+  end
+
+  it "#read returns an error hash for plugins if error hash is passed in" do
+    Kitchen::Diagnostic.new(
+      :instances => { :error => "shoot" }, :plugins => true
+    ).read["plugins"].must_equal("error" => "shoot")
   end
 
   it "#read returns the instances' diganose hashes if instances are present" do

@@ -384,6 +384,81 @@ describe Kitchen::Instance do
     end
   end
 
+  describe "#diagnose_plugins" do
+
+    it "returns a hash" do
+      instance.diagnose_plugins.must_be_instance_of Hash
+    end
+
+    it "sets :driver key to driver's plugin_diagnose info" do
+      driver.class.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose_plugins[:driver].must_equal(
+        :name => "Dummy",
+        :a => "b"
+      )
+    end
+
+    it "sets :driver key to :unknown if class doesn't have #diagnose" do
+      opts[:driver] = Class.new(driver.class) {
+        undef_method :diagnose_plugins
+      }.new({})
+
+      instance.diagnose_plugins[:driver].must_equal(:unknown)
+    end
+
+    it "sets :provisioner key to provisioner's plugin_diagnose info" do
+      provisioner.class.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose_plugins[:provisioner].must_equal(
+        :name => "Dummy",
+        :a => "b"
+      )
+    end
+
+    it "sets :provisioner key to :unknown if class doesn't have #diagnose" do
+      opts[:provisioner] = Class.new(driver.class) {
+        undef_method :diagnose_plugins
+      }.new({})
+
+      instance.diagnose_plugins[:provisioner].must_equal(:unknown)
+    end
+
+    it "sets :verifier key to verifier's plugin_diagnose info" do
+      verifier.class.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose_plugins[:verifier].must_equal(
+        :name => "Dummy",
+        :a => "b"
+      )
+    end
+
+    it "sets :verifier key to :unknown if class doesn't have #diagnose" do
+      opts[:verifier] = Class.new(verifier.class) {
+        undef_method :diagnose_plugins
+      }.new({})
+
+      instance.diagnose_plugins[:verifier].must_equal(:unknown)
+    end
+
+    it "sets :transport key to transport's plugin_diagnose info" do
+      transport.class.stubs(:diagnose).returns(:a => "b")
+
+      instance.diagnose_plugins[:transport].must_equal(
+        :name => "Dummy",
+        :a => "b"
+      )
+    end
+
+    it "sets :transport key to :unknown if class doesn't have #diagnose" do
+      opts[:transport] = Class.new(transport.class) {
+        undef_method :diagnose_plugins
+      }.new({})
+
+      instance.diagnose_plugins[:transport].must_equal(:unknown)
+    end
+  end
+
   describe "performing actions" do
 
     describe "#create" do
