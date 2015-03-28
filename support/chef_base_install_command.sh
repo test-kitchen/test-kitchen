@@ -196,19 +196,24 @@ unable_to_download() {
   exit 10;
 }
 
-should_update_chef "$chef_omnibus_root" "$version"
-if test $? -eq 0; then
-  echo "-----> Installing Chef Omnibus (${pretty_version})";
+# main
+main() {
+  should_update_chef "$chef_omnibus_root" "$version"
+  if test $? -eq 0; then
+    echo "-----> Installing Chef Omnibus (${pretty_version})";
 
-  # solaris 10 lacks recent enough credentials, so http url is used
-  platform="`/usr/bin/uname -s 2>/dev/null`";
-  platform_version="`/usr/bin/uname -r 2>/dev/null`";
-  if test "x${platform}" = "xSunOS" && test "x${platform_version}" = "x5.10"; then
-    chef_omnibus_url=`echo "$chef_omnibus_url" | sed -e "s/https/http/"`;
+    # solaris 10 lacks recent enough credentials, so http url is used
+    platform="`/usr/bin/uname -s 2>/dev/null`";
+    platform_version="`/usr/bin/uname -r 2>/dev/null`";
+    if test "x${platform}" = "xSunOS" && test "x${platform_version}" = "x5.10"; then
+      chef_omnibus_url=`echo "$chef_omnibus_url" | sed -e "s/https/http/"`;
+    fi
+
+    do_download "$chef_omnibus_url" /tmp/install.sh;
+    $sudo_sh /tmp/install.sh $install_flags;
+  else
+    echo "-----> Chef Omnibus installation detected (${pretty_version})";
   fi
+}
 
-  do_download "$chef_omnibus_url" /tmp/install.sh;
-  $sudo_sh /tmp/install.sh $install_flags;
-else
-  echo "-----> Chef Omnibus installation detected (${pretty_version})";
-fi
+main
