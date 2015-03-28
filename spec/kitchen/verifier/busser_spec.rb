@@ -89,6 +89,10 @@ describe Kitchen::Verifier::Busser do
   #   }.must_raise Kitchen::UserError
   # end
 
+  it "plugin_version is set to Kitchen::VERSION" do
+    verifier.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "configuration" do
 
     describe "for unix operating systems" do

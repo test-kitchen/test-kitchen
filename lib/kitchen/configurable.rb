@@ -129,7 +129,7 @@ module Kitchen
     # etc.).
     #
     # @return [Hash] a diagnostic hash
-    def diagnose_plugins
+    def diagnose_plugin
       result = Hash.new
       result[:name] = name
       result.merge!(self.class.diagnose)
@@ -315,13 +315,37 @@ module Kitchen
     # Class methods which will be mixed in on inclusion of Configurable module.
     module ClassMethods
 
+      # Sets the loaded version of this plugin, usually corresponding to the
+      # RubyGems version of the plugin's library. If the plugin does not set
+      # this value, then `nil` will be used and reported.
+      #
+      # @example setting a version used by RubyGems
+      #
+      #   require "kitchen/driver/vagrant_version"
+      #
+      #   module Kitchen
+      #     module Driver
+      #       class Vagrant < Kitchen::Driver::Base
+      #
+      #         plugin_version Kitchen::Driver::VAGRANT_VERSION
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [String] a version string
+      def plugin_version(version) # rubocop:disable Style/TrivialAccessors
+        @plugin_version = version
+      end
+
       # Returns a Hash of configuration and other useful diagnostic
       # information.
       #
       # @return [Hash] a diagnostic hash
       def diagnose
         {
-          :class => name
+          :class        => name,
+          :version      => @plugin_version
         }
       end
 

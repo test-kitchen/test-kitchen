@@ -38,6 +38,10 @@ describe Kitchen::Driver::Proxy do
     Kitchen::Driver::Proxy.new(config).finalize_config!(instance)
   end
 
+  it "plugin_version is set to Kitchen::VERSION" do
+    driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "non-parallel action" do
 
     it "create must be serially executed" do

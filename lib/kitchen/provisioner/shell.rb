@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require "kitchen/provisioner/base"
+require "kitchen/version"
 
 module Kitchen
 
@@ -26,6 +27,8 @@ module Kitchen
     #
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
+
+      plugin_version Kitchen::VERSION
 
       default_config :script do |provisioner|
         src = provisioner.powershell_shell? ? "bootstrap.ps1" : "bootstrap.sh"

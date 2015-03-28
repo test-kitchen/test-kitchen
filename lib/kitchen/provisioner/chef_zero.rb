@@ -27,6 +27,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
 
+      plugin_version Kitchen::VERSION
+
       default_config :client_rb, {}
       default_config :json_attributes, true
       default_config :chef_zero_host, nil

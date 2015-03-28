@@ -401,7 +401,7 @@ describe Kitchen::Instance do
 
     it "sets :driver key to :unknown if class doesn't have #diagnose" do
       opts[:driver] = Class.new(driver.class) {
-        undef_method :diagnose_plugins
+        undef_method :diagnose_plugin
       }.new({})
 
       instance.diagnose_plugins[:driver].must_equal(:unknown)
@@ -418,7 +418,7 @@ describe Kitchen::Instance do
 
     it "sets :provisioner key to :unknown if class doesn't have #diagnose" do
       opts[:provisioner] = Class.new(driver.class) {
-        undef_method :diagnose_plugins
+        undef_method :diagnose_plugin
       }.new({})
 
       instance.diagnose_plugins[:provisioner].must_equal(:unknown)
@@ -435,7 +435,7 @@ describe Kitchen::Instance do
 
     it "sets :verifier key to :unknown if class doesn't have #diagnose" do
       opts[:verifier] = Class.new(verifier.class) {
-        undef_method :diagnose_plugins
+        undef_method :diagnose_plugin
       }.new({})
 
       instance.diagnose_plugins[:verifier].must_equal(:unknown)
@@ -452,7 +452,7 @@ describe Kitchen::Instance do
 
     it "sets :transport key to :unknown if class doesn't have #diagnose" do
       opts[:transport] = Class.new(transport.class) {
-        undef_method :diagnose_plugins
+        undef_method :diagnose_plugin
       }.new({})
 
       instance.diagnose_plugins[:transport].must_equal(:unknown)

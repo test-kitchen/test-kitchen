@@ -19,6 +19,7 @@
 #
 
 require "kitchen"
+require "kitchen/version"
 
 module Kitchen
 
@@ -32,6 +33,8 @@ module Kitchen
     #
     # @author Seth Chisamore <schisamo@opscode.com>
     class Proxy < Kitchen::Driver::SSHBase
+
+      plugin_version Kitchen::VERSION
 
       required_config :host
       required_config :reset_command

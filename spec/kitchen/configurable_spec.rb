@@ -39,6 +39,11 @@ module Kitchen
       end
     end
 
+    class Versioned < Tiny
+
+      plugin_version "1.8.17"
+    end
+
     class StaticDefaults
 
       include Kitchen::Configurable
@@ -392,17 +397,20 @@ describe Kitchen::Configurable do
     end
   end
 
-  describe "#diagnose_plugins" do
+  describe "#diagnose_plugin" do
 
     it "returns a plugin hash for a plugin without version" do
-      subject.diagnose_plugins.must_equal(
-        :name => "Tiny", :class => "Kitchen::Thing::Tiny"
+      subject.diagnose_plugin.must_equal(
+        :name => "Tiny", :class => "Kitchen::Thing::Tiny",
+        :version => nil
       )
     end
 
     it "returns a plugin hash for a plugin with version" do
-      subject.diagnose_plugins.must_equal(
-        :name => "Tiny", :class => "Kitchen::Thing::Tiny"
+      subject = Kitchen::Thing::Versioned.new(config).finalize_config!(instance)
+      subject.diagnose_plugin.must_equal(
+        :name => "Versioned", :class => "Kitchen::Thing::Versioned",
+        :version => "1.8.17"
       )
     end
   end

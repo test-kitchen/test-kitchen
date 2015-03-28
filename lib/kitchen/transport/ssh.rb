@@ -36,6 +36,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
 
+      plugin_version Kitchen::VERSION
+
       default_config :port, 22
       default_config :username, "root"
       default_config :keepalive, true
