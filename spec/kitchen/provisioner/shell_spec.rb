@@ -49,6 +49,11 @@ describe Kitchen::Provisioner::Shell do
     }.new(config).finalize_config!(instance)
   end
 
+  it "plugin_version is set to Kitchen::VERSION" do
+    provisioner = Kitchen::Provisioner::Shell.new(config).finalize_config!(instance)
+    provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "configuration" do
 
     describe "for bourne shells" do

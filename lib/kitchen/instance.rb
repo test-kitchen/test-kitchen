@@ -251,8 +251,8 @@ module Kitchen
       result = Hash.new
       [:driver, :provisioner, :verifier, :transport].each do |sym|
         obj = send(sym)
-        result[sym] = if obj.respond_to?(:diagnose_plugins)
-          obj.diagnose_plugins
+        result[sym] = if obj.respond_to?(:diagnose_plugin)
+          obj.diagnose_plugin
         else
           :unknown
         end

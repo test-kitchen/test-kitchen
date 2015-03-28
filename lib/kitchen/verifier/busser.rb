@@ -32,6 +32,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Busser < Kitchen::Verifier::Base
 
+      plugin_version Kitchen::VERSION
+
       default_config :busser_bin do |verifier|
         verifier.
           remote_path_join(%W[#{verifier[:root_path]} bin busser]).

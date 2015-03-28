@@ -28,6 +28,8 @@ module Kitchen
     # plugins.
     class Dummy < Kitchen::Transport::Base
 
+      plugin_version Kitchen::VERSION
+
       default_config :sleep, 1
       default_config :random_exit_code, 0
 

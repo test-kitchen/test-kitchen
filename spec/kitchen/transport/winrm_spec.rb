@@ -35,6 +35,10 @@ describe Kitchen::Transport::Winrm do
     Kitchen::Transport::Winrm.new(config).finalize_config!(instance)
   end
 
+  it "plugin_version is set to Kitchen::VERSION" do
+    transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "default_config" do
 
     it "sets :port to 5985 by default" do

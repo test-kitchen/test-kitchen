@@ -109,6 +109,10 @@ describe Kitchen::Driver::SSHBase do
     Kitchen::Driver::SSHBase.new(config).finalize_config!(instance)
   end
 
+  it "plugin_version is not set" do
+    driver.diagnose_plugin[:version].must_equal nil
+  end
+
   describe "configuration" do
 
     it ":sudo defaults to true" do

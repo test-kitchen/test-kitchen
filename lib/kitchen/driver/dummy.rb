@@ -30,6 +30,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Driver::Base
 
+      plugin_version Kitchen::VERSION
+
       default_config :sleep, 0
       default_config :random_failure, false
 

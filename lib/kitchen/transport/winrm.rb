@@ -50,6 +50,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Winrm < Kitchen::Transport::Base
 
+      plugin_version Kitchen::VERSION
+
       default_config :port, 5985
       default_config :username, ".\\administrator"
       default_config :password, nil

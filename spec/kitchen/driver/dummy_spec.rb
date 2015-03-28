@@ -37,6 +37,10 @@ describe Kitchen::Driver::Dummy do
     Kitchen::Driver::Dummy.new(config).finalize_config!(instance)
   end
 
+  it "plugin_version is set to Kitchen::VERSION" do
+    driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "default_config" do
 
     it "sets :sleep to 0 by default" do
