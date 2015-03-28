@@ -124,6 +124,18 @@ module Kitchen
       result
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information
+    # associated with the plugin itself (such as loaded version, class name,
+    # etc.).
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose_plugins
+      result = Hash.new
+      result[:name] = name
+      result.merge!(self.class.diagnose)
+      result
+    end
+
     # Returns the name of this plugin, suitable for display in a CLI.
     #
     # @return [String] name of this plugin
@@ -302,6 +314,16 @@ module Kitchen
 
     # Class methods which will be mixed in on inclusion of Configurable module.
     module ClassMethods
+
+      # Returns a Hash of configuration and other useful diagnostic
+      # information.
+      #
+      # @return [Hash] a diagnostic hash
+      def diagnose
+        {
+          :class => name
+        }
+      end
 
       # Sets a sane default value for a configuration attribute. These values
       # can be overridden by provided configuration or in a subclass with

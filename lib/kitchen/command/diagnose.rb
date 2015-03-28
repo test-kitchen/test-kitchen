@@ -37,10 +37,15 @@ module Kitchen
         loader = record_failure { load_loader }
 
         puts Kitchen::Diagnostic.new(
-          :loader => loader, :instances => instances).read.to_yaml
+          :loader => loader, :instances => instances, :plugins => plugins?
+        ).read.to_yaml
       end
 
       private
+
+      def plugins?
+        options[:all] || options[:plugins]
+      end
 
       # Loads and returns instances if they are requested.
       #

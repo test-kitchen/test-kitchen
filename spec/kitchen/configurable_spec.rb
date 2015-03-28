@@ -392,6 +392,21 @@ describe Kitchen::Configurable do
     end
   end
 
+  describe "#diagnose_plugins" do
+
+    it "returns a plugin hash for a plugin without version" do
+      subject.diagnose_plugins.must_equal(
+        :name => "Tiny", :class => "Kitchen::Thing::Tiny"
+      )
+    end
+
+    it "returns a plugin hash for a plugin with version" do
+      subject.diagnose_plugins.must_equal(
+        :name => "Tiny", :class => "Kitchen::Thing::Tiny"
+      )
+    end
+  end
+
   describe "#calculate_path" do
 
     let(:config) do
