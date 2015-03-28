@@ -33,6 +33,7 @@ require "uri"
 require "kitchen"
 require "kitchen/transport/winrm/command_executor"
 require "kitchen/transport/winrm/file_transporter"
+require "kitchen/transport/winrm/shell_closer"
 
 module Kitchen
 
@@ -90,7 +91,6 @@ module Kitchen
           logger.debug("[WinRM] closing remote shell #{shell_id} on #{self}")
           session.close
           logger.debug("[WinRM] remote shell #{shell_id} closed")
-          remove_finalizer
         ensure
           @session = nil
         end
@@ -190,26 +190,6 @@ module Kitchen
         # @api private
         attr_reader :winrm_transport
 
-        # Creates a finalizer for this connection which will close the open
-        # remote shell session when the object is garabage collected or on
-        # Ruby VM shutdown.
-        #
-        # @param shell_id [String] the remote shell identifier
-        # @api private
-        def add_finalizer(shell_id)
-          ObjectSpace.define_finalizer(
-            self,
-            ShellCloser.new(
-              logger.debug?,
-              shell_id,
-              "#{self}",
-              endpoint,
-              winrm_transport,
-              options
-            )
-          )
-        end
-
         # Writes an RDP document to the local file system.
         #
         # @param opts [Hash] file options
@@ -246,15 +226,15 @@ module Kitchen
         # @return [Winrm::CommandExecutor] the command executor session
         # @api private
         def establish_shell(opts)
-          @service = ::WinRM::WinRMWebService.new(
-            endpoint, winrm_transport, options)
+          service_args = [endpoint, winrm_transport, options]
+          @service = ::WinRM::WinRMWebService.new(*service_args)
+          closer = Winrm::ShellCloser.new("#{self}", logger.debug?, service_args)
 
-          executor = Winrm::CommandExecutor.new(@service, logger)
+          executor = Winrm::CommandExecutor.new(@service, logger, closer)
           retryable(opts) do
             logger.debug("[WinRM] opening remote shell on #{self}")
             shell_id = executor.open
             logger.debug("[WinRM] remote shell #{shell_id} is open on #{self}")
-            add_finalizer(shell_id)
           end
           executor
         end
@@ -350,13 +330,6 @@ module Kitchen
         # @api private
         def rdp_doc_path
           File.join(kitchen_root, ".kitchen", "#{instance_name}.rdp")
-        end
-
-        # Removes any finalizers for this connection.
-        #
-        # @api private
-        def remove_finalizer
-          ObjectSpace.undefine_finalizer(self)
         end
 
         # Yields to a block and reties the block if certain rescuable
@@ -465,47 +438,6 @@ module Kitchen
         logger.debug("[WinRM] reusing existing connection #{@connection}")
         yield @connection if block_given?
         @connection
-      end
-
-      # An object that can close a remote shell session over WinRM.
-      #
-      # @author Fletcher Nichol <fnichol@nichol.ca>
-      # @api private
-      class ShellCloser
-
-        # Constructs a new ShellCloser.
-        #
-        # @param debug [true,false] whether or not debug messages should be
-        #   output
-        # @param shell_id [String] the indentifier for the current open remote
-        #   shell session
-        # @param info [String] a string representation of the connection
-        # @param args [Array] arguments to construct a `WinRM::WinRMWebService`
-        def initialize(debug, shell_id, info, *args)
-          @debug = debug
-          @shell_id = shell_id
-          @info = info
-          @args = args
-        end
-
-        # Closes the remote shell session.
-        def call(*)
-          debug("[WinRM] closing remote shell #{@shell_id} on #{@info}")
-          ::WinRM::WinRMWebService.new(*@args).close_shell(@shell_id)
-          debug("[WinRM] remote shell #{@shell_id} closed")
-        rescue => e
-          debug("Exception: #{e.inspect}")
-        end
-
-        private
-
-        # Writes a debug message, if debug mode is enabled.
-        #
-        # @param message [String] a message
-        # @api private
-        def debug(message)
-          $stdout.puts "D      #{message}" if @debug
-        end
       end
     end
   end

@@ -30,15 +30,22 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:shell_id)        { "shell-123" }
+  let(:executor_args)   { [service, logger] }
 
   let(:executor) do
-    Kitchen::Transport::Winrm::CommandExecutor.new(service, logger)
+    Kitchen::Transport::Winrm::CommandExecutor.new(*executor_args)
   end
 
   let(:service) do
     s = mock("winrm_service")
     s.responds_like_instance_of(WinRM::WinRMWebService)
     s
+  end
+
+  let(:closer) do
+    c = mock("shell_closer")
+    c.stubs(:for)
+    c
   end
 
   let(:version_output) do
@@ -72,12 +79,34 @@ describe Kitchen::Transport::Winrm::CommandExecutor do
       executor.close
       executor.close
     end
+
+    it "undefines a finalizer on the object if a closer is set" do
+      service.stubs(:close_shell)
+      executor_args << closer
+      ObjectSpace.stubs(:define_finalizer).with { |e, _| e == executor }
+      ObjectSpace.expects(:undefine_finalizer).with(executor)
+      executor.open
+
+      executor.close
+    end
   end
 
   describe "#open" do
 
     it "calls service#open_shell" do
       service.expects(:open_shell).returns(shell_id)
+
+      executor.open
+    end
+
+    it "defines a finalizer on the object if a closer is set" do
+      executor_args << closer
+      new_closer = "new_closer"
+      closer.expects(:for).with(shell_id).returns(new_closer)
+      ObjectSpace.expects(:define_finalizer).with do |e, c|
+        e.must_equal(executor)
+        c.must_equal(new_closer)
+      end
 
       executor.open
     end
