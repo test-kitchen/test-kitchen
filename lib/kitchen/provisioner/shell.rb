@@ -28,6 +28,8 @@ module Kitchen
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
 
+      kitchen_provisioner_api_version 2
+
       plugin_version Kitchen::VERSION
 
       default_config :script do |provisioner|

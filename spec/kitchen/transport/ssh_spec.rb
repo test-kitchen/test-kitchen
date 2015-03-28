@@ -127,6 +127,10 @@ describe Kitchen::Transport::Ssh do
     Kitchen::Transport::Ssh.new(config).finalize_config!(instance)
   end
 
+  it "provisioner api_version is 1" do
+    transport.diagnose_plugin[:api_version].must_equal 1
+  end
+
   it "plugin_version is set to Kitchen::VERSION" do
     transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end

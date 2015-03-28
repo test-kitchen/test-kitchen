@@ -45,6 +45,10 @@ describe Kitchen::Provisioner::ChefZero do
     Kitchen::Provisioner::ChefZero.new(config).finalize_config!(instance)
   end
 
+  it "provisioner api_version is 2" do
+    provisioner.diagnose_plugin[:api_version].must_equal 2
+  end
+
   it "plugin_version is set to Kitchen::VERSION" do
     provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end

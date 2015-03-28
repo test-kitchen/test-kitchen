@@ -89,6 +89,31 @@ module Kitchen
         @serial_actions += methods
       end
 
+      # Sets the API version for this driver. If the driver does not set this
+      # value, then `nil` will be used and reported.
+      #
+      # Sets the API version for this driver
+      #
+      # @example setting an API version
+      #
+      #   module Kitchen
+      #     module Driver
+      #       class NewDriver < Kitchen::Driver::Base
+      #
+      #         kitchen_driver_api_version 2
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [Integer,String] a version number
+      #
+      # rubocop:disable Style/TrivialAccessors
+      def self.kitchen_driver_api_version(version)
+        @api_version = version
+      end
+      # rubocop:enable Style/TrivialAccessors
+
       private
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log

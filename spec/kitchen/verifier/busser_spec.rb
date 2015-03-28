@@ -89,6 +89,10 @@ describe Kitchen::Verifier::Busser do
   #   }.must_raise Kitchen::UserError
   # end
 
+  it "verifier api_version is 1" do
+    verifier.diagnose_plugin[:api_version].must_equal 1
+  end
+
   it "plugin_version is set to Kitchen::VERSION" do
     verifier.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end

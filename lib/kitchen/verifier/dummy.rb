@@ -30,6 +30,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Verifier::Base
 
+      kitchen_verifier_api_version 1
+
       plugin_version Kitchen::VERSION
 
       default_config :sleep, 0

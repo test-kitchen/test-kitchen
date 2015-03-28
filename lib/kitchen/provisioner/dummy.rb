@@ -30,6 +30,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Provisioner::Base
 
+      kitchen_provisioner_api_version 2
+
       plugin_version Kitchen::VERSION
 
       default_config :sleep, 0

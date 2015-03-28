@@ -162,6 +162,31 @@ module Kitchen
           "trying to access the path.")
       end
 
+      # Sets the API version for this verifier. If the verifier does not set
+      # this value, then `nil` will be used and reported.
+      #
+      # Sets the API version for this verifier
+      #
+      # @example setting an API version
+      #
+      #   module Kitchen
+      #     module Verifier
+      #       class NewVerifier < Kitchen::Verifier::Base
+      #
+      #         kitchen_verifier_api_version 2
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [Integer,String] a version number
+      #
+      # rubocop:disable Style/TrivialAccessors
+      def self.kitchen_verifier_api_version(version)
+        @api_version = version
+      end
+      # rubocop:enable Style/TrivialAccessors
+
       private
 
       # Builds a complete command given a variables String preamble and a file

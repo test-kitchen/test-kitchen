@@ -345,7 +345,8 @@ module Kitchen
       def diagnose
         {
           :class        => name,
-          :version      => @plugin_version
+          :version      => @plugin_version,
+          :api_version  => @api_version
         }
       end
 

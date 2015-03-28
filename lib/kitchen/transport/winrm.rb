@@ -50,6 +50,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Winrm < Kitchen::Transport::Base
 
+      kitchen_transport_api_version 1
+
       plugin_version Kitchen::VERSION
 
       default_config :port, 5985

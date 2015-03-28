@@ -27,6 +27,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefSolo < ChefBase
 
+      kitchen_provisioner_api_version 2
+
       plugin_version Kitchen::VERSION
 
       default_config :solo_rb, {}

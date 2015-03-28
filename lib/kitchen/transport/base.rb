@@ -141,6 +141,31 @@ module Kitchen
           @logger = @options.delete(:logger) || Kitchen.logger
         end
       end
+
+      # Sets the API version for this transport. If the transport does not set
+      # this value, then `nil` will be used and reported.
+      #
+      # Sets the API version for this transport
+      #
+      # @example setting an API version
+      #
+      #   module Kitchen
+      #     module Transport
+      #       class NewTransport < Kitchen::Transport::Base
+      #
+      #         kitchen_transport_api_version 2
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [Integer,String] a version number
+      #
+      # rubocop:disable Style/TrivialAccessors
+      def self.kitchen_transport_api_version(version)
+        @api_version = version
+      end
+      # rubocop:enable Style/TrivialAccessors
     end
   end
 end

@@ -157,6 +157,31 @@ module Kitchen
         FileUtils.rmtree(sandbox_path)
       end
 
+      # Sets the API version for this provisioner. If the provisioner does not
+      # set this value, then `nil` will be used and reported.
+      #
+      # Sets the API version for this provisioner
+      #
+      # @example setting an API version
+      #
+      #   module Kitchen
+      #     module Provisioner
+      #       class NewProvisioner < Kitchen::Provisioner::Base
+      #
+      #         kitchen_provisioner_api_version 2
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [Integer,String] a version number
+      #
+      # rubocop:disable Style/TrivialAccessors
+      def self.kitchen_provisioner_api_version(version)
+        @api_version = version
+      end
+      # rubocop:enable Style/TrivialAccessors
+
       private
 
       # Builds a complete command given a variables String preamble and a file

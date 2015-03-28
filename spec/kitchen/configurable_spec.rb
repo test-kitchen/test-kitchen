@@ -402,7 +402,7 @@ describe Kitchen::Configurable do
     it "returns a plugin hash for a plugin without version" do
       subject.diagnose_plugin.must_equal(
         :name => "Tiny", :class => "Kitchen::Thing::Tiny",
-        :version => nil
+        :version => nil, :api_version => nil
       )
     end
 
@@ -410,7 +410,7 @@ describe Kitchen::Configurable do
       subject = Kitchen::Thing::Versioned.new(config).finalize_config!(instance)
       subject.diagnose_plugin.must_equal(
         :name => "Versioned", :class => "Kitchen::Thing::Versioned",
-        :version => "1.8.17"
+        :version => "1.8.17", :api_version => nil
       )
     end
   end

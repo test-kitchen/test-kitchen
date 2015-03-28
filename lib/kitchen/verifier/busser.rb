@@ -32,6 +32,8 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Busser < Kitchen::Verifier::Base
 
+      kitchen_verifier_api_version 1
+
       plugin_version Kitchen::VERSION
 
       default_config :busser_bin do |verifier|
