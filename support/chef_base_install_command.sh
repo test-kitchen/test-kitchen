@@ -33,9 +33,6 @@ do_curl() {
 
 # do_download URL FILENAME
 do_download() {
-  PATH="/opt/local/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin";
-  export PATH;
-
   echo "Downloading ${1} to file ${2}";
 
   exists wget;
@@ -215,5 +212,9 @@ main() {
     echo "-----> Chef Omnibus installation detected (${pretty_version})";
   fi
 }
+
+# augment path in an attempt to find a download program
+PATH="${PATH}:/opt/local/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/sfw/bin";
+export PATH;
 
 main
