@@ -344,6 +344,18 @@ describe Kitchen::Configurable do
 
         subject[:complex_path].must_equal "/tmp/yo/self/complex"
       end
+
+      it "leaves a nil config value as nil" do
+        config[:success_path] = nil
+
+        subject[:success_path].must_equal nil
+      end
+
+      it "leaves a false config value as false" do
+        config[:success_path] = false
+
+        subject[:success_path].must_equal false
+      end
     end
 
     describe "using inherited static expand_path_for statements" do

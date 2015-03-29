@@ -49,6 +49,9 @@ module Kitchen
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
 
+      default_config :ssh_key, nil
+      expand_path_for :ssh_key
+
       # (see Base#connection)
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))

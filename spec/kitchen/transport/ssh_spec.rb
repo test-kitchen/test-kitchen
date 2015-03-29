@@ -168,6 +168,17 @@ describe Kitchen::Transport::Ssh do
     it "sets :max_wait_until_ready to 600 by default" do
       transport[:max_wait_until_ready].must_equal 600
     end
+
+    it "sets :ssh_key to nil by default" do
+      transport[:ssh_key].must_equal nil
+    end
+
+    it "expands :ssh_path path if set" do
+      config[:kitchen_root] = "/rooty"
+      config[:ssh_key] = "my_key"
+
+      transport[:ssh_key].must_equal "/rooty/my_key"
+    end
   end
 
   describe "#connection" do
@@ -415,10 +426,11 @@ describe Kitchen::Transport::Ssh do
       end
 
       it "sets :keys to an array if :ssh_key is set in config" do
+        config[:kitchen_root] = "/r"
         config[:ssh_key] = "ssh_key_from_config"
 
         klass.expects(:new).with do |hash|
-          hash[:keys] == ["ssh_key_from_config"]
+          hash[:keys] == ["/r/ssh_key_from_config"]
         end
 
         make_connection
