@@ -19,6 +19,10 @@
 require_relative "../../spec_helper"
 
 require "kitchen/transport/winrm"
+require "winrm"
+require "winrm/transport/command_executor"
+require "winrm/transport/shell_closer"
+require "winrm/transport/file_transporter"
 
 describe Kitchen::Transport::Winrm do
 
@@ -353,8 +357,76 @@ describe Kitchen::Transport::Winrm do
     end
   end
 
+  describe "#load_needed_dependencies" do
+
+    before do
+      # force loading of winrm-transport to get the version constant
+      require "winrm/transport/version"
+    end
+
+    it "logs a message to debug that code will be loaded" do
+      transport
+
+      logged_output.string.must_match debug_line_with(
+        "Winrm Transport requested, loading WinRM::Transport gem")
+    end
+
+    it "logs a message to debug when library is initially loaded" do
+      transport = Kitchen::Transport::Winrm.new(config)
+      transport.stubs(:require)
+      transport.stubs(:require).with("winrm/transport/version").returns(true)
+      transport.finalize_config!(instance)
+
+      logged_output.string.must_match(
+        %r{^D, .* : WinRM::Transport [^\s]+ library loaded$}
+      )
+    end
+
+    it "logs a message to debug when library is previously loaded" do
+      transport = Kitchen::Transport::Winrm.new(config)
+      transport.stubs(:require)
+      transport.stubs(:require).with("winrm/transport/version").returns(false)
+      transport.finalize_config!(instance)
+
+      logged_output.string.must_match(
+        %r{^D, .* : WinRM::Transport [^\s]+ previously loaded$}
+      )
+    end
+
+    it "logs a message to fatal when libraries cannot be loaded" do
+      transport = Kitchen::Transport::Winrm.new(config)
+      transport.stubs(:require)
+      transport.stubs(:require).with("winrm/transport/version").
+        raises(LoadError, "uh oh")
+      begin
+        transport.finalize_config!(instance)
+      rescue # rubocop:disable Lint/HandleExceptions
+        # we are interested in the log output, not this exception
+      end
+
+      logged_output.string.must_match fatal_line_with(
+        "The `winrm-transport' gem is missing and must be installed")
+    end
+
+    it "raises a UserError when libraries cannot be loaded" do
+      transport = Kitchen::Transport::Winrm.new(config)
+      transport.stubs(:require)
+      transport.stubs(:require).with("winrm/transport/version").
+        raises(LoadError, "uh oh")
+
+      err = proc {
+        transport.finalize_config!(instance)
+      }.must_raise Kitchen::UserError
+      err.message.must_match(/^Could not load or activate WinRM::Transport /)
+    end
+  end
+
   def debug_line_with(msg)
     %r{^D, .* : #{Regexp.escape(msg)}}
+  end
+
+  def fatal_line_with(msg)
+    %r{^F, .* : #{Regexp.escape(msg)}}
   end
 end
 
@@ -383,7 +455,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
   let(:executor) do
     s = mock("command_executor")
-    s.responds_like_instance_of(Kitchen::Transport::Winrm::CommandExecutor)
+    s.responds_like_instance_of(WinRM::Transport::CommandExecutor)
     s
   end
 
@@ -405,7 +477,7 @@ describe Kitchen::Transport::Winrm::Connection do
     end
 
     before do
-      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
       # disable finalizer as service is a fake anyway
       ObjectSpace.stubs(:define_finalizer).
         with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
@@ -441,7 +513,7 @@ describe Kitchen::Transport::Winrm::Connection do
   describe "#execute" do
 
     before do
-      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
       # disable finalizer as service is a fake anyway
       ObjectSpace.stubs(:define_finalizer).
         with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
@@ -879,7 +951,7 @@ MSG
 
     let(:transporter) do
       t = mock("file_transporter")
-      t.responds_like_instance_of(Kitchen::Transport::Winrm::FileTransporter)
+      t.responds_like_instance_of(WinRM::Transport::FileTransporter)
       t
     end
 
@@ -888,10 +960,10 @@ MSG
       ObjectSpace.stubs(:define_finalizer).
         with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
 
-      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
       executor.stubs(:open)
 
-      Kitchen::Transport::Winrm::FileTransporter.stubs(:new).
+      WinRM::Transport::FileTransporter.stubs(:new).
         with(executor, logger).returns(transporter)
       transporter.stubs(:upload)
     end
@@ -899,18 +971,18 @@ MSG
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_specs_for_upload
       it "builds a Winrm::FileTransporter" do
-        Kitchen::Transport::Winrm::FileTransporter.unstub(:new)
+        WinRM::Transport::FileTransporter.unstub(:new)
 
-        Kitchen::Transport::Winrm::FileTransporter.expects(:new).
+        WinRM::Transport::FileTransporter.expects(:new).
           with(executor, logger).returns(transporter)
 
         upload
       end
 
       it "reuses the Winrm::FileTransporter" do
-        Kitchen::Transport::Winrm::FileTransporter.unstub(:new)
+        WinRM::Transport::FileTransporter.unstub(:new)
 
-        Kitchen::Transport::Winrm::FileTransporter.expects(:new).
+        WinRM::Transport::FileTransporter.expects(:new).
           with(executor, logger).returns(transporter).once
 
         upload
@@ -942,7 +1014,7 @@ MSG
   describe "#wait_until_ready" do
 
     before do
-      Kitchen::Transport::Winrm::CommandExecutor.stubs(:new).returns(executor)
+      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
       # disable finalizer as service is a fake anyway
       ObjectSpace.stubs(:define_finalizer).
         with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
