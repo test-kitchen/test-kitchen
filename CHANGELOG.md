@@ -1,3 +1,29 @@
+## 1.4.0.rc.1 / 2015-03-29
+
+### Potentially breaking changes
+
+* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependenices to manage. ([@fnichol][])
+
+### Bug fixes
+
+* Issue [#656][], pull request 669: Move ObjectSpace finalizer logic into CommandExtractor to close the last opened remote shell on shutdown for Winrm Transport. ([@fnichol][])
+* Issue [#611][], pull request [#673][]: Ensure that secret key is deleted before converge for chef_zero and chef_solo Provisioners. ([@fnichol][])
+* Issue [#389][], pull request [#674][]: Expand path for `:ssh_key` if provided in kitchen.yml for Ssh Transport. ([@fnichol][])
+* Pull request [#653][]: Consider `:require_chef_omnibus = 11` to be a modern version for Chef Provisioners. ([@fnichol][])
+
+### New features
+
+* Add [API versioning](d8f1a7db9e506c44f321462e1fba0b1e24994070) metadata to all plugin types. ([@fnichol][])
+* Pull request [#667][], pull request [#668][]: Add plugin diagnostics, exposed via `kitchen diagnose`. ([@fnichol][])
+* Pull request [#675][], issue [#424][]: Add default `:compression` & `:compression_level` configuration attributes to Ssh Transport.
+* Pull request [#651][], issue [#592][], issue [#629][], issue [#307][]: Add :sudo_command to Provisioners, Verifiers, & ShellOut. ([@fnichol][])
+
+### Improvements
+
+* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms includig Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
+* Pull request [#652][], pull request [#666][], issue [#556][]: Support symbol values in solo.rb & client.rb for chef_zero and chef_solo Provisioners. ([@fnichol][])
+
+
 ## 1.4.0.beta.2 / 2015-03-25
 
 ### Potentially breaking changes
@@ -571,6 +597,7 @@ The initial release.
 [#304]: https://github.com/test-kitchen/test-kitchen/issues/304
 [#305]: https://github.com/test-kitchen/test-kitchen/issues/305
 [#306]: https://github.com/test-kitchen/test-kitchen/issues/306
+[#307]: https://github.com/test-kitchen/test-kitchen/issues/307
 [#309]: https://github.com/test-kitchen/test-kitchen/issues/309
 [#310]: https://github.com/test-kitchen/test-kitchen/issues/310
 [#313]: https://github.com/test-kitchen/test-kitchen/issues/313
@@ -587,9 +614,11 @@ The initial release.
 [#373]: https://github.com/test-kitchen/test-kitchen/issues/373
 [#375]: https://github.com/test-kitchen/test-kitchen/issues/375
 [#381]: https://github.com/test-kitchen/test-kitchen/issues/381
+[#389]: https://github.com/test-kitchen/test-kitchen/issues/389
 [#397]: https://github.com/test-kitchen/test-kitchen/issues/397
 [#399]: https://github.com/test-kitchen/test-kitchen/issues/399
 [#416]: https://github.com/test-kitchen/test-kitchen/issues/416
+[#424]: https://github.com/test-kitchen/test-kitchen/issues/424
 [#427]: https://github.com/test-kitchen/test-kitchen/issues/427
 [#429]: https://github.com/test-kitchen/test-kitchen/issues/429
 [#431]: https://github.com/test-kitchen/test-kitchen/issues/431
@@ -617,6 +646,7 @@ The initial release.
 [#549]: https://github.com/test-kitchen/test-kitchen/issues/549
 [#554]: https://github.com/test-kitchen/test-kitchen/issues/554
 [#555]: https://github.com/test-kitchen/test-kitchen/issues/555
+[#556]: https://github.com/test-kitchen/test-kitchen/issues/556
 [#557]: https://github.com/test-kitchen/test-kitchen/issues/557
 [#558]: https://github.com/test-kitchen/test-kitchen/issues/558
 [#567]: https://github.com/test-kitchen/test-kitchen/issues/567
@@ -624,10 +654,26 @@ The initial release.
 [#580]: https://github.com/test-kitchen/test-kitchen/issues/580
 [#581]: https://github.com/test-kitchen/test-kitchen/issues/581
 [#588]: https://github.com/test-kitchen/test-kitchen/issues/588
+[#592]: https://github.com/test-kitchen/test-kitchen/issues/592
 [#600]: https://github.com/test-kitchen/test-kitchen/issues/600
+[#611]: https://github.com/test-kitchen/test-kitchen/issues/611
+[#629]: https://github.com/test-kitchen/test-kitchen/issues/629
 [#633]: https://github.com/test-kitchen/test-kitchen/issues/633
 [#648]: https://github.com/test-kitchen/test-kitchen/issues/648
 [#649]: https://github.com/test-kitchen/test-kitchen/issues/649
+[#651]: https://github.com/test-kitchen/test-kitchen/issues/651
+[#652]: https://github.com/test-kitchen/test-kitchen/issues/652
+[#653]: https://github.com/test-kitchen/test-kitchen/issues/653
+[#654]: https://github.com/test-kitchen/test-kitchen/issues/654
+[#656]: https://github.com/test-kitchen/test-kitchen/issues/656
+[#658]: https://github.com/test-kitchen/test-kitchen/issues/658
+[#666]: https://github.com/test-kitchen/test-kitchen/issues/666
+[#667]: https://github.com/test-kitchen/test-kitchen/issues/667
+[#668]: https://github.com/test-kitchen/test-kitchen/issues/668
+[#672]: https://github.com/test-kitchen/test-kitchen/issues/672
+[#673]: https://github.com/test-kitchen/test-kitchen/issues/673
+[#674]: https://github.com/test-kitchen/test-kitchen/issues/674
+[#675]: https://github.com/test-kitchen/test-kitchen/issues/675
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@adamhjk]: https://github.com/adamhjk
