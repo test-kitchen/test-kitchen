@@ -118,8 +118,10 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          sort.map { |dir| remote_path_join(config[:root_path], dir) }
+        dirs = %w[
+          cookbooks data data_bags environments roles clients
+          encrypted_data_bag_secret
+        ].sort.map { |dir| remote_path_join(config[:root_path], dir) }
 
         vars = if powershell_shell?
           init_command_vars_for_powershell(dirs)

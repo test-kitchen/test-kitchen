@@ -529,7 +529,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:root_path] = "/route"
         dirs = %W[
           /route/clients /route/cookbooks /route/data /route/data_bags
-          /route/environments /route/roles
+          /route/encrypted_data_bag_secret /route/environments /route/roles
         ].join(" ")
 
         cmd.must_match regexify(%{dirs="#{dirs}"})
@@ -583,7 +583,8 @@ describe Kitchen::Provisioner::ChefBase do
         config[:root_path] = "\\route"
         dirs = %W[
           "\\route\\clients" "\\route\\cookbooks" "\\route\\data"
-          "\\route\\data_bags" "\\route\\environments" "\\route\\roles"
+          "\\route\\data_bags" "\\route\\encrypted_data_bag_secret"
+          "\\route\\environments" "\\route\\roles"
         ].join(", ")
 
         cmd.must_match regexify(%{$dirs = @(#{dirs})})
