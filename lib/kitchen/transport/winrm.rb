@@ -18,22 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def silence_warnings
-  old_verbose, $VERBOSE = $VERBOSE, nil
-  yield
-ensure
-  $VERBOSE = old_verbose
-end
-
-silence_warnings { require "winrm" }
-
 require "rbconfig"
 require "uri"
 
 require "kitchen"
-require "kitchen/transport/winrm/command_executor"
-require "kitchen/transport/winrm/file_transporter"
-require "kitchen/transport/winrm/shell_closer"
 
 module Kitchen
 
@@ -146,12 +134,14 @@ module Kitchen
 
         PING_COMMAND = "Write-Host '[WinRM] Established\n'".freeze
 
-        RESCUE_EXCEPTIONS_ON_ESTABLISH = [
-          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
-          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-          ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
-          HTTPClient::KeepAliveDisconnected
-        ].freeze
+        RESCUE_EXCEPTIONS_ON_ESTABLISH = lambda do
+          [
+            Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+            Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+            ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
+            HTTPClient::KeepAliveDisconnected
+          ].freeze
+        end
 
         # @return [Integer] how many times to retry when failing to execute
         #   a command or transfer files
@@ -228,9 +218,9 @@ module Kitchen
         def establish_shell(opts)
           service_args = [endpoint, winrm_transport, options]
           @service = ::WinRM::WinRMWebService.new(*service_args)
-          closer = Winrm::ShellCloser.new("#{self}", logger.debug?, service_args)
+          closer = WinRM::Transport::ShellCloser.new("#{self}", logger.debug?, service_args)
 
-          executor = Winrm::CommandExecutor.new(@service, logger, closer)
+          executor = WinRM::Transport::CommandExecutor.new(@service, logger, closer)
           retryable(opts) do
             logger.debug("[WinRM] opening remote shell on #{self}")
             shell_id = executor.open
@@ -257,7 +247,7 @@ module Kitchen
         # @return [Winrm::FileTransporter] a file transporter
         # @api private
         def file_transporter
-          @file_transporter ||= Winrm::FileTransporter.new(session, logger)
+          @file_transporter ||= WinRM::Transport::FileTransporter.new(session, logger)
         end
 
         # (see Base#init_options)
@@ -346,7 +336,7 @@ module Kitchen
         # @api private
         def retryable(opts)
           yield
-        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH.call => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
               logger.debug("[WinRM] connection failed (#{e.inspect})")
@@ -387,6 +377,8 @@ module Kitchen
       end
 
       private
+
+      WINRM_TRANSPORT_SPEC_VERSION = "~> 1.0".freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
@@ -430,6 +422,42 @@ module Kitchen
         @connection = Kitchen::Transport::Winrm::Connection.new(options, &block)
       end
 
+      # (see Base#load_needed_dependencies!)
+      def load_needed_dependencies! # rubocop:disable Metrics/MethodLength
+        super
+        spec_version = WINRM_TRANSPORT_SPEC_VERSION.dup
+        logger.debug("Winrm Transport requested," \
+          " loading WinRM::Transport gem (#{spec_version})")
+        gem "winrm-transport", spec_version
+        first_load = require "winrm/transport/version"
+        load_winrm_transport!
+
+        version = ::WinRM::Transport::VERSION
+        if first_load
+          logger.debug("WinRM::Transport #{version} library loaded")
+        else
+          logger.debug("WinRM::Transport #{version} previously loaded")
+        end
+      rescue LoadError => e
+        logger.fatal("The `winrm-transport' gem is missing and must" \
+          " be installed or cannot be properly activated. Run" \
+          " `gem install winrm-transport --version '#{spec_version}'`" \
+          " or add the following to your Gemfile if you are using Bundler:" \
+          " `gem 'winrm-transport', '#{spec_version}'`.")
+        raise UserError,
+          "Could not load or activate WinRM::Transport (#{e.message})"
+      end
+
+      # Load WinRM::Transport code.
+      #
+      # @api private
+      def load_winrm_transport!
+        silence_warnings { require "winrm" }
+        require "winrm/transport/shell_closer"
+        require "winrm/transport/command_executor"
+        require "winrm/transport/file_transporter"
+      end
+
       # Return the last saved WinRM connection instance.
       #
       # @return [Winrm::Connection] a WinRM Connection instance
@@ -438,6 +466,13 @@ module Kitchen
         logger.debug("[WinRM] reusing existing connection #{@connection}")
         yield @connection if block_given?
         @connection
+      end
+
+      def silence_warnings
+        old_verbose, $VERBOSE = $VERBOSE, nil
+        yield
+      ensure
+        $VERBOSE = old_verbose
       end
     end
   end

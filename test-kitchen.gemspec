@@ -26,12 +26,11 @@ Gem::Specification.new do |gem|
   gem.add_dependency "mixlib-shellout", ">= 1.2", "< 3.0"
   gem.add_dependency "net-scp",         "~> 1.1"
   gem.add_dependency "net-ssh",         "~> 2.7"
-  gem.add_dependency "winrm",           "~> 1.3"
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
-  gem.add_dependency "rubyzip",         ">= 1.1.7", "~> 1.1"
 
   gem.add_development_dependency "pry"
+  gem.add_development_dependency "winrm-transport", "~> 1.0"
 
   gem.add_development_dependency "bundler",   "~> 1.3"
   gem.add_development_dependency "rake"
