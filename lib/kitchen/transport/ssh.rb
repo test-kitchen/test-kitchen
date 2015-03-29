@@ -52,6 +52,18 @@ module Kitchen
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
+      default_config :compression, "zlib"
+      required_config :compression do |attr, value, transport|
+        if !%W[zlib none].include?(value)
+          raise UserError, "#{transport} :#{attr} value may only " \
+            "be set to `none' or `zlib'."
+        end
+      end
+
+      default_config :compression_level do |transport|
+        transport[:compression] == "none" ? 0 : 6
+      end
+
       # (see Base#connection)
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))
@@ -278,7 +290,7 @@ module Kitchen
       # @param data [Hash] merged configuration and mutable state data
       # @return [Hash] hash of connection options
       # @api private
-      def connection_options(data)
+      def connection_options(data) # rubocop:disable Metrics/MethodLength
         opts = {
           :logger                 => logger,
           :user_known_hosts_file  => "/dev/null",
@@ -286,6 +298,8 @@ module Kitchen
           :hostname               => data[:hostname],
           :port                   => data[:port],
           :username               => data[:username],
+          :compression            => data[:compression],
+          :compression_level      => data[:compression_level],
           :keepalive              => data[:keepalive],
           :keepalive_interval     => data[:keepalive_interval],
           :timeout                => data[:connection_timeout],

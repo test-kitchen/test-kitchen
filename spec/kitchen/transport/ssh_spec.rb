@@ -145,6 +145,33 @@ describe Kitchen::Transport::Ssh do
       transport[:username].must_equal "root"
     end
 
+    it "sets :compression to zlib by default" do
+      transport[:compression].must_equal "zlib"
+    end
+
+    it "sets :compression to none if set to none" do
+      config[:compression] = "none"
+
+      transport[:compression].must_equal "none"
+    end
+
+    it "raises a UserError if :compression is set to a bogus value" do
+      config[:compression] = "boom"
+
+      err = proc { transport }.must_raise Kitchen::UserError
+      err.message.must_match(%r{value may only be set to `none' or `zlib'})
+    end
+
+    it "sets :compression_level to 6 by default" do
+      transport[:compression_level].must_equal 6
+    end
+
+    it "sets :compression_level to 0 if :compression is set to none" do
+      config[:compression] = "none"
+
+      transport[:compression_level].must_equal 0
+    end
+
     it "sets :keepalive to true by default" do
       transport[:keepalive].must_equal true
     end
@@ -273,6 +300,48 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:username] == "user_from_state"
+        end
+
+        make_connection
+      end
+
+      it "sets :compression from config" do
+        config[:compression] = "none"
+
+        klass.expects(:new).with do |hash|
+          hash[:compression] == "none"
+        end
+
+        make_connection
+      end
+
+      it "sets :compression from state over config data" do
+        state[:compression] = "none"
+        config[:compression] = "zlib"
+
+        klass.expects(:new).with do |hash|
+          hash[:compression] == "none"
+        end
+
+        make_connection
+      end
+
+      it "sets :compression_level from config" do
+        config[:compression_level] = 9999
+
+        klass.expects(:new).with do |hash|
+          hash[:compression_level] == 9999
+        end
+
+        make_connection
+      end
+
+      it "sets :compression_level from state over config data" do
+        state[:compression_level] = 9999
+        config[:compression_level] = 1111
+
+        klass.expects(:new).with do |hash|
+          hash[:compression_level] == 9999
         end
 
         make_connection
