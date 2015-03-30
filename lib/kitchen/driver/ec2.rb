@@ -20,7 +20,6 @@ require 'benchmark'
 require 'json'
 require 'fog'
 require 'kitchen'
-include Fog::AWS::CredentialFetcher::ServiceMethods
 
 module Kitchen
 
@@ -31,11 +30,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
 
-
-      iam_creds = Fog::AWS::CredentialFetcher::ServiceMethods.fetch_credentials(
-        use_iam_profile: true
-      ) rescue {}
-
+      extend Fog::AWS::CredentialFetcher::ServiceMethods
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
@@ -101,6 +96,15 @@ module Kitchen
               ":ebs_delete_on_termination and :ebs_device_name"
           end
         end
+      end
+
+      def self.iam_creds
+        @iam_creds ||= begin
+         fetch_credentials(use_iam_profile:true)
+       rescue
+         debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
+         {}
+       end
       end
 
       def create(state)
