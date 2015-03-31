@@ -81,7 +81,7 @@ module Kitchen
         validations[d] = lambda do |attr, val, driver|
           unless val.nil?
             driver.warn "WARN: The config key `#{attr}` is deprecated," +
-              " please use `block_device_mappings`"
+              ' please use `block_device_mappings`'
           end
         end
       end
@@ -100,11 +100,11 @@ module Kitchen
 
       def self.iam_creds
         @iam_creds ||= begin
-         fetch_credentials(use_iam_profile:true)
-       rescue
-         debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
-         {}
-       end
+          fetch_credentials(use_iam_profile:true)
+        rescue RuntimeError => e
+          debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
+          {}
+        end
       end
 
       def create(state)
