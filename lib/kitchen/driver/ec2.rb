@@ -30,6 +30,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
 
+      extend Fog::AWS::CredentialFetcher::ServiceMethods
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
@@ -41,13 +42,13 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID']
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] || iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || iam_creds[:aws_session_token]
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -80,7 +81,7 @@ module Kitchen
         validations[d] = lambda do |attr, val, driver|
           unless val.nil?
             driver.warn "WARN: The config key `#{attr}` is deprecated," +
-              " please use `block_device_mappings`"
+              ' please use `block_device_mappings`'
           end
         end
       end
@@ -97,14 +98,23 @@ module Kitchen
         end
       end
 
+      def self.iam_creds
+        @iam_creds ||= begin
+          fetch_credentials(use_iam_profile:true)
+        rescue RuntimeError => e
+          debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
+          {}
+        end
+      end
+
       def create(state)
         return if state[:server_id]
 
         info("Creating <#{state[:server_id]}>...")
-        info("If you are not using an account that qualifies under the AWS")
-        info("free-tier, you may be charged to run these suites. The charge")
-        info("should be minimal, but neither Test Kitchen nor its maintainers")
-        info("are responsible for your incurred costs.")
+        info('If you are not using an account that qualifies under the AWS')
+        info('free-tier, you may be charged to run these suites. The charge')
+        info('should be minimal, but neither Test Kitchen nor its maintainers')
+        info('are responsible for your incurred costs.')
 
         if config[:price]
           # Spot instance when a price is set
