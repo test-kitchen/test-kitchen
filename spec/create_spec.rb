@@ -128,14 +128,38 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
-  describe '#iam_creds' do
-    context 'when use_iam_profile is not set' do
-      it 'returns an empty hash' do
-        expect(driver.iam_creds).to eq({})
+  context 'When autodetecting an iam role' do
+    let(:iam_creds) do
+      {
+        aws_access_key_id: 'secret',
+        aws_secret_access_key: 'moarsecret',
+        aws_session_token: 'randomsecret'
+      }
+    end
+
+    context 'when :aws_secret_key_id is not set via iam_creds' do
+      it 'does not set config[:aws_session_token] based on iam_creds' do
+        config[:aws_secret_access_key] = 'adifferentsecret'
+
+        allow(driver)
+          .to receive(:iam_creds).and_return(iam_creds)
+
+        expect(driver.send(:config)[:aws_session_token]).to be_nil
       end
     end
 
-    context 'when use_iam_profile is set to true' do
+    context 'when :aws_access_key_id is not set via iam_creds' do
+     it 'does not set config[:aws_session_token] based on iam_creds' do
+        config[:aws_access_key_id] = 'adifferentsecret'
+
+        allow(driver)
+          .to receive(:iam_creds).and_return(iam_creds)
+
+        expect(driver.send(:config)[:aws_session_token]).to be_nil
+      end
+    end
+
+    context 'when :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
       let(:credentials) do
         {
           aws_access_key_id: 'secret',
@@ -144,17 +168,14 @@ describe Kitchen::Driver::Ec2 do
         }
       end
 
-      it 'calls fetch_credentials' do
-        config[:use_iam_profile] = true
-
+      it 'uses :aws_session_token from iam_creds' do
         allow(driver)
-          .to receive(:fetch_credentials).and_return(credentials)
+          .to receive(:iam_creds).and_return(iam_creds)
 
         expect(driver)
-          .to receive(:fetch_credentials)
-          .with(use_iam_profile: true)
+          .to receive(:iam_creds)
 
-        expect(driver.iam_creds).to eq(credentials)
+        expect(driver.send(:config)[:aws_session_token]).to eq(iam_creds[:aws_session_token])
       end
     end
   end
