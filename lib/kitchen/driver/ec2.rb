@@ -29,7 +29,7 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
-      extend Fog::AWS::CredentialFetcher::ServiceMethods
+      include Fog::AWS::CredentialFetcher::ServiceMethods
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
