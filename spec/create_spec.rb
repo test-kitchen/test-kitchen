@@ -160,14 +160,6 @@ describe Kitchen::Driver::Ec2 do
     end
 
     context 'when :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
-      let(:credentials) do
-        {
-          aws_access_key_id: 'secret',
-          aws_secret_access_key: 'moarsecret',
-          aws_session_token: 'randomsecret'
-        }
-      end
-
       it 'uses :aws_session_token from iam_creds' do
         allow(driver)
           .to receive(:iam_creds).and_return(iam_creds)
