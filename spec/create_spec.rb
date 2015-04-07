@@ -128,6 +128,37 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
+  describe '#iam_creds' do
+    context 'when use_iam_profile is not set' do
+      it 'returns an empty hash' do
+        expect(driver.iam_creds).to eq({})
+      end
+    end
+
+    context 'when use_iam_profile is set to true' do
+      let(:credentials) do
+        {
+          aws_access_key_id: 'secret',
+          aws_secret_access_key: 'moarsecret',
+          aws_session_token: 'randomsecret'
+        }
+      end
+
+      it 'calls fetch_credentials' do
+        config[:use_iam_profile] = true
+
+        allow(driver)
+          .to receive(:fetch_credentials).and_return(credentials)
+
+        expect(driver)
+          .to receive(:fetch_credentials)
+          .with(use_iam_profile: true)
+
+        expect(driver.iam_creds).to eq(credentials)
+      end
+    end
+  end
+
   describe '#block_device_mappings' do
     let(:connection) { double(Fog::Compute) }
     let(:image) { double('Image', :root_device_name => 'name') }

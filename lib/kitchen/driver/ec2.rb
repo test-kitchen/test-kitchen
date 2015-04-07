@@ -29,7 +29,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
-
       extend Fog::AWS::CredentialFetcher::ServiceMethods
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
@@ -41,14 +40,16 @@ module Kitchen
       default_config :private_ip_address, nil
       default_config :iam_profile_name,   nil
       default_config :price,   nil
+      default_config :use_iam_profile, false
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || iam_creds[:aws_access_key_id]
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || driver.iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] || iam_creds[:aws_secret_access_key]
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] \
+          || driver.iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || iam_creds[:aws_session_token]
+        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || driver.iam_creds[:aws_session_token]
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -98,10 +99,10 @@ module Kitchen
         end
       end
 
-      def self.iam_creds
+      def iam_creds
         @iam_creds ||= begin
-          fetch_credentials(use_iam_profile:true)
-        rescue RuntimeError => e
+          config[:use_iam_profile] ? fetch_credentials(use_iam_profile: true) : {}
+        rescue RuntimeError, NoMethodError => e
           debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
           {}
         end
