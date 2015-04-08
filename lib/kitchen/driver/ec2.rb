@@ -44,8 +44,8 @@ module Kitchen
         ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || driver.iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] \
-          || driver.iam_creds[:aws_secret_access_key]
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] ||
+          driver.iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
         driver.default_aws_session_token
