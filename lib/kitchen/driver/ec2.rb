@@ -18,8 +18,13 @@
 
 require 'benchmark'
 require 'json'
-require 'fog'
+require 'excon'
+require 'multi_json'
+require 'json'
+require 'aws'
+require 'retryable'
 require 'kitchen'
+require 'kitchen/driver/ec2_version'
 
 module Kitchen
 
@@ -28,18 +33,25 @@ module Kitchen
     # Amazon EC2 driver for Test Kitchen.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Ec2 < Kitchen::Driver::SSHBase
-      include Fog::AWS::CredentialFetcher::ServiceMethods
+    class Ec2 < Kitchen::Driver::Base
+
+      kitchen_driver_api_version 2
+
+      plugin_version Kitchen::Driver::EC2_VERSION
+
       default_config :region,             'us-east-1'
-      default_config :availability_zone,  'us-east-1b'
-      default_config :flavor_id,          'm1.small'
+      default_config :availability_zone,  nil
+      default_config :flavor_id,          nil
+      default_config :instance_type,      nil
       default_config :ebs_optimized,      false
-      default_config :security_group_ids, ['default']
+      default_config :security_group_ids, nil
       default_config :tags,               { 'created-by' => 'test-kitchen' }
       default_config :user_data,          nil
       default_config :private_ip_address, nil
       default_config :iam_profile_name,   nil
-      default_config :price,   nil
+      default_config :price,              nil
+      default_config :retryable_tries,    60
+      default_config :retryable_sleep,    5
       default_config :aws_access_key_id do |driver|
         ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] ||
           driver.iam_creds[:aws_access_key_id]
@@ -57,33 +69,55 @@ module Kitchen
       default_config :image_id do |driver|
         driver.default_ami
       end
-      default_config :username do |driver|
-        driver.default_username
-      end
-      default_config :endpoint do |driver|
-        "https://ec2.#{driver[:region]}.amazonaws.com/"
-      end
+      default_config :username, nil
 
       default_config :interface, nil
       default_config :associate_public_ip do |driver|
         driver.default_public_ip_association
       end
-      default_config :ssh_timeout, 1
-      default_config :ssh_retries, 3
 
       required_config :aws_access_key_id
       required_config :aws_secret_access_key
       required_config :aws_ssh_key_id
       required_config :image_id
 
+      def self.validation_warn(driver, old, new)
+        driver.warn "WARN: The driver[#{driver.class.name}] config key `#{old}` is deprecated," +
+          " please use `#{new}`"
+      end
+
       # TODO: remove these in the next major version of TK
       deprecated_configs = [:ebs_volume_size, :ebs_delete_on_termination, :ebs_device_name]
       deprecated_configs.each do |d|
         validations[d] = lambda do |attr, val, driver|
           unless val.nil?
-            driver.warn "WARN: The config key `#{attr}` is deprecated," +
-              ' please use `block_device_mappings`'
+            validation_warn(driver, attr, 'block_device_mappings')
           end
+        end
+      end
+      validations[:ssh_key] = lambda do |attr, val, driver|
+        unless val.nil?
+          validation_warn(driver, attr, 'transport.ssh_key')
+        end
+      end
+      validations[:ssh_timeout] = lambda do |attr, val, driver|
+        unless val.nil?
+          validation_warn(driver, attr, 'transport.connection_timeout')
+        end
+      end
+      validations[:ssh_retries] = lambda do |attr, val, driver|
+        unless val.nil?
+          validation_warn(driver, attr, 'transport.connection_retries')
+        end
+      end
+      validations[:username] = lambda do |attr, val, driver|
+        unless val.nil?
+          validation_warn(driver, attr, 'transport.username')
+        end
+      end
+      validations[:flavor_id] = lambda do |attr, val, driver|
+        unless val.nil?
+          validation_warn(driver, attr, 'instance_type')
         end
       end
 
@@ -99,65 +133,84 @@ module Kitchen
         end
       end
 
-      # First we check the existence of the metadata host.  Only fetch_credentials
-      # if we can find the host.
-      def iam_creds
-        require 'net/http'
-        require 'timeout'
-        @iam_creds ||= begin
-          timeout(5) do
-            Net::HTTP.get(URI.parse('http://169.254.169.254'))
-          end
-          fetch_credentials(use_iam_profile: true)
-        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error,
-          NoMethodError, ::StandardError => e
-          debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
-          {}
+      # A lifecycle method that should be invoked when the object is about
+      # ready to be used. A reference to an Instance is required as
+      # configuration dependant data may be access through an Instance. This
+      # also acts as a hook point where the object may wish to perform other
+      # last minute checks, validations, or configuration expansions.
+      #
+      # @param instance [Instance] an associated instance
+      # @return [self] itself, for use in chaining
+      # @raise [ClientError] if instance parameter is nil
+      def finalize_config!(instance)
+        super
+        if config[:availability_zone].nil?
+          config[:availability_zone] = config[:region]+'b'
         end
+        if config[:instance_type].nil?
+          config[:instance_type] = config[:flavor_id] || 'm1.small'
+        end
+        self
       end
 
       def create(state)
+        copy_deprecated_configs(state)
         return if state[:server_id]
 
-        info("Creating <#{state[:server_id]}>...")
-        info('If you are not using an account that qualifies under the AWS')
-        info('free-tier, you may be charged to run these suites. The charge')
-        info('should be minimal, but neither Test Kitchen nor its maintainers')
-        info('are responsible for your incurred costs.')
+        info(<<-END.gsub!(/^\s+/m,''))
+          Creating <#{state[:server_id]}>...
+          If you are not using an account that qualifies under the AWS
+          free-tier, you may be charged to run these suites. The charge
+          should be minimal, but neither Test Kitchen nor its maintainers
+          are responsible for your incurred costs.
+        END
 
         if config[:price]
           # Spot instance when a price is set
-          server = submit_spot
+          server = submit_spot(state)
         else
            # On-demand instance
-          server = create_server
+          server = submit_server
         end
 
         state[:server_id] = server.id
         info("EC2 instance <#{state[:server_id]}> created.")
-        server.wait_for do
-          print '.'
+        Retryable.retryable(
+          :tries => config[:retryable_tries],
+          :sleep => config[:retryable_sleep],
+          :on => TimeoutError
+        ) do |retries, exception|
+          c = retries*config[:retryable_sleep]
+          t = config[:retryable_tries]*config[:retryable_sleep]
+          info "Waited #{c}/#{t} for instance <#{state[:server_id]}> to become ready."
+          hostname = hostname(server)
           # Euca instances often report ready before they have an IP
-          hostname = Kitchen::Driver::Ec2.hostname(self)
-          ready? && !hostname.nil? && hostname != '0.0.0.0'
+          ready = server.status == :running && !hostname.nil? && hostname != '0.0.0.0'
+          unless ready
+            raise TimeoutError
+          end
         end
-        print '(server ready)'
+
+        info("EC2 instance <#{state[:server_id]}> ready.")
         state[:hostname] = hostname(server)
-        wait_for_sshd(state[:hostname], config[:username], {
-          :ssh_timeout => config[:ssh_timeout],
-          :ssh_retries => config[:ssh_retries]
-        })
-        print "(ssh ready)\n"
+        instance.transport.connection(state).wait_until_ready
         debug("ec2:create '#{state[:hostname]}'")
-      rescue Fog::Errors::Error, Excon::Errors::Error => ex
-        raise ActionFailed, ex.message
       end
 
       def destroy(state)
         return if state[:server_id].nil?
 
-        server = connection.servers.get(state[:server_id])
-        server.destroy unless server.nil?
+        server = ec2.instances[state[:server_id]]
+        unless server.nil?
+          instance.transport.connection(state).close
+          server.delete unless server.nil?
+        end
+        if state[:spot_request_id]
+          debug("Deleting spot request <#{state[:server_id]}>")
+          ec2.client.cancel_spot_instance_requests(
+            :spot_instance_request_ids => [state[:spot_request_id]]
+          )
+        end
         info("EC2 instance <#{state[:server_id]}> destroyed.")
         state.delete(:server_id)
         state.delete(:hostname)
@@ -166,10 +219,6 @@ module Kitchen
       def default_ami
         region = amis['regions'][config[:region]]
         region && region[instance.platform.name]
-      end
-
-      def default_username
-        amis['usernames'][instance.platform.name] || 'root'
       end
 
       def default_public_ip_association
@@ -194,84 +243,176 @@ module Kitchen
         env
       end
 
+      # First we check the existence of the metadata host.  Only fetch_credentials
+      # if we can find the host.
+      def iam_creds
+        require 'net/http'
+        require 'timeout'
+        @iam_creds ||= begin
+          timeout(5) do
+            Net::HTTP.get(URI.parse('http://169.254.169.254'))
+          end
+          fetch_credentials
+        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error,
+          NoMethodError, ::StandardError => e
+          debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
+          {}
+        end
+      end
+
+      INSTANCE_METADATA_HOST = 'http://169.254.169.254'
+      INSTANCE_METADATA_PATH = '/latest/meta-data/iam/security-credentials/'
+      # fetch_credentials logic copied from Fog
+      def fetch_credentials
+        begin
+          connection = Excon.new(INSTANCE_METADATA_HOST)
+          role_name = connection.get(
+            :path => INSTANCE_METADATA_PATH, :expects => 200
+          ).body
+          role_data = connection.get(
+            :path => INSTANCE_METADATA_PATH+role_name, :expects => 200
+          ).body
+
+          session = MultiJson.load(role_data)
+          credentials = {}
+          credentials[:aws_access_key_id] = session['AccessKeyId']
+          credentials[:aws_secret_access_key] = session['SecretAccessKey']
+          credentials[:aws_session_token] = session['Token']
+          credentials[:aws_credentials_expire_at] = Time.xmlschema session['Expiration']
+          #these indicate the metadata service is unavailable or has no profile setup
+          credentials
+        rescue Excon::Errors::Error => e
+          info("Unable to fetch credentials: #{e.message}")
+          super
+        end
+      end
+
       private
 
-      def connection
-        Fog::Compute.new(
-          :provider               => :aws,
-          :aws_access_key_id      => config[:aws_access_key_id],
-          :aws_secret_access_key  => config[:aws_secret_access_key],
-          :aws_session_token      => config[:aws_session_token],
-          :region                 => config[:region],
-          :endpoint               => config[:endpoint],
+      # This copies transport config from the current config object into the
+      # state.  This relies on logic in the transport that merges the transport
+      # config with the current state object, so its a bad coupling.  But we
+      # can get rid of this when we get rid of these deprecated configs!
+      def copy_deprecated_configs(state)
+        if config[:ssh_timeout]
+          state[:connection_timeout] = config[:ssh_timeout]
+        end
+        if config[:ssh_retries]
+          state[:connection_retries] = config[:ssh_retries]
+        end
+        if config[:username]
+          state[:username] = config[:username]
+        elsif instance.transport[:username] == instance.transport.class.defaults[:username]
+          # If the transport has the default username, copy it from amis.json
+          # This duplicated old behavior but I hate amis.json
+          ami_username = amis['usernames'][instance.platform.name]
+          state[:username] = ami_username if ami_username
+        end
+        if config[:ssh_key]
+          state[:ssh_key] = config[:ssh_key]
+        end
+      end
+
+      def ec2
+        @ec2 ||= AWS::EC2.new(
+          config: AWS.config({
+            :access_key_id        => config[:aws_access_key_id],
+            :secret_access_key    => config[:aws_secret_access_key],
+            :region               => config[:region],
+            :session_token        => config[:aws_session_token],
+          })
         )
       end
 
-      def create_server
+      # Fog AWS helper for creating the instance
+      def submit_server
         debug_server_config
 
-        connection.servers.create(
-          :availability_zone         => config[:availability_zone],
-          :security_group_ids        => config[:security_group_ids],
-          :tags                      => config[:tags],
-          :flavor_id                 => config[:flavor_id],
-          :ebs_optimized             => config[:ebs_optimized],
-          :image_id                  => config[:image_id],
-          :private_ip_address        => config[:private_ip_address],
-          :key_name                  => config[:aws_ssh_key_id],
-          :subnet_id                 => config[:subnet_id],
-          :iam_instance_profile_name => config[:iam_profile_name],
-          :associate_public_ip       => config[:associate_public_ip],
-          :user_data                 => (config[:user_data].nil? ? nil :
-            (File.file?(config[:user_data]) ?
-              File.read(config[:user_data]) : config[:user_data]
-            )
-          ),
-          :block_device_mapping      => block_device_mappings
-        )
+        debug('Creating EC2 Instance..')
+        instance_data = ec2_instance_data
+        server = ec2.instances.create(instance_data)
+        info("Instance <#{server.id}> requested.")
+        tag_server(server)
       end
 
-      def request_spot
+      def submit_spot(state)
         debug_server_config
 
-        connection.spot_requests.create(
-          :availability_zone         => config[:availability_zone],
-          :groups                    => config[:security_group_ids],
-          :tags                      => config[:tags],
-          :flavor_id                 => config[:flavor_id],
-          :ebs_optimized             => config[:ebs_optimized],
-          :image_id                  => config[:image_id],
-          :private_ip_address        => config[:private_ip_address],
-          :key_name                  => config[:aws_ssh_key_id],
-          :subnet_id                 => config[:subnet_id],
-          :iam_instance_profile_name => config[:iam_profile_name],
-          :user_data                 => (config[:user_data].nil? ? nil :
-            (File.file?(config[:user_data]) ?
-              File.read(config[:user_data]) : config[:user_data]
-            )
-          ),
-          :price                     => config[:price],
-          :instance_count            => config[:instance_count]
-        )
+        debug('Creating EC2 Spot Instance..')
+        instance_data = {}
+        instance_data[:spot_price] = config[:price].to_s
+
+        # the spot request has different keys than the instance request
+        launch = ec2_instance_data
+        instance_data[:availability_zone_group] = launch.delete(:availability_zone)
+        subnet = launch.delete(:subnet)
+        launch[:subnet_id] = subnet if subnet
+        iam_profile = launch.delete(:iam_instance_profile)
+        launch[:iam_instance_profile] = { :name => iam_profile } if iam_profile
+        unless launch[:associate_public_ip_address].nil?
+          launch[:network_interfaces] = [{
+            :device_index => 0,
+            :associate_public_ip_address => launch.delete(:associate_public_ip_address)
+          }]
+        end
+        instance_data[:launch_specification] = launch
+
+        response = ec2.client.request_spot_instances(instance_data)
+        spot_request_id = response[:spot_instance_request_set][0][:spot_instance_request_id]
+        # deleting the instance cancels the request, but deleting the request
+        # does not affect the instance
+        state[:spot_request_id] = spot_request_id
+        server = nil
+        Retryable.retryable(
+          :tries => config[:retryable_tries],
+          :sleep => config[:retryable_sleep],
+          :on => TimeoutError
+        ) do |retries, exception|
+          c = retries*config[:retryable_sleep]
+          t = config[:retryable_tries]*config[:retryable_sleep]
+          info "Waited #{c}/#{t} for spot request <#{spot_request_id}> to become fulfilled."
+          server = ec2.instances.filter('spot-instance-request-id', spot_request_id).to_a[0]
+          raise TimeoutError if server.nil?
+        end
+        info("Instance <#{server.id}> requested.")
+        tag_server(server)
+      end
+
+      def tag_server(server)
+        # tag assignation on the instance.
+        config[:tags].each do |k, v|
+          server.tag(k, :value => v)
+        end
+        server
+      end
+
+      def ec2_instance_data
+        i = {
+          :availability_zone            => config[:availability_zone],
+          :instance_type                => config[:instance_type],
+          :ebs_optimized                => config[:ebs_optimized],
+          :image_id                     => config[:image_id],
+          :key_name                     => config[:aws_ssh_key_id],
+          :subnet                       => config[:subnet_id],
+          :iam_instance_profile         => config[:iam_profile_name],
+          :associate_public_ip_address  => config[:associate_public_ip],
+          :block_device_mappings        => block_device_mappings
+        }
+        i[:security_group_ids] = config[:security_group_ids] if config[:security_group_ids]
+        i[:user_data] = prepared_user_data if prepared_user_data
+        i
       end
 
       def debug_server_config
-        debug("ec2:region '#{config[:region]}'")
-        debug("ec2:availability_zone '#{config[:availability_zone]}'")
-        debug("ec2:flavor_id '#{config[:flavor_id]}'")
-        debug("ec2:ebs_optimized '#{config[:ebs_optimized]}'")
-        debug("ec2:image_id '#{config[:image_id]}'")
-        debug("ec2:private_ip_address '#{config[:private_ip_address]}'")
-        debug("ec2:security_group_ids '#{config[:security_group_ids]}'")
-        debug("ec2:tags '#{config[:tags]}'")
-        debug("ec2:key_name '#{config[:aws_ssh_key_id]}'")
-        debug("ec2:subnet_id '#{config[:subnet_id]}'")
-        debug("ec2:iam_profile_name '#{config[:iam_profile_name]}'")
-        debug("ec2:associate_public_ip '#{config[:associate_public_ip]}'")
-        debug("ec2:user_data '#{config[:user_data]}'")
-        debug("ec2:ssh_timeout '#{config[:ssh_timeout]}'")
-        debug("ec2:ssh_retries '#{config[:ssh_retries]}'")
-        debug("ec2:spot_price '#{config[:price]}'")
+        debug('EC2 Server Configuration')
+        names = [
+          :region, :availability_zone, :instance_type, :ebs_optimized, :image_id,
+          :private_ip_address, :security_group_ids, :tags, :aws_ssh_key_id, :subnet_id,
+          :iam_profile_name, :associate_public_ip, :user_data, :price
+        ]
+        names.each do |c|
+          debug("ec2:#{c} '#{config[c]}'")
+        end
       end
 
       def amis
@@ -294,18 +435,11 @@ module Kitchen
         }
 
       #
-      # Lookup hostname of a provided server using the configured interface.
-      #
-      def hostname(server)
-        Kitchen::Driver::Ec2.hostname(server, config[:interface])
-      end
-
-      #
       # Lookup hostname of provided server.  If interface_type is provided use
       # that interface to lookup hostname.  Otherwise, try ordered list of
       # options.
       #
-      def self.hostname(server, interface_type=nil)
+      def hostname(server, interface_type=nil)
         if interface_type
           interface_type = INTERFACE_TYPES.fetch(interface_type) do
             raise Kitchen::UserError, "Invalid interface [#{interface_type}]"
@@ -320,67 +454,61 @@ module Kitchen
         end
       end
 
-      def submit_spot
-        spot = request_spot
-        info("Spot instance <#{spot.id}> requested.")
-        info("Spot price is <#{spot.price}>.")
-        spot.wait_for { print '.'; spot.state == 'active' }
-        print '(spot active)'
-
-        # tag assignation on the instance.
-        if config[:tags]
-          connection.create_tags(
-            spot.instance_id,
-            spot.tags
-          )
-        end
-        connection.servers.get(spot.instance_id)
-      end
-
-      # A mapping from config key values to what Fog expects
-      CONFIG_TO_AWS = {
-        :ebs_volume_size => 'Ebs.VolumeSize',
-        :ebs_volume_type => 'Ebs.VolumeType',
-        :ebs_delete_on_termination => 'Ebs.DeleteOnTermination',
-        :ebs_snapshot_id => 'Ebs.SnapshotId',
-        :ebs_device_name => 'DeviceName',
-        :ebs_virtual_name => 'VirtualName'
-      }
-
       def block_device_mappings
         bdms = config[:block_device_mappings]
 
         # If they don't provide one, lets give them a default one
         if bdms.nil? || bdms.empty?
           bdms = [{
-            :ebs_volume_type => 'standard',
-            :ebs_volume_size => config[:ebs_volume_size],
-            :ebs_delete_on_termination => config[:ebs_delete_on_termination],
-            :ebs_snapshot_id => nil,
-            :ebs_device_name => config[:ebs_device_name],
-            :ebs_virtual_name => nil
+            :ebs => {
+              :volume_size           => config[:ebs_volume_size],
+              :volume_type           => 'standard',
+              :delete_on_termination => config[:ebs_delete_on_termination],
+              :snapshot_id           => nil,
+            },
+            :device_name             => config[:ebs_device_name],
+            :virtual_name            => nil
           }]
+        else
+          # Convert the provided keys to what AWS expects
+          bdms = bdms.map do |bdm|
+            b = {
+              :ebs => {
+                :volume_size           => bdm[:ebs_volume_size],
+                :volume_type           => bdm[:ebs_volume_type] || 'standard',
+                :delete_on_termination => bdm[:ebs_delete_on_termination],
+              },
+              :device_name             => bdm[:ebs_device_name]
+            }
+            b[:ebs][:snapshot_id] = bdm[:ebs_snapshot_id] if bdm[:ebs_snapshot_id]
+            b[:virtual_name] = bdm[:ebs_virtual_name] if bdm[:ebs_virtual_name]
+            b
+          end
         end
 
         # This could be helpful for users debugging
         image_id = config[:image_id]
-        image = connection.images.get(image_id)
+        image = ec2.images[image_id]
         if image.nil?
           raise "Could not find image [#{image_id}]"
         end
         root_device_name = image.root_device_name
         bdms.find { |bdm|
-          if bdm[:ebs_device_name] == root_device_name
+          if bdm[:device_name] == root_device_name
             info("Overriding root device [#{root_device_name}] from image [#{image_id}]")
           end
         }
 
-        # Convert the provided keys to what Fog expects
-        bdms = bdms.map do |bdm|
-          Hash[bdm.map { |k, v| [CONFIG_TO_AWS[k], v] }]
-        end
-
         bdms
+      end
+
+      def prepared_user_data
+        # If user_data is a file reference, lets read it as such
+        @user_data ||= unless config[:user_data].nil?
+          if File.file?(config[:user_data])
+            config[:user_data] = File.read(config[:user_data])
+          end
+        end
       end
     end
   end
