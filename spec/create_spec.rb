@@ -148,56 +148,37 @@ describe Kitchen::Driver::Ec2 do
       before do
         allow(ENV).to receive(:[]).and_return(nil)
         allow(driver).to receive(:iam_creds).and_return(iam_creds)
+        allow(Net::HTTP).to receive(:get).with(URI.parse('http://169.254.169.254')).and_return(true)
       end
 
-      context 'because :aws_access_key_id is explicitly set' do
+      context 'because :aws_access_key_id is set but not via #iam_creds' do
         before { config[:aws_access_key_id] = 'adifferentkey' }
         it 'does not override :aws_access_key_id' do
           expect(driver.send(:config)[:aws_access_key_id]).to eq('adifferentkey')
         end
 
-        it 'does not set :aws_secret_access_key via #iam_creds' do
-          expect(driver.send(:config)[:aws_secret_access_key])
-            .to_not eq(iam_creds[:aws_secret_access_key])
-        end
-
         it 'does not set :aws_session_token via #iam_creds' do
           expect(driver.send(:config)[:aws_session_token])
             .to_not eq(iam_creds[:aws_session_token])
         end
       end
 
-      context 'because :aws_access_key_id is explicitly set' do
+      context 'because :aws_access_key_id is set but not via #iam_creds' do
         before { config[:aws_secret_access_key] = 'adifferentsecret' }
         it 'does not override :aws_secret_access_key' do
           expect(driver.send(:config)[:aws_secret_access_key]).to eq('adifferentsecret')
         end
 
-        it 'does not set :aws_access_key_id via #iam_creds' do
-          expect(driver.send(:config)[:aws_access_key_id])
-            .to_not eq(iam_creds[:aws_access_key_id])
-        end
-
         it 'does not set :aws_session_token via #iam_creds' do
           expect(driver.send(:config)[:aws_session_token])
             .to_not eq(iam_creds[:aws_session_token])
         end
       end
 
-      context 'because :aws_session_token is explicitly set' do
+      context 'because :aws_session_token is set but not via #iam_creds' do
         before { config[:aws_session_token] = 'adifferentsessiontoken' }
         it 'does not override :aws_session_token' do
           expect(driver.send(:config)[:aws_session_token]).to eq('adifferentsessiontoken')
-        end
-
-        it 'does not set :aws_access_key_id via #iam_creds' do
-          expect(driver.send(:config)[:aws_access_key_id])
-            .to_not eq(iam_creds[:aws_access_key_id])
-        end
-
-        it 'does not set :aws_secret_access_key via #iam_creds' do
-          expect(driver.send(:config)[:aws_secret_access_key])
-            .to_not eq(iam_creds[:aws_secret_access_key])
         end
       end
     end
@@ -249,7 +230,7 @@ describe Kitchen::Driver::Ec2 do
         end
       end
 
-      context 'when #fetch_credentials fails with StandardError' do
+      context 'when #fetch_credentials fails with ::StandardError' do
         it 'returns an empty hash' do
           allow(driver).to receive(:fetch_credentials).and_raise(::StandardError)
           expect(driver.iam_creds).to eq({})

@@ -49,8 +49,7 @@ module Kitchen
           driver.iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] ||
-          driver.iam_creds[:aws_session_token]
+        driver.default_aws_session_token
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -175,6 +174,16 @@ module Kitchen
 
       def default_public_ip_association
         !!config[:subnet_id]
+      end
+
+      def default_aws_session_token
+        env = ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+        if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] \
+          && config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
+          env || iam_creds[:aws_session_token]
+        else
+          env
+        end
       end
 
       private
