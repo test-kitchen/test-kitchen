@@ -138,13 +138,6 @@ describe Kitchen::Driver::Ec2 do
 
   context 'When #iam_creds returns values' do
     context 'but they should not be used' do
-      let(:config) do
-        {
-          aws_ssh_key_id: 'larry',
-          user_data: nil
-        }
-      end
-
       before do
         allow(ENV).to receive(:[]).and_return(nil)
         allow(driver).to receive(:iam_creds).and_return(iam_creds)
@@ -152,9 +145,8 @@ describe Kitchen::Driver::Ec2 do
       end
 
       context 'because :aws_access_key_id is set but not via #iam_creds' do
-        before { config[:aws_access_key_id] = 'adifferentkey' }
         it 'does not override :aws_access_key_id' do
-          expect(driver.send(:config)[:aws_access_key_id]).to eq('adifferentkey')
+          expect(driver.send(:config)[:aws_access_key_id]).to eq(config[:aws_access_key_id])
         end
 
         it 'does not set :aws_session_token via #iam_creds' do
@@ -164,9 +156,8 @@ describe Kitchen::Driver::Ec2 do
       end
 
       context 'because :aws_access_key_id is set but not via #iam_creds' do
-        before { config[:aws_secret_access_key] = 'adifferentsecret' }
         it 'does not override :aws_secret_access_key' do
-          expect(driver.send(:config)[:aws_secret_access_key]).to eq('adifferentsecret')
+          expect(driver.send(:config)[:aws_secret_access_key]).to eq(config[:aws_secret_access_key])
         end
 
         it 'does not set :aws_session_token via #iam_creds' do
