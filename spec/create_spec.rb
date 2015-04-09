@@ -156,8 +156,14 @@ describe Kitchen::Driver::Ec2 do
           expect(driver.send(:config)[:aws_access_key_id]).to eq('adifferentkey')
         end
 
-        it 'does not set :aws_session_token' do
-          expect(driver.send(:config)[:aws_session_token]).to be_nil
+        it 'does not set :aws_secret_access_key via #iam_creds' do
+          expect(driver.send(:config)[:aws_secret_access_key])
+            .to_not eq(iam_creds[:aws_secret_access_key])
+        end
+
+        it 'does not set :aws_session_token via #iam_creds' do
+          expect(driver.send(:config)[:aws_session_token])
+            .to_not eq(iam_creds[:aws_session_token])
         end
       end
 
@@ -167,8 +173,14 @@ describe Kitchen::Driver::Ec2 do
           expect(driver.send(:config)[:aws_secret_access_key]).to eq('adifferentsecret')
         end
 
-        it 'does not set :aws_session_token' do
-          expect(driver.send(:config)[:aws_session_token]).to be_nil
+        it 'does not set :aws_access_key_id via #iam_creds' do
+          expect(driver.send(:config)[:aws_access_key_id])
+            .to_not eq(iam_creds[:aws_access_key_id])
+        end
+
+        it 'does not set :aws_session_token via #iam_creds' do
+          expect(driver.send(:config)[:aws_session_token])
+            .to_not eq(iam_creds[:aws_session_token])
         end
       end
 
@@ -176,6 +188,16 @@ describe Kitchen::Driver::Ec2 do
         before { config[:aws_session_token] = 'adifferentsessiontoken' }
         it 'does not override :aws_session_token' do
           expect(driver.send(:config)[:aws_session_token]).to eq('adifferentsessiontoken')
+        end
+
+        it 'does not set :aws_access_key_id via #iam_creds' do
+          expect(driver.send(:config)[:aws_access_key_id])
+            .to_not eq(iam_creds[:aws_access_key_id])
+        end
+
+        it 'does not set :aws_secret_access_key via #iam_creds' do
+          expect(driver.send(:config)[:aws_secret_access_key])
+            .to_not eq(iam_creds[:aws_secret_access_key])
         end
       end
     end
