@@ -43,7 +43,7 @@ describe Kitchen::Driver::Ec2 do
 
     let(:iam_creds) do
       {
-        aws_access_key_id: 'siam_creds_access_keu',
+        aws_access_key_id: 'iam_creds_access_key',
         aws_secret_access_key: 'iam_creds_secret_access_key',
         aws_session_token: 'iam_creds_session_token'
       }
@@ -136,29 +136,57 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
-  context 'When #iam_creds returns values but they should not be used' do
-    context 'because :aws_access_key_id is not set via iam_creds' do
-      it 'does not set config[:aws_session_token]' do
-        config[:aws_access_key_id] = 'adifferentkey'
-        allow(driver).to receive(:iam_creds).and_return(iam_creds)
-        expect(driver.send(:config)[:aws_session_token]).to be_nil
+  context 'When #iam_creds returns values' do
+    context 'but they should not be used' do
+      context 'because :aws_access_key_id is not set via iam_creds' do
+        it 'does not set config[:aws_session_token]' do
+          config[:aws_access_key_id] = 'adifferentkey'
+          allow(driver).to receive(:iam_creds).and_return(iam_creds)
+          expect(driver.send(:config)[:aws_session_token]).to be_nil
+        end
+      end
+
+      context 'because :aws_secret_key_id is not set via iam_creds' do
+        it 'does not set config[:aws_session_token]' do
+          config[:aws_secret_access_key] = 'adifferentsecret'
+          allow(driver).to receive(:iam_creds).and_return(iam_creds)
+          expect(driver.send(:config)[:aws_session_token]).to be_nil
+        end
+      end
+
+      context 'because :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
+        it 'does not set config[:aws_session_token]' do
+          config[:aws_access_key_id] = 'adifferentkey'
+          config[:aws_secret_access_key] = 'adifferentsecret'
+          allow(driver).to receive(:iam_creds).and_return(iam_creds)
+          expect(driver.send(:config)[:aws_session_token]).to be_nil
+        end
       end
     end
 
-    context 'because :aws_secret_key_id is not set via iam_creds' do
-      it 'does not set config[:aws_session_token]' do
-        config[:aws_secret_access_key] = 'adifferentsecret'
-        allow(driver).to receive(:iam_creds).and_return(iam_creds)
-        expect(driver.send(:config)[:aws_session_token]).to be_nil
+    context 'and they should be used' do
+      let(:config) do
+        {
+          aws_ssh_key_id: 'larry',
+          user_data: nil
+        }
       end
-    end
 
-    context 'because :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
-      it 'does not set config[:aws_session_token]' do
-        config[:aws_access_key_id] = 'adifferentkey'
-        config[:aws_secret_access_key] = 'adifferentsecret'
+      before do
+        allow(ENV).to receive(:[]).and_return(nil)
         allow(driver).to receive(:iam_creds).and_return(iam_creds)
-        expect(driver.send(:config)[:aws_session_token]).to be_nil
+      end
+
+      it 'uses :aws_access_key_id from iam_creds' do
+        expect(driver.send(:config)[:aws_access_key_id]).to eq(iam_creds[:aws_access_key_id])
+      end
+
+      it 'uses :aws_secret_key_id from iam_creds' do
+        expect(driver.send(:config)[:aws_secret_key_id]).to eq(iam_creds[:aws_secret_key_id])
+      end
+
+      it 'uses :aws_session_token from iam_creds' do
+        expect(driver.send(:config)[:aws_session_token]).to eq(iam_creds[:aws_session_token])
       end
     end
   end
