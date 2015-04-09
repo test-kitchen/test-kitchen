@@ -176,7 +176,7 @@ describe Kitchen::Driver::Ec2 do
 
       context 'when #fetch_credentials fails with StandardError' do
         it 'returns an empty hash' do
-          allow(driver).to receive(:fetch_credentials).and_raise(StandardError)
+          allow(driver).to receive(:fetch_credentials).and_raise(::StandardError)
           expect(driver.iam_creds).to eq({})
         end
       end
