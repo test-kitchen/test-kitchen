@@ -41,14 +41,16 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || driver.iam_creds[:aws_access_key_id]
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] ||
+          driver.iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
         ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] ||
           driver.iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        driver.default_aws_session_token
+        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] ||
+          driver.iam_creds[:aws_session_token]
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -98,10 +100,18 @@ module Kitchen
         end
       end
 
+      # First we check the existence of the metadata host.  Only fetch_credentials
+      # if we can find the host.  Ping logic taken from
+      # http://stackoverflow.com/questions/7519159/ruby-ping-pingecho-missing
       def iam_creds
+        require 'net/http'
+        require 'timeout'
         @iam_creds ||= begin
+          timeout(5) do
+            Net::HTTP.get(URI.parse('http://169.254.169.254'))
+          end
           fetch_credentials(use_iam_profile: true)
-        rescue RuntimeError, NoMethodError => e
+        rescue Errno::EHOSTUNREACH, Timeout::Error, NoMethodError, ::StandardError => e
           debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
           {}
         end
@@ -165,15 +175,6 @@ module Kitchen
 
       def default_public_ip_association
         !!config[:subnet_id]
-      end
-
-      def default_aws_session_token
-        if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] \
-          && config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
-          iam_creds[:aws_session_token]
-        else
-          ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
-        end
       end
 
       private

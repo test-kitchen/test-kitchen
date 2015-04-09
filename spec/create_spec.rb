@@ -128,46 +128,79 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
-  context 'When autodetecting an iam role' do
+  describe '#iam_creds' do
     let(:iam_creds) do
       {
-        aws_access_key_id: 'secret',
-        aws_secret_access_key: 'moarsecret',
-        aws_session_token: 'randomsecret'
+        aws_access_key_id: 'siam_creds_access_keu',
+        aws_secret_access_key: 'iam_creds_secret_access_key',
+        aws_session_token: 'iam_creds_session_token'
       }
     end
 
-    context 'when :aws_secret_key_id is not set via iam_creds' do
-      it 'does not set config[:aws_session_token] based on iam_creds' do
-        config[:aws_secret_access_key] = 'adifferentsecret'
+    context 'when a metadata service is available' do
+      before do
+        allow(Net::HTTP).to receive(:get).with(URI.parse('http://169.254.169.254')).and_return(true)
+      end
 
-        allow(driver)
-          .to receive(:iam_creds).and_return(iam_creds)
+      context 'and #fetch_credentials returns valid iam credentials' do
+        context 'when :aws_secret_key_id is not set via iam_creds' do
+          it 'does not set config[:aws_session_token] based on iam_creds' do
+            config[:aws_secret_access_key] = 'adifferentsecret'
+            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
+            expect(driver.send(:config)[:aws_session_token]).to be_nil
+          end
+        end
 
-        expect(driver.send(:config)[:aws_session_token]).to be_nil
+        context 'when :aws_access_key_id is not set via iam_creds' do
+         it 'does not set config[:aws_session_token] based on iam_creds' do
+            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
+            config[:aws_access_key_id] = 'adifferentsecret'
+            expect(driver.send(:config)[:aws_session_token]).to be_nil
+          end
+        end
+
+        context 'when :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
+          it 'uses :aws_session_token from iam_creds' do
+            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
+            expect(driver.send(:config)[:aws_session_token]).to eq(iam_creds[:aws_session_token])
+          end
+        end
+      end
+
+      context 'when #fetch_credentials fails with NoMethodError' do
+        it 'returns an empty hash' do
+          allow(driver).to receive(:fetch_credentials).and_raise(NoMethodError)
+          expect(driver.iam_creds).to eq({})
+        end
+      end
+
+      context 'when #fetch_credentials fails with StandardError' do
+        it 'returns an empty hash' do
+          allow(driver).to receive(:fetch_credentials).and_raise(StandardError)
+          expect(driver.iam_creds).to eq({})
+        end
+      end
+
+      context 'when #fetch_credentials fails with Errno::EHOSTUNREACH' do
+        it 'returns an empty hash' do
+          allow(driver).to receive(:fetch_credentials).and_raise(Errno::EHOSTUNREACH)
+          expect(driver.iam_creds).to eq({})
+        end
+      end
+
+      context 'when #fetch_credentials fails with Timeout::Error' do
+        it 'returns an empty hash' do
+          allow(driver).to receive(:fetch_credentials).and_raise(Timeout::Error)
+          expect(driver.iam_creds).to eq({})
+        end
       end
     end
 
-    context 'when :aws_access_key_id is not set via iam_creds' do
-     it 'does not set config[:aws_session_token] based on iam_creds' do
-        config[:aws_access_key_id] = 'adifferentsecret'
-
-        allow(driver)
-          .to receive(:iam_creds).and_return(iam_creds)
-
-        expect(driver.send(:config)[:aws_session_token]).to be_nil
-      end
-    end
-
-    context 'when :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
-      it 'uses :aws_session_token from iam_creds' do
-        allow(driver)
-          .to receive(:iam_creds).and_return(iam_creds)
-
-        expect(driver)
-          .to receive(:iam_creds)
-
-        expect(driver.send(:config)[:aws_session_token]).to eq(iam_creds[:aws_session_token])
+    context 'when a metadata service is not available' do
+      it 'will not call #fetch_credentials' do
+        allow(Net::HTTP).to receive(:get)
+          .with(URI.parse('http://169.254.169.254')).and_return(false)
+        expect(driver).to_not receive(:fetch_credentials)
       end
     end
   end
