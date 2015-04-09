@@ -138,28 +138,44 @@ describe Kitchen::Driver::Ec2 do
 
   context 'When #iam_creds returns values' do
     context 'but they should not be used' do
-      context 'because :aws_access_key_id is not set via iam_creds' do
-        it 'does not set config[:aws_session_token]' do
-          config[:aws_access_key_id] = 'adifferentkey'
-          allow(driver).to receive(:iam_creds).and_return(iam_creds)
+      let(:config) do
+        {
+          aws_ssh_key_id: 'larry',
+          user_data: nil
+        }
+      end
+
+      before do
+        allow(ENV).to receive(:[]).and_return(nil)
+        allow(driver).to receive(:iam_creds).and_return(iam_creds)
+      end
+
+      context 'because :aws_access_key_id is explicitly set' do
+        before { config[:aws_access_key_id] = 'adifferentkey' }
+        it 'does not override :aws_access_key_id' do
+          expect(driver.send(:config)[:aws_access_key_id]).to eq('adifferentkey')
+        end
+
+        it 'does not set :aws_session_token' do
           expect(driver.send(:config)[:aws_session_token]).to be_nil
         end
       end
 
-      context 'because :aws_secret_key_id is not set via iam_creds' do
-        it 'does not set config[:aws_session_token]' do
-          config[:aws_secret_access_key] = 'adifferentsecret'
-          allow(driver).to receive(:iam_creds).and_return(iam_creds)
+      context 'because :aws_access_key_id is explicitly set' do
+        before { config[:aws_secret_access_key] = 'adifferentsecret' }
+        it 'does not override :aws_secret_access_key' do
+          expect(driver.send(:config)[:aws_secret_access_key]).to eq('adifferentsecret')
+        end
+
+        it 'does not set :aws_session_token' do
           expect(driver.send(:config)[:aws_session_token]).to be_nil
         end
       end
 
-      context 'because :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
-        it 'does not set config[:aws_session_token]' do
-          config[:aws_access_key_id] = 'adifferentkey'
-          config[:aws_secret_access_key] = 'adifferentsecret'
-          allow(driver).to receive(:iam_creds).and_return(iam_creds)
-          expect(driver.send(:config)[:aws_session_token]).to be_nil
+      context 'because :aws_session_token is explicitly set' do
+        before { config[:aws_session_token] = 'adifferentsessiontoken' }
+        it 'does not override :aws_session_token' do
+          expect(driver.send(:config)[:aws_session_token]).to eq('adifferentsessiontoken')
         end
       end
     end
