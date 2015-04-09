@@ -41,6 +41,14 @@ describe Kitchen::Driver::Ec2 do
       Kitchen::Driver::Ec2.new(config)
     end
 
+    let(:iam_creds) do
+      {
+        aws_access_key_id: 'siam_creds_access_keu',
+        aws_secret_access_key: 'iam_creds_secret_access_key',
+        aws_session_token: 'iam_creds_session_token'
+      }
+    end
+
     before do
       instance
       allow(driver).to receive(:create_server).and_return(server)
@@ -128,42 +136,43 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
-  describe '#iam_creds' do
-    let(:iam_creds) do
-      {
-        aws_access_key_id: 'siam_creds_access_keu',
-        aws_secret_access_key: 'iam_creds_secret_access_key',
-        aws_session_token: 'iam_creds_session_token'
-      }
+  context 'When #iam_creds returns values but they should not be used' do
+    context 'because :aws_access_key_id is not set via iam_creds' do
+      it 'does not set config[:aws_session_token]' do
+        config[:aws_access_key_id] = 'adifferentkey'
+        allow(driver).to receive(:iam_creds).and_return(iam_creds)
+        expect(driver.send(:config)[:aws_session_token]).to be_nil
+      end
     end
 
+    context 'because :aws_secret_key_id is not set via iam_creds' do
+      it 'does not set config[:aws_session_token]' do
+        config[:aws_secret_access_key] = 'adifferentsecret'
+        allow(driver).to receive(:iam_creds).and_return(iam_creds)
+        expect(driver.send(:config)[:aws_session_token]).to be_nil
+      end
+    end
+
+    context 'because :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
+      it 'does not set config[:aws_session_token]' do
+        config[:aws_access_key_id] = 'adifferentkey'
+        config[:aws_secret_access_key] = 'adifferentsecret'
+        allow(driver).to receive(:iam_creds).and_return(iam_creds)
+        expect(driver.send(:config)[:aws_session_token]).to be_nil
+      end
+    end
+  end
+
+  describe '#iam_creds' do
     context 'when a metadata service is available' do
       before do
         allow(Net::HTTP).to receive(:get).with(URI.parse('http://169.254.169.254')).and_return(true)
       end
 
       context 'and #fetch_credentials returns valid iam credentials' do
-        context 'when :aws_secret_key_id is not set via iam_creds' do
-          it 'does not set config[:aws_session_token] based on iam_creds' do
-            config[:aws_secret_access_key] = 'adifferentsecret'
-            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
-            expect(driver.send(:config)[:aws_session_token]).to be_nil
-          end
-        end
-
-        context 'when :aws_access_key_id is not set via iam_creds' do
-         it 'does not set config[:aws_session_token] based on iam_creds' do
-            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
-            config[:aws_access_key_id] = 'adifferentsecret'
-            expect(driver.send(:config)[:aws_session_token]).to be_nil
-          end
-        end
-
-        context 'when :aws_secret_key_id and :aws_access_key_id are set via iam_creds' do
-          it 'uses :aws_session_token from iam_creds' do
-            allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
-            expect(driver.send(:config)[:aws_session_token]).to eq(iam_creds[:aws_session_token])
-          end
+        it '#iam_creds retuns the iam credentials from fetch_credentials' do
+          allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
+          expect(driver.send(:iam_creds)).to eq(iam_creds)
         end
       end
 
