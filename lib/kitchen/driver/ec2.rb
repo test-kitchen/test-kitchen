@@ -93,8 +93,8 @@ module Kitchen
           unless bdm.keys.include?(:ebs_volume_size) &&
             bdm.keys.include?(:ebs_delete_on_termination) &&
             bdm.keys.include?(:ebs_device_name)
-            raise "Every :block_device_mapping must include the keys :ebs_volume_size, " +
-              ":ebs_delete_on_termination and :ebs_device_name"
+            raise 'Every :block_device_mapping must include the keys :ebs_volume_size, ' +
+              ':ebs_delete_on_termination and :ebs_device_name'
           end
         end
       end
@@ -109,7 +109,8 @@ module Kitchen
             Net::HTTP.get(URI.parse('http://169.254.169.254'))
           end
           fetch_credentials(use_iam_profile: true)
-        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error, NoMethodError, ::StandardError => e
+        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error,
+          NoMethodError, ::StandardError => e
           debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
           {}
         end
@@ -186,8 +187,10 @@ module Kitchen
       #    metadata service values.
       def default_aws_session_token
         env = ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
-        env ||= iam_creds[:aws_session_token] if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] &&
+        if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] &&
           config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
+          env ||= iam_creds[:aws_session_token]
+        end
         env
       end
 
