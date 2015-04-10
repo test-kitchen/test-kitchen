@@ -29,8 +29,7 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ec2 < Kitchen::Driver::SSHBase
-
-      extend Fog::AWS::CredentialFetcher::ServiceMethods
+      include Fog::AWS::CredentialFetcher::ServiceMethods
       default_config :region,             'us-east-1'
       default_config :availability_zone,  'us-east-1b'
       default_config :flavor_id,          'm1.small'
@@ -42,13 +41,15 @@ module Kitchen
       default_config :iam_profile_name,   nil
       default_config :price,   nil
       default_config :aws_access_key_id do |driver|
-        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] || iam_creds[:aws_access_key_id]
+        ENV['AWS_ACCESS_KEY'] || ENV['AWS_ACCESS_KEY_ID'] ||
+          driver.iam_creds[:aws_access_key_id]
       end
       default_config :aws_secret_access_key do |driver|
-        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] || iam_creds[:aws_secret_access_key]
+        ENV['AWS_SECRET_KEY'] || ENV['AWS_SECRET_ACCESS_KEY'] ||
+          driver.iam_creds[:aws_secret_access_key]
       end
       default_config :aws_session_token do |driver|
-        ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN'] || iam_creds[:aws_session_token]
+        driver.default_aws_session_token
       end
       default_config :aws_ssh_key_id do |driver|
         ENV['AWS_SSH_KEY_ID']
@@ -98,10 +99,17 @@ module Kitchen
         end
       end
 
-      def self.iam_creds
+      # First we check the existence of the metadata host.  Only fetch_credentials
+      # if we can find the host.
+      def iam_creds
+        require 'net/http'
+        require 'timeout'
         @iam_creds ||= begin
-          fetch_credentials(use_iam_profile:true)
-        rescue RuntimeError => e
+          timeout(5) do
+            Net::HTTP.get(URI.parse('http://169.254.169.254'))
+          end
+          fetch_credentials(use_iam_profile: true)
+        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error, NoMethodError, ::StandardError => e
           debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
           {}
         end
@@ -165,6 +173,22 @@ module Kitchen
 
       def default_public_ip_association
         !!config[:subnet_id]
+      end
+
+      # If running on an EC2 node there are 3 possible scenarios:
+      #  1) The user has supplied the session token as an environment variable
+      #  2) The user has manually set access key/secret - don't use the session token from
+      #    the metadata service, only auth with key/secret supplied
+      #  3) The user has not set the access key/secret - because we default these values
+      #    we cannot tell if these have not been set.  So we do our best guess by checking
+      #    if the current value is the same as what is returned from the metadata service.
+      #    If they are the same we assume no user values have been set and we use the
+      #    metadata service values.
+      def default_aws_session_token
+        env = ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
+        env ||= iam_creds[:aws_session_token] if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] &&
+          config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
+        env
       end
 
       private

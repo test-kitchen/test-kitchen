@@ -3,51 +3,58 @@ require 'kitchen/provisioner/dummy'
 
 describe Kitchen::Driver::Ec2 do
 
-    let(:config) do
-      {
-        aws_ssh_key_id: 'larry',
-        aws_access_key_id: 'secret',
-        aws_secret_access_key: 'moarsecret',
-        user_data: nil
-      }
-    end
+  let(:config) do
+    {
+      aws_ssh_key_id: 'larry',
+      aws_access_key_id: 'secret',
+      aws_secret_access_key: 'moarsecret',
+      user_data: nil
+    }
+  end
 
-    let(:state) do
-      {}
-    end
+  let(:state) do
+    {}
+  end
 
-    let(:server) do
-      double(
-       :id => "123",
-       :wait_for => nil,
-       :dns_name => "server.example.com",
-       :private_ip_address => '172.13.16.11',
-       :public_ip_address => '213.225.123.134'
-      )
-    end
+  let(:server) do
+    double(
+     :id => "123",
+     :wait_for => nil,
+     :dns_name => "server.example.com",
+     :private_ip_address => '172.13.16.11',
+     :public_ip_address => '213.225.123.134'
+    )
+  end
 
-    let(:instance) do
-      Kitchen::Instance.new(
-        :platform => double(:name => "centos-6.4"),
-        :suite => double(:name => "default"),
-        :driver => driver,
-        :provisioner => Kitchen::Provisioner::Dummy.new({}),
-        :busser => double("busser"),
-        :state_file => double("state_file")
-      )
-    end
+  let(:instance) do
+    Kitchen::Instance.new(
+      :platform => double(:name => "centos-6.4"),
+      :suite => double(:name => "default"),
+      :driver => driver,
+      :provisioner => Kitchen::Provisioner::Dummy.new({}),
+      :busser => double("busser"),
+      :state_file => double("state_file")
+    )
+  end
 
-    let(:driver) do
-      Kitchen::Driver::Ec2.new(config)
-    end
+  let(:driver) do
+    Kitchen::Driver::Ec2.new(config)
+  end
 
+  let(:iam_creds) do
+    {
+      aws_access_key_id: 'iam_creds_access_key',
+      aws_secret_access_key: 'iam_creds_secret_access_key',
+      aws_session_token: 'iam_creds_session_token'
+    }
+  end
+
+  context 'Interface is set in config' do
     before do
       instance
       allow(driver).to receive(:create_server).and_return(server)
       allow(driver).to receive(:wait_for_sshd)
     end
-
-  context 'Interface is set in config' do
 
     it 'derives hostname from DNS when specified in the .kitchen.yml' do
       config[:interface] = 'dns'
@@ -75,6 +82,11 @@ describe Kitchen::Driver::Ec2 do
   end
 
   context 'Interface is derived automatically' do
+    before do
+      instance
+      allow(driver).to receive(:create_server).and_return(server)
+      allow(driver).to receive(:wait_for_sshd)
+    end
 
     let(:server) do
       double(:id => "123",
@@ -114,6 +126,11 @@ describe Kitchen::Driver::Ec2 do
   end
 
   context 'user_data implementation is working' do
+    before do
+      instance
+      allow(driver).to receive(:create_server).and_return(server)
+      allow(driver).to receive(:wait_for_sshd)
+    end
 
     it 'user_data is not defined' do
       driver.create(state)
@@ -128,7 +145,125 @@ describe Kitchen::Driver::Ec2 do
 
   end
 
+  context 'When #iam_creds returns values' do
+    let(:config) do
+      {
+        aws_ssh_key_id: 'larry',
+        user_data: nil
+      }
+    end
+
+    before do
+      allow(ENV).to receive(:[]).and_return(nil)
+      allow(driver).to receive(:iam_creds).and_return(iam_creds)
+      instance
+    end
+
+    context 'but they should not be used' do
+      shared_examples ':aws_session_token not set' do
+        it 'does not set :aws_session_token via #iam_creds' do
+          expect(driver[:aws_session_token]).to_not eq(iam_creds[:aws_session_token])
+        end
+      end
+      context 'because :aws_access_key_id is set from config' do
+        let(:aws_access_key_id) { 'secret' }
+        before do
+          config[:aws_access_key_id] = aws_access_key_id
+        end
+
+        it 'does not override :aws_access_key_id' do
+          expect(driver[:aws_access_key_id]).to eq(aws_access_key_id)
+        end
+
+        include_examples ':aws_session_token not set'
+      end
+
+      context 'because :aws_secret_access_key is set from config' do
+        let(:aws_secret_access_key) { 'moarsecret' }
+
+        before do
+          config[:aws_secret_access_key] = aws_secret_access_key
+        end
+
+        it 'does not override :aws_secret_access_key' do
+          expect(driver[:aws_secret_access_key]).to eq(aws_secret_access_key)
+        end
+
+        include_examples ':aws_session_token not set'
+      end
+
+      context 'because :aws_session_token is set from config' do
+        let(:aws_session_token) { 'adifferentsessiontoken' }
+        before do
+          config[:aws_session_token] = aws_session_token
+        end
+        it 'does not override :aws_session_token' do
+          expect(driver[:aws_session_token]).to eq('adifferentsessiontoken')
+        end
+      end
+    end
+
+    context 'and they should be used' do
+      let(:config) do
+        {
+          aws_ssh_key_id: 'larry',
+          user_data: nil
+        }
+      end
+
+      it 'uses :aws_access_key_id from iam_creds' do
+        expect(driver[:aws_access_key_id]).to eq(iam_creds[:aws_access_key_id])
+      end
+
+      it 'uses :aws_secret_key_id from iam_creds' do
+        expect(driver[:aws_secret_key_id]).to eq(iam_creds[:aws_secret_key_id])
+      end
+
+      it 'uses :aws_session_token from iam_creds' do
+        expect(driver[:aws_session_token]).to eq(iam_creds[:aws_session_token])
+      end
+    end
+  end
+
+  describe '#iam_creds' do
+    context 'when a metadata service is available' do
+      before do
+        allow(Net::HTTP).to receive(:get).and_return(true)
+      end
+
+      context 'and #fetch_credentials returns valid iam credentials' do
+        it '#iam_creds retuns the iam credentials from fetch_credentials' do
+          allow(driver).to receive(:fetch_credentials).and_return(iam_creds)
+          expect(driver.iam_creds).to eq(iam_creds)
+        end
+      end
+
+      errors = [NoMethodError, StandardError, Errno::EHOSTUNREACH, Errno::EHOSTDOWN]
+      errors.each do |e|
+        context "when #fetch_credentials fails with #{e}" do
+          it 'returns an empty hash' do
+            expect(driver).to receive(:fetch_credentials).and_raise(e)
+            expect(driver.iam_creds).to eq({})
+          end
+        end
+      end
+    end
+
+    context 'when Net::HTTP#get fails with Timeout::Error' do
+      it 'returns an empty hash' do
+        expect(Net::HTTP).to receive(:get)
+          .with(URI.parse('http://169.254.169.254')).and_raise(Timeout::Error)
+        expect(driver.iam_creds).to eq({})
+      end
+    end
+  end
+
   describe '#block_device_mappings' do
+    before do
+      instance
+      allow(driver).to receive(:create_server).and_return(server)
+      allow(driver).to receive(:wait_for_sshd)
+    end
     let(:connection) { double(Fog::Compute) }
     let(:image) { double('Image', :root_device_name => 'name') }
     before do
