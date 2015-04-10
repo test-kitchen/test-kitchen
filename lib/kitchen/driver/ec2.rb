@@ -100,8 +100,7 @@ module Kitchen
       end
 
       # First we check the existence of the metadata host.  Only fetch_credentials
-      # if we can find the host.  Ping logic taken from
-      # http://stackoverflow.com/questions/7519159/ruby-ping-pingecho-missing
+      # if we can find the host.
       def iam_creds
         require 'net/http'
         require 'timeout'
@@ -110,7 +109,7 @@ module Kitchen
             Net::HTTP.get(URI.parse('http://169.254.169.254'))
           end
           fetch_credentials(use_iam_profile: true)
-        rescue Errno::EHOSTUNREACH, Timeout::Error, NoMethodError, ::StandardError => e
+        rescue Errno::EHOSTUNREACH, Errno::EHOSTDOWN, Timeout::Error, NoMethodError, ::StandardError => e
           debug("fetch_credentials failed with exception #{e.message}:#{e.backtrace.join("\n")}")
           {}
         end
@@ -176,14 +175,20 @@ module Kitchen
         !!config[:subnet_id]
       end
 
+      # If running on an EC2 node there are 3 possible scenarios:
+      #  1) The user has supplied the session token as an environment variable
+      #  2) The user has manually set access key/secret - don't use the session token from
+      #    the metadata service, only auth with key/secret supplied
+      #  3) The user has not set the access key/secret - because we default these values
+      #    we cannot tell if these have not been set.  So we do our best guess by checking
+      #    if the current value is the same as what is returned from the metadata service.
+      #    If they are the same we assume no user values have been set and we use the
+      #    metadata service values.
       def default_aws_session_token
         env = ENV['AWS_SESSION_TOKEN'] || ENV['AWS_TOKEN']
-        if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] \
-          && config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
-          env || iam_creds[:aws_session_token]
-        else
-          env
-        end
+        env ||= iam_creds[:aws_session_token] if config[:aws_secret_access_key] == iam_creds[:aws_secret_access_key] &&
+          config[:aws_access_key_id] == iam_creds[:aws_access_key_id]
+        env
       end
 
       private
