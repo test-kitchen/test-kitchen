@@ -334,8 +334,7 @@ module Kitchen
       if options[:log_level]
         # validate log level specified on command line
         if Util.to_logger_level(options[:log_level].downcase.to_sym).nil?
-          banner "WARNING - invalid log level specified: \"#{options[:log_level]}\" - reverting to :info log level."
-          level = :info
+          raise "WARNING - invalid log level specified: \"#{options[:log_level]}\""
         else
           level = options[:log_level].downcase.to_sym
         end
