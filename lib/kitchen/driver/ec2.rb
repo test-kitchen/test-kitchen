@@ -163,7 +163,7 @@ module Kitchen
           bdm[:ebs_delete_on_termination] = config[:ebs_delete_on_termination] || true
         end
         if bdm[:ebs_device_name].nil?
-          bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda0'
+          bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda1'
         end
         if bdm[:ebs_volume_type].nil?
           bdm[:ebs_volume_type] = config[:ebs_volume_type] || 'standard'
