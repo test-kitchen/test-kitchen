@@ -121,6 +121,9 @@ module Kitchen
         end
       end
 
+      # TODO in next major version make block_device_mappings optional
+      # it should just use whatever the AMI provides by default
+      # no longer default in here if they don't provide anything
       default_config :block_device_mappings, []
       validations[:block_device_mappings] = lambda do |attr, val, driver|
         val.each do |bdm|
@@ -144,12 +147,29 @@ module Kitchen
       # @raise [ClientError] if instance parameter is nil
       def finalize_config!(instance)
         super
+
         if config[:availability_zone].nil?
           config[:availability_zone] = config[:region]+'b'
         end
         if config[:instance_type].nil?
           config[:instance_type] = config[:flavor_id] || 'm1.small'
         end
+        bdm = config[:block_device_mappings][0]
+        bdm = {} if bdm.nil?
+        if bdm[:ebs_volume_size].nil?
+          bdm[:ebs_volume_size] = config[:ebs_volume_size] || 8
+        end
+        if bdm[:ebs_delete_on_termination].nil?
+          bdm[:ebs_delete_on_termination] = config[:ebs_delete_on_termination] || true
+        end
+        if bdm[:ebs_device_name].nil?
+          bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda0'
+        end
+        if bdm[:ebs_volume_type].nil?
+          bdm[:ebs_volume_type] = config[:ebs_volume_type] || 'standard'
+        end
+        config[:block_device_mappings][0] = bdm
+
         self
       end
 
@@ -457,33 +477,19 @@ module Kitchen
       def block_device_mappings
         bdms = config[:block_device_mappings]
 
-        # If they don't provide one, lets give them a default one
-        if bdms.nil? || bdms.empty?
-          bdms = [{
+        # Convert the provided keys to what AWS expects
+        bdms = bdms.map do |bdm|
+          b = {
             :ebs => {
-              :volume_size           => config[:ebs_volume_size],
-              :volume_type           => 'standard',
-              :delete_on_termination => config[:ebs_delete_on_termination],
-              :snapshot_id           => nil,
+              :volume_size           => bdm[:ebs_volume_size],
+              :volume_type           => bdm[:ebs_volume_type],
+              :delete_on_termination => bdm[:ebs_delete_on_termination],
             },
-            :device_name             => config[:ebs_device_name],
-            :virtual_name            => nil
-          }]
-        else
-          # Convert the provided keys to what AWS expects
-          bdms = bdms.map do |bdm|
-            b = {
-              :ebs => {
-                :volume_size           => bdm[:ebs_volume_size],
-                :volume_type           => bdm[:ebs_volume_type] || 'standard',
-                :delete_on_termination => bdm[:ebs_delete_on_termination],
-              },
-              :device_name             => bdm[:ebs_device_name]
-            }
-            b[:ebs][:snapshot_id] = bdm[:ebs_snapshot_id] if bdm[:ebs_snapshot_id]
-            b[:virtual_name] = bdm[:ebs_virtual_name] if bdm[:ebs_virtual_name]
-            b
-          end
+            :device_name             => bdm[:ebs_device_name]
+          }
+          b[:ebs][:snapshot_id] = bdm[:ebs_snapshot_id] if bdm[:ebs_snapshot_id]
+          b[:virtual_name] = bdm[:ebs_virtual_name] if bdm[:ebs_virtual_name]
+          b
         end
 
         # This could be helpful for users debugging
