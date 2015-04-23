@@ -121,17 +121,16 @@ module Kitchen
         end
       end
 
-      # TODO in next major version make block_device_mappings optional
-      # it should just use whatever the AMI provides by default
-      # no longer default in here if they don't provide anything
-      default_config :block_device_mappings, []
+      default_config :block_device_mappings, nil
       validations[:block_device_mappings] = lambda do |attr, val, driver|
-        val.each do |bdm|
-          unless bdm.keys.include?(:ebs_volume_size) &&
-            bdm.keys.include?(:ebs_delete_on_termination) &&
-            bdm.keys.include?(:ebs_device_name)
-            raise 'Every :block_device_mapping must include the keys :ebs_volume_size, ' +
-              ':ebs_delete_on_termination and :ebs_device_name'
+        unless val.nil?
+          val.each do |bdm|
+            unless bdm.keys.include?(:ebs_volume_size) &&
+              bdm.keys.include?(:ebs_delete_on_termination) &&
+              bdm.keys.include?(:ebs_device_name)
+              raise 'Every :block_device_mapping must include the keys :ebs_volume_size, ' +
+                ':ebs_delete_on_termination and :ebs_device_name'
+            end
           end
         end
       end
@@ -154,21 +153,6 @@ module Kitchen
         if config[:instance_type].nil?
           config[:instance_type] = config[:flavor_id] || 'm1.small'
         end
-        bdm = config[:block_device_mappings][0]
-        bdm = {} if bdm.nil?
-        if bdm[:ebs_volume_size].nil?
-          bdm[:ebs_volume_size] = config[:ebs_volume_size] || 8
-        end
-        if bdm[:ebs_delete_on_termination].nil?
-          bdm[:ebs_delete_on_termination] = config[:ebs_delete_on_termination] || true
-        end
-        if bdm[:ebs_device_name].nil?
-          bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda1'
-        end
-        if bdm[:ebs_volume_type].nil?
-          bdm[:ebs_volume_type] = config[:ebs_volume_type] || 'standard'
-        end
-        config[:block_device_mappings][0] = bdm
 
         self
       end
@@ -415,9 +399,9 @@ module Kitchen
           :key_name                     => config[:aws_ssh_key_id],
           :subnet                       => config[:subnet_id],
           :iam_instance_profile         => config[:iam_profile_name],
-          :associate_public_ip_address  => config[:associate_public_ip],
-          :block_device_mappings        => block_device_mappings
+          :associate_public_ip_address  => config[:associate_public_ip]
         }
+        i[:block_device_mappings] = block_device_mappings unless block_device_mappings.empty?
         i[:security_group_ids] = config[:security_group_ids] if config[:security_group_ids]
         i[:user_data] = prepared_user_data if prepared_user_data
         i
@@ -475,7 +459,28 @@ module Kitchen
       end
 
       def block_device_mappings
-        bdms = config[:block_device_mappings]
+        bdms = config[:block_device_mappings] || []
+        if bdms.nil? || bdms.empty?
+          if config[:ebs_volume_size] || config[:ebs_delete_on_termination] ||
+            config[:ebs_device_name] || config[:ebs_volume_type]
+            # If the user didn't supply block_device_mappings but did supply
+            # the old configs, copy them into the block_device_mappings array correctly
+            bdm = {}
+            if bdm[:ebs_volume_size].nil?
+              bdm[:ebs_volume_size] = config[:ebs_volume_size] || 8
+            end
+            if bdm[:ebs_delete_on_termination].nil?
+              bdm[:ebs_delete_on_termination] = config[:ebs_delete_on_termination] || true
+            end
+            if bdm[:ebs_device_name].nil?
+              bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda1'
+            end
+            if bdm[:ebs_volume_type].nil?
+              bdm[:ebs_volume_type] = config[:ebs_volume_type] || 'standard'
+            end
+            bdms << bdm
+          end
+        end
 
         # Convert the provided keys to what AWS expects
         bdms = bdms.map do |bdm|

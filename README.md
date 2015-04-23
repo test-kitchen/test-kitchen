@@ -183,7 +183,7 @@ name of your ebs device, for example: `/dev/sda1`
 
 ### <a name="config-block_device_mappings"></a> block\_device\_mappings
 
-**Required** A list of block device mappings for the machine.  An example of all available keys looks like:
+A list of block device mappings for the machine.  An example of all available keys looks like:
 ```yaml
 block_device_mappings:
   - ebs_device_name: /dev/sda1
@@ -208,6 +208,7 @@ volume types. `ebs_volume_type` defaults to `standard` but can also be `gp2` or 
 If you have a block device mapping with a `ebs_device_name` equal to the root storage device name on your
 [image](#config-image-id) then the provided mapping will replace the settings in the image.
 
+If this is not provided it will use the default block_device_mappings from the AMI.
 
 ### ebs\_optimized
 
