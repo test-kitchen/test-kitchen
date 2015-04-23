@@ -1,9 +1,9 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 # Specify your gem's dependencies in kitchen-ec2.gemspec
 gemspec
 
 group :test do
-  gem 'rake'
-  gem 'pry'
+  gem "rake"
+  gem "pry"
 end

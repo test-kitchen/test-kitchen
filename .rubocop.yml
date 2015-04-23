@@ -1,0 +1,9 @@
+Style/FileName:
+  Exclude:
+    - 'data/**/*'
+
+Style/Next:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
