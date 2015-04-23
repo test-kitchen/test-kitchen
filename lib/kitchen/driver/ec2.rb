@@ -17,9 +17,7 @@
 # limitations under the License.
 
 require 'benchmark'
-require 'json'
 require 'excon'
-require 'multi_json'
 require 'json'
 require 'aws'
 require 'retryable'
@@ -81,9 +79,9 @@ module Kitchen
       required_config :aws_ssh_key_id
       required_config :image_id
 
-      def self.validation_warn(driver, old, new)
-        driver.warn "WARN: The driver[#{driver.class.name}] config key `#{old}` is deprecated," +
-          " please use `#{new}`"
+      def self.validation_warn(driver, old_key, new_key)
+        driver.warn "WARN: The driver[#{driver.class.name}] config key `#{old_key}` " +
+          "is deprecated, please use `#{new_key}`"
       end
 
       # TODO: remove these in the next major version of TK
@@ -161,7 +159,7 @@ module Kitchen
         copy_deprecated_configs(state)
         return if state[:server_id]
 
-        info(<<-END.gsub!(/^\s+/m,''))
+        info(Kitchen::Util.outdent!(<<-END))
           Creating <#{state[:server_id]}>...
           If you are not using an account that qualifies under the AWS
           free-tier, you may be charged to run these suites. The charge
@@ -277,7 +275,7 @@ module Kitchen
             :path => INSTANCE_METADATA_PATH+role_name, :expects => 200
           ).body
 
-          session = MultiJson.load(role_data)
+          session = JSON.parse(role_data)
           credentials = {}
           credentials[:aws_access_key_id] = session['AccessKeyId']
           credentials[:aws_secret_access_key] = session['SecretAccessKey']
@@ -461,7 +459,7 @@ module Kitchen
       def block_device_mappings
         bdms = config[:block_device_mappings] || []
         if bdms.nil? || bdms.empty?
-          if config[:ebs_volume_size] || config[:ebs_delete_on_termination] ||
+          if config[:ebs_volume_size] || config.fetch(:ebs_delete_on_termination, nil) ||
             config[:ebs_device_name] || config[:ebs_volume_type]
             # If the user didn't supply block_device_mappings but did supply
             # the old configs, copy them into the block_device_mappings array correctly
@@ -470,7 +468,7 @@ module Kitchen
               bdm[:ebs_volume_size] = config[:ebs_volume_size] || 8
             end
             if bdm[:ebs_delete_on_termination].nil?
-              bdm[:ebs_delete_on_termination] = config[:ebs_delete_on_termination] || true
+              bdm[:ebs_delete_on_termination] = config.fetch(:ebs_delete_on_termination, true)
             end
             if bdm[:ebs_device_name].nil?
               bdm[:ebs_device_name] = config[:ebs_device_name] || '/dev/sda1'
