@@ -105,6 +105,15 @@ module Kitchen
       hash
     end
 
+    # Yields each key/value pair to the provided block.  Returns a new
+    # Hash with only the keys and rendered values for which the block
+    # returns true.
+    #
+    # @return [Hash] a new hash
+    def select(&block)
+      to_hash.select(&block)
+    end
+
     private
 
     # Returns an object or invokes call with context if object is callable.
