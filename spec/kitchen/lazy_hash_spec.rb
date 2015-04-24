@@ -87,4 +87,10 @@ describe Kitchen::LazyHash do
       converted.fetch(:genre).must_equal "heavy metal"
     end
   end
+
+  describe "select" do
+    it "calls Procs when appropriate" do
+      Kitchen::LazyHash.new(hash_obj, context).select { |_,_| true }.must_equal :shed_color => "blue", :barn => "locked", :genre => "heavy metal"
+    end
+  end
 end
