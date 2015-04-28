@@ -1,4 +1,4 @@
-## 1.4.0.rc.1 / 2015-04-23
+## 1.4.0 / 2015-04-28
 
 (*A selected roll-up of 1.4.0 pre-release changelogs*)
 
