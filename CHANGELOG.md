@@ -1,8 +1,58 @@
+## 1.4.0.rc.1 / 2015-04-23
+
+(*A selected roll-up of 1.4.0 pre-release changelogs*)
+
+### Potentially breaking changes
+
+**Note::** while a huge amount of effort has gone into preserving backwards compatibility, there could be issues when running this release using certain Drivers and Provisioners, especially ones that are deeply customized. Drivers that inherit directly from `Kitchen::Driver::Base` may need to be updated, while Driver that inherit directly from `Kitchen::Driver::SSHBase` should continue to operate as before. Other libraries/addons/plugins which patch internals of Test Kitchen's code may break or work differently and would be extremely hard to preserve while adding new functionality. Sadly, this is a tradeoff.
+
+* Drivers are no longer responsible for `converge`, `setup`, `verify`, and `login` actions. The updated Driver API contract ([Driver::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/base.rb)) only requires implementing the `#create` and `#destroy` methods, same as before. However, for Drivers that directly inherit from `Kitchen::Driver::Base`, any custom `#converge`, `#setup`, `#verify`, or `#login_command` methods will no longer be called. ([@fnichol][])
+* Drivers which inherit directly from `Kitchen::Driver::SSHBase` are now considered "Legacy Drivers" as further improvements for these Drivers may not be available in future releases. The previous behavior is preserved, i.e. the Driver's `#converge`, `#setup`, and `#verify` methods are called and all methods signatures (and relative behavior) is preserved. ([Driver::SSHBase](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/ssh_base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d816d6fd1bd21548b485ca91e0ff9303e99a6fbc)) ([@fnichol][])
+* Provisioners are now self-aware, completely owning the `converge` action. The original public methods of the Base Provisioner are maintained but are now invoked with a `#call(state)` method on the Provisioner object. Provisioner authors may elect to implement the command and sandbox methods, or re-implement the `#call` method which may not call any of the previously mentioned methods. ([Provisioner::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/3196675e519a2fb97af4bcac80ef11f5e37f2537)) ([@fnichol][])
+* Transport are not responsible for the `login` command. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/ae360a11d8c18ff5d1086ee19b099db1d0422024)) ([@fnichol][])
+* Busser is now a plugin of type Verifier (see below for details on Verifiers). Any external code that directly creates a `Kitchen::Busser` object will fail as the class has moved to `Kitchen::Verifier::Busser`. Any external code that directly invokes Busser's `#sync_cmd` will log a warning and will **not** transfer test files (authors of plugins may now call `instance.transport(state).upload(locals, remote)` in its place). ([@fnichol][])
+* Verifiers are responsible for the `verify` action. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d62f577003c1920259eb627cc4479c0b21e0c374)) ([@fnichol][])
+* Pull request [#649][]: Preserve Busser's #setup_cmd, #run_cmd, & #sync_cmd for better backwards compatibility. ([@fnichol][])
+* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependencies to manage. ([@fnichol][])
+
+### Bug fixes
+
+* Issue [#656][], pull request 669: Move ObjectSpace finalizer logic into CommandExtractor to close the last opened remote shell on shutdown for Winrm Transport. ([@fnichol][])
+* Issue [#611][], pull request [#673][]: Ensure that secret key is deleted before converge for chef_zero and chef_solo Provisioners. ([@fnichol][])
+* Issue [#389][], pull request [#674][]: Expand path for `:ssh_key` if provided in kitchen.yml for Ssh Transport. ([@fnichol][])
+* Pull request [#653][]: Consider `:require_chef_omnibus = 11` to be a modern version for Chef Provisioners. ([@fnichol][])
+
+### New features
+
+* ChefZero Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefZero](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_zero.rb)) ([@fnichol][])
+* ChefSolo Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefSolo](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_solo.rb)) ([@fnichol][])
+* Shell Provisioner supports PowerShell scripts in addition to Bourne shell scripts ([Provisioner::Shell](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/shell.rb)) ([@fnichol][])
+* Platform operating system and shell hinting: By default, Windows platform names (case insensitive platform names starting with `/^win/`) will have `:os_type` set to `"windows"` and `:shell_type` set to `"powershell"`. By default, non-Windows platform names will have `:os_type` set to `"unix"` and `:shell_type` set to `"bourne"`. The methods `#windows_os?`, `#unix_os?`, `#powershell_shell?`, `#bourne_shell?`, and `#remote_path_join` are available for all Driver, Provisioner, Verifier, and Transport authors. ([@fnichol][])
+* New plugin type: Transport, which executes commands and transfers files to remote instances. ([Transport::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/base.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: WinRM: which re-uses a remote shell to execute commands and upload files over WinRM. Currently non-SSL/plaintext authentication only. ([Transport::Winrm](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/winrm.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: SSH, which re-uses one SSH connection where possible. Improvements such as keepalive, retries, and further configuration attributes are included. This replaces the more general `Kitchen:SSH` class, which remains in the codebase for plugins that call this class directly. ([Transport::Ssh](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/ssh.rb)) ([@fnichol][])
+* New plugin type: Verifier, which executes post-convergence tests on the instance. Busser is now a Verifier. ([Verifier::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/verifier/base.rb)) ([@fnichol][])
+* Add [API versioning](d8f1a7db9e506c44f321462e1fba0b1e24994070) metadata to all plugin types. ([@fnichol][])
+* Pull request [#667][], pull request [#668][]: Add plugin diagnostics, exposed via `kitchen diagnose`. ([@fnichol][])
+* Pull request [#675][], issue [#424][]: Add default `:compression` & `:compression_level` configuration attributes to Ssh Transport.
+* Pull request [#651][], issue [#592][], issue [#629][], issue [#307][]: Add :sudo_command to Provisioners, Verifiers, & ShellOut. ([@fnichol][])
+
+#### Improvements
+
+* In addition to supporting setting `http_proxy` and `https_proxy` environment variables when `:http_proxy` and `:https_proxy` are set in Provisioner and Verifier blocks, `HTTP_PROXY` and `HTTPS_PROXY` environment variables will also be set/exported in ChefZero/ChefSolo Provisioners and Busser Verifier. ([@fnichol][])
+* Pull request [#600][], pull request [#633][], issue [#85][]: Add `--log-overwrite` flag to CLI anywhere `--log-level` is accepted.  By default it is true and will clear out the log every time Test Kitchen runs. To disable this behavior pass `--log-overwrite=false` or `--no-log-overwrite`.  You can also configure this with the environment variable `KITCHEN_LOG_OVERWRITE`. ([@tyler-ball][])
+* Refactor "non-trivial" (i.e. more than a line or two) Bourne and PowerShell code bodies into static files under support/ for better code review by domain experts. ([@fnichol][])
+* Pull request [#530][], issue [#429][]: Stop uploading empty directories. ([@whiteley][])
+* Pull request [#588][]: Change getchef.com to chef.io in ChefZero and ChefSolo Provisioners. ([@jdmundrawala][])
+* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms including Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
+* Pull request [#652][], pull request [#666][], issue [#556][]: Support symbol values in solo.rb & client.rb for chef_zero and chef_solo Provisioners. ([@fnichol][])
+
+
 ## 1.4.0.rc.1 / 2015-03-29
 
 ### Potentially breaking changes
 
-* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependenices to manage. ([@fnichol][])
+* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependencies to manage. ([@fnichol][])
 
 ### Bug fixes
 
@@ -20,7 +70,7 @@
 
 ### Improvements
 
-* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms includig Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
+* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms including Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
 * Pull request [#652][], pull request [#666][], issue [#556][]: Support symbol values in solo.rb & client.rb for chef_zero and chef_solo Provisioners. ([@fnichol][])
 
 
