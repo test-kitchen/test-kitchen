@@ -483,6 +483,16 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
+      it "sets :auth_methods to only publickey if :ssh_key is set in config" do
+        config[:ssh_key] = "ssh_key_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:auth_methods] == ["publickey"]
+        end
+
+        make_connection
+      end
+
       it "sets :keys_only to true if :ssh_key is set in state" do
         state[:ssh_key] = "ssh_key_from_config"
         config[:ssh_key] = false
