@@ -212,8 +212,8 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-12.04
-      - name: centos-6.6
+      - name: ubuntu-14.04
+      - name: centos-7.1
 
     suites:
       - name: default
