@@ -213,7 +213,7 @@ Feature: Add Test Kitchen support to an existing project
 
     platforms:
       - name: ubuntu-12.04
-      - name: centos-6.4
+      - name: centos-6.6
 
     suites:
       - name: default
