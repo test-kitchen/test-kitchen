@@ -1,24 +1,39 @@
+# -*- encoding: utf-8 -*-
+
 require "bundler/gem_tasks"
-require 'cane/rake_task'
-require 'tailor/rake_task'
-require 'rspec/core/rake_task'
 
+require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:test)
-
-desc "Run cane to check quality metrics"
-Cane::RakeTask.new do |cane|
-  cane.canefile = './.cane'
-end
-
-Tailor::RakeTask.new
 
 desc "Display LOC stats"
 task :stats do
   puts "\n## Production Code Stats"
-  sh "countloc -r lib/kitchen"
+  sh "countloc -r lib/kitchen lib/kitchen.rb"
+  puts "\n## Test Code Stats"
+  sh "countloc -r spec features"
 end
 
-desc "Run all quality tasks"
-task :quality => [:cane, :tailor, :stats, :test]
+require "finstyle"
+require "rubocop/rake_task"
+RuboCop::RakeTask.new(:style) do |task|
+  task.options << "--display-cop-names"
+end
 
-task :default => [:quality]
+if RUBY_ENGINE != "jruby"
+  require "cane/rake_task"
+  desc "Run cane to check quality metrics"
+  Cane::RakeTask.new do |cane|
+    cane.canefile = "./.cane"
+  end
+
+  desc "Run all quality tasks"
+  task :quality => [:cane, :style, :stats]
+else
+  desc "Run all quality tasks"
+  task :quality => [:style, :stats]
+end
+
+require "yard"
+YARD::Rake::YardocTask.new
+
+task :default => [:test, :quality]
