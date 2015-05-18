@@ -295,7 +295,7 @@ module Kitchen
               lg.remainder = ""
               lg << [msg, "\n"].join
             end
-          end
+          end if logger.respond_to?(:loggers)
         end
       end
 
