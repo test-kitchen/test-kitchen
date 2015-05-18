@@ -1,12 +1,22 @@
-## Unreleased
+## 0.9.0 / 2015-05-18
 
 ### Bug Fixes
 
+* Pull Request [#46][]: Don't create multiple instances if `kitchen create` is called multiple times. ([@anl][])
+* Pull Request [#97][], [#69][], [#99][]: Try additional connections to servers which don't have a `public_ip_address`.  This helps connect to nodes over VPN. ([@chuckg][], [@tyler-ball][], [@mumoshu][])
+
 ### New Features
 
+* Pull Request [#35][]: Adding support for specifying the IAM profile on created instance.  Set `:iam_profile_name` in the driver section of your .kitchen.yml to specify this. ([@nicgrayson][])
+* Pull Request [#82][]: Add the ability to specify user data.  Set `:user_data` in the driver section of your .kitchen.yml.  This can either be the user data or the path to a file which contains the user data. ([@sebbrandt87][])
+* Pull Request [#84][]: Add the ability to specify the private ip of the instance.  Set `:private_ip_address` in the driver section of your .kitchen.yml. ([@scarolan][])
 * Pull Request [#68][], [#104][], [#107][]: If provisioning from an EC2 host and credentials are not set use the local nodes's credentials.  If access key & secret are set, do not use local session token - leave it unset. ([@JamesAwesome][], [@Igorshp][], [@daanemanz][])
 
 ### Improvements
+
+* Pull Request [#110][]: Updating to use the AWS SDK V2 instead of Fog. ([@tyler-ball][])
+    * We no longer recommend storing the AWS credentials in the `.kitchen.yml` file.  Instead, specify them as environment variables or in the `~/.aws/credentials` file.  See the README for more details.
+* Pull Request [#112][]: Updating to depend on the latest version of Test Kitchen, 1.4.0. ([@jmundrawala][])
 
 ## 0.8.0 / 2014-02-11
 
@@ -88,14 +98,25 @@
 [#29]: https://github.com/test-kitchen/kitchen-ec2/issues/29
 [#31]: https://github.com/test-kitchen/kitchen-ec2/issues/31
 [#34]: https://github.com/test-kitchen/kitchen-ec2/issues/34
+[#35]: https://github.com/test-kitchen/kitchen-ec2/issues/35
+[#46]: https://github.com/test-kitchen/kitchen-ec2/issues/46
 [#68]: https://github.com/test-kitchen/kitchen-ec2/issues/68
+[#69]: https://github.com/test-kitchen/kitchen-ec2/issues/69
+[#82]: https://github.com/test-kitchen/kitchen-ec2/issues/82
+[#84]: https://github.com/test-kitchen/kitchen-ec2/issues/84
+[#97]: https://github.com/test-kitchen/kitchen-ec2/issues/97
+[#99]: https://github.com/test-kitchen/kitchen-ec2/issues/99
 [#104]: https://github.com/test-kitchen/kitchen-ec2/issues/104
 [#107]: https://github.com/test-kitchen/kitchen-ec2/issues/107
+[#110]: https://github.com/test-kitchen/kitchen-ec2/issues/110
+[#112]: https://github.com/test-kitchen/kitchen-ec2/issues/112
 [@Atalanta]: https://github.com/Atalanta
 [@Igorshp]: https://github.com/Igorshp
 [@JamesAwesome]: https://github.com/JamesAwesome
+[@anl]: https://github.com/anl
 [@arangamani]: https://github.com/arangamani
 [@bozinsky]: https://github.com/bozinsky
+[@chuckg]: https://github.com/chuckg
 [@coderanger]: https://github.com/coderanger
 [@daanemanz]: https://github.com/daanemanz
 [@dissonanz]: https://github.com/dissonanz
@@ -103,10 +124,16 @@
 [@eherot]: https://github.com/eherot
 [@fnichol]: https://github.com/fnichol
 [@halcyonCorsair]: https://github.com/halcyonCorsair
+[@jmundrawala]: https://github.com/jmundrawala
 [@juliandunn]: https://github.com/juliandunn
 [@matheeeny]: https://github.com/matheeeny
 [@mattray]: https://github.com/mattray
+[@mumoshu]: https://github.com/mumoshu
+[@nicgrayson]: https://github.com/nicgrayson
+[@scarolan]: https://github.com/scarolan
+[@sebbrandt87]: https://github.com/sebbrandt87
 [@sethvargo]: https://github.com/sethvargo
 [@someara]: https://github.com/someara
 [@spheromak]: https://github.com/spheromak
 [@tiwilliam]: https://github.com/tiwilliam
+[@tyler-ball]: https://github.com/tyler-ball

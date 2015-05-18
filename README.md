@@ -60,28 +60,65 @@ platforms:
 
 For specific default values, please consult [amis.json][amis_json].
 
+## Authenticating with AWS
+
+There are 3 ways you can authenticate against AWS, and we will try them in the
+following order:
+
+1. You can specify the access key and access secret (and optionally the session
+token) through config.  See the `aws_access_key_id` and `aws_secret_access_key`
+config sections below to see how to specify these in your .kitchen.yml or
+through environment variables.  If you would like to specify your session token
+use the environment variable `AWS_SESSION_TOKEN`.
+1. The shared credentials ini file at `~/.aws/credentials`.  You can specify 
+multiple profiles in this file and select one with the `AWS_PROFILE`
+environment variable or the `shared_credentials_profile` driver config.  Read
+[this][credentials_docs] for more information.
+1. From an instance profile when running on EC2.  This accesses the local
+metadata service to discover the local instance's IAM instance profile.
+
+This precedence order is taken from http://docs.aws.amazon.com/sdkforruby/api/index.html#Configuration
+  
+The first method attempted that works will be used.  IE, if you want to auth
+using the instance profile, you must not set any of the access key configs
+or environment variables, and you must not specify a `~/.aws/credentials`
+file.
+
+Because the Test Kitchen test should be checked into source control and ran
+through CI we no longer recommend storing the AWS credentials in the
+`.kitchen.yml` file.  Instead, specify them as environment variables or in the 
+`~/.aws/credentials` file.
+
 ## General Configuration
 
 ### availability\_zone
 
-**Required** The AWS [availability zone][region_docs] to use.  Only request
+The AWS [availability zone][region_docs] to use.  Only request
 the letter designation - will attach this to the region used.
 
 The default is `"#{region}b"`.
 
 ### aws\_access\_key\_id
 
-**Required** The AWS [access key id][credentials_docs] to use.
+**Deprecated** It is recommended to use the `AWS_ACCESS_KEY_ID` or the
+`~/.aws/credentials` file instead.
 
-The default will be read from the `AWS_ACCESS_KEY` environment variable if set,
-or `nil` otherwise.
+The AWS [access key id][credentials_docs] to use.
 
 ### aws\_secret\_access\_key
 
-**Required** The AWS [secret access key][credentials_docs] to use.
+**Deprecated** It is recommended to use the `AWS_SECRET_ACCESS_KEY` or the
+`~/.aws/credentials` file instead.
 
-The default will be read from the `AWS_SECRET_KEY` environment variable if set,
-or `nil` otherwise.
+The AWS [secret access key][credentials_docs] to use.
+
+### shared\_credentials\_profile
+
+The EC2 [profile name][credentials_docs] to use when reading credentials out
+of `~/.aws/credentials`.  If it is not specified AWS will read the `Default`
+profile credentials (if using this method of authentication).
+
+Can also be specified as `ENV['AWS_PROFILE']`.
 
 ### aws\_ssh\_key\_id
 
@@ -92,10 +129,10 @@ or `nil` otherwise.
 
 ### aws\_session\_token
 
-The AWS [session token][credentials_docs] to use.
+**Deprecated** It is recommended to use the `AWS_SESSION_TOKEN` or the
+`~/.aws/credentials` file instead.
 
-The default will be read from the `AWS_SESSION_TOKEN` environment variable if set,
-or `nil` otherwise.
+The AWS [session token][credentials_docs] to use.
 
 ### flavor\_id
 
@@ -126,7 +163,8 @@ computed, then the default is `nil`.
 
 **Required** The AWS [region][region_docs] to use.
 
-The default is `"us-east-1"`.
+If the environment variable `AWS_REGION` is populated that will be used.
+Otherwise the default is `"us-east-1"`.
 
 ### subnet\_id
 
@@ -313,8 +351,6 @@ to override default configuration.
 ---
 driver:
   name: ec2
-  aws_access_key_id: KAS...
-  aws_secret_access_key: 3UK...
   aws_ssh_key_id: id_rsa-aws
   security_group_ids: ["sg-1a2b3c4d"]
   region: us-east-1
@@ -338,36 +374,6 @@ transport:
   connection_timeout: 10
   connection_retries: 5
   username: ubuntu
-
-platforms:
-  - name: ubuntu-12.04
-    driver:
-      image_id: ami-fd20ad94
-      username: ubuntu
-  - name: centos-6.3
-    driver:
-      image_id: ami-ef5ff086
-      username: ec2-user
-
-suites:
-# ...
-```
-
-Both `.kitchen.yml` and `.kitchen.local.yml` files are pre-processed through
-ERB which can help to factor out secrets and credentials. For example:
-
-```yaml
----
-driver:
-  name: ec2
-  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY'] %>
-  aws_secret_access_key: <%= ENV['AWS_SECRET_KEY'] %>
-  aws_ssh_key_id: <%= ENV['AWS_SSH_KEY_ID'] %>
-  ssh_key: <%= File.expand_path('~/.ssh/id_rsa') %>
-  security_group_ids: ["sg-1a2b3c4d"]
-  region: us-east-1
-  availability_zone: b
-  require_chef_omnibus: true
 
 platforms:
   - name: ubuntu-12.04
@@ -417,8 +423,8 @@ Apache 2.0 (see [LICENSE][license])
 [amis_json]:        https://github.com/test-kitchen/kitchen-ec2/blob/master/data/amis.json
 [ami_docs]:         http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ComponentsAMIs.html
 [aws_site]:         http://aws.amazon.com/
-[credentials_docs]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SettingUp_CommandLine.html#using-credentials-access-key
-[aws_sdk_gem]:      https://github.com/aws/aws-sdk-ruby/tree/aws-sdk-v1
+[credentials_docs]: http://blogs.aws.amazon.com/security/post/Tx3D6U6WSFGOK2H/A-New-and-Standardized-Way-to-Manage-Credentials-in-the-AWS-SDKs
+[aws_sdk_gem]:      http://docs.aws.amazon.com/sdkforruby/api/index.html
 [group_docs]:       http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html
 [instance_docs]:    http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
 [key_id_docs]:      http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verifying-your-key-pair.html

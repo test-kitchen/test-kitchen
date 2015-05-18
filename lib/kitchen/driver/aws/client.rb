@@ -32,8 +32,16 @@ module Kitchen
       # @author Tyler Ball <tball@chef.io>
       class Client
 
-        def initialize(region, profile_name = nil, access_key_id = nil, secret_access_key = nil)
-          creds = self.class.get_credentials(profile_name, access_key_id, secret_access_key)
+        def initialize(
+          region,
+          profile_name = nil,
+          access_key_id = nil,
+          secret_access_key = nil,
+          session_token = nil
+        )
+          creds = self.class.get_credentials(
+            profile_name, access_key_id, secret_access_key, session_token
+          )
           Aws.config = {
             :region => region,
             :credentials => creds
@@ -43,10 +51,10 @@ module Kitchen
         # Try and get the credentials from an ordered list of locations
         # http://docs.aws.amazon.com/sdkforruby/api/index.html#Configuration
         # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-        def self.get_credentials(profile_name, access_key_id, secret_access_key)
+        def self.get_credentials(profile_name, access_key_id, secret_access_key, session_token)
           shared_creds = ::Aws::SharedCredentials.new(:profile_name => profile_name)
           if access_key_id && secret_access_key
-            ::Aws::Credentials.new(access_key_id, secret_access_key)
+            ::Aws::Credentials.new(access_key_id, secret_access_key, session_token)
           # TODO: these are deprecated, remove them in the next major version
           elsif ENV["AWS_ACCESS_KEY"] && ENV["AWS_SECRET_KEY"]
             ::Aws::Credentials.new(

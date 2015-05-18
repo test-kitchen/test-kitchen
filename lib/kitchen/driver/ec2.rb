@@ -53,6 +53,7 @@ module Kitchen
       default_config :retryable_sleep,    5
       default_config :aws_access_key_id,  nil
       default_config :aws_secret_access_key, nil
+      default_config :aws_session_token,  nil
       default_config :aws_ssh_key_id,     ENV["AWS_SSH_KEY_ID"]
       default_config :image_id do |driver|
         driver.default_ami
@@ -60,8 +61,6 @@ module Kitchen
       default_config :username,            nil
       default_config :associate_public_ip, nil
 
-      required_config :aws_access_key_id
-      required_config :aws_secret_access_key
       required_config :aws_ssh_key_id
       required_config :image_id
 
@@ -125,16 +124,21 @@ module Kitchen
         unless val.nil?
           driver.warn "WARN: #{attr} has been deprecated, please use " \
             "ENV['AWS_ACCESS_KEY_ID'] or ~/.aws/credentials.  See " \
-            "http://docs.aws.amazon.com/sdkforruby/api/index.html#Configuration " \
-            "for more details"
+            "the README for more details"
         end
       end
       validations[:aws_secret_access_key] = lambda do |attr, val, driver|
         unless val.nil?
           driver.warn "WARN: #{attr} has been deprecated, please use " \
             "ENV['AWS_SECRET_ACCESS_KEY'] or ~/.aws/credentials.  See " \
-            "http://docs.aws.amazon.com/sdkforruby/api/index.html#Configuration " \
-            "for more details"
+            "the README for more details"
+        end
+      end
+      validations[:aws_session_token] = lambda do |attr, val, driver|
+        unless val.nil?
+          driver.warn "WARN: #{attr} has been deprecated, please use " \
+            "ENV['AWS_SESSION_TOKEN'] or ~/.aws/credentials.  See " \
+            "the README for more details"
         end
       end
 
@@ -238,7 +242,8 @@ module Kitchen
           config[:region],
           config[:shared_credentials_profile],
           config[:aws_access_key_id],
-          config[:aws_secret_access_key]
+          config[:aws_secret_access_key],
+          config[:aws_session_token]
         )
       end
 
