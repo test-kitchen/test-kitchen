@@ -285,12 +285,12 @@ module Kitchen
         ## flush buffer and remainder
         def flush_log_buffers(logger)
           logger.loggers.map do |lg|
-            if ! lg.buffer.empty? && ! lg.remainder.empty?
+            if !lg.buffer.empty? && !lg.remainder.empty?
               msg = lg.buffer
               lg.buffer = ""
               lg.remainder = ""
               lg << [msg, "\n"].join
-            elsif lg.buffer.empty? && ! lg.remainder.empty?
+            elsif lg.buffer.empty? && !lg.remainder.empty?
               msg = lg.remainder
               lg.remainder = ""
               lg << [msg, "\n"].join
