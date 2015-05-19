@@ -93,4 +93,27 @@ describe Kitchen::Driver::Aws::Client do
        )
     end
   end
+
+  let(:client) { Kitchen::Driver::Aws::Client.new("us-west-1") }
+
+  describe "#initialize" do
+
+    it "successfully creates a client" do
+      expect(client).to be_a(Kitchen::Driver::Aws::Client)
+    end
+
+    it "Sets the AWS config" do
+      client
+      expect(Aws.config[:region]).to eq("us-west-1")
+    end
+  end
+
+  it "returns a client" do
+    expect(client.client).to be_a(Aws::EC2::Client)
+  end
+
+  it "returns a resource" do
+    expect(client.resource).to be_a(Aws::EC2::Resource)
+  end
+
 end

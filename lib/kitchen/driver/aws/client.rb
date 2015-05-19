@@ -42,10 +42,10 @@ module Kitchen
           creds = self.class.get_credentials(
             profile_name, access_key_id, secret_access_key, session_token
           )
-          Aws.config = {
+          ::Aws.config.update(
             :region => region,
             :credentials => creds
-          }
+          )
         end
 
         # Try and get the credentials from an ordered list of locations
@@ -94,11 +94,11 @@ module Kitchen
         end
 
         def client
-          @client ||= Aws::EC2::Client.new
+          @client ||= ::Aws::EC2::Client.new
         end
 
         def resource
-          @resource ||= Aws::EC2::Resource.new
+          @resource ||= ::Aws::EC2::Resource.new
         end
 
       end
