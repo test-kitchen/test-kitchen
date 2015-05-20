@@ -267,7 +267,7 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
           :security_group_ids => ["sg-789"],
           :user_data => "foo",
           :iam_instance_profile => "iam-123",
-          :associate_public_ip_address => true
+          :associate_public_ip => true
         }
       end
 

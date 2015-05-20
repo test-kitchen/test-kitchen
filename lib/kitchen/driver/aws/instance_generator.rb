@@ -58,11 +58,11 @@ module Kitchen
           if config[:iam_instance_profile]
             i[:iam_instance_profile] = { :name => config[:iam_profile_name] }
           end
-          if !config.fetch(:associate_public_ip_address, nil).nil?
+          if !config.fetch(:associate_public_ip, nil).nil?
             i[:network_interfaces] =
               [{
                 :device_index => 0,
-                :associate_public_ip_address => config[:associate_public_ip_address]
+                :associate_public_ip_address => config[:associate_public_ip]
               }]
           end
           i
