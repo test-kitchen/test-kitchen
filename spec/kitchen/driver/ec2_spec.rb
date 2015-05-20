@@ -83,7 +83,13 @@ describe Kitchen::Driver::Ec2 do
     let(:public_dns_name) { nil }
     let(:public_ip_address) { nil }
     let(:private_ip_address) { nil }
-    let(:server) { double("server", :public_dns_name => public_dns_name, :public_ip_address => public_ip_address, :private_ip_address => private_ip_address) }
+    let(:server) {
+      double("server",
+        :public_dns_name => public_dns_name,
+        :public_ip_address => public_ip_address,
+        :private_ip_address => private_ip_address
+      )
+    }
 
     it "returns nil if all sources are nil" do
       expect(driver.hostname(server)).to eq(nil)

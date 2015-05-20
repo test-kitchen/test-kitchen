@@ -7,3 +7,9 @@ Style/Next:
 
 Style/DoubleNegation:
   Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Max: 30
+
+Metrics/PerceivedComplexity:
+  Max: 30

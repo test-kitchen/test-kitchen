@@ -61,6 +61,7 @@ module Kitchen
       end
       default_config :username,            nil
       default_config :associate_public_ip, nil
+      default_config :interface,           nil
 
       required_config :aws_ssh_key_id
       required_config :image_id
@@ -201,12 +202,13 @@ module Kitchen
             :delay => config[:retryable_sleep],
             :before_attempt => wait_log
           ) do |s|
-            hostname = hostname(s)
+            hostname = hostname(s, config[:interface])
             # Euca instances often report ready before they have an IP
             s.exists? && s.state.name == "running" && !hostname.nil? && hostname != "0.0.0.0"
           end
         rescue ::Aws::Waiters::Errors::WaiterFailed
-          error("Ran out of time waiting for the server with id [#{state[:server_id]}] to become ready, attempting to destroy it")
+          error("Ran out of time waiting for the server with id [#{state[:server_id]}]" \
+            " to become ready, attempting to destroy it")
           destroy(state)
           raise
         end
