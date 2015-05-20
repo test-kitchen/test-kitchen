@@ -64,6 +64,11 @@ module Kitchen
                 :device_index => 0,
                 :associate_public_ip_address => config[:associate_public_ip]
               }]
+            # If specifying `:network_interfaces` in the request, you must specify the
+            # subnet_id in the network_interfaces block and not at the top level
+            if config[:subnet_id]
+              i[:network_interfaces][0][:subnet_id] = i.delete(:subnet_id)
+            end
           end
           i
         end
