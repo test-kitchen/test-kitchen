@@ -307,7 +307,7 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
           ],
           :security_group_ids => ["sg-789"],
           :user_data => "foo",
-          :iam_instance_profile => "iam-123",
+          :iam_profile_name => "iam-123",
           :associate_public_ip => true
         }
       end
@@ -332,7 +332,7 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
               :virtual_name => "test"
             }
           ],
-          :iam_instance_profile => { :name => nil },
+          :iam_instance_profile => { :name => "iam-123" },
           :network_interfaces => [{
             :device_index => 0,
             :associate_public_ip_address => true,
