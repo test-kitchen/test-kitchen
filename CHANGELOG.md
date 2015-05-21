@@ -1,3 +1,17 @@
+## 0.9.1 / 2015-05-21
+
+### Bug Fixes
+
+* Pull Request #124: AWS SDK V2 returns `instance.public_dns_name` as empty string instead of nil, and we were only checking for nil.  Caused timeouts trying to connect. (@tyler-ball)
+    * Fixed regression: Adding back `interface` config value that I accidently removed, code is now in line with README.
+* Pull Request #125: When specifying `associate_public_ip` we must send the subnet (if provided) in the `network_interfaces` section of the payload instead of the main section. (@tyler-ball)
+    * Fixed regression: Accidently renamed config `associate_public_ip` to `associate_public_ip_address`, reverting.
+    * Fixed regression: Accidently renamed config `iam_profile_name` to `iam_instance_profile`, reverting.
+
+### New Features
+
+### Improvements
+
 ## 0.9.0 / 2015-05-18
 
 ### Bug Fixes
