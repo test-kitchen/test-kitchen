@@ -55,15 +55,20 @@ module Kitchen
           i[:block_device_mappings] = block_device_mappings unless block_device_mappings.empty?
           i[:security_group_ids] = config[:security_group_ids] if config[:security_group_ids]
           i[:user_data] = prepared_user_data if prepared_user_data
-          if config[:iam_instance_profile]
+          if config[:iam_profile_name]
             i[:iam_instance_profile] = { :name => config[:iam_profile_name] }
           end
-          if !config.fetch(:associate_public_ip_address, nil).nil?
+          if !config.fetch(:associate_public_ip, nil).nil?
             i[:network_interfaces] =
               [{
                 :device_index => 0,
-                :associate_public_ip_address => config[:associate_public_ip_address]
+                :associate_public_ip_address => config[:associate_public_ip]
               }]
+            # If specifying `:network_interfaces` in the request, you must specify the
+            # subnet_id in the network_interfaces block and not at the top level
+            if config[:subnet_id]
+              i[:network_interfaces][0][:subnet_id] = i.delete(:subnet_id)
+            end
           end
           i
         end

@@ -244,6 +244,47 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
       end
     end
 
+    context "when subnet_id is provided" do
+      let(:config) do
+        {
+          :subnet_id => "s-456"
+        }
+      end
+
+      it "adds a network_interfaces block" do
+        expect(generator.ec2_instance_data).to eq(
+          :placement => { :availability_zone => nil },
+          :instance_type => nil,
+          :ebs_optimized => nil,
+          :image_id => nil,
+          :key_name => nil,
+          :subnet_id => "s-456",
+          :private_ip_address => nil
+        )
+      end
+    end
+
+    context "when associate_public_ip is provided" do
+      let(:config) do
+        {
+          :associate_public_ip => true
+        }
+      end
+
+      it "adds a network_interfaces block" do
+        expect(generator.ec2_instance_data).to eq(
+          :placement => { :availability_zone => nil },
+          :instance_type => nil,
+          :ebs_optimized => nil,
+          :image_id => nil,
+          :key_name => nil,
+          :subnet_id => nil,
+          :private_ip_address => nil,
+          :network_interfaces => [{ :device_index => 0, :associate_public_ip_address => true }]
+        )
+      end
+    end
+
     context "when provided the maximum config" do
       let(:config) do
         {
@@ -266,8 +307,8 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
           ],
           :security_group_ids => ["sg-789"],
           :user_data => "foo",
-          :iam_instance_profile => "iam-123",
-          :associate_public_ip_address => true
+          :iam_profile_name => "iam-123",
+          :associate_public_ip => true
         }
       end
 
@@ -278,7 +319,6 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
           :ebs_optimized => true,
           :image_id => "ami-123",
           :key_name => "key",
-          :subnet_id => "s-456",
           :private_ip_address => "0.0.0.0",
           :block_device_mappings => [
             {
@@ -292,8 +332,12 @@ describe Kitchen::Driver::Aws::InstanceGenerator do
               :virtual_name => "test"
             }
           ],
-          :iam_instance_profile => { :name => nil },
-          :network_interfaces => [{ :device_index => 0, :associate_public_ip_address => true }],
+          :iam_instance_profile => { :name => "iam-123" },
+          :network_interfaces => [{
+            :device_index => 0,
+            :associate_public_ip_address => true,
+            :subnet_id => "s-456"
+          }],
           :security_group_ids => ["sg-789"],
           :user_data => "foo"
         )
