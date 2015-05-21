@@ -71,11 +71,91 @@ describe Kitchen::Driver::Ec2 do
     end
   end
 
-  describe "finalize_config!" do
+  describe "#finalize_config!" do
     it "defaults the availability zone if not provided" do
       expect(config[:availability_zone]).to eq(nil)
       driver.finalize_config!(instance)
       expect(config[:availability_zone]).to eq("us-east-1b")
+    end
+  end
+
+  describe "#hostname" do
+    let(:public_dns_name) { nil }
+    let(:public_ip_address) { nil }
+    let(:private_ip_address) { nil }
+    let(:server) {
+      double("server",
+        :public_dns_name => public_dns_name,
+        :public_ip_address => public_ip_address,
+        :private_ip_address => private_ip_address
+      )
+    }
+
+    it "returns nil if all sources are nil" do
+      expect(driver.hostname(server)).to eq(nil)
+    end
+
+    it "raises an error if provided an unknown interface" do
+      expect { driver.hostname(server, "foobar") }.to raise_error(Kitchen::UserError)
+    end
+
+    shared_examples "an interface type provided" do
+      it "returns public_dns_name when requested" do
+        expect(driver.hostname(server, "dns")).to eq(public_dns_name)
+      end
+      it "returns public_ip_address when requested" do
+        expect(driver.hostname(server, "public")).to eq(public_ip_address)
+      end
+      it "returns private_ip_address when requested" do
+        expect(driver.hostname(server, "private")).to eq(private_ip_address)
+      end
+    end
+
+    context "private_ip_address is populated" do
+      let(:private_ip_address) { "10.0.0.1" }
+
+      it "returns the private_ip_address" do
+        expect(driver.hostname(server)).to eq(private_ip_address)
+      end
+
+      include_examples "an interface type provided"
+    end
+
+    context "public_ip_address is populated" do
+      let(:private_ip_address) { "10.0.0.1" }
+      let(:public_ip_address) { "127.0.0.1" }
+
+      it "returns the public_ip_address" do
+        expect(driver.hostname(server)).to eq(public_ip_address)
+      end
+
+      include_examples "an interface type provided"
+    end
+
+    context "public_dns_name is populated" do
+      let(:private_ip_address) { "10.0.0.1" }
+      let(:public_ip_address) { "127.0.0.1" }
+      let(:public_dns_name) { "public_dns_name" }
+
+      it "returns the public_dns_name" do
+        expect(driver.hostname(server)).to eq(public_dns_name)
+      end
+
+      include_examples "an interface type provided"
+    end
+
+    context "public_dns_name returns as empty string" do
+      let(:public_dns_name) { "" }
+      it "returns nil" do
+        expect(driver.hostname(server)).to eq(nil)
+      end
+
+      context "and private_ip_address is populated" do
+        let(:private_ip_address) { "10.0.0.1" }
+        it "returns the private_ip_address" do
+          expect(driver.hostname(server)).to eq(private_ip_address)
+        end
+      end
     end
   end
 

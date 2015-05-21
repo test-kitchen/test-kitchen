@@ -20,9 +20,10 @@ require "benchmark"
 require "json"
 require "aws"
 require "kitchen"
-require "kitchen/driver/ec2_version"
+require_relative "ec2_version"
 require_relative "aws/client"
 require_relative "aws/instance_generator"
+require "aws-sdk-core/waiters/errors"
 
 module Kitchen
 
@@ -60,6 +61,7 @@ module Kitchen
       end
       default_config :username,            nil
       default_config :associate_public_ip, nil
+      default_config :interface,           nil
 
       required_config :aws_ssh_key_id
       required_config :image_id
@@ -194,14 +196,21 @@ module Kitchen
           t = config[:retryable_tries] * config[:retryable_sleep]
           info "Waited #{c}/#{t}s for instance <#{state[:server_id]}> to become ready."
         end
-        server = server.wait_until(
-          :max_attempts => config[:retryable_tries],
-          :delay => config[:retryable_sleep],
-          :before_attempt => wait_log
-        ) do |s|
-          hostname = hostname(s)
-          # Euca instances often report ready before they have an IP
-          s.state.name == "running" && !hostname.nil? && hostname != "0.0.0.0"
+        begin
+          server = server.wait_until(
+            :max_attempts => config[:retryable_tries],
+            :delay => config[:retryable_sleep],
+            :before_attempt => wait_log
+          ) do |s|
+            hostname = hostname(s, config[:interface])
+            # Euca instances often report ready before they have an IP
+            s.exists? && s.state.name == "running" && !hostname.nil? && hostname != "0.0.0.0"
+          end
+        rescue ::Aws::Waiters::Errors::WaiterFailed
+          error("Ran out of time waiting for the server with id [#{state[:server_id]}]" \
+            " to become ready, attempting to destroy it")
+          destroy(state)
+          raise
         end
 
         info("EC2 instance <#{state[:server_id]}> ready.")
@@ -217,7 +226,7 @@ module Kitchen
         server = ec2.get_instance(state[:server_id])
         unless server.nil?
           instance.transport.connection(state).close
-          server.terminate unless server.nil?
+          server.terminate
         end
         if state[:spot_request_id]
           debug("Deleting spot request <#{state[:server_id]}>")
@@ -234,8 +243,6 @@ module Kitchen
         region = amis["regions"][config[:region]]
         region && region[instance.platform.name]
       end
-
-      private
 
       def ec2
         @ec2 ||= Aws::Client.new(
@@ -354,6 +361,8 @@ module Kitchen
           potential_hostname = nil
           INTERFACE_TYPES.values.each do |type|
             potential_hostname ||= server.send(type)
+            # AWS returns an empty string if the dns name isn't populated yet
+            potential_hostname = nil if potential_hostname == ""
           end
           potential_hostname
         end
