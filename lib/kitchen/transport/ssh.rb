@@ -245,7 +245,7 @@ module Kitchen
               end
             end
           end
-          session.loop
+          session.loop { !exit_code.nil? }
           exit_code
         end
 
