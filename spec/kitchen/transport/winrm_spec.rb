@@ -703,7 +703,7 @@ MSG
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
       ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
-      HTTPClient::KeepAliveDisconnected
+      HTTPClient::KeepAliveDisconnected, HTTPClient::ConnectTimeoutError
     ].each do |klass|
       describe "raising #{klass}" do
 
