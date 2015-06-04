@@ -16,5 +16,4 @@ Feature: Search RubyGems to discover new Test Kitchen Driver gems
   Scenario: Running driver discover returns live results
     When I run `kitchen driver discover`
     Then the exit status should be 0
-    And the output should contain "kitchen-vagrant"
     And the output should contain "kitchen-bluebox"
