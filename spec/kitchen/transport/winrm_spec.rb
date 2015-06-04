@@ -53,8 +53,8 @@ describe Kitchen::Transport::Winrm do
       transport[:port].must_equal 5985
     end
 
-    it "sets :username to .\\administrator by default" do
-      transport[:username].must_equal ".\\administrator"
+    it "sets :username to administrator by default" do
+      transport[:username].must_equal "administrator"
     end
 
     it "sets :password to nil by default" do

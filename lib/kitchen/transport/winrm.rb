@@ -44,7 +44,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       default_config :port, 5985
-      default_config :username, ".\\administrator"
+      default_config :username, "administrator"
       default_config :password, nil
       default_config :endpoint_template, "http://%{hostname}:%{port}/wsman"
       default_config :rdp_port, 3389
