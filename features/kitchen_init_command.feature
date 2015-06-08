@@ -32,7 +32,7 @@ Feature: Add Test Kitchen support to an existing project
     And a file named "Thorfile" should not exist
     And a gem named "kitchen-vagrant" is installed
     And a file named "chefignore" should exist
-    And the file "chefignore" should contain "*/.kitchen/*"
+    And the file "chefignore" should contain ".kitchen"
 
   Scenario: Running init that creates a Gemfile
     When I successfully run `kitchen init --create-gemfile`
