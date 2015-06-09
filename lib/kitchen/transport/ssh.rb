@@ -48,6 +48,7 @@ module Kitchen
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
+      default_config :number_of_password_prompts, 3
 
       default_config :ssh_key, nil
       expand_path_for :ssh_key
@@ -292,20 +293,21 @@ module Kitchen
       # @api private
       def connection_options(data) # rubocop:disable Metrics/MethodLength
         opts = {
-          :logger                 => logger,
-          :user_known_hosts_file  => "/dev/null",
-          :paranoid               => false,
-          :hostname               => data[:hostname],
-          :port                   => data[:port],
-          :username               => data[:username],
-          :compression            => data[:compression],
-          :compression_level      => data[:compression_level],
-          :keepalive              => data[:keepalive],
-          :keepalive_interval     => data[:keepalive_interval],
-          :timeout                => data[:connection_timeout],
-          :connection_retries     => data[:connection_retries],
-          :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          :logger                     => logger,
+          :user_known_hosts_file      => "/dev/null",
+          :paranoid                   => false,
+          :hostname                   => data[:hostname],
+          :port                       => data[:port],
+          :username                   => data[:username],
+          :compression                => data[:compression],
+          :compression_level          => data[:compression_level],
+          :keepalive                  => data[:keepalive],
+          :keepalive_interval         => data[:keepalive_interval],
+          :timeout                    => data[:connection_timeout],
+          :connection_retries         => data[:connection_retries],
+          :connection_retry_sleep     => data[:connection_retry_sleep],
+          :max_wait_until_ready       => data[:max_wait_until_ready],
+          :number_of_password_prompts => data[:number_of_password_prompts]
         }
 
         opts[:keys_only] = true                     if data[:ssh_key]

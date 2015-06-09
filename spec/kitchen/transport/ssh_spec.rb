@@ -196,6 +196,10 @@ describe Kitchen::Transport::Ssh do
       transport[:max_wait_until_ready].must_equal 600
     end
 
+    it "sets :number_of_password_prompts to 3 by default" do
+      transport[:number_of_password_prompts].must_equal 3
+    end
+
     it "sets :ssh_key to nil by default" do
       transport[:ssh_key].must_equal nil
     end
@@ -468,6 +472,27 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:max_wait_until_ready] == "max_from_state"
+        end
+
+        make_connection
+      end
+
+      it "sets :number_of_password_prompts from config" do
+        config[:number_of_password_prompts] = "max_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:number_of_password_prompts] == "max_from_config"
+        end
+
+        make_connection
+      end
+
+      it "sets :number_of_password_prompts from state over config data" do
+        state[:number_of_password_prompts] = "max_from_state"
+        config[:number_of_password_prompts] = "max_from_config"
+
+        klass.expects(:new).with do |hash|
+          hash[:number_of_password_prompts] == "max_from_state"
         end
 
         make_connection
