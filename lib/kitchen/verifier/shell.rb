@@ -26,7 +26,7 @@ module Kitchen
     #
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Shell < Kitchen::Verifier::Base
-      require 'mixlib/shellout'
+      require "mixlib/shellout"
 
       kitchen_verifier_api_version 1
 
@@ -53,7 +53,7 @@ module Kitchen
       # @api private
       def sleep_if_set
         config[:sleep].to_i.times do
-          print '.'
+          print "."
           sleep 1
         end
         puts
@@ -67,7 +67,7 @@ module Kitchen
       end
 
       def merge_state_to_env(state)
-        env_state = {environment: {}}
+        env_state = { :environment => {} }
         state.each_pair do |key, value|
           env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value
         end
