@@ -64,7 +64,7 @@ describe Kitchen::Verifier::Shell do
     end
 
     it "sets :command to 'true' by default" do
-      verifier[:command].must_equal 'true'
+      verifier[:command].must_equal "true"
     end
 
     it "sets :live_stream to stdout by default" do
@@ -82,11 +82,11 @@ describe Kitchen::Verifier::Shell do
     end
 
     it "states are set to environment" do
-      state[:hostname] = 'testhost'
-      state[:server_id] = 'i-xxxxxx'
+      state[:hostname] = "testhost"
+      state[:server_id] = "i-xxxxxx"
       verifier.call(state)
-      config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal 'testhost'
-      config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal 'i-xxxxxx'
+      config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
+      config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
     end
 
     it "raises ActionFailed if set false to :command" do
