@@ -33,7 +33,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       default_config :sleep, 0
-      default_config :command, "id"
+      default_config :command, "true"
       default_config :shellout_opts, {}
       default_config :live_stream, $stdout
 
@@ -63,7 +63,11 @@ module Kitchen
         cmd = Mixlib::ShellOut.new(config[:command], config[:shellout_opts])
         cmd.live_stream = config[:live_stream]
         cmd.run_command
-        cmd.error!
+        begin
+          cmd.error!
+        rescue Mixlib::ShellOut::ShellCommandFailed
+          raise ActionFailed, "Action #verify failed for #{instance.to_str}."
+        end
       end
 
       def merge_state_to_env(state)
