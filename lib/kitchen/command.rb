@@ -168,7 +168,6 @@ module Kitchen
         queue = Queue.new
         instances.each { |i| queue << i }
         concurrency.times { queue << nil }
-
         threads = []
         concurrency.times do
           threads << Thread.new do
@@ -177,6 +176,7 @@ module Kitchen
             end
           end
         end
+        Thread.abort_on_exception = true if options[:'fail-fast']
         threads.map(&:join)
       end
     end

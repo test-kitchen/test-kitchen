@@ -162,6 +162,12 @@ module Kitchen
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
+      method_option :'fail-fast',
+        :aliases => "-f",
+        :type => :boolean,
+        :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
+          Fail Test Kitchen immediately if any test suites fails without waiting for others to finish when kitchen is running in concurrency mode
+        DESC
       log_options
       define_method(action) do |*args|
         update_config!
