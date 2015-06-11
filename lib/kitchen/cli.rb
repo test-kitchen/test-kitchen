@@ -166,7 +166,7 @@ module Kitchen
         :aliases => "-f",
         :type => :boolean,
         :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
-          Fail Test Kitchen immediately if any test suites fails without waiting for others to finish when kitchen is running in concurrency mode
+          Fail Test Kitchen immediately when get errors in concurrency mode
         DESC
       log_options
       define_method(action) do |*args|
