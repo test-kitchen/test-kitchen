@@ -241,6 +241,7 @@ module Kitchen
       :aliases => "-c",
       :desc => "execute via ssh"
     log_options
+    exclude_option
     def exec(*args)
       update_config!
       perform("exec", "exec", args)
