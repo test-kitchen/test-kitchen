@@ -93,6 +93,14 @@ module Kitchen
         :type => :boolean
     end
 
+    # Sets the exclude method_option
+    # @api private
+    def self.exclude_option
+      method_option :exclude,
+        :aliases => "-x",
+        :desc => "Set the name or pattern for excluding instances [INSTANCE|REGEXP]"
+    end
+
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
     method_option :bare,
       :aliases => "-b",
@@ -103,6 +111,7 @@ module Kitchen
       :type => :boolean,
       :desc => "[Deprecated] Please use `kitchen diagnose'"
     log_options
+    exclude_option
     def list(*args)
       update_config!
       perform("list", "list", args)
@@ -166,6 +175,7 @@ module Kitchen
           Run a #{action} against all matching instances concurrently.
         DESC
       log_options
+      exclude_option
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
@@ -211,6 +221,7 @@ module Kitchen
       :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
     log_options
+    exclude_option
     def test(*args)
       update_config!
       ensure_initialized

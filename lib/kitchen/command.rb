@@ -142,7 +142,12 @@ module Kitchen
       # @return [Array<Instance>] an array of instances
       # @api private
       def parse_subcommand(arg = nil)
-        arg == "all" ? all_instances : filtered_instances(arg)
+        targets = arg == "all" ? all_instances : filtered_instances(arg)
+        if options[:exclude]
+          excludes = filtered_instances(options[:exclude])
+          excludes.each {|ex| targets.delete(ex) }
+        end
+        targets
       end
     end
 
