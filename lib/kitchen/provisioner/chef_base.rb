@@ -189,6 +189,7 @@ module Kitchen
           :validation_key   => remote_path_join(root, "validation.pem"),
           :client_key       => remote_path_join(root, "client.pem"),
           :chef_server_url  => "http://127.0.0.1:8889",
+          :ssl_ca_path      => "/etc/ssl/certs",
           :encrypted_data_bag_secret => remote_path_join(
             root, "encrypted_data_bag_secret"
           )
