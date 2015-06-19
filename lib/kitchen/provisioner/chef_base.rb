@@ -257,9 +257,15 @@ module Kitchen
       # @return [String] shell variable lines
       # @api private
       def install_command_vars_for_bourne(version)
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        install_flags = %w[latest nightly true].include?(version) ? "" : "-v #{version}"
         if config[:chef_omnibus_install_options]
           install_flags << " " << config[:chef_omnibus_install_options]
+        end
+
+        # Do a little argument shuffling to ensure the latest of the latest!
+        if version.eql? "nightly"
+          version = "latest"
+          install_flags << " -n"
         end
 
         [
