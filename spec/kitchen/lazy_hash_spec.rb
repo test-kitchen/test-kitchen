@@ -94,4 +94,24 @@ describe Kitchen::LazyHash do
         must_equal :shed_color => "blue", :barn => "locked", :genre => "heavy metal"
     end
   end
+
+  describe "enumerable" do
+    it "is an Enumerable" do
+      assert Kitchen::LazyHash.new(hash_obj, context).is_a? Enumerable
+    end
+
+    it "returns an Enumerator from each() if no block given" do
+      e = Kitchen::LazyHash.new(hash_obj, context).each
+      e.is_a? Enumerator
+      e.next.must_equal [ :shed_color, "blue" ]
+      e.next.must_equal [ :barn, "locked" ]
+      e.next.must_equal [ :genre, "heavy metal" ]
+    end
+
+    it "yields each item to the block if a block is given to each()" do
+      items = []
+      e = Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i }
+      items.must_equal [ [ :shed_color, "blue" ], [:barn, "locked"], [:genre, "heavy metal"] ]
+    end
+  end
 end

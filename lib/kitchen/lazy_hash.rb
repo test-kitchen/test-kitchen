@@ -53,6 +53,7 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class LazyHash < SimpleDelegator
+    include Enumerable
 
     # Creates a new LazyHash using a Hash-like object to populate itself and
     # an object that can be used as context in value-callable blocks. The
@@ -112,6 +113,16 @@ module Kitchen
     # @return [Hash] a new hash
     def select(&block)
       to_hash.select(&block)
+    end
+
+    # If no block provided, returns an enumerator over the keys and
+    # rendered values in the underlying object.  If a block is
+    # provided, calls the block once for each [key, rendered_value]
+    # pair in the underlying object.
+    #
+    # @return [Enumerator, Array]
+    def each(&block)
+      to_hash.each(&block)
     end
 
     private
