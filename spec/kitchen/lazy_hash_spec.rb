@@ -103,15 +103,15 @@ describe Kitchen::LazyHash do
     it "returns an Enumerator from each() if no block given" do
       e = Kitchen::LazyHash.new(hash_obj, context).each
       e.is_a? Enumerator
-      e.next.must_equal [ :shed_color, "blue" ]
-      e.next.must_equal [ :barn, "locked" ]
-      e.next.must_equal [ :genre, "heavy metal" ]
+      e.next.must_equal [:shed_color, "blue"]
+      e.next.must_equal [:barn, "locked"]
+      e.next.must_equal [:genre, "heavy metal"]
     end
 
     it "yields each item to the block if a block is given to each()" do
       items = []
-      e = Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i }
-      items.must_equal [ [ :shed_color, "blue" ], [:barn, "locked"], [:genre, "heavy metal"] ]
+      Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i }
+      items.must_equal [[:shed_color, "blue"], [:barn, "locked"], [:genre, "heavy metal"]]
     end
   end
 end
