@@ -1,3 +1,21 @@
+## 1.4.1 / 2015-06-18
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* Issue [#663][], PR [#665][]: Centos 6.4 no longer supported, upgrade in templates for `kitchen init` ([@lloydde][])
+* PR [#711][]: Update to Ubuntu 14.04 and Centos 7.1 for `kitchen init` ([@fnichol][])
+* PR [#734][]: Fix failing `kitchen driver discover` test ([@fnichol][])
+* Issue [#732][], PR [#737][]: Generate a `chefignore` file during `kitchen init` ([@metadave][])
+* Issue [#688][], PR [#728][] and [#736][]: Default WinRM username updated to `administrator` and additional errors caught for retry logic when trying to login with WinRM ([@zl4bv][], [@tyler-ball][])
+
+### New features
+
+### Improvements
+
+* PR [#704][]: Don't prompt for passwords when using public key auth ([@caboteria][])
+
 ## 1.4.0 / 2015-04-28
 
 (*A selected roll-up of 1.4.0 pre-release changelogs*)
@@ -717,6 +735,8 @@ The initial release.
 [#654]: https://github.com/test-kitchen/test-kitchen/issues/654
 [#656]: https://github.com/test-kitchen/test-kitchen/issues/656
 [#658]: https://github.com/test-kitchen/test-kitchen/issues/658
+[#663]: https://github.com/test-kitchen/test-kitchen/issues/663
+[#665]: https://github.com/test-kitchen/test-kitchen/issues/665
 [#666]: https://github.com/test-kitchen/test-kitchen/issues/666
 [#667]: https://github.com/test-kitchen/test-kitchen/issues/667
 [#668]: https://github.com/test-kitchen/test-kitchen/issues/668
@@ -724,6 +744,14 @@ The initial release.
 [#673]: https://github.com/test-kitchen/test-kitchen/issues/673
 [#674]: https://github.com/test-kitchen/test-kitchen/issues/674
 [#675]: https://github.com/test-kitchen/test-kitchen/issues/675
+[#688]: https://github.com/test-kitchen/test-kitchen/issues/688
+[#704]: https://github.com/test-kitchen/test-kitchen/issues/704
+[#711]: https://github.com/test-kitchen/test-kitchen/issues/711
+[#728]: https://github.com/test-kitchen/test-kitchen/issues/728
+[#732]: https://github.com/test-kitchen/test-kitchen/issues/732
+[#734]: https://github.com/test-kitchen/test-kitchen/issues/734
+[#736]: https://github.com/test-kitchen/test-kitchen/issues/736
+[#737]: https://github.com/test-kitchen/test-kitchen/issues/737
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@adamhjk]: https://github.com/adamhjk
@@ -733,6 +761,7 @@ The initial release.
 [@benlangfeld]: https://github.com/benlangfeld
 [@bkw]: https://github.com/bkw
 [@bryanwb]: https://github.com/bryanwb
+[@caboteria]: https://github.com/caboteria
 [@calavera]: https://github.com/calavera
 [@chrishenry]: https://github.com/chrishenry
 [@coderanger]: https://github.com/coderanger
@@ -763,11 +792,13 @@ The initial release.
 [@kamalim]: https://github.com/kamalim
 [@kisoku]: https://github.com/kisoku
 [@lamont-granquist]: https://github.com/lamont-granquist
+[@lloydde]: https://github.com/lloydde
 [@manul]: https://github.com/manul
 [@martinb3]: https://github.com/martinb3
 [@mattray]: https://github.com/mattray
 [@mconigliaro]: https://github.com/mconigliaro
 [@mcquin]: https://github.com/mcquin
+[@metadave]: https://github.com/metadave
 [@michaelkirk]: https://github.com/michaelkirk
 [@miketheman]: https://github.com/miketheman
 [@mthssdrbrg]: https://github.com/mthssdrbrg
@@ -797,4 +828,5 @@ The initial release.
 [@tknerr]: https://github.com/tknerr
 [@tyler-ball]: https://github.com/tyler-ball
 [@whiteley]: https://github.com/whiteley
+[@zl4bv]: https://github.com/zl4bv
 [@zts]: https://github.com/zts

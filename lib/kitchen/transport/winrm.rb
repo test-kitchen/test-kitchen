@@ -44,7 +44,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       default_config :port, 5985
-      default_config :username, ".\\administrator"
+      default_config :username, "administrator"
       default_config :password, nil
       default_config :endpoint_template, "http://%{hostname}:%{port}/wsman"
       default_config :rdp_port, 3389
@@ -139,7 +139,8 @@ module Kitchen
             Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
             Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
             ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
-            HTTPClient::KeepAliveDisconnected
+            HTTPClient::KeepAliveDisconnected,
+            HTTPClient::ConnectTimeoutError
           ].freeze
         end
 

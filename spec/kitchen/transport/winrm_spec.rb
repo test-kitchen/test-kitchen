@@ -53,8 +53,8 @@ describe Kitchen::Transport::Winrm do
       transport[:port].must_equal 5985
     end
 
-    it "sets :username to .\\administrator by default" do
-      transport[:username].must_equal ".\\administrator"
+    it "sets :username to administrator by default" do
+      transport[:username].must_equal "administrator"
     end
 
     it "sets :password to nil by default" do
@@ -703,7 +703,7 @@ MSG
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
       ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
-      HTTPClient::KeepAliveDisconnected
+      HTTPClient::KeepAliveDisconnected, HTTPClient::ConnectTimeoutError
     ].each do |klass|
       describe "raising #{klass}" do
 
