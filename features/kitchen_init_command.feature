@@ -224,3 +224,49 @@ Feature: Add Test Kitchen support to an existing project
         attributes:
 
     """
+
+  Scenario: Running init with an empty file metadata.rb sets an empty run list
+    Given an empty file named "metadata.rb"
+    When I successfully run `kitchen init`
+    Then the file ".kitchen.yml" should contain exactly:
+    """
+    ---
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
+
+    platforms:
+      - name: ubuntu-14.04
+      - name: centos-7.1
+
+    suites:
+      - name: default
+        run_list:
+        attributes:
+
+    """
+
+  Scenario: Running init with no metadata.rb file sets an empty run list
+    Given a file named "metadata.rb" does not exist
+    When I successfully run `kitchen init`
+    Then the file ".kitchen.yml" should contain exactly:
+    """
+    ---
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
+
+    platforms:
+      - name: ubuntu-14.04
+      - name: centos-7.1
+
+    suites:
+      - name: default
+        run_list:
+        attributes:
+
+    """
