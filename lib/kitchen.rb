@@ -89,10 +89,10 @@ module Kitchen
       log_location = log_location.to_s
 
       Logger.new(
-          :stdout => $stdout,
-          :logdev => log_location,
-          :level => Util.to_logger_level(level),
-          :log_overwrite => log_overwrite
+        :stdout => $stdout,
+        :logdev => log_location,
+        :level => Util.to_logger_level(level),
+        :log_overwrite => log_overwrite
       )
     end
 
