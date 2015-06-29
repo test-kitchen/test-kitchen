@@ -36,7 +36,7 @@ def with_sorted_dir_entries
     class << self
       alias_method :__entries__, :entries unless method_defined?(:__entries__)
 
-      def entries(*args)
+      def entries(*args) # rubocop:disable Lint/NestedMethodDefinition
         send(:__entries__, *args).sort
       end
     end
@@ -95,7 +95,7 @@ module Net
           pty_data = ["xterm", 80, 24, 640, 480, "\0"]
 
           script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types
+            def types # rubocop:disable Lint/NestedMethodDefinition
               if @type == 98 && @data[1] == "pty-req"
                 @types ||= [
                   :long, :string, :bool, :string,
@@ -579,9 +579,9 @@ describe Kitchen::Transport::Ssh do
         make_connection(state)
         make_connection(state)
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[SSH] reusing existing connection ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
 
       it "returns a new connection when called again if state differs" do
@@ -602,9 +602,9 @@ describe Kitchen::Transport::Ssh do
         make_connection(state)
         make_connection(state.merge(:port => 9000))
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[SSH] shutting previous connection ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -694,9 +694,9 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
-          }.size.must_equal 3
+          }.must_equal 3
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -717,10 +717,10 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ info_line_with(
               "[SSH] connection failed, retrying in 7 seconds")
-          }.size.must_equal 2
+          }.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -730,9 +730,9 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          }.size.must_equal 1
+          }.must_equal 1
         end
       end
     end
@@ -1161,16 +1161,16 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ info_line_with(
             "Waiting for SSH service on foo:22, retrying in 3 seconds")
-        }.size.must_equal((300 / 3) - 1)
-        logged_output.string.lines.select { |l|
+        }.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[SSH] connection failed ")
-        }.size.must_equal((300 / 3) - 1)
-        logged_output.string.lines.select { |l|
+        }.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count { |l|
           l =~ warn_line_with("[SSH] connection failed, terminating ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
 
       it "sleeps for 3 seconds between retries" do

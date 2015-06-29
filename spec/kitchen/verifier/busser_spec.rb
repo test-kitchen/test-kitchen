@@ -135,7 +135,6 @@ describe Kitchen::Verifier::Busser do
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.common_bourne_variable_specs
     it "uses bourne shell" do
       cmd.must_match(/\Ash -c '$/)
@@ -162,9 +161,7 @@ describe Kitchen::Verifier::Busser do
       cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"; export GEM_CACHE})
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.common_powershell_variable_specs
     it "sets the BUSSER_ROOT environment variable" do
       cmd.must_match regexify(%{$env:BUSSER_ROOT = "\\r"})
@@ -182,7 +179,6 @@ describe Kitchen::Verifier::Busser do
       cmd.must_match regexify(%{$env:GEM_CACHE = "\\r\\gems\\cache"})
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   describe "#install_command" do
 
