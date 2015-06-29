@@ -158,9 +158,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
-          }.size.must_equal opts[:ssh_retries]
+          }.must_equal opts[:ssh_retries]
         end
 
         it "sleeps for 1 second between retries" do
@@ -179,9 +179,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ info_line_with("[SSH] connection failed, retrying ")
-          }.size.must_equal 2
+          }.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -190,9 +190,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          }.size.must_equal 1
+          }.must_equal 1
         end
       end
     end
@@ -642,9 +642,9 @@ describe Kitchen::SSH do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
       ssh.wait
 
-      logged_output.string.lines.select { |l|
+      logged_output.string.lines.count { |l|
         l =~ info_line_with("Waiting for foo:22...")
-      }.size.must_equal 2
+      }.must_equal 2
     end
   end
 

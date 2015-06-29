@@ -306,9 +306,9 @@ describe Kitchen::Transport::Winrm do
         make_connection(state)
         make_connection(state)
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[WinRM] reusing existing connection ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
 
       it "returns a new connection when called again if state differs" do
@@ -329,9 +329,9 @@ describe Kitchen::Transport::Winrm do
         make_connection(state)
         make_connection(state.merge(:port => 9000))
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[WinRM] shutting previous connection ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -732,12 +732,12 @@ MSG
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ debug_line("[WinRM] opening remote shell on #{info}")
-          }.size.must_equal 3
-          logged_output.string.lines.select { |l|
+          }.must_equal 3
+          logged_output.string.lines.count { |l|
             l =~ debug_line("[WinRM] remote shell shell-123 is open on #{info}")
-          }.size.must_equal 0
+          }.must_equal 0
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -758,10 +758,10 @@ MSG
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ info_line_with(
               "[WinRM] connection failed, retrying in 7 seconds")
-          }.size.must_equal 2
+          }.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -771,9 +771,9 @@ MSG
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ warn_line_with("[WinRM] connection failed, terminating ")
-          }.size.must_equal 1
+          }.must_equal 1
         end
       end
     end
@@ -1033,16 +1033,16 @@ MSG
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        logged_output.string.lines.select { |l|
+        logged_output.string.lines.count { |l|
           l =~ info_line_with(
             "Waiting for WinRM service on http://foo:5985/wsman, retrying in 3 seconds")
-        }.size.must_equal((300 / 3) - 1)
-        logged_output.string.lines.select { |l|
+        }.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count { |l|
           l =~ debug_line_with("[WinRM] connection failed ")
-        }.size.must_equal((300 / 3) - 1)
-        logged_output.string.lines.select { |l|
+        }.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count { |l|
           l =~ warn_line_with("[WinRM] connection failed, terminating ")
-        }.size.must_equal 1
+        }.must_equal 1
       end
 
       it "sleeps for 3 seconds between retries" do
