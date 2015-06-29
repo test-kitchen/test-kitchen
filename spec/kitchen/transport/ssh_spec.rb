@@ -36,7 +36,7 @@ def with_sorted_dir_entries
     class << self
       alias_method :__entries__, :entries unless method_defined?(:__entries__)
 
-      def entries(*args)
+      def entries(*args) # rubocop:disable Lint/NestedMethodDefinition
         send(:__entries__, *args).sort
       end
     end
@@ -95,7 +95,7 @@ module Net
           pty_data = ["xterm", 80, 24, 640, 480, "\0"]
 
           script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types
+            def types # rubocop:disable Lint/NestedMethodDefinition
               if @type == 98 && @data[1] == "pty-req"
                 @types ||= [
                   :long, :string, :bool, :string,
