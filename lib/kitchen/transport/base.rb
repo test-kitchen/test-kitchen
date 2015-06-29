@@ -161,11 +161,9 @@ module Kitchen
       #
       # @param version [Integer,String] a version number
       #
-      # rubocop:disable Style/TrivialAccessors
       def self.kitchen_transport_api_version(version)
         @api_version = version
       end
-      # rubocop:enable Style/TrivialAccessors
     end
   end
 end

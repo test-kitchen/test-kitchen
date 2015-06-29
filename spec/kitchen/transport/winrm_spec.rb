@@ -968,7 +968,6 @@ MSG
       transporter.stubs(:upload)
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_specs_for_upload
       it "builds a Winrm::FileTransporter" do
         WinRM::Transport::FileTransporter.unstub(:new)
@@ -990,7 +989,6 @@ MSG
         upload
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     describe "for a file" do
 
