@@ -810,7 +810,6 @@ describe Kitchen::Provisioner::ChefZero do
         config[:require_chef_omnibus] = "10.20"
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def self.common_old_shell_specs
         it "does not set local mode flag" do
           cmd.wont_match regexify(" --local-mode", :partial_line)
