@@ -20,7 +20,7 @@ require_relative "../spec_helper"
 
 require "kitchen/data_munger"
 
-module Kitchen
+module Kitchen # rubocop:disable Metrics/ModuleLength
 
   describe DataMunger do
 

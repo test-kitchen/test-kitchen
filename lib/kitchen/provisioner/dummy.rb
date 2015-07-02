@@ -58,7 +58,7 @@ module Kitchen
       #
       # @api private
       def failure_if_set
-        if config[:"fail"]
+        if config[:fail]
           debug("Failure for Provisioner #{name}.")
           raise ActionFailed, "Action #converge failed for #{instance.to_str}."
         elsif config[:random_failure] && randomly_fail?

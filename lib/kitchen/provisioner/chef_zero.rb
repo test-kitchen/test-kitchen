@@ -99,10 +99,10 @@ module Kitchen
         # these flags are modern/chef-client local most only and will not work
         # on older versions of chef-client
         if config[:chef_zero_host]
-          args <<  "--chef-zero-host #{config[:chef_zero_host]}"
+          args << "--chef-zero-host #{config[:chef_zero_host]}"
         end
         if config[:chef_zero_port]
-          args <<  "--chef-zero-port #{config[:chef_zero_port]}"
+          args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
       end
 

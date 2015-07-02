@@ -176,11 +176,9 @@ module Kitchen
       #
       # @param version [Integer,String] a version number
       #
-      # rubocop:disable Style/TrivialAccessors
       def self.kitchen_provisioner_api_version(version)
         @api_version = version
       end
-      # rubocop:enable Style/TrivialAccessors
 
       private
 
