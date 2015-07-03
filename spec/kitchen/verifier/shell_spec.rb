@@ -27,7 +27,7 @@ describe Kitchen::Verifier::Shell do
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:platform)      { stub(:os_type => nil, :shell_type => nil) }
+  let(:platform)      { stub(:os_type => nil, :shell_type => nil, :name => "coolbeans") }
   let(:suite)         { stub(:name => "fries") }
   let(:state)         { Hash.new }
 
@@ -37,7 +37,7 @@ describe Kitchen::Verifier::Shell do
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
+      :name => [platform.name, suite.name].join("-"),
       :to_str => "instance",
       :logger => logger,
       :suite => suite,
@@ -87,6 +87,9 @@ describe Kitchen::Verifier::Shell do
       verifier.call(state)
       config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
       config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+      config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+      config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
+      config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
     end
 
     it "raises ActionFailed if set false to :command" do
