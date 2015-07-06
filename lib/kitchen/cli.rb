@@ -91,6 +91,10 @@ module Kitchen
       method_option :log_overwrite,
         :desc => "Set to false to prevent log overwriting each time Test Kitchen runs",
         :type => :boolean
+      method_option :color,
+        :type => :boolean,
+        :lazy_default => $stdout.tty?,
+        :desc => "Toggle color output for STDOUT logger"
     end
 
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
@@ -338,13 +342,14 @@ module Kitchen
       unless options[:log_overwrite].nil?
         @config.log_overwrite = options[:log_overwrite]
       end
+      @config.colorize = options[:color] unless options[:color].nil?
 
       # Now that we have required configs, lets create our file logger
       Kitchen.logger = Kitchen.default_file_logger(
         level,
         options[:log_overwrite]
       )
-
+      
       update_parallel!
     end
 

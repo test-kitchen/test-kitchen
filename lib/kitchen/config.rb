@@ -77,6 +77,14 @@ module Kitchen
     # @api private
     attr_accessor :log_overwrite
 
+    # @return [Boolean] whether to force color output or not in logger
+    # @api private
+    attr_accessor :log_overwrite
+
+    # @return [Boolean] whether to force color output or not in logger
+    # @api private
+    attr_accessor :colorize
+
     # Creates a new configuration, representing a particular testing
     # configuration for a project.
     #
@@ -100,6 +108,7 @@ module Kitchen
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
       @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
       @log_overwrite  = options.fetch(:log_overwrite) { Kitchen::DEFAULT_LOG_OVERWRITE }
+      @colorize       = options.fetch(:colorize) { Kitchen.tty? } 
       @log_root       = options.fetch(:log_root) { default_log_root }
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
     end
@@ -264,7 +273,8 @@ module Kitchen
         :logdev   => log_location,
         :level    => Util.to_logger_level(log_level),
         :log_overwrite => log_overwrite,
-        :progname => name
+        :progname => name,
+        :colorize => @colorize
       )
     end
 

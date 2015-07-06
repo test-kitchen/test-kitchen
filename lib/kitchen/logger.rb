@@ -78,8 +78,8 @@ module Kitchen
     def populate_loggers(color, options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
-      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
-      @loggers << stdout_logger($stdout, color) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], color, options[:colorize]) if options[:stdout]
+      @loggers << stdout_logger($stdout, color, options[:colorize]) if @loggers.empty?
     end
     private :populate_loggers
 
@@ -288,9 +288,9 @@ module Kitchen
     # @param color [Symbol] color to use when outputing messages
     # @return [StdoutLogger] a new logger
     # @api private
-    def stdout_logger(stdout, color)
+    def stdout_logger(stdout, color, colorize)
       logger = StdoutLogger.new(stdout)
-      if Kitchen.tty?
+      if colorize
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
           Color.colorize("#{msg}", color).concat("\n")
         end
