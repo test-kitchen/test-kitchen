@@ -91,6 +91,10 @@ module Kitchen
       method_option :log_overwrite,
         :desc => "Set to false to prevent log overwriting each time Test Kitchen runs",
         :type => :boolean
+      method_option :color,
+        :type => :boolean,
+        :lazy_default => $stdout.tty?,
+        :desc => "Toggle color output for STDOUT logger"
     end
 
     # Sets the test_base_path method_options
@@ -349,6 +353,7 @@ module Kitchen
       unless options[:log_overwrite].nil?
         @config.log_overwrite = options[:log_overwrite]
       end
+      @config.colorize = options[:color] unless options[:color].nil?
 
       if options[:test_base_path]
         # ensure we have an absolute path
@@ -360,7 +365,7 @@ module Kitchen
         log_level,
         options[:log_overwrite]
       )
-
+      
       update_parallel!
     end
 
