@@ -31,12 +31,12 @@ Before do
   @aruba_timeout_seconds = 15
   @cleanup_dirs = []
 
-  Aruba::InProcess.main_class = ArubaHelper
-  Aruba.process = Aruba::InProcess
+  Aruba::Processes::InProcess.main_class = ArubaHelper
+  Aruba.process = Aruba::Processes::InProcess
 end
 
 Before("@spawn") do
-  Aruba.process = Aruba::SpawnProcess
+  Aruba.process = Aruba::Processes::SpawnProcess
 end
 
 After do |s|
