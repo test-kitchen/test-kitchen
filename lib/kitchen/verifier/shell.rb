@@ -36,14 +36,30 @@ module Kitchen
       default_config :command, "true"
       default_config :shellout_opts, {}
       default_config :live_stream, $stdout
+      default_config :remote_exec, false
 
       # (see Base#call)
       def call(state)
         info("[#{name}] Verify on instance=#{instance} with state=#{state}")
         sleep_if_set
         merge_state_to_env(state)
-        shellout
+        if config[:remote_exec]
+          instance.transport.connection(state) do |conn|
+            conn.execute(config[:command])
+          end
+        else
+          shellout
+        end
         debug("[#{name}] Verify completed.")
+      end
+
+      def run_command
+        if config[:remote_exec]
+          config[:command]
+        else
+          shellout
+          nil
+        end
       end
 
       private
