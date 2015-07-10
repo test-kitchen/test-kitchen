@@ -162,7 +162,7 @@ module Kitchen
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
-      method_option :'fail-fast',
+      method_option :fail_fast,
         :aliases => "-f",
         :type => :boolean,
         :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
