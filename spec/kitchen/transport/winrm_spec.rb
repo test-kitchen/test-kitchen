@@ -43,6 +43,10 @@ end
 
 describe Kitchen::Transport::Winrm do
 
+  before do
+    RbConfig::CONFIG.stubs(:[]).with("host_os").returns("blah")
+  end
+
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
@@ -53,7 +57,11 @@ describe Kitchen::Transport::Winrm do
   end
 
   let(:transport) do
-    Kitchen::Transport::Winrm.new(config).finalize_config!(instance)
+    t = Kitchen::Transport::Winrm.new(config)
+    # :load_winrm_s! is not cross-platform safe
+    # and gets initialized too early in the pipeline
+    t.stubs(:load_winrm_s!)
+    t.finalize_config!(instance)
   end
 
   it "provisioner api_version is 1" do
@@ -97,6 +105,10 @@ describe Kitchen::Transport::Winrm do
 
     it "sets :max_wait_until_ready to 600 by default" do
       transport[:max_wait_until_ready].must_equal 600
+    end
+
+    it "sets :winrm_transport to :plaintext" do
+      transport[:winrm_transport].must_equal :plaintext
     end
   end
 
@@ -165,9 +177,10 @@ describe Kitchen::Transport::Winrm do
       it "sets :endpoint from data in config" do
         config[:hostname] = "host_from_config"
         config[:port] = "port_from_config"
+        config[:winrm_transport] = "ssl"
 
         klass.expects(:new).with do |hash|
-          hash[:endpoint] == "http://host_from_config:port_from_config/wsman"
+          hash[:endpoint] == "https://host_from_config:port_from_config/wsman"
         end
 
         make_connection
@@ -178,9 +191,10 @@ describe Kitchen::Transport::Winrm do
         config[:hostname] = "host_from_config"
         state[:port] = "port_from_state"
         config[:port] = "port_from_config"
+        config[:winrm_transport] = "ssl"
 
         klass.expects(:new).with do |hash|
-          hash[:endpoint] == "http://host_from_state:port_from_state/wsman"
+          hash[:endpoint] == "https://host_from_state:port_from_state/wsman"
         end
 
         make_connection
@@ -312,6 +326,55 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
+      it "sets :winrm_transport from config data" do
+        config[:winrm_transport] = "ssl"
+
+        klass.expects(:new).with do |hash|
+          hash[:winrm_transport] == :ssl
+        end
+
+        make_connection
+      end
+
+      describe "when sspinegotiate is set in config" do
+        before do
+          config[:winrm_transport] = "sspinegotiate"
+        end
+
+        describe "for Windows workstations" do
+          before do
+            RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
+          end
+
+          it "sets :winrm_transport to sspinegotiate on Windows" do
+
+            klass.expects(:new).with do |hash|
+              hash[:winrm_transport] == :sspinegotiate &&
+                hash[:disable_sspi] == false &&
+                hash[:basic_auth_only] == false
+            end
+
+            make_connection
+          end
+        end
+
+        describe "for non-Windows workstations" do
+          before do
+            RbConfig::CONFIG.stubs(:[]).with("host_os").returns("darwin14")
+          end
+
+          it "sets :winrm_transport to plaintext" do
+            klass.expects(:new).with do |hash|
+              hash[:winrm_transport] == :plaintext &&
+                hash[:disable_sspi] == true &&
+                hash[:basic_auth_only] == true
+            end
+
+            make_connection
+          end
+        end
+      end
+
       it "returns the same connection when called again with same state" do
         first_connection  = make_connection(state)
         second_connection = make_connection(state)
@@ -375,66 +438,133 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "#load_needed_dependencies" do
-
-    before do
-      # force loading of winrm-transport to get the version constant
-      require "winrm/transport/version"
-    end
-
-    it "logs a message to debug that code will be loaded" do
-      transport
-
-      logged_output.string.must_match debug_line_with(
-        "Winrm Transport requested, loading WinRM::Transport gem")
-    end
-
-    it "logs a message to debug when library is initially loaded" do
-      transport = Kitchen::Transport::Winrm.new(config)
-      transport.stubs(:require)
-      transport.stubs(:require).with("winrm/transport/version").returns(true)
-      transport.finalize_config!(instance)
-
-      logged_output.string.must_match(
-        %r{^D, .* : WinRM::Transport [^\s]+ library loaded$}
-      )
-    end
-
-    it "logs a message to debug when library is previously loaded" do
-      transport = Kitchen::Transport::Winrm.new(config)
-      transport.stubs(:require)
-      transport.stubs(:require).with("winrm/transport/version").returns(false)
-      transport.finalize_config!(instance)
-
-      logged_output.string.must_match(
-        %r{^D, .* : WinRM::Transport [^\s]+ previously loaded$}
-      )
-    end
-
-    it "logs a message to fatal when libraries cannot be loaded" do
-      transport = Kitchen::Transport::Winrm.new(config)
-      transport.stubs(:require)
-      transport.stubs(:require).with("winrm/transport/version").
-        raises(LoadError, "uh oh")
-      begin
-        transport.finalize_config!(instance)
-      rescue # rubocop:disable Lint/HandleExceptions
-        # we are interested in the log output, not this exception
+    describe "winrm-transport" do
+      before do
+        # force loading of winrm-transport to get the version constant
+        require "winrm/transport/version"
       end
 
-      logged_output.string.must_match fatal_line_with(
-        "The `winrm-transport' gem is missing and must be installed")
+      it "logs a message to debug that code will be loaded" do
+        transport.stubs(:require)
+        transport
+
+        logged_output.string.must_match debug_line_with(
+          "Winrm Transport requested, loading WinRM::Transport gem")
+      end
+
+      it "logs a message to debug when library is initially loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:require)
+        transport.stubs(:execute_block).returns(true)
+
+        transport.finalize_config!(instance)
+
+        logged_output.string.must_match(
+          /WinRM::Transport library loaded/
+        )
+      end
+
+      it "logs a message to debug when library is previously loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:require)
+        transport.stubs(:execute_block).returns(false)
+
+        transport.finalize_config!(instance)
+
+        logged_output.string.must_match(
+          /WinRM::Transport previously loaded/
+        )
+      end
+
+      it "logs a message to fatal when libraries cannot be loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:require)
+        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        begin
+          transport.finalize_config!(instance)
+        rescue # rubocop:disable Lint/HandleExceptions
+          # we are interested in the log output, not this exception
+        end
+
+        logged_output.string.must_match fatal_line_with(
+          "The `winrm-transport` gem is missing and must be installed")
+      end
+
+      it "raises a UserError when libraries cannot be loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:require)
+        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+
+        err = proc {
+          transport.finalize_config!(instance)
+        }.must_raise Kitchen::UserError
+        err.message.must_match(/^Could not load or activate winrm-transport\. /)
+      end
     end
 
-    it "raises a UserError when libraries cannot be loaded" do
-      transport = Kitchen::Transport::Winrm.new(config)
-      transport.stubs(:require)
-      transport.stubs(:require).with("winrm/transport/version").
-        raises(LoadError, "uh oh")
+    describe "winrm-s" do
+      before do
+        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
+      end
 
-      err = proc {
+      it "logs a message to debug that code will be loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:require)
         transport.finalize_config!(instance)
-      }.must_raise Kitchen::UserError
-      err.message.must_match(/^Could not load or activate WinRM::Transport /)
+
+        logged_output.string.must_match debug_line_with(
+          "The winrm-s gem is being loaded")
+      end
+
+      it "logs a message to debug when library is initially loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:execute_block).returns(true)
+
+        transport.finalize_config!(instance)
+
+        logged_output.string.must_match(
+          /winrm-s is loaded/
+        )
+      end
+
+      it "logs a message to debug when library is previously loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:execute_block).returns(false)
+
+        transport.finalize_config!(instance)
+
+        logged_output.string.must_match(
+          /winrm-s was already loaded/
+        )
+      end
+
+      it "logs a message to fatal when libraries cannot be loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        begin
+          transport.finalize_config!(instance)
+        rescue # rubocop:disable Lint/HandleExceptions
+          # we are interested in the log output, not this exception
+        end
+
+        logged_output.string.must_match fatal_line_with(
+          "The `winrm-s` gem is missing and must be installed")
+      end
+
+      it "raises a UserError when libraries cannot be loaded" do
+        transport = Kitchen::Transport::Winrm.new(config)
+        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+
+        err = proc {
+          transport.finalize_config!(instance)
+        }.must_raise Kitchen::UserError
+        err.message.must_match(/^Could not load or activate winrm-s\. /)
+      end
     end
   end
 
