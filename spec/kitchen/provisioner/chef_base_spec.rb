@@ -323,6 +323,14 @@ describe Kitchen::Provisioner::ChefBase do
         cmd.must_match regexify(%{version="latest"})
       end
 
+      it "will install the nightly of chef, if necessary" do
+        config[:require_chef_omnibus] = "nightly"
+
+        cmd.must_match regexify(%{install_flags="-n"})
+        cmd.must_match regexify(%{pretty_version="always install latest version"})
+        cmd.must_match regexify(%{version="latest"})
+      end
+
       it "will install a of chef, unless it exists" do
         config[:require_chef_omnibus] = true
 

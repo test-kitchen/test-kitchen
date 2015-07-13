@@ -166,7 +166,7 @@ module Kitchen
         version = config[:require_chef_omnibus]
 
         case version
-        when nil, false, true, 11, "11", "latest"
+        when nil, false, true, 11, "11", "latest", "nightly"
           true
         else
           Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
