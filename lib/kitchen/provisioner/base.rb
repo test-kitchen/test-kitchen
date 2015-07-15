@@ -141,7 +141,18 @@ module Kitchen
       # @return [String] the absolute path to the sandbox directory
       # @raise [ClientError] if the sandbox directory has no yet been created
       #   by calling `#create_sandbox`
+      # @raise [ClientError] if the system temp directory has incorrect
+      #   permissions causing the mktempdir call to try to use config[:kitchen_root]
+      #   instead.
       def sandbox_path
+        if File.dirname(@sandbox_path) == config[:kitchen_root]
+          raise ClientError,
+            "There was a problem attempting to write to your " \
+            "default system temp directory. Check the permissions, and on " \
+            "non-windows hosts ensure the tmp sticky bit is set on the temp " \
+            "directory."
+        end
+
         @sandbox_path || (raise ClientError, "Sandbox directory has not yet " \
           "been created. Please run #{self.class}#create_sandox before " \
           "trying to access the path.")
