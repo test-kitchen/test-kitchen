@@ -1136,6 +1136,53 @@ describe Kitchen::Transport::Ssh::Connection do
     end
   end
 
+  describe "#download" do
+
+    describe "for a file" do
+
+      let(:dst) do
+        file = Tempfile.new("file")
+        file.close
+        FileUtils.chmod(0755, file.path)
+        file
+      end
+
+      before do
+        expect_scp_session("-f /tmp/remote") do |channel|
+          channel.sends_data("\0")
+          channel.gets_data("C0755 1234 /tmp/remote\n")
+          channel.sends_data("\0")
+          channel.gets_data("a" * 1234)
+          channel.gets_data("\0")
+          channel.sends_data("\0")
+        end
+      end
+
+      after do
+        dst.unlink
+      end
+
+      it "downloads a file from remote over scp" do
+        assert_scripted do
+          connection.download("/tmp/remote", dst.path)
+        end
+      end
+
+      it "logs download progress to debug" do
+        assert_scripted do
+          connection.download("/tmp/remote", dst.path)
+        end
+
+        logged_output.string.must_match debug_line(
+          "[SSH] opening connection to me@foo<{:port=>22}>"
+        )
+        logged_output.string.must_match debug_line(
+          "Downloaded /tmp/remote to #{dst.path}"
+        )
+      end
+    end
+  end
+
   describe "#wait_until_ready" do
 
     before do

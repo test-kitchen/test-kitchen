@@ -73,6 +73,7 @@ describe Kitchen::Driver::SSHBase do
     v.stubs(:cleanup_sandbox).returns(true)
     v.stubs(:sandbox_path).returns("/tmp/sandbox")
     v.stubs(:[]).with(:root_path).returns("/tmp/verifier")
+    v.stubs(:[]).with(:scp_file).returns(nil)
     v
   end
 
@@ -638,6 +639,16 @@ describe Kitchen::Driver::SSHBase do
 
     it "uploads sandbox files" do
       connection.expects(:upload).with([], "/tmp/verifier")
+
+      cmd
+    end
+
+    it "downloads files if specified in verifer" do
+      verifier.stubs(:[]).with(:scp_file).returns(:source => "/tmp/reports",
+                                                  :dest => "./reports",
+                                                  :recursive => true)
+
+      connection.expects(:download).with("/tmp/reports", "./reports", true)
 
       cmd
     end

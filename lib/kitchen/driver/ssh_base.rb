@@ -102,7 +102,7 @@ module Kitchen
       end
 
       # (see Base#verify)
-      def verify(state) # rubocop:disable Metrics/AbcSize
+      def verify(state) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         verifier = instance.verifier
         verifier.create_sandbox
         sandbox_dirs = Dir.glob(File.join(verifier.sandbox_path, "*"))
@@ -118,6 +118,17 @@ module Kitchen
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
       ensure
+        if verifier[:scp_file]
+          instance.transport.connection(backcompat_merged_state(state)) do |conn|
+            info "Transferring #{verifier[:scp_file][:source]} from instance" \
+              " to #{verifier[:scp_file][:dest]} on host"
+            conn.download(
+              verifier[:scp_file][:source],
+              verifier[:scp_file][:dest],
+              verifier[:scp_file][:recursive])
+            debug("Transfer complete")
+          end
+        end
         instance.verifier.cleanup_sandbox
       end
 
