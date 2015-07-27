@@ -105,6 +105,8 @@ module Kitchen
       def default_windows_chef_metadata_url
         version = config[:require_chef_omnibus]
         version = "latest" if version == true
+        nightly = config[:nightly]
+
         base = if config[:chef_omnibus_url] =~ %r{/install.sh$}
           "#{File.dirname(config[:chef_omnibus_url])}/"
         else
@@ -114,6 +116,7 @@ module Kitchen
         url = "#{base}#{metadata_project_from_options}"
         url << "?p=windows&m=x86_64&pv=2008r2" # same pacakge for all versions
         url << "&v=#{CGI.escape(version.to_s.downcase)}"
+        url << "&nightlies=true" if nightly
         url
       end
 
