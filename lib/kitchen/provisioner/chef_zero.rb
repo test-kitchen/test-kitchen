@@ -169,7 +169,13 @@ module Kitchen
         when nil, false, true, 11, "11", "latest"
           true
         else
-          Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
+          if Gem::Version.correct?(version)
+            Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
+          else
+            # Build versions of chef, for example
+            # 12.5.0-current.0+20150721082808.git.14.c91b337-1
+            true
+          end
         end
       end
 
