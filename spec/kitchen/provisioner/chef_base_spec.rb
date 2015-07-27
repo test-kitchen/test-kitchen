@@ -175,6 +175,28 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner[:chef_metadata_url].
             must_equal "#{base_url}-chefdk?p=windows&m=x86_64&pv=2008r2&v=0.3"
         end
+
+        it "defaults to a nightly from :nightly" do
+          config[:nightly] = true
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=latest&nightlies=true"
+        end
+
+        it "defaults to nightly from :require_chef_omnibus" do
+          config[:require_chef_omnibus] = "nightly"
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=latest&nightlies=true"
+        end
+
+        it "defaults to versioned nightly from :require_chef_omnibus and :nightly" do
+          config[:require_chef_omnibus] = 12.4
+          config[:nightly] = true
+
+          provisioner[:chef_metadata_url].
+            must_equal "#{base_url}?p=windows&m=x86_64&pv=2008r2&v=12.4&nightlies=true"
+        end
       end
     end
 
@@ -323,7 +345,7 @@ describe Kitchen::Provisioner::ChefBase do
         cmd.must_match regexify(%{version="10.1.0.rc.1"})
       end
 
-      it "will install a nightly, if necessary" do
+      it "will install an explicit nightly, if necessary" do
         config[:require_chef_omnibus] = "12.5.0-current.0+20150721082808.git.14.c91b337-1"
 
         cmd.must_match(
@@ -332,6 +354,12 @@ describe Kitchen::Provisioner::ChefBase do
           regexify(%{pretty_version="12.5.0-current.0+20150721082808.git.14.c91b337-1"}))
         cmd.must_match(
           regexify(%{version="12.5.0-current.0+20150721082808.git.14.c91b337-1"}))
+      end
+
+      it "will install a nightly, if necessary" do
+        config[:nightly] = true
+
+        cmd.must_match regexify(%{install_flags="-n"})
       end
 
       it "will install the latest of chef, if necessary" do
