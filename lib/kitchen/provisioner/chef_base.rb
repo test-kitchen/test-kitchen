@@ -105,8 +105,8 @@ module Kitchen
       #   for installing a Windows MSI package
       def default_windows_chef_metadata_url
         version = config[:require_chef_omnibus]
-        version = "latest" if version == true
-        nightly = config[:nightly]
+        nightly = config[:nightly] || version == "nightly"
+        version = "latest" if version == true || version == "nightly"
 
         base = if config[:chef_omnibus_url] =~ %r{/install.sh$}
           "#{File.dirname(config[:chef_omnibus_url])}/"
@@ -262,8 +262,8 @@ module Kitchen
       # @return [String] shell variable lines
       # @api private
       def install_command_vars_for_bourne(version)
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{CGI.escape(version)}"
-        if config[:nightly]
+        install_flags = %w[latest true nightly].include?(version) ? "" : "-v #{CGI.escape(version)}"
+        if config[:nightly] || version == "nightly"
           install_flags << " " << "-n"
         end
         if config[:chef_omnibus_install_options]
