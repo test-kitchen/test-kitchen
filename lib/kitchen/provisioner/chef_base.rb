@@ -262,6 +262,9 @@ module Kitchen
       # @api private
       def install_command_vars_for_bourne(version)
         install_flags = %w[latest true].include?(version) ? "" : "-v #{CGI.escape(version)}"
+        if config[:nightly]
+          install_flags << " " << "-n"
+        end
         if config[:chef_omnibus_install_options]
           install_flags << " " << config[:chef_omnibus_install_options]
         end
