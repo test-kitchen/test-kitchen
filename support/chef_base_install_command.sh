@@ -172,13 +172,22 @@ should_update_chef() {
     return 0;
   fi
 
-  chef_version="`${1}/bin/chef-solo -v | cut -d \" \" -f 2`";
+  if test -f "${1}/version-manifest.txt"; then
+    chef_version="`head -n 1 ${1}/version-manifest.txt | cut -d \" \" -f 2`";
+  else
+    chef_version="`${1}/bin/chef-solo -v | cut -d \" \" -f 2`";
+  fi
 
   echo "$chef_version" | grep "^${2}" 2>&1 >/dev/null;
   if test $? -eq 0; then
     return 1;
   else
-    return 0;
+    echo "${2}" | grep "^$chef_version" 2>&1 >/dev/null;
+    if test $? -eq 0; then
+      return 1;
+    else
+      return 0;
+    fi
   fi
 }
 

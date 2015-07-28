@@ -19,6 +19,7 @@
 require "fileutils"
 require "pathname"
 require "json"
+require "cgi"
 
 require "kitchen/provisioner/chef/berkshelf"
 require "kitchen/provisioner/chef/common_sandbox"
@@ -112,7 +113,7 @@ module Kitchen
 
         url = "#{base}#{metadata_project_from_options}"
         url << "?p=windows&m=x86_64&pv=2008r2" # same pacakge for all versions
-        url << "&v=#{version.to_s.downcase}"
+        url << "&v=#{CGI.escape(version.to_s.downcase)}"
         url
       end
 
@@ -257,7 +258,7 @@ module Kitchen
       # @return [String] shell variable lines
       # @api private
       def install_command_vars_for_bourne(version)
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
+        install_flags = %w[latest true].include?(version) ? "" : "-v #{CGI.escape(version)}"
         if config[:chef_omnibus_install_options]
           install_flags << " " << config[:chef_omnibus_install_options]
         end
