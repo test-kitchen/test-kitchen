@@ -25,6 +25,7 @@ require "kitchen/provisioner/chef/berkshelf"
 require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
+require "mixlib/install"
 
 module Kitchen
 
@@ -46,18 +47,6 @@ module Kitchen
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
-
-      default_config :chef_metadata_url do |provisioner|
-        provisioner.default_windows_chef_metadata_url if provisioner.windows_os?
-      end
-
-      default_config :chef_omnibus_root do |provisioner|
-        if provisioner.windows_os?
-          "$env:systemdrive\\opscode\\chef"
-        else
-          "/opt/chef"
-        end
-      end
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
@@ -100,23 +89,6 @@ module Kitchen
         Chef::CommonSandbox.new(config, sandbox_path, instance).populate
       end
 
-      # @return [String] a metadata URL for the Chef Omnitruck API suitable
-      #   for installing a Windows MSI package
-      def default_windows_chef_metadata_url
-        version = config[:require_chef_omnibus]
-        version = "latest" if version == true
-        base = if config[:chef_omnibus_url] =~ %r{/install.sh$}
-          "#{File.dirname(config[:chef_omnibus_url])}/"
-        else
-          "https://www.chef.io/chef/"
-        end
-
-        url = "#{base}#{metadata_project_from_options}"
-        url << "?p=windows&m=x86_64&pv=2008r2" # same pacakge for all versions
-        url << "&v=#{CGI.escape(version.to_s.downcase)}"
-        url
-      end
-
       # (see Base#init_command)
       def init_command
         dirs = %w[
@@ -139,16 +111,29 @@ module Kitchen
 
         version = config[:require_chef_omnibus].to_s.downcase
 
-        vars = if powershell_shell?
-          install_command_vars_for_powershell(version)
-        else
-          install_command_vars_for_bourne(version)
-        end
-
-        shell_code_from_file(vars, "chef_base_install_command")
+        installer = Mixlib::Install.new(version, powershell_shell?, install_options)
+        config[:chef_omnibus_root] = installer.root
+        installer.install_command
       end
 
       private
+
+      # @return [Hash] an option hash for the install commands
+      # @api private
+      def install_options
+        project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
+        {
+          :omnibus_url => config[:chef_omnibus_url],
+          :project => project.nil? ? nil : project[1],
+          :install_flags => config[:chef_omnibus_install_options],
+          :use_sudo => config[:sudo],
+          :sudo_command => config[:sudo_command]
+        }.tap do |opts|
+          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
+          opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy
+          opts[:https_proxy] = config[:https_proxy] if config.key? :https_proxy
+        end
+      end
 
       # @return [String] an absolute path to a Berksfile, relative to the
       #   kitchen root
@@ -251,43 +236,6 @@ module Kitchen
         ].join("\n")
       end
 
-      # Generates the install command variables for Bourne shell-based
-      # platforms.
-      #
-      # @param version [String] version string
-      # @return [String] shell variable lines
-      # @api private
-      def install_command_vars_for_bourne(version)
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{CGI.escape(version)}"
-        if config[:chef_omnibus_install_options]
-          install_flags << " " << config[:chef_omnibus_install_options]
-        end
-
-        [
-          shell_var("chef_omnibus_root", config[:chef_omnibus_root]),
-          shell_var("chef_omnibus_url", config[:chef_omnibus_url]),
-          shell_var("install_flags", install_flags.strip),
-          shell_var("pretty_version", pretty_version(version)),
-          shell_var("sudo_sh", sudo("sh")),
-          shell_var("version", version)
-        ].join("\n")
-      end
-
-      # Generates the install command variables for PowerShell-based platforms.
-      #
-      # @param version [String] version string
-      # @return [String] shell variable lines
-      # @api private
-      def install_command_vars_for_powershell(version)
-        [
-          shell_var("chef_metadata_url", config[:chef_metadata_url]),
-          shell_var("chef_omnibus_root", config[:chef_omnibus_root]),
-          shell_var("msi", "$env:TEMP\\chef-#{version}.msi"),
-          shell_var("pretty_version", pretty_version(version)),
-          shell_var("version", version)
-        ].join("\n")
-      end
-
       # Load cookbook dependency resolver code, if required.
       #
       # (see Base#load_needed_dependencies!)
@@ -299,31 +247,6 @@ module Kitchen
         elsif File.exist?(cheffile)
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
-        end
-      end
-
-      # @return the correct Chef Omnitruck API metadata endpoint, based on
-      #   project type which could live in
-      #   `config[:chef_omnibus_install_options]`
-      # @api private
-      def metadata_project_from_options
-        match = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
-
-        if match.nil? || match[1].downcase == "chef"
-          "metadata"
-        else
-          "metadata-#{match[1].downcase}"
-        end
-      end
-
-      # @return [String] a pretty/helpful representation of a Chef Omnibus
-      #   package version
-      # @api private
-      def pretty_version(version)
-        case version
-        when "true" then "install only if missing"
-        when "latest" then "always install latest version"
-        else version
         end
       end
 
