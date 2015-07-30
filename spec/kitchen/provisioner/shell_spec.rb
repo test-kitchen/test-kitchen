@@ -66,7 +66,7 @@ describe Kitchen::Provisioner::Shell do
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it ":script uses calculate_path and is expanded" do
-        provisioner[:script].must_equal "/rooty/<calculated>/bootstrap.sh"
+        provisioner[:script].must_equal os_safe_root_path("/rooty/<calculated>/bootstrap.sh")
       end
     end
 
@@ -75,12 +75,12 @@ describe Kitchen::Provisioner::Shell do
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it ":script uses calculate_path and is expanded" do
-        provisioner[:script].must_equal "/rooty/<calculated>/bootstrap.ps1"
+        provisioner[:script].must_equal os_safe_root_path("/rooty/<calculated>/bootstrap.ps1")
       end
     end
 
     it ":data_path uses calculate_path and is expanded" do
-      provisioner[:data_path].must_equal "/rooty/<calculated>/data"
+      provisioner[:data_path].must_equal os_safe_root_path("/rooty/<calculated>/data")
     end
   end
 
@@ -398,7 +398,10 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          sandbox_path("my_script").executable?.must_equal true
+          unless running_tests_on_windows?
+            # Windows doesn't have the concept of executable
+            sandbox_path("my_script").executable?.must_equal true
+          end
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 
@@ -442,7 +445,10 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             sandbox_path("bootstrap.sh").file?.must_equal true
-            sandbox_path("bootstrap.sh").executable?.must_equal true
+            unless running_tests_on_windows?
+              # Windows doesn't have the concept of executable
+              sandbox_path("bootstrap.sh").executable?.must_equal true
+            end
             IO.read(sandbox_path("bootstrap.sh")).
               must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
           end
@@ -470,7 +476,10 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             sandbox_path("bootstrap.ps1").file?.must_equal true
-            sandbox_path("bootstrap.ps1").executable?.must_equal true
+            unless running_tests_on_windows?
+              # Windows doesn't have the concept of executable
+              sandbox_path("bootstrap.ps1").executable?.must_equal true
+            end
             IO.read(sandbox_path("bootstrap.ps1")).
               must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
           end

@@ -67,3 +67,19 @@ def with_fake_fs
   FakeFS.deactivate!
   FakeFS::FileSystem.clear
 end
+
+def running_tests_on_windows?
+  ENV['OS'] == 'Windows_NT'
+end
+
+def os_safe_root_path(root_path)
+  if running_tests_on_windows?
+    "#{File.join(ENV['SystemDrive'], root_path)}"
+  else
+    root_path
+  end
+end
+
+def padded_octal_string(integer)
+  integer.to_s(8).rjust(4,'0')
+end
