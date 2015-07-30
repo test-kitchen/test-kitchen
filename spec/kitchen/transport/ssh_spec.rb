@@ -1056,7 +1056,7 @@ describe Kitchen::Transport::Ssh::Connection do
       before do
         @dir = Dir.mktmpdir("local")
 
-        #Since File.chmod is a NOOP on Windows
+        # Since File.chmod is a NOOP on Windows
         @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
         @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
         @beta_file_mode = running_tests_on_windows? ? 0444 : 0555

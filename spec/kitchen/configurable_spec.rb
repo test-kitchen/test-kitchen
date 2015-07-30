@@ -330,7 +330,7 @@ describe Kitchen::Configurable do
         paths = %W[
           /tmp/yo/self/a /tmp/yo/self/b /tmp/yo/self/c
         ]
-        os_safe_paths = paths.collect {|path| os_safe_root_path(path)}
+        os_safe_paths = paths.collect { |path| os_safe_root_path(path) }
         subject[:bunch_of_paths].must_equal os_safe_paths
       end
 
