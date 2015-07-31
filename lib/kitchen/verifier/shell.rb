@@ -53,6 +53,7 @@ module Kitchen
         debug("[#{name}] Verify completed.")
       end
 
+      # for legacy drivers.
       def run_command
         if config[:remote_exec]
           config[:command]

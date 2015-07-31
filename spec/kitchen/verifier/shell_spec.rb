@@ -103,5 +103,53 @@ describe Kitchen::Verifier::Shell do
 
       logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
     end
+
+    describe "remote_exec" do
+      let(:transport) do
+        t = mock("transport")
+        t.responds_like_instance_of(Kitchen::Transport::Base)
+        t
+      end
+
+      let(:connection) do
+        c = mock("transport_connection")
+        c.responds_like_instance_of(Kitchen::Transport::Base::Connection)
+        c
+      end
+
+      let(:instance) do
+        stub(
+          :name => "coolbeans",
+          :to_str => "instance",
+          :logger => logger,
+          :platform => platform,
+          :suite => suite,
+          :transport => transport
+        )
+      end
+
+      before do
+        transport.stubs(:connection).yields(connection)
+        connection.stubs(:execute)
+      end
+
+      it "execute command onto instance." do
+        config[:remote_exec] = true
+
+        transport.expects(:connection).with(state).yields(connection)
+        verifier.call(state)
+      end
+    end
+  end
+
+  describe "#run_command" do
+    it "execute localy and returns nil" do
+      verifier.run_command
+    end
+
+    it "returns string when remote_exec" do
+      config[:remote_exec] = true
+      verifier.run_command.must_equal "true"
+    end
   end
 end
