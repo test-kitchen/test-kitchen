@@ -311,25 +311,27 @@ describe Kitchen::Configurable do
       end
 
       it "expands a default value" do
-        subject[:success_path].must_equal "/tmp/yo/self/success"
+        subject[:success_path].must_equal os_safe_root_path("/tmp/yo/self/success")
       end
 
       it "uses provided config over default_config" do
         config[:success_path] = "mine"
 
-        subject[:success_path].must_equal "/tmp/yo/self/mine"
+        subject[:success_path].must_equal os_safe_root_path("/tmp/yo/self/mine")
       end
 
       it "leaves a full path expanded" do
         config[:success_path] = "/the/other/one"
 
-        subject[:success_path].must_equal "/the/other/one"
+        subject[:success_path].must_equal os_safe_root_path("/the/other/one")
       end
 
       it "expands all items if path is an array" do
-        subject[:bunch_of_paths].must_equal %W[
+        paths = %W[
           /tmp/yo/self/a /tmp/yo/self/b /tmp/yo/self/c
         ]
+        os_safe_paths = paths.collect { |path| os_safe_root_path(path) }
+        subject[:bunch_of_paths].must_equal os_safe_paths
       end
 
       it "doesn't expand path with a falsy expand_path_for value" do
@@ -342,7 +344,7 @@ describe Kitchen::Configurable do
         config[:something_else] = "is_set"
         config[:complex_path] = "./complex"
 
-        subject[:complex_path].must_equal "/tmp/yo/self/complex"
+        subject[:complex_path].must_equal os_safe_root_path("/tmp/yo/self/complex")
       end
 
       it "leaves a nil config value as nil" do
@@ -369,7 +371,7 @@ describe Kitchen::Configurable do
       end
 
       it "contains expand_path_for from superclass" do
-        subject[:success_path].must_equal "/rooty/success"
+        subject[:success_path].must_equal os_safe_root_path("/rooty/success")
       end
 
       it "uses its own expand_path_for over inherited expand_path_for" do

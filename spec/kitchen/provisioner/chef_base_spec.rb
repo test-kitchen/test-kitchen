@@ -203,33 +203,38 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":data_path uses calculate_path and is expanded" do
-      provisioner[:data_path].must_equal "/rooty/<calculated>/data"
+      provisioner[:data_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/data")
     end
 
     it ":data_bags_path uses calculate_path and is expanded" do
-      provisioner[:data_bags_path].must_equal "/rooty/<calculated>/data_bags"
+      provisioner[:data_bags_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/data_bags")
     end
 
     it ":environments_path uses calculate_path and is expanded" do
       provisioner[:environments_path].
-        must_equal "/rooty/<calculated>/environments"
+        must_equal os_safe_root_path("/rooty/<calculated>/environments")
     end
 
     it ":nodes_path uses calculate_path and is expanded" do
-      provisioner[:nodes_path].must_equal "/rooty/<calculated>/nodes"
+      provisioner[:nodes_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/nodes")
     end
 
     it ":roles_path uses calculate_path and is expanded" do
-      provisioner[:roles_path].must_equal "/rooty/<calculated>/roles"
+      provisioner[:roles_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/roles")
     end
 
     it ":clients_path uses calculate_path and is expanded" do
-      provisioner[:clients_path].must_equal "/rooty/<calculated>/clients"
+      provisioner[:clients_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/clients")
     end
 
     it "...secret_key_path uses calculate_path and is expanded" do
       provisioner[:encrypted_data_bag_secret_key_path].
-        must_equal "/rooty/<calculated>/encrypted_data_bag_secret_key"
+        must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
     end
   end
 

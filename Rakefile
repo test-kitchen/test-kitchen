@@ -12,7 +12,7 @@ end
 require "cucumber"
 require "cucumber/rake/task"
 Cucumber::Rake::Task.new(:features) do |t|
-  t.cucumber_opts = ["features", "-x", "--format progress"]
+  t.cucumber_opts = ["features", "-x", "--format progress", "--no-color"]
 end
 
 desc "Run all test suites"
@@ -29,7 +29,7 @@ end
 require "finstyle"
 require "rubocop/rake_task"
 RuboCop::RakeTask.new(:style) do |task|
-  task.options << "--display-cop-names"
+  task.options += ["--display-cop-names", "--no-color"]
 end
 
 if RUBY_ENGINE != "jruby"

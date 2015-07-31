@@ -47,7 +47,7 @@ describe Kitchen::Verifier::Busser do
     {
       "mondospec/charlie" => {
         :content => "charlie",
-        :perms => "0764"
+        :perms => (running_tests_on_windows? ? "0644" : "0764")
       },
       "minispec/beta" => {
         :content => "beta",
@@ -55,7 +55,7 @@ describe Kitchen::Verifier::Busser do
       },
       "abba/alpha" => {
         :content => "alpha",
-        :perms => "0440"
+        :perms => (running_tests_on_windows? ? "0444" : "0440")
       }
     }
   end
@@ -68,7 +68,7 @@ describe Kitchen::Verifier::Busser do
       },
       "abba/common" => {
         :content => "yeppers",
-        :perms => "0664"
+        :perms => (running_tests_on_windows? ? "0644" : "0664")
       }
     }
   end

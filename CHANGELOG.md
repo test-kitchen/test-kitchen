@@ -1,3 +1,15 @@
+## UNRELEASED
+
+### Potentially breaking changes
+
+### Bug fixes
+
+### New features
+
+### Improvements
+
+* PR [#689][]: Fixing tests to run on Windows and adding AppVeyor builds. ([@tyler-ball][] and [@smurawski][])
+
 ## 1.4.1 / 2015-06-18
 
 ### Potentially breaking changes
