@@ -56,7 +56,22 @@ module Kitchen
       required_config :compression
 
       default_config :compression_level do |transport|
-        transport[:compression] == "none" ? 0 : 6
+        transport[:compression] == false ? 0 : 6
+      end
+
+      def finalize_config!(instance)
+        super
+
+        # zlib was never a valid value and breaks in net-ssh >= 2.10
+        # TODO: remove these backwards compatiable casts in 2.0
+        case config[:compression]
+        when "zlib"
+          config[:compression] = "zlib@openssh.com"
+        when "none"
+          config[:compression] = false
+        end
+
+        self
       end
 
       # (see Base#connection)
