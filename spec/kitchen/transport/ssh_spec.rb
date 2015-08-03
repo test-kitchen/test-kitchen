@@ -145,21 +145,20 @@ describe Kitchen::Transport::Ssh do
       transport[:username].must_equal "root"
     end
 
-    it "sets :compression to zlib by default" do
-      transport[:compression].must_equal "zlib"
+    it "sets :compression to true by default" do
+      transport[:compression].must_equal true
     end
 
-    it "sets :compression to none if set to none" do
+    it "sets :compression to false if set to none" do
       config[:compression] = "none"
 
-      transport[:compression].must_equal "none"
+      transport[:compression].must_equal false
     end
 
-    it "raises a UserError if :compression is set to a bogus value" do
-      config[:compression] = "boom"
+    it "sets :compression to zlib@openssh.com if set to zlib" do
+      config[:compression] = "zlib"
 
-      err = proc { transport }.must_raise Kitchen::UserError
-      err.message.must_match(%r{value may only be set to `none' or `zlib'})
+      transport[:compression].must_equal "zlib@openssh.com"
     end
 
     it "sets :compression_level to 6 by default" do
@@ -309,7 +308,7 @@ describe Kitchen::Transport::Ssh do
         config[:compression] = "none"
 
         klass.expects(:new).with do |hash|
-          hash[:compression] == "none"
+          hash[:compression] == false
         end
 
         make_connection
