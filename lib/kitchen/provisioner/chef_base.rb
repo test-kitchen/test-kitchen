@@ -36,6 +36,7 @@ module Kitchen
     class ChefBase < Base
 
       default_config :require_chef_omnibus, true
+      default_config :nightly, false
       default_config :chef_omnibus_url, "https://www.chef.io/chef/install.sh"
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
@@ -104,7 +105,9 @@ module Kitchen
       #   for installing a Windows MSI package
       def default_windows_chef_metadata_url
         version = config[:require_chef_omnibus]
-        version = "latest" if version == true
+        nightly = config[:nightly] || version == "nightly"
+        version = "latest" if version == true || version == "nightly"
+
         base = if config[:chef_omnibus_url] =~ %r{/install.sh$}
           "#{File.dirname(config[:chef_omnibus_url])}/"
         else
@@ -114,6 +117,7 @@ module Kitchen
         url = "#{base}#{metadata_project_from_options}"
         url << "?p=windows&m=x86_64&pv=2008r2" # same pacakge for all versions
         url << "&v=#{CGI.escape(version.to_s.downcase)}"
+        url << "&nightlies=true" if nightly
         url
       end
 
@@ -258,7 +262,10 @@ module Kitchen
       # @return [String] shell variable lines
       # @api private
       def install_command_vars_for_bourne(version)
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{CGI.escape(version)}"
+        install_flags = %w[latest true nightly].include?(version) ? "" : "-v #{CGI.escape(version)}"
+        if config[:nightly] || version == "nightly"
+          install_flags << " " << "-n"
+        end
         if config[:chef_omnibus_install_options]
           install_flags << " " << config[:chef_omnibus_install_options]
         end
