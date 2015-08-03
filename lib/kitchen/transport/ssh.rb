@@ -52,13 +52,8 @@ module Kitchen
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
-      default_config :compression, "zlib"
-      required_config :compression do |attr, value, transport|
-        if !%W[zlib none].include?(value)
-          raise UserError, "#{transport} :#{attr} value may only " \
-            "be set to `none' or `zlib'."
-        end
-      end
+      default_config :compression, true
+      required_config :compression
 
       default_config :compression_level do |transport|
         transport[:compression] == "none" ? 0 : 6
