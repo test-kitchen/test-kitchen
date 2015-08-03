@@ -155,7 +155,7 @@ module Kitchen
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
           Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-          Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
+          Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Errno::ETIMEDOUT
         ].freeze
 
         # @return [Integer] how many times to retry when failing to execute
