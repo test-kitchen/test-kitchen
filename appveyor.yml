@@ -7,7 +7,6 @@ platform:
 environment:
   matrix:
     - ruby_version: "200"
-    - ruby_version: "215"
 
 clone_folder: c:\projects\test_kitchen
 clone_depth: 1
