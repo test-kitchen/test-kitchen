@@ -1,3 +1,19 @@
+## 1.4.2
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* PR [#801][]: Use compression `true` instead of `'zlib'` by default, supports net-ssh 2.10.  Old values of `'zlib'` and `'none'` are cast to `'zlib[@openssh][].com'` and `false` respectively but are deprecated.  In 2.0 this casting will be removed. ([@coderanger][])
+* PR [#802][]: net-ssh 2.10 throws a different error than 2.9 when connection times out, so we need to retry that. We now retry both the 2.9 and 2.10 errors. ([@Annih][])
+* Pinning to net-ssh < 2.10 because 2.10 no longer works with Ruby 1.9 and TK still does ([@tyler-ball][])
+
+### New features
+
+### Improvements
+
+* PR [#689][]: Fixing tests to run on Windows and adding AppVeyor builds. ([@tyler-ball][] and [@smurawski][])
+
 ## 1.4.1 / 2015-06-18
 
 ### Potentially breaking changes
@@ -745,6 +761,7 @@ The initial release.
 [#674]: https://github.com/test-kitchen/test-kitchen/issues/674
 [#675]: https://github.com/test-kitchen/test-kitchen/issues/675
 [#688]: https://github.com/test-kitchen/test-kitchen/issues/688
+[#689]: https://github.com/test-kitchen/test-kitchen/issues/689
 [#704]: https://github.com/test-kitchen/test-kitchen/issues/704
 [#711]: https://github.com/test-kitchen/test-kitchen/issues/711
 [#728]: https://github.com/test-kitchen/test-kitchen/issues/728
@@ -752,6 +769,9 @@ The initial release.
 [#734]: https://github.com/test-kitchen/test-kitchen/issues/734
 [#736]: https://github.com/test-kitchen/test-kitchen/issues/736
 [#737]: https://github.com/test-kitchen/test-kitchen/issues/737
+[#801]: https://github.com/test-kitchen/test-kitchen/issues/801
+[#802]: https://github.com/test-kitchen/test-kitchen/issues/802
+[@Annih]: https://github.com/Annih
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@adamhjk]: https://github.com/adamhjk
@@ -804,6 +824,7 @@ The initial release.
 [@mthssdrbrg]: https://github.com/mthssdrbrg
 [@mwrock]: https://github.com/mwrock
 [@oferrigni]: https://github.com/oferrigni
+[@openssh]: https://github.com/openssh
 [@patcon]: https://github.com/patcon
 [@portertech]: https://github.com/portertech
 [@rarenerd]: https://github.com/rarenerd
@@ -821,6 +842,7 @@ The initial release.
 [@scotthain]: https://github.com/scotthain
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
+[@smurawski]: https://github.com/smurawski
 [@someara]: https://github.com/someara
 [@srenatus]: https://github.com/srenatus
 [@stevendanna]: https://github.com/stevendanna

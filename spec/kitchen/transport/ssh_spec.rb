@@ -145,21 +145,20 @@ describe Kitchen::Transport::Ssh do
       transport[:username].must_equal "root"
     end
 
-    it "sets :compression to zlib by default" do
-      transport[:compression].must_equal "zlib"
+    it "sets :compression to true by default" do
+      transport[:compression].must_equal true
     end
 
-    it "sets :compression to none if set to none" do
+    it "sets :compression to false if set to none" do
       config[:compression] = "none"
 
-      transport[:compression].must_equal "none"
+      transport[:compression].must_equal false
     end
 
-    it "raises a UserError if :compression is set to a bogus value" do
-      config[:compression] = "boom"
+    it "sets :compression to zlib@openssh.com if set to zlib" do
+      config[:compression] = "zlib"
 
-      err = proc { transport }.must_raise Kitchen::UserError
-      err.message.must_match(%r{value may only be set to `none' or `zlib'})
+      transport[:compression].must_equal "zlib@openssh.com"
     end
 
     it "sets :compression_level to 6 by default" do
@@ -204,7 +203,7 @@ describe Kitchen::Transport::Ssh do
       config[:kitchen_root] = "/rooty"
       config[:ssh_key] = "my_key"
 
-      transport[:ssh_key].must_equal "/rooty/my_key"
+      transport[:ssh_key].must_equal os_safe_root_path("/rooty/my_key")
     end
   end
 
@@ -309,7 +308,7 @@ describe Kitchen::Transport::Ssh do
         config[:compression] = "none"
 
         klass.expects(:new).with do |hash|
-          hash[:compression] == "none"
+          hash[:compression] == false
         end
 
         make_connection
@@ -509,7 +508,7 @@ describe Kitchen::Transport::Ssh do
         config[:ssh_key] = "ssh_key_from_config"
 
         klass.expects(:new).with do |hash|
-          hash[:keys] == ["/r/ssh_key_from_config"]
+          hash[:keys] == [os_safe_root_path("/r/ssh_key_from_config")]
         end
 
         make_connection
@@ -667,7 +666,7 @@ describe Kitchen::Transport::Ssh::Connection do
   describe "establishing a connection" do
 
     [
-      Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+      Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
       Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
     ].each do |klass|
@@ -1018,8 +1017,9 @@ describe Kitchen::Transport::Ssh::Connection do
 
       before do
         expect_scp_session("-t /tmp/remote") do |channel|
+          file_mode = running_tests_on_windows? ? 0644 : 0755
           channel.gets_data("\0")
-          channel.sends_data("C0755 1234 #{File.basename(src.path)}\n")
+          channel.sends_data("C#{padded_octal_string(file_mode)} 1234 #{File.basename(src.path)}\n")
           channel.gets_data("\0")
           channel.sends_data("a" * 1234)
           channel.sends_data("\0")
@@ -1054,6 +1054,12 @@ describe Kitchen::Transport::Ssh::Connection do
     describe "for a path" do
       before do
         @dir = Dir.mktmpdir("local")
+
+        # Since File.chmod is a NOOP on Windows
+        @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
+        @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
+        @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
+
         FileUtils.chmod(0700, @dir)
         File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
         FileUtils.chmod(0644, "#{@dir}/alpha")
@@ -1066,16 +1072,16 @@ describe Kitchen::Transport::Ssh::Connection do
 
         expect_scp_session("-t -r /tmp/remote") do |channel|
           channel.gets_data("\0")
-          channel.sends_data("D0700 0 #{File.basename(@dir)}\n")
+          channel.sends_data("D#{padded_octal_string(@tmp_dir_mode)} 0 #{File.basename(@dir)}\n")
           channel.gets_data("\0")
-          channel.sends_data("C0644 15 alpha\n")
+          channel.sends_data("C#{padded_octal_string(@alpha_file_mode)} 15 alpha\n")
           channel.gets_data("\0")
           channel.sends_data("alpha-contents\n")
           channel.sends_data("\0")
           channel.gets_data("\0")
           channel.sends_data("D0755 0 subdir\n")
           channel.gets_data("\0")
-          channel.sends_data("C0555 14 beta\n")
+          channel.sends_data("C#{padded_octal_string(@beta_file_mode)} 14 beta\n")
           channel.gets_data("\0")
           channel.sends_data("beta-contents\n")
           channel.sends_data("\0")
