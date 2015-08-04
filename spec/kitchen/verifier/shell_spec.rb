@@ -107,13 +107,13 @@ describe Kitchen::Verifier::Shell do
     describe "remote_exec" do
       let(:transport) do
         t = mock("transport")
-        t.responds_like_instance_of(Kitchen::Transport::Base)
+        t.responds_like_instance_of(Kitchen::Transport::Ssh)
         t
       end
 
       let(:connection) do
         c = mock("transport_connection")
-        c.responds_like_instance_of(Kitchen::Transport::Base::Connection)
+        c.responds_like_instance_of(Kitchen::Transport::Ssh::Connection)
         c
       end
 
