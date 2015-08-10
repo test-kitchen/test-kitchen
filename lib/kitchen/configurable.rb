@@ -295,15 +295,22 @@ module Kitchen
     # @param code [String] the shell code to be wrapped
     # @return [String] wrapped shell code
     # @api private
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def wrap_shell_code(code)
       env = []
       if config[:http_proxy]
         env << shell_env_var("http_proxy", config[:http_proxy])
         env << shell_env_var("HTTP_PROXY", config[:http_proxy])
+      else
+        env << shell_env_var("http_proxy", ENV["http_proxy"]) if ENV["http_proxy"]
+        env << shell_env_var("HTTP_PROXY", ENV["HTTP_PROXY"]) if ENV["HTTP_PROXY"]
       end
       if config[:https_proxy]
         env << shell_env_var("https_proxy", config[:https_proxy])
         env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
+      else
+        env << shell_env_var("https_proxy", ENV["https_proxy"]) if ENV["https_proxy"]
+        env << shell_env_var("HTTPS_PROXY", ENV["HTTPS_PROXY"]) if ENV["HTTPS_PROXY"]
       end
       if powershell_shell?
         env.join("\n").concat("\n").concat(code)

@@ -727,6 +727,17 @@ describe Kitchen::Configurable do
 
     let(:cmd) { subject.send(:wrap_shell_code, "mkdir foo") }
 
+    before do
+      @original_env = ENV.to_hash
+      ENV.replace("http_proxy" => nil, "HTTP_PROXY" => nil,
+                  "https_proxy" => nil, "HTTPS_PROXY" => nil)
+    end
+
+    after do
+      ENV.clear
+      ENV.replace(@original_env)
+    end
+
     describe "for bourne shells" do
 
       before { platform.stubs(:shell_type).returns("bourne") }
@@ -778,6 +789,32 @@ describe Kitchen::Configurable do
           '
         CODE
       end
+
+      it "exports http_proxy & HTTP_PROXY from workstation when :http_proxy isn't set" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY from workstation when :https_proxy isn't set" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
     end
 
     describe "for powershell shells" do
@@ -815,6 +852,28 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports http_proxy & HTTP_PROXY from workstation when :http_proxy isn't set" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY from workstation when :https_proxy isn't set" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
           mkdir foo
