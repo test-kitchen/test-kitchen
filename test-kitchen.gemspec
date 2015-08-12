@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "net-ssh",         "~> 2.7", "< 2.10"
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
+  gem.add_dependency "mixlib-install",  "~> 0.7"
 
   gem.add_development_dependency "pry"
   gem.add_development_dependency "winrm-transport", "~> 1.0"
