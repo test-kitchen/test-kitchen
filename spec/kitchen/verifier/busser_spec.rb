@@ -237,7 +237,7 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{gem_install_args="busser --no-rdoc --no-ri"})
+            %{gem_install_args="busser --no-rdoc --no-ri --no-format-executable"})
         end
 
         it "prepends sudo for busser binstub command when :sudo is set" do
@@ -284,7 +284,7 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{$gem_install_args = "busser --no-rdoc --no-ri"})
+            %{$gem_install_args = "busser --no-rdoc --no-ri --no-format-executable"})
         end
 
         it "sets path to busser binstub command" do
