@@ -175,7 +175,7 @@ module Kitchen
 
         args = gem
         args += " --version #{version}" if version
-        args += " --no-rdoc --no-ri"
+        args += " --no-rdoc --no-ri --no-format-executable"
         args
       end
 
