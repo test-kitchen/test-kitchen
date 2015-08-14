@@ -288,11 +288,17 @@ describe Kitchen::Driver::SSHBase do
       provisioner.stubs(:[]).with(:root_path).returns("/rooty")
       FakeFS.activate!
       FileUtils.mkdir_p("/tmp")
+      @original_env = ENV.to_hash
+      ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
+                  "https_proxy" => nil, "HTTPS_PROXY" => nil,
+                  "no_proxy"    => nil, "NO_PROXY"    => nil)
     end
 
     after do
       FakeFS.deactivate!
       FakeFS::FileSystem.clear
+      ENV.clear
+      ENV.replace(@original_env)
     end
 
     constructs_an_ssh_connection
@@ -333,11 +339,65 @@ describe Kitchen::Driver::SSHBase do
       cmd
     end
 
+    it "invokes the #install_command with ENV[\"http_proxy\"] set" do
+      ENV["http_proxy"] = "http://proxy"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env http_proxy=http://proxy HTTP_PROXY=http://proxy install")
+      else
+        connection.expects(:execute).with("env http_proxy=http://proxy install")
+      end
+      cmd
+    end
+
+    it "invokes the #install_command with ENV[\"http_proxy\"] and ENV[\"no_proxy\"] set" do
+      ENV["http_proxy"] = "http://proxy"
+      ENV["no_proxy"]   = "http://no"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env http_proxy=http://proxy HTTP_PROXY=http://proxy " \
+            "no_proxy=http://no NO_PROXY=http://no install")
+      else
+        connection.expects(:execute).with("env http_proxy=http://proxy " \
+          "no_proxy=http://no install")
+      end
+      cmd
+    end
+
     it "invokes the #install_command with :https_proxy set in config" do
       config[:https_proxy] = "https://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with("env https_proxy=https://proxy install")
 
+      cmd
+    end
+
+    it "invokes the #install_command with ENV[\"https_proxy\"] set" do
+      ENV["https_proxy"] = "https://proxy"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy install")
+      else
+        connection.expects(:execute).with("env https_proxy=https://proxy install")
+      end
+      cmd
+    end
+
+    it "invokes the #install_command with ENV[\"https_proxy\"] and ENV[\"no_proxy\"] set" do
+      ENV["https_proxy"] = "https://proxy"
+      ENV["no_proxy"]    = "https://no"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy " \
+          "no_proxy=https://no NO_PROXY=https://no install")
+      else
+        connection.expects(:execute).with("env https_proxy=https://proxy " \
+          "no_proxy=https://no install")
+      end
       cmd
     end
 
