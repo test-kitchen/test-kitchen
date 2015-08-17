@@ -667,7 +667,7 @@ describe Kitchen::Transport::Ssh::Connection do
 
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
-      Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+      Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, EOFError,
       Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
     ].each do |klass|
       describe "raising #{klass}" do
