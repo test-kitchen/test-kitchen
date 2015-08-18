@@ -234,16 +234,26 @@ module Kitchen
       end
 
       # Adds http and https proxy environment variables to a command, if set
-      # in configuration data.
+      # in configuration data or on local workstation.
       #
       # @param cmd [String] command string
       # @return [String] command string
       # @api private
+      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       def env_cmd(cmd)
         return if cmd.nil?
         env = "env"
-        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
-        env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
+        http_proxy = config[:http_proxy] || ENV["http_proxy"] ||
+          ENV["HTTP_PROXY"]
+        https_proxy = config[:https_proxy] || ENV["https_proxy"] ||
+          ENV["HTTPS_PROXY"]
+        no_proxy = if (!config[:http_proxy] && http_proxy) ||
+            (!config[:https_proxy] && https_proxy)
+          ENV["no_proxy"] || ENV["NO_PROXY"]
+        end
+        env << " http_proxy=#{http_proxy}"   if http_proxy
+        env << " https_proxy=#{https_proxy}" if https_proxy
+        env << " no_proxy=#{no_proxy}"       if no_proxy
 
         env == "env" ? cmd : "#{env} #{cmd}"
       end
