@@ -66,6 +66,8 @@ module Kitchen
       def prepare_command
         return unless config[:remote_upload_path]
         commands = []
+        commands << [sudo('rm -rf'), config[:remote_upload_path] + ' &&']
+        commands << [sudo('mkdir -p'), config[:remote_upload_path] + ' &&']
         commands << [sudo('cp -r'),
                      File.join(config[:root_path],
                                File.basename(config[:upload_path]) + '/*'),
