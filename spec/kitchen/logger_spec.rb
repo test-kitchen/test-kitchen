@@ -282,7 +282,7 @@ describe Kitchen::Logger do
         )
       end
 
-      it "logger that receives full line plus partial line will flush on next message with newline" do
+      it "logger that receives mixed first chunk will flush next message with newline" do
         logger << "partially\no"
         logger << "kay\n"
 

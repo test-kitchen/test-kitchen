@@ -346,7 +346,7 @@ module Kitchen
         @buffer += msg
         while i = @buffer.index("\n")
           format_line(@buffer[0, i].chomp)
-          @buffer[0, i+1] = ''
+          @buffer[0, i + 1] = ""
         end
       end
 
