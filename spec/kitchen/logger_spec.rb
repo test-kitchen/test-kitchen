@@ -282,6 +282,16 @@ describe Kitchen::Logger do
         )
       end
 
+      it "logger that receives full line plus partial line will flush on next message with newline" do
+        logger << "partially\no"
+        logger << "kay\n"
+
+        stdout.string.must_equal(
+          colorize("       partially", opts[:color]) + "\n" +
+          colorize("       okay", opts[:color]) + "\n"
+        )
+      end
+
       it "logger chomps carriage return characters" do
         logger << [
           "-----> banner\r",
