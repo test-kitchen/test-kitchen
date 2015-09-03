@@ -267,6 +267,13 @@ module Kitchen
       state_file.read[:last_action]
     end
 
+    # Clean up any per-instance resources before exiting.
+    #
+    # @return [void]
+    def cleanup!
+      @transport.cleanup! if @transport
+    end
+
     private
 
     # @return [StateFile] a state file object that can be read from or written

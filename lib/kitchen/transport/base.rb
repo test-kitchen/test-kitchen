@@ -58,6 +58,13 @@ module Kitchen
         raise ClientError, "#{self.class}#connection must be implemented"
       end
 
+      # Closes the connection, if it is still active.
+      #
+      # @return [void]
+      def cleanup!
+        # This method may be left unimplemented if that is applicable
+      end
+
       # A Connection instance can be generated and re-generated, given new
       # connection details such as connection port, hostname, credentials, etc.
       # This object is responsible for carrying out the actions on the remote
