@@ -7,8 +7,7 @@ else
 fi
 
 if test ! -f "$BUSSER_ROOT/bin/busser"; then
-  gem_bindir=`$ruby -rrubygems -e "puts Gem.bindir"`
-  $gem_bindir/busser setup
+  $busser setup
 fi
 
 echo "       Installing Busser plugins: $plugins"

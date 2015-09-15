@@ -44,6 +44,8 @@ module Kitchen
         verifier.windows_os? ? nil : true
       end
 
+      default_config :chef_omnibus_root, "/opt/chef"
+
       default_config :sudo_command do |verifier|
         verifier.windows_os? ? nil : "sudo -E"
       end
