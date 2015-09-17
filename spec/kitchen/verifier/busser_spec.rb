@@ -237,12 +237,12 @@ describe Kitchen::Verifier::Busser do
           cmd.must_match regexify(%{version="the_best"})
         end
 
-        # rubocop:disable Metrics/LineLength
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{gem_install_args="busser --no-rdoc --no-ri --no-format-executable -n /r/bin --no-user-install"})
+            "gem_install_args=\"busser --no-rdoc --no-ri --no-format-executable" \
+            " -n /r/bin --no-user-install\""
+          )
         end
-        # rubocop:enable Metrics/LineLength
 
         it "prepends sudo for busser binstub command when :sudo is set" do
           cmd.must_match regexify(%{busser="sudo -E /r/bin/busser"})
@@ -286,12 +286,12 @@ describe Kitchen::Verifier::Busser do
           cmd.must_match regexify(%{$version = "the_best"})
         end
 
-        # rubocop:disable Metrics/LineLength
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{$gem_install_args = "busser --no-rdoc --no-ri --no-format-executable -n \\r\\bin --no-user-install"})
+            "$gem_install_args = \"busser --no-rdoc --no-ri --no-format-executable" \
+            " -n \\r\\bin --no-user-install\""
+          )
         end
-        # rubocop:enable Metrics/LineLength
 
         it "sets path to busser binstub command" do
           cmd.must_match regexify(%{$busser = "\\r\\bin\\busser.bat"})
