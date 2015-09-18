@@ -101,7 +101,9 @@ describe Kitchen::Verifier::Busser do
 
     describe "for unix operating systems" do
 
-      before { platform.stubs(:os_type).returns("unix") }
+      before {
+        platform.stubs(:os_type).returns("unix")
+      }
 
       it ":ruby_bindir defaults the an Omnibus Chef installation" do
         verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
@@ -237,7 +239,9 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{gem_install_args="busser --no-rdoc --no-ri --no-format-executable"})
+            "gem_install_args=\"busser --no-rdoc --no-ri --no-format-executable" \
+            " -n /r/bin --no-user-install\""
+          )
         end
 
         it "prepends sudo for busser binstub command when :sudo is set" do
@@ -284,7 +288,9 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{$gem_install_args = "busser --no-rdoc --no-ri --no-format-executable"})
+            "$gem_install_args = \"busser --no-rdoc --no-ri --no-format-executable" \
+            " -n \\r\\bin --no-user-install\""
+          )
         end
 
         it "sets path to busser binstub command" do

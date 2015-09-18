@@ -46,7 +46,7 @@ module Kitchen
         if verifier.windows_os?
           "$env:systemdrive\\opscode\\chef\\embedded\\bin"
         else
-          "/opt/chef/embedded/bin"
+          verifier.remote_path_join(%W[#{verifier[:chef_omnibus_root]} embedded bin])
         end
       end
 
@@ -173,9 +173,16 @@ module Kitchen
         gem, version = config[:version].split("@")
         gem, version = "busser", gem if gem =~ /^\d+\.\d+\.\d+/
 
+        root = config[:root_path]
+        gem_bin = remote_path_join(root, "bin")
+
+        # We don't want the gems to be installed in the home directory,
+        # this will force the bindir and the gem install location both
+        # to be under /tmp/verifier
         args = gem
         args += " --version #{version}" if version
-        args += " --no-rdoc --no-ri --no-format-executable"
+        args += " --no-rdoc --no-ri --no-format-executable -n #{gem_bin}"
+        args += " --no-user-install"
         args
       end
 
