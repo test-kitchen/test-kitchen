@@ -59,7 +59,7 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def call(state)
         create_sandbox
-        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*")) + Dir.glob(File.join(sandbox_path, ".[1-0a-zA-Z]*"))
+        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*")) + Dir.glob(File.join(sandbox_path, ".[a-zA-Z0-9]*"))
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
