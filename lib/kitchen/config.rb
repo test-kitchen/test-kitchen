@@ -95,13 +95,16 @@ module Kitchen
     #   directories (default: `"#{kitchen_root}/test/integration"`)
     # @option options [Symbol] :log_level the log level verbosity that the
     #   loggers will use when outputing information (default: `:info`)
+
     def initialize(options = {})
-      @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
-      @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
-      @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
-      @log_overwrite  = options.fetch(:log_overwrite) { Kitchen::DEFAULT_LOG_OVERWRITE }
-      @log_root       = options.fetch(:log_root) { default_log_root }
-      @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
+      @loader            = options.fetch(:loader) { Kitchen::Loader::YAML.new }
+      @kitchen_root      = options.fetch(:kitchen_root) { Dir.pwd }
+      init_log_level     = Kitchen.env_log || Kitchen::DEFAULT_LOG_LEVEL
+      @log_level         = options.fetch(:log_level) { init_log_level }
+      init_log_overwrite = Kitchen.env_log_overwrite || Kitchen::DEFAULT_LOG_OVERWRITE
+      @log_overwrite     = options.fetch(:log_overwrite) { init_log_overwrite }
+      @log_root          = options.fetch(:log_root) { default_log_root }
+      @test_base_path    = options.fetch(:test_base_path) { default_test_base_path }
     end
 
     # @return [Collection<Instance>] all instances, resulting from all
