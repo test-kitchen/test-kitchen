@@ -76,6 +76,8 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
+      default_config :remove_chef_repo, false
+
       def install_command
         return unless config[:require_chef_omnibus]
 
@@ -387,6 +389,14 @@ module Kitchen
         File.open(File.join(fake_cb, "metadata.rb"), "wb") do |file|
           file.write(%{name "#{name}\n"})
         end
+      end
+
+      def remove_chef_repo
+        config[:remove_chef_repo]
+      end
+
+      def remove_repo
+        remove_chef_repo ? "; #{sudo('rm')} -rf /tmp/kitchen " : nil
       end
 
       def resolve_with_berkshelf

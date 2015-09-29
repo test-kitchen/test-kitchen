@@ -67,7 +67,7 @@ module Kitchen
         if config[:json_attributes]
           args << "--json-attributes #{config[:root_path]}/dna.json"
         end
-
+        args << remove_repo
         if local_mode_supported?
           ["#{sudo('chef-client')} -z"].concat(args).join(" ")
         else

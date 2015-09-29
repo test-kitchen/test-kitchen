@@ -40,7 +40,8 @@ module Kitchen
           "--config #{config[:root_path]}/solo.rb",
           "--json-attributes #{config[:root_path]}/dna.json",
           config[:log_file] ? "--logfile #{config[:log_file]}" : nil,
-          "--log_level #{config[:log_level]}"
+          "--log_level #{config[:log_level]}",
+          remove_repo
         ].join(" ")
       end
 
