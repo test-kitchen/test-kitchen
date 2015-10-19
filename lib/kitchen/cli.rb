@@ -166,6 +166,9 @@ module Kitchen
           Run a #{action} against all matching instances concurrently.
         DESC
       log_options
+      method_option :test_base_path,
+        :aliases => "-t",
+        :desc => "Set the base path of the tests"
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
@@ -337,6 +340,10 @@ module Kitchen
       end
       unless options[:log_overwrite].nil?
         @config.log_overwrite = options[:log_overwrite]
+      end
+
+      if options[:test_base_path]
+        @config.test_base_path = options[:test_base_path]
       end
 
       # Now that we have required configs, lets create our file logger

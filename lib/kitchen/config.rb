@@ -77,6 +77,10 @@ module Kitchen
     # @api private
     attr_accessor :log_overwrite
 
+    # @return [String] an absolute path to the directory containing test suites
+    # @api private
+    attr_accessor :test_base_path
+
     # Creates a new configuration, representing a particular testing
     # configuration for a project.
     #
