@@ -74,34 +74,36 @@ describe Kitchen::Verifier::Shell do
 
   describe "#call" do
 
-    it "calls sleep if :sleep value is greater than 0" do
-      config[:sleep] = 3
-      verifier.expects(:sleep).with(1).returns(true).at_least(3)
+    describe "#shell_out" do
+      it "calls sleep if :sleep value is greater than 0" do
+        config[:sleep] = 3
+        verifier.expects(:sleep).with(1).returns(true).at_least(3)
 
-      verifier.call(state)
-    end
+        verifier.call(state)
+      end
 
-    it "states are set to environment" do
-      state[:hostname] = "testhost"
-      state[:server_id] = "i-xxxxxx"
-      verifier.call(state)
-      config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
-      config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
-      config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
-      config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
-      config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
-    end
+      it "states are set to environment" do
+        state[:hostname] = "testhost"
+        state[:server_id] = "i-xxxxxx"
+        verifier.call(state)
+        config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
+        config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+        config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+        config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
+        config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
+      end
 
-    it "raises ActionFailed if set false to :command" do
-      config[:command] = "false"
+      it "raises ActionFailed if set false to :command" do
+        config[:command] = "false"
 
-      proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
-    end
+        proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      end
 
-    it "logs a converge event to INFO" do
-      verifier.call(state)
+      it "logs a converge event to INFO" do
+        verifier.call(state)
 
-      logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
+        logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
+      end
     end
 
     describe "remote_exec" do
