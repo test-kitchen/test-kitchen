@@ -340,7 +340,7 @@ module Kitchen
         end
 
         @connection_options = options
-        @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)
+        @connection = self.class::Connection.new(options, &block)
       end
 
       # Return the last saved SSH connection instance.
