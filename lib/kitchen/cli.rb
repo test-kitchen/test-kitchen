@@ -350,7 +350,8 @@ module Kitchen
       end
 
       if options[:test_base_path]
-        @config.test_base_path = options[:test_base_path]
+        # ensure we have an absolute path
+        @config.test_base_path = File.absolute_path(options[:test_base_path])
       end
 
       # Now that we have required configs, lets create our file logger
