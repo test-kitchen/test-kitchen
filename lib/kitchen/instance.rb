@@ -236,7 +236,6 @@ module Kitchen
       provisioner.clean(state_file.read)
     end
 
-
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash
