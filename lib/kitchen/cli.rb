@@ -93,6 +93,14 @@ module Kitchen
         :type => :boolean
     end
 
+    # Sets the test_base_path method_options
+    # @api private
+    def self.test_base_path
+      method_option :test_base_path,
+        :aliases => "-t",
+        :desc => "Set the base path of the tests"
+    end
+
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
     method_option :bare,
       :aliases => "-b",
@@ -165,10 +173,8 @@ module Kitchen
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
+      test_base_path
       log_options
-      method_option :test_base_path,
-        :aliases => "-t",
-        :desc => "Set the base path of the tests"
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
@@ -213,6 +219,7 @@ module Kitchen
       :type => :boolean,
       :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
+    test_base_path
     log_options
     def test(*args)
       update_config!
