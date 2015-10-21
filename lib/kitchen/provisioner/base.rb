@@ -157,6 +157,16 @@ module Kitchen
         FileUtils.rmtree(sandbox_path)
       end
 
+      # Clean sand_box on server instance
+      def clean(state)
+        debug("Cleaning up remote sandbox in #{config[:root_path]}")
+        instance.transport.connection(state) do |conn|
+          conn.execute("rm -rf #{config[:root_path]}")
+        end
+      rescue Kitchen::Transport::TransportFailed => ex
+        raise ActionFailed, ex.message
+      end
+
       # Sets the API version for this provisioner. If the provisioner does not
       # set this value, then `nil` will be used and reported.
       #
