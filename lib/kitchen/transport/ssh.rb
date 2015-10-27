@@ -18,6 +18,7 @@
 
 require "kitchen"
 
+require "timeout"
 require "net/ssh"
 require "net/scp"
 
