@@ -1,3 +1,5 @@
+$ErrorActionPreference = "stop"
+
 Function Check-UpdateChef($root, $version) {
   if (-Not (Test-Path $root)) { return $true }
   elseif ("$version" -eq "true") { return $false }
@@ -66,13 +68,18 @@ Function Unresolve-Path($p) {
   else { return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p) }
 }
 
-$chef_omnibus_root = Unresolve-Path $chef_omnibus_root
-$msi = Unresolve-Path $msi
+Try {
+  $chef_omnibus_root = Unresolve-Path $chef_omnibus_root
+  $msi = Unresolve-Path $msi
 
-if (Check-UpdateChef $chef_omnibus_root $version) {
-  Write-Host "-----> Installing Chef Omnibus ($pretty_version)`n"
-  Download-Chef "$chef_metadata_url" $msi
-  Install-Chef $msi
-} else {
-  Write-Host "-----> Chef Omnibus installation detected ($pretty_version)`n"
+  if (Check-UpdateChef $chef_omnibus_root $version) {
+    Write-Host "-----> Installing Chef Omnibus ($pretty_version)`n"
+    Download-Chef "$chef_metadata_url" $msi
+    Install-Chef $msi
+  } else {
+    Write-Host "-----> Chef Omnibus installation detected ($pretty_version)`n"
+}
+Catch {
+  Write-Error ($_ | ft -Property * | out-string) -ErrorAction Continue
+  exit 1
 }
