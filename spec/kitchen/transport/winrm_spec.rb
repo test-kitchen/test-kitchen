@@ -24,6 +24,23 @@ require "winrm/transport/command_executor"
 require "winrm/transport/shell_closer"
 require "winrm/transport/file_transporter"
 
+module Kitchen
+
+  module Transport
+
+    class WinRMConnectionDummy < Kitchen::Transport::Winrm::Connection
+
+      attr_reader :saved_command, :remote_path, :local_path
+
+      def upload(locals, remote)
+        @saved_command = IO.read(locals)
+        @local_path = locals
+        @remote_path = remote
+      end
+    end
+  end
+end
+
 describe Kitchen::Transport::Winrm do
 
   let(:logged_output) { StringIO.new }
@@ -573,6 +590,39 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         logged_output.string.wont_match warn_line("congrats")
+      end
+    end
+
+    describe "long command" do
+      let(:command) { %{Write-Host "#{"a" * 4000}"} }
+
+      let(:connection) do
+        Kitchen::Transport::WinRMConnectionDummy.new(options)
+      end
+
+      let(:response) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "ok\r\n" },
+          { :stderr => "congrats\r\n" }
+        ])
+        o
+      end
+
+      before do
+        executor.expects(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
+          with(%{& "$env:TEMP/kitchen/coolbeans-long_script.ps1"}).
+          yields("ok\n", nil).returns(response)
+      end
+
+      it "uploads the long command" do
+        with_fake_fs do
+          connection.execute(command)
+
+          connection.saved_command.must_equal command
+        end
       end
     end
 
