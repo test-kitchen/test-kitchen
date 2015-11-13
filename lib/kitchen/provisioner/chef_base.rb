@@ -111,6 +111,11 @@ module Kitchen
 
         version = config[:require_chef_omnibus].to_s.downcase
 
+        # Passing "true" to mixlib-install currently breaks the windows metadata_url
+        # TODO: remove this line once https://github.com/chef/mixlib-install/pull/22
+        # is accepted and released
+        version = "" if version == "true"
+
         installer = Mixlib::Install.new(version, powershell_shell?, install_options)
         config[:chef_omnibus_root] = installer.root
         installer.install_command

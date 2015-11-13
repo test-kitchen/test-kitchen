@@ -27,6 +27,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
   let(:suite)           { stub(:name => "fries") }
+  let(:default_version) { "" }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
@@ -166,7 +167,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "passes sensible defaults" do
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -174,7 +175,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         install_opts[:http_proxy] = "http://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -182,7 +183,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:https_proxy] = "https://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -192,7 +193,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:http_proxy] = "http://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -200,7 +201,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_omnibus_url] = "FROM_HERE"
         install_opts[:omnibus_url] = "FROM_HERE"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -250,7 +251,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a version of chef, unless it exists" do
         config[:require_chef_omnibus] = true
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -259,7 +260,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_flags] = "-P chefdk"
         install_opts[:project] = "chefdk"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -275,7 +276,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will set the install root" do
         config[:chef_omnibus_root] = "/tmp/test"
         install_opts[:root] = "/tmp/test"
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
     end
@@ -288,7 +289,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "prepends sudo for sh commands when :sudo is set" do
         config[:sudo] = true
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -296,7 +297,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:sudo] = false
         install_opts[:use_sudo] = false
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
     end
@@ -312,7 +313,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the powershell flag for Mixlib::Install" do
         install_opts[:use_sudo] = nil
         install_opts[:sudo_command] = nil
-        Mixlib::Install.any_instance.expects(:initialize).with("true", true, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, true, install_opts)
         cmd
       end
     end
