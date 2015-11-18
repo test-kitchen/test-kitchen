@@ -43,8 +43,6 @@ module Kitchen
           tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
-      default_config :enforce_idempotency, false
-
       default_config :ruby_bindir do |provisioner|
         provisioner.
           remote_path_join(%W[#{provisioner[:chef_omnibus_root]} embedded bin])
@@ -55,7 +53,7 @@ module Kitchen
         super
         prepare_chef_client_zero_rb
         prepare_validation_pem
-        prepare_client_rb
+        prepare_config_rb
       end
 
       # (see Base#prepare_command)
@@ -76,20 +74,7 @@ module Kitchen
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        chef_client_cmd = prefix_command(wrap_shell_code(
-          [cmd, *chef_client_args("client.rb"), last_exit_code].join(" ").
-          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-        ))
-
-        if config[:enforce_idempotency]
-          idempotent_check_client_cmd = wrap_shell_code(
-            [cmd, *chef_client_args("client_no_updated_resources.rb"), last_exit_code].join(" ").
-            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-          )
-          separator = windows_os? ? " ; " : " && "
-          chef_client_cmd = [chef_client_cmd, idempotent_check_client_cmd].join(separator)
-        end
-        chef_client_cmd
+        chef_cmd(cmd)
       end
 
       private
@@ -128,7 +113,7 @@ module Kitchen
       #
       # @return [Array<String>] an array of command line arguments
       # @api private
-      def chef_client_args(client_rb_filename)
+      def chef_args(client_rb_filename)
         level = config[:log_level]
         args = [
           "--config #{remote_path_join(config[:root_path], client_rb_filename)}",
@@ -211,46 +196,6 @@ module Kitchen
         source = File.join(File.dirname(__FILE__),
           %w[.. .. .. support chef-client-zero.rb])
         FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
-      end
-
-      HANDLER_CODE = <<-EOH
-# Handler to kill the run if any resource is updated
-class UpdatedResources < ::Chef::Handler
-  def report
-    if updated_resources.size > 0
-      #exit 203 # if chef handler code was not catching Exception
-      puts "Chef run should reach a converged state. Resources updated in a second chef-client run:"
-      updated_resources.each do |r|
-        puts r
-      end
-      Process.kill('KILL', Process.pid)
-    end
-  end
-end
-report_handlers << UpdatedResources.new
-      EOH
-
-      # Writes a client.rb configuration file to the sandbox directory.
-      #
-      # @api private
-      def prepare_client_rb
-        data = default_config_rb.merge(config[:client_rb])
-        data = data.merge(:named_run_list => config[:named_run_list]) if config[:named_run_list]
-
-        info("Preparing client.rb")
-        debug("Creating client.rb from #{data.inspect}")
-
-        File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
-          file.write(format_config_file(data))
-        end
-
-        if config[:enforce_idempotency]
-          File.open(File.join(sandbox_path, "client_no_updated_resources.rb"), "wb") do |file|
-            file.write(format_config_file(data))
-            file.write("\n")
-            file.write HANDLER_CODE
-          end
-        end
       end
 
       # Writes a fake (but valid) validation.pem into the sandbox directory.

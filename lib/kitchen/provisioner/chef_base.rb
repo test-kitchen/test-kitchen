@@ -68,6 +68,8 @@ module Kitchen
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
 
+      default_config :enforce_idempotency, false
+
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
@@ -375,6 +377,76 @@ module Kitchen
             "Either use a different provisioner, or delete/rename " \
             "#{policyfile}"
         end
+      end
+
+      # Writes a configuration file to the sandbox directory.
+      # @api private
+      def prepare_config_rb
+        data = default_config_rb.merge(config[config_filename.gsub(".", "_").to_sym])
+        data = data.merge(:named_run_list => config[:named_run_list]) if config[:named_run_list]
+
+        info("Preparing #{config_filename}")
+        debug("Creating #{config_filename} from #{data.inspect}")
+
+        File.open(File.join(sandbox_path, config_filename), "wb") do |file|
+          file.write(format_config_file(data))
+        end
+
+        prepare_config_idempotency_check if config[:enforce_idempotency]
+
+      end
+
+      # Writes a configuration file to the sandbox directory
+      # to check for idempotency of the run.
+      # @api private
+      def prepare_config_idempotency_check
+        handler_filename = "chef-client-fail-if-update-handler.rb"
+        source = File.join(
+          File.dirname(__FILE__), %w[.. .. .. support ], handler_filename
+        )
+        FileUtils.cp(source, File.join(sandbox_path, handler_filename))
+        File.open(File.join(sandbox_path, "client_no_updated_resources.rb"), "wb") do |file|
+          file.write(format_config_file(data))
+          file.write("\n\n")
+          file.write("handler_file = File.join(File.dirname(__FILE__), '#{handler_filename}')\n")
+          file.write "Chef::Config.from_file(handler_file)\n"
+        end
+      end
+
+      # Returns an Array of command line arguments for the chef client.
+      #
+      # @return [Array<String>] an array of command line arguments
+      # @api private
+      def chef_args(_config_filename)
+        fail "You must override in sub classes!"
+      end
+
+      # Returns a filename for the configuration file
+      # defaults to client.rb
+      #
+      # @return [String] a filename
+      # @api private
+      def config_filename
+        "client.rb"
+      end
+
+      # Gives the command used to run chef
+      # @api private
+      def chef_cmd(base_cmd)
+        cmd = prefix_command(wrap_shell_code(
+          [base_cmd, *chef_args(config_filename), last_exit_code].join(" ").
+          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        ))
+
+        if config[:enforce_idempotency]
+          idempotent_cmd = prefix_command(wrap_shell_code(
+            [base_cmd, *chef_args("client_no_updated_resources.rb"), last_exit_code].join(" ").
+            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+          ))
+          separator = windows_os? ? " ; " : " && "
+          cmd = [cmd, idempotent_cmd].join(separator)
+        end
+        cmd
       end
     end
   end
