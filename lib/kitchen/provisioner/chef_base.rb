@@ -393,7 +393,6 @@ module Kitchen
         end
 
         prepare_config_idempotency_check if config[:enforce_idempotency]
-
       end
 
       # Writes a configuration file to the sandbox directory

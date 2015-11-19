@@ -326,6 +326,16 @@ describe Kitchen::Provisioner::ChefSolo do
         cmd.must_match(/'\Z/)
       end
 
+      it "contains a second run if enforce_idempotency is set" do
+        config[:enforce_idempotency] = true
+        cmd.must_match(/chef-solo.*&&.*chef-solo.*client_no_updated_resources.rb/m)
+      end
+
+      it "does not contains a second run if enforce_idempotency is not set" do
+        config[:enforce_idempotency] = false
+        cmd.wont_match(/chef-solo.*&&.*chef-solo.*client_no_updated_resources.rb/m)
+      end
+
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
@@ -466,6 +476,16 @@ describe Kitchen::Provisioner::ChefSolo do
       before do
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
+      end
+
+      it "contains a second run if enforce_idempotency is set" do
+        config[:enforce_idempotency] = true
+        cmd.must_match(/chef-solo.*;.*chef-solo.*client_no_updated_resources.rb/m)
+      end
+
+      it "does not contains a second run if enforce_idempotency is not set" do
+        config[:enforce_idempotency] = false
+        cmd.wont_match(/chef-solo.*;.*chef-solo.*client_no_updated_resources.rb/m)
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
