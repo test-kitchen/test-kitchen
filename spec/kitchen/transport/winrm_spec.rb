@@ -739,6 +739,32 @@ MSG
       end
     end
 
+    describe 'for a connection with a command prefix' do
+      let(:response) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "ok\r\n" },
+          { :stderr => "congrats\r\n" }
+        ])
+        o
+      end
+
+      before do
+        executor.expects(:open).returns("shell-123")
+        executor.expects(:run_powershell_script).
+          with("test_prefix doit").yields("ok\n", nil).returns(response)
+      end
+
+      it "logger displays command on debug" do
+        connection.stubs(:command_prefix).returns('test_prefix')
+        connection.execute("doit")
+
+        logged_output.string.must_match debug_line(
+          "[WinRM] #{info} (test_prefix doit)")
+      end
+    end
+
     describe "for a nil command" do
 
       it "does not log on debug" do
