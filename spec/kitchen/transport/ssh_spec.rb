@@ -907,7 +907,7 @@ describe Kitchen::Transport::Ssh::Connection do
       end
     end
 
-    describe 'for a connection with a command prefix' do
+    describe "for a connection with a command prefix" do
 
       before do
         story do |script|
@@ -922,10 +922,10 @@ describe Kitchen::Transport::Ssh::Connection do
         end
       end
 
-      it 'logger displays command containing prefix on debug' do
-        connection.stubs(:command_prefix).returns('test_prefix')
+      it "logger displays command containing prefix on debug" do
+        connection.stubs(:command_prefix).returns("test_prefix")
 
-        assert_scripted { connection.execute('doit') }
+        assert_scripted { connection.execute("doit") }
 
         logged_output.string.must_match debug_line(
           "[SSH] me@foo<{:port=>22}> (test_prefix doit)"

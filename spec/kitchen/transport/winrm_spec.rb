@@ -739,7 +739,7 @@ MSG
       end
     end
 
-    describe 'for a connection with a command prefix' do
+    describe "for a connection with a command prefix" do
       let(:response) do
         o = WinRM::Output.new
         o[:exitcode] = 0
@@ -757,7 +757,7 @@ MSG
       end
 
       it "logger displays command on debug" do
-        connection.stubs(:command_prefix).returns('test_prefix')
+        connection.stubs(:command_prefix).returns("test_prefix")
         connection.execute("doit")
 
         logged_output.string.must_match debug_line(

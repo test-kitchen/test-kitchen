@@ -108,7 +108,7 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          command = [ command_prefix, command ].compact.join(' ')
+          command = [command_prefix, command].compact.join(" ")
           logger.debug("[SSH] #{self} (#{command})")
 
           exit_code = execute_with_exit_code(command)

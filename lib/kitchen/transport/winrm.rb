@@ -88,7 +88,7 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          command = [ command_prefix, command ].compact.join(' ')
+          command = [command_prefix, command].compact.join(" ")
           logger.debug("[WinRM] #{self} (#{command})")
 
           if command.length > MAX_COMMAND_SIZE
