@@ -907,6 +907,32 @@ describe Kitchen::Transport::Ssh::Connection do
       end
     end
 
+    describe "for a connection with a command prefix" do
+
+      before do
+        story do |script|
+          channel = script.opens_channel
+          channel.sends_request_pty
+          channel.sends_exec("test_prefix doit")
+          channel.gets_data("ok\n")
+          channel.gets_extended_data("some stderr stuffs\n")
+          channel.gets_exit_status(0)
+          channel.gets_close
+          channel.sends_close
+        end
+      end
+
+      it "logger displays command containing prefix on debug" do
+        connection.stubs(:command_prefix).returns("test_prefix")
+
+        assert_scripted { connection.execute("doit") }
+
+        logged_output.string.must_match debug_line(
+          "[SSH] me@foo<{:port=>22}> (test_prefix doit)"
+        )
+      end
+    end
+
     describe "for a nil command" do
 
       it "does not log on debug" do

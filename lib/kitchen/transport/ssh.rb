@@ -48,6 +48,7 @@ module Kitchen
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
+      default_config :command_prefix, nil
 
       default_config :ssh_key, nil
       expand_path_for :ssh_key
@@ -106,7 +107,10 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
+
+          command = [command_prefix, command].compact.join(" ")
           logger.debug("[SSH] #{self} (#{command})")
+
           exit_code = execute_with_exit_code(command)
 
           if exit_code != 0
@@ -197,6 +201,10 @@ module Kitchen
         # @api private
         attr_reader :port
 
+        # @return [String] prefix for each executed command
+        # @api private
+        attr_reader :command_prefix
+
         # Establish an SSH session on the remote host.
         #
         # @param opts [Hash] retry options
@@ -268,6 +276,7 @@ module Kitchen
           @connection_retries     = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @command_prefix         = @options.delete(:command_prefix)
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -315,7 +324,8 @@ module Kitchen
           :timeout                => data[:connection_timeout],
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          :max_wait_until_ready   => data[:max_wait_until_ready],
+          :command_prefix         => data[:command_prefix]
         }
 
         opts[:keys_only] = true                     if data[:ssh_key]

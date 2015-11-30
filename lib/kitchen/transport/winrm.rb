@@ -51,6 +51,7 @@ module Kitchen
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
+      default_config :command_prefix, nil
 
       # (see Base#connection)
       def connection(state, &block)
@@ -86,6 +87,8 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
+
+          command = [command_prefix, command].compact.join(" ")
           logger.debug("[WinRM] #{self} (#{command})")
 
           if command.length > MAX_COMMAND_SIZE
@@ -190,6 +193,10 @@ module Kitchen
         # @api private
         attr_reader :winrm_transport
 
+        # @return [String] prefix for each executed command
+        # @api private
+        attr_reader :command_prefix
+
         # Writes an RDP document to the local file system.
         #
         # @param opts [Hash] file options
@@ -271,6 +278,7 @@ module Kitchen
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @command_prefix         = @options.delete(:command_prefix)
         end
 
         # Logs formatted standard error output at the warning level.
@@ -435,7 +443,8 @@ module Kitchen
           :rdp_port               => data[:rdp_port],
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          :max_wait_until_ready   => data[:max_wait_until_ready],
+          :command_prefix         => data[:command_prefix]
         }
 
         opts
