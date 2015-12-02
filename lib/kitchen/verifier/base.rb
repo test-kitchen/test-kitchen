@@ -50,6 +50,8 @@ module Kitchen
         verifier.windows_os? ? nil : "sudo -E"
       end
 
+      default_config :command_prefix, nil
+
       default_config(:suite_name) { |busser| busser.instance.suite.name }
 
       # Creates a new Verifier object using the provided configuration data
@@ -214,6 +216,19 @@ module Kitchen
       # @api private
       def sudo(script)
         config[:sudo] ? "#{config[:sudo_command]} #{script}" : script
+      end
+
+      # Conditionally prefixes a command with a command prefix.
+      # This should generally be done after a command has been
+      # conditionally prefixed by #sudo as certain platforms, such as
+      # Cisco Nexus, require all commands to be run with a prefix to
+      # obtain outbound network access.
+      #
+      # @param command [String] command to be prefixed
+      # @return [String] the command, conditionally prefixed with the configured prefix
+      # @api private
+      def prefix_command(script)
+        config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
       end
     end
   end

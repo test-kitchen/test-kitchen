@@ -102,7 +102,7 @@ module Kitchen
           init_command_vars_for_bourne(dirs)
         end
 
-        shell_code_from_file(vars, "chef_base_init_command")
+        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
       end
 
       # (see Base#install_command)
@@ -118,7 +118,7 @@ module Kitchen
 
         installer = Mixlib::Install.new(version, powershell_shell?, install_options)
         config[:chef_omnibus_root] = installer.root
-        installer.install_command
+        prefix_command(sudo(installer.install_command))
       end
 
       private
@@ -131,8 +131,8 @@ module Kitchen
           :omnibus_url => config[:chef_omnibus_url],
           :project => project.nil? ? nil : project[1],
           :install_flags => config[:chef_omnibus_install_options],
-          :use_sudo => config[:sudo],
-          :sudo_command => config[:sudo_command]
+          :use_sudo => false,
+          :sudo_command => nil
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy

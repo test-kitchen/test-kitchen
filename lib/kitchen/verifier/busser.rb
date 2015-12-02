@@ -76,7 +76,7 @@ module Kitchen
         cmd = sudo(config[:busser_bin]).dup.
           tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-        wrap_shell_code(Util.outdent!(<<-CMD))
+        prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
 
           #{cmd} suite cleanup
@@ -89,7 +89,7 @@ module Kitchen
 
         vars = install_command_vars
 
-        shell_code_from_file(vars, "busser_install_command")
+        prefix_command(shell_code_from_file(vars, "busser_install_command"))
       end
 
       # (see Base#run_command)
@@ -99,7 +99,7 @@ module Kitchen
         cmd = sudo(config[:busser_bin]).dup.
           tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-        wrap_shell_code(Util.outdent!(<<-CMD))
+        prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
 
           #{cmd} test
