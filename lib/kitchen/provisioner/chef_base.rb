@@ -130,9 +130,7 @@ module Kitchen
         {
           :omnibus_url => config[:chef_omnibus_url],
           :project => project.nil? ? nil : project[1],
-          :install_flags => config[:chef_omnibus_install_options],
-          :use_sudo => false,
-          :sudo_command => nil
+          :install_flags => config[:chef_omnibus_install_options]
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy

@@ -147,8 +147,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://www.chef.io/chef/install.sh",
-        :project => nil, :install_flags => nil, :use_sudo => false,
-        :sudo_command => nil, :http_proxy => nil,
+        :project => nil, :install_flags => nil, :http_proxy => nil,
         :https_proxy => nil }
     }
 
