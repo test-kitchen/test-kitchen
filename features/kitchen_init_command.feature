@@ -3,6 +3,9 @@ Feature: Add Test Kitchen support to an existing project
   As an operator
   I want to run a command to initialize my project
 
+  Background:
+    Given a sandboxed GEM_HOME directory named "kitchen-init"
+
   @spawn
   Scenario: Displaying help
     When I run `kitchen help init`
@@ -15,8 +18,7 @@ Feature: Add Test Kitchen support to an existing project
 
   @spawn
   Scenario: Running init with default values
-    Given a sandboxed GEM_HOME directory named "kitchen-init"
-    And I have a git repository
+    Given I have a git repository
     When I run `kitchen init`
     Then the exit status should be 0
     And a directory named "test/integration/default" should exist
