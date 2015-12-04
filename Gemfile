@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 source "https://rubygems.org"
+
+gem "mixlib-install", github: "chef/mixlib-install", branch: "pw/windows"
+
 gemspec
 
 group :guard do

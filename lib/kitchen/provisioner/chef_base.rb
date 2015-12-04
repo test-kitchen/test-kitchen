@@ -108,7 +108,12 @@ module Kitchen
       end
 
       def install_command
-        "sudo /bin/sh #{File.join(config[:root_path], 'installer.sh')}"
+        # TODO: We should check use_sudo? in here
+        if powershell_shell?
+          "Powershell.exe #{File.join(config[:root_path], 'installer.ps1')}"
+        else
+          "sudo /bin/sh #{File.join(config[:root_path], 'installer.sh')}"
+        end
       end
 
       private
@@ -116,8 +121,9 @@ module Kitchen
       # Prepares the installer script under the sandbox
       # @api private
       def prepare_installer_script
+        require 'pry'; binding.pry
         return unless config[:require_chef_omnibus] || config[:product_name]
-        install_script_path = File.join(sandbox_path, 'installer.sh')
+        install_script_path = File.join(sandbox_path, "installer#{powershell_shell? ? ".ps1" : ".sh"}")
 
         File.open(install_script_path, "wb") do |file|
           file.write(install_script_contents)
@@ -279,7 +285,9 @@ module Kitchen
             product_name: config[:product_name],
             product_version: config[:product_version],
             channel: config[:channel].to_sym || :stable
-          })
+          }.tap do |opts|
+            opts[:shell_type] = :ps1 if powershell_shell?
+          end)
           config[:chef_omnibus_root] = installer.root
           installer.install_command
         elsif config[:require_chef_omnibus]
