@@ -175,7 +175,7 @@ Feature: Add Test Kitchen support to an existing project
     """
 
   Scenario: Running without git doesn't make a .gitignore
-    When I successfully run `kitchen init`
+    When I successfully run `kitchen init --no-driver`
     Then the exit status should be 0
     And a file named ".gitignore" should not exist
 
