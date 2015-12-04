@@ -70,10 +70,9 @@ module Kitchen
       # @api private
       def sleep_if_set
         config[:sleep].to_i.times do
-          print "."
+          info(".")
           sleep 1
         end
-        puts
       end
 
       def shellout
