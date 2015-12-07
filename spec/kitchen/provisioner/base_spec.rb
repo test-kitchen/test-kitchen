@@ -325,4 +325,25 @@ describe Kitchen::Provisioner::Base do
       end
     end
   end
+
+  describe "#prefix_command" do
+
+    describe "with :command_prefix set" do
+
+      before { config[:command_prefix] = "my_prefix" }
+
+      it "prepends the command with the prefix" do
+        provisioner.send(:prefix_command, "my_command").must_equal("my_prefix my_command")
+      end
+    end
+
+    describe "with :command_prefix unset" do
+
+      before { config[:command_prefix] = nil }
+
+      it "returns an unaltered command" do
+        provisioner.send(:prefix_command, "my_command").must_equal("my_command")
+      end
+    end
+  end
 end

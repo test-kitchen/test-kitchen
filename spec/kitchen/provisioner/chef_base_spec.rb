@@ -147,8 +147,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://www.chef.io/chef/install.sh",
-        :project => nil, :install_flags => nil, :use_sudo => true,
-        :sudo_command => "sudo -E", :http_proxy => nil,
+        :project => nil, :install_flags => nil, :http_proxy => nil,
         :https_proxy => nil }
     }
 
@@ -279,26 +278,39 @@ describe Kitchen::Provisioner::ChefBase do
         Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
     end
 
     describe "for bourne shells" do
       before do
         Mixlib::Install.any_instance.expects(:root).at_least_once.returns("/opt/chef")
-        Mixlib::Install.any_instance.expects(:install_command)
+        Mixlib::Install.any_instance.expects(:install_command).returns("my_install_command")
       end
+
       it "prepends sudo for sh commands when :sudo is set" do
         config[:sudo] = true
+        config[:sudo_command] = "my_sudo_command"
 
         Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
-        cmd
+        cmd.must_equal "my_sudo_command my_install_command"
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
         config[:sudo] = false
-        install_opts[:use_sudo] = false
 
         Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
-        cmd
+        cmd.must_equal "my_install_command"
       end
     end
 
@@ -311,8 +323,6 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "sets the powershell flag for Mixlib::Install" do
-        install_opts[:use_sudo] = nil
-        install_opts[:sudo_command] = nil
         Mixlib::Install.any_instance.expects(:initialize).with(default_version, true, install_opts)
         cmd
       end
@@ -322,6 +332,23 @@ describe Kitchen::Provisioner::ChefBase do
   describe "#init_command" do
 
     let(:cmd) { provisioner.init_command }
+
+    describe "common behavior" do
+
+      before { platform.stubs(:shell_type).returns("fake") }
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
+    end
 
     describe "for bourne shells" do
 
