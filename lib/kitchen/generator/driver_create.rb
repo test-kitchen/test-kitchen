@@ -87,8 +87,8 @@ module Kitchen
       # @api private
       def initialize_git
         inside(target_dir) do
-          run("git init")
-          run("git add .")
+          run("git init", :capture => true)
+          run("git add .", :capture => true)
         end
       end
 
