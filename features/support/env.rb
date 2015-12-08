@@ -27,16 +27,16 @@ class ArubaHelper
   end
 end
 
+Aruba.configure do |config|
+  # We need a long timeout for `kitchen discover`
+  config.exit_timeout    = 120
+  config.io_wait_timeout = 2
+end
+
 Before do
-  @aruba_timeout_seconds = 15
   @cleanup_dirs = []
 
   Aruba::Processes::InProcess.main_class = ArubaHelper
-  Aruba.process = Aruba::Processes::InProcess
-end
-
-Before("@spawn") do
-  Aruba.process = Aruba::Processes::SpawnProcess
 end
 
 After do |s|

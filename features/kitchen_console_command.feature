@@ -1,6 +1,6 @@
 Feature: Running a console command
   In order to interactively explore Kitchen's internals and wiring
-  As an opterator
+  As an operator
   I want to run a command to launch an interactive console session
 
   Background:
