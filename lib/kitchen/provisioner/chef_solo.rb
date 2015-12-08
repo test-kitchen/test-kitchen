@@ -46,7 +46,7 @@ module Kitchen
       end
 
       # (see Base#run_command)
-      def run_command
+      def run_command # rubocop:disable Metrics/AbcSize
         level = config[:log_level] == :info ? :auto : config[:log_level]
 
         cmd = sudo(config[:chef_solo_path]).dup.
@@ -60,10 +60,12 @@ module Kitchen
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
-        wrap_shell_code(
-          [cmd, *args].join(" ").
-          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        prefix_command(
+          wrap_shell_code(
+            [cmd, *args].join(" ").
+            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
         )
+      )
       end
 
       private

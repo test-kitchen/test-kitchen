@@ -66,16 +66,18 @@ module Kitchen
           shell_var("gem", sudo(gem_bin))
         ].join("\n").concat("\n")
 
-        shell_code_from_file(vars, "chef_zero_prepare_command_legacy")
+        prefix_command(shell_code_from_file(vars, "chef_zero_prepare_command_legacy"))
       end
 
       # (see Base#run_command)
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        wrap_shell_code(
-          [cmd, *chef_client_args].join(" ").
-          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        prefix_command(
+          wrap_shell_code(
+            [cmd, *chef_client_args].join(" ").
+            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+          )
         )
       end
 

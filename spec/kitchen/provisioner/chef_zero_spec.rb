@@ -634,6 +634,18 @@ describe Kitchen::Provisioner::ChefZero do
       it "does not set logfile flag by default" do
         cmd.wont_match regexify(" --logfile ", :partial_line)
       end
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
