@@ -36,9 +36,9 @@ module Kitchen
             "#{hostname}:#{remote}"
 
           logger.debug("Rsync via command '#{cmd}'")
-          Open3.popen2e(cmd) {|stdin, stdout_stderr, wait_thr|
+          Open3.popen2e(cmd) { |stdin, stdout_stderr, wait_thr|
             Thread.new do
-              stdout_stderr.each {|l| logger.debug(l.chomp) }
+              stdout_stderr.each { |l| logger.debug(l.chomp) }
             end
 
             stdin.puts("#{options[:password]}\n") if Array(options[:keys]).empty?
