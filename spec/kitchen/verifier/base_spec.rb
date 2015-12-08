@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require_relative "../../spec_helper"
+require_relative "../ssh_spec"
 
 require "logger"
 require "stringio"
@@ -330,6 +331,27 @@ describe Kitchen::Verifier::Base do
         config[:sudo_command] = "blueto -Ohai"
 
         verifier.send(:sudo, "wakka").must_equal("wakka")
+      end
+    end
+  end
+
+  describe "#prefix_command" do
+
+    describe "with :command_prefix set" do
+
+      before { config[:command_prefix] = "my_prefix" }
+
+      it "prepends the command with the prefix" do
+        verifier.send(:prefix_command, "my_command").must_equal("my_prefix my_command")
+      end
+    end
+
+    describe "with :command_prefix unset" do
+
+      before { config[:command_prefix] = nil }
+
+      it "returns an unaltered command" do
+        verifier.send(:prefix_command, "my_command").must_equal("my_command")
       end
     end
   end

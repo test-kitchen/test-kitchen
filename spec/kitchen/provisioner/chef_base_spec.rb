@@ -27,6 +27,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
   let(:suite)           { stub(:name => "fries") }
+  let(:default_version) { "" }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
@@ -146,8 +147,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://www.chef.io/chef/install.sh",
-        :project => nil, :install_flags => nil, :use_sudo => true,
-        :sudo_command => "sudo -E", :http_proxy => nil,
+        :project => nil, :install_flags => nil, :http_proxy => nil,
         :https_proxy => nil }
     }
 
@@ -166,7 +166,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "passes sensible defaults" do
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -174,7 +174,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         install_opts[:http_proxy] = "http://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -182,7 +182,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:https_proxy] = "https://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -192,7 +192,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:http_proxy] = "http://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -200,7 +200,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_omnibus_url] = "FROM_HERE"
         install_opts[:omnibus_url] = "FROM_HERE"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -250,7 +250,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a version of chef, unless it exists" do
         config[:require_chef_omnibus] = true
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -259,7 +259,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_flags] = "-P chefdk"
         install_opts[:project] = "chefdk"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
       end
 
@@ -275,29 +275,42 @@ describe Kitchen::Provisioner::ChefBase do
       it "will set the install root" do
         config[:chef_omnibus_root] = "/tmp/test"
         install_opts[:root] = "/tmp/test"
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
         cmd
+      end
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
       end
     end
 
     describe "for bourne shells" do
       before do
         Mixlib::Install.any_instance.expects(:root).at_least_once.returns("/opt/chef")
-        Mixlib::Install.any_instance.expects(:install_command)
+        Mixlib::Install.any_instance.expects(:install_command).returns("my_install_command")
       end
+
       it "prepends sudo for sh commands when :sudo is set" do
         config[:sudo] = true
+        config[:sudo_command] = "my_sudo_command"
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
-        cmd
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
+        cmd.must_equal "my_sudo_command my_install_command"
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
         config[:sudo] = false
-        install_opts[:use_sudo] = false
 
-        Mixlib::Install.any_instance.expects(:initialize).with("true", false, install_opts)
-        cmd
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, false, install_opts)
+        cmd.must_equal "my_install_command"
       end
     end
 
@@ -310,9 +323,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "sets the powershell flag for Mixlib::Install" do
-        install_opts[:use_sudo] = nil
-        install_opts[:sudo_command] = nil
-        Mixlib::Install.any_instance.expects(:initialize).with("true", true, install_opts)
+        Mixlib::Install.any_instance.expects(:initialize).with(default_version, true, install_opts)
         cmd
       end
     end
@@ -321,6 +332,23 @@ describe Kitchen::Provisioner::ChefBase do
   describe "#init_command" do
 
     let(:cmd) { provisioner.init_command }
+
+    describe "common behavior" do
+
+      before { platform.stubs(:shell_type).returns("fake") }
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
+    end
 
     describe "for bourne shells" do
 
