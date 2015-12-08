@@ -31,8 +31,8 @@ module Kitchen
         def upload(locals, remote)
           key_args = []
           Array(options[:keys]).each { |ssh_key| key_args << "-i #{ssh_key}" }
-          cmd = "rsync -rav --delete --exclude=cache -e 'ssh -l #{username} -p #{port} " +
-            " -o StrictHostKeyChecking=no #{key_args.join(' ')}' #{locals.join(' ')} " +
+          cmd = "rsync -rav --delete --exclude=cache -e 'ssh -l #{username} -p #{port} " \
+            " -o StrictHostKeyChecking=no #{key_args.join(" ")}' #{locals.join(" ")} " \
             "#{hostname}:#{remote}"
 
           logger.debug("Rsync via command '#{cmd}'")
@@ -42,8 +42,7 @@ module Kitchen
             end
 
             stdin.puts("#{options[:password]}\n") if Array(options[:keys]).empty?
-            exit_status = wait_thr.value
-            logger.debug("Rsync returned #{exit_status}")
+            logger.debug("Rsync returned #{wait_thr.value}")
           }
         end
       end
