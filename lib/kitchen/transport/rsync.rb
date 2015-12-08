@@ -25,11 +25,15 @@ module Kitchen
   module Transport
     class Rsync < Kitchen::Transport::Ssh
 
+      # Connection class that inherits from the normal ssh class but
+      # overrides the upload method to call out to rsync.
       class Connection < Kitchen::Transport::Ssh::Connection
         def upload(locals, remote)
           key_args = []
           Array(options[:keys]).each { |ssh_key| key_args << "-i #{ssh_key}" }
-          cmd = "rsync -rav --delete --exclude=cache -e 'ssh -l #{username} -p #{port} -o StrictHostKeyChecking=no #{key_args.join(' ')}' #{locals.join(' ')} #{hostname}:#{remote}"
+          cmd = "rsync -rav --delete --exclude=cache -e 'ssh -l #{username} -p #{port} " +
+            " -o StrictHostKeyChecking=no #{key_args.join(' ')}' #{locals.join(' ')} " +
+            "#{hostname}:#{remote}"
 
           logger.debug("Rsync via command '#{cmd}'")
           Open3.popen2e(cmd) {|stdin, stdout_stderr, wait_thr|

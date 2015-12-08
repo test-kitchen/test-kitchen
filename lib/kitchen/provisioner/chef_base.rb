@@ -104,7 +104,9 @@ module Kitchen
         end
 
         shell_code = []
-        shell_code << shell_code_from_file(vars, "chef_base_clean_command") if config[:clean_files_first]
+        if config[:clean_files_first]
+          shell_code << shell_code_from_file(vars, "chef_base_clean_command")
+        end
         shell_code << shell_code_from_file(vars, "chef_base_init_command")
         prefix_command(shell_code.join("\n"))
       end
