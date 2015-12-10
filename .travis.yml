@@ -23,6 +23,25 @@ bundler_args: --without guard
 sudo: false
 
 matrix:
+  include:
+    - rvm: 2.2
+      sudo: required
+      dist: trusty
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get -y install squid3 git curl
+      env:
+        global:
+          - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
+          - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
+      script:
+        - bundle exec kitchen --version
+        - git clone https://github.com/chef/proxy_tests.git
+        - rvmsudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
+      after_script:
+        - cat /tmp/out.txt
+        - sudo cat /var/log/squid3/cache.log
+        - sudo cat /var/log/squid3/access.log
   allow_failures:
     - rvm: ruby-head
   exclude:
