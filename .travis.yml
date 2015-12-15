@@ -27,16 +27,22 @@ matrix:
     - rvm: 2.2
       sudo: required
       dist: trusty
+      # To run the proxy tests we need additional gems than what Test Kitchen normally uses
+      # for testing
+      gemfile: Gemfile.proxy_tests
       before_install:
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
-        global:
+        # ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']
+        - secure: "E7h427Y8z6Nx5sdrA4Ye9gO9pDGpe4jxfhJdM4HPJIM/FSkEJM0ZDPdvhQ6QAQ1S1AHja/JhQUFaNP5NzKhRkVqGCzunBBC6RVb7pp1Qo16EMhJkg7LEsExiSsjQykAzt2w6K/71V+mIlMKxCPYdpu6PT/8w/jZFgBqLEHXuogU="
+        - global:
           - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
           - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
+
       script:
         - bundle exec kitchen --version
-        - git clone https://github.com/chef/proxy_tests.git
+        - git clone -b tball/tk_prep https://github.com/chef/proxy_tests.git
         - rvmsudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
       after_script:
         - cat /tmp/out.txt
