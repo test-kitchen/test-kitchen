@@ -42,6 +42,7 @@ matrix:
 
       script:
         - bundle exec kitchen --version
+        # TODO switch to master when https://github.com/chef/proxy_tests/pull/12 is merged
         - git clone -b tball/tk_prep https://github.com/chef/proxy_tests.git
         - rvmsudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
       after_script:

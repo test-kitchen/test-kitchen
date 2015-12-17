@@ -119,15 +119,27 @@ describe Kitchen::Provisioner::Shell do
         ])
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
-        cmd.lines.to_a[1..4].must_equal([
+        cmd.lines.to_a[1..6].must_equal([
           %{http_proxy="http://proxy"; export http_proxy\n},
           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
           %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
         ])
       end
 
@@ -184,15 +196,27 @@ describe Kitchen::Provisioner::Shell do
         ])
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
-        cmd.lines.to_a[0..3].must_equal([
+        cmd.lines.to_a[0..5].must_equal([
           %{$env:http_proxy = "http://proxy"\n},
           %{$env:HTTP_PROXY = "http://proxy"\n},
           %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
+          %{$env:HTTPS_PROXY = "https://proxy"\n},
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
         ])
       end
 
@@ -253,15 +277,27 @@ describe Kitchen::Provisioner::Shell do
         ])
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
-        cmd.lines.to_a[1..4].must_equal([
+        cmd.lines.to_a[1..6].must_equal([
           %{http_proxy="http://proxy"; export http_proxy\n},
           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
           %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
         ])
       end
 
@@ -306,15 +342,27 @@ describe Kitchen::Provisioner::Shell do
         ])
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
-        cmd.lines.to_a[0..3].must_equal([
+        cmd.lines.to_a[0..5].must_equal([
           %{$env:http_proxy = "http://proxy"\n},
           %{$env:HTTP_PROXY = "http://proxy"\n},
           %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
+          %{$env:HTTPS_PROXY = "https://proxy"\n},
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
         ])
       end
 

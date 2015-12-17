@@ -291,6 +291,7 @@ describe Kitchen::Driver::SSHBase do
       @original_env = ENV.to_hash
       ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
                   "https_proxy" => nil, "HTTPS_PROXY" => nil,
+                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
                   "no_proxy"    => nil, "NO_PROXY"    => nil)
     end
 
@@ -401,12 +402,48 @@ describe Kitchen::Driver::SSHBase do
       cmd
     end
 
-    it "invokes the #install_command with :http_proxy & :https_proxy set" do
+    it "invokes the #install_command with :ftp_proxy set in config" do
+      config[:ftp_proxy] = "ftp://proxy"
+      transport.stubs(:connection).yields(connection)
+      connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+
+      cmd
+    end
+
+    it "invokes the #install_command with ENV[\"ftp_proxy\"] set" do
+      ENV["ftp_proxy"] = "ftp://proxy"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env ftp_proxy=ftp://proxy FTP_PROXY=ftp://proxy install")
+      else
+        connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+      end
+      cmd
+    end
+
+    it "invokes the #install_command with ENV[\"ftp_proxy\"] and ENV[\"no_proxy\"] set" do
+      ENV["ftp_proxy"]  = "ftp://proxy"
+      ENV["no_proxy"]   = "http://no"
+      transport.stubs(:connection).yields(connection)
+      if running_tests_on_windows?
+        connection.expects(:execute).
+          with("env ftp_proxy=ftp://proxy FTP_PROXY=http://proxy " \
+            "no_proxy=http://no NO_PROXY=http://no install")
+      else
+        connection.expects(:execute).with("env ftp_proxy=ftp://proxy " \
+          "no_proxy=http://no install")
+      end
+      cmd
+    end
+
+    it "invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
       config[:http_proxy] = "http://proxy"
       config[:https_proxy] = "https://proxy"
+      config[:ftp_proxy] = "ftp://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy install")
+        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install")
 
       cmd
     end
@@ -488,12 +525,21 @@ describe Kitchen::Driver::SSHBase do
       cmd
     end
 
-    it "invokes the Verifier#install_command with :http_proxy & :https_proxy set" do
+    it "invokes the Verifier#install_command with :ftp_proxy set in config" do
+      config[:ftp_proxy] = "ftp://proxy"
+      transport.stubs(:connection).yields(connection)
+      connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+
+      cmd
+    end
+
+    it "invokes the Verifier#install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
       config[:http_proxy] = "http://proxy"
       config[:https_proxy] = "https://proxy"
+      config[:ftp_proxy] = "ftp://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy install")
+        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install")
 
       cmd
     end
@@ -565,11 +611,19 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "invokes Verifier##{phase}_command with :http_proxy & :https_proxy set" do
+      it "invokes Verifier##{phase}_command with :ftp_proxy set in config" do
+        config[:ftp_proxy] = "ftp://proxy"
+        connection.expects(:execute).with("env ftp_proxy=ftp://proxy #{phase}")
+
+        cmd
+      end
+
+      it "invokes Verifier##{phase}_command with :http_proxy & :https_proxy & :ftp_proxy set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
         connection.expects(:execute).with(
-          "env http_proxy=http://proxy https_proxy=https://proxy #{phase}")
+          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy #{phase}")
 
         cmd
       end
@@ -979,12 +1033,21 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "invokes the #install_command with :http_proxy & :https_proxy set" do
+      it "invokes the #install_command with :ftp_proxy set in config" do
+        config[:ftp_proxy] = "ftp://proxy"
+        Kitchen::SSH.stubs(:new).returns(connection)
+        connection.expects(:exec).with("env ftp_proxy=ftp://proxy huh")
+
+        cmd
+      end
+
+      it "invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.expects(:exec).with(
-          "env http_proxy=http://proxy https_proxy=https://proxy huh")
+          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy huh")
 
         cmd
       end

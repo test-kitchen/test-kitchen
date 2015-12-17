@@ -33,8 +33,8 @@ module Kitchen
       include Logging
 
       default_config :http_proxy, nil
-
       default_config :https_proxy, nil
+      default_config :ftp_proxy, nil
 
       default_config :root_path do |verifier|
         verifier.windows_os? ? "$env:TEMP\\verifier" : "/tmp/verifier"
