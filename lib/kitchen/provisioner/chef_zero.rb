@@ -113,7 +113,7 @@ module Kitchen
       # @return [Array<String>] an array of command line arguments
       # @api private
       def chef_client_args
-        level = config[:log_level] == :info ? :auto : config[:log_level]
+        level = config[:log_level] == :info ? :warn : config[:log_level]
         args = [
           "--config #{remote_path_join(config[:root_path], "client.rb")}",
           "--log_level #{level}",
