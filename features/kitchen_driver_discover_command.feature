@@ -17,3 +17,9 @@ Feature: Search RubyGems to discover new Test Kitchen Driver gems
     When I run `kitchen driver discover`
     Then the exit status should be 0
     And the output should contain "kitchen-bluebox"
+
+  Scenario: Running driver discover with the --chef-config-path parameter loads the chef config
+    Given an empty file named "kitchen_client.rb"
+    When I run `kitchen driver discover --chef-config-path=kitchen_client.rb`
+    Then the exit status should be 0
+    And the output should contain "kitchen-bluebox"

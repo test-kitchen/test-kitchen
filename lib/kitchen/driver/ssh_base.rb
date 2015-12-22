@@ -233,13 +233,13 @@ module Kitchen
         [combined[:hostname], combined[:username], opts]
       end
 
-      # Adds http and https proxy environment variables to a command, if set
-      # in configuration data or on local workstation.
+      # Adds http, https and ftp proxy environment variables to a command, if
+      # set in configuration data or on local workstation.
       #
       # @param cmd [String] command string
       # @return [String] command string
       # @api private
-      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def env_cmd(cmd)
         return if cmd.nil?
         env = "env"
@@ -247,12 +247,16 @@ module Kitchen
           ENV["HTTP_PROXY"]
         https_proxy = config[:https_proxy] || ENV["https_proxy"] ||
           ENV["HTTPS_PROXY"]
+        ftp_proxy = config[:ftp_proxy] || ENV["ftp_proxy"] ||
+          ENV["FTP_PROXY"]
         no_proxy = if (!config[:http_proxy] && http_proxy) ||
-            (!config[:https_proxy] && https_proxy)
+            (!config[:https_proxy] && https_proxy) ||
+            (!config[:ftp_proxy] && ftp_proxy)
           ENV["no_proxy"] || ENV["NO_PROXY"]
         end
         env << " http_proxy=#{http_proxy}"   if http_proxy
         env << " https_proxy=#{https_proxy}" if https_proxy
+        env << " ftp_proxy=#{ftp_proxy}"     if ftp_proxy
         env << " no_proxy=#{no_proxy}"       if no_proxy
 
         env == "env" ? cmd : "#{env} #{cmd}"

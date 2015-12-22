@@ -287,6 +287,9 @@ module Kitchen
         guarenteed that every result is a driver, but chances are good most
         relevant drivers will be returned.
       D
+      method_option :chef_config_path,
+        :default => nil,
+        :desc => "Path to chef config file containing proxy configuration to use"
       def discover
         perform("discover", "driver_discover", args)
       end

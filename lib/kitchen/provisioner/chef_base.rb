@@ -26,6 +26,8 @@ require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
 require "mixlib/install"
+require "chef-config/config"
+require "chef-config/workstation_config_loader"
 
 module Kitchen
 
@@ -41,6 +43,7 @@ module Kitchen
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
+      default_config :config_path, nil
       default_config :log_file, nil
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
@@ -82,6 +85,21 @@ module Kitchen
         provisioner.calculate_path("encrypted_data_bag_secret_key", :type => :file)
       end
       expand_path_for :encrypted_data_bag_secret_key_path
+
+      # Reads the local Chef::Config object (if present).  We do this because
+      # we want to start bring Chef config and ChefDK tool config closer
+      # together.  For example, we want to configure proxy settings in 1
+      # location instead of 3 configuration files.
+      #
+      # @param config [Hash] initial provided configuration
+      def initialize(config = {})
+        super(config)
+
+        ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
+        # This exports any proxy config present in the Chef config to
+        # appropriate environment variables, which Test Kitchen respects
+        ChefConfig::Config.export_proxies
+      end
 
       # (see Base#create_sandbox)
       def create_sandbox

@@ -140,6 +140,10 @@ describe Kitchen::Verifier::Base do
     it ":http_proxys defaults to nil" do
       verifier[:https_proxy].must_equal nil
     end
+
+    it ":ftp_proxy defaults to nil" do
+      verifier[:ftp_proxy].must_equal nil
+    end
   end
 
   describe "#call" do

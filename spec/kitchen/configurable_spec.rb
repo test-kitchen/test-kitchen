@@ -731,6 +731,7 @@ describe Kitchen::Configurable do
       @original_env = ENV.to_hash
       ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
                   "https_proxy" => nil, "HTTPS_PROXY" => nil,
+                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
                   "no_proxy"    => nil, "NO_PROXY"    => nil)
     end
 
@@ -776,9 +777,22 @@ describe Kitchen::Configurable do
         CODE
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports all http proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
@@ -786,6 +800,8 @@ describe Kitchen::Configurable do
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
           mkdir foo
           '
         CODE
@@ -812,6 +828,19 @@ describe Kitchen::Configurable do
           sh -c '
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports ftp_proxy & FTP_PROXY from workstation when :ftp_proxy isn't set" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
           mkdir foo
           '
         CODE
@@ -844,6 +873,23 @@ describe Kitchen::Configurable do
           sh -c '
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when ftp_proxy is set from workstation" do
+        ENV["ftp_proxy"]  = "ftp://proxy"
+        ENV["FTP_PROXY"]  = "ftp://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
           no_proxy="http://no"; export no_proxy
           NO_PROXY="http://no"; export NO_PROXY
           mkdir foo
@@ -880,15 +926,28 @@ describe Kitchen::Configurable do
         CODE
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports all http proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
           mkdir foo
         CODE
       end
@@ -911,6 +970,17 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          mkdir foo
+        CODE
+      end
+
+      it "exports ftp_proxy & FTP_PROXY from workstation when :ftp_proxy isn't set" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
           mkdir foo
         CODE
       end
@@ -939,6 +1009,21 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:no_proxy = "http://no"
+          $env:NO_PROXY = "http://no"
+          mkdir foo
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when ftp_proxy is set from workstation" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
           $env:no_proxy = "http://no"
           $env:NO_PROXY = "http://no"
           mkdir foo

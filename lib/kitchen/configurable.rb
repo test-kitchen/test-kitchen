@@ -303,20 +303,26 @@ module Kitchen
         env << shell_env_var("http_proxy", config[:http_proxy])
         env << shell_env_var("HTTP_PROXY", config[:http_proxy])
       else
-        env << shell_env_var("http_proxy", ENV["http_proxy"]) if ENV["http_proxy"]
-        env << shell_env_var("HTTP_PROXY", ENV["HTTP_PROXY"]) if ENV["HTTP_PROXY"]
+        export_proxy(env, "http")
       end
       if config[:https_proxy]
         env << shell_env_var("https_proxy", config[:https_proxy])
         env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
       else
-        env << shell_env_var("https_proxy", ENV["https_proxy"]) if ENV["https_proxy"]
-        env << shell_env_var("HTTPS_PROXY", ENV["HTTPS_PROXY"]) if ENV["HTTPS_PROXY"]
+        export_proxy(env, "https")
       end
-      # if http_proxy was set from environment variable, or https_proxy was set
-      # from environment variable, include no_proxy environment variable, if set.
+      if config[:ftp_proxy]
+        env << shell_env_var("ftp_proxy", config[:ftp_proxy])
+        env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
+      else
+        export_proxy(env, "ftp")
+      end
+      # if http_proxy was set from environment variable or https_proxy was set
+      # from environment variable, or ftp_proxy was set from environment
+      # variable, include no_proxy environment variable, if set.
       if (!config[:http_proxy] && (ENV["http_proxy"] || ENV["HTTP_PROXY"])) ||
-          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"]))
+          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"])) ||
+          (!config[:ftp_proxy] && (ENV["ftp_proxy"] || ENV["FTP_PROXY"]))
         env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
         env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
       end
@@ -325,6 +331,17 @@ module Kitchen
       else
         Util.wrap_command(env.join("\n").concat("\n").concat(code))
       end
+    end
+
+    # Helper method to export
+    #
+    # @param env [Array] the environment to modify
+    # @param code [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
+    # @api private
+    def export_proxy(env, type)
+      env << shell_env_var("#{type}_proxy", ENV["#{type}_proxy"]) if ENV["#{type}_proxy"]
+      env << shell_env_var("#{type.upcase}_PROXY", ENV["#{type.upcase}_PROXY"]) if
+        ENV["#{type.upcase}_PROXY"]
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.

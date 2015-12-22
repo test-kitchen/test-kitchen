@@ -29,8 +29,11 @@ Gem::Specification.new do |gem|
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
   gem.add_dependency "mixlib-install",  "~> 0.7"
+  gem.add_dependency "chef-config",     ">= 12.5.1"
 
   gem.add_development_dependency "pry"
+  gem.add_development_dependency "pry-byebug"
+  gem.add_development_dependency "pry-stack_explorer"
   gem.add_development_dependency "winrm-transport", "~> 1.0", ">= 1.0.3"
 
   gem.add_development_dependency "bundler",   "~> 1.3"
