@@ -1,4 +1,29 @@
-## 1.4.2
+## 1.5.0
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* PR [#816][]: Fix SuSe OS Busser install ([@Peuserik][])
+* PR [#833][]: Updates the gem path to install everything in /tmp/verifier ([@scotthain][])
+* PR [#878][]: write install_command to file and invoke on the instance to avoid command too long on windows ([@mwrock][])
+
+### New features
+
+* PR [#741][]: Add shell verifier ([@sawanoboly][])
+* PR [#752][]: Make lazyhash enumerable ([@caboteria][])
+* PR [#892][]: Adding proxy tests to the Travis.yml ([@tyler-ball][])
+* PR [#895][]: Adding in ChefConfig support to enable loading proxy config from chef config files ([@tyler-ball][])
+
+### Improvements
+
+* PR [#782][]: Use [`mixlib-install`](https://github.com/chef/mixlib-install) to generate chef install command. ([@thommay][])
+* PR [#804][]: Drop Ruby 1.9 from TravisCI build matrix ([@thommay][])
+* PR [#813][]: Honor proxy ENV variables ([@mcquin][])
+* PR [#885][]: Running the chef_base provisioner install_command via sudo, and command_prefix support ([@adamleff][])
+* PR [#896][]: Fixing garbled output for chef_zero provisioner ([@someara][])
+
+## 1.4.2 / 2015-08-03
 
 ### Potentially breaking changes
 
@@ -769,12 +794,26 @@ The initial release.
 [#734]: https://github.com/test-kitchen/test-kitchen/issues/734
 [#736]: https://github.com/test-kitchen/test-kitchen/issues/736
 [#737]: https://github.com/test-kitchen/test-kitchen/issues/737
+[#741]: https://github.com/test-kitchen/test-kitchen/issues/741
+[#752]: https://github.com/test-kitchen/test-kitchen/issues/752
+[#782]: https://github.com/test-kitchen/test-kitchen/issues/782
 [#801]: https://github.com/test-kitchen/test-kitchen/issues/801
 [#802]: https://github.com/test-kitchen/test-kitchen/issues/802
+[#804]: https://github.com/test-kitchen/test-kitchen/issues/804
+[#813]: https://github.com/test-kitchen/test-kitchen/issues/813
+[#816]: https://github.com/test-kitchen/test-kitchen/issues/816
+[#833]: https://github.com/test-kitchen/test-kitchen/issues/833
+[#878]: https://github.com/test-kitchen/test-kitchen/issues/878
+[#885]: https://github.com/test-kitchen/test-kitchen/issues/885
+[#892]: https://github.com/test-kitchen/test-kitchen/issues/892
+[#895]: https://github.com/test-kitchen/test-kitchen/issues/895
+[#896]: https://github.com/test-kitchen/test-kitchen/issues/896
 [@Annih]: https://github.com/Annih
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
+[@Peuserik]: https://github.com/Peuserik
 [@adamhjk]: https://github.com/adamhjk
+[@adamleff]: https://github.com/adamleff
 [@afiune]: https://github.com/afiune
 [@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
