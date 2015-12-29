@@ -18,5 +18,5 @@
 
 module Kitchen
 
-  VERSION = "1.4.3.dev.0"
+  VERSION = "1.5.0.rc.1"
 end
