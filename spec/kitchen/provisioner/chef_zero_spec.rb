@@ -686,6 +686,19 @@ describe Kitchen::Provisioner::ChefZero do
 
           cmd.wont_match regexify(" --chef-zero-port ", :partial_line)
         end
+
+        it "sets profile-ruby flag when config element is set" do
+          config[:profile_ruby] = true
+
+          cmd.must_match regexify(
+            " --profile-ruby", :partial_line)
+        end
+
+        it "does not set profile-ruby flag when config element is falsey" do
+          config[:profile_ruby] = false
+
+          cmd.wont_match regexify(" --profile-ruby", :partial_line)
+        end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 

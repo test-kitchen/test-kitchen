@@ -59,6 +59,7 @@ module Kitchen
           "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
+        args << "--profile-ruby" if config[:profile_ruby]
 
         prefix_command(
           wrap_shell_code(
