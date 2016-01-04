@@ -27,7 +27,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
   let(:suite)           { stub(:name => "fries") }
-  let(:default_version) { "" }
+  let(:default_version) { "true" }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
@@ -348,7 +348,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "sets the powershell flag for Mixlib::Install" do
         Mixlib::Install.expects(:new).
-          with(default_version, true, install_opts).returns(installer)
+          with("", true, install_opts).returns(installer)
         cmd
       end
     end
