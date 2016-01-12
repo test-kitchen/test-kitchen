@@ -296,7 +296,7 @@ module Kitchen
 
       # @return [String] basename
       def self.basename
-        super
+        super + " driver"
       end
     end
 
