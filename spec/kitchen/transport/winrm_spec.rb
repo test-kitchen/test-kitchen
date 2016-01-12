@@ -750,7 +750,7 @@ MSG
     end
 
     [
-      Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
+      Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
       ::WinRM::WinRMHTTPTransportError, ::WinRM::WinRMAuthorizationError,
       HTTPClient::KeepAliveDisconnected, HTTPClient::ConnectTimeoutError
