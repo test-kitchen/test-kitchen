@@ -15,7 +15,7 @@ sudo: false
 
 matrix:
   include:
-    - rvm: 2.2
+    - rvm: 2.2.4
       sudo: required
       dist: trusty
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
