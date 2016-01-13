@@ -45,6 +45,7 @@ module Kitchen
       default_config :attributes, {}
       default_config :config_path, nil
       default_config :log_file, nil
+      default_config :clean_files_first, true
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -120,7 +121,12 @@ module Kitchen
           init_command_vars_for_bourne(dirs)
         end
 
-        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
+        shell_code = []
+        if config[:clean_files_first]
+          shell_code << shell_code_from_file(vars, "chef_base_clean_command")
+        end
+        shell_code << shell_code_from_file(vars, "chef_base_init_command")
+        prefix_command(shell_code.join("\n"))
       end
 
       # (see Base#install_command)
