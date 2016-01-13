@@ -22,6 +22,7 @@ matrix:
       # for testing
       gemfile: Gemfile.proxy_tests
       before_install:
+        - gem install bundler
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
