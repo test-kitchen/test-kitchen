@@ -24,9 +24,7 @@ require "uri"
 require "kitchen"
 
 module Kitchen
-
   module Transport
-
     # Wrapped exception for any internally raised WinRM-related errors.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
@@ -38,19 +36,43 @@ module Kitchen
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Winrm < Kitchen::Transport::Base
-
       kitchen_transport_api_version 1
 
       plugin_version Kitchen::VERSION
 
-      default_config :port, 5985
       default_config :username, "administrator"
       default_config :password, nil
-      default_config :endpoint_template, "http://%{hostname}:%{port}/wsman"
       default_config :rdp_port, 3389
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
+      default_config :winrm_transport, "plaintext"
+      default_config :port do |transport|
+        transport[:winrm_transport] == :ssl ? 5986 : 5985
+      end
+      default_config :endpoint_template do |transport|
+        scheme = transport[:winrm_transport] == :ssl ? "https" : "http"
+        "#{scheme}://%{hostname}:%{port}/wsman"
+      end
+
+      def finalize_config!(instance)
+        super
+
+        transport = config[:winrm_transport].to_sym
+        config[:winrm_transport] =
+         case transport
+         when :sspinegotiate
+           if host_os_windows?
+             transport
+           else
+             :plaintext
+           end
+         else
+           transport
+         end
+
+        self
+      end
 
       # (see Base#connection)
       def connection(state, &block)
@@ -70,7 +92,6 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
-
         # (see Base::Connection#close)
         def close
           return if @session.nil?
@@ -112,7 +133,7 @@ module Kitchen
           when /linux/
             login_command_for_linux
           else
-            raise ActionFailed, "Remote login not supported in #{self.class} " \
+            fail ActionFailed, "Remote login not supported in #{self.class} " \
               "from host OS '#{RbConfig::CONFIG["host_os"]}'."
           end
         end
@@ -126,9 +147,9 @@ module Kitchen
         def wait_until_ready
           delay = 3
           session(
-            :retries  => max_wait_until_ready / delay,
-            :delay    => delay,
-            :message  => "Waiting for WinRM service on #{endpoint}, " \
+            :retries => max_wait_until_ready / delay,
+            :delay => delay,
+            :message => "Waiting for WinRM service on #{endpoint}, " \
               "retrying in #{delay} seconds"
           )
           execute(PING_COMMAND.dup)
@@ -299,9 +320,9 @@ module Kitchen
         # @return [LoginCommand] a login command
         # @api private
         def login_command_for_linux
-          args  = %W[ -u #{options[:user]} ]
-          args += %W[ -p #{options[:pass]} ] if options.key?(:pass)
-          args += %W[ #{URI.parse(endpoint).host}:#{rdp_port} ]
+          args  = %W[-u #{options[:user]}]
+          args += %W[-p #{options[:pass]}] if options.key?(:pass)
+          args += %W[#{URI.parse(endpoint).host}:#{rdp_port}]
 
           LoginCommand.new("rdesktop", args)
         end
@@ -373,7 +394,7 @@ module Kitchen
         def session(retry_options = {})
           @session ||= establish_shell({
             :retries => connection_retries.to_i,
-            :delay   => connection_retry_sleep.to_i
+            :delay => connection_retry_sleep.to_i
           }.merge(retry_options))
         end
 
@@ -423,22 +444,36 @@ module Kitchen
       # @api private
       def connection_options(data)
         opts = {
-          :instance_name          => instance.name,
-          :kitchen_root           => data[:kitchen_root],
-          :logger                 => logger,
-          :winrm_transport        => :plaintext,
-          :disable_sspi           => true,
-          :basic_auth_only        => true,
-          :endpoint               => data[:endpoint_template] % data,
-          :user                   => data[:username],
-          :pass                   => data[:password],
-          :rdp_port               => data[:rdp_port],
-          :connection_retries     => data[:connection_retries],
+          :instance_name => instance.name,
+          :kitchen_root => data[:kitchen_root],
+          :logger => logger,
+          :endpoint => data[:endpoint_template] % data,
+          :user => data[:username],
+          :pass => data[:password],
+          :rdp_port => data[:rdp_port],
+          :connection_retries => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          :max_wait_until_ready => data[:max_wait_until_ready],
+          :winrm_transport => data[:winrm_transport]
         }
-
+        opts.merge!(additional_transport_args(opts[:winrm_transport]))
         opts
+      end
+
+      def additional_transport_args(transport_type)
+        case transport_type
+        when :ssl, :sspinegotiate
+          {
+            :no_ssl_peer_verification => true,
+            :disable_sspi => false,
+            :basic_auth_only => false
+          }
+        when :plaintext
+          {
+            :disable_sspi => true,
+            :basic_auth_only => true
+          }
+        end
       end
 
       # Creates a new WinRM Connection instance and save it for potential
@@ -458,39 +493,88 @@ module Kitchen
       end
 
       # (see Base#load_needed_dependencies!)
-      def load_needed_dependencies! # rubocop:disable Metrics/MethodLength
+      def load_needed_dependencies!
         super
-        spec_version = WINRM_TRANSPORT_SPEC_VERSION.dup
-        logger.debug("Winrm Transport requested," \
-          " loading WinRM::Transport gem (#{spec_version})")
-        gem "winrm-transport", *spec_version
-        first_load = require "winrm/transport/version"
         load_winrm_transport!
-
-        version = ::WinRM::Transport::VERSION
-        if first_load
-          logger.debug("WinRM::Transport #{version} library loaded")
-        else
-          logger.debug("WinRM::Transport #{version} previously loaded")
-        end
-      rescue LoadError => e
-        logger.fatal("The `winrm-transport' gem is missing and must" \
-          " be installed or cannot be properly activated. Run" \
-          " `gem install winrm-transport --version '#{spec_version}'`" \
-          " or add the following to your Gemfile if you are using Bundler:" \
-          " `gem 'winrm-transport', '#{spec_version}'`.")
-        raise UserError,
-          "Could not load or activate WinRM::Transport (#{e.message})"
+        load_winrm_s! if host_os_windows?
       end
 
       # Load WinRM::Transport code.
       #
       # @api private
       def load_winrm_transport!
+        spec_version = WINRM_TRANSPORT_SPEC_VERSION.dup
+        options = {
+          :load_msg => "Winrm Transport requested," \
+          " loading WinRM::Transport gem (#{spec_version})",
+          :success_msg => "WinRM::Transport library loaded",
+          :already_msg => "WinRM::Transport previously loaded",
+          :name => "winrm-transport",
+          :version => spec_version
+        }
+
+        load_with_rescue!(options) do
+          gem "winrm-transport", WINRM_TRANSPORT_SPEC_VERSION.dup
+          require "winrm/transport/version"
+        end
+
         silence_warnings { require "winrm" }
         require "winrm/transport/shell_closer"
         require "winrm/transport/command_executor"
         require "winrm/transport/file_transporter"
+      end
+
+      def load_winrm_s!
+        options = {
+          :load_msg => "The winrm-s gem is being loaded" \
+          " to enable sspiauthentication.",
+          :success_msg => "winrm-s is loaded." \
+            "  sspinegotiate auth is now available.",
+          :already_msg => "winrm-s was already loaded.",
+          :name => "winrm-s"
+        }
+
+        load_with_rescue!(options) { require "winrm-s" }
+      end
+
+      def load_with_rescue!(options = {}, &block)
+        logger.debug(options[:load_msg])
+        attempt_load = execute_block(&block)
+        if attempt_load
+          logger.debug(options[:success_msg])
+        else
+          logger.debug(options[:already_msg])
+        end
+      rescue LoadError => e
+        message = fail_to_load_gem_message(options[:name],
+          options[:version])
+        logger.fatal(message)
+        raise UserError,
+          "Could not load or activate #{options[:name]}. (#{e.message})"
+      end
+
+      def execute_block
+        yield if block_given?
+      end
+
+      def fail_to_load_gem_message(name, version = nil)
+        version_cmd = "--version '#{version}'" if version
+        version_file = "', '#{version}"
+
+        "The `#{name}` gem is missing and must" \
+          " be installed or cannot be properly activated. Run" \
+          " `gem install #{name} #{version_cmd}`" \
+          " or add the following to your Gemfile if you are using Bundler:" \
+          " `gem '#{name} #{version_file}'`."
+      end
+
+      def host_os_windows?
+        case RbConfig::CONFIG["host_os"]
+        when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+          true
+        else
+          false
+        end
       end
 
       # Return the last saved WinRM connection instance.
