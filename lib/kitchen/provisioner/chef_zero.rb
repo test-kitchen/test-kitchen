@@ -88,6 +88,7 @@ module Kitchen
       #
       # @param args [Array<String>] array of flags
       # @api private
+      # rubocop:disable Metrics/CyclomaticComplexity
       def add_optional_chef_client_args!(args)
         if config[:json_attributes]
           json = remote_path_join(config[:root_path], "dna.json")
@@ -106,7 +107,11 @@ module Kitchen
         if config[:chef_zero_port]
           args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
+        if config[:profile_ruby]
+          args << "--profile-ruby"
+        end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
 
       # Returns an Array of command line arguments for the chef client.
       #

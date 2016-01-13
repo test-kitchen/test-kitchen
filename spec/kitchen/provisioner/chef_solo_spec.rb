@@ -424,6 +424,19 @@ describe Kitchen::Provisioner::ChefSolo do
 
         cmd.must_match regexify(" --logfile /a/out.log", :partial_line)
       end
+
+      it "sets profile-ruby flag when config element is set" do
+        config[:profile_ruby] = true
+
+        cmd.must_match regexify(
+          " --profile-ruby", :partial_line)
+      end
+
+      it "does not set profile-ruby flag when config element is falsey" do
+        config[:profile_ruby] = false
+
+        cmd.wont_match regexify(" --profile-ruby", :partial_line)
+      end
     end
 
     describe "for powershell shells on windows os types" do
