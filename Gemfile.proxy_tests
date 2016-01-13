@@ -2,5 +2,4 @@
 eval_gemfile File.join(File.dirname(__FILE__), "Gemfile")
 
 gem "kitchen-ec2"
-# TODO when this is released in Chef 12.6.0 we need to depend on that
-gem "chef-config", github: "chef/chef", submodules: true
+gem "chef-config"
