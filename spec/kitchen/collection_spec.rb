@@ -58,7 +58,7 @@ describe Kitchen::Collection do
       result.get_all(/one/).size.must_equal 1
     end
 
-    it "returns an empty Collection if on matches are found" do
+    it "returns an empty Collection if no matches are found" do
       result = collection.get_all(/noppa/)
       result.must_equal []
       result.get("nahuh").must_be_nil
