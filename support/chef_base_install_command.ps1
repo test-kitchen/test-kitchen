@@ -4,13 +4,13 @@ Function Check-UpdateChef($root, $version) {
   if (-Not (Test-Path $root)) { return $true }
   elseif ("$version" -eq "true") { return $false }
   elseif ("$version" -eq "latest") { return $true }
-  Try { $chef_version = Get-Content $root\version-manifest.txt | select-object -1}
+  Try { $chef_version = (Get-Content $root\version-manifest.txt | select-object -first 1) }
   Catch {
-    Try { $chef_version = (& $root\bin\chef-solo.bat -v).split(" ", 2)[1] }
-    Catch { $chef_version = "" }
+    Try { $chef_version = (& $root\bin\chef-solo.bat -v) }
+    Catch { $chef_version = " " }
   }
 
-  if ($chef_version.StartsWith($version)) { return $false }
+  if ($chef_version.split(" ", 2)[1].StartsWith($version)) { return $false }
   else { return $true }
 }
 
