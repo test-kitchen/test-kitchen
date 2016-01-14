@@ -345,7 +345,12 @@ module Kitchen
     # @api private
     def update_config!
       if options[:log_level]
-        level = options[:log_level].downcase.to_sym
+        # validate log level specified on command line
+        if Util.to_logger_level(options[:log_level].downcase.to_sym).nil?
+          raise "WARNING - invalid log level specified: \"#{options[:log_level]}\""
+        else
+          level = options[:log_level].downcase.to_sym
+        end
         @config.log_level = level
       end
       unless options[:log_overwrite].nil?
