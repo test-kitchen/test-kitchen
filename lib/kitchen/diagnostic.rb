@@ -35,9 +35,12 @@ module Kitchen
     #   to `#diagnose` or an error Hash
     # @option options [Array<#diagnose>,Hash] :instances an Array of instances
     #   that respond to `#diagnose` or an error Hash
+    # @option options [true,false] :plugins whether or not plugins should be
+    #   returned
     def initialize(options = {})
       @loader = options.fetch(:loader, nil)
       @instances = options.fetch(:instances, [])
+      @plugins = options.fetch(:plugins, false)
       @result = Hash.new
     end
 
@@ -46,6 +49,7 @@ module Kitchen
     # @return [Hash] a configuration Hash
     def read
       prepare_common
+      prepare_plugins
       prepare_loader
       prepare_instances
 
@@ -84,6 +88,31 @@ module Kitchen
         result[:loader] = loader
       else
         result[:loader] = loader.diagnose if loader
+      end
+    end
+
+    # Adds plugin information to the result Hash.
+    #
+    # @api private
+    def prepare_plugins
+      return unless @plugins
+
+      if error_hash?(instances)
+        result[:plugins] = { :error => instances[:error] }
+      elsif instances.empty?
+        result[:plugins] = Hash.new
+      else
+        plugins = {
+          :driver => [], :provisioner => [], :transport => [], :verifier => []
+        }
+        instances.map(&:diagnose_plugins).each do |plugin_hash|
+          plugin_hash.each { |type, plugin| plugins[type] << plugin }
+        end
+        plugins.each do |type, list|
+          plugins[type] =
+            Hash[list.uniq.map { |hash| [hash.delete(:name), hash] }]
+        end
+        result[:plugins] = plugins
       end
     end
 

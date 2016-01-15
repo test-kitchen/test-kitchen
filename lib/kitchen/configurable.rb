@@ -53,6 +53,7 @@ module Kitchen
       @instance = instance
       expand_paths!
       validate_config!
+      load_needed_dependencies!
 
       self
     end
@@ -63,6 +64,12 @@ module Kitchen
     # @return [Object] value at configuration key
     def [](attr)
       config[attr]
+    end
+
+    # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
+    #   unset, for backwards compatability)
+    def bourne_shell?
+      ["bourne", nil].include?(instance.platform.shell_type)
     end
 
     # Find an appropriate path to a file or directory, based on graceful
@@ -117,6 +124,60 @@ module Kitchen
       result
     end
 
+    # Returns a Hash of configuration and other useful diagnostic information
+    # associated with the plugin itself (such as loaded version, class name,
+    # etc.).
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose_plugin
+      result = Hash.new
+      result[:name] = name
+      result.merge!(self.class.diagnose)
+      result
+    end
+
+    # Returns the name of this plugin, suitable for display in a CLI.
+    #
+    # @return [String] name of this plugin
+    def name
+      self.class.name.split("::").last
+    end
+
+    # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
+    def powershell_shell?
+      ["powershell"].include?(instance.platform.shell_type)
+    end
+
+    # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
+    #
+    # @return [String] joined path for instance's os_type
+    def remote_path_join(*parts)
+      path = File.join(*parts)
+      windows_os? ? path.gsub("/", "\\") : path.gsub("\\", "/")
+    end
+
+    # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
+    #   unset, for backwards compatibility)
+    def unix_os?
+      ["unix", nil].include?(instance.platform.os_type)
+    end
+
+    # Performs whatever tests that may be required to ensure that this plugin
+    # will be able to function in the current environment. This may involve
+    # checking for the presence of certain directories, software installed,
+    # etc.
+    #
+    # @raise [UserError] if the plugin will not be able to perform or if a
+    #   documented dependency is missing from the system
+    def verify_dependencies
+      # this method may be left unimplemented if that is applicable
+    end
+
+    # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
+    def windows_os?
+      ["windows"].include?(instance.platform.os_type)
+    end
+
     private
 
     # @return [LzayHash] a configuration hash
@@ -146,9 +207,73 @@ module Kitchen
       expanded_paths = LazyHash.new(self.class.expanded_paths, self).to_hash
 
       expanded_paths.each do |key, should_expand|
-        next if !should_expand || config[key].nil?
+        next if !should_expand || config[key].nil? || config[key] == false
 
-        config[key] = File.expand_path(config[key], root_path)
+        config[key] = if config[key].is_a?(Array)
+          config[key].map { |path| File.expand_path(path, root_path) }
+        else
+          File.expand_path(config[key], root_path)
+        end
+      end
+    end
+
+    # Loads any required third party Ruby libraries or runs any shell out
+    # commands to prepare the plugin. This method will be called in the
+    # context of the main thread of execution and so does not necessarily
+    # have to be thread safe.
+    #
+    # **Note:** any subclasses overriding this method would be well advised
+    # to call super when overriding this method, for example:
+    #
+    # @example overriding `#load_needed_dependencies!`
+    #
+    #   class MyProvisioner < Kitchen::Provisioner::Base
+    #     def load_needed_dependencies!
+    #       super
+    #       # any further work
+    #     end
+    #   end
+    #
+    # @raise [ClientError] if any library loading fails or any of the
+    #   dependency requirements cannot be satisfied
+    # @api private
+    def load_needed_dependencies!
+      # this method may be left unimplemented if that is applicable
+    end
+
+    # @return [Logger] the instance's logger or Test Kitchen's common logger
+    #   otherwise
+    # @api private
+    def logger
+      instance ? instance.logger : Kitchen.logger
+    end
+
+    # Builds a shell environment variable assignment string for the
+    # required shell type.
+    #
+    # @param name [String] variable name
+    # @param value [String] variable value
+    # @return [String] shell variable assignment
+    # @api private
+    def shell_env_var(name, value)
+      if powershell_shell?
+        shell_var("env:#{name}", value)
+      else
+        "#{shell_var(name, value)}; export #{name}"
+      end
+    end
+
+    # Builds a shell variable assignment string for the required shell type.
+    #
+    # @param name [String] variable name
+    # @param value [String] variable value
+    # @return [String] shell variable assignment
+    # @api private
+    def shell_var(name, value)
+      if powershell_shell?
+        %{$#{name} = "#{value}"}
+      else
+        %{#{name}="#{value}"}
       end
     end
 
@@ -164,8 +289,98 @@ module Kitchen
       end
     end
 
+    # Wraps a body of shell code with common context appropriate for the type
+    # of shell.
+    #
+    # @param code [String] the shell code to be wrapped
+    # @return [String] wrapped shell code
+    # @api private
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+    def wrap_shell_code(code)
+      env = []
+      if config[:http_proxy]
+        env << shell_env_var("http_proxy", config[:http_proxy])
+        env << shell_env_var("HTTP_PROXY", config[:http_proxy])
+      else
+        export_proxy(env, "http")
+      end
+      if config[:https_proxy]
+        env << shell_env_var("https_proxy", config[:https_proxy])
+        env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
+      else
+        export_proxy(env, "https")
+      end
+      if config[:ftp_proxy]
+        env << shell_env_var("ftp_proxy", config[:ftp_proxy])
+        env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
+      else
+        export_proxy(env, "ftp")
+      end
+      # if http_proxy was set from environment variable or https_proxy was set
+      # from environment variable, or ftp_proxy was set from environment
+      # variable, include no_proxy environment variable, if set.
+      if (!config[:http_proxy] && (ENV["http_proxy"] || ENV["HTTP_PROXY"])) ||
+          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"])) ||
+          (!config[:ftp_proxy] && (ENV["ftp_proxy"] || ENV["FTP_PROXY"]))
+        env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
+        env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
+      end
+      if powershell_shell?
+        env.join("\n").concat("\n").concat(code)
+      else
+        Util.wrap_command(env.join("\n").concat("\n").concat(code))
+      end
+    end
+
+    # Helper method to export
+    #
+    # @param env [Array] the environment to modify
+    # @param code [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
+    # @api private
+    def export_proxy(env, type)
+      env << shell_env_var("#{type}_proxy", ENV["#{type}_proxy"]) if ENV["#{type}_proxy"]
+      env << shell_env_var("#{type.upcase}_PROXY", ENV["#{type.upcase}_PROXY"]) if
+        ENV["#{type.upcase}_PROXY"]
+    end
+
     # Class methods which will be mixed in on inclusion of Configurable module.
     module ClassMethods
+
+      # Sets the loaded version of this plugin, usually corresponding to the
+      # RubyGems version of the plugin's library. If the plugin does not set
+      # this value, then `nil` will be used and reported.
+      #
+      # @example setting a version used by RubyGems
+      #
+      #   require "kitchen/driver/vagrant_version"
+      #
+      #   module Kitchen
+      #     module Driver
+      #       class Vagrant < Kitchen::Driver::Base
+      #
+      #         plugin_version Kitchen::Driver::VAGRANT_VERSION
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [String] a version string
+      def plugin_version(version) # rubocop:disable Style/TrivialAccessors
+        @plugin_version = version
+      end
+
+      # Returns a Hash of configuration and other useful diagnostic
+      # information.
+      #
+      # @return [Hash] a diagnostic hash
+      def diagnose
+        {
+          :class        => name,
+          :version      => @plugin_version,
+          :api_version  => @api_version
+        }
+      end
 
       # Sets a sane default value for a configuration attribute. These values
       # can be overridden by provided configuration or in a subclass with

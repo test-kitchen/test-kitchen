@@ -25,17 +25,21 @@ describe Kitchen::Provisioner::ChefBase do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform)        { stub(:os_type => nil) }
+  let(:suite)           { stub(:name => "fries") }
+  let(:default_version) { "true" }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
   end
 
-  let(:suite) do
-    stub(:name => "fries")
-  end
-
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite)
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :suite => suite,
+      :platform => platform
+    )
   end
 
   let(:provisioner) do
@@ -48,17 +52,33 @@ describe Kitchen::Provisioner::ChefBase do
 
   describe "configuration" do
 
+    describe "for unix operating systems" do
+
+      before { platform.stubs(:os_type).returns("unix") }
+
+      it ":chef_omnibus_url has a default" do
+        provisioner[:chef_omnibus_url].
+          must_equal "https://www.chef.io/chef/install.sh"
+      end
+
+      it ":chef_metadata_url defaults to nil" do
+        provisioner[:chef_metadata_url].must_equal(nil)
+      end
+    end
+
+    describe "for windows operating systems" do
+
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it ":chef_omnibus_url has a default" do
+        provisioner[:chef_omnibus_url].
+          must_equal "https://www.chef.io/chef/install.sh"
+      end
+
+    end
+
     it ":require_chef_omnibus defaults to true" do
       provisioner[:require_chef_omnibus].must_equal true
-    end
-
-    it ":chef_omnibus_url has a default" do
-      provisioner[:chef_omnibus_url].
-        must_equal "https://www.chef.io/chef/install.sh"
-    end
-
-    it ":chef_omnibus_root has a default" do
-      provisioner[:chef_omnibus_root].must_equal "/opt/chef"
     end
 
     it ":chef_omnibus_install_options defaults to nil" do
@@ -82,168 +102,404 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":data_path uses calculate_path and is expanded" do
-      provisioner[:data_path].must_equal "/rooty/<calculated>/data"
+      provisioner[:data_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/data")
     end
 
     it ":data_bags_path uses calculate_path and is expanded" do
-      provisioner[:data_bags_path].must_equal "/rooty/<calculated>/data_bags"
+      provisioner[:data_bags_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/data_bags")
     end
 
     it ":environments_path uses calculate_path and is expanded" do
       provisioner[:environments_path].
-        must_equal "/rooty/<calculated>/environments"
+        must_equal os_safe_root_path("/rooty/<calculated>/environments")
     end
 
     it ":nodes_path uses calculate_path and is expanded" do
-      provisioner[:nodes_path].must_equal "/rooty/<calculated>/nodes"
+      provisioner[:nodes_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/nodes")
     end
 
     it ":roles_path uses calculate_path and is expanded" do
-      provisioner[:roles_path].must_equal "/rooty/<calculated>/roles"
+      provisioner[:roles_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/roles")
     end
 
     it ":clients_path uses calculate_path and is expanded" do
-      provisioner[:clients_path].must_equal "/rooty/<calculated>/clients"
+      provisioner[:clients_path].
+        must_equal os_safe_root_path("/rooty/<calculated>/clients")
     end
 
     it "...secret_key_path uses calculate_path and is expanded" do
       provisioner[:encrypted_data_bag_secret_key_path].
-        must_equal "/rooty/<calculated>/encrypted_data_bag_secret_key"
+        must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
     end
   end
 
   describe "#install_command" do
 
+    before do
+      platform.stubs(:shell_type).returns("bourne")
+      Mixlib::Install.stubs(:new).returns(installer)
+    end
+
+    let(:installer) { stub(:root => "/rooty", :install_command => "make_it_so") }
+
+    let(:cmd) { provisioner.install_command }
+
+    let(:install_opts) {
+      { :omnibus_url => "https://www.chef.io/chef/install.sh",
+        :project => nil, :install_flags => nil, :http_proxy => nil,
+        :https_proxy => nil }
+    }
+
     it "returns nil if :require_chef_omnibus is falsey" do
       config[:require_chef_omnibus] = false
 
-      provisioner.install_command.must_equal nil
+      installer.expects(:root).never
+      installer.expects(:install_command).never
+      cmd.must_equal nil
     end
 
-    it "uses bourne shell (sh)" do
-      provisioner.install_command.must_match(/\Ash -c '$/)
+    describe "common behaviour" do
+      before do
+        installer.expects(:root).at_least_once.returns("/opt/chef")
+        installer.expects(:install_command)
+      end
+
+      it "passes sensible defaults" do
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+        install_opts[:http_proxy] = "http://proxy"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+        install_opts[:https_proxy] = "https://proxy"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        install_opts[:http_proxy] = "http://proxy"
+        install_opts[:https_proxy] = "https://proxy"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "installs chef using :chef_omnibus_url, if necessary" do
+        config[:chef_omnibus_url] = "FROM_HERE"
+        install_opts[:omnibus_url] = "FROM_HERE"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a specific version of chef, if necessary" do
+        config[:require_chef_omnibus] = "1.2.3"
+
+        Mixlib::Install.expects(:new).
+          with("1.2.3", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a major/minor version of chef, if necessary" do
+        config[:require_chef_omnibus] = "11.10"
+
+        Mixlib::Install.expects(:new).
+          with("11.10", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a major version of chef, if necessary" do
+        config[:require_chef_omnibus] = "12"
+
+        Mixlib::Install.expects(:new).
+          with("12", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a downcaased version string of chef, if necessary" do
+        config[:require_chef_omnibus] = "10.1.0.RC.1"
+
+        Mixlib::Install.expects(:new).
+          with("10.1.0.rc.1", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a nightly, if necessary" do
+        config[:require_chef_omnibus] =
+          "12.5.0-current.0+20150721082808.git.14.c91b337-1"
+
+        Mixlib::Install.expects(:new).with(
+          "12.5.0-current.0+20150721082808.git.14.c91b337-1",
+          false,
+          install_opts
+        ).returns(installer)
+        cmd
+      end
+
+      it "will install the latest chef, if necessary" do
+        config[:require_chef_omnibus] = "latest"
+
+        Mixlib::Install.expects(:new).
+          with("latest", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will install a version of chef, unless it exists" do
+        config[:require_chef_omnibus] = true
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will pass a project, when given" do
+        config[:chef_omnibus_install_options] = "-P chefdk"
+        install_opts[:install_flags] = "-P chefdk"
+        install_opts[:project] = "chefdk"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will pass install options and version info, when given" do
+        config[:require_chef_omnibus] = "11"
+        config[:chef_omnibus_install_options] = "-d /tmp/place"
+        install_opts[:install_flags] = "-d /tmp/place"
+
+        Mixlib::Install.expects(:new).
+          with("11", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will set the install root" do
+        config[:chef_omnibus_root] = "/tmp/test"
+        install_opts[:root] = "/tmp/test"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
     end
 
-    it "ends with a single quote" do
-      provisioner.install_command.must_match(/'\Z/)
+    describe "for bourne shells" do
+      before do
+        installer.expects(:root).at_least_once.returns("/opt/chef")
+        installer.expects(:install_command).returns("my_install_command")
+      end
+
+      it "prepends sudo for sh commands when :sudo is set" do
+        config[:sudo] = true
+        config[:sudo_command] = "my_sudo_command"
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd.must_equal "my_sudo_command my_install_command"
+      end
+
+      it "does not sudo for sh commands when :sudo is falsey" do
+        config[:sudo] = false
+
+        Mixlib::Install.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd.must_equal "my_install_command"
+      end
     end
 
-    it "installs chef using :chef_omnibus_url, if necessary" do
-      config[:chef_omnibus_url] = "FROM_HERE"
+    describe "for powershell shells on windows os types" do
+      before do
+        installer.expects(:root).at_least_once.returns("/opt/chef")
+        installer.expects(:install_command)
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
 
-      provisioner.install_command.must_match regexify(
-        "do_download FROM_HERE /tmp/install.sh")
-    end
-
-    it "will install a specific version of chef, if necessary" do
-      config[:require_chef_omnibus] = "1.2.3"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 1.2.3")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (1.2.3)", :partial_line)
-    end
-
-    it "will install a major/minor version of chef, if necessary" do
-      config[:require_chef_omnibus] = "11.10"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11.10")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (11.10)", :partial_line)
-    end
-
-    it "will install a major version of chef, if necessary" do
-      config[:require_chef_omnibus] = "12"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 12")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (12)", :partial_line)
-    end
-
-    it "will install a downcaased version string of chef, if necessary" do
-      config[:require_chef_omnibus] = "10.1.0.RC.1"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 10.1.0.rc.1")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (10.1.0.rc.1)", :partial_line)
-    end
-
-    it "will install the latest of chef, if necessary" do
-      config[:require_chef_omnibus] = "latest"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (always install latest version)",
-        :partial_line
-      )
-    end
-
-    it "will install a of chef, unless it exists" do
-      config[:require_chef_omnibus] = true
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh ")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (install only if missing)", :partial_line)
-    end
-
-    it "will pass install options, when given" do
-      config[:chef_omnibus_install_options] = "-P chefdk"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -P chefdk")
-      provisioner.install_command.must_match regexify(
-        "Installing Chef Omnibus (install only if missing)", :partial_line)
-    end
-
-    it "will pass install options and version info, when given" do
-      config[:require_chef_omnibus] = "11"
-      config[:chef_omnibus_install_options] = "-d /tmp/place"
-
-      provisioner.install_command.must_match regexify(
-        "sudo -E sh /tmp/install.sh -v 11 -d /tmp/place")
+      it "sets the powershell flag for Mixlib::Install" do
+        Mixlib::Install.expects(:new).
+          with("", true, install_opts).returns(installer)
+        cmd
+      end
     end
   end
 
   describe "#init_command" do
 
-    it "uses bourne shell" do
-      provisioner.init_command.must_match(/\Ash -c '$/)
-      provisioner.init_command.must_match(/'\Z/)
-    end
+    let(:cmd) { provisioner.init_command }
 
-    it "uses sudo for rm when configured" do
-      config[:sudo] = true
+    describe "common behavior" do
 
-      provisioner.init_command.
-        must_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+      before { platform.stubs(:shell_type).returns("fake") }
 
-    it "does not use sudo for rm when configured" do
-      config[:sudo] = false
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
 
-      provisioner.init_command.
-        must_match regexify("rm -rf ", :partial_line)
-      provisioner.init_command.
-        wont_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+        cmd.must_match(/\Amy_prefix /)
+      end
 
-    %w[cookbooks data data_bags environments roles clients].each do |dir|
-      it "removes the #{dir} directory" do
-        config[:root_path] = "/route"
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
 
-        provisioner.init_command.must_match %r{rm -rf\b.*\s+/route/#{dir}\s+}
+        cmd.wont_match(/\Amy_prefix /)
       end
     end
 
-    it "creates :root_path directory" do
-      config[:root_path] = "/root/path"
+    describe "for bourne shells" do
 
-      provisioner.init_command.must_match regexify("mkdir -p /root/path")
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..4].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "prepends sudo for rm when :sudo is set" do
+        config[:sudo] = true
+
+        cmd.must_match regexify(%{sudo_rm="sudo -E rm"})
+      end
+
+      it "does not sudo for sh commands when :sudo is falsey" do
+        config[:sudo] = false
+
+        cmd.must_match regexify(%{sudo_rm="rm"})
+      end
+
+      it "sets chef component dirs for deletion" do
+        config[:root_path] = "/route"
+        dirs = %W[
+          /route/clients /route/cookbooks /route/data /route/data_bags
+          /route/encrypted_data_bag_secret /route/environments /route/roles
+        ].join(" ")
+
+        cmd.must_match regexify(%{dirs="#{dirs}"})
+      end
+
+      it "sets the root_path from :root_path" do
+        config[:root_path] = "RIGHT_HERE"
+
+        cmd.must_match regexify(%{root_path="RIGHT_HERE"})
+      end
+    end
+
+    describe "for powershell shells on windows os types" do
+
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports all http proxy variables when both are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..3].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "sets chef component dirs for deletion" do
+        config[:root_path] = "\\route"
+        dirs = %W[
+          "\\route\\clients" "\\route\\cookbooks" "\\route\\data"
+          "\\route\\data_bags" "\\route\\encrypted_data_bag_secret"
+          "\\route\\environments" "\\route\\roles"
+        ].join(", ")
+
+        cmd.must_match regexify(%{$dirs = @(#{dirs})})
+      end
+
+      it "sets the root_path from :root_path" do
+        config[:root_path] = "RIGHT_HERE"
+
+        cmd.must_match regexify(%{$root_path = "RIGHT_HERE"})
+      end
     end
   end
 

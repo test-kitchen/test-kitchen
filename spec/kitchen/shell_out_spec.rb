@@ -112,6 +112,13 @@ describe Kitchen::ShellOut do
       subject.run_command("yo", :use_sudo => true)
     end
 
+    it "prepends with custom :sudo_command if :use_sudo is truthy" do
+      Mixlib::ShellOut.unstub(:new)
+      Mixlib::ShellOut.expects(:new).with("wat yo", opts).returns(command)
+
+      subject.run_command("yo", :use_sudo => true, :sudo_command => "wat")
+    end
+
     it "logs a debug BEGIN message" do
       subject.run_command("echo whoopa\ndoopa\ndo")
 

@@ -30,6 +30,10 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Driver::Base
 
+      kitchen_driver_api_version 2
+
+      plugin_version Kitchen::VERSION
+
       default_config :sleep, 0
       default_config :random_failure, false
 
@@ -37,11 +41,6 @@ module Kitchen
       def create(state)
         state[:my_id] = "#{instance.name}-#{Time.now.to_i}"
         report(:create, state)
-      end
-
-      # (see Base#converge)
-      def converge(state)
-        report(:converge, state)
       end
 
       # (see Base#setup)

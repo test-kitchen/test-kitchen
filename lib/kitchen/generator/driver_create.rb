@@ -87,8 +87,8 @@ module Kitchen
       # @api private
       def initialize_git
         inside(target_dir) do
-          run("git init")
-          run("git add .")
+          run("git init", :capture => true)
+          run("git add .", :capture => true)
         end
       end
 
@@ -129,7 +129,7 @@ module Kitchen
       #   found
       # @api private
       def author
-        git_user_name = %x{git config user.name}.chomp
+        git_user_name = `git config user.name`.chomp
         git_user_name.empty? ? "TODO: Write your name" : git_user_name
       end
 
@@ -137,7 +137,7 @@ module Kitchen
       #   if found
       # @api private
       def email
-        git_user_email = %x{git config user.email}.chomp
+        git_user_email = `git config user.email`.chomp
         git_user_email.empty? ? "TODO: Write your email" : git_user_email
       end
 

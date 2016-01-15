@@ -36,7 +36,7 @@ def with_sorted_dir_entries
     class << self
       alias_method :__entries__, :entries unless method_defined?(:__entries__)
 
-      def entries(*args)
+      def entries(*args) # rubocop:disable Lint/NestedMethodDefinition
         send(:__entries__, *args).sort
       end
     end
@@ -95,7 +95,7 @@ module Net
           pty_data = ["xterm", 80, 24, 640, 480, "\0"]
 
           script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types
+            def types # rubocop:disable Lint/NestedMethodDefinition
               if @type == 98 && @data[1] == "pty-req"
                 @types ||= [
                   :long, :string, :bool, :string,
@@ -138,7 +138,7 @@ describe Kitchen::SSH do
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-      Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
+      Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout
     ].each do |klass|
       describe "raising #{klass}" do
 
@@ -158,9 +158,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
-          }.size.must_equal opts[:ssh_retries]
+          }.must_equal opts[:ssh_retries]
         end
 
         it "sleeps for 1 second between retries" do
@@ -179,9 +179,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ info_line_with("[SSH] connection failed, retrying ")
-          }.size.must_equal 2
+          }.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -190,9 +190,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count { |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          }.size.must_equal 1
+          }.must_equal 1
         end
       end
     end
@@ -320,8 +320,9 @@ describe Kitchen::SSH do
 
     before do
       expect_scp_session("-t /tmp/remote") do |channel|
+        file_mode = running_tests_on_windows? ? 0644 : 0755
         channel.gets_data("\0")
-        channel.sends_data("C0755 1234 #{File.basename(src.path)}\n")
+        channel.sends_data("C#{padded_octal_string(file_mode)} 1234 #{File.basename(src.path)}\n")
         channel.gets_data("\0")
         channel.sends_data("a" * 1234)
         channel.sends_data("\0")
@@ -357,6 +358,12 @@ describe Kitchen::SSH do
 
     before do
       @dir = Dir.mktmpdir("local")
+
+      # Since File.chmod is a NOOP on Windows
+      @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
+      @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
+      @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
+
       FileUtils.chmod(0700, @dir)
       File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
       FileUtils.chmod(0644, "#{@dir}/alpha")
@@ -369,16 +376,16 @@ describe Kitchen::SSH do
 
       expect_scp_session("-t -r /tmp/remote") do |channel|
         channel.gets_data("\0")
-        channel.sends_data("D0700 0 #{File.basename(@dir)}\n")
+        channel.sends_data("D#{padded_octal_string(@tmp_dir_mode)} 0 #{File.basename(@dir)}\n")
         channel.gets_data("\0")
-        channel.sends_data("C0644 15 alpha\n")
+        channel.sends_data("C#{padded_octal_string(@alpha_file_mode)} 15 alpha\n")
         channel.gets_data("\0")
         channel.sends_data("alpha-contents\n")
         channel.sends_data("\0")
         channel.gets_data("\0")
         channel.sends_data("D0755 0 subdir\n")
         channel.gets_data("\0")
-        channel.sends_data("C0555 14 beta\n")
+        channel.sends_data("C#{padded_octal_string(@beta_file_mode)} 14 beta\n")
         channel.gets_data("\0")
         channel.sends_data("beta-contents\n")
         channel.sends_data("\0")
@@ -492,84 +499,84 @@ describe Kitchen::SSH do
   describe "#login_command" do
 
     let(:login_command) { ssh.login_command }
-    let(:cmd)           { login_command.cmd_array.join(" ") }
+    let(:args)          { login_command.arguments.join(" ") }
 
     it "returns a LoginCommand" do
       login_command.must_be_instance_of Kitchen::LoginCommand
     end
 
     it "is an SSH command" do
-      cmd.must_match %r{^ssh }
-      cmd.must_match %r{ me@foo$}
+      login_command.command.must_equal "ssh"
+      args.must_match %r{ me@foo$}
     end
 
     it "sets the UserKnownHostsFile option" do
-      cmd.must_match regexify(" -o UserKnownHostsFile=/dev/null ")
+      args.must_match regexify("-o UserKnownHostsFile=/dev/null ")
     end
 
     it "sets the StrictHostKeyChecking option" do
-      cmd.must_match regexify(" -o StrictHostKeyChecking=no ")
+      args.must_match regexify(" -o StrictHostKeyChecking=no ")
     end
 
     it "won't set IdentitiesOnly option by default" do
-      cmd.wont_match regexify(" -o IdentitiesOnly=")
+      args.wont_match regexify(" -o IdentitiesOnly=")
     end
 
     it "sets the IdentiesOnly option if :keys option is given" do
       opts[:keys] = ["yep"]
 
-      cmd.must_match regexify(" -o IdentitiesOnly=yes ")
+      args.must_match regexify(" -o IdentitiesOnly=yes ")
     end
 
     it "sets the LogLevel option to VERBOSE if logger is set to debug" do
       logger.level = ::Logger::DEBUG
       opts[:logger] = logger
 
-      cmd.must_match regexify(" -o LogLevel=VERBOSE ")
+      args.must_match regexify(" -o LogLevel=VERBOSE ")
     end
 
     it "sets the LogLevel option to ERROR if logger is not set to debug" do
       logger.level = ::Logger::INFO
       opts[:logger] = logger
 
-      cmd.must_match regexify(" -o LogLevel=ERROR ")
+      args.must_match regexify(" -o LogLevel=ERROR ")
     end
 
     it "won't set the ForwardAgent option by default" do
-      cmd.wont_match regexify(" -o ForwardAgent=")
+      args.wont_match regexify(" -o ForwardAgent=")
     end
 
     it "sets the ForwardAgent option to yes if truthy" do
       opts[:forward_agent] = "yep"
 
-      cmd.must_match regexify(" -o ForwardAgent=yes")
+      args.must_match regexify(" -o ForwardAgent=yes")
     end
 
     it "sets the ForwardAgent option to no if falsey" do
       opts[:forward_agent] = false
 
-      cmd.must_match regexify(" -o ForwardAgent=no")
+      args.must_match regexify(" -o ForwardAgent=no")
     end
 
     it "won't add any SSH keys by default" do
-      cmd.wont_match regexify(" -i ")
+      args.wont_match regexify(" -i ")
     end
 
     it "sets SSH keys options if given" do
       opts[:keys] = %w[one two]
 
-      cmd.must_match regexify(" -i one ")
-      cmd.must_match regexify(" -i two ")
+      args.must_match regexify(" -i one ")
+      args.must_match regexify(" -i two ")
     end
 
     it "sets the port option to 22 by default" do
-      cmd.must_match regexify(" -p 22 ")
+      args.must_match regexify(" -p 22 ")
     end
 
     it "sets the port option" do
       opts[:port] = 1234
 
-      cmd.must_match regexify(" -p 1234 ")
+      args.must_match regexify(" -p 1234 ")
     end
   end
 
@@ -642,9 +649,9 @@ describe Kitchen::SSH do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
       ssh.wait
 
-      logged_output.string.lines.select { |l|
+      logged_output.string.lines.count { |l|
         l =~ info_line_with("Waiting for foo:22...")
-      }.size.must_equal 2
+      }.must_equal 2
     end
   end
 

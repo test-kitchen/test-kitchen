@@ -37,6 +37,14 @@ describe Kitchen::Driver::Dummy do
     Kitchen::Driver::Dummy.new(config).finalize_config!(instance)
   end
 
+  it "driver api_version is 2" do
+    driver.diagnose_plugin[:api_version].must_equal 2
+  end
+
+  it "plugin_version is set to Kitchen::VERSION" do
+    driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "default_config" do
 
     it "sets :sleep to 0 by default" do
@@ -92,35 +100,6 @@ describe Kitchen::Driver::Dummy do
       driver.create(state)
 
       logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Create on .+$/)
-    end
-  end
-
-  describe "#converge" do
-
-    it "calls sleep if :sleep value is greater than 0" do
-      config[:sleep] = 12.5
-      driver.expects(:sleep).with(12.5).returns(true)
-
-      driver.create(state)
-    end
-
-    it "raises ActionFailed if :fail_converge is set" do
-      config[:fail_converge] = true
-
-      proc { driver.converge(state) }.must_raise Kitchen::ActionFailed
-    end
-
-    it "randomly raises ActionFailed if :random_failure is set" do
-      config[:random_failure] = true
-      driver.stubs(:randomly_fail?).returns(true)
-
-      proc { driver.converge(state) }.must_raise Kitchen::ActionFailed
-    end
-
-    it "logs a converge event to INFO" do
-      driver.converge(state)
-
-      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)
     end
   end
 

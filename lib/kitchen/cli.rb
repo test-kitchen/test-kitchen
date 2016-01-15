@@ -93,6 +93,14 @@ module Kitchen
         :type => :boolean
     end
 
+    # Sets the test_base_path method_options
+    # @api private
+    def self.test_base_path
+      method_option :test_base_path,
+        :aliases => "-t",
+        :desc => "Set the base path of the tests"
+    end
+
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
     method_option :bare,
       :aliases => "-b",
@@ -112,6 +120,9 @@ module Kitchen
     method_option :loader,
       :type => :boolean,
       :desc => "Include data loader diagnostics"
+    method_option :plugins,
+      :type => :boolean,
+      :desc => "Include plugin diagnostics"
     method_option :instances,
       :type => :boolean,
       :default => true,
@@ -168,6 +179,7 @@ module Kitchen
         :desc => <<-DESC.gsub(/^\s+/, "").gsub(/\n/, " ")
           Fail Test Kitchen immediately if any test suites fails without waiting for others to finish when kitchen is running in concurrency mode
         DESC
+      test_base_path
       log_options
       define_method(action) do |*args|
         update_config!
@@ -213,6 +225,7 @@ module Kitchen
       :type => :boolean,
       :default => false,
       :desc => "Invoke init command if .kitchen.yml is missing"
+    test_base_path
     log_options
     def test(*args)
       update_config!
@@ -290,6 +303,9 @@ module Kitchen
         guarenteed that every result is a driver, but chances are good most
         relevant drivers will be returned.
       D
+      method_option :chef_config_path,
+        :default => nil,
+        :desc => "Path to chef config file containing proxy configuration to use"
       def discover
         perform("discover", "driver_discover", args)
       end
@@ -340,6 +356,11 @@ module Kitchen
       end
       unless options[:log_overwrite].nil?
         @config.log_overwrite = options[:log_overwrite]
+      end
+
+      if options[:test_base_path]
+        # ensure we have an absolute path
+        @config.test_base_path = File.absolute_path(options[:test_base_path])
       end
 
       # Now that we have required configs, lets create our file logger

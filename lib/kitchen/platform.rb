@@ -28,6 +28,12 @@ module Kitchen
     # @return [String] logical name of this platform
     attr_reader :name
 
+    # @return [String] operating system type hint (default: `"unix"`)
+    attr_reader :os_type
+
+    # @return [String] shell command flavor hint (default: `"bourne"`)
+    attr_reader :shell_type
+
     # Constructs a new platform.
     #
     # @param [Hash] options configuration for a new platform
@@ -37,6 +43,19 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Platform#new requires option :name"
       end
+      @os_type = options.fetch(:os_type) do
+        @name.downcase =~ /^win/ ? "windows" : "unix"
+      end
+      @shell_type = options.fetch(:shell_type) do
+        @name.downcase =~ /^win/ ? "powershell" : "bourne"
+      end
+    end
+
+    # Returns a Hash of configuration and other useful diagnostic information.
+    #
+    # @return [Hash] a diagnostic hash
+    def diagnose
+      { :os_type => os_type, :shell_type => shell_type }
     end
   end
 end

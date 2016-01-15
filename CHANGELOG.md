@@ -1,8 +1,182 @@
-## 1.4.0 / unreleased
+## 1.5.0
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* PR [#816][]: Fix SuSe OS Busser install ([@Peuserik][])
+* PR [#833][]: Updates the gem path to install everything in /tmp/verifier ([@scotthain][])
+* PR [#878][]: write install_command to file and invoke on the instance to avoid command too long on windows ([@mwrock][])
+
+### New features
+
+* PR [#741][]: Add shell verifier ([@sawanoboly][])
+* PR [#752][]: Make lazyhash enumerable ([@caboteria][])
+* PR [#892][]: Adding proxy tests to the Travis.yml ([@tyler-ball][])
+* PR [#895][]: Adding in ChefConfig support to enable loading proxy config from chef config files ([@tyler-ball][])
 
 ### Improvements
 
-* Add --log-overwrite flag to CLI anywhere --log-level is accepted.  By default it is true and will clear out the log every time Test Kitchen runs.  To disable this behavior pas --log-overwrite=false or --no-log-overwrite.  You can also configure this with the environment variable `KITCHEN_LOG_OVERWRITE`. ([@tyler-ball])
+* PR [#782][]: Use [`mixlib-install`](https://github.com/chef/mixlib-install) to generate chef install command. ([@thommay][])
+* PR [#804][]: Drop Ruby 1.9 from TravisCI build matrix ([@thommay][])
+* PR [#813][]: Honor proxy ENV variables ([@mcquin][])
+* PR [#885][]: Running the chef_base provisioner install_command via sudo, and command_prefix support ([@adamleff][])
+* PR [#896][]: Fixing garbled output for chef_zero provisioner ([@someara][])
+
+## 1.4.2 / 2015-08-03
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* PR [#801][]: Use compression `true` instead of `'zlib'` by default, supports net-ssh 2.10.  Old values of `'zlib'` and `'none'` are cast to `'zlib[@openssh][].com'` and `false` respectively but are deprecated.  In 2.0 this casting will be removed. ([@coderanger][])
+* PR [#802][]: net-ssh 2.10 throws a different error than 2.9 when connection times out, so we need to retry that. We now retry both the 2.9 and 2.10 errors. ([@Annih][])
+* Pinning to net-ssh < 2.10 because 2.10 no longer works with Ruby 1.9 and TK still does ([@tyler-ball][])
+
+### New features
+
+### Improvements
+
+* PR [#689][]: Fixing tests to run on Windows and adding AppVeyor builds. ([@tyler-ball][] and [@smurawski][])
+
+## 1.4.1 / 2015-06-18
+
+### Potentially breaking changes
+
+### Bug fixes
+
+* Issue [#663][], PR [#665][]: Centos 6.4 no longer supported, upgrade in templates for `kitchen init` ([@lloydde][])
+* PR [#711][]: Update to Ubuntu 14.04 and Centos 7.1 for `kitchen init` ([@fnichol][])
+* PR [#734][]: Fix failing `kitchen driver discover` test ([@fnichol][])
+* Issue [#732][], PR [#737][]: Generate a `chefignore` file during `kitchen init` ([@metadave][])
+* Issue [#688][], PR [#728][] and [#736][]: Default WinRM username updated to `administrator` and additional errors caught for retry logic when trying to login with WinRM ([@zl4bv][], [@tyler-ball][])
+
+### New features
+
+### Improvements
+
+* PR [#704][]: Don't prompt for passwords when using public key auth ([@caboteria][])
+
+## 1.4.0 / 2015-04-28
+
+(*A selected roll-up of 1.4.0 pre-release changelogs*)
+
+### Potentially breaking changes
+
+**Note::** while a huge amount of effort has gone into preserving backwards compatibility, there could be issues when running this release using certain Drivers and Provisioners, especially ones that are deeply customized. Drivers that inherit directly from `Kitchen::Driver::Base` may need to be updated, while Driver that inherit directly from `Kitchen::Driver::SSHBase` should continue to operate as before. Other libraries/addons/plugins which patch internals of Test Kitchen's code may break or work differently and would be extremely hard to preserve while adding new functionality. Sadly, this is a tradeoff.
+
+* Drivers are no longer responsible for `converge`, `setup`, `verify`, and `login` actions. The updated Driver API contract ([Driver::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/base.rb)) only requires implementing the `#create` and `#destroy` methods, same as before. However, for Drivers that directly inherit from `Kitchen::Driver::Base`, any custom `#converge`, `#setup`, `#verify`, or `#login_command` methods will no longer be called. ([@fnichol][])
+* Drivers which inherit directly from `Kitchen::Driver::SSHBase` are now considered "Legacy Drivers" as further improvements for these Drivers may not be available in future releases. The previous behavior is preserved, i.e. the Driver's `#converge`, `#setup`, and `#verify` methods are called and all methods signatures (and relative behavior) is preserved. ([Driver::SSHBase](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/ssh_base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d816d6fd1bd21548b485ca91e0ff9303e99a6fbc)) ([@fnichol][])
+* Provisioners are now self-aware, completely owning the `converge` action. The original public methods of the Base Provisioner are maintained but are now invoked with a `#call(state)` method on the Provisioner object. Provisioner authors may elect to implement the command and sandbox methods, or re-implement the `#call` method which may not call any of the previously mentioned methods. ([Provisioner::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/3196675e519a2fb97af4bcac80ef11f5e37f2537)) ([@fnichol][])
+* Transport are not responsible for the `login` command. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/ae360a11d8c18ff5d1086ee19b099db1d0422024)) ([@fnichol][])
+* Busser is now a plugin of type Verifier (see below for details on Verifiers). Any external code that directly creates a `Kitchen::Busser` object will fail as the class has moved to `Kitchen::Verifier::Busser`. Any external code that directly invokes Busser's `#sync_cmd` will log a warning and will **not** transfer test files (authors of plugins may now call `instance.transport(state).upload(locals, remote)` in its place). ([@fnichol][])
+* Verifiers are responsible for the `verify` action. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d62f577003c1920259eb627cc4479c0b21e0c374)) ([@fnichol][])
+* Pull request [#649][]: Preserve Busser's #setup_cmd, #run_cmd, & #sync_cmd for better backwards compatibility. ([@fnichol][])
+* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependencies to manage. ([@fnichol][])
+
+### Bug fixes
+
+* Issue [#656][], pull request 669: Move ObjectSpace finalizer logic into CommandExtractor to close the last opened remote shell on shutdown for Winrm Transport. ([@fnichol][])
+* Issue [#611][], pull request [#673][]: Ensure that secret key is deleted before converge for chef_zero and chef_solo Provisioners. ([@fnichol][])
+* Issue [#389][], pull request [#674][]: Expand path for `:ssh_key` if provided in kitchen.yml for Ssh Transport. ([@fnichol][])
+* Pull request [#653][]: Consider `:require_chef_omnibus = 11` to be a modern version for Chef Provisioners. ([@fnichol][])
+
+### New features
+
+* ChefZero Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefZero](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_zero.rb)) ([@fnichol][])
+* ChefSolo Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefSolo](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_solo.rb)) ([@fnichol][])
+* Shell Provisioner supports PowerShell scripts in addition to Bourne shell scripts ([Provisioner::Shell](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/shell.rb)) ([@fnichol][])
+* Platform operating system and shell hinting: By default, Windows platform names (case insensitive platform names starting with `/^win/`) will have `:os_type` set to `"windows"` and `:shell_type` set to `"powershell"`. By default, non-Windows platform names will have `:os_type` set to `"unix"` and `:shell_type` set to `"bourne"`. The methods `#windows_os?`, `#unix_os?`, `#powershell_shell?`, `#bourne_shell?`, and `#remote_path_join` are available for all Driver, Provisioner, Verifier, and Transport authors. ([@fnichol][])
+* New plugin type: Transport, which executes commands and transfers files to remote instances. ([Transport::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/base.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: WinRM: which re-uses a remote shell to execute commands and upload files over WinRM. Currently non-SSL/plaintext authentication only. ([Transport::Winrm](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/winrm.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: SSH, which re-uses one SSH connection where possible. Improvements such as keepalive, retries, and further configuration attributes are included. This replaces the more general `Kitchen:SSH` class, which remains in the codebase for plugins that call this class directly. ([Transport::Ssh](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/ssh.rb)) ([@fnichol][])
+* New plugin type: Verifier, which executes post-convergence tests on the instance. Busser is now a Verifier. ([Verifier::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/verifier/base.rb)) ([@fnichol][])
+* Add [API versioning](d8f1a7db9e506c44f321462e1fba0b1e24994070) metadata to all plugin types. ([@fnichol][])
+* Pull request [#667][], pull request [#668][]: Add plugin diagnostics, exposed via `kitchen diagnose`. ([@fnichol][])
+* Pull request [#675][], issue [#424][]: Add default `:compression` & `:compression_level` configuration attributes to Ssh Transport.
+* Pull request [#651][], issue [#592][], issue [#629][], issue [#307][]: Add :sudo_command to Provisioners, Verifiers, & ShellOut. ([@fnichol][])
+
+#### Improvements
+
+* In addition to supporting setting `http_proxy` and `https_proxy` environment variables when `:http_proxy` and `:https_proxy` are set in Provisioner and Verifier blocks, `HTTP_PROXY` and `HTTPS_PROXY` environment variables will also be set/exported in ChefZero/ChefSolo Provisioners and Busser Verifier. ([@fnichol][])
+* Pull request [#600][], pull request [#633][], issue [#85][]: Add `--log-overwrite` flag to CLI anywhere `--log-level` is accepted.  By default it is true and will clear out the log every time Test Kitchen runs. To disable this behavior pass `--log-overwrite=false` or `--no-log-overwrite`.  You can also configure this with the environment variable `KITCHEN_LOG_OVERWRITE`. ([@tyler-ball][])
+* Refactor "non-trivial" (i.e. more than a line or two) Bourne and PowerShell code bodies into static files under support/ for better code review by domain experts. ([@fnichol][])
+* Pull request [#530][], issue [#429][]: Stop uploading empty directories. ([@whiteley][])
+* Pull request [#588][]: Change getchef.com to chef.io in ChefZero and ChefSolo Provisioners. ([@jdmundrawala][])
+* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms including Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
+* Pull request [#652][], pull request [#666][], issue [#556][]: Support symbol values in solo.rb & client.rb for chef_zero and chef_solo Provisioners. ([@fnichol][])
+
+
+## 1.4.0.rc.1 / 2015-03-29
+
+### Potentially breaking changes
+
+* Pull request [#672][]: Extract WinRM-dependant code from Transport::Winrm into the winrm-transport gem, meaning that WinRM support is now a soft dependency of Test Kitchen, similar to Berkshelf and Librarian-Chef. This means the first time a Winrm Transport is requested, a `kitchen` command will crash with a UserError message instructing the user to install the winrm-transport gem. Existing projects which do not use the Winrm Transport will be unaffected and have no extra gem dependencies to manage. ([@fnichol][])
+
+### Bug fixes
+
+* Issue [#656][], pull request 669: Move ObjectSpace finalizer logic into CommandExtractor to close the last opened remote shell on shutdown for Winrm Transport. ([@fnichol][])
+* Issue [#611][], pull request [#673][]: Ensure that secret key is deleted before converge for chef_zero and chef_solo Provisioners. ([@fnichol][])
+* Issue [#389][], pull request [#674][]: Expand path for `:ssh_key` if provided in kitchen.yml for Ssh Transport. ([@fnichol][])
+* Pull request [#653][]: Consider `:require_chef_omnibus = 11` to be a modern version for Chef Provisioners. ([@fnichol][])
+
+### New features
+
+* Add [API versioning](d8f1a7db9e506c44f321462e1fba0b1e24994070) metadata to all plugin types. ([@fnichol][])
+* Pull request [#667][], pull request [#668][]: Add plugin diagnostics, exposed via `kitchen diagnose`. ([@fnichol][])
+* Pull request [#675][], issue [#424][]: Add default `:compression` & `:compression_level` configuration attributes to Ssh Transport.
+* Pull request [#651][], issue [#592][], issue [#629][], issue [#307][]: Add :sudo_command to Provisioners, Verifiers, & ShellOut. ([@fnichol][])
+
+### Improvements
+
+* Pull request [#658][], issue [#654][]: Updated for sh compatibility based on install.sh code which supports more platforms including Solaris. ([@scotthain][], [@curiositycasualty][], [@fnichol][])
+* Pull request [#652][], pull request [#666][], issue [#556][]: Support symbol values in solo.rb & client.rb for chef_zero and chef_solo Provisioners. ([@fnichol][])
+
+
+## 1.4.0.beta.2 / 2015-03-25
+
+### Potentially breaking changes
+
+* Pull request [#649][]: Preserve Busser's #setup_cmd, #run_cmd, & #sync_cmd for better backwards compatibility. ([@fnichol][])
+
+### Bug fixes
+
+* Pull request [#648][]: Transport::Winrm: Truncate destination file for overwriting. ([@fnichol][])
+
+
+## 1.4.0.beta.1 / 2015-03-24
+
+### Potentially breaking changes
+
+**Note::** while a huge amount of effort has gone into preserving backwards compatibility, there could be issues when running this release using certain Drivers and Provisioners, especially ones that are deeply customized. Drivers that inherit directly from `Kitchen::Driver::Base` may need to be updated, while Driver that inherit directly from `Kitchen::Driver::SSHBase` should continue to operate as before. Other libraries/addons/plugins which patch internals of Test Kitchen's code may break or work differently and would be extremely hard to preserve while adding new functionality. Sadly, this is a tradeoff.
+
+* Drivers are no longer responsible for `converge`, `setup`, `verify`, and `login` actions. The updated Driver API contract ([Driver::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/base.rb)) only requires implementing the `#create` and `#destroy` methods, same as before. However, for Drivers that directly inherit from `Kitchen::Driver::Base`, any custom `#converge`, `#setup`, `#verify`, or `#login_command` methods will no longer be called. ([@fnichol][])
+* Drivers which inherit directly from `Kitchen::Driver::SSHBase` are now considered "Legacy Drivers" as further improvements for these Drivers may not be available in future releases. The previous behavior is preserved, i.e. the Driver's `#converge`, `#setup`, and `#verify` methods are called and all methods signatures (and relative behavior) is preserved. ([Driver::SSHBase](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/driver/ssh_base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d816d6fd1bd21548b485ca91e0ff9303e99a6fbc)) ([@fnichol][])
+* Provisioners are now self-aware, completely owning the `converge` action. The original public methods of the Base Provisioner are maintained but are now invoked with a `#call(state)` method on the Provisioner object. Provisioner authors may elect to implement the command and sandbox methods, or re-implement the `#call` method which may not call any of the previously mentioned methods. ([Provisioner::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/base.rb), [Commit notes](https://github.com/test-kitchen/test-kitchen/commit/3196675e519a2fb97af4bcac80ef11f5e37f2537)) ([@fnichol][])
+* Transport are not responsible for the `login` command. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/ae360a11d8c18ff5d1086ee19b099db1d0422024)) ([@fnichol][])
+* Busser is now a plugin of type Verifier (see below for details on Verifiers). Any external code that directly creates a `Kitchen::Busser` object will fail as the class has moved to `Kitchen::Verifier::Busser`. Any external code that directly invokes Busser's `#sync_cmd` will log a warning and will **not** transfer test files (authors of plugins may now call `instance.transport(state).upload(locals, remote)` in its place). ([@fnichol][])
+* Verifiers are responsible for the `verify` action. ([Commit notes](https://github.com/test-kitchen/test-kitchen/commit/d62f577003c1920259eb627cc4479c0b21e0c374)) ([@fnichol][])
+
+
+### New features
+
+* ChefZero Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefZero](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_zero.rb)) ([@fnichol][])
+* ChefSolo Provisioner supports Windows paths and PowerShell commands and works with the WinRM Transport (default behavior for Platform names starting with `/^win/`). ([Provisioner::ChefSolo](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/chef_solo.rb)) ([@fnichol][])
+* Shell Provisioner supports PowerShell scripts in addition to Bourne shell scripts ([Provisioner::Shell](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/shell.rb)) ([@fnichol][])
+* Platform operating system and shell hinting: By default, Windows platform names (case insensitive platform names starting with `/^win/`) will have `:os_type` set to `"windows"` and `:shell_type` set to `"powershell"`. By default, non-Windows platform names will have `:os_type` set to `"unix"` and `:shell_type` set to `"bourne"`. The methods `#windows_os?`, `#unix_os?`, `#powershell_shell?`, `#bourne_shell?`, and `#remote_path_join` are available for all Driver, Provisioner, Verifier, and Transport authors. ([@fnichol][])
+* New plugin type: Transport, which executes commands and transfers files to remote instances. ([Transport::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/base.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: WinRM: which re-uses a remote shell to execute commands and upload files over WinRM. Currently non-SSL/plaintext authentication only. ([Transport::Winrm](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/winrm.rb)) ([@afiune][], [@mwrock][], [@fnichol][])
+* New Transport: SSH, which re-uses one SSH connection where possible. Improvements such as keepalive, retries, and further configuration attributes are included. This replaces the more general `Kitchen:SSH` class, which remains in the codebase for plugins that call this class directly. ([Transport::Ssh](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/transport/ssh.rb)) ([@fnichol][])
+* New plugin type: Verifier, which executes post-convergence tests on the instance. Busser is now a Verifier. ([Verifier::Base](https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/verifier/base.rb)) ([@fnichol][])
+
+#### Improvements
+
+* In addition to supporting setting `http_proxy` and `https_proxy` environment variables when `:http_proxy` and `:https_proxy` are set in Provisioner and Verifier blocks, `HTTP_PROXY` and `HTTPS_PROXY` environment variables will also be set/exported in ChefZero/ChefSolo Provisioners and Busser Verifier. ([@fnichol][])
+* Pull request [#600][], pull request [#633][], issue [#85][]: Add `--log-overwrite` flag to CLI anywhere `--log-level` is accepted.  By default it is true and will clear out the log every time Test Kitchen runs. To disable this behavior pass `--log-overwrite=false` or `--no-log-overwrite`.  You can also configure this with the environment variable `KITCHEN_LOG_OVERWRITE`. ([@tyler-ball][])
+* Refactor "non-trivial" (i.e. more than a line or two) Bourne and PowerShell code bodies into static files under support/ for better code review by domain experts. ([@fnichol][])
+* Pull request [#530][], issue [#429][]: Stop uploading empty directories. ([@whiteley][])
+* Pull request [#588][]: Change getchef.com to chef.io in ChefZero and ChefSolo Provisioners. ([@jdmundrawala][])
+
 
 ## 1.3.1 / 2015-01-16
 
@@ -443,6 +617,7 @@ The initial release.
 [#81]: https://github.com/test-kitchen/test-kitchen/issues/81
 [#82]: https://github.com/test-kitchen/test-kitchen/issues/82
 [#84]: https://github.com/test-kitchen/test-kitchen/issues/84
+[#85]: https://github.com/test-kitchen/test-kitchen/issues/85
 [#90]: https://github.com/test-kitchen/test-kitchen/issues/90
 [#92]: https://github.com/test-kitchen/test-kitchen/issues/92
 [#94]: https://github.com/test-kitchen/test-kitchen/issues/94
@@ -531,6 +706,7 @@ The initial release.
 [#304]: https://github.com/test-kitchen/test-kitchen/issues/304
 [#305]: https://github.com/test-kitchen/test-kitchen/issues/305
 [#306]: https://github.com/test-kitchen/test-kitchen/issues/306
+[#307]: https://github.com/test-kitchen/test-kitchen/issues/307
 [#309]: https://github.com/test-kitchen/test-kitchen/issues/309
 [#310]: https://github.com/test-kitchen/test-kitchen/issues/310
 [#313]: https://github.com/test-kitchen/test-kitchen/issues/313
@@ -547,10 +723,13 @@ The initial release.
 [#373]: https://github.com/test-kitchen/test-kitchen/issues/373
 [#375]: https://github.com/test-kitchen/test-kitchen/issues/375
 [#381]: https://github.com/test-kitchen/test-kitchen/issues/381
+[#389]: https://github.com/test-kitchen/test-kitchen/issues/389
 [#397]: https://github.com/test-kitchen/test-kitchen/issues/397
 [#399]: https://github.com/test-kitchen/test-kitchen/issues/399
 [#416]: https://github.com/test-kitchen/test-kitchen/issues/416
+[#424]: https://github.com/test-kitchen/test-kitchen/issues/424
 [#427]: https://github.com/test-kitchen/test-kitchen/issues/427
+[#429]: https://github.com/test-kitchen/test-kitchen/issues/429
 [#431]: https://github.com/test-kitchen/test-kitchen/issues/431
 [#433]: https://github.com/test-kitchen/test-kitchen/issues/433
 [#450]: https://github.com/test-kitchen/test-kitchen/issues/450
@@ -570,25 +749,78 @@ The initial release.
 [#524]: https://github.com/test-kitchen/test-kitchen/issues/524
 [#526]: https://github.com/test-kitchen/test-kitchen/issues/526
 [#527]: https://github.com/test-kitchen/test-kitchen/issues/527
+[#530]: https://github.com/test-kitchen/test-kitchen/issues/530
 [#531]: https://github.com/test-kitchen/test-kitchen/issues/531
 [#543]: https://github.com/test-kitchen/test-kitchen/issues/543
 [#549]: https://github.com/test-kitchen/test-kitchen/issues/549
 [#554]: https://github.com/test-kitchen/test-kitchen/issues/554
 [#555]: https://github.com/test-kitchen/test-kitchen/issues/555
+[#556]: https://github.com/test-kitchen/test-kitchen/issues/556
 [#557]: https://github.com/test-kitchen/test-kitchen/issues/557
 [#558]: https://github.com/test-kitchen/test-kitchen/issues/558
 [#567]: https://github.com/test-kitchen/test-kitchen/issues/567
 [#579]: https://github.com/test-kitchen/test-kitchen/issues/579
 [#580]: https://github.com/test-kitchen/test-kitchen/issues/580
 [#581]: https://github.com/test-kitchen/test-kitchen/issues/581
+[#588]: https://github.com/test-kitchen/test-kitchen/issues/588
+[#592]: https://github.com/test-kitchen/test-kitchen/issues/592
+[#600]: https://github.com/test-kitchen/test-kitchen/issues/600
+[#611]: https://github.com/test-kitchen/test-kitchen/issues/611
+[#629]: https://github.com/test-kitchen/test-kitchen/issues/629
+[#633]: https://github.com/test-kitchen/test-kitchen/issues/633
+[#648]: https://github.com/test-kitchen/test-kitchen/issues/648
+[#649]: https://github.com/test-kitchen/test-kitchen/issues/649
+[#651]: https://github.com/test-kitchen/test-kitchen/issues/651
+[#652]: https://github.com/test-kitchen/test-kitchen/issues/652
+[#653]: https://github.com/test-kitchen/test-kitchen/issues/653
+[#654]: https://github.com/test-kitchen/test-kitchen/issues/654
+[#656]: https://github.com/test-kitchen/test-kitchen/issues/656
+[#658]: https://github.com/test-kitchen/test-kitchen/issues/658
+[#663]: https://github.com/test-kitchen/test-kitchen/issues/663
+[#665]: https://github.com/test-kitchen/test-kitchen/issues/665
+[#666]: https://github.com/test-kitchen/test-kitchen/issues/666
+[#667]: https://github.com/test-kitchen/test-kitchen/issues/667
+[#668]: https://github.com/test-kitchen/test-kitchen/issues/668
+[#672]: https://github.com/test-kitchen/test-kitchen/issues/672
+[#673]: https://github.com/test-kitchen/test-kitchen/issues/673
+[#674]: https://github.com/test-kitchen/test-kitchen/issues/674
+[#675]: https://github.com/test-kitchen/test-kitchen/issues/675
+[#688]: https://github.com/test-kitchen/test-kitchen/issues/688
+[#689]: https://github.com/test-kitchen/test-kitchen/issues/689
+[#704]: https://github.com/test-kitchen/test-kitchen/issues/704
+[#711]: https://github.com/test-kitchen/test-kitchen/issues/711
+[#728]: https://github.com/test-kitchen/test-kitchen/issues/728
+[#732]: https://github.com/test-kitchen/test-kitchen/issues/732
+[#734]: https://github.com/test-kitchen/test-kitchen/issues/734
+[#736]: https://github.com/test-kitchen/test-kitchen/issues/736
+[#737]: https://github.com/test-kitchen/test-kitchen/issues/737
+[#741]: https://github.com/test-kitchen/test-kitchen/issues/741
+[#752]: https://github.com/test-kitchen/test-kitchen/issues/752
+[#782]: https://github.com/test-kitchen/test-kitchen/issues/782
+[#801]: https://github.com/test-kitchen/test-kitchen/issues/801
+[#802]: https://github.com/test-kitchen/test-kitchen/issues/802
+[#804]: https://github.com/test-kitchen/test-kitchen/issues/804
+[#813]: https://github.com/test-kitchen/test-kitchen/issues/813
+[#816]: https://github.com/test-kitchen/test-kitchen/issues/816
+[#833]: https://github.com/test-kitchen/test-kitchen/issues/833
+[#878]: https://github.com/test-kitchen/test-kitchen/issues/878
+[#885]: https://github.com/test-kitchen/test-kitchen/issues/885
+[#892]: https://github.com/test-kitchen/test-kitchen/issues/892
+[#895]: https://github.com/test-kitchen/test-kitchen/issues/895
+[#896]: https://github.com/test-kitchen/test-kitchen/issues/896
+[@Annih]: https://github.com/Annih
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
+[@Peuserik]: https://github.com/Peuserik
 [@adamhjk]: https://github.com/adamhjk
+[@adamleff]: https://github.com/adamleff
+[@afiune]: https://github.com/afiune
 [@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
 [@benlangfeld]: https://github.com/benlangfeld
 [@bkw]: https://github.com/bkw
 [@bryanwb]: https://github.com/bryanwb
+[@caboteria]: https://github.com/caboteria
 [@calavera]: https://github.com/calavera
 [@chrishenry]: https://github.com/chrishenry
 [@coderanger]: https://github.com/coderanger
@@ -604,6 +836,7 @@ The initial release.
 [@hollow]: https://github.com/hollow
 [@jaimegildesagredo]: https://github.com/jaimegildesagredo
 [@jasonroelofs]: https://github.com/jasonroelofs
+[@jdmundrawala]: https://github.com/jdmundrawala
 [@jgoldschrafe]: https://github.com/jgoldschrafe
 [@jochenseeber]: https://github.com/jochenseeber
 [@jonsmorrow]: https://github.com/jonsmorrow
@@ -618,15 +851,19 @@ The initial release.
 [@kamalim]: https://github.com/kamalim
 [@kisoku]: https://github.com/kisoku
 [@lamont-granquist]: https://github.com/lamont-granquist
+[@lloydde]: https://github.com/lloydde
 [@manul]: https://github.com/manul
 [@martinb3]: https://github.com/martinb3
 [@mattray]: https://github.com/mattray
 [@mconigliaro]: https://github.com/mconigliaro
 [@mcquin]: https://github.com/mcquin
+[@metadave]: https://github.com/metadave
 [@michaelkirk]: https://github.com/michaelkirk
 [@miketheman]: https://github.com/miketheman
 [@mthssdrbrg]: https://github.com/mthssdrbrg
+[@mwrock]: https://github.com/mwrock
 [@oferrigni]: https://github.com/oferrigni
+[@openssh]: https://github.com/openssh
 [@patcon]: https://github.com/patcon
 [@portertech]: https://github.com/portertech
 [@rarenerd]: https://github.com/rarenerd
@@ -644,9 +881,13 @@ The initial release.
 [@scotthain]: https://github.com/scotthain
 [@sethvargo]: https://github.com/sethvargo
 [@smith]: https://github.com/smith
+[@smurawski]: https://github.com/smurawski
 [@someara]: https://github.com/someara
 [@srenatus]: https://github.com/srenatus
 [@stevendanna]: https://github.com/stevendanna
 [@thommay]: https://github.com/thommay
 [@tknerr]: https://github.com/tknerr
+[@tyler-ball]: https://github.com/tyler-ball
+[@whiteley]: https://github.com/whiteley
+[@zl4bv]: https://github.com/zl4bv
 [@zts]: https://github.com/zts

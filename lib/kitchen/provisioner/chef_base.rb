@@ -19,10 +19,15 @@
 require "fileutils"
 require "pathname"
 require "json"
+require "cgi"
 
 require "kitchen/provisioner/chef/berkshelf"
+require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
+require "mixlib/install"
+require "chef-config/config"
+require "chef-config/workstation_config_loader"
 
 module Kitchen
 
@@ -35,11 +40,12 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://www.chef.io/chef/install.sh"
-      default_config :chef_omnibus_root, "/opt/chef"
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
+      default_config :config_path, nil
       default_config :log_file, nil
+      default_config :profile_ruby, false
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -81,241 +87,74 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
-      # (see Base#install_command)
-      def install_command
-        return unless config[:require_chef_omnibus]
+      # Reads the local Chef::Config object (if present).  We do this because
+      # we want to start bring Chef config and ChefDK tool config closer
+      # together.  For example, we want to configure proxy settings in 1
+      # location instead of 3 configuration files.
+      #
+      # @param config [Hash] initial provided configuration
+      def initialize(config = {})
+        super(config)
 
-        lines = [Util.shell_helpers, chef_shell_helpers, chef_install_function]
-        Util.wrap_command(lines.join("\n"))
-      end
-
-      # (see Base#init_command)
-      def init_command
-        dirs = %w[cookbooks data data_bags environments roles clients].
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        lines = ["#{sudo("rm")} -rf #{dirs}", "mkdir -p #{config[:root_path]}"]
-
-        Util.wrap_command(lines.join("\n"))
+        ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
+        # This exports any proxy config present in the Chef config to
+        # appropriate environment variables, which Test Kitchen respects
+        ChefConfig::Config.export_proxies
       end
 
       # (see Base#create_sandbox)
       def create_sandbox
         super
-        prepare_json
-        prepare_cache
-        prepare_cookbooks
-        prepare(:data)
-        prepare(:data_bags)
-        prepare(:environments)
-        prepare(:nodes)
-        prepare(:roles)
-        prepare(:clients)
-        prepare(
-          :secret,
-          :type => :file,
-          :dest_name => "encrypted_data_bag_secret",
-          :key_name => :encrypted_data_bag_secret_key_path
-        )
+        Chef::CommonSandbox.new(config, sandbox_path, instance).populate
+      end
+
+      # (see Base#init_command)
+      def init_command
+        dirs = %w[
+          cookbooks data data_bags environments roles clients
+          encrypted_data_bag_secret
+        ].sort.map { |dir| remote_path_join(config[:root_path], dir) }
+
+        vars = if powershell_shell?
+          init_command_vars_for_powershell(dirs)
+        else
+          init_command_vars_for_bourne(dirs)
+        end
+
+        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
+      end
+
+      # (see Base#install_command)
+      def install_command
+        return unless config[:require_chef_omnibus]
+
+        version = config[:require_chef_omnibus].to_s.downcase
+
+        # Passing "true" to mixlib-install currently breaks the windows metadata_url
+        # TODO: remove this line once https://github.com/chef/mixlib-install/pull/22
+        # is accepted and released
+        version = "" if version == "true" && powershell_shell?
+
+        installer = Mixlib::Install.new(version, powershell_shell?, install_options)
+        config[:chef_omnibus_root] = installer.root
+        prefix_command(sudo(installer.install_command))
       end
 
       private
 
-      # Load cookbook dependency resolver code, if required.
-      #
-      # (see Base#load_needed_dependencies!)
-      def load_needed_dependencies!
-        if File.exist?(berksfile)
-          debug("Berksfile found at #{berksfile}, loading Berkshelf")
-          Chef::Berkshelf.load!(logger)
-        elsif File.exist?(cheffile)
-          debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
-          Chef::Librarian.load!(logger)
-        end
-      end
-
-      # Returns shell code with chef-related functions.
-      #
-      # @return [String] shell code
+      # @return [Hash] an option hash for the install commands
       # @api private
-      def chef_shell_helpers
-        IO.read(File.join(
-          File.dirname(__FILE__), %w[.. .. .. support chef_helpers.sh]
-        ))
-      end
-
-      # Generates the shell code to conditionally install a Chef Omnibus
-      # package onto an instance.
-      #
-      # @return [String] shell code
-      # @api private
-      def chef_install_function
-        version = config[:require_chef_omnibus].to_s.downcase
-        pretty_version = case version
-                         when "true" then "install only if missing"
-                         when "latest" then "always install latest version"
-                         else version
-                         end
-        install_flags = %w[latest true].include?(version) ? "" : "-v #{version}"
-        if config[:chef_omnibus_install_options]
-          install_flags << " " << config[:chef_omnibus_install_options]
-        end
-
-        <<-INSTALL.gsub(/^ {10}/, "")
-          if should_update_chef "#{config[:chef_omnibus_root]}" "#{version}" ; then
-            echo "-----> Installing Chef Omnibus (#{pretty_version})"
-            do_download #{config[:chef_omnibus_url]} /tmp/install.sh
-            #{sudo("sh")} /tmp/install.sh #{install_flags.strip}
-          else
-            echo "-----> Chef Omnibus installation detected (#{pretty_version})"
-          fi
-        INSTALL
-      end
-
-      # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
-      # String.
-      #
-      # @param data [Hash] a key/value pair hash of configuration
-      # @return [String] a rendered Chef config file as a String
-      # @api private
-      def format_config_file(data)
-        data.each.map { |attr, value|
-          [attr, value.inspect].join(" ")
-        }.join("\n")
-      end
-
-      # Generates a Hash with default values for a solo.rb or client.rb Chef
-      # configuration file.
-      #
-      # @return [Hash] a configuration hash
-      # @api private
-      def default_config_rb
-        root = config[:root_path]
-
+      def install_options
+        project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
-          :node_name        => instance.name,
-          :checksum_path    => "#{root}/checksums",
-          :file_cache_path  => "#{root}/cache",
-          :file_backup_path => "#{root}/backup",
-          :cookbook_path    => ["#{root}/cookbooks", "#{root}/site-cookbooks"],
-          :data_bag_path    => "#{root}/data_bags",
-          :environment_path => "#{root}/environments",
-          :node_path        => "#{root}/nodes",
-          :role_path        => "#{root}/roles",
-          :client_path      => "#{root}/clients",
-          :user_path        => "#{root}/users",
-          :validation_key   => "#{root}/validation.pem",
-          :client_key       => "#{root}/client.pem",
-          :chef_server_url  => "http://127.0.0.1:8889",
-          :encrypted_data_bag_secret => "#{root}/encrypted_data_bag_secret"
-        }
-      end
-
-      # Prepares a generic Chef component source directory or file for
-      # inclusion in the sandbox path. These components might includes nodes,
-      # roles, etc.
-      #
-      # @param component [Symbol,String] a component name such as `:node`
-      # @param opts [Hash] optional configuration
-      # @option opts [Symbol] :type whether the component is a directory or
-      #   file (default: `:directory`)
-      # @option opts [Symbol] :key_name the key name in the config hash from
-      #   which to pull the source path (default: `"#{component}_path"`)
-      # @option opts [String] :dest_name the destination file or directory
-      #   basename in the sandbox path (default: `component.to_s`)
-      # @api private
-      def prepare(component, opts = {})
-        opts = { :type => :directory }.merge(opts)
-        key_name = opts.fetch(:key_name, "#{component}_path")
-        src = config[key_name.to_sym]
-        return if src.nil?
-
-        info("Preparing #{component}")
-        debug("Using #{component} from #{src}")
-
-        dest = File.join(sandbox_path, opts.fetch(:dest_name, component.to_s))
-
-        case opts[:type]
-        when :directory
-          FileUtils.mkdir_p(dest)
-          FileUtils.cp_r(Dir.glob("#{src}/*"), dest)
-        when :file
-          FileUtils.mkdir_p(File.dirname(dest))
-          FileUtils.cp_r(src, dest)
+          :omnibus_url => config[:chef_omnibus_url],
+          :project => project.nil? ? nil : project[1],
+          :install_flags => config[:chef_omnibus_install_options]
+        }.tap do |opts|
+          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
+          opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy
+          opts[:https_proxy] = config[:https_proxy] if config.key? :https_proxy
         end
-      end
-
-      # Prepares a Chef JSON file, sometimes called a dna.json or
-      # first-boot.json, for inclusion in the sandbox path.
-      #
-      # @api private
-      def prepare_json
-        dna = config[:attributes].merge(:run_list => config[:run_list])
-
-        info("Preparing dna.json")
-        debug("Creating dna.json from #{dna.inspect}")
-
-        File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
-          file.write(dna.to_json)
-        end
-      end
-
-      # Prepares a cache directory for inclusion in the sandbox path.
-      #
-      # @api private
-      def prepare_cache
-        FileUtils.mkdir_p(File.join(sandbox_path, "cache"))
-      end
-
-      # Prepares Chef cookbooks for inclusion in the sandbox path.
-      #
-      # @api private
-      def prepare_cookbooks
-        if File.exist?(berksfile)
-          resolve_with_berkshelf
-        elsif File.exist?(cheffile)
-          resolve_with_librarian
-          cp_site_cookbooks if File.directory?(site_cookbooks_dir)
-        elsif File.directory?(cookbooks_dir)
-          cp_cookbooks
-        elsif File.exist?(metadata_rb)
-          cp_this_cookbook
-        else
-          make_fake_cookbook
-        end
-
-        filter_only_cookbook_files
-      end
-
-      # Removes all non-cookbook files in the sandbox path.
-      #
-      # @api private
-      def filter_only_cookbook_files
-        info("Removing non-cookbook files before transfer")
-        FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
-        Dir.glob(File.join(tmpbooks_dir, "**/"), File::FNM_PATHNAME).
-          reverse_each { |fn| FileUtils.rmdir(fn) if Dir.entries(fn).size == 2 }
-      end
-
-      # Generates a list of all files in the cookbooks directory in the
-      # sandbox path.
-      #
-      # @return [Array<String>] an array of absolute paths to files
-      # @api private
-      def all_files_in_cookbooks
-        Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
-          select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
-      end
-
-      # Generates a list of all typical cookbook files needed in a Chef run,
-      # located in the cookbooks directory in the sandbox path.
-      #
-      # @return [Array<String>] an array of absolute paths to files
-      # @api private
-      def only_cookbook_files
-        glob = File.join(tmpbooks_dir, "*", "{#{config[:cookbook_files_glob]}}")
-
-        Dir.glob(glob, File::FNM_DOTMATCH).
-          select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
       end
 
       # @return [String] an absolute path to a Berksfile, relative to the
@@ -332,114 +171,116 @@ module Kitchen
         File.join(config[:kitchen_root], "Cheffile")
       end
 
-      # @return [String] an absolute path to a metadata.rb, relative to the
-      #   kitchen root
-      # @api private
-      def metadata_rb
-        File.join(config[:kitchen_root], "metadata.rb")
-      end
-
-      # @return [String] an absolute path to a cookbooks/ directory, relative
-      #   to the kitchen root
-      # @api private
-      def cookbooks_dir
-        File.join(config[:kitchen_root], "cookbooks")
-      end
-
-      # @return [String] an absolute path to a site-cookbooks/ directory,
-      #   relative to the kitchen root
-      # @api private
-      def site_cookbooks_dir
-        File.join(config[:kitchen_root], "site-cookbooks")
-      end
-
-      # @return [String] an absolute path to a cookbooks/ directory in the
-      #   sandbox path
-      # @api private
-      def tmpbooks_dir
-        File.join(sandbox_path, "cookbooks")
-      end
-
-      # @return [String] an absolute path to a site cookbooks directory in the
-      #   sandbox path
-      # @api private
-      def tmpsitebooks_dir
-        File.join(sandbox_path, "cookbooks")
-      end
-
-      # Copies a cookbooks/ directory into the sandbox path.
-      def cp_cookbooks
-        info("Preparing cookbooks from project directory")
-        debug("Using cookbooks from #{cookbooks_dir}")
-
-        FileUtils.mkdir_p(tmpbooks_dir)
-        FileUtils.cp_r(File.join(cookbooks_dir, "."), tmpbooks_dir)
-
-        cp_site_cookbooks if File.directory?(site_cookbooks_dir)
-        cp_this_cookbook if File.exist?(metadata_rb)
-      end
-
-      # Copies a site-cookbooks/ directory into the sandbox path.
+      # Generates a Hash with default values for a solo.rb or client.rb Chef
+      # configuration file.
       #
+      # @return [Hash] a configuration hash
       # @api private
-      def cp_site_cookbooks
-        info("Preparing site-cookbooks from project directory")
-        debug("Using cookbooks from #{site_cookbooks_dir}")
+      def default_config_rb # rubocop:disable Metrics/MethodLength
+        root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']\}")
 
-        FileUtils.mkdir_p(tmpsitebooks_dir)
-        FileUtils.cp_r(File.join(site_cookbooks_dir, "."), tmpsitebooks_dir)
+        {
+          :node_name        => instance.name,
+          :checksum_path    => remote_path_join(root, "checksums"),
+          :file_cache_path  => remote_path_join(root, "cache"),
+          :file_backup_path => remote_path_join(root, "backup"),
+          :cookbook_path    => [
+            remote_path_join(root, "cookbooks"),
+            remote_path_join(root, "site-cookbooks")
+          ],
+          :data_bag_path    => remote_path_join(root, "data_bags"),
+          :environment_path => remote_path_join(root, "environments"),
+          :node_path        => remote_path_join(root, "nodes"),
+          :role_path        => remote_path_join(root, "roles"),
+          :client_path      => remote_path_join(root, "clients"),
+          :user_path        => remote_path_join(root, "users"),
+          :validation_key   => remote_path_join(root, "validation.pem"),
+          :client_key       => remote_path_join(root, "client.pem"),
+          :chef_server_url  => "http://127.0.0.1:8889",
+          :encrypted_data_bag_secret => remote_path_join(
+            root, "encrypted_data_bag_secret"
+          )
+        }
       end
 
-      # Copies the current project, assumed to be a Chef cookbook into the
-      # sandbox path.
+      # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a
+      # String.
       #
+      # @param data [Hash] a key/value pair hash of configuration
+      # @return [String] a rendered Chef config file as a String
       # @api private
-      def cp_this_cookbook
-        info("Preparing current project directory as a cookbook")
-        debug("Using metadata.rb from #{metadata_rb}")
-
-        cb_name = MetadataChopper.extract(metadata_rb).first || raise(UserError,
-          "The metadata.rb does not define the 'name' key." \
-            " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
-
-        cb_path = File.join(tmpbooks_dir, cb_name)
-
-        glob = Dir.glob("#{config[:kitchen_root]}/**")
-
-        FileUtils.mkdir_p(cb_path)
-        FileUtils.cp_r(glob, cb_path)
+      def format_config_file(data)
+        data.each.map { |attr, value|
+          [attr, format_value(value)].join(" ")
+        }.join("\n")
       end
 
-      # Creates a minimal, no-op cookbook in the sandbox path.
+      # Converts a Ruby object to a String interpretation suitable for writing
+      # out to a client.rb/solo.rb/knife.rb file.
       #
+      # @param obj [Object] an object
+      # @return [String] a string representation
       # @api private
-      def make_fake_cookbook
-        info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
-          "so Chef will run with effectively no cookbooks. Is this intended?")
-        name = File.basename(config[:kitchen_root])
-        fake_cb = File.join(tmpbooks_dir, name)
-        FileUtils.mkdir_p(fake_cb)
-        File.open(File.join(fake_cb, "metadata.rb"), "wb") do |file|
-          file.write(%{name "#{name}"\n})
+      def format_value(obj)
+        if obj.is_a?(String) && obj =~ /^:/
+          obj
+        elsif obj.is_a?(String)
+          %{"#{obj.gsub(/\\/, "\\\\\\\\")}"}
+        elsif obj.is_a?(Array)
+          %{[#{obj.map { |i| format_value(i) }.join(", ")}]}
+        else
+          obj.inspect
         end
       end
 
-      # Performs a Berkshelf cookbook resolution inside a common mutex.
+      # Generates the init command variables for Bourne shell-based platforms.
       #
+      # @param dirs [Array<String>] directories
+      # @return [String] shell variable lines
       # @api private
-      def resolve_with_berkshelf
-        Kitchen.mutex.synchronize do
-          Chef::Berkshelf.new(berksfile, tmpbooks_dir, logger).resolve
+      def init_command_vars_for_bourne(dirs)
+        [
+          shell_var("sudo_rm", sudo("rm")),
+          shell_var("dirs", dirs.join(" ")),
+          shell_var("root_path", config[:root_path])
+        ].join("\n")
+      end
+
+      # Generates the init command variables for PowerShell-based platforms.
+      #
+      # @param dirs [Array<String>] directories
+      # @return [String] shell variable lines
+      # @api private
+      def init_command_vars_for_powershell(dirs)
+        [
+          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})},
+          shell_var("root_path", config[:root_path])
+        ].join("\n")
+      end
+
+      # Load cookbook dependency resolver code, if required.
+      #
+      # (see Base#load_needed_dependencies!)
+      def load_needed_dependencies!
+        super
+        if File.exist?(berksfile)
+          debug("Berksfile found at #{berksfile}, loading Berkshelf")
+          Chef::Berkshelf.load!(logger)
+        elsif File.exist?(cheffile)
+          debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
+          Chef::Librarian.load!(logger)
         end
       end
 
-      # Performs a Librarin-Chef cookbook resolution inside a common mutex.
-      #
+      # @return [String] a powershell command to reload the `PATH` environment
+      #   variable, only to be used to support old Omnibus Chef packages that
+      #   require `PATH` to find the `ruby.exe` binary
       # @api private
-      def resolve_with_librarian
-        Kitchen.mutex.synchronize do
-          Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
-        end
+      def reload_ps1_path
+        [
+          %{$env:PATH},
+          %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")\n\n}
+        ].join(" = ")
       end
     end
   end

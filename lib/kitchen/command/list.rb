@@ -62,13 +62,15 @@ module Kitchen
           color_pad(instance.name),
           color_pad(instance.driver.name),
           color_pad(instance.provisioner.name),
+          color_pad(instance.verifier.name),
+          color_pad(instance.transport.name),
           format_last_action(instance.last_action)
         ]
       end
 
       # Format and color the given last action.
       #
-      # @param [String] the last action
+      # @param last_action [String] the last action
       # @return [String] formated last action
       # @api private
       def format_last_action(last_action)
@@ -90,7 +92,8 @@ module Kitchen
         table = [
           [
             colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Last Action", :green)
+            colorize("Provisioner", :green), colorize("Verifier", :green),
+            colorize("Transport", :green), colorize("Last Action", :green)
           ]
         ]
         table += Array(result).map { |i| display_instance(i) }

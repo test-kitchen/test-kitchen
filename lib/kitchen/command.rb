@@ -173,6 +173,7 @@ module Kitchen
           threads << Thread.new do
             while instance = queue.pop
               instance.public_send(action, *args)
+              instance.cleanup!
             end
           end
         end

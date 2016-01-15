@@ -3,7 +3,7 @@
 .bundle
 .config
 .yardoc
-Gemfile.lock
+Gemfile*.lock
 InstalledFiles
 _yardoc
 coverage
@@ -19,6 +19,7 @@ tmp
 .rbenv-version
 .ruby-version
 .project
+.DS_Store
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml

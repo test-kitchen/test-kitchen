@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
-
 require "kitchen/lazy_hash"
 
 module Kitchen
@@ -29,7 +27,6 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
 
-      include ShellOut
       include Configurable
       include Logging
 
@@ -41,13 +38,6 @@ module Kitchen
         init_config(config)
       end
 
-      # Returns the name of this driver, suitable for display in a CLI.
-      #
-      # @return [String] name of this driver
-      def name
-        self.class.name.split("::").last
-      end
-
       # Creates an instance.
       #
       # @param state [Hash] mutable instance and driver state
@@ -55,52 +45,11 @@ module Kitchen
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
-      # Converges a running instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @raise [ActionFailed] if the action could not be completed
-      def converge(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Sets up an instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @raise [ActionFailed] if the action could not be completed
-      def setup(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Verifies a converged instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @raise [ActionFailed] if the action could not be completed
-      def verify(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
       # Destroys an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
-
-      # Returns the shell command that will log into an instance.
-      #
-      # @param state [Hash] mutable instance and driver state
-      # @return [LoginCommand] an object containing the array of command line
-      #   tokens and exec options to be used in a fork/exec
-      # @raise [ActionFailed] if the action could not be completed
-      def login_command(state) # rubocop:disable Lint/UnusedMethodArgument
-        raise ActionFailed, "Remote login is not supported in this driver."
-      end
-
-      # Performs whatever tests that may be required to ensure that this driver
-      # will be able to function in the current environment. This may involve
-      # checking for the presence of certain directories, software installed,
-      # etc.
-      #
-      # @raise [UserError] if the driver will not be able to perform or if a
-      #   documented dependency is missing from the system
-      def verify_dependencies
       end
 
       class << self
@@ -128,7 +77,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = [:create, :converge, :setup, :verify, :destroy]
+        action_methods = [:create, :setup, :verify, :destroy]
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)
@@ -140,14 +89,30 @@ module Kitchen
         @serial_actions += methods
       end
 
-      private
-
-      # Returns a suitable logger to use for output.
+      # Sets the API version for this driver. If the driver does not set this
+      # value, then `nil` will be used and reported.
       #
-      # @return [Kitchen::Logger] a logger
-      def logger
-        instance ? instance.logger : Kitchen.logger
+      # Sets the API version for this driver
+      #
+      # @example setting an API version
+      #
+      #   module Kitchen
+      #     module Driver
+      #       class NewDriver < Kitchen::Driver::Base
+      #
+      #         kitchen_driver_api_version 2
+      #
+      #       end
+      #     end
+      #   end
+      #
+      # @param version [Integer,String] a version number
+      #
+      def self.kitchen_driver_api_version(version)
+        @api_version = version
       end
+
+      private
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
       # event instead.
@@ -163,30 +128,6 @@ module Kitchen
       # @param msg [String] message string
       def print(msg)
         info(msg)
-      end
-
-      # Delegates to Kitchen::ShellOut.run_command, overriding some default
-      # options:
-      #
-      # * `:use_sudo` defaults to the value of `config[:use_sudo]` in the
-      #   Driver object
-      # * `:log_subject` defaults to a String representation of the Driver's
-      #   class name
-      #
-      # @see ShellOut#run_command
-      def run_command(cmd, options = {})
-        base_options = {
-          :use_sudo => config[:use_sudo],
-          :log_subject => Thor::Util.snake_case(self.class.to_s)
-        }.merge(options)
-        super(cmd, base_options)
-      end
-
-      # Returns the Busser object associated with the driver.
-      #
-      # @return [Busser] a busser
-      def busser
-        instance.busser
       end
     end
   end

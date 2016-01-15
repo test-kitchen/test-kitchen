@@ -25,17 +25,20 @@ describe Kitchen::Provisioner::Shell do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
+  let(:suite)           { stub(:name => "fries") }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
   end
 
-  let(:suite) do
-    stub(:name => "fries")
-  end
-
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :suite => suite)
+    stub(
+      :name => "coolbeans",
+      :logger => logger,
+      :suite => suite,
+      :platform => platform
+    )
   end
 
   let(:provisioner) do
@@ -46,14 +49,38 @@ describe Kitchen::Provisioner::Shell do
     }.new(config).finalize_config!(instance)
   end
 
+  it "provisioner api_version is 2" do
+    provisioner = Kitchen::Provisioner::Shell.new(config).finalize_config!(instance)
+    provisioner.diagnose_plugin[:api_version].must_equal 2
+  end
+
+  it "plugin_version is set to Kitchen::VERSION" do
+    provisioner = Kitchen::Provisioner::Shell.new(config).finalize_config!(instance)
+    provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
+  end
+
   describe "configuration" do
 
-    it ":script uses calculate_path and is expanded" do
-      provisioner[:script].must_equal "/rooty/<calculated>/bootstrap.sh"
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it ":script uses calculate_path and is expanded" do
+        provisioner[:script].must_equal os_safe_root_path("/rooty/<calculated>/bootstrap.sh")
+      end
+    end
+
+    describe "for powershell shells" do
+
+      before { platform.stubs(:shell_type).returns("powershell") }
+
+      it ":script uses calculate_path and is expanded" do
+        provisioner[:script].must_equal os_safe_root_path("/rooty/<calculated>/bootstrap.ps1")
+      end
     end
 
     it ":data_path uses calculate_path and is expanded" do
-      provisioner[:data_path].must_equal "/rooty/<calculated>/data"
+      provisioner[:data_path].must_equal os_safe_root_path("/rooty/<calculated>/data")
     end
   end
 
@@ -61,36 +88,157 @@ describe Kitchen::Provisioner::Shell do
 
     let(:cmd) { provisioner.init_command }
 
-    it "uses bourne shell" do
-      cmd.must_match(/\Ash -c '$/)
-      cmd.must_match(/'\Z/)
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..6].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "uses sudo for rm when configured" do
+        config[:sudo] = true
+
+        cmd.must_match regexify("sudo -E rm -rf ", :partial_line)
+      end
+
+      it "does not use sudo for rm when configured" do
+        config[:sudo] = false
+
+        provisioner.init_command.
+          must_match regexify("rm -rf ", :partial_line)
+        provisioner.init_command.
+          wont_match regexify("sudo -E rm -rf ", :partial_line)
+      end
+
+      it "removes the data directory" do
+        config[:root_path] = "/route"
+
+        cmd.must_match %r{rm -rf\b.*\s+/route/data\s+}
+      end
+
+      it "creates :root_path directory" do
+        config[:root_path] = "/root/path"
+
+        cmd.must_match regexify("mkdir -p /root/path", :partial_line)
+      end
     end
 
-    it "uses sudo for rm when configured" do
-      config[:sudo] = true
+    describe "for powershell shells on windows os types" do
 
-      cmd.must_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+      before do
+        platform.stubs(:os_type).returns("windows")
+        platform.stubs(:shell_type).returns("powershell")
+      end
 
-    it "does not use sudo for rm when configured" do
-      config[:sudo] = false
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
 
-      provisioner.init_command.
-        must_match regexify("rm -rf ", :partial_line)
-      provisioner.init_command.
-        wont_match regexify("sudo -E rm -rf ", :partial_line)
-    end
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
 
-    it "removes the data directory" do
-      config[:root_path] = "/route"
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
 
-      cmd.must_match %r{rm -rf\b.*\s+/route/data\s+}
-    end
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
 
-    it "creates :root_path directory" do
-      config[:root_path] = "/root/path"
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
 
-      cmd.must_match regexify("mkdir -p /root/path", :partial_line)
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[0..5].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n},
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "removes the data directory" do
+        config[:root_path] = "\\route"
+
+        cmd.must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
+          if (Test-Path "\\route\\data") {
+            Remove-Item "\\route\\data" -Recurse -Force
+          }
+        POWERSHELL
+      end
+
+      it "creates the :root_path directory" do
+        config[:root_path] = "\\route"
+
+        cmd.must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
+          if (-Not (Test-Path "\\route")) {
+            New-Item "\\route" -ItemType directory | Out-Null
+          }
+        POWERSHELL
+      end
     end
   end
 
@@ -98,24 +246,131 @@ describe Kitchen::Provisioner::Shell do
 
     let(:cmd) { provisioner.run_command }
 
-    it "uses bourne shell" do
-      cmd.must_match(/\Ash -c '$/)
-      cmd.must_match(/'\Z/)
+    describe "for bourne shells" do
+
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
+        ])
+      end
+
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..2].must_equal([
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[1..6].must_equal([
+          %{http_proxy="http://proxy"; export http_proxy\n},
+          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+          %{https_proxy="https://proxy"; export https_proxy\n},
+          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
+        ])
+      end
+
+      it "uses sudo for script when configured" do
+        config[:root_path] = "/r"
+        config[:sudo] = true
+
+        cmd.must_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+      end
+
+      it "does not use sudo for script when configured" do
+        config[:root_path] = "/r"
+        config[:sudo] = false
+
+        cmd.must_match regexify("/r/bootstrap.sh", :partial_line)
+        cmd.wont_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+      end
     end
 
-    it "uses sudo for script when configured" do
-      config[:root_path] = "/r"
-      config[:sudo] = true
+    describe "for powershell shells on windows os types" do
 
-      cmd.must_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
-    end
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
 
-    it "does not use sudo for script when configured" do
-      config[:root_path] = "/r"
-      config[:sudo] = false
+      it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
+        config[:http_proxy] = "http://proxy"
 
-      cmd.must_match regexify("/r/bootstrap.sh", :partial_line)
-      cmd.wont_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n}
+        ])
+      end
+
+      it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
+        config[:https_proxy] = "https://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n}
+        ])
+      end
+
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[0..1].must_equal([
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "exports all proxy variables when all are set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.lines.to_a[0..5].must_equal([
+          %{$env:http_proxy = "http://proxy"\n},
+          %{$env:HTTP_PROXY = "http://proxy"\n},
+          %{$env:https_proxy = "https://proxy"\n},
+          %{$env:HTTPS_PROXY = "https://proxy"\n},
+          %{$env:ftp_proxy = "ftp://proxy"\n},
+          %{$env:FTP_PROXY = "ftp://proxy"\n}
+        ])
+      end
+
+      it "invokes the bootstrap.ps1 script" do
+        config[:root_path] = "\\r"
+
+        cmd.must_match regexify(%{& "\\r\\bootstrap.ps1"})
+      end
     end
   end
 
@@ -191,7 +446,10 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          sandbox_path("my_script").executable?.must_equal true
+          unless running_tests_on_windows?
+            # Windows doesn't have the concept of executable
+            sandbox_path("my_script").executable?.must_equal true
+          end
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 
@@ -213,27 +471,66 @@ describe Kitchen::Provisioner::Shell do
 
         before { config[:script] = nil }
 
-        it "logs a message on info" do
-          provisioner.create_sandbox
+        describe "for bourne shells" do
 
-          logged_output.string.must_match info_line("Preparing script")
+          before { platform.stubs(:shell_type).returns("bourne") }
+
+          it "logs a message on info" do
+            provisioner.create_sandbox
+
+            logged_output.string.must_match info_line("Preparing script")
+          end
+
+          it "logs a warning on info" do
+            provisioner.create_sandbox
+
+            logged_output.string.must_match info_line(
+              "bootstrap.sh not found so Kitchen will run a stubbed script. " \
+              "Is this intended?")
+          end
+
+          it "creates a file in the sandbox directory" do
+            provisioner.create_sandbox
+
+            sandbox_path("bootstrap.sh").file?.must_equal true
+            unless running_tests_on_windows?
+              # Windows doesn't have the concept of executable
+              sandbox_path("bootstrap.sh").executable?.must_equal true
+            end
+            IO.read(sandbox_path("bootstrap.sh")).
+              must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
+          end
         end
 
-        it "logs a warning on info" do
-          provisioner.create_sandbox
+        describe "for powershell shells" do
 
-          logged_output.string.must_match info_line(
-            "bootstrap.sh not found so Kitchen will run a stubbed script. " \
-            "Is this intended?")
-        end
+          before { platform.stubs(:shell_type).returns("powershell") }
 
-        it "creates a file in the sandbox directory" do
-          provisioner.create_sandbox
+          it "logs a message on info" do
+            provisioner.create_sandbox
 
-          sandbox_path("bootstrap.sh").file?.must_equal true
-          sandbox_path("bootstrap.sh").executable?.must_equal true
-          IO.read(sandbox_path("bootstrap.sh")).
-            must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
+            logged_output.string.must_match info_line("Preparing script")
+          end
+
+          it "logs a warning on info" do
+            provisioner.create_sandbox
+
+            logged_output.string.must_match info_line(
+              "bootstrap.ps1 not found so Kitchen will run a stubbed script. " \
+              "Is this intended?")
+          end
+
+          it "creates a file in the sandbox directory" do
+            provisioner.create_sandbox
+
+            sandbox_path("bootstrap.ps1").file?.must_equal true
+            unless running_tests_on_windows?
+              # Windows doesn't have the concept of executable
+              sandbox_path("bootstrap.ps1").executable?.must_equal true
+            end
+            IO.read(sandbox_path("bootstrap.ps1")).
+              must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
+          end
         end
       end
     end

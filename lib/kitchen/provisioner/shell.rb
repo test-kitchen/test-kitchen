@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require "kitchen/provisioner/base"
+require "kitchen/version"
 
 module Kitchen
 
@@ -27,8 +28,13 @@ module Kitchen
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
 
+      kitchen_provisioner_api_version 2
+
+      plugin_version Kitchen::VERSION
+
       default_config :script do |provisioner|
-        provisioner.calculate_path("bootstrap.sh", :type => :file)
+        src = provisioner.powershell_shell? ? "bootstrap.ps1" : "bootstrap.sh"
+        provisioner.calculate_path(src, :type => :file)
       end
       expand_path_for :script
 
@@ -46,17 +52,34 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        data = File.join(config[:root_path], "data")
-        cmd = "#{sudo("rm")} -rf #{data} ; mkdir -p #{config[:root_path]}"
+        root = config[:root_path]
+        data = remote_path_join(root, "data")
 
-        Util.wrap_command(cmd)
+        code = if powershell_shell?
+          Util.outdent!(<<-POWERSHELL)
+            if (Test-Path "#{data}") {
+              Remove-Item "#{data}" -Recurse -Force
+            }
+            if (-Not (Test-Path "#{root}")) {
+              New-Item "#{root}" -ItemType directory | Out-Null
+            }
+          POWERSHELL
+        else
+          "#{sudo("rm")} -rf #{data} ; mkdir -p #{root}"
+        end
+
+        wrap_shell_code(code)
       end
 
       # (see Base#run_command)
       def run_command
-        Util.wrap_command(
-          sudo(File.join(config[:root_path], File.basename(config[:script])))
+        script = remote_path_join(
+          config[:root_path],
+          File.basename(config[:script])
         )
+        code = powershell_shell? ? %{& "#{script}"} : sudo(script)
+
+        wrap_shell_code(code)
       end
 
       private
@@ -87,16 +110,28 @@ module Kitchen
           debug("Using script from #{config[:script]}")
           FileUtils.cp_r(config[:script], sandbox_path)
         else
-          config[:script] = File.join(sandbox_path, "bootstrap.sh")
-          info("#{File.basename(config[:script])} not found " \
-            "so Kitchen will run a stubbed script. Is this intended?")
-          File.open(config[:script], "wb") do |file|
-            file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
-          end
+          prepare_stubbed_script
         end
 
         FileUtils.chmod(0755,
           File.join(sandbox_path, File.basename(config[:script])))
+      end
+
+      # Creates a minimal, no-op script in the sandbox path.
+      #
+      # @api private
+      def prepare_stubbed_script
+        base = powershell_shell? ? "bootstrap.ps1" : "bootstrap.sh"
+        config[:script] = File.join(sandbox_path, base)
+        info("#{File.basename(config[:script])} not found " \
+          "so Kitchen will run a stubbed script. Is this intended?")
+        File.open(config[:script], "wb") do |file|
+          if powershell_shell?
+            file.write(%{Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"\n})
+          else
+            file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
+          end
+        end
       end
     end
   end
