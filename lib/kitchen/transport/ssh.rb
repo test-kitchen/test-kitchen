@@ -85,6 +85,15 @@ module Kitchen
         end
       end
 
+      # (see Base#cleanup!)
+      def cleanup!
+        if @connection
+          logger.debug("[SSH] shutting previous connection #{@connection}")
+          @connection.close
+          @connection = @connection_options = nil
+        end
+      end
+
       # A Connection instance can be generated and re-generated, given new
       # connection details such as connection port, hostname, credentials, etc.
       # This object is responsible for carrying out the actions on the remote
@@ -335,11 +344,7 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def create_new_connection(options, &block)
-        if @connection
-          logger.debug("[SSH] shutting previous connection #{@connection}")
-          @connection.close
-        end
-
+        cleanup!
         @connection_options = options
         @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)
       end
