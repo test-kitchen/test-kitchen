@@ -344,10 +344,8 @@ module Kitchen
     #
     # @api private
     def update_config!
-      if options[:log_level]
-        level = options[:log_level].downcase.to_sym
-        @config.log_level = level
-      end
+      @config.log_level = log_level if log_level
+
       unless options[:log_overwrite].nil?
         @config.log_overwrite = options[:log_overwrite]
       end
@@ -359,11 +357,36 @@ module Kitchen
 
       # Now that we have required configs, lets create our file logger
       Kitchen.logger = Kitchen.default_file_logger(
-        level,
+        log_level,
         options[:log_overwrite]
       )
 
       update_parallel!
+    end
+
+    # Validate the log level from the config / CLI options, defaulting
+    # to :info if the supplied level is empty or invalid
+    #
+    # @api private
+    def log_level
+      return unless options[:log_level]
+      return @log_level if @log_level
+
+      level = options[:log_level].downcase.to_sym
+      unless valid_log_level?(level)
+        level = :info
+        banner "WARNING - invalid log level specified: " \
+          "\"#{options[:log_level]}\" - reverting to :info log level."
+      end
+
+      @log_level = level
+    end
+
+    # Check to whether a provided log level is valid
+    #
+    # @api private
+    def valid_log_level?(level)
+      !Util.to_logger_level(level).nil?
     end
 
     # Set parallel concurrency options for Thor
