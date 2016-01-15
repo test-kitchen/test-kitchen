@@ -167,10 +167,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Rakefile" should contain:
     """
     begin
-      require "kitchen/rake_tasks"
+      require 'kitchen/rake_tasks'
       Kitchen::RakeTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+      puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
     end
     """
 
@@ -186,10 +186,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Thorfile" should contain:
     """
     begin
-      require "kitchen/thor_tasks"
+      require 'kitchen/thor_tasks'
       Kitchen::ThorTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+      puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
     end
     """
 

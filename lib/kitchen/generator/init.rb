@@ -143,10 +143,10 @@ module Kitchen
         rakedoc = <<-RAKE.gsub(/^ {10}/, "")
 
           begin
-            require "kitchen/rake_tasks"
+            require 'kitchen/rake_tasks'
             Kitchen::RakeTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+            puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         RAKE
         append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
@@ -161,10 +161,10 @@ module Kitchen
         thordoc = <<-THOR.gsub(/^ {10}/, "")
 
           begin
-            require "kitchen/thor_tasks"
+            require 'kitchen/thor_tasks'
             Kitchen::ThorTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+            puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         THOR
         append_to_file(File.join(destination_root, "Thorfile"), thordoc)
