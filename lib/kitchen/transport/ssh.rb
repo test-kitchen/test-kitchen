@@ -266,6 +266,7 @@ module Kitchen
             end
           end
           session.loop
+          flush_log_buffers(logger)
           exit_code
         end
 
@@ -299,6 +300,22 @@ module Kitchen
         # @api private
         def to_s
           "#{username}@#{hostname}<#{options.inspect}>"
+        end
+
+        ## flush buffer and remainder
+        def flush_log_buffers(logger)
+          logger.loggers.map do |lg|
+            if !lg.buffer.empty? && !lg.remainder.empty?
+              msg = lg.buffer
+              lg.buffer = ""
+              lg.remainder = ""
+              lg << [msg, "\n"].join
+            elsif lg.buffer.empty? && !lg.remainder.empty?
+              msg = lg.remainder
+              lg.remainder = ""
+              lg << [msg, "\n"].join
+            end
+          end if logger.respond_to?(:loggers)
         end
       end
 

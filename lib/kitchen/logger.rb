@@ -38,6 +38,9 @@ module Kitchen
     #   overwriting
     attr_reader :log_overwrite
 
+    # @return [Array] loggers
+    attr_reader :loggers
+
     # Constructs a new logger.
     #
     # @param options [Hash] configuration for a new logger
@@ -337,15 +340,16 @@ module Kitchen
     class LogdevLogger < ::Logger
 
       alias_method :super_info, :info
+      attr_accessor :buffer, :remainder
 
       # Dump one or more messages to info.
       #
       # @param msg [String] a message
       def <<(msg)
         @buffer ||= ""
-        lines, _, remainder = msg.rpartition("\n")
+        lines, _, @remainder = msg.rpartition("\n")
         if lines.empty?
-          @buffer << remainder
+          @buffer << @remainder
         else
           lines.insert(0, @buffer)
           lines.split("\n").each { |l| format_line(l.chomp) }
