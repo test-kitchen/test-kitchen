@@ -1,4 +1,4 @@
-## 1.5.0
+## 1.5.0 / 2016-01-21
 
 ### Potentially breaking changes
 
