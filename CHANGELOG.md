@@ -4,24 +4,43 @@
 
 ### Bug fixes
 
+* PR [#499][]: Use single quotes in Rake/Thorfile templates ([@chr4][])
+* PR [#697][]: Set default log level even if you forget to add it to command line arg ([@scotthain][])
 * PR [#816][]: Fix SuSe OS Busser install ([@Peuserik][])
+* PR [#824][]: Fix handling of chunked ssh output ([@kingpong][])
 * PR [#833][]: Updates the gem path to install everything in /tmp/verifier ([@scotthain][])
+* PR [#835][]: WinRM connect (with retry) is failing on Windows ([@Stift][])
+* PR [#864][]: Fix Windows Omnibus Install ([@dissonanz][])
 * PR [#878][]: write install_command to file and invoke on the instance to avoid command too long on windows ([@mwrock][])
+* PR [#897][]: typo: on != no ([@miketheman][])
+* PR [#919][]: Because net/ssh is no longer including timeout.rb, we need to so that Ruby doesn't think Timeout belongs to the TK class ([@tyler-ball][])
 
 ### New features
 
 * PR [#741][]: Add shell verifier ([@sawanoboly][])
 * PR [#752][]: Make lazyhash enumerable ([@caboteria][])
+* PR [#827][]: update omnibus url to chef.io ([@andrewelizondo][])
+* PR [#857][]: add cli option to set the test path ([@chris-rock][])
 * PR [#892][]: Adding proxy tests to the Travis.yml ([@tyler-ball][])
 * PR [#895][]: Adding in ChefConfig support to enable loading proxy config from chef config files ([@tyler-ball][])
+* PR [#901][]: Add support for --profile-ruby ([@martinb3][])
+* PR [#906][]: Adding Maintainers file ([@cheeseplus][])
 
 ### Improvements
 
+* PR [#753][]: add tests for empty or missing files ([@miketheman][])
+* PR [#776][]: Add more options for WinRM ([@smurawski][])
 * PR [#782][]: Use [`mixlib-install`](https://github.com/chef/mixlib-install) to generate chef install command. ([@thommay][])
 * PR [#804][]: Drop Ruby 1.9 from TravisCI build matrix ([@thommay][])
 * PR [#813][]: Honor proxy ENV variables ([@mcquin][])
+* PR [#825][]: Add hooks for instance cleanup before exit ([@coderanger][])
+* PR [#872][]: Added try/catch around main and set error action to stop ([@mcallb][])
 * PR [#885][]: Running the chef_base provisioner install_command via sudo, and command_prefix support ([@adamleff][])
 * PR [#896][]: Fixing garbled output for chef_zero provisioner ([@someara][])
+* PR [#908][]: Updating to the latest release of net-ssh to consume https://github.com/net-ssh/net-ssh/pull/280 ([@tyler-ball][])
+* PR [#911][]: Put Travis on a diet ([@cheeseplus][])
+* PR [#912][]: The netssh 3.0 update returns a different error on connection timeout than 2.9.2 did, adding it to the retry list ([@tyler-ball][])
+
 
 ## 1.4.2 / 2015-08-03
 
@@ -742,6 +761,7 @@ The initial release.
 [#481]: https://github.com/test-kitchen/test-kitchen/issues/481
 [#489]: https://github.com/test-kitchen/test-kitchen/issues/489
 [#498]: https://github.com/test-kitchen/test-kitchen/issues/498
+[#499]: https://github.com/test-kitchen/test-kitchen/issues/499
 [#504]: https://github.com/test-kitchen/test-kitchen/issues/504
 [#507]: https://github.com/test-kitchen/test-kitchen/issues/507
 [#510]: https://github.com/test-kitchen/test-kitchen/issues/510
@@ -787,6 +807,7 @@ The initial release.
 [#675]: https://github.com/test-kitchen/test-kitchen/issues/675
 [#688]: https://github.com/test-kitchen/test-kitchen/issues/688
 [#689]: https://github.com/test-kitchen/test-kitchen/issues/689
+[#697]: https://github.com/test-kitchen/test-kitchen/issues/697
 [#704]: https://github.com/test-kitchen/test-kitchen/issues/704
 [#711]: https://github.com/test-kitchen/test-kitchen/issues/711
 [#728]: https://github.com/test-kitchen/test-kitchen/issues/728
@@ -796,25 +817,43 @@ The initial release.
 [#737]: https://github.com/test-kitchen/test-kitchen/issues/737
 [#741]: https://github.com/test-kitchen/test-kitchen/issues/741
 [#752]: https://github.com/test-kitchen/test-kitchen/issues/752
+[#753]: https://github.com/test-kitchen/test-kitchen/issues/753
+[#776]: https://github.com/test-kitchen/test-kitchen/issues/776
 [#782]: https://github.com/test-kitchen/test-kitchen/issues/782
 [#801]: https://github.com/test-kitchen/test-kitchen/issues/801
 [#802]: https://github.com/test-kitchen/test-kitchen/issues/802
 [#804]: https://github.com/test-kitchen/test-kitchen/issues/804
 [#813]: https://github.com/test-kitchen/test-kitchen/issues/813
 [#816]: https://github.com/test-kitchen/test-kitchen/issues/816
+[#824]: https://github.com/test-kitchen/test-kitchen/issues/824
+[#825]: https://github.com/test-kitchen/test-kitchen/issues/825
+[#827]: https://github.com/test-kitchen/test-kitchen/issues/827
 [#833]: https://github.com/test-kitchen/test-kitchen/issues/833
+[#835]: https://github.com/test-kitchen/test-kitchen/issues/835
+[#857]: https://github.com/test-kitchen/test-kitchen/issues/857
+[#864]: https://github.com/test-kitchen/test-kitchen/issues/864
+[#872]: https://github.com/test-kitchen/test-kitchen/issues/872
 [#878]: https://github.com/test-kitchen/test-kitchen/issues/878
 [#885]: https://github.com/test-kitchen/test-kitchen/issues/885
 [#892]: https://github.com/test-kitchen/test-kitchen/issues/892
 [#895]: https://github.com/test-kitchen/test-kitchen/issues/895
 [#896]: https://github.com/test-kitchen/test-kitchen/issues/896
+[#897]: https://github.com/test-kitchen/test-kitchen/issues/897
+[#901]: https://github.com/test-kitchen/test-kitchen/issues/901
+[#906]: https://github.com/test-kitchen/test-kitchen/issues/906
+[#908]: https://github.com/test-kitchen/test-kitchen/issues/908
+[#911]: https://github.com/test-kitchen/test-kitchen/issues/911
+[#912]: https://github.com/test-kitchen/test-kitchen/issues/912
+[#919]: https://github.com/test-kitchen/test-kitchen/issues/919
 [@Annih]: https://github.com/Annih
 [@ChrisLundquist]: https://github.com/ChrisLundquist
 [@MarkGibbons]: https://github.com/MarkGibbons
 [@Peuserik]: https://github.com/Peuserik
+[@Stift]: https://github.com/Stift
 [@adamhjk]: https://github.com/adamhjk
 [@adamleff]: https://github.com/adamleff
 [@afiune]: https://github.com/afiune
+[@andrewelizondo]: https://github.com/andrewelizondo
 [@arangamani]: https://github.com/arangamani
 [@arunthampi]: https://github.com/arunthampi
 [@benlangfeld]: https://github.com/benlangfeld
@@ -822,10 +861,14 @@ The initial release.
 [@bryanwb]: https://github.com/bryanwb
 [@caboteria]: https://github.com/caboteria
 [@calavera]: https://github.com/calavera
+[@cheeseplus]: https://github.com/cheeseplus
+[@chr4]: https://github.com/chr4
+[@chris-rock]: https://github.com/chris-rock
 [@chrishenry]: https://github.com/chrishenry
 [@coderanger]: https://github.com/coderanger
 [@curiositycasualty]: https://github.com/curiositycasualty
 [@daniellockard]: https://github.com/daniellockard
+[@dissonanz]: https://github.com/dissonanz
 [@ekrupnik]: https://github.com/ekrupnik
 [@fnichol]: https://github.com/fnichol
 [@fnordfish]: https://github.com/fnordfish
@@ -849,12 +892,14 @@ The initial release.
 [@juliandunn]: https://github.com/juliandunn
 [@justincampbell]: https://github.com/justincampbell
 [@kamalim]: https://github.com/kamalim
+[@kingpong]: https://github.com/kingpong
 [@kisoku]: https://github.com/kisoku
 [@lamont-granquist]: https://github.com/lamont-granquist
 [@lloydde]: https://github.com/lloydde
 [@manul]: https://github.com/manul
 [@martinb3]: https://github.com/martinb3
 [@mattray]: https://github.com/mattray
+[@mcallb]: https://github.com/mcallb
 [@mconigliaro]: https://github.com/mconigliaro
 [@mcquin]: https://github.com/mcquin
 [@metadave]: https://github.com/metadave
