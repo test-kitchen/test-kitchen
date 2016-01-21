@@ -20,6 +20,7 @@ require "kitchen"
 
 require "net/ssh"
 require "net/scp"
+require "timeout"
 
 module Kitchen
 
