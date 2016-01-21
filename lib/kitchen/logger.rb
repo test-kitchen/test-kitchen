@@ -343,13 +343,10 @@ module Kitchen
       # @param msg [String] a message
       def <<(msg)
         @buffer ||= ""
-        lines, _, remainder = msg.rpartition("\n")
-        if lines.empty?
-          @buffer << remainder
-        else
-          lines.insert(0, @buffer)
-          lines.split("\n").each { |l| format_line(l.chomp) }
-          @buffer = ""
+        @buffer += msg
+        while i = @buffer.index("\n")
+          format_line(@buffer[0, i].chomp)
+          @buffer[0, i + 1] = ""
         end
       end
 
