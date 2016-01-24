@@ -46,7 +46,7 @@ $ echo $?
 
 A few things of note from the output above:
 
-* Notice the `Setting up <default-ubuntu-1204>` line? That's another action called the **Setup Action**. Usually not a big for most users but this action is responsible for installing the Busser RubyGem and any test runner plugins required. In our case the `busser-bats` RubyGem was installed which helped to install the bats testing framework.
+* Notice the `Setting up <default-ubuntu-1204>` line? That's another action called the **Setup Action**. Usually not a big deal for most users but this action is responsible for installing the Busser RubyGem and any test runner plugins required. In our case the `busser-bats` RubyGem was installed which helped to install the bats testing framework.
 * The `Verifying <default-ubuntu-1204>` line corresponds to the start of the **Verify Action** and the `✓ git binary is found in PATH` line is output from a bats test run.
 * The last command (`echo $?`) is a way to print the exit code of the last run shell command. This shows that the **kitchen** command exited cleanly.
 
