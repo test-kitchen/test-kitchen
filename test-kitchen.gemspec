@@ -33,8 +33,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "pry"
   gem.add_development_dependency "pry-byebug"
   gem.add_development_dependency "pry-stack_explorer"
-  gem.add_development_dependency "winrm-transport", "~> 1.0", ">= 1.0.3"
-  gem.add_development_dependency "winrm-s", "~> 0.3"
+  gem.add_development_dependency "winrm", "~> 1.6"
+  gem.add_development_dependency "winrm-fs", "~> 0.3"
 
   gem.add_development_dependency "bundler",   "~> 1.3"
   gem.add_development_dependency "rake"
