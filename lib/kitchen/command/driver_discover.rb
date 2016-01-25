@@ -40,7 +40,9 @@ module Kitchen
         # We are introducing the idea of using the Chef configuration as a
         # unified config for all the ChefDK tools.  The first practical
         # implementation of this is 1 location to setup proxy configurations.
-        ChefConfig::WorkstationConfigLoader.new(options[:chef_config_path]).load if defined?(ChefConfig::WorkstationConfigLoader)
+        if defined?(ChefConfig::WorkstationConfigLoader)
+          ChefConfig::WorkstationConfigLoader.new(options[:chef_config_path]).load
+        end
         ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
 
         specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }

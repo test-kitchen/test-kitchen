@@ -100,7 +100,9 @@ module Kitchen
       def initialize(config = {})
         super(config)
 
-        ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load if defined?(ChefConfig::WorkstationConfigLoader)
+        if defined?(ChefConfig::WorkstationConfigLoader)
+          ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
+        end
         # This exports any proxy config present in the Chef config to
         # appropriate environment variables, which Test Kitchen respects
         ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
