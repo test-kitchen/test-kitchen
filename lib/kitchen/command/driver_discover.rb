@@ -22,7 +22,7 @@ require "rubygems/spec_fetcher"
 begin
   require "chef-config/config"
   require "chef-config/workstation_config_loader"
-rescue LoadError
+rescue LoadError # rubocop:disable Lint/HandleExceptions
   # This space left intentionally blank.
 end
 
