@@ -26,8 +26,12 @@ require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
 require "mixlib/install"
-require "chef-config/config"
-require "chef-config/workstation_config_loader"
+begin
+  require "chef-config/config"
+  require "chef-config/workstation_config_loader"
+rescue LoadError
+  # This space left intentionally blank.
+end
 
 module Kitchen
 
@@ -96,10 +100,10 @@ module Kitchen
       def initialize(config = {})
         super(config)
 
-        ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
+        ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load if defined?(ChefConfig::WorkstationConfigLoader)
         # This exports any proxy config present in the Chef config to
         # appropriate environment variables, which Test Kitchen respects
-        ChefConfig::Config.export_proxies
+        ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
       end
 
       # (see Base#create_sandbox)
