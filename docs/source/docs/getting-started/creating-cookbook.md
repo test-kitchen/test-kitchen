@@ -179,4 +179,4 @@ $ git commit -m "Add Test Kitchen to the project."
  create mode 100644 .kitchen.yml
 ~~~
 
-Ok, we have a instance created and ready for some Chef code. Onward!
+Ok, we have an instance created and ready for some Chef code. Onward!
