@@ -52,7 +52,9 @@ module Kitchen
     end
 
     def windows?(options)
-      @name.downcase =~ /^win/ || (!options[:transport].nil? && options[:transport][:name] == 'winrm')
+      @name.downcase =~ /^win/ || (
+        !options[:transport].nil? && options[:transport][:name] == "winrm"
+      )
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
