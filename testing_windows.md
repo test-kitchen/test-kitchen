@@ -21,6 +21,8 @@ platforms:
       box: mwrock/Windows2012R2
 ```
 
+For other windows OS versions, you can spin up instances in your favorite cloud provider or create your own vagrant box. The windows packer templates found in the [boxcutter repo](https://github.com/boxcutter/windows) provide a good place to start here.
+
 ### `bundle install`
 
 From the root of your cookbook directory run `bundle install`
