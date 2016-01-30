@@ -6,10 +6,11 @@ The [windows cookbook](https://github.com/chef-cookbooks/windows) is a grand cho
 ### Edit the `Gemfile` 
 Ensure that the cookbook's root directory includes a `Gemfile` that includes your local test-kitchen repo on the branch you would like to test as well as required windows-only needed gems:
 ```
-gem 'test-kitchen', path: '../test-kitchen'
+gem 'test-kitchen', git: 'https://github.com/mwrock/test-kitchen', branch: 'winrm-fs'
 gem 'winrm', '~> 1.6'
 gem 'winrm-fs', '~> 0.3'
 ```
+The above would target the `winrm-fs` branch in mwrock's test-kitchen repo.
 
 ### Finding a windows image
 Make sure you have a windows test image handy. You can use your favorite cloud or hypervisor. An easy vagrant option is `mwrock/Windows2012R2` which is publicly available on atlas. To use that, edit your cookbook's `.kitchen.yml` to include:
