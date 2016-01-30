@@ -4,7 +4,7 @@
 The [windows cookbook](https://github.com/chef-cookbooks/windows) is a grand choice.
 
 ### Edit the `Gemfile` 
-Ensure that the cookbook's root directory includes a `Gemfile` that includes your local test-kitchen repo as well as required windows-only needed gems:
+Ensure that the cookbook's root directory includes a `Gemfile` that includes your local test-kitchen repo on the branch you would like to test as well as required windows-only needed gems:
 ```
 gem 'test-kitchen', path: '../test-kitchen'
 gem 'winrm', '~> 1.6'
@@ -16,7 +16,7 @@ Make sure you have a windows test image handy. You can use your favorite cloud o
 ```
 platforms:
   - name: win2012r2-standard
-    driver_config:
+    driver:
       box: mwrock/Windows2012R2
 ```
 
