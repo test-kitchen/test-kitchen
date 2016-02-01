@@ -66,7 +66,6 @@ module Kitchen
       end
 
       # (see Base#run_command)
-      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def run_command
         config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
         cmd = sudo(config[:chef_solo_path]).dup.
@@ -82,7 +81,6 @@ module Kitchen
       # @return [Array<String>] an array of command line arguments
       # @api private
       def chef_args(solo_rb_filename)
-        level = config[:log_level] == :info ? :auto : config[:log_level]
         args = [
           "--config #{remote_path_join(config[:root_path], solo_rb_filename)}",
           "--log_level #{config[:log_level]}",

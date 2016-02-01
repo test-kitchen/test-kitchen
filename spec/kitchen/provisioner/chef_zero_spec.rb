@@ -722,14 +722,16 @@ describe Kitchen::Provisioner::ChefZero do
           cmd.must_match(/'\Z/)
         end
 
-        it "contains a second run if enforce_idempotency is set" do
-          config[:enforce_idempotency] = true
-          cmd.must_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+        it "contains a standard second run if multiple_converge is set to 2" do
+          config[:multiple_converge] = 2
+          cmd.must_match(/chef-client.*&&.*chef-client.*/m)
+          cmd.wont_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
         end
 
-        it "does not contains a second run if enforce_idempotency is not set" do
-          config[:enforce_idempotency] = false
-          cmd.wont_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+        it "contains a specific second run if enforce_idempotency is set" do
+          config[:multiple_converge] = 2
+          config[:enforce_idempotency] = true
+          cmd.must_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
         end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
@@ -796,14 +798,16 @@ describe Kitchen::Provisioner::ChefZero do
         common_shell_specs
         common_modern_shell_specs
 
-        it "contains a second run if enforce_idempotency is set" do
-          config[:enforce_idempotency] = true
-          cmd.must_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+        it "contains a standard second run if multiple_converge is set to 2" do
+          config[:multiple_converge] = 2
+          cmd.must_match(/chef-client.*;.*chef-client.*/m)
+          cmd.wont_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
         end
 
-        it "does not contains a second run if enforce_idempotency is not set" do
-          config[:enforce_idempotency] = false
-          cmd.wont_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+        it "contains a specific second run if enforce_idempotency is set" do
+          config[:multiple_converge] = 2
+          config[:enforce_idempotency] = true
+          cmd.must_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
         end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do

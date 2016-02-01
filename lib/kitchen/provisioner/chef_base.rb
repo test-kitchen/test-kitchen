@@ -68,6 +68,8 @@ module Kitchen
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
 
+      default_config :multiple_converge, 1
+
       default_config :enforce_idempotency, false
 
       default_config :data_path do |provisioner|
@@ -432,20 +434,35 @@ module Kitchen
       # Gives the command used to run chef
       # @api private
       def chef_cmd(base_cmd)
+        if windows_os?
+          separator = [
+            "; if ($LastExitCode -ne 0) { ",
+            "throw \"Command failed with exit code $LastExitCode.\" } ;"
+          ].join
+        else
+          separator = " && "
+        end
+        chef_cmds(base_cmd).join(separator)
+      end
+
+      # Gives an array of command
+      # @api private
+      def chef_cmds(base_cmd)
         cmd = prefix_command(wrap_shell_code(
           [base_cmd, *chef_args(config_filename), last_exit_code].join(" ").
           tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
         ))
+
+        cmds = [cmd].cycle(config[:multiple_converge].to_i).to_a
 
         if config[:enforce_idempotency]
           idempotent_cmd = prefix_command(wrap_shell_code(
             [base_cmd, *chef_args("client_no_updated_resources.rb"), last_exit_code].join(" ").
             tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
           ))
-          separator = windows_os? ? " ; " : " && "
-          cmd = [cmd, idempotent_cmd].join(separator)
+          cmds[-1] = idempotent_cmd
         end
-        cmd
+        cmds
       end
     end
   end
