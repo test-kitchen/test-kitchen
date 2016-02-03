@@ -86,6 +86,16 @@ module Kitchen
       end
       expand_path_for :clients_path
 
+      default_config :berksfile_path do |provisioner|
+        provisioner.calculate_path("berksfile")
+      end
+      expand_path_for :berksfile_path
+
+      default_config :cookbooks_path do |provisioner|
+        provisioner.calculate_path("cookbooks")
+      end
+      expand_path_for :cookbooks_path
+
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
         provisioner.calculate_path("encrypted_data_bag_secret_key", :type => :file)
       end
@@ -167,7 +177,11 @@ module Kitchen
       #   kitchen root
       # @api private
       def berksfile
-        File.join(config[:kitchen_root], "Berksfile")
+        if config[:berksfile_path]
+	  File.expand_path(config[:berksfile_path])
+	else
+          File.join(config[:kitchen_root], "Berksfile")
+	end
       end
 
       # @return [String] an absolute path to a Cheffile, relative to the
