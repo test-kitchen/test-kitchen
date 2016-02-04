@@ -150,7 +150,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://www.chef.io/chef/install.sh",
-        :project => nil, :install_flags => nil, :sudo_command => 'sudo -E',
+        :project => nil, :install_flags => nil, :sudo_command => "sudo -E",
         :http_proxy => nil, :https_proxy => nil }
     }
 
@@ -324,7 +324,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:sudo] = true
         config[:sudo_command] = "my_sudo_command"
         install_opts_clone = install_opts.clone
-        install_opts_clone[:sudo_command]=config[:sudo_command]
+        install_opts_clone[:sudo_command] = config[:sudo_command]
 
         Mixlib::Install.expects(:new).
           with(default_version, false, install_opts_clone).returns(installer)
@@ -335,7 +335,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:sudo] = false
 
         install_opts_clone = install_opts.clone
-        install_opts_clone[:sudo_command]=''
+        install_opts_clone[:sudo_command] = ""
         Mixlib::Install.expects(:new).
           with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_install_command"
@@ -352,7 +352,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "sets the powershell flag for Mixlib::Install" do
         install_opts_clone = install_opts.clone
-        install_opts_clone[:sudo_command]=''
+        install_opts_clone[:sudo_command] = ""
         Mixlib::Install.expects(:new).
           with("", true, install_opts_clone).returns(installer)
         cmd

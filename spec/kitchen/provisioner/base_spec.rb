@@ -330,6 +330,39 @@ describe Kitchen::Provisioner::Base do
     end
   end
 
+  describe "#sudo_command" do
+
+    describe "with :sudo set" do
+
+      before { config[:sudo] = true }
+
+      it "returns the default sudo_command" do
+        provisioner.send(:sudo_command).must_equal("sudo -E")
+      end
+
+      it "returns the custom sudo_command" do
+        config[:sudo_command] = "mysudo"
+
+        provisioner.send(:sudo_command).must_equal("mysudo")
+      end
+    end
+
+    describe "with :sudo falsey" do
+
+      before { config[:sudo] = false }
+
+      it "returns empty string for default sudo_command" do
+        provisioner.send(:sudo_command).must_equal("")
+      end
+
+      it "returns empty string for custom sudo_command" do
+        config[:sudo_command] = "mysudo"
+
+        provisioner.send(:sudo_command).must_equal("")
+      end
+    end
+  end
+
   describe "#prefix_command" do
 
     describe "with :command_prefix set" do

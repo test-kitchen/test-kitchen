@@ -216,7 +216,7 @@ module Kitchen
       # @return [String] the sudo command if sudo config is true
       # @api private
       def sudo_command
-        config[:sudo] ? config[:sudo_command].to_s : ''
+        config[:sudo] ? config[:sudo_command].to_s : ""
       end
 
       # Conditionally prefixes a command with a command prefix.
