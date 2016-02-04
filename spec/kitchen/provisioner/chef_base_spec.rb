@@ -150,8 +150,8 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://www.chef.io/chef/install.sh",
-        :project => nil, :install_flags => nil, :http_proxy => nil,
-        :https_proxy => nil }
+        :project => nil, :install_flags => nil, :sudo_command => "sudo -E",
+        :http_proxy => nil, :https_proxy => nil }
     }
 
     it "returns nil if :require_chef_omnibus is falsey" do
@@ -323,17 +323,21 @@ describe Kitchen::Provisioner::ChefBase do
       it "prepends sudo for sh commands when :sudo is set" do
         config[:sudo] = true
         config[:sudo_command] = "my_sudo_command"
+        install_opts_clone = install_opts.clone
+        install_opts_clone[:sudo_command] = config[:sudo_command]
 
         Mixlib::Install.expects(:new).
-          with(default_version, false, install_opts).returns(installer)
+          with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_sudo_command my_install_command"
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
         config[:sudo] = false
 
+        install_opts_clone = install_opts.clone
+        install_opts_clone[:sudo_command] = ""
         Mixlib::Install.expects(:new).
-          with(default_version, false, install_opts).returns(installer)
+          with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_install_command"
       end
     end
@@ -347,8 +351,10 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "sets the powershell flag for Mixlib::Install" do
+        install_opts_clone = install_opts.clone
+        install_opts_clone[:sudo_command] = ""
         Mixlib::Install.expects(:new).
-          with("", true, install_opts).returns(installer)
+          with("", true, install_opts_clone).returns(installer)
         cmd
       end
     end
