@@ -206,6 +206,7 @@ module Kitchen
     #
     # @return [Net::SSH::Connection::Session] the SSH connection session
     # @api private
+    # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
     def establish_connection
       rescue_exceptions = [
         Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,

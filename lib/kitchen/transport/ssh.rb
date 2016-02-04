@@ -141,7 +141,7 @@ module Kitchen
             args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
           end
           if ssh_gateway
-            gateway_command="ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
+            gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
             args += %W[ -o ProxyCommand=#{gateway_command} ]
             args += %W[ -p 22 ] # Should support other ports than 22 for ssh gateways
           else
@@ -242,6 +242,7 @@ module Kitchen
         #   debug (overriding the default) when a rescuable exception is raised
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
+        # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
         def establish_connection(opts)
           if ssh_gateway
             logger.debug("[SSH] opening connection to #{self} via " \
@@ -268,6 +269,7 @@ module Kitchen
             raise SshFailed, "SSH session could not be established"
           end
         end
+        # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength
 
         # Execute a remote command over SSH and return the command's exit code.
         #
@@ -310,7 +312,6 @@ module Kitchen
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
           @ssh_gateway            = @options.delete(:ssh_gateway)
           @ssh_gateway_username   = @options.delete(:ssh_gateway_username)
-
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -330,8 +331,8 @@ module Kitchen
           @gateway_session ||= if ssh_gateway
             # Should support the gateway running on other than 22
             Net::SSH::Gateway.new(ssh_gateway,
-                                  ssh_gateway_username,
-                                  options.merge(:port => 22))
+              ssh_gateway_username,
+              options.merge(:port => 22))
           end
         end
 
@@ -352,7 +353,9 @@ module Kitchen
       # @param data [Hash] merged configuration and mutable state data
       # @return [Hash] hash of connection options
       # @api private
-      def connection_options(data) # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize,
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def connection_options(data)
         opts = {
           :logger                 => logger,
           :user_known_hosts_file  => "/dev/null",
