@@ -306,8 +306,6 @@ module Kitchen
         pseudo_state[:username] = username if username
         pseudo_state.merge!(options)
 
-        # TODO: 
-        # SSH.new(*build_ssh_args(options.merge(:hostname => hostname))).wait
         instance.transport.connection(backcompat_merged_state(pseudo_state)).
           wait_until_ready
       end
