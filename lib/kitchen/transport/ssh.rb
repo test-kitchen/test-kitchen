@@ -244,7 +244,8 @@ module Kitchen
         # @api private
         def establish_connection(opts)
           if ssh_gateway
-            logger.debug("[SSH] opening connection to #{self} via #{ssh_gateway_username}@#{ssh_gateway}")
+            logger.debug("[SSH] opening connection to #{self} via " \
+              "#{ssh_gateway_username}@#{ssh_gateway}")
             gateway_session.ssh(hostname, username, options)
           else
             logger.debug("[SSH] opening connection to #{self}")
@@ -327,7 +328,10 @@ module Kitchen
 
         def gateway_session
           @gateway_session ||= if ssh_gateway
-            Net::SSH::Gateway.new(ssh_gateway, ssh_gateway_username, options.merge(:port => 22)) # Should support the gateway running on other than 22
+            # Should support the gateway running on other than 22
+            Net::SSH::Gateway.new(ssh_gateway,
+                                  ssh_gateway_username,
+                                  options.merge(:port => 22))
           end
         end
 

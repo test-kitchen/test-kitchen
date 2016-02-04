@@ -197,7 +197,8 @@ module Kitchen
     # @api private
     def gateway_session
       @gateway_session ||= if gateway
-        Net::SSH::Gateway.new(gateway, username, options.merge(:port => 22)) # Should support the gateway running on other than 22
+        # Should support the gateway running on other than 22
+        Net::SSH::Gateway.new(gateway, username, options.merge(:port => 22))
       end
     end
 
