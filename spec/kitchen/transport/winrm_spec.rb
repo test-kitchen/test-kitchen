@@ -20,9 +20,7 @@ require_relative "../../spec_helper"
 
 require "kitchen/transport/winrm"
 require "winrm"
-require "winrm/transport/command_executor"
-require "winrm/transport/shell_closer"
-require "winrm/transport/file_transporter"
+require "winrm-fs"
 
 module Kitchen
 
@@ -107,8 +105,8 @@ describe Kitchen::Transport::Winrm do
       transport[:max_wait_until_ready].must_equal 600
     end
 
-    it "sets :winrm_transport to :plaintext" do
-      transport[:winrm_transport].must_equal :plaintext
+    it "sets :winrm_transport to :negotiate" do
+      transport[:winrm_transport].must_equal :negotiate
     end
   end
 
@@ -150,25 +148,17 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
-      it "sets the :winrm_transport to :plaintext" do
+      it "sets the :winrm_transport to :negotiate" do
         klass.expects(:new).with do |hash|
-          hash[:winrm_transport] == :plaintext
+          hash[:winrm_transport] == :negotiate
         end
 
         make_connection
       end
 
-      it "sets the :disable_sspi to true" do
+      it "sets the :disable_sspi to false" do
         klass.expects(:new).with do |hash|
-          hash[:disable_sspi] == true
-        end
-
-        make_connection
-      end
-
-      it "sets the :basic_auth_only to true" do
-        klass.expects(:new).with do |hash|
-          hash[:basic_auth_only] == true
+          hash[:disable_sspi] == false
         end
 
         make_connection
@@ -336,42 +326,20 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
-      describe "when sspinegotiate is set in config" do
+      describe "when negotiate is set in config" do
         before do
-          config[:winrm_transport] = "sspinegotiate"
+          config[:winrm_transport] = "negotiate"
         end
 
-        describe "for Windows workstations" do
-          before do
-            RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
+        it "sets :winrm_transport to negotiate" do
+
+          klass.expects(:new).with do |hash|
+            hash[:winrm_transport] == :negotiate &&
+              hash[:disable_sspi] == false &&
+              hash[:basic_auth_only] == false
           end
 
-          it "sets :winrm_transport to sspinegotiate on Windows" do
-
-            klass.expects(:new).with do |hash|
-              hash[:winrm_transport] == :sspinegotiate &&
-                hash[:disable_sspi] == false &&
-                hash[:basic_auth_only] == false
-            end
-
-            make_connection
-          end
-        end
-
-        describe "for non-Windows workstations" do
-          before do
-            RbConfig::CONFIG.stubs(:[]).with("host_os").returns("darwin14")
-          end
-
-          it "sets :winrm_transport to plaintext" do
-            klass.expects(:new).with do |hash|
-              hash[:winrm_transport] == :plaintext &&
-                hash[:disable_sspi] == true &&
-                hash[:basic_auth_only] == true
-            end
-
-            make_connection
-          end
+          make_connection
         end
       end
 
@@ -438,48 +406,46 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "#load_needed_dependencies" do
-    describe "winrm-transport" do
+    describe "winrm-fs" do
       before do
-        # force loading of winrm-transport to get the version constant
-        require "winrm/transport/version"
+        # force loading of winrm-fs to get the version constant
+        require "winrm-fs"
       end
 
       it "logs a message to debug that code will be loaded" do
-        transport.stubs(:require)
         transport
 
         logged_output.string.must_match debug_line_with(
-          "Winrm Transport requested, loading WinRM::Transport gem")
+          "winrm-fs requested, loading winrm-fs gem")
       end
 
       it "logs a message to debug when library is initially loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require)
-        transport.stubs(:execute_block).returns(true)
-
+        transport.stubs(:require).with("winrm", anything)
+        transport.stubs(:require).with("winrm-fs").returns(true)
         transport.finalize_config!(instance)
 
         logged_output.string.must_match(
-          /WinRM::Transport library loaded/
+          /winrm-fs is loaded/
         )
       end
 
       it "logs a message to debug when library is previously loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require)
-        transport.stubs(:execute_block).returns(false)
-
+        transport.stubs(:require).with("winrm", anything)
+        transport.stubs(:require).with("winrm-fs").returns(false)
         transport.finalize_config!(instance)
 
         logged_output.string.must_match(
-          /WinRM::Transport previously loaded/
+          /winrm-fs was already loaded/
         )
       end
 
       it "logs a message to fatal when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require)
-        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm", anything)
+        transport.stubs(:require).with("winrm-fs").
+          raises(LoadError, "uh oh")
         begin
           transport.finalize_config!(instance)
         rescue # rubocop:disable Lint/HandleExceptions
@@ -487,64 +453,61 @@ describe Kitchen::Transport::Winrm do
         end
 
         logged_output.string.must_match fatal_line_with(
-          "The `winrm-transport` gem is missing and must be installed")
+          "The `winrm-fs` gem is missing and must be installed")
       end
 
       it "raises a UserError when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require)
-        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm", anything)
+        transport.stubs(:require).with("winrm-fs").
+          raises(LoadError, "uh oh")
 
         err = proc {
           transport.finalize_config!(instance)
         }.must_raise Kitchen::UserError
-        err.message.must_match(/^Could not load or activate winrm-transport\. /)
+        err.message.must_match(/^Could not load or activate winrm-fs\. /)
       end
     end
 
-    describe "winrm-s" do
-      before do
-        RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
-      end
-
+    describe "winrm" do
       it "logs a message to debug that code will be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:load_winrm_transport!)
+        transport.stubs(:require).with("winrm-fs", anything)
         transport.stubs(:require)
         transport.finalize_config!(instance)
 
         logged_output.string.must_match debug_line_with(
-          "The winrm-s gem is being loaded")
+          "winrm requested, loading winrm gem")
       end
 
       it "logs a message to debug when library is initially loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:load_winrm_transport!)
-        transport.stubs(:execute_block).returns(true)
+        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).returns(true)
 
         transport.finalize_config!(instance)
 
         logged_output.string.must_match(
-          /winrm-s is loaded/
+          /winrm is loaded/
         )
       end
 
       it "logs a message to debug when library is previously loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:load_winrm_transport!)
-        transport.stubs(:execute_block).returns(false)
+        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).returns(false)
 
         transport.finalize_config!(instance)
 
         logged_output.string.must_match(
-          /winrm-s was already loaded/
+          /winrm was already loaded/
         )
       end
 
       it "logs a message to fatal when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:load_winrm_transport!)
-        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).raises(LoadError, "uh oh")
         begin
           transport.finalize_config!(instance)
         rescue # rubocop:disable Lint/HandleExceptions
@@ -552,18 +515,18 @@ describe Kitchen::Transport::Winrm do
         end
 
         logged_output.string.must_match fatal_line_with(
-          "The `winrm-s` gem is missing and must be installed")
+          "The `winrm` gem is missing and must be installed")
       end
 
       it "raises a UserError when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:load_winrm_transport!)
-        transport.stubs(:execute_block).raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).raises(LoadError, "uh oh")
 
         err = proc {
           transport.finalize_config!(instance)
         }.must_raise Kitchen::UserError
-        err.message.must_match(/^Could not load or activate winrm-s\. /)
+        err.message.must_match(/^Could not load or activate winrm\. /)
       end
     end
   end
@@ -602,7 +565,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
   let(:executor) do
     s = mock("command_executor")
-    s.responds_like_instance_of(WinRM::Transport::CommandExecutor)
+    s.responds_like_instance_of(WinRM::CommandExecutor)
     s
   end
 
@@ -611,6 +574,8 @@ describe Kitchen::Transport::Winrm::Connection do
   end
 
   before do
+    WinRM::WinRMWebService.stubs(:new).returns(winrm_session)
+    winrm_session.stubs(:logger=)
     logger.level = Logger::DEBUG
   end
 
@@ -624,27 +589,10 @@ describe Kitchen::Transport::Winrm::Connection do
     end
 
     before do
-      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
-      # disable finalizer as service is a fake anyway
-      ObjectSpace.stubs(:define_finalizer).
-        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
-      executor.stubs(:open).returns("shell-123")
-      executor.stubs(:shell).returns("shell-123")
+      winrm_session.stubs(:create_executor).returns(executor)
       executor.stubs(:close)
       executor.stubs(:run_powershell_script).
         with("doit").yields("ok\n", nil).returns(response)
-    end
-
-    it "logger displays closing connection on debug" do
-      connection.execute("doit")
-      connection.close
-
-      logged_output.string.must_match debug_line(
-        "[WinRM] closing remote shell shell-123 on #{info}"
-      )
-      logged_output.string.must_match debug_line(
-        "[WinRM] remote shell shell-123 closed"
-      )
     end
 
     it "only closes the shell once for multiple calls" do
@@ -660,10 +608,7 @@ describe Kitchen::Transport::Winrm::Connection do
   describe "#execute" do
 
     before do
-      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
-      # disable finalizer as service is a fake anyway
-      ObjectSpace.stubs(:define_finalizer).
-        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+      winrm_session.stubs(:create_executor).returns(executor)
     end
 
     describe "for a successful command" do
@@ -679,7 +624,6 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       before do
-        executor.expects(:open).returns("shell-123")
         executor.expects(:run_powershell_script).
           with("doit").yields("ok\n", nil).returns(response)
       end
@@ -689,17 +633,6 @@ describe Kitchen::Transport::Winrm::Connection do
 
         logged_output.string.must_match debug_line(
           "[WinRM] #{info} (doit)")
-      end
-
-      it "logger displays establishing connection on debug" do
-        connection.execute("doit")
-
-        logged_output.string.must_match debug_line(
-          "[WinRM] opening remote shell on #{info}"
-        )
-        logged_output.string.must_match debug_line(
-          "[WinRM] remote shell shell-123 is open on #{info}"
-        )
       end
 
       it "logger captures stdout" do
@@ -741,7 +674,6 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       before do
-        executor.expects(:open).returns("shell-123")
         executor.expects(:run_powershell_script).with(
           %{powershell -ExecutionPolicy Bypass -File "$env:TEMP/kitchen/coolbeans-long_script.ps1"}
         ).yields("ok\n", nil).returns(response)
@@ -786,12 +718,11 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       before do
-        executor.expects(:open).returns("shell-123")
         executor.expects(:run_powershell_script).
           with("doit").yields("nope\n", nil).returns(response)
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
       def self.common_failed_command_specs
         it "logger displays command on debug" do
           begin
@@ -802,21 +733,6 @@ describe Kitchen::Transport::Winrm::Connection do
 
           logged_output.string.must_match debug_line(
             "[WinRM] #{info} (doit)"
-          )
-        end
-
-        it "logger displays establishing connection on debug" do
-          begin
-            connection.execute("doit")
-          rescue # rubocop:disable Lint/HandleExceptions
-            # the raise is not what is being tested here, rather its side-effect
-          end
-
-          logged_output.string.must_match debug_line(
-            "[WinRM] opening remote shell on #{info}"
-          )
-          logged_output.string.must_match debug_line(
-            "[WinRM] remote shell shell-123 is open on #{info}"
           )
         end
 
@@ -854,7 +770,7 @@ MSG
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
 
       describe "when a non-zero exit code is returned" do
 
@@ -897,63 +813,11 @@ MSG
 
           options[:connection_retries] = 3
           options[:connection_retry_sleep] = 7
-          connection.stubs(:sleep)
-          executor.stubs(:open).raises(k)
+          winrm_session.stubs(:create_executor).raises(k)
         end
 
         it "reraises the #{klass} exception" do
           proc { connection.execute("nope") }.must_raise klass
-        end
-
-        it "attempts to connect :connection_retries times" do
-          begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
-            # the raise is not what is being tested here, rather its side-effect
-          end
-
-          logged_output.string.lines.count { |l|
-            l =~ debug_line("[WinRM] opening remote shell on #{info}")
-          }.must_equal 3
-          logged_output.string.lines.count { |l|
-            l =~ debug_line("[WinRM] remote shell shell-123 is open on #{info}")
-          }.must_equal 0
-        end
-
-        it "sleeps for :connection_retry_sleep seconds between retries" do
-          connection.unstub(:sleep)
-          connection.expects(:sleep).with(7).twice
-
-          begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
-            # the raise is not what is being tested here, rather its side-effect
-          end
-        end
-
-        it "logs the first 2 retry failures on info" do
-          begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
-            # the raise is not what is being tested here, rather its side-effect
-          end
-
-          logged_output.string.lines.count { |l|
-            l =~ info_line_with(
-              "[WinRM] connection failed, retrying in 7 seconds")
-          }.must_equal 2
-        end
-
-        it "logs the last retry failures on warn" do
-          begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
-            # the raise is not what is being tested here, rather its side-effect
-          end
-
-          logged_output.string.lines.count { |l|
-            l =~ warn_line_with("[WinRM] connection failed, terminating ")
-          }.must_equal 1
         end
       end
     end
@@ -1131,38 +995,33 @@ MSG
 
     let(:transporter) do
       t = mock("file_transporter")
-      t.responds_like_instance_of(WinRM::Transport::FileTransporter)
+      t.responds_like_instance_of(WinRM::FS::Core::FileTransporter)
       t
     end
 
     before do
-      # disable finalizer as service is a fake anyway
-      ObjectSpace.stubs(:define_finalizer).
-        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+      winrm_session.stubs(:create_executor).returns(executor)
 
-      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
-      executor.stubs(:open)
-
-      WinRM::Transport::FileTransporter.stubs(:new).
-        with(executor, logger).returns(transporter)
+      WinRM::FS::Core::FileTransporter.stubs(:new).
+        with(executor).returns(transporter)
       transporter.stubs(:upload)
     end
 
     def self.common_specs_for_upload
       it "builds a Winrm::FileTransporter" do
-        WinRM::Transport::FileTransporter.unstub(:new)
+        WinRM::FS::Core::FileTransporter.unstub(:new)
 
-        WinRM::Transport::FileTransporter.expects(:new).
-          with(executor, logger).returns(transporter)
+        WinRM::FS::Core::FileTransporter.expects(:new).
+          with(executor).returns(transporter)
 
         upload
       end
 
       it "reuses the Winrm::FileTransporter" do
-        WinRM::Transport::FileTransporter.unstub(:new)
+        WinRM::FS::Core::FileTransporter.unstub(:new)
 
-        WinRM::Transport::FileTransporter.expects(:new).
-          with(executor, logger).returns(transporter).once
+        WinRM::FS::Core::FileTransporter.expects(:new).
+          with(executor).returns(transporter).once
 
         upload
         upload
@@ -1192,49 +1051,8 @@ MSG
   describe "#wait_until_ready" do
 
     before do
-      WinRM::Transport::CommandExecutor.stubs(:new).returns(executor)
-      # disable finalizer as service is a fake anyway
-      ObjectSpace.stubs(:define_finalizer).
-        with { |obj, _| obj.class == Kitchen::Transport::Winrm::Connection }
+      winrm_session.stubs(:create_executor).returns(executor)
       options[:max_wait_until_ready] = 300
-      connection.stubs(:sleep)
-    end
-
-    describe "when failing to connect" do
-
-      before do
-        executor.stubs(:open).raises(Errno::ECONNREFUSED)
-      end
-
-      it "attempts to connect :max_wait_until_ready / 3 times if failing" do
-        begin
-          connection.wait_until_ready
-        rescue # rubocop:disable Lint/HandleExceptions
-          # the raise is not what is being tested here, rather its side-effect
-        end
-
-        logged_output.string.lines.count { |l|
-          l =~ info_line_with(
-            "Waiting for WinRM service on http://foo:5985/wsman, retrying in 3 seconds")
-        }.must_equal((300 / 3) - 1)
-        logged_output.string.lines.count { |l|
-          l =~ debug_line_with("[WinRM] connection failed ")
-        }.must_equal((300 / 3) - 1)
-        logged_output.string.lines.count { |l|
-          l =~ warn_line_with("[WinRM] connection failed, terminating ")
-        }.must_equal 1
-      end
-
-      it "sleeps for 3 seconds between retries" do
-        connection.unstub(:sleep)
-        connection.expects(:sleep).with(3).times((300 / 3) - 1)
-
-        begin
-          connection.wait_until_ready
-        rescue # rubocop:disable Lint/HandleExceptions
-          # the raise is not what is being tested here, rather its side-effect
-        end
-      end
     end
 
     describe "when connection is successful" do
@@ -1247,7 +1065,6 @@ MSG
       end
 
       before do
-        executor.stubs(:open).returns("shell-123")
         executor.expects(:run_powershell_script).
           with("Write-Host '[WinRM] Established\n'").returns(response)
       end
@@ -1267,7 +1084,6 @@ MSG
       end
 
       before do
-        executor.stubs(:open).returns("shell-123")
         executor.expects(:run_powershell_script).
           with("Write-Host '[WinRM] Established\n'").returns(response)
       end
