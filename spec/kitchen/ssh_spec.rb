@@ -18,7 +18,6 @@
 
 require_relative "../spec_helper"
 
-require "net/ssh/test"
 require "kitchen/ssh"
 require "tmpdir"
 
@@ -55,7 +54,7 @@ end
 # `IO.select` with a version for testing Net::SSH code. Unfortunetly this
 # impacts other code, so we'll "un-patch" this after each spec and "re-patch"
 # it before the next one.
-
+require "net/ssh/test"
 def depatch_io
   IO.class_exec do
     class << self
@@ -63,6 +62,10 @@ def depatch_io
     end
   end
 end
+# We need to immediately call depatch so that `IO.select` is in a good state
+# _right now_.  The require immediately monkeypatches it and we only want
+# it monkey patched inside each ssh test
+depatch_io
 
 def repatch_io
   IO.class_exec do
@@ -82,7 +85,7 @@ end
 # `LocalPacket` which can deal with the `"pty-req"` type.
 #
 # An upstream patch to Net::SSH will be required to retire this yak shave ;)
-
+require "net/ssh/test/channel"
 module Net
 
   module SSH

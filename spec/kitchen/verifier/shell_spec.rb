@@ -22,6 +22,7 @@ require "logger"
 require "stringio"
 
 require "kitchen/verifier/shell"
+require "kitchen/transport/ssh"
 
 describe Kitchen::Verifier::Shell do
 
