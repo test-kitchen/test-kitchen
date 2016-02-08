@@ -178,10 +178,10 @@ module Kitchen
       # @api private
       def berksfile
         if config[:berksfile_path]
-	  File.expand_path(config[:berksfile_path])
-	else
+          File.expand_path(config[:berksfile_path])
+        else
           File.join(config[:kitchen_root], "Berksfile")
-	end
+        end
       end
 
       # @return [String] an absolute path to a Cheffile, relative to the
