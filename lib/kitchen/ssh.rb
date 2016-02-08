@@ -285,10 +285,24 @@ module Kitchen
     # @return [true,false] a truthy value if the socket is ready and false
     #   otherwise
     # @api private
-    def test_ssh
-      return true if gateway # How to handle this?
-      socket = TCPSocket.new(hostname, port)
-      IO.select([socket], nil, nil, 5)
+    def test_ssh # rubocop: disable Metrics/CyclomaticComplexity
+      if gateway
+        # Netcat through ssh gateway to check if remote is up
+        # This is really ugly - we should improve it in future.
+        Net::SSH.start(gateway, username, options.merge(:port => 22)) do |session|
+          session.open_channel do |channel|
+            channel.exec "nc -z -w2 #{hostname} #{port}" do |_, success|
+              raise Errno::EACCES unless success # Should be different error code?
+              channel.on_request("exit-status") do |_, data|
+                raise Errno::EACCES if data.read_long > 0 # Can't differentiate errors with nc
+              end
+            end
+          end
+        end
+      else
+        socket = TCPSocket.new(hostname, port)
+        IO.select([socket], nil, nil, 5)
+      end
     rescue *SOCKET_EXCEPTIONS
       sleep options[:ssh_timeout] || 2
       false
