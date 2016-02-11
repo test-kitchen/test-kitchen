@@ -112,9 +112,6 @@ module Kitchen
         else
           prepare_stubbed_script
         end
-
-        FileUtils.chmod(0755,
-          File.join(sandbox_path, File.basename(config[:script])))
       end
 
       # Creates a minimal, no-op script in the sandbox path.
