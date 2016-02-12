@@ -81,7 +81,9 @@ module Kitchen
           config[:root_path],
           File.basename(config[:script])
         )
-        code = powershell_shell? ? "#{config[:command_interpreter]} #{script}" : sudo("#{config[:command_interpreter]} #{script}")
+        code = powershell_shell? ?
+            "#{config[:command_interpreter]} #{script}" : 
+            sudo("#{config[:command_interpreter]} #{script}")
 
         wrap_shell_code(code)
       end
