@@ -38,6 +38,10 @@ module Kitchen
       end
       expand_path_for :script
 
+      default_config :command_interpreter do |provisioner|
+        src = provisioner.powershell_shell? ? "powershell.exe" : "sh"
+      end
+
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
@@ -77,7 +81,7 @@ module Kitchen
           config[:root_path],
           File.basename(config[:script])
         )
-        code = powershell_shell? ? %{& "#{script}"} : sudo("sh #{script}")
+        code = powershell_shell? ? %{& "#{command_interpreter} #{script}"} : sudo("#{command_interpreter} #{script}")
 
         wrap_shell_code(code)
       end
