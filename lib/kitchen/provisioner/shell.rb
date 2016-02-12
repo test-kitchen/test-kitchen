@@ -39,7 +39,7 @@ module Kitchen
       expand_path_for :script
 
       default_config :command_interpreter do |provisioner|
-        src = provisioner.powershell_shell? ? "powershell.exe" : "sh"
+        provisioner.powershell_shell? ? "powershell.exe" : "sh"
       end
 
       default_config :data_path do |provisioner|
