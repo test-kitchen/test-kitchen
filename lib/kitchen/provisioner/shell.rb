@@ -77,13 +77,11 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        script = remote_path_join(
+        script = "#{config[:command_interpreter]} " + remote_path_join(
           config[:root_path],
           File.basename(config[:script])
         )
-        code = powershell_shell? ?
-            "#{config[:command_interpreter]} #{script}" : 
-            sudo("#{config[:command_interpreter]} #{script}")
+        code = powershell_shell? ? "#{script}" : sudo("#{script}")
 
         wrap_shell_code(code)
       end
