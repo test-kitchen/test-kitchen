@@ -305,7 +305,7 @@ describe Kitchen::Provisioner::Shell do
         config[:root_path] = "/r"
         config[:sudo] = true
 
-        cmd.must_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
+        cmd.must_match regexify("sudo -E sh /r/bootstrap.sh", :partial_line)
       end
 
       it "does not use sudo for script when configured" do
@@ -369,7 +369,7 @@ describe Kitchen::Provisioner::Shell do
       it "invokes the bootstrap.ps1 script" do
         config[:root_path] = "\\r"
 
-        cmd.must_match regexify(%{& "\\r\\bootstrap.ps1"})
+        cmd.must_match regexify("powershell.exe\ \\r\\bootstrap.ps1")
       end
     end
   end
@@ -446,10 +446,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          unless running_tests_on_windows?
-            # Windows doesn't have the concept of executable
-            sandbox_path("my_script").executable?.must_equal true
-          end
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 
@@ -493,10 +489,6 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             sandbox_path("bootstrap.sh").file?.must_equal true
-            unless running_tests_on_windows?
-              # Windows doesn't have the concept of executable
-              sandbox_path("bootstrap.sh").executable?.must_equal true
-            end
             IO.read(sandbox_path("bootstrap.sh")).
               must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
           end
@@ -524,10 +516,6 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             sandbox_path("bootstrap.ps1").file?.must_equal true
-            unless running_tests_on_windows?
-              # Windows doesn't have the concept of executable
-              sandbox_path("bootstrap.ps1").executable?.must_equal true
-            end
             IO.read(sandbox_path("bootstrap.ps1")).
               must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
           end
