@@ -74,6 +74,11 @@ module Kitchen
           config[:root_path],
           File.basename(config[:script])
         )
+
+        if config[:arguments]
+          script.concat(" ").concat(config[:arguments])
+        end
+
         code = powershell_shell? ? %{& "#{script}"} : sudo(script)
 
         prefix_command(wrap_shell_code(code))
