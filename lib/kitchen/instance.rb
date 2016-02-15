@@ -396,7 +396,7 @@ module Kitchen
     # @see Driver::Base#verify
     # @return [self] this instance, used to chain actions
     # @api private
-    def verify_action
+    def verify_action # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
         # use special handling for busser
@@ -404,7 +404,10 @@ module Kitchen
             (
               (!defined?(Kitchen::Verifier::Busser).nil? &&
                 verifier.is_a?(Kitchen::Verifier::Busser)
-              ) || verifier.is_a?(Kitchen::Verifier::Dummy)
+              ) || (
+               !defined?(Kitchen::Verifier::Dummy).nil? &&
+                verifier.is_a?(Kitchen::Verifier::Dummy)
+              )
             )
           legacy_ssh_base_verify(state)
         elsif legacy_ssh_base_driver?
