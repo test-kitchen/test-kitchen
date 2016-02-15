@@ -46,7 +46,7 @@ module Kitchen
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
-      default_config :winrm_transport, "negotiate"
+      default_config :winrm_transport, :negotiate
       default_config :port do |transport|
         transport[:winrm_transport] == :ssl ? 5986 : 5985
       end
@@ -386,7 +386,7 @@ module Kitchen
       end
 
       def additional_transport_args(transport_type)
-        case transport_type
+        case transport_type.to_sym
         when :ssl, :negotiate
           {
             :no_ssl_peer_verification => true,
@@ -398,6 +398,8 @@ module Kitchen
             :disable_sspi => true,
             :basic_auth_only => true
           }
+        else
+          {}
         end
       end
 
