@@ -399,8 +399,16 @@ module Kitchen
     def verify_action
       banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
-        if legacy_ssh_base_driver?
-          legacy_ssh_base_verify(state)
+        # use special handling for busser
+        if (
+          legacy_ssh_base_driver? &&
+          !defined?(Kitchen::Verifier::Busser).nil? &&
+          verifier.is_a?(Kitchen::Verifier::Busser)
+        )
+           legacy_ssh_base_verify(state)
+        elsif legacy_ssh_base_driver?
+          # read ssh options from legacy driver
+          verifier.call(driver.legacy_state(state))
         else
           verifier.call(state)
         end

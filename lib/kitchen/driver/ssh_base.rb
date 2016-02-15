@@ -123,6 +123,10 @@ module Kitchen
         raise ClientError, "#{self.class}#destroy must be implemented"
       end
 
+      def legacy_state(state)
+        backcompat_merged_state(state)
+      end
+
       # (see Base#login_command)
       def login_command(state)
         instance.transport.connection(backcompat_merged_state(state)).
