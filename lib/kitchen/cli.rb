@@ -234,6 +234,13 @@ module Kitchen
       perform("login", "login", args)
     end
 
+    desc "package INSTANCE|REGEXP", "package an instance"
+    log_options
+    def package(*args)
+      update_config!
+      perform("package", "package", args)
+    end
+
     desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
       "Execute command on one or more instance"
     method_option :command,

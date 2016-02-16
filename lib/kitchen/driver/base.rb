@@ -52,6 +52,13 @@ module Kitchen
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
+      # Package an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @raise [ActionFailed] if the action could not be completed
+      def package(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot
         #   be run concurrently and must be run in serial via a shared mutex
