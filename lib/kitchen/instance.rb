@@ -391,24 +391,30 @@ module Kitchen
       self
     end
 
+    # returns true, if the verifier is busser
+    def verifier_busser?(verifier)
+      !defined?(Kitchen::Verifier::Busser).nil? && verifier.is_a?(Kitchen::Verifier::Busser)
+    end
+
+    # returns true, if the verifier is dummy
+    def verifier_dummy?(verifier)
+      !defined?(Kitchen::Verifier::Dummy).nil? && verifier.is_a?(Kitchen::Verifier::Dummy)
+    end
+
+    def use_legacy_ssh_verifier?(verifier)
+      verifier_busser?(verifier) || verifier_dummy?(verifier)
+    end
+
     # Perform the verify action.
     #
     # @see Driver::Base#verify
     # @return [self] this instance, used to chain actions
     # @api private
-    def verify_action # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+    def verify_action
       banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
-        # use special handling for busser
-        if legacy_ssh_base_driver? &&
-            (
-              (!defined?(Kitchen::Verifier::Busser).nil? &&
-                verifier.is_a?(Kitchen::Verifier::Busser)
-              ) || (
-               !defined?(Kitchen::Verifier::Dummy).nil? &&
-                verifier.is_a?(Kitchen::Verifier::Dummy)
-              )
-            )
+        # use special handling for legacy driver
+        if legacy_ssh_base_driver? && use_legacy_ssh_verifier?(verifier)
           legacy_ssh_base_verify(state)
         elsif legacy_ssh_base_driver?
           # read ssh options from legacy driver
