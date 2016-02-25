@@ -17,7 +17,7 @@ version "0.1.0"
 depends "runit", "~> 1.4.0"
 ~~~
 
-Note that we're adding a contstraint on the version of the runit cookbook. While this isn't strictly required it is something you want to consider as cookbooks can introduce breaking changes in the future.
+Note that we're adding a constraint on the version of the runit cookbook. While this isn't strictly required it is something you want to consider as cookbooks can introduce breaking changes in the future.
 
 Now, let's see if we get to pass our tests:
 
