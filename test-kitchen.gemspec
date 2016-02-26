@@ -38,6 +38,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "bundler",   "~> 1.3"
   gem.add_development_dependency "rake"
+  gem.add_development_dependency "github_changelog_generator", "!= 1.10.2", "!= 1.10.3", "!= 1.10.4", "!= 1.10.5", "!= 1.11.0", "!= 1.11.1", "!= 1.11.2"
 
   gem.add_development_dependency "aruba",     "~> 0.11.1"
   gem.add_development_dependency "fakefs",    "~> 0.4"

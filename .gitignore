@@ -3,6 +3,8 @@
 .bundle
 .config
 .yardoc
+bin
+!bin/kitchen
 Gemfile*.lock
 InstalledFiles
 _yardoc
