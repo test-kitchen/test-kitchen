@@ -161,9 +161,7 @@ module Kitchen
           delay = 3
           session(
             :retries  => max_wait_until_ready / delay,
-            :delay    => delay,
-            :message  => "Waiting for SSH service on #{hostname}:#{port}, " \
-              "retrying in #{delay} seconds"
+            :delay    => delay
           )
           execute(PING_COMMAND.dup)
         end
@@ -220,16 +218,39 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
+          last_error_type = nil
+
           logger.debug("[SSH] opening connection to #{self}")
+
           Net::SSH.start(hostname, username, options)
+
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          # Make a much better explanation for why
+          error_type, explanation = case e
+          when Errno::ENETUNREACH, Errno::EHOSTUNREACH
+            [ "Unable to reach host", "The could mean the server has no public IP or are behind a VPN you aren't connected to." ]
+          when Errno::ETIMEDOUT, Timeout::Error, Net::SSH::ConnectionTimeout
+            [ "Connection timeout", "Could not connect within #{options[:timeout]} seconds. This could mean SSH hasn't started yet, or it could mean server's network acls don't allow external connections to port #{port}." ]
+          when Errno::ECONNREFUSED
+            [ "Connection refused", "This could mean SSH simply hasn't spun up yet, or it could mean the server's security groups don't allow external connections to port #{port}." ]
+          when Net::SSH::AuthenticationFailed
+            [ "Authentication failed", "Your username or credentials for #{self} are incorrect." ]
+          else
+            [ "Connection failed", "There was an unexpected error (#{e}). Check that your credentials and username are correct, that the server is up and enough time has passed for SSH to start, and that your security groups and network acls allow you to connect to this port, and that the server has a public IP or you are on its VPN." ]
+          end
+          if error_type != last_error_type
+            default_message = "#{error_type}. #{explanation}"
+          else
+            default_message = "#{error_type}."
+          end
+          last_error_type = error_type
+
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
               logger.debug("[SSH] connection failed (#{e.inspect})")
               opts[:message]
             else
-              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                "(#{e.inspect})"
+              "[SSH] #{default_message} Retrying in #{opts[:delay]} seconds."
             end
             logger.info(message)
             sleep(opts[:delay])
