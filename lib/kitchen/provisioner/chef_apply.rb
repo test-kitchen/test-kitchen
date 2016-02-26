@@ -99,8 +99,7 @@ module Kitchen
 
       # (see ChefSolo#run_command)
       def run_command
-        level = config[:log_level] == :info ? :auto : config[:log_level]
-
+        level = config[:log_level]
         lines = []
         config[:run_list].map do |recipe|
           cmd = sudo(config[:chef_apply_path]).dup.

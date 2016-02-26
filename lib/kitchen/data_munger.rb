@@ -82,7 +82,6 @@ module Kitchen
       merged_data_for(:provisioner, suite, platform).tap do |pdata|
         set_kitchen_config_at!(pdata, :kitchen_root)
         set_kitchen_config_at!(pdata, :test_base_path)
-        set_kitchen_config_at!(pdata, :log_level)
         combine_arrays!(pdata, :run_list, :platform, :suite)
       end
     end

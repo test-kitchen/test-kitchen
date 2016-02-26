@@ -51,6 +51,7 @@ module Kitchen
       default_config :attributes, {}
       default_config :config_path, nil
       default_config :log_file, nil
+      default_config :log_level, 'auto'
       default_config :profile_ruby, false
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
