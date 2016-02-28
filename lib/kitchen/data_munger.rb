@@ -280,7 +280,7 @@ module Kitchen
           data data_bags encrypted_data_bag_secret_key
           environments nodes roles
         ].each do |key|
-          move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
+          move_data_to!(:provisioner, suite, "#{key}_path".to_sym)
         end
       end
     end
@@ -677,13 +677,13 @@ module Kitchen
     # @api private
     def move_chef_data_to_provisioner!
       data.fetch(:suites, []).each do |suite|
-        move_chef_data_to_provisioner_at!(suite, :attributes)
-        move_chef_data_to_provisioner_at!(suite, :run_list)
+        move_data_to!(:provisioner, suite, :attributes)
+        move_data_to!(:provisioner, suite, :run_list)
       end
 
       data.fetch(:platforms, []).each do |platform|
-        move_chef_data_to_provisioner_at!(platform, :attributes)
-        move_chef_data_to_provisioner_at!(platform, :run_list)
+        move_data_to!(:provisioner, platform, :attributes)
+        move_data_to!(:provisioner, platform, :run_list)
       end
     end
 
@@ -695,12 +695,12 @@ module Kitchen
     # @param key [Symbol] a key in the root hash to move into a `:provisioner`
     #   sub-hash block
     # @api private
-    def move_chef_data_to_provisioner_at!(root, key)
+    def move_data_to!(to, root, key)
       if root.key?(key)
-        pdata = root.fetch(:provisioner, Hash.new)
+        pdata = root.fetch(to, Hash.new)
         pdata = { :name => pdata } if pdata.is_a?(String)
         if !root.fetch(key, nil).nil?
-          root[:provisioner] = pdata.rmerge(key => root.delete(key))
+          root[to] = pdata.rmerge(key => root.delete(key))
         end
       end
     end
