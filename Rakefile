@@ -72,9 +72,5 @@ GitHubChangelogGenerator::RakeTask.new :changelog do |config|
   config.future_release = Kitchen::VERSION
   config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature".split(",")
   config.bug_labels = "bug,Bug,Improvement".split(",")
-  config.exclude_labels =
-    %w[
-      duplicate question invalid wontfix no_changelog
-      Exclude From Changelog Question Upstream Bug Discussion
-    ]
+  config.exclude_labels = %w[Duplicate Question Discussion]
 end
