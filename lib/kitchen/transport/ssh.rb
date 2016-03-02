@@ -75,6 +75,15 @@ module Kitchen
         self
       end
 
+      # Returns the configured username. This is occassionally needed
+      # by an instance's driver to perform other tasks, such as a
+      # password reset for the transport user on a GCE Windows instance.
+      #
+      # @return [String] Configured username for the transport
+      def username
+        config[:username]
+      end
+
       # (see Base#connection)
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))
