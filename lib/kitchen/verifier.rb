@@ -31,25 +31,28 @@ module Kitchen
     # Default verifier to use
     DEFAULT_PLUGIN = "busser".freeze
 
+    def self.load_plugin(verifier_name)
+      require("kitchen/verifier/#{verifier_name}")
+    rescue LoadError, NameError
+      raise ClientError,
+        "Could not load the '#{verifier_name}' verifier from the load path." \
+          " Please ensure that your transport is installed as a gem or" \
+          " included in your Gemfile if using Bundler."
+    end
+
     # Returns an instance of a verifier given a plugin type string.
     #
     # @param plugin [String] a verifier plugin type, to be constantized
     # @param config [Hash] a configuration hash to initialize the verifier
     # @return [Verifier::Base] a verifier instance
     # @raise [ClientError] if a verifier instance could not be created
-    def self.for_plugin(plugin, config)
-      first_load = require("kitchen/verifier/#{plugin}")
-
-      str_const = Thor::Util.camel_case(plugin)
+    def self.for_plugin(verifier_name, config)
+      first_load = load_plugin(verifier_name)
+      str_const = Thor::Util.camel_case(verifier_name)
       klass = const_get(str_const)
       object = klass.new(config)
       object.verify_dependencies if first_load
       object
-    rescue LoadError, NameError
-      raise ClientError,
-        "Could not load the '#{plugin}' verifier from the load path." \
-          " Please ensure that your transport is installed as a gem or" \
-          " included in your Gemfile if using Bundler."
     end
   end
 end
