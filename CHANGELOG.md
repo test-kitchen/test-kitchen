@@ -1,7 +1,7 @@
 # Change Log
 
-## [1.6.0](https://github.com/test-kitchen/test-kitchen/tree/1.6.0) (2016-02-26)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.5.0...1.6.0)
+## [v1.6.0](https://github.com/test-kitchen/test-kitchen/tree/v1.6.0) (2016-02-29)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.5.0...v1.6.0)
 
 **Implemented enhancements:**
 
@@ -15,6 +15,7 @@
 - Permission denied for Busser [\#749](https://github.com/test-kitchen/test-kitchen/issues/749)
 - --force-formatter is passed to a version of chef-client that does not support it. [\#593](https://github.com/test-kitchen/test-kitchen/issues/593)
 - http\(s\)\_proxy in test [\#533](https://github.com/test-kitchen/test-kitchen/issues/533)
+- make rubocop glücklich [\#956](https://github.com/test-kitchen/test-kitchen/pull/956) ([chris-rock](https://github.com/chris-rock))
 - allow non-busser verifier to work with legacy drivers [\#944](https://github.com/test-kitchen/test-kitchen/pull/944) ([chris-rock](https://github.com/chris-rock))
 - properly initialize attributes for new negotiate [\#937](https://github.com/test-kitchen/test-kitchen/pull/937) ([chris-rock](https://github.com/chris-rock))
 - Fix sudo dependency [\#932](https://github.com/test-kitchen/test-kitchen/pull/932) ([alexpop](https://github.com/alexpop))
@@ -23,6 +24,7 @@
 
 **Closed issues:**
 
+- key not found: "src\_md5" on kitchen converge [\#954](https://github.com/test-kitchen/test-kitchen/issues/954)
 - Kitchen Converge Argument Error [\#940](https://github.com/test-kitchen/test-kitchen/issues/940)
 - Intermittent key not found: "src\_md5" failures on windows nodes [\#926](https://github.com/test-kitchen/test-kitchen/issues/926)
 - Chef Omnibus Windows Issues \(mixlib-install \#22 related\) [\#847](https://github.com/test-kitchen/test-kitchen/issues/847)
@@ -58,6 +60,7 @@
 
 **Merged pull requests:**
 
+- Update release process to use github changelog generator [\#952](https://github.com/test-kitchen/test-kitchen/pull/952) ([jkeiser](https://github.com/jkeiser))
 - The Net::SSH::Extensions were overwriting IO.select agressively, so we scaled this down some [\#935](https://github.com/test-kitchen/test-kitchen/pull/935) ([tyler-ball](https://github.com/tyler-ball))
 - use winrm transport as alternative detection method [\#928](https://github.com/test-kitchen/test-kitchen/pull/928) ([chris-rock](https://github.com/chris-rock))
 - bypass execution policy when running powershell script files [\#925](https://github.com/test-kitchen/test-kitchen/pull/925) ([mwrock](https://github.com/mwrock))
