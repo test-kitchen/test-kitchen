@@ -315,7 +315,11 @@ module Kitchen
     # @return [Verifier] a new Verifier object
     # @api private
     def new_verifier(suite, platform)
+      # load verifier class
+      Verifier.load_plugin(data.verifier_name)
+      # fetch verifier configuration
       vdata = data.verifier_data_for(suite.name, platform.name)
+      # create verifier instance
       Verifier.for_plugin(vdata[:name], vdata)
     end
   end

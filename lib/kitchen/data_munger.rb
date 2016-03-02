@@ -124,6 +124,12 @@ module Kitchen
       end
     end
 
+    def verifier_name
+      vdata = data.fetch(:verifier, {})
+      vdata = { :name => vdata } if vdata.is_a?(String)
+      vdata[:name]
+    end
+
     private
 
     # @return [Hash] the user data hash
