@@ -635,6 +635,17 @@ describe Kitchen::Provisioner::ChefZero do
         cmd.wont_match regexify(" --logfile ", :partial_line)
       end
 
+      it "sets format flag for custom value" do
+        config[:format] = "min"
+
+        cmd.must_match regexify(
+          " --format min", :partial_line)
+      end
+
+      it "does not set logfile flag by default" do
+        cmd.wont_match regexify(" --format ", :partial_line)
+      end
+
       it "prefixs the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 

@@ -90,6 +90,8 @@ module Kitchen
       # @param args [Array<String>] array of flags
       # @api private
       # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/PerceivedComplexity
       def add_optional_chef_client_args!(args)
         if config[:json_attributes]
           json = remote_path_join(config[:root_path], "dna.json")
@@ -97,6 +99,9 @@ module Kitchen
         end
         if config[:log_file]
           args << "--logfile #{config[:log_file]}"
+        end
+        if config[:format]
+          args << "--format #{config[:format]}"
         end
         return unless modern?
 
@@ -113,6 +118,8 @@ module Kitchen
         end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
 
       # Returns an Array of command line arguments for the chef client.
       #
