@@ -37,7 +37,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "winrm-fs", "~> 0.3"
 
   gem.add_development_dependency "bundler",   "~> 1.3"
-  gem.add_development_dependency "rake"
+  gem.add_development_dependency "rake", "~> 10.0"
   gem.add_development_dependency "github_changelog_generator", "1.11.3"
 
   gem.add_development_dependency "aruba",     "~> 0.11.1"
