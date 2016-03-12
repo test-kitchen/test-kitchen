@@ -217,7 +217,7 @@ Feature: Add Test Kitchen support to an existing project
 
     platforms:
       - name: ubuntu-14.04
-      - name: centos-7.1
+      - name: centos-7.2
 
     suites:
       - name: default
@@ -241,7 +241,7 @@ Feature: Add Test Kitchen support to an existing project
 
     platforms:
       - name: ubuntu-14.04
-      - name: centos-7.1
+      - name: centos-7.2
 
     suites:
       - name: default
@@ -264,7 +264,7 @@ Feature: Add Test Kitchen support to an existing project
 
     platforms:
       - name: ubuntu-14.04
-      - name: centos-7.1
+      - name: centos-7.2
 
     suites:
       - name: default
