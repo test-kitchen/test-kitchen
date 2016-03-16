@@ -246,24 +246,12 @@ module Kitchen
       # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def env_cmd(cmd)
         return if cmd.nil?
-        env = "env"
-        http_proxy = config[:http_proxy] || ENV["http_proxy"] ||
-          ENV["HTTP_PROXY"]
-        https_proxy = config[:https_proxy] || ENV["https_proxy"] ||
-          ENV["HTTPS_PROXY"]
-        ftp_proxy = config[:ftp_proxy] || ENV["ftp_proxy"] ||
-          ENV["FTP_PROXY"]
-        no_proxy = if (!config[:http_proxy] && http_proxy) ||
-            (!config[:https_proxy] && https_proxy) ||
-            (!config[:ftp_proxy] && ftp_proxy)
-          ENV["no_proxy"] || ENV["NO_PROXY"]
-        end
-        env << " http_proxy=#{http_proxy}"   if http_proxy
-        env << " https_proxy=#{https_proxy}" if https_proxy
-        env << " ftp_proxy=#{ftp_proxy}"     if ftp_proxy
-        env << " no_proxy=#{no_proxy}"       if no_proxy
-
-        env == "env" ? cmd : "#{env} #{cmd}"
+        env = 'env'
+        env << " http_proxy=#{config[:http_proxy]}"   if config[:http_proxy]
+        env << " https_proxy=#{config[:https_proxy]}" if config[:https_proxy]
+        env << " no_proxy=#{config[:no_proxy]}"       if config[:no_proxy]
+        env << " ftp_proxy=#{config[:ftp_proxy]}"     if config[:ftp_proxy]
+        env == 'env' ? cmd : "#{env} #{cmd}"
       end
 
       # Executes a remote command over SSH.

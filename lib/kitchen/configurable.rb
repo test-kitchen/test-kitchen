@@ -299,32 +299,11 @@ module Kitchen
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
     def wrap_shell_code(code)
       env = []
-      if config[:http_proxy]
-        env << shell_env_var("http_proxy", config[:http_proxy])
-        env << shell_env_var("HTTP_PROXY", config[:http_proxy])
-      else
-        export_proxy(env, "http")
-      end
-      if config[:https_proxy]
-        env << shell_env_var("https_proxy", config[:https_proxy])
-        env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
-      else
-        export_proxy(env, "https")
-      end
-      if config[:ftp_proxy]
-        env << shell_env_var("ftp_proxy", config[:ftp_proxy])
-        env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
-      else
-        export_proxy(env, "ftp")
-      end
-      # if http_proxy was set from environment variable or https_proxy was set
-      # from environment variable, or ftp_proxy was set from environment
-      # variable, include no_proxy environment variable, if set.
-      if (!config[:http_proxy] && (ENV["http_proxy"] || ENV["HTTP_PROXY"])) ||
-          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"])) ||
-          (!config[:ftp_proxy] && (ENV["ftp_proxy"] || ENV["FTP_PROXY"]))
-        env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
-        env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
+      %i(http_proxy https_proxy no_proxy ftp_proxy).each do |type|
+        if config[type]
+          env << shell_env_var(type.to_str, config[type])
+          env << shell_env_var(type.to_str.upcase, config[type])
+        end
       end
       if powershell_shell?
         env.join("\n").concat("\n").concat(code)
