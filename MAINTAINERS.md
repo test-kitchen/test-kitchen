@@ -21,3 +21,4 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Chris Hartmann](https://github.com/chris-rock)
 * [Sean Omeara](http://github.com/someara)
 * [Robb Kidd](https://github.com/robbkidd)
+* [Kimball Johnson](https://github.com/drrk)
