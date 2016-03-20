@@ -29,7 +29,7 @@ describe Kitchen::Provisioner::ChefSolo do
   let(:suite)           { stub(:name => "fries") }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r", :log_level => :info }
+    { :test_base_path => "/b", :kitchen_root => "/r" }
   end
 
   let(:instance) do
