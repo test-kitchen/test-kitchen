@@ -299,19 +299,19 @@ module Kitchen
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
     def wrap_shell_code(code)
       env = []
-      if config[:http_proxy]
+      if config[:http_proxy] && !config[:http_proxy].empty?
         env << shell_env_var("http_proxy", config[:http_proxy])
         env << shell_env_var("HTTP_PROXY", config[:http_proxy])
       else
         export_proxy(env, "http")
       end
-      if config[:https_proxy]
+      if config[:https_proxy] && !config[:https_proxy].empty?
         env << shell_env_var("https_proxy", config[:https_proxy])
         env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
       else
         export_proxy(env, "https")
       end
-      if config[:ftp_proxy]
+      if config[:ftp_proxy] && !config[:ftp_proxy].empty?
         env << shell_env_var("ftp_proxy", config[:ftp_proxy])
         env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
       else

@@ -833,6 +833,28 @@ describe Kitchen::Configurable do
         CODE
       end
 
+      it "does not export http_proxy or HTTP_PROXY when :http_proxy is empty" do
+        config[:http_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "does not export https_proxy or HTTPS_PROXY when :https_proxy is empty" do
+        config[:https_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+
+          mkdir foo
+          '
+        CODE
+      end
+
       it "exports ftp_proxy & FTP_PROXY from workstation when :ftp_proxy isn't set" do
         ENV["ftp_proxy"] = "ftp://proxy"
         ENV["FTP_PROXY"] = "ftp://proxy"
@@ -841,6 +863,17 @@ describe Kitchen::Configurable do
           sh -c '
           ftp_proxy="ftp://proxy"; export ftp_proxy
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "does not export ftp_proxy or FTP_PROXY when :ftp_proxy is empty" do
+        config[:ftp_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+
           mkdir foo
           '
         CODE
