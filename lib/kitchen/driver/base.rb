@@ -30,6 +30,8 @@ module Kitchen
       include Configurable
       include Logging
 
+      default_config :synced_folders, []
+
       # Creates a new Driver object using the provided configuration data
       # which will be merged with any default configuration.
       #
@@ -50,6 +52,20 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
+      # Copy files or folders to the VM, as specified in the synced_folders
+      # driver config setting. Each entry must be in the form
+      # [local_path, remote_path]. Each local_path will be copied to
+      # remote_path on the VM.
+      #
+      # @param state [Hash] mutable instance and driver state
+      def sync_folders(state)
+        config[:synced_folders].each do |synced_folder|
+          instance.transport.connection(state) do |connection|
+            sync_folder(connection, synced_folder[0], synced_folder[1])
+          end
+        end
       end
 
       class << self
@@ -128,6 +144,16 @@ module Kitchen
       # @param msg [String] message string
       def print(msg)
         info(msg)
+      end
+
+      # Copies a local path to a remote path.
+      #
+      # @param connection Transport connection used to do the upload
+      # @param local_path Path on local system to be copied
+      # @param remote_path Path on the VM to which the local_path will be copied
+      def sync_folder(connection, local_path, remote_path)
+        info("Uploading #{local_path} to #{remote_path}")
+        connection.upload(local_path, remote_path)
       end
     end
   end
