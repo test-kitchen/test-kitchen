@@ -25,3 +25,4 @@ tmp
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml
+Berksfile.lock
