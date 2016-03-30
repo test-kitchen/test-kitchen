@@ -346,10 +346,10 @@ module Kitchen
               file.write(command)
             end
 
-            target_path = File.join("$env:TEMP", "kitchen")
+            target_path = File.join("$env:TEMP", script_name)
             upload(script_path, target_path)
 
-            %{powershell -ExecutionPolicy Bypass -File "#{File.join(target_path, script_name)}"}
+            %{powershell -ExecutionPolicy Bypass -File "#{target_path}"}
           ensure
             FileUtils.rmtree(temp_dir)
           end
@@ -359,7 +359,7 @@ module Kitchen
       private
 
       WINRM_SPEC_VERSION = ["~> 1.6"].freeze
-      WINRM_FS_SPEC_VERSION = ["~> 0.3"].freeze
+      WINRM_FS_SPEC_VERSION = ["~> 0.4"].freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
