@@ -675,7 +675,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
       before do
         executor.expects(:run_powershell_script).with(
-          %{powershell -ExecutionPolicy Bypass -File "$env:TEMP/kitchen/coolbeans-long_script.ps1"}
+          %{powershell -ExecutionPolicy Bypass -File "$env:TEMP/coolbeans-long_script.ps1"}
         ).yields("ok\n", nil).returns(response)
       end
 
