@@ -26,6 +26,8 @@ require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
 require "mixlib/install"
+require "mixlib/install/script_generator"
+
 begin
   require "chef-config/config"
   require "chef-config/workstation_config_loader"
@@ -132,18 +134,8 @@ module Kitchen
 
       # (see Base#install_command)
       def install_command
-        return unless config[:require_chef_omnibus]
-
-        version = config[:require_chef_omnibus].to_s.downcase
-
-        # Passing "true" to mixlib-install currently breaks the windows metadata_url
-        # TODO: remove this line once https://github.com/chef/mixlib-install/pull/22
-        # is accepted and released
-        version = "" if version == "true" && powershell_shell?
-
-        installer = Mixlib::Install.new(version, powershell_shell?, install_options)
-        config[:chef_omnibus_root] = installer.root
-        prefix_command(sudo(installer.install_command))
+        return unless config[:require_chef_omnibus] || config[:product_name]
+        prefix_command(sudo(install_script_contents))
       end
 
       private
@@ -159,8 +151,9 @@ module Kitchen
           :sudo_command => sudo_command
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
-          opts[:http_proxy] = config[:http_proxy] if config.key? :http_proxy
-          opts[:https_proxy] = config[:https_proxy] if config.key? :https_proxy
+          [:install_msi_url, :http_proxy, :https_proxy].each do |key|
+            opts[key] = config[key] if config.key? key
+          end
         end
       end
 
@@ -288,6 +281,59 @@ module Kitchen
           %{$env:PATH},
           %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")\n\n}
         ].join(" = ")
+      end
+
+      # @return [String] contents of the install script
+      # @api private
+      def install_script_contents
+        # by default require_chef_omnibus is set to true. Check config[:product_name] first
+        # so that we can use it if configured.
+        if config[:product_name]
+          script_for_product
+        elsif config[:require_chef_omnibus]
+          script_for_omnibus_version
+        end
+      end
+
+      # @return [String] contents of product based install script
+      # @api private
+      def script_for_product
+        installer = Mixlib::Install.new({
+          :product_name => config[:product_name],
+          :product_version => config[:product_version],
+          :channel => (config[:channel] || :stable).to_sym
+        }.tap do |opts|
+          opts[:shell_type] = :ps1 if powershell_shell?
+          [:platform, :platform_version, :architecture].each do |key|
+            opts[key] = config[key] if config[key]
+          end
+        end)
+        config[:chef_omnibus_root] = installer.root
+        if powershell_shell?
+          installer.install_command
+        else
+          install_from_file(installer.install_command)
+        end
+      end
+
+      def install_from_file(command)
+        install_file = "/tmp/chef-installer.sh"
+        script = ["cat > #{install_file} <<\"EOL\""]
+        script << "#!/bin/bash"
+        script << command
+        script << "EOL"
+        script << "chmod +x #{install_file}"
+        script << sudo(install_file)
+        script.join("\n")
+      end
+
+      # @return [String] contents of version based install script
+      # @api private
+      def script_for_omnibus_version
+        installer = Mixlib::Install::ScriptGenerator.new(
+          config[:require_chef_omnibus], powershell_shell?, install_options)
+        config[:chef_omnibus_root] = installer.root
+        installer.install_command
       end
     end
   end
