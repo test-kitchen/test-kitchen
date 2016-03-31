@@ -27,7 +27,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
   let(:suite)           { stub(:name => "fries") }
-  let(:default_version) { "true" }
+  let(:default_version) { true }
 
   let(:config) do
     { :test_base_path => "/basist", :kitchen_root => "/rooty" }
@@ -141,7 +141,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     before do
       platform.stubs(:shell_type).returns("bourne")
-      Mixlib::Install.stubs(:new).returns(installer)
+      Mixlib::Install::ScriptGenerator.stubs(:new).returns(installer)
     end
 
     let(:installer) { stub(:root => "/rooty", :install_command => "make_it_so") }
@@ -169,7 +169,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "passes sensible defaults" do
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -178,7 +178,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         install_opts[:http_proxy] = "http://proxy"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -187,7 +187,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:https_proxy] = "https://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -198,7 +198,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:http_proxy] = "http://proxy"
         install_opts[:https_proxy] = "https://proxy"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -207,7 +207,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_omnibus_url] = "FROM_HERE"
         install_opts[:omnibus_url] = "FROM_HERE"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -215,7 +215,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a specific version of chef, if necessary" do
         config[:require_chef_omnibus] = "1.2.3"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with("1.2.3", false, install_opts).returns(installer)
         cmd
       end
@@ -223,7 +223,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a major/minor version of chef, if necessary" do
         config[:require_chef_omnibus] = "11.10"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with("11.10", false, install_opts).returns(installer)
         cmd
       end
@@ -231,16 +231,8 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a major version of chef, if necessary" do
         config[:require_chef_omnibus] = "12"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with("12", false, install_opts).returns(installer)
-        cmd
-      end
-
-      it "will install a downcaased version string of chef, if necessary" do
-        config[:require_chef_omnibus] = "10.1.0.RC.1"
-
-        Mixlib::Install.expects(:new).
-          with("10.1.0.rc.1", false, install_opts).returns(installer)
         cmd
       end
 
@@ -248,7 +240,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] =
           "12.5.0-current.0+20150721082808.git.14.c91b337-1"
 
-        Mixlib::Install.expects(:new).with(
+        Mixlib::Install::ScriptGenerator.expects(:new).with(
           "12.5.0-current.0+20150721082808.git.14.c91b337-1",
           false,
           install_opts
@@ -259,7 +251,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install the latest chef, if necessary" do
         config[:require_chef_omnibus] = "latest"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with("latest", false, install_opts).returns(installer)
         cmd
       end
@@ -267,7 +259,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will install a version of chef, unless it exists" do
         config[:require_chef_omnibus] = true
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -277,7 +269,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_flags] = "-P chefdk"
         install_opts[:project] = "chefdk"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -287,7 +279,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_omnibus_install_options] = "-d /tmp/place"
         install_opts[:install_flags] = "-d /tmp/place"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with("11", false, install_opts).returns(installer)
         cmd
       end
@@ -296,7 +288,16 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_omnibus_root] = "/tmp/test"
         install_opts[:root] = "/tmp/test"
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will set the msi url" do
+        config[:install_msi_url] = "http://blah/blah.msi"
+        install_opts[:install_msi_url] = "http://blah/blah.msi"
+
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
         cmd
       end
@@ -314,6 +315,81 @@ describe Kitchen::Provisioner::ChefBase do
       end
     end
 
+    describe "for product" do
+      before do
+        installer.expects(:root).at_least_once.returns("/opt/chef")
+        installer.expects(:install_command)
+        config[:product_name] = "my_product"
+      end
+
+      it "will set the product name, version and channel" do
+        config[:product_version] = "version"
+        config[:channel] = "channel"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:product_name].must_equal "my_product"
+          opts[:product_version].must_equal "version"
+          opts[:channel].must_equal :channel
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set the architecture if given" do
+        config[:architecture] = "architecture"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:architecture].must_equal "architecture"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set the platform if given" do
+        config[:platform] = "platform"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:platform].must_equal "platform"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set the platform_version if given" do
+        config[:platform_version] = "platform_version"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:platform_version].must_equal "platform_version"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will omit the architecture if not given" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts.key?(:architecture).must_equal false
+        end.returns(installer)
+        cmd
+      end
+
+      it "will omit the platform if not given" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts.key?(:platform).must_equal false
+        end.returns(installer)
+        cmd
+      end
+
+      it "will omit the platform_version if not given" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts.key?(:platform_version).must_equal false
+        end.returns(installer)
+        cmd
+      end
+
+      it "will use stable channel when none specified" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:channel].must_equal :stable
+        end.returns(installer)
+        cmd
+      end
+    end
+
     describe "for bourne shells" do
       before do
         installer.expects(:root).at_least_once.returns("/opt/chef")
@@ -326,9 +402,18 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = config[:sudo_command]
 
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_sudo_command my_install_command"
+      end
+
+      it "does not pass shell type for product based command" do
+        config[:product_name] = "product_name"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts.key?(:shell_type).must_equal false
+        end.returns(installer)
+        cmd
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
@@ -336,7 +421,7 @@ describe Kitchen::Provisioner::ChefBase do
 
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
-        Mixlib::Install.expects(:new).
+        Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_install_command"
       end
@@ -353,8 +438,17 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the powershell flag for Mixlib::Install" do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
-        Mixlib::Install.expects(:new).
-          with("", true, install_opts_clone).returns(installer)
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with(default_version, true, install_opts_clone).returns(installer)
+        cmd
+      end
+
+      it "passes ps1 shell type for product based command" do
+        config[:product_name] = "product_name"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:shell_type].must_equal :ps1
+        end.returns(installer)
         cmd
       end
     end
