@@ -346,10 +346,10 @@ module Kitchen
               file.write(command)
             end
 
-            target_path = File.join("$env:TEMP", "kitchen")
+            target_path = File.join("$env:TEMP", "kitchen", script_name)
             upload(script_path, target_path)
 
-            %{powershell -ExecutionPolicy Bypass -File "#{File.join(target_path, script_name)}"}
+            %{powershell -ExecutionPolicy Bypass -File "#{target_path}"}
           ensure
             FileUtils.rmtree(temp_dir)
           end
