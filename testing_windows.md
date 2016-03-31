@@ -8,7 +8,7 @@ Ensure that the cookbook's root directory includes a `Gemfile` that includes you
 ```
 gem 'test-kitchen', git: 'https://github.com/mwrock/test-kitchen', branch: 'winrm-fs'
 gem 'winrm', '~> 1.6'
-gem 'winrm-fs', '~> 0.4'
+gem 'winrm-fs', '~> 0.4.0'
 ```
 The above would target the `winrm-fs` branch in mwrock's test-kitchen repo.
 
