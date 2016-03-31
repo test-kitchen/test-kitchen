@@ -3,38 +3,55 @@ language: ruby
 rvm:
   - 2.2.4
   - 2.1.8
-  - 2.0.0
   - ruby-head
 
+env:
+  - global:
+    - machine_user=travis
+    - machine_pass=travis
+    - machine_port=22
+
+dist: trusty
+sudo: required
+
 before_install:
+  - sudo usermod -p `openssl passwd -1 'travis'` travis
   - gem --version
 
-bundler_args: --without guard
+bundler_args: --without guard integration
 
-sudo: false
+script:
+  - bundle exec rake
+  - bundle install --with integration
+  - export KITCHEN_YAML=.kitchen.ci.yml
+  - bundle exec kitchen verify ubuntu
+
+branches:
+  only:
+  - master
 
 matrix:
   include:
     - rvm: 2.2.4
-      sudo: required
-      dist: trusty
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
       gemfile: Gemfile.proxy_tests
       before_install:
+        - sudo usermod -p `openssl passwd -1 'travis'` travis
         - gem install bundler
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
-        # ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']
-        - secure: "E7h427Y8z6Nx5sdrA4Ye9gO9pDGpe4jxfhJdM4HPJIM/FSkEJM0ZDPdvhQ6QAQ1S1AHja/JhQUFaNP5NzKhRkVqGCzunBBC6RVb7pp1Qo16EMhJkg7LEsExiSsjQykAzt2w6K/71V+mIlMKxCPYdpu6PT/8w/jZFgBqLEHXuogU="
         - global:
+          - machine_user=travis
+          - machine_pass=travis
+          - machine_port=22
           - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
           - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
+          - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/.kitchen.proxy.yml
 
       script:
         - bundle exec kitchen --version
-        # TODO switch to master when https://github.com/chef/proxy_tests/pull/12 is merged
         - git clone https://github.com/chef/proxy_tests.git
         - rvmsudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
       after_script:

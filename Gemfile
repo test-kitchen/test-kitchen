@@ -9,6 +9,11 @@ group :guard do
   gem "guard-yard"
 end
 
+group :integration do
+  gem "berkshelf", "~> 4.3"
+  gem "kitchen-inspec", "~> 0.12.5"
+end
+
 group :test do
   gem "codeclimate-test-reporter", :require => nil
 end
