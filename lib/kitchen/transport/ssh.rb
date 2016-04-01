@@ -311,7 +311,8 @@ module Kitchen
       # @param data [Hash] merged configuration and mutable state data
       # @return [Hash] hash of connection options
       # @api private
-      def connection_options(data) # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+      def connection_options(data)
         opts = {
           :logger                 => logger,
           :user_known_hosts_file  => "/dev/null",
@@ -334,6 +335,7 @@ module Kitchen
         opts[:auth_methods] = ["publickey"]         if data[:ssh_key]
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
+        opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
 
         opts
       end
