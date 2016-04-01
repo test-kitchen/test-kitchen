@@ -51,26 +51,11 @@ YARD::Rake::YardocTask.new
 
 task :default => [:test, :quality]
 
-task :deploy_over_dk do
-  if RUBY_PLATFORM =~ /mswin|mingw|windows/
-    dk_path = File.join(ENV["SYSTEMDRIVE"], "opscode", "chefdk")
-  else
-    dk_path = "/opt/chefdk"
-  end
-
-  dk_app_path = File.join(dk_path, %w[embedded apps test-kitchen])
-  FileUtils.copy_entry(File.dirname(__FILE__), dk_app_path)
-  git_dir = File.join(dk_app_path, ".git")
-  FileUtils.rm_rf(git_dir) if Dir.exist?(git_dir)
-end
-
-task :dk_install => [:deploy_over_dk, :install]
-
 require "github_changelog_generator/task"
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|
   config.future_release = Kitchen::VERSION
-  config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature".split(",")
-  config.bug_labels = "bug,Bug,Improvement".split(",")
-  config.exclude_labels = %w[Duplicate Question Discussion]
+  config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
+  config.bug_labels = "bug,Bug".split(",")
+  config.exclude_labels = %w[Duplicate Question Discussion No_Changelog]
 end
