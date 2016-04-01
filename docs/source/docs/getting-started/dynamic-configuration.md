@@ -30,6 +30,16 @@ driver:
 
 Keep in mind, this assumes you have an OpenStack deployment setup and ready to use. If this doesn't apply, let us continue.
 
+Another useful use of the ERB fragments is to allow you to dynamically override the log_level of
+the provisioner.  Since Kitchen 1.7.0 the log level for the provisioner is no longer related to the Kitchen log level.  Using the following snippet, allows the environment to override the provisioner log level without modifying the config file.:
+
+~~~yaml
+---
+provisioner:
+  name: chef-zero
+  log_level: <%= ENV['PROVISIONER_LOG_LEVEL'] %>
+~~~
+
 You can also specify a path to a global `config.yml`, project or local `.kitchen.yml` file by setting the following environment variables:
 
 ~~~
