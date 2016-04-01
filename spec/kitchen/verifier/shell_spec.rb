@@ -86,9 +86,11 @@ describe Kitchen::Verifier::Shell do
       it "states are set to environment" do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
+        state[:port] = 22
         verifier.call(state)
         config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
         config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+        config[:shellout_opts][:environment]["KITCHEN_PORT"].must_equal "22"
         config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
         config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
         config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
