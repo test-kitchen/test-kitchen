@@ -29,7 +29,7 @@ describe Kitchen::Provisioner::ChefZero do
   let(:suite)           { stub(:name => "fries") }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r", :log_level => :info }
+    { :test_base_path => "/b", :kitchen_root => "/r" }
   end
 
   let(:instance) do
@@ -588,8 +588,8 @@ describe Kitchen::Provisioner::ChefZero do
           " --config #{custom_base}client.rb", :partial_line)
       end
 
-      it "sets log level flag on chef-client to warn by default" do
-        cmd.must_match regexify(" --log_level warn", :partial_line)
+      it "sets log level flag on chef-client to auto by default" do
+        cmd.must_match regexify(" --log_level auto", :partial_line)
       end
 
       it "set log level flag for custom level" do
