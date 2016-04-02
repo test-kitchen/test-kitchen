@@ -1,0 +1,3 @@
+# Managing line ending conversions
+# See http://git-scm.com/docs/gitattributes#_end-of-line_conversion
+* text=auto
