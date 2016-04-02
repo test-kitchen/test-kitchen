@@ -1,7 +1,14 @@
 # Change Log
 
-## [1.7.0](https://github.com/test-kitchen/test-kitchen/tree/1.7.0) (2016-04-01)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.6.0...1.7.0)
+## [1.7.1](https://github.com/test-kitchen/test-kitchen/tree/1.7.1) (2016-04-02)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.0...1.7.1)
+
+**Fixed bugs:**
+
+- Adding gitattributes file for managing line ending conversions [\#991](https://github.com/test-kitchen/test-kitchen/pull/991) ([mwrock](https://github.com/mwrock))
+
+## [v1.7.0](https://github.com/test-kitchen/test-kitchen/tree/v1.7.0) (2016-04-01)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.6.0...v1.7.0)
 
 **Implemented enhancements:**
 
