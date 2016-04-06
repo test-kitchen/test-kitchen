@@ -905,6 +905,9 @@ describe Kitchen::Provisioner::ChefBase do
         end
 
         it "raises a UserError if Berkshelf library can't be loaded" do
+          Kitchen::Provisioner::Chef::Berkshelf.stubs(:load_berkshelf!).with do
+            raise Kitchen::UserError, "Load failed"
+          end
           proc { provisioner }.must_raise Kitchen::UserError
         end
 
