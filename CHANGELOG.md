@@ -1,7 +1,16 @@
 # Change Log
 
-## [1.7.1](https://github.com/test-kitchen/test-kitchen/tree/1.7.1) (2016-04-02)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.0...1.7.1)
+## [1.7.2](https://github.com/test-kitchen/test-kitchen/tree/1.7.2) (2016-04-07)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...1.7.2)
+
+**Merged pull requests:**
+
+- Don't require dev dependencies to build [\#1000](https://github.com/test-kitchen/test-kitchen/pull/1000) ([jkeiser](https://github.com/jkeiser))
+- update to win2k8 friendly dependencies [\#999](https://github.com/test-kitchen/test-kitchen/pull/999) ([mwrock](https://github.com/mwrock))
+- Fix Berkshelf load test [\#998](https://github.com/test-kitchen/test-kitchen/pull/998) ([chefsalim](https://github.com/chefsalim))
+
+## [v1.7.1](https://github.com/test-kitchen/test-kitchen/tree/v1.7.1) (2016-04-02)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1.dev...v1.7.1)
 
 **Fixed bugs:**
 
