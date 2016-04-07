@@ -9,10 +9,14 @@ Rake::TestTask.new(:unit) do |t|
   t.verbose = true
 end
 
-require "cucumber"
-require "cucumber/rake/task"
-Cucumber::Rake::Task.new(:features) do |t|
-  t.cucumber_opts = ["features", "-x", "--format progress", "--no-color"]
+begin
+  require "cucumber"
+  require "cucumber/rake/task"
+  Cucumber::Rake::Task.new(:features) do |t|
+    t.cucumber_opts = ["features", "-x", "--format progress", "--no-color"]
+  end
+rescue LoadError
+  puts "cucumber is not available. (sudo) gem install cucumber to run tests."
 end
 
 desc "Run all test suites"
@@ -26,36 +30,54 @@ task :stats do
   sh "countloc -r spec features"
 end
 
-require "finstyle"
-require "rubocop/rake_task"
-RuboCop::RakeTask.new(:style) do |task|
-  task.options += ["--display-cop-names", "--no-color"]
-end
-
-if RUBY_ENGINE != "jruby"
-  require "cane/rake_task"
-  desc "Run cane to check quality metrics"
-  Cane::RakeTask.new do |cane|
-    cane.canefile = "./.cane"
+begin
+  require "finstyle"
+  require "rubocop/rake_task"
+  RuboCop::RakeTask.new(:style) do |task|
+    task.options += ["--display-cop-names", "--no-color"]
   end
-
-  desc "Run all quality tasks"
-  task :quality => [:cane, :style, :stats]
-else
-  desc "Run all quality tasks"
-  task :quality => [:style, :stats]
+rescue LoadError
+  puts "finstyle/rubocop is not available.  gem install finstyle to do style checking."
 end
 
-require "yard"
-YARD::Rake::YardocTask.new
+begin
+  if RUBY_ENGINE != "jruby"
+    require "cane/rake_task"
+    desc "Run cane to check quality metrics"
+    Cane::RakeTask.new do |cane|
+      cane.canefile = "./.cane"
+    end
+
+    desc "Run all quality tasks"
+    task :quality => [:cane, :style, :stats]
+  else
+    desc "Run all quality tasks"
+    task :quality => [:style, :stats]
+  end
+rescue LoadError
+  puts "cane is not available. (sudo) gem install cane to check quality metrics."
+end
+
+begin
+  require "yard"
+  YARD::Rake::YardocTask.new
+rescue LoadError
+  puts "yard is not available. (sudo) gem install yard to generate yard documentation."
+end
 
 task :default => [:test, :quality]
 
-require "github_changelog_generator/task"
+begin
+  require "github_changelog_generator/task"
+  require "kitchen/version"
 
-GitHubChangelogGenerator::RakeTask.new :changelog do |config|
-  config.future_release = Kitchen::VERSION
-  config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
-  config.bug_labels = "bug,Bug".split(",")
-  config.exclude_labels = %w[Duplicate Question Discussion No_Changelog]
+  GitHubChangelogGenerator::RakeTask.new :changelog do |config|
+    config.future_release = Kitchen::VERSION
+    config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
+    config.bug_labels = "bug,Bug".split(",")
+    config.exclude_labels = %w[Duplicate Question Discussion No_Changelog]
+  end
+rescue LoadError
+  puts "github_changelog_generator is not available." \
+       " gem install github_changelog_generator to generate changelogs"
 end
