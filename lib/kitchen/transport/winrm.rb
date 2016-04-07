@@ -359,7 +359,7 @@ module Kitchen
       private
 
       WINRM_SPEC_VERSION = ["~> 1.6"].freeze
-      WINRM_FS_SPEC_VERSION = ["~> 0.4.0"].freeze
+      WINRM_FS_SPEC_VERSION = ["~> 0.4.1"].freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
