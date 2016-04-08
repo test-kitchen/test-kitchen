@@ -248,6 +248,17 @@ module Kitchen
       instance ? instance.logger : Kitchen.logger
     end
 
+    # @return [String] a powershell command to reload the `PATH` environment
+    #   variable, only to be used to support old Omnibus Chef packages that
+    #   require `PATH` to find the `ruby.exe` binary
+    # @api private
+    def reload_ps1_path
+      [
+        %{$env:PATH},
+        %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")\n\n}
+      ].join(" = ")
+    end
+
     # Builds a shell environment variable assignment string for the
     # required shell type.
     #
