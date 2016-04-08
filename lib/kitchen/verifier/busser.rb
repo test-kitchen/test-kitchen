@@ -151,7 +151,8 @@ module Kitchen
           shell_env_var("GEM_HOME", gem_home),
           shell_env_var("GEM_PATH", gem_path),
           shell_env_var("GEM_CACHE", gem_cache)
-        ].join("\n")
+        ].join("\n").
+          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
       end
 
       # Determines whether or not a local workstation file exists under a
