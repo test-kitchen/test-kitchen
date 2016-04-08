@@ -40,14 +40,12 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 10.0"
   gem.add_development_dependency "github_changelog_generator", "1.11.3"
 
-  gem.add_development_dependency "aruba",     "~> 0.11.1"
+  gem.add_development_dependency "aruba",     "~> 0.11"
   gem.add_development_dependency "fakefs",    "~> 0.4"
   gem.add_development_dependency "minitest",  "~> 5.3"
   gem.add_development_dependency "mocha",     "~> 1.1"
 
-  # cucumber is getting explicit and aggresive version pin as the behavior of
-  # the aruba and cucumber apis are tightly coupled
-  gem.add_development_dependency "cucumber",  "~> 2.1.0"
+  gem.add_development_dependency "cucumber",  "~> 2.1"
 
   gem.add_development_dependency "countloc",  "~> 0.4"
   gem.add_development_dependency "maruku",    "~> 0.6"
