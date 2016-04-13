@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.7.3](https://github.com/test-kitchen/test-kitchen/tree/1.7.3) (2016-04-13)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.2...1.7.3)
+
+**Fixed bugs:**
+
+- Test Kitchen on windows fails to upload data bags [\#1006](https://github.com/test-kitchen/test-kitchen/issues/1006)
+- Fixes busser install for older omnibus windows installs [\#1003](https://github.com/test-kitchen/test-kitchen/pull/1003) ([mwrock](https://github.com/mwrock))
+
 ## [1.7.2](https://github.com/test-kitchen/test-kitchen/tree/1.7.2) (2016-04-07)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...1.7.2)
 
