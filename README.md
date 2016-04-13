@@ -82,11 +82,14 @@ subcommands and their usage:
 $ kitchen help test
 ```
 
-More verbose logging (for both test-kitchen and the chef-solo/chef-zero provisioners) can be specified when running test-kitchen form the command line using:
+More verbose logging for test-kitchen can be specified when running test-kitchen from the command line using:
 
 ```
 $ kitchen test -l debug
 ```
+
+For the provisioner (e.g. chef-solo or chef-zero) add a `log_level` item to the provesioner section of the `.kitchen.yml`
+For more information see the Documentation.  This is a change since version 1.7.0
 
 ## Documentation
 
