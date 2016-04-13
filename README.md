@@ -88,7 +88,7 @@ More verbose logging for test-kitchen can be specified when running test-kitchen
 $ kitchen test -l debug
 ```
 
-For the provisioner (e.g. chef-solo or chef-zero) add a `log_level` item to the provesioner section of the `.kitchen.yml`
+For the provisioner (e.g. chef-solo or chef-zero) add a `log_level` item to the provisioner section of the `.kitchen.yml`
 For more information see the Documentation.  This is a change since version 1.7.0
 
 ## Documentation
