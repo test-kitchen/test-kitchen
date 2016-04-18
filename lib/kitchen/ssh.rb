@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'logger'
-require 'net/ssh'
-require 'net/scp'
-require 'net/ssh/proxy/command'
-require 'socket'
+require "logger"
+require "net/ssh"
+require "net/scp"
+require "net/ssh/proxy/command"
+require "socket"
 
 require "kitchen/errors"
 require "kitchen/login_command"

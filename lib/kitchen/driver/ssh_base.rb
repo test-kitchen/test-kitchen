@@ -230,7 +230,7 @@ module Kitchen
         opts[:keys_only] = true if combined[:ssh_key]
         opts[:password] = combined[:password] if combined[:password]
         opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
-        opts[:proxy_command] = combined[:proxy_command] if combined[:proxy_command]
+        opts[:proxy_command] = combined[:proxy_command] if combined.key? :proxy_command
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
