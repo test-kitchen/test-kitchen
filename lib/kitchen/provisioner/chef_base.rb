@@ -21,6 +21,7 @@ require "pathname"
 require "json"
 require "cgi"
 
+require "kitchen/provisioner/chef/policyfile"
 require "kitchen/provisioner/chef/berkshelf"
 require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/provisioner/chef/librarian"
@@ -53,6 +54,9 @@ module Kitchen
       default_config :log_file, nil
       default_config :log_level, "auto"
       default_config :profile_ruby, false
+      # Will try to autodetect by searching for `Policyfile.rb` if not set.
+      # If set, will error if the file doesn't exist.
+      default_config :policyfile_path, nil
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -114,6 +118,7 @@ module Kitchen
       # (see Base#create_sandbox)
       def create_sandbox
         super
+        sanity_check_sandbox_options!
         Chef::CommonSandbox.new(config, sandbox_path, instance).populate
       end
 
@@ -156,6 +161,14 @@ module Kitchen
             opts[key] = config[key] if config.key? key
           end
         end
+      end
+
+      # @return [String] an absolute path to a Policyfile, relative to the
+      #   kitchen root
+      # @api private
+      def policyfile
+        policyfile_basename = config[:policyfile_path] || "Policyfile.rb"
+        File.join(config[:kitchen_root], policyfile_basename)
       end
 
       # @return [String] an absolute path to a Berksfile, relative to the
@@ -264,7 +277,10 @@ module Kitchen
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         super
-        if File.exist?(berksfile)
+        if File.exist?(policyfile)
+          debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
+          Chef::Policyfile.load!(logger)
+        elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger)
         elsif File.exist?(cheffile)
@@ -324,6 +340,27 @@ module Kitchen
           config[:require_chef_omnibus], powershell_shell?, install_options)
         config[:chef_omnibus_root] = installer.root
         installer.install_command
+      end
+
+      def supports_policyfile?
+        false
+      end
+
+      # @return [void]
+      # @raise [UserError]
+      # @api private
+      def sanity_check_sandbox_options!
+        if config[:policyfile_path] && !File.exist?(policyfile)
+          raise UserError, "policyfile_path set in config "\
+            "(#{config[:policyfile_path]} could not be found. " \
+            "Expected to find it at full path #{policyfile} " \
+        end
+        if File.exist?(policyfile) && !supports_policyfile?
+          raise UserError, "policyfile detected, but provisioner " \
+            "#{self.class.name} doesn't support policyfiles. " \
+            "Either use a different provisioner, or delete/rename " \
+            "#{policyfile}"
+        end
       end
     end
   end

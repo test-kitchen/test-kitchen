@@ -32,6 +32,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       default_config :client_rb, {}
+      default_config :named_run_list, {}
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
@@ -207,6 +208,7 @@ module Kitchen
       # @api private
       def prepare_client_rb
         data = default_config_rb.merge(config[:client_rb])
+        data = data.merge(:named_run_list => config[:named_run_list]) if config[:named_run_list]
 
         info("Preparing client.rb")
         debug("Creating client.rb from #{data.inspect}")
@@ -239,6 +241,14 @@ module Kitchen
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
         "#{chef_client_zero_env}\n#{sudo(ruby)} #{shim}"
+      end
+
+      # This provisioner supports policyfiles, so override the default (which
+      # is false)
+      # @return [true] always returns true
+      # @api private
+      def supports_policyfile?
+        true
       end
     end
   end

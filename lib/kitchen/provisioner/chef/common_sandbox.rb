@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "json"
+
 module Kitchen
 
   module Provisioner
@@ -84,6 +86,14 @@ module Kitchen
         def all_files_in_cookbooks
           Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
             select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
+        end
+
+        # @return [String] an absolute path to a Policyfile, relative to the
+        #   kitchen root
+        # @api private
+        def policyfile
+          basename = config[:policyfile_path] || "Policyfile.rb"
+          File.join(config[:kitchen_root], basename)
         end
 
         # @return [String] an absolute path to a Berksfile, relative to the
@@ -246,8 +256,11 @@ module Kitchen
         # Prepares Chef cookbooks for inclusion in the sandbox path.
         #
         # @api private
+        # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
-          if File.exist?(berksfile)
+          if File.exist?(policyfile)
+            resolve_with_policyfile
+          elsif File.exist?(berksfile)
             resolve_with_berkshelf
           elsif File.exist?(cheffile)
             resolve_with_librarian
@@ -268,13 +281,38 @@ module Kitchen
         #
         # @api private
         def prepare_json
-          dna = config[:attributes].merge(:run_list => config[:run_list])
+          dna = if File.exist?(policyfile)
+            update_dna_for_policyfile
+          else
+            config[:attributes].merge(:run_list => config[:run_list])
+          end
 
           info("Preparing dna.json")
           debug("Creating dna.json from #{dna.inspect}")
 
           File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
             file.write(dna.to_json)
+          end
+        end
+
+        def update_dna_for_policyfile
+          if !config[:run_list].nil? && !config[:run_list].empty?
+            warn("You must set your run_list in your policyfile instead of "\
+                 "kitchen config. The run_list your config will be ignored.")
+            warn("Ignored run_list: #{config[:run_list].inspect}")
+          end
+          policylock = policyfile.gsub(/\.rb\Z/, ".lock.json")
+          policy_name = JSON.parse(IO.read(policylock))["name"]
+          policy_group = "local"
+          config[:attributes].merge(:policy_name => policy_name, :policy_group => policy_group)
+        end
+
+        # Performs a Policyfile cookbook resolution inside a common mutex.
+        #
+        # @api private
+        def resolve_with_policyfile
+          Kitchen.mutex.synchronize do
+            Chef::Policyfile.new(policyfile, sandbox_path, logger).resolve
           end
         end
 
@@ -316,6 +354,7 @@ module Kitchen
         def tmpsitebooks_dir
           File.join(sandbox_path, "cookbooks")
         end
+
       end
     end
   end

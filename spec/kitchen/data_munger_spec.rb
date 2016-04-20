@@ -480,6 +480,23 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           )
         end
 
+        it "moves named_run_list into provisioner" do
+          DataMunger.new(
+            {
+              :provisioner => "chefy",
+              :suites => [
+                {
+                  :name => "sweet",
+                  :named_run_list => "other_run_list"
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "plat").must_equal(
+            :name => "chefy",
+            :named_run_list => "other_run_list"
+          )
+        end
         it "maintains run_list in provisioner" do
           DataMunger.new(
             {
@@ -536,6 +553,23 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           )
         end
 
+        it "merge provisioner into named_run_list if provisioner exists" do
+          DataMunger.new(
+            {
+              :suites => [
+                {
+                  :name => "sweet",
+                  :named_run_list => "other_run_list",
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "plat").must_equal(
+            :name => "chefy",
+            :named_run_list => "other_run_list"
+          )
+        end
         it "drops nil run_list" do
           DataMunger.new(
             {
@@ -609,6 +643,23 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           )
         end
 
+        it "moves named_run_list into provisioner" do
+          DataMunger.new(
+            {
+              :provisioner => "chefy",
+              :platforms => [
+                {
+                  :name => "plat",
+                  :named_run_list => "other_run_list"
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "plat").must_equal(
+            :name => "chefy",
+            :named_run_list => "other_run_list"
+          )
+        end
         it "maintains run_list in provisioner" do
           DataMunger.new(
             {
@@ -665,6 +716,23 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           )
         end
 
+        it "merge provisioner into named_run_list if provisioner exists" do
+          DataMunger.new(
+            {
+              :platforms => [
+                {
+                  :name => "plat",
+                  :named_run_list => "other_run_list",
+                  :provisioner => "chefy"
+                }
+              ]
+            },
+            {}
+          ).provisioner_data_for("sweet", "plat").must_equal(
+            :name => "chefy",
+            :named_run_list => "other_run_list"
+          )
+        end
         it "drops nil run_list" do
           DataMunger.new(
             {

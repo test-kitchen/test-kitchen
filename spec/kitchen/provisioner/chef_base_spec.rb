@@ -893,6 +893,154 @@ describe Kitchen::Provisioner::ChefBase do
         end
       end
 
+      describe "with a Policyfile under kitchen_root" do
+
+        let(:resolver) { stub(:resolve => true) }
+
+        describe "with the default name `Policyfile.rb`" do
+          before do
+            File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
+              file.write(<<-POLICYFILE)
+name 'wat'
+run_list 'wat'
+cookbook 'wat'
+POLICYFILE
+            end
+            File.open("#{kitchen_root}/Policyfile.lock.json", "wb") do |file|
+              file.write(<<-POLICYFILE)
+{
+  "name": "wat"
+}
+POLICYFILE
+            end
+            Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
+          end
+
+          describe "when the chef executable is not in the PATH" do
+            it "raises a UserError" do
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:detect_chef_command!).with do
+                raise Kitchen::UserError, "Load failed"
+              end
+              proc { provisioner }.must_raise Kitchen::UserError
+            end
+          end
+
+          describe "when using a provisoner that doesn't support policyfiles" do
+            # This is be the default, provisioners must opt-in.
+            it "raises a UserError" do
+              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+            end
+          end
+
+          describe "when the chef executable is in the PATH" do
+
+            before do
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+              provisioner.stubs(:supports_policyfile?).returns(true)
+            end
+
+            it "logs on debug that it autodetected the policyfile" do
+              provisioner
+
+              logged_output.string.must_match debug_line(
+                "Policyfile found at #{kitchen_root}/Policyfile.rb, "\
+                "using Policyfile to resolve dependencies")
+            end
+
+            it "uses uses the policyfile to resolve dependencies" do
+              resolver.expects(:resolve)
+
+              provisioner.create_sandbox
+            end
+
+            it "uses Kitchen.mutex for resolving" do
+              Kitchen.mutex.expects(:synchronize)
+
+              provisioner.create_sandbox
+            end
+
+            it "injects policyfile configuration into the dna.json" do
+              provisioner.create_sandbox
+
+              dna_json_file = File.join(provisioner.sandbox_path, "dna.json")
+              dna_json_data = JSON.parse(IO.read(dna_json_file))
+
+              expected = {
+                "policy_name" => "wat",
+                "policy_group" => "local"
+              }
+
+              dna_json_data.must_equal(expected)
+            end
+          end
+        end
+        describe "with a custom policyfile_path" do
+
+          let(:config) do
+            {
+              :policyfile_path => "foo-policy.rb",
+              :test_base_path => "/basist",
+              :kitchen_root => "/rooty"
+            }
+          end
+
+          before do
+            Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+            Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
+            provisioner.stubs(:supports_policyfile?).returns(true)
+          end
+
+          describe "when the policyfile exists" do
+
+            let(:policyfile_path) { "#{kitchen_root}/foo-policy.rb" }
+            let(:policyfile_lock_path) { "#{kitchen_root}/foo-policy.lock.json" }
+
+            before do
+              File.open(policyfile_path, "wb") do |file|
+                file.write(<<-POLICYFILE)
+name 'wat'
+run_list 'wat'
+cookbook 'wat'
+POLICYFILE
+              end
+              File.open(policyfile_lock_path, "wb") do |file|
+                file.write(<<-POLICYFILE)
+{
+  "name": "wat"
+}
+POLICYFILE
+              end
+            end
+
+            it "uses uses the policyfile to resolve dependencies" do
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+              resolver.expects(:resolve)
+
+              provisioner.create_sandbox
+            end
+
+            it "passes the correct path to the policyfile resolver" do
+              Kitchen::Provisioner::Chef::Policyfile.
+                expects(:new).
+                with(policyfile_path, instance_of(String), anything).
+                returns(resolver)
+
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+              resolver.expects(:resolve)
+
+              provisioner.create_sandbox
+            end
+          end
+          describe "when the policyfile doesn't exist" do
+
+            it "raises a UserError" do
+              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+            end
+
+          end
+        end
+      end
+
       describe "with a Berksfile under kitchen_root" do
 
         let(:resolver) { stub(:resolve => true) }
