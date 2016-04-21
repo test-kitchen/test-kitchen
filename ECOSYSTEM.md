@@ -81,6 +81,6 @@ The following are community driven plugins.
 [cloudformation]: https://github.com/neillturner/kitchen-cloudformation
 [wpar]:  https://github.com/adejoux/kitchen-wpar
 [powervc]:  https://github.com/chmod666org/kitchen-powervc
-[appbundle-updater]: https://github.com/chef/kitchen-appbundler-updater
+[appbundle-updater]: https://github.com/chef/kitchen-appbundle-updater
 [inspec]: https://github.com/chef/kitchen-inspec
 [chef]: https://chef.io
