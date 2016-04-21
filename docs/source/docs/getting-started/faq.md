@@ -66,3 +66,14 @@ and verify that it works as expected:
 ```
 
 This is per setup of course, but you should get the point here.
+
+### How do I update just test-kitchen if I'm using Chef-DK?
+
+To take from [discourse.chef.io](https://discourse.chef.io/t/updating-to-test-kitchen-1-6-0-in-a-chefdk-0-11-2-or-lesser/7899), you can
+
+```bash
+chef gem install appbundle-updater
+appbundle-updater chefdk test-kitchen v1.6.0 # or whatever version you want update to
+```
+
+The appbundle-updater gem can update a "appbundled" gem in a chef or chefdk omnibus install and reference a specific git branch, tag or sha. The above uses it to pull down the v1.6.0 tag of the test-kitchen repo and then propperly pins that inside an existing chefdk installation.
