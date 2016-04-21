@@ -61,4 +61,7 @@ guide:
   -
     url: "next-steps"
     name: "Next Steps"
+  -
+    url: "faq"
+    name: "FAQ"
 ---

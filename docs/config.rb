@@ -25,7 +25,7 @@
 # end
 
 with_layout :guide do
-  page "/docs/getting-started/*"
+  page "/docs/*"
 end
 
 # Proxy pages (http://middlemanapp.com/dynamic-pages/)
@@ -74,4 +74,3 @@ configure :build do
   # Or use a different image path
   # set :http_prefix, "/Content/images/"
 end
-
