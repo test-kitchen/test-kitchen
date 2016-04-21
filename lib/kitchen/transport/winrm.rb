@@ -42,6 +42,7 @@ module Kitchen
 
       default_config :username, "administrator"
       default_config :password, nil
+      default_config :elevated, false
       default_config :rdp_port, 3389
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
@@ -185,6 +186,10 @@ module Kitchen
         # @api private
         attr_reader :winrm_transport
 
+        # @return [Boolean] whether to use winrm-elevated for running commands
+        # @api private
+        attr_reader :elevated
+
         # Writes an RDP document to the local file system.
         #
         # @param opts [Hash] file options
@@ -217,11 +222,28 @@ module Kitchen
         #   script and the standard error stream
         # @api private
         def execute_with_exit_code(command)
-          response = session.run_powershell_script(command) do |stdout, _|
-            logger << stdout if stdout
+          if elevated
+            unless options[:elevated_username] == options[:user]
+              command = "$env:temp='#{unelevated_temp_dir}';#{command}"
+            end
+            response = elevated_runner.powershell_elevated(
+              command,
+              options[:elevated_username],
+              options[:elevated_password]
+            ) do |stdout, _|
+              logger << stdout if stdout
+            end
+          else
+            response = session.run_powershell_script(command) do |stdout, _|
+              logger << stdout if stdout
+            end
           end
 
           [response[:exitcode], response.stderr]
+        end
+
+        def unelevated_temp_dir
+          @unelevated_temp_dir ||= session.run_powershell_script("$env:temp").stdout.chomp
         end
 
         # @return [Winrm::FileTransporter] a file transporter
@@ -241,6 +263,7 @@ module Kitchen
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @elevated           = @options.delete(:elevated)
         end
 
         # Logs formatted standard error output at the warning level.
@@ -309,16 +332,33 @@ module Kitchen
         # @return [Winrm::CommandExecutor] the command executor session
         # @api private
         def session(retry_options = {})
-          @session ||= begin
+          @session ||= service(retry_options).create_executor
+        end
+
+        # Creates the elevated runner for running elevated commands
+        #
+        # @return [Winrm::Elevated::Runner] the elevated runner
+        # @api private
+        def elevated_runner
+          @elevated_runner ||= WinRM::Elevated::Runner.new(session)
+        end
+
+        # Creates a winrm web service instance
+        #
+        # @param retry_options [Hash] retry options for the initial connection
+        # @return [Winrm::WinRMWebService] the winrm web service
+        # @api private
+        def service(retry_options = {})
+          @service ||= begin
             opts = {
               :retry_limit => connection_retries.to_i,
               :retry_delay   => connection_retry_sleep.to_i
             }.merge(retry_options)
 
             service_args = [endpoint, winrm_transport, options.merge(opts)]
-            @service = ::WinRM::WinRMWebService.new(*service_args)
-            @service.logger = logger
-            @service.create_executor
+            svc = ::WinRM::WinRMWebService.new(*service_args)
+            svc.logger = logger
+            svc
           end
         end
 
@@ -360,6 +400,7 @@ module Kitchen
 
       WINRM_SPEC_VERSION = ["~> 1.6"].freeze
       WINRM_FS_SPEC_VERSION = ["~> 0.4.1"].freeze
+      WINRM_ELEVATED_SPEC_VERSION = ["~> 0.4.0"].freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
@@ -368,6 +409,9 @@ module Kitchen
       # @return [Hash] hash of connection options
       # @api private
       def connection_options(data)
+        elevated_password = data[:password]
+        elevated_password = data[:elevated_password] if data.key?(:elevated_password)
+
         opts = {
           :instance_name => instance.name,
           :kitchen_root => data[:kitchen_root],
@@ -379,7 +423,10 @@ module Kitchen
           :connection_retries => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
           :max_wait_until_ready => data[:max_wait_until_ready],
-          :winrm_transport => data[:winrm_transport]
+          :winrm_transport => data[:winrm_transport],
+          :elevated => data[:elevated],
+          :elevated_username => data[:elevated_username] || data[:username],
+          :elevated_password => elevated_password
         }
         opts.merge!(additional_transport_args(opts[:winrm_transport]))
         opts
@@ -424,6 +471,7 @@ module Kitchen
         super
         load_with_rescue!("winrm", WINRM_SPEC_VERSION.dup)
         load_with_rescue!("winrm-fs", WINRM_FS_SPEC_VERSION.dup)
+        load_with_rescue!("winrm-elevated", WINRM_ELEVATED_SPEC_VERSION.dup) if config[:elevated]
       end
 
       def load_with_rescue!(gem_name, spec_version)

@@ -13,6 +13,9 @@ provisioner:
 platforms:
   - name: ubuntu-14.04
   - name: windows-2012R2
+    transport:
+      name: winrm
+      elevated: true
 
 verifier:
   name: inspec
