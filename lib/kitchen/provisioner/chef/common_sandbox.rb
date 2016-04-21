@@ -302,6 +302,11 @@ module Kitchen
             warn("Ignored run_list: #{config[:run_list].inspect}")
           end
           policylock = policyfile.gsub(/\.rb\Z/, ".lock.json")
+          unless File.exist?(policylock)
+            Kitchen.mutex.synchronize do
+              Chef::Policyfile.new(policyfile, sandbox_path, logger).compile
+            end
+          end
           policy_name = JSON.parse(IO.read(policylock))["name"]
           policy_group = "local"
           config[:attributes].merge(:policy_name => policy_name, :policy_group => policy_group)

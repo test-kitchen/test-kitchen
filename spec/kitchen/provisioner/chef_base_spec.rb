@@ -1038,6 +1038,22 @@ POLICYFILE
             end
 
           end
+          describe "when the policyfile lock doesn't exist" do
+            before do
+              File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
+                file.write(<<-POLICYFILE)
+  name 'wat'
+  run_list 'wat'
+  cookbook 'wat'
+  POLICYFILE
+              end
+
+              it "runs `chef install` to generate the lock" do
+                resolver.expects(:compile)
+                provisioner.create_sandbox
+              end
+            end
+          end
         end
       end
 

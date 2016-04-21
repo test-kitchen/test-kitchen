@@ -62,6 +62,14 @@ module Kitchen
           run_command("chef export #{policyfile} #{path} --force")
         end
 
+        # Runs `chef install` to determine the correct cookbook set and
+        # generate the policyfile lock.
+        def compile
+          info("Policy lock file doesn't exist, running `chef install` for "\
+               "Policyfile #{policyfile}...")
+          run_command("chef install #{policyfile}")
+        end
+
         private
 
         # @return [String] path to a Berksfile
