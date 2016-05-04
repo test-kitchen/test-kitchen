@@ -21,6 +21,7 @@ require_relative "../../spec_helper"
 require "kitchen/transport/winrm"
 require "winrm"
 require "winrm-fs"
+require "winrm-elevated"
 
 module Kitchen
 
@@ -107,6 +108,10 @@ describe Kitchen::Transport::Winrm do
 
     it "sets :winrm_transport to :negotiate" do
       transport[:winrm_transport].must_equal :negotiate
+    end
+
+    it "sets :elevated to false" do
+      transport[:elevated].must_equal false
     end
   end
 
@@ -326,6 +331,59 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
+      it "sets elevated_username from user by default" do
+        config[:username] = "user"
+
+        klass.expects(:new).with do |hash|
+          hash[:elevated_username] == "user"
+        end
+
+        make_connection
+      end
+
+      it "sets elevated_username from overriden elevated_username" do
+        config[:username] = "user"
+        config[:elevated_username] = "elevated_user"
+
+        klass.expects(:new).with do |hash|
+          hash[:elevated_username] == "elevated_user"
+        end
+
+        make_connection
+      end
+
+      it "sets elevated_password from user by default" do
+        config[:password] = "pass"
+
+        klass.expects(:new).with do |hash|
+          hash[:elevated_password] == "pass"
+        end
+
+        make_connection
+      end
+
+      it "sets elevated_password from overriden elevated_password" do
+        config[:password] = "pass"
+        config[:elevated_password] = "elevated_pass"
+
+        klass.expects(:new).with do |hash|
+          hash[:elevated_password] == "elevated_pass"
+        end
+
+        make_connection
+      end
+
+      it "sets elevated_password to nil if overriden elevated_password is nil" do
+        config[:password] = "pass"
+        config[:elevated_password] = nil
+
+        klass.expects(:new).with do |hash|
+          hash[:elevated_password].nil?
+        end
+
+        make_connection
+      end
+
       describe "when negotiate is set in config" do
         before do
           config[:winrm_transport] = "negotiate"
@@ -406,6 +464,31 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "#load_needed_dependencies" do
+    describe "winrm-elevated" do
+      let(:transport) { Kitchen::Transport::Winrm.new(config) }
+
+      before do
+        transport.stubs(:require).with("winrm")
+        transport.stubs(:require).with("winrm-fs")
+      end
+
+      describe "elevated is false" do
+        it "does not require winrm-elevated" do
+          transport.expects(:require).with("winrm-elevated").never
+          transport.finalize_config!(instance)
+        end
+      end
+
+      describe "elevated is true" do
+        before { config[:elevated] = true }
+
+        it "does requires winrm-elevated" do
+          transport.expects(:require).with("winrm-elevated")
+          transport.finalize_config!(instance)
+        end
+      end
+    end
+
     describe "winrm-fs" do
       before do
         # force loading of winrm-fs to get the version constant
@@ -653,6 +736,76 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         logged_output.string.wont_match warn_line("congrats")
+      end
+    end
+
+    describe "elevated command" do
+      let(:response) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "ok\r\n" },
+          { :stderr => "congrats\r\n" }
+        ])
+        o
+      end
+      let(:env_temp_response) do
+        o = WinRM::Output.new
+        o[:exitcode] = 0
+        o[:data].concat([
+          { :stdout => "temp_dir" }
+        ])
+        o
+      end
+      let(:elevated_runner) do
+        r = mock("elevated_runner")
+        r.responds_like_instance_of(WinRM::Elevated::Runner)
+        r
+      end
+
+      before do
+        options[:elevated] = true
+        WinRM::Elevated::Runner.stubs(:new).with(executor).returns(elevated_runner)
+      end
+
+      describe "elevated user is not login user" do
+        before do
+          options[:elevated_username] = "username"
+          options[:elevated_password] = "password"
+          executor.expects(:run_powershell_script).
+            with("$env:temp").returns(env_temp_response)
+          elevated_runner.expects(:powershell_elevated).
+            with(
+              "$env:temp='temp_dir';doit",
+              options[:elevated_username],
+              options[:elevated_password]
+            ).yields("ok\n", nil).returns(response)
+        end
+
+        it "logger captures stdout" do
+          connection.execute("doit")
+
+          logged_output.string.must_match(/^ok$/)
+        end
+      end
+
+      describe "elevator user is login user" do
+        before do
+          options[:elevated_username] = options[:user]
+          options[:elevated_password] = options[:pass]
+          elevated_runner.expects(:powershell_elevated).
+            with(
+              "doit",
+              options[:elevated_username],
+              options[:elevated_password]
+            ).yields("ok\n", nil).returns(response)
+        end
+
+        it "logger captures stdout" do
+          connection.execute("doit")
+
+          logged_output.string.must_match(/^ok$/)
+        end
       end
     end
 
