@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.8.0](https://github.com/test-kitchen/test-kitchen/tree/1.8.0) (2016-05-05)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.3...1.8.0)
+
+**Implemented enhancements:**
+
+- Add native policyfile resolution support [\#1014](https://github.com/test-kitchen/test-kitchen/pull/1014) ([danielsdeleo](https://github.com/danielsdeleo))
+- Provide the option to run all winrm commands through a scheduled task [\#1012](https://github.com/test-kitchen/test-kitchen/pull/1012) ([mwrock](https://github.com/mwrock))
+
 ## [1.7.3](https://github.com/test-kitchen/test-kitchen/tree/1.7.3) (2016-04-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.2...1.7.3)
 
