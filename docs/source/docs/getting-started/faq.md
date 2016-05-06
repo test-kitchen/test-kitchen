@@ -77,3 +77,12 @@ appbundle-updater chefdk test-kitchen v1.6.0 # or whatever version you want upda
 ```
 
 The appbundle-updater gem can update a "appbundled" gem in a chef or chefdk omnibus install and reference a specific git branch, tag or sha. The above uses it to pull down the v1.6.0 tag of the test-kitchen repo and then propperly pins that inside an existing chefdk installation.
+
+### How do I change the user to access the instance?
+
+You can edit the `.kitchen.yml` with a `transport` option, for instance:
+
+```yaml
+transport:
+  username: ubuntu
+```
