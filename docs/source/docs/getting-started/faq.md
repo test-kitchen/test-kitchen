@@ -1,8 +1,8 @@
 ---
 title: "Frequently Asked Questions"
-next:
-  text: "Frequently Asked Questions"
-  url: "faq"
+prev:
+  text: "Next Steps"
+  url: "next-steps"
 ---
 
 ### The defaults are way too small or missing something, how do I change the default Vagrant machine?
