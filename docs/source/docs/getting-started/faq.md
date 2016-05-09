@@ -45,7 +45,7 @@ or [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean#i
 and edit your `.kitchen.yml`.
 
 It's suggested after doing this, to run `kitchen list` to verify that everything
-is setup and working as suspected. There is a strong change that the flavors, or
+is setup and working as suspected. There is a strong chance that the flavors, or
 image names are different per driver, so you'll need to do the legwork to confirm.
 
 ### When would I want to use .kitchen.local.yml or .kitchen.cloud.yml?
