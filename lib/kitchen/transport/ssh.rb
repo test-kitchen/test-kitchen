@@ -64,7 +64,8 @@ module Kitchen
 
       # ciphers in decreasing order of performance (happily it roughly matches their decreasing order of security as well)
       default_config :encryption, %w{ aes256-ctr aes191-ctr aes128-ctr aes192-cbc aes128-cbc rijndael-cbc@lysator.liu.se aes256-cbc arcfour256 arcfour128 arcfour blowfish-cbc cast128-cbc 3des-cbc }
-      default_config :hmac, "none"
+      # hmacs purely in order of speed
+      default_config :hmac, %w{ none hmac-md5 hmac-md5-96 hmac-sha1 hmac-sha1-96 hmac-ripemd160 hmac-ripemd160@openssh.com hmac-sha2-512 hmac-sha2-256 }
 
       def finalize_config!(instance)
         super
