@@ -21,6 +21,7 @@ require "kitchen"
 require "net/ssh"
 require "net/scp"
 require "timeout"
+require "benchmark"
 
 module Kitchen
 
@@ -53,7 +54,8 @@ module Kitchen
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
-      default_config :compression, true
+      # compression disabled by default for speed
+      default_config :compression, false
       required_config :compression
 
       default_config :compression_level do |transport|
@@ -145,13 +147,19 @@ module Kitchen
 
         # (see Base::Connection#upload)
         def upload(locals, remote)
-          Array(locals).each do |local|
-            opts = File.directory?(local) ? { :recursive => true } : {}
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
+          elapsed = Benchmark.measure do
+            waits = Array(locals).map do |local|
+              opts = File.directory?(local) ? { :recursive => true } : {}
 
-            session.scp.upload!(local, remote, opts) do |_ch, name, sent, total|
-              logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
+              session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
+                logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
+              end
             end
+            waits.each(&:wait)
           end
+          delta = Util.duration(elapsed.real)
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SCP upload failed (#{ex.message})"
         end

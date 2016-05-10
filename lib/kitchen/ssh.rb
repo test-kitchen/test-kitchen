@@ -104,6 +104,18 @@ module Kitchen
       session.scp.upload!(local, remote, options, &progress)
     end
 
+    def upload(local, remote, options = {}, &progress)
+      if progress.nil?
+        progress = lambda { |_ch, name, sent, total|
+          if sent == total
+            logger.debug("Async Uploaded #{name} (#{total} bytes)")
+          end
+        }
+      end
+
+      session.scp.upload(local, remote, options, &progress)
+    end
+
     # Uploads a recursive directory to remote host.
     #
     # @param local [String] path to local file or directory
@@ -116,6 +128,11 @@ module Kitchen
       options = { :recursive => true }.merge(options)
 
       upload!(local, remote, options, &progress)
+    end
+
+    def upload_path(local, remote, options = {}, &progress)
+      options = { :recursive => true }.merge(options)
+      upload(local, remote, options, &progress)
     end
 
     # Shuts down the session connection, if it is still active.
