@@ -62,6 +62,9 @@ module Kitchen
         transport[:compression] == false ? 0 : 6
       end
 
+      default_config :encryption, "none"
+      default_config :hmac, "none"
+
       def finalize_config!(instance)
         super
 
@@ -329,6 +332,8 @@ module Kitchen
           :username               => data[:username],
           :compression            => data[:compression],
           :compression_level      => data[:compression_level],
+          :encryption             => data[:encryption],
+          :hmac                   => data[:hmac],
           :keepalive              => data[:keepalive],
           :keepalive_interval     => data[:keepalive_interval],
           :timeout                => data[:connection_timeout],
