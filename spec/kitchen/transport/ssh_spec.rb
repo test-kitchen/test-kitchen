@@ -148,7 +148,7 @@ describe Kitchen::Transport::Ssh do
     end
 
     it "sets :compression to true by default" do
-      transport[:compression].must_equal true
+      transport[:compression].must_equal false
     end
 
     it "sets :compression to false if set to none" do
@@ -164,13 +164,13 @@ describe Kitchen::Transport::Ssh do
     end
 
     it "sets :compression_level to 6 by default" do
-      transport[:compression_level].must_equal 6
+      transport[:compression_level].must_equal 0
     end
 
-    it "sets :compression_level to 0 if :compression is set to none" do
-      config[:compression] = "none"
+    it "sets :compression_level to 6 if :compression is set to true" do
+      config[:compression] = true
 
-      transport[:compression_level].must_equal 0
+      transport[:compression_level].must_equal 6
     end
 
     it "sets :keepalive to true by default" do
@@ -1048,9 +1048,11 @@ describe Kitchen::Transport::Ssh::Connection do
         logged_output.string.must_match debug_line(
           "[SSH] opening connection to me@foo<{:port=>22}>"
         )
-        logged_output.string.must_match debug_line(
-          "Uploaded #{src.path} (1234 bytes)"
-        )
+        logged_output.string.lines.count { |l|
+          l =~ debug_line(
+            "Async Uploaded #{src.path} (1234 bytes)"
+          )
+        }.must_equal 1
       end
     end
 
@@ -1119,15 +1121,21 @@ describe Kitchen::Transport::Ssh::Connection do
         logged_output.string.must_match debug_line(
           "[SSH] opening connection to me@foo<{:port=>22}>"
         )
-        logged_output.string.must_match debug_line(
-          "Uploaded #{@dir}/alpha (15 bytes)"
-        )
-        logged_output.string.must_match debug_line(
-          "Uploaded #{@dir}/subdir/beta (14 bytes)"
-        )
-        logged_output.string.must_match debug_line(
-          "Uploaded #{@dir}/zulu (14 bytes)"
-        )
+        logged_output.string.lines.count { |l|
+          l =~ debug_line(
+            "Async Uploaded #{@dir}/alpha (15 bytes)"
+          )
+        }.must_equal 1
+        logged_output.string.lines.count { |l|
+          l =~ debug_line(
+            "Async Uploaded #{@dir}/subdir/beta (14 bytes)"
+          )
+        }.must_equal 1
+        logged_output.string.lines.count { |l|
+          l =~ debug_line(
+            "Async Uploaded #{@dir}/zulu (14 bytes)"
+          )
+        }.must_equal 1
       end
     end
 

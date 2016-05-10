@@ -18,7 +18,6 @@
 
 require "fileutils"
 require "logger"
-require "benchmark"
 
 module Kitchen
 
@@ -268,15 +267,6 @@ module Kitchen
     #
     # @see http://is.gd/b13cVn
     delegate_to_all_loggers :close
-
-
-    def timer(message)
-      debug "TIMING: #{message} start"
-      elapsed = Benchmark.measure do
-        yield
-      end
-      debug "TIMING: #{message} took #{Util.duration(elapsed.real)} seconds"
-    end
 
     private
 
