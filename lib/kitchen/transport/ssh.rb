@@ -62,7 +62,8 @@ module Kitchen
         transport[:compression] == false ? 0 : 6
       end
 
-      default_config :encryption, "none"
+      # ciphers in decreasing order of performance (happily it roughly matches their decreasing order of security as well)
+      default_config :encryption, %w{ aes256-ctr aes191-ctr aes128-ctr aes192-cbc aes128-cbc rijndael-cbc@lysator.liu.se aes256-cbc arcfour256 arcfour128 arcfour blowfish-cbc cast128-cbc 3des-cbc }
       default_config :hmac, "none"
 
       def finalize_config!(instance)
