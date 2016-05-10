@@ -291,7 +291,10 @@ module Kitchen
         return if locals.nil? || Array(locals).empty?
 
         info("Transferring files to #{instance.to_str}")
-        locals.each { |local| connection.upload_path!(local, remote) }
+        timer "scp uploading files asynchronously (Kitchen::Driver::SSHBase)" do
+          waits = locals.map { |local| connection.upload_path(local, remote) }
+          waits.each { |d| d.wait }
+        end
         debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
