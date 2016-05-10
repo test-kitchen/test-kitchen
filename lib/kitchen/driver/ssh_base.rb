@@ -292,12 +292,13 @@ module Kitchen
         return if locals.nil? || Array(locals).empty?
 
         info("Transferring files to #{instance.to_str}")
-        debug("TIMING: scp uploading files asynchronously (Kitchen::Driver::SSHBase)")
+        debug("TIMING: scp asynch upload (Kitchen::Driver::SSHBase)")
         elapsed = Benchmark.measure do
           waits = locals.map { |local| connection.upload_path(local, remote) }
           waits.each(&:wait)
         end
-        debug("TIMING: scp uploading files asynchronously (Kitchen::Driver::SSHBase) took #{Util.duration(elapsed.real)}")
+        delta = Util.duration(elapsed.real)
+        debug("TIMING: scp async upload (Kitchen::Driver::SSHBase) took #{delta}")
         debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message

@@ -147,7 +147,7 @@ module Kitchen
 
         # (see Base::Connection#upload)
         def upload(locals, remote)
-          logger.debug("TIMING: scp uploading files asynchronously (Kitchen::Transport::Ssh)")
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
           elapsed = Benchmark.measure do
             waits = Array(locals).map do |local|
               opts = File.directory?(local) ? { :recursive => true } : {}
@@ -158,7 +158,8 @@ module Kitchen
             end
             waits.each(&:wait)
           end
-          logger.debug("TIMING: scp uploading files asynchronously (Kitchen::Transport::Ssh) took #{Util.duration(elapsed.real)}")
+          delta = Util.duration(elapsed.real)
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SCP upload failed (#{ex.message})"
         end
