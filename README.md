@@ -100,6 +100,10 @@ read and contribute to improve them!
 
 Test Kitchen aims to adhere to [Semantic Versioning 2.0.0][semver].
 
+## Community and Ecosystem
+
+If you would like to see a few of the plugins or ecosystem helpers, please look at [ECOSYSTEM.md][ecosystem].
+
 ## Development
 
 * Source hosted at [GitHub][repo]
@@ -136,3 +140,4 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [semver]: http://semver.org/
 [twitter]: https://twitter.com/kitchenci
 [website]: http://kitchen.ci
+[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
