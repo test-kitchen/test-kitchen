@@ -834,6 +834,8 @@ describe Kitchen::Configurable do
       end
 
       it "does not export http_proxy or HTTP_PROXY when :http_proxy is empty" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
         config[:http_proxy] = ""
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
@@ -845,6 +847,8 @@ describe Kitchen::Configurable do
       end
 
       it "does not export https_proxy or HTTPS_PROXY when :https_proxy is empty" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
         config[:https_proxy] = ""
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
