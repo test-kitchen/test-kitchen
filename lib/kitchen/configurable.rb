@@ -313,18 +313,24 @@ module Kitchen
       if config[:http_proxy] && !config[:http_proxy].empty?
         env << shell_env_var("http_proxy", config[:http_proxy])
         env << shell_env_var("HTTP_PROXY", config[:http_proxy])
+      elsif config.key? :http_proxy
+        # Maybe a logging line here?
       else
         export_proxy(env, "http")
       end
       if config[:https_proxy] && !config[:https_proxy].empty?
         env << shell_env_var("https_proxy", config[:https_proxy])
         env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
+      elsif config.key? :https_proxy
+        # Maybe a logging line here?
       else
         export_proxy(env, "https")
       end
       if config[:ftp_proxy] && !config[:ftp_proxy].empty?
         env << shell_env_var("ftp_proxy", config[:ftp_proxy])
         env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
+      elsif config.key? :ftp_proxy
+        # Maybe a logging line here?
       else
         export_proxy(env, "ftp")
       end
