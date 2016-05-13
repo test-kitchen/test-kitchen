@@ -306,42 +306,57 @@ module Kitchen
     # @param code [String] the shell code to be wrapped
     # @return [String] wrapped shell code
     # @api private
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
     def wrap_shell_code(code)
-      env = []
-      if config[:http_proxy] && !config[:http_proxy].empty?
-        env << shell_env_var("http_proxy", config[:http_proxy])
-        env << shell_env_var("HTTP_PROXY", config[:http_proxy])
-      else
-        export_proxy(env, "http")
+      return env_wrapped code if powershell_shell?
+      Util.wrap_command((env_wrapped code))
+    end
+
+    def env_wrapped(code)
+      (proxy_settings << code).join("\n")
+    end
+
+    def proxy_setting_keys
+      [:http_proxy, :https_proxy, :ftp_proxy]
+    end
+
+    def resolve_proxy_settings_from_config
+      proxy_setting_keys.each_with_object([]) do |protocol, set_env|
+        if !config.key?(protocol) || config[protocol].nil?
+          export_proxy(set_env, protocol)
+        elsif proxy_config_setting_present?(protocol)
+          set_env << shell_env_var("#{protocol.downcase}", config[protocol])
+          set_env << shell_env_var("#{protocol.upcase}", config[protocol])
+        end
       end
-      if config[:https_proxy] && !config[:https_proxy].empty?
-        env << shell_env_var("https_proxy", config[:https_proxy])
-        env << shell_env_var("HTTPS_PROXY", config[:https_proxy])
-      else
-        export_proxy(env, "https")
-      end
-      if config[:ftp_proxy] && !config[:ftp_proxy].empty?
-        env << shell_env_var("ftp_proxy", config[:ftp_proxy])
-        env << shell_env_var("FTP_PROXY", config[:ftp_proxy])
-      else
-        export_proxy(env, "ftp")
-      end
+    end
+
+    def proxy_settings
+      env = resolve_proxy_settings_from_config
+
       # if http_proxy was set from environment variable or https_proxy was set
       # from environment variable, or ftp_proxy was set from environment
       # variable, include no_proxy environment variable, if set.
-      if (!config[:http_proxy] && (ENV["http_proxy"] || ENV["HTTP_PROXY"])) ||
-          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"])) ||
-          (!config[:ftp_proxy] && (ENV["ftp_proxy"] || ENV["FTP_PROXY"]))
+      if !proxy_from_config? && proxy_from_environment?
         env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
         env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
       end
-      if powershell_shell?
-        env.join("\n").concat("\n").concat(code)
-      else
-        Util.wrap_command(env.join("\n").concat("\n").concat(code))
+      env
+    end
+
+    def proxy_from_config?
+      proxy_setting_keys.any? do |protocol|
+        !config[protocol].nil?
       end
+    end
+
+    def proxy_from_environment?
+      proxy_setting_keys.any? do |protocol|
+        !ENV["#{protocol.downcase}"].nil? || !ENV["#{protocol.upcase}"].nil?
+      end
+    end
+
+    def proxy_config_setting_present?(protocol)
+      config.key?(protocol) && !config[protocol].nil? && !config[protocol].empty?
     end
 
     # Helper method to export
@@ -350,9 +365,9 @@ module Kitchen
     # @param code [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
     # @api private
     def export_proxy(env, type)
-      env << shell_env_var("#{type}_proxy", ENV["#{type}_proxy"]) if ENV["#{type}_proxy"]
-      env << shell_env_var("#{type.upcase}_PROXY", ENV["#{type.upcase}_PROXY"]) if
-        ENV["#{type.upcase}_PROXY"]
+      env << shell_env_var("#{type}", ENV["#{type}"]) if ENV["#{type}"]
+      env << shell_env_var("#{type.upcase}", ENV["#{type.upcase}"]) if
+        ENV["#{type.upcase}"]
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.

@@ -747,7 +747,6 @@ describe Kitchen::Configurable do
       it "uses bourne shell (sh)" do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -834,22 +833,24 @@ describe Kitchen::Configurable do
       end
 
       it "does not export http_proxy or HTTP_PROXY when :http_proxy is empty" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
         config[:http_proxy] = ""
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
       end
 
       it "does not export https_proxy or HTTPS_PROXY when :https_proxy is empty" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
         config[:https_proxy] = ""
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -873,7 +874,6 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -936,7 +936,7 @@ describe Kitchen::Configurable do
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it "uses powershell shell" do
-        cmd.must_equal("\nmkdir foo")
+        cmd.must_equal("mkdir foo")
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
