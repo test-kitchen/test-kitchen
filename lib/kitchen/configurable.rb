@@ -307,37 +307,52 @@ module Kitchen
     # @return [String] wrapped shell code
     # @api private
     def wrap_shell_code(code)
-      env = proxy_settings
-      if powershell_shell?
-        env.join("\n").concat("\n").concat(code)
-      else
-        Util.wrap_command(env.join("\n").concat("\n").concat(code))
-      end
+      return env_wrapped code if powershell_shell?
+      Util.wrap_command((env_wrapped code))
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-    def proxy_settings
-      env = [:http_proxy, :https_proxy, :ftp_proxy].collect do |protocol|
-        set_env = []
+    def env_wrapped(code)
+      (proxy_settings << code).join("\n")
+    end
+
+    def proxy_setting_keys
+      [:http_proxy, :https_proxy, :ftp_proxy]
+    end
+
+    def resolve_proxy_settings_from_config
+      proxy_setting_keys.each_with_object([]) do |protocol, set_env|
         if !config.key?(protocol) || config[protocol].nil?
           export_proxy(set_env, protocol)
         elsif proxy_config_setting_present?(protocol)
           set_env << shell_env_var("#{protocol.downcase}", config[protocol])
           set_env << shell_env_var("#{protocol.upcase}", config[protocol])
         end
-        set_env
-      end.flatten
+      end
+    end
+
+    def proxy_settings
+      env = resolve_proxy_settings_from_config
 
       # if http_proxy was set from environment variable or https_proxy was set
       # from environment variable, or ftp_proxy was set from environment
       # variable, include no_proxy environment variable, if set.
-      if (!config[:http_proxy] && (ENV["http_proxy"] || ENV["HTTP_PROXY"])) ||
-          (!config[:https_proxy] && (ENV["https_proxy"] || ENV["HTTPS_PROXY"])) ||
-          (!config[:ftp_proxy] && (ENV["ftp_proxy"] || ENV["FTP_PROXY"]))
+      if !proxy_from_config? && proxy_from_environment?
         env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
         env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
       end
       env
+    end
+
+    def proxy_from_config?
+      proxy_setting_keys.any? do |protocol|
+        !config[protocol].nil?
+      end
+    end
+
+    def proxy_from_environment?
+      proxy_setting_keys.any? do |protocol|
+        !ENV["#{protocol.downcase}"].nil? || !ENV["#{protocol.upcase}"].nil?
+      end
     end
 
     def proxy_config_setting_present?(protocol)

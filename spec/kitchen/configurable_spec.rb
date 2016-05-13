@@ -747,7 +747,6 @@ describe Kitchen::Configurable do
       it "uses bourne shell (sh)" do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -840,7 +839,6 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -853,7 +851,6 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -877,7 +874,6 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
           mkdir foo
           '
         CODE
@@ -940,7 +936,7 @@ describe Kitchen::Configurable do
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it "uses powershell shell" do
-        cmd.must_equal("\nmkdir foo")
+        cmd.must_equal("mkdir foo")
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
