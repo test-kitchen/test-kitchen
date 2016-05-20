@@ -170,15 +170,26 @@ module Kitchen
         concurrency.times { queue << nil }
 
         threads = []
+        errors = []
         concurrency.times do
           threads << Thread.new do
             while instance = queue.pop
-              instance.public_send(action, *args)
-              instance.cleanup!
+              begin
+                instance.public_send(action, *args)
+              rescue Kitchen::ActionFailed => e
+                new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
+                new_error.set_backtrace(e.backtrace)
+                errors << new_error
+              ensure
+                instance.cleanup!
+              end
             end
           end
         end
         threads.map(&:join)
+        if !errors.empty?
+          raise Kitchen::ActionFailed.new("#{errors.length} actions failed.", errors)
+        end
       end
     end
   end
