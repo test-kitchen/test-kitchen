@@ -159,37 +159,45 @@ module Kitchen
       # @param action [String] action to perform
       # @param instances [Array<Instance>] an array of instances
       def run_action(action, instances, *args)
-        concurrency = 1
-        if options[:concurrency]
-          concurrency = options[:concurrency] || instances.size
-          concurrency = instances.size if concurrency > instances.size
-        end
+        concurrency = concurrency_setting(instances)
 
         queue = Queue.new
         instances.each { |i| queue << i }
         concurrency.times { queue << nil }
 
         threads = []
-        errors = []
+        @action_errors = []
         concurrency.times do
           threads << Thread.new do
             while instance = queue.pop
-              begin
-                instance.public_send(action, *args)
-              rescue Kitchen::ActionFailed => e
-                new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
-                new_error.set_backtrace(e.backtrace)
-                errors << new_error
-              ensure
-                instance.cleanup!
-              end
+              run_action_in_thread(action, instance, *args)
             end
           end
         end
         threads.map(&:join)
-        if !errors.empty?
-          raise Kitchen::ActionFailed.new("#{errors.length} actions failed.", errors)
+        unless @action_errors.empty?
+          raise ActionFailed.new("#{@action_errors.length} actions failed.", @action_errors)
         end
+      end
+
+      # private
+      def concurrency_setting(instances)
+        concurrency = 1
+        if options[:concurrency]
+          concurrency = options[:concurrency] || instances.size
+          concurrency = instances.size if concurrency > instances.size
+        end
+        concurrency
+      end
+
+      def run_action_in_thread(action, instance, *args)
+        instance.public_send(action, *args)
+      rescue Kitchen::ActionFailed => e
+        new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
+        new_error.set_backtrace(e.backtrace)
+        @action_errors << new_error
+      ensure
+        instance.cleanup!
       end
     end
   end

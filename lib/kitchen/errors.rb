@@ -45,24 +45,27 @@ module Kitchen
     # @return [Array<String>] a formatted message
     def self.formatted_trace(exception, title = "Exception")
       arr = formatted_exception(exception, title).dup
+      arr += formatted_backtrace(exception)
 
       if exception.respond_to?(:original) && exception.original
         arr += if exception.original.is_a? Array
-                 exception.original.map do |composite_exception|
-                   formatted_trace(composite_exception, "Composite Exception").flatten
-                 end
-               else
-                 [
-                   formatted_exception(exception.original, "Nested Exception"),
-                   formatted_backtrace(exception)
-                 ].flatten
-               end
+          exception.original.map do |composite_exception|
+            formatted_trace(composite_exception, "Composite Exception").flatten
+          end
+        else
+          [
+            formatted_exception(exception.original, "Nested Exception"),
+            formatted_backtrace(exception)
+          ].flatten
+        end
       end
       arr.flatten
     end
 
     def self.formatted_backtrace(exception)
-      unless exception.backtrace.nil?
+      if exception.backtrace.nil?
+        []
+      else
         [
           "Backtrace".center(22, "-"),
           exception.backtrace,

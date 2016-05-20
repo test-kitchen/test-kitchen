@@ -49,8 +49,6 @@ describe Kitchen::Error do
         "------Exception-------",
         "Class: Kitchen::StandardError",
         "Message: shoot",
-        "------Backtrace-------",
-        nil,
         "----------------------"
       ])
     end
@@ -59,7 +57,7 @@ describe Kitchen::Error do
       begin
         raise Kitchen::StandardError, "shoot"
       rescue => e
-        Kitchen::Error.formatted_trace(e)[4...-1].must_equal e.backtrace
+        Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
       end
     end
 
@@ -73,14 +71,34 @@ describe Kitchen::Error do
           "------Exception-------",
           "Class: Kitchen::StandardError",
           "Message: shoot",
+          "----------------------",
           "---Nested Exception---",
           "Class: IOError",
           "Message: no disk, yo",
-          "------Backtrace-------",
-          nil,
           "----------------------"
         ])
       end
+    end
+
+    it "returns an array when an error has more than one error in original" do
+      error_array = []
+      error_array << Kitchen::StandardError.new("one")
+      error_array << Kitchen::StandardError.new("two")
+      composite_error = Kitchen::StandardError.new("array", error_array)
+
+      Kitchen::Error.formatted_trace(composite_error).must_equal([
+        "------Exception-------",
+        "Class: Kitchen::StandardError",
+        "Message: array",
+        "----------------------",
+        "-Composite Exception--",
+        "Class: Kitchen::StandardError",
+        "Message: one", "----------------------",
+        "-Composite Exception--",
+        "Class: Kitchen::StandardError",
+        "Message: two",
+        "----------------------"
+      ])
     end
   end
 end
