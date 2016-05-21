@@ -321,7 +321,7 @@ describe Kitchen::Provisioner::Shell do
         config[:root_path] = "/r"
         config[:sudo] = false
 
-        cmd.must_match regexify("TEST=yes /r/bootstrap.sh", :partial_line)
+        cmd.must_match(/^TEST=yes/)
       end
     end
 
