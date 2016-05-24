@@ -258,26 +258,41 @@ module Kitchen
         # @api private
         # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
-          resolver = config[:preferred_resolver]
-          if File.exist?(policyfile) && (resolver.nil? || resolver == "policyfile")
-            resolve_with_policyfile
-          elsif File.exist?(berksfile) && (resolver.nil? || resolver == "berksfile")
-            resolve_with_berkshelf
-          elsif File.exist?(cheffile) && (resolver.nil? || resolver == "cheffile")
-            resolve_with_librarian
-            cp_site_cookbooks if File.directory?(site_cookbooks_dir)
-          elsif File.directory?(cookbooks_dir) && (resolver.nil? || resolver == "directory")
-            cp_cookbooks
-          elsif File.exist?(metadata_rb) && (resolver.nil? || resolver == "metadata")
-            cp_this_cookbook
-          elsif !resolver.nil?
-            raise(UserError, "Valid options for :preferred_resolver include: policyfile, " \
-                  "berksfile, cheffile, directory, or metadata.")
+          resolver_methods = { policyfile: resolve_with_policyfile,
+                               berksfile: resolve_with_berkshelf,
+                               cheffile: resolve_with_librarian,
+                               cookbooks_dir: cp_cookbooks,
+                               metadata_rb: cp_this_cookbook }
+
+          if config[:preferred_resolver]
+            prepare_cookbooks_with_preferred_resolver
           else
-            make_fake_cookbook
+            found_resolver = false
+            resolver_methods.each do |resolver, resolver_method|
+              next unless File.exist?(self.send(resolver))
+              resolver_method
+              found_resolver = true
+              break
+            end
           end
 
+          make_fake_cookbook unless found_resolver
           filter_only_cookbook_files
+        end
+
+        # Prepares Chef cookbooks for includsion in the sandbox path when
+        # config[:preferred_resolver] is specified.
+        #
+        # @api private
+        def prepare_cookbooks_with_preferred_resolver
+          if resolver_methods.keys.include?(config[:preferred_resolver])
+            if File.exist?(self.send(config[:preferred_resolver]))
+              resolver_methods[config[:preferred_resolver]]
+            end
+          else
+            raise(UserError, "Valid options for :preferred_resolver include: " \
+                              "#{resolver_methods.keys.join(', ')}.")
+          end
         end
 
         # Prepares a Chef JSON file, sometimes called a dna.json or
@@ -341,6 +356,8 @@ module Kitchen
           Kitchen.mutex.synchronize do
             Chef::Librarian.new(cheffile, tmpbooks_dir, logger).resolve
           end
+
+          cp_site_cookbooks if File.directory?(site_cookbooks_dir)
         end
 
         # @return [String] an absolute path to a site-cookbooks/ directory,
