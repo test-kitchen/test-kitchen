@@ -79,7 +79,7 @@ module Kitchen
         )
         code = powershell_shell? ? %{& "#{script}"} : sudo(script)
 
-        wrap_shell_code(code)
+        prefix_command(wrap_shell_code(code))
       end
 
       private

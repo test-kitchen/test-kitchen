@@ -315,6 +315,14 @@ describe Kitchen::Provisioner::Shell do
         cmd.must_match regexify("/r/bootstrap.sh", :partial_line)
         cmd.wont_match regexify("sudo -E /r/bootstrap.sh", :partial_line)
       end
+
+      it "uses command_prefix for script when configured" do
+        config[:command_prefix] = "TEST=yes"
+        config[:root_path] = "/r"
+        config[:sudo] = false
+
+        cmd.must_match(/^TEST=yes/)
+      end
     end
 
     describe "for powershell shells on windows os types" do
