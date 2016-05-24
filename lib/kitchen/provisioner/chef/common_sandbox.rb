@@ -258,17 +258,21 @@ module Kitchen
         # @api private
         # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
-          if File.exist?(policyfile)
+          resolver = config[:preferred_resolver]
+          if File.exist?(policyfile) && (resolver.nil? || resolver == "policyfile")
             resolve_with_policyfile
-          elsif File.exist?(berksfile)
+          elsif File.exist?(berksfile) && (resolver.nil? || resolver == "berksfile")
             resolve_with_berkshelf
-          elsif File.exist?(cheffile)
+          elsif File.exist?(cheffile) && (resolver.nil? || resolver == "cheffile")
             resolve_with_librarian
             cp_site_cookbooks if File.directory?(site_cookbooks_dir)
-          elsif File.directory?(cookbooks_dir)
+          elsif File.directory?(cookbooks_dir) && (resolver.nil? || resolver == "directory")
             cp_cookbooks
-          elsif File.exist?(metadata_rb)
+          elsif File.exist?(metadata_rb) && (resolver.nil? || resolver == "metadata")
             cp_this_cookbook
+          elsif !resolver.nil?
+            raise(UserError, "Valid options for :preferred_resolver include: policyfile, " \
+                  "berksfile, cheffile, directory, or metadata.")
           else
             make_fake_cookbook
           end

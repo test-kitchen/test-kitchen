@@ -57,6 +57,12 @@ module Kitchen
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
+      # By default prepare_cookbooks will look for the existence of a policyfile, and
+      # then a berksfile, and then a cheffile, then a cookbooks directory, and then
+      # finally just for a metadata.rb to resolve cookbooks. This lets you optionally
+      # specify an option to override that resolution order (if you have a policyfile
+      # AND a berksfile but want berksfile for example).
+      default_config :preferred_resolver, nil
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
