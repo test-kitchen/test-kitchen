@@ -273,11 +273,25 @@ module Kitchen
           FileUtils.mkdir_p(File.join(sandbox_path, "cache"))
         end
 
+        # Validates config[:preferred_solver] is a valid resolver.
+        #
+        # @api private
+        def validate_preferred_resolver
+          # List of valid options for config[:preferred_resolver]. The empty string
+          # is the string version of nil, which is the default option.
+          resolvers = ["policyfile", "berksfile", "cheffile", "cookbooks_dir", "metadata_rb", ""]
+          if !resolvers.include?(config[:preferred_resolver].to_s)
+            raise(UserError, "Valid options for config[:preferred_resolver] are " \
+                  "#{resolvers.join(", ")}and nil")
+          end
+        end
+
         # Prepares Chef cookbooks for inclusion in the sandbox path.
         #
         # @api private
         # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
+          validate_preferred_resolver
           if File.exist?(policyfile)
             resolve_with_policyfile
           elsif File.exist?(berksfile)
