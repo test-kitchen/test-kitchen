@@ -57,6 +57,12 @@ module Kitchen
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
+      # By default prepare_cookbooks will look for the existence of a policyfile, and
+      # then a berksfile, and then a cheffile, then a cookbooks directory, and then
+      # finally just for a metadata.rb to resolve cookbooks. This lets you optionally
+      # specify an option to override that resolution order (if you have a policyfile
+      # AND a berksfile but want berksfile for example).
+      default_config :preferred_resolver, nil
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -167,22 +173,34 @@ module Kitchen
       #   kitchen root
       # @api private
       def policyfile
-        policyfile_basename = config[:policyfile_path] || "Policyfile.rb"
-        File.join(config[:kitchen_root], policyfile_basename)
+        if [nil, "policyfile", :policyfile].include?(config[:preferred_resolver])
+          basename = config[:policyfile_path] || "Policyfile.rb"
+          File.join(config[:kitchen_root], basename)
+        else
+          return ""
+        end
       end
 
       # @return [String] an absolute path to a Berksfile, relative to the
       #   kitchen root
       # @api private
       def berksfile
-        File.join(config[:kitchen_root], "Berksfile")
+        if [nil, "berksfile", :berksfile].include?(config[:preferred_resolver])
+          File.join(config[:kitchen_root], "Berksfile")
+        else
+          return ""
+        end
       end
 
       # @return [String] an absolute path to a Cheffile, relative to the
       #   kitchen root
       # @api private
       def cheffile
-        File.join(config[:kitchen_root], "Cheffile")
+        if [nil, "cheffile", :cheffile].include?(config[:preferred_resolver])
+          File.join(config[:kitchen_root], "Cheffile")
+        else
+          return ""
+        end
       end
 
       # Generates a Hash with default values for a solo.rb or client.rb Chef
