@@ -308,7 +308,8 @@ module Kitchen
         #
         # @api private
         def prepare_json
-          dna = if File.exist?(policyfile) && (config[:preferred_resolver].nil? || config[:preferred_resolver] == "policyfile")
+          dna = if File.exist?(policyfile) && (config[:preferred_resolver].nil? ||
+                                               config[:preferred_resolver] == "policyfile")
             update_dna_for_policyfile
           else
             config[:attributes].merge(:run_list => config[:run_list])

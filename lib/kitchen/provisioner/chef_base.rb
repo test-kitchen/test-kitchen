@@ -283,13 +283,16 @@ module Kitchen
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         super
-        if File.exist?(policyfile) && (config[:preferred_resolver].nil? || config[:preferred_resolver] == "policyfile")
+        if File.exist?(policyfile) && (config[:preferred_resolver].nil? ||
+                                       config[:preferred_resolver] == "policyfile")
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
           Chef::Policyfile.load!(logger)
-        elsif File.exist?(berksfile) && (config[:preferred_resolver].nil? || config[:preferred_resolver] == "berksfile")
+        elsif File.exist?(berksfile) && (config[:preferred_resolver].nil? ||
+                                         config[:preferred_resolver] == "berksfile")
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger)
-        elsif File.exist?(cheffile) && (config[:preferred_resolver].nil? || config[:preferred_resolver] == "cheffile")
+        elsif File.exist?(cheffile) && (config[:preferred_resolver].nil? ||
+                                        config[:preferred_resolver] == "cheffile")
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
         end
