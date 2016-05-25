@@ -258,19 +258,20 @@ module Kitchen
         # @api private
         # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
-          resolver_methods = { policyfile: resolve_with_policyfile,
-                               berksfile: resolve_with_berkshelf,
-                               cheffile: resolve_with_librarian,
-                               cookbooks_dir: cp_cookbooks,
-                               metadata_rb: cp_this_cookbook }
+          found_resolver = false
+          @resolver_methods = { policyfile: :resolve_with_policyfile,
+                                berksfile: :resolve_with_berkshelf,
+                                cheffile: :resolve_with_librarian,
+                                cookbooks_dir: :cp_cookbooks,
+                                metadata_rb: :cp_this_cookbook }
 
           if config[:preferred_resolver]
             prepare_cookbooks_with_preferred_resolver
+            found_resolver = true
           else
-            found_resolver = false
-            resolver_methods.each do |resolver, resolver_method|
+            @resolver_methods.each do |resolver, resolver_method|
               next unless File.exist?(self.send(resolver))
-              resolver_method
+              self.send(resolver_method)
               found_resolver = true
               break
             end
@@ -285,13 +286,20 @@ module Kitchen
         #
         # @api private
         def prepare_cookbooks_with_preferred_resolver
-          if resolver_methods.keys.include?(config[:preferred_resolver])
+          if config[:preferred_resolver].class == String
+            config[:preferred_resolver] = config[:preferred_resolver].to_sym
+          end
+          if @resolver_methods.keys.include?(config[:preferred_resolver])
             if File.exist?(self.send(config[:preferred_resolver]))
-              resolver_methods[config[:preferred_resolver]]
+              self.send(@resolver_methods[config[:preferred_resolver]])
+            else
+              raise(UserError, "Specified :preferred_resolver of " \
+                    "\"#{config[:preferred_resolver]}\", but " \
+                    "#{self.send(config[:preferred_resolver])} does not exist!")
             end
           else
             raise(UserError, "Valid options for :preferred_resolver include: " \
-                              "#{resolver_methods.keys.join(', ')}.")
+                  "#{@resolver_methods.keys.join(', ')}.")
           end
         end
 
@@ -300,7 +308,7 @@ module Kitchen
         #
         # @api private
         def prepare_json
-          dna = if File.exist?(policyfile)
+          dna = if File.exist?(policyfile) && (config[:preferred_resolver].nil? || config[:preferred_resolver] == "policyfile")
             update_dna_for_policyfile
           else
             config[:attributes].merge(:run_list => config[:run_list])
