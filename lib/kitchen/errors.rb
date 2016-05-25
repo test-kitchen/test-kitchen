@@ -43,15 +43,35 @@ module Kitchen
     #
     # @param exception [::StandardError] an exception
     # @return [Array<String>] a formatted message
-    def self.formatted_trace(exception)
-      arr = formatted_exception(exception).dup
-      last = arr.pop
+    def self.formatted_trace(exception, title = "Exception")
+      arr = formatted_exception(exception, title).dup
+      arr += formatted_backtrace(exception)
+
       if exception.respond_to?(:original) && exception.original
-        arr += formatted_exception(exception.original, "Nested Exception")
-        last = arr.pop
+        arr += if exception.original.is_a? Array
+          exception.original.map do |composite_exception|
+            formatted_trace(composite_exception, "Composite Exception").flatten
+          end
+        else
+          [
+            formatted_exception(exception.original, "Nested Exception"),
+            formatted_backtrace(exception)
+          ].flatten
+        end
       end
-      arr += ["Backtrace".center(22, "-"), exception.backtrace, last].flatten
-      arr
+      arr.flatten
+    end
+
+    def self.formatted_backtrace(exception)
+      if exception.backtrace.nil?
+        []
+      else
+        [
+          "Backtrace".center(22, "-"),
+          exception.backtrace,
+          "End Backtrace".center(22, "-")
+        ]
+      end
     end
 
     # Creates an array of strings, representing a formatted exception that
