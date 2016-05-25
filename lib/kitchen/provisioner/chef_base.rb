@@ -57,6 +57,12 @@ module Kitchen
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
+      # By default prepare_cookbooks will look for the existence of a policyfile, and
+      # then a berksfile, and then a cheffile, then a cookbooks directory, and then
+      # finally just for a metadata.rb to resolve cookbooks. This lets you optionally
+      # specify an option to override that resolution order (if you have a policyfile
+      # AND a berksfile but want berksfile for example).
+      default_config :preferred_resolver, nil
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -277,13 +283,16 @@ module Kitchen
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         super
-        if File.exist?(policyfile)
+        if File.exist?(policyfile) && (config[:preferred_resolver].nil? ||
+                                       config[:preferred_resolver] == "policyfile")
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
           Chef::Policyfile.load!(logger)
-        elsif File.exist?(berksfile)
+        elsif File.exist?(berksfile) && (config[:preferred_resolver].nil? ||
+                                         config[:preferred_resolver] == "berksfile")
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger)
-        elsif File.exist?(cheffile)
+        elsif File.exist?(cheffile) && (config[:preferred_resolver].nil? ||
+                                        config[:preferred_resolver] == "cheffile")
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
           Chef::Librarian.load!(logger)
         end
