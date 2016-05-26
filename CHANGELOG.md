@@ -1,5 +1,22 @@
 # Change Log
 
+## [1.9.0](https://github.com/test-kitchen/test-kitchen/tree/1.9.0) (2016-05-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.8.0...1.9.0)
+
+**Implemented enhancements:**
+
+- Buffer errors until the end of an action [\#1034](https://github.com/test-kitchen/test-kitchen/pull/1034) ([smurawski](https://github.com/smurawski))
+- Added ECOSYSTEM doc highlight all the core Test-Kitchen and community plugins. [\#1015](https://github.com/test-kitchen/test-kitchen/pull/1015) ([jjasghar](https://github.com/jjasghar))
+- Add kitchen-azurerm to list of community-provided drivers [\#1024](https://github.com/test-kitchen/test-kitchen/pull/1024) ([stuartpreston](https://github.com/stuartpreston))
+- uploads: reuse connections+disable compression [\#1023](https://github.com/test-kitchen/test-kitchen/pull/1023) ([lamont-granquist](https://github.com/lamont-granquist))
+
+**Fixed bugs:**
+
+- Use command\_prefix provided by Kitchen::Provisioner::Base in shell provisioner [\#1033](https://github.com/test-kitchen/test-kitchen/pull/1033) ([pstengel](https://github.com/pstengel))
+- Empty string for the config setting for proxies did not really work [\#1027](https://github.com/test-kitchen/test-kitchen/pull/1027) ([smurawski](https://github.com/smurawski))
+- Update `chef\_omnbius\_url` default value [\#1028](https://github.com/test-kitchen/test-kitchen/pull/1028) ([schisamo](https://github.com/schisamo))
+- Fix grammar in common\_sandbox warning message [\#1031](https://github.com/test-kitchen/test-kitchen/pull/1031) ([emachnic](https://github.com/emachnic))
+
 ## [1.8.0](https://github.com/test-kitchen/test-kitchen/tree/1.8.0) (2016-05-05)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.3...1.8.0)
 
