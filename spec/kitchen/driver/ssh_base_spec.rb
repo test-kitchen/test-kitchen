@@ -1076,8 +1076,7 @@ describe Kitchen::Driver::SSHBase do
     describe "#transfer_path" do
 
       let(:cmd)         { driver.use_transfer_path(state, ["nope"], "nadda") }
-      let(:channel)     { stub(:wait => true) }
-      let(:connection)  { stub(:upload_path! => true, :upload_path => channel) }
+      let(:connection)  { stub(:upload_path! => true) }
 
       before do
         state[:hostname] = "fizzy"
@@ -1100,14 +1099,14 @@ describe Kitchen::Driver::SSHBase do
 
       it "raises an ActionFailed on transfer when SSHFailed is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:upload_path).raises(Kitchen::SSHFailed.new("dang"))
+        connection.stubs(:upload_path!).raises(Kitchen::SSHFailed.new("dang"))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
 
       it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:upload_path).raises(Net::SSH::Exception.new("dang"))
+        connection.stubs(:upload_path!).raises(Net::SSH::Exception.new("dang"))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end

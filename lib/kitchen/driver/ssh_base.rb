@@ -19,7 +19,6 @@
 require "thor/util"
 
 require "kitchen/lazy_hash"
-require "benchmark"
 
 module Kitchen
 
@@ -292,13 +291,7 @@ module Kitchen
         return if locals.nil? || Array(locals).empty?
 
         info("Transferring files to #{instance.to_str}")
-        debug("TIMING: scp asynch upload (Kitchen::Driver::SSHBase)")
-        elapsed = Benchmark.measure do
-          waits = locals.map { |local| connection.upload_path(local, remote) }
-          waits.each(&:wait)
-        end
-        delta = Util.duration(elapsed.real)
-        debug("TIMING: scp async upload (Kitchen::Driver::SSHBase) took #{delta}")
+        locals.each { |local| connection.upload_path!(local, remote) }
         debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
