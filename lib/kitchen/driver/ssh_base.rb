@@ -222,7 +222,7 @@ module Kitchen
       # @param state [Hash] state hash
       # @return [Array] SSH constructor arguments
       # @api private
-      def build_ssh_args(state)
+      def build_ssh_args(state) # rubocop:disable Metrics/CyclomaticComplexity
         combined = config.to_hash.merge(state)
 
         opts = Hash.new
@@ -234,6 +234,7 @@ module Kitchen
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
+        opts[:gateway] = combined[:ssh_gateway] if combined[:ssh_gateway]
 
         [combined[:hostname], combined[:username], opts]
       end
@@ -266,6 +267,7 @@ module Kitchen
 
         env == "env" ? cmd : "#{env} #{cmd}"
       end
+      # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
 
       # Executes a remote command over SSH.
       #

@@ -18,6 +18,7 @@
 
 require "logger"
 require "net/ssh"
+require "net/ssh/gateway"
 require "net/scp"
 require "socket"
 
@@ -65,6 +66,7 @@ module Kitchen
       @username = username
       @options = options.dup
       @logger = @options.delete(:logger) || ::Logger.new(STDOUT)
+      @gateway = @options.delete(:gateway)
 
       if block_given?
         yield self
@@ -192,6 +194,10 @@ module Kitchen
     # @api private
     attr_reader :logger
 
+    # @return [String] Optional ssh gateway to use as a tunnel
+    # @api private
+    attr_reader :gateway
+
     # Builds the Net::SSH session connection or returns the existing one if
     # built.
     #
@@ -201,10 +207,23 @@ module Kitchen
       @session ||= establish_connection
     end
 
+    # Builds a Net::SSH:Gatway connection or returns the existing one if
+    # built.
+    #
+    # @return [Net::SSH::Gateway]
+    # @api private
+    def gateway_session
+      @gateway_session ||= if gateway
+        # Should support the gateway running on other than 22
+        Net::SSH::Gateway.new(gateway, username, options.merge(:port => 22))
+      end
+    end
+
     # Establish a connection session to the remote host.
     #
     # @return [Net::SSH::Connection::Session] the SSH connection session
     # @api private
+    # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
     def establish_connection
       rescue_exceptions = [
         Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
@@ -214,8 +233,13 @@ module Kitchen
       retries = options[:ssh_retries] || 3
 
       begin
-        logger.debug("[SSH] opening connection to #{self}")
-        Net::SSH.start(hostname, username, options)
+        if gateway
+          logger.debug("[SSH] opening connection to #{self} via #{gateway}")
+          gateway_session.ssh(hostname, username, options)
+        else
+          logger.debug("[SSH] opening connection to #{self}")
+          Net::SSH.start(hostname, username, options)
+        end
       rescue *rescue_exceptions => e
         retries -= 1
         if retries > 0
@@ -278,9 +302,24 @@ module Kitchen
     # @return [true,false] a truthy value if the socket is ready and false
     #   otherwise
     # @api private
-    def test_ssh
-      socket = TCPSocket.new(hostname, port)
-      IO.select([socket], nil, nil, 5)
+    def test_ssh # rubocop: disable Metrics/CyclomaticComplexity
+      if gateway
+        # Netcat through ssh gateway to check if remote is up
+        # This is really ugly - we should improve it in future.
+        Net::SSH.start(gateway, username, options.merge(:port => 22)) do |session|
+          session.open_channel do |channel|
+            channel.exec "nc -z -w2 #{hostname} #{port}" do |_, success|
+              raise Errno::EACCES unless success # Should be different error code?
+              channel.on_request("exit-status") do |_, data|
+                raise Errno::EACCES if data.read_long > 0 # Can't differentiate errors with nc
+              end
+            end
+          end
+        end
+      else
+        socket = TCPSocket.new(hostname, port)
+        IO.select([socket], nil, nil, 5)
+      end
     rescue *SOCKET_EXCEPTIONS
       sleep options[:ssh_timeout] || 2
       false
