@@ -365,7 +365,7 @@ module Kitchen
         log_level,
         options[:log_overwrite]
       )
-      
+
       update_parallel!
     end
 

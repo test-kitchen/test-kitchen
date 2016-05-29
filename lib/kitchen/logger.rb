@@ -54,8 +54,10 @@ module Kitchen
     #   messages (default: `"Kitchen"`)
     # @option options [IO] :stdout a standard out IO object to use
     #   (default: `$stdout`)
+    # @option options [Boolean] :colorize whether to colorize output
+    #   when Test Kitchen runs.
+    #   (default: `$stdout.tty?`)
     def initialize(options = {})
-      color = options[:color]
       @log_overwrite = if options[:log_overwrite].nil?
         default_log_overwrite
       else
@@ -64,7 +66,7 @@ module Kitchen
 
       @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
 
-      populate_loggers(color, options)
+      populate_loggers(options)
 
       # These setters cannot be called until @loggers are populated because
       # they are delegated
@@ -75,11 +77,11 @@ module Kitchen
     # Pulled out for Rubocop complexity issues
     #
     # @api private
-    def populate_loggers(color, options)
+    def populate_loggers(options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
-      @loggers << stdout_logger(options[:stdout], color, options[:colorize]) if options[:stdout]
-      @loggers << stdout_logger($stdout, color, options[:colorize]) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], options[:color], options[:colorize]) if options[:stdout]
+      @loggers << stdout_logger($stdout, options[:color], options[:colorize]) if @loggers.empty?
     end
     private :populate_loggers
 
@@ -286,6 +288,7 @@ module Kitchen
     #
     # @param stdout [IO] the IO object that represents stdout (or similar)
     # @param color [Symbol] color to use when outputing messages
+    # @param colorize [Boolean] whether to enable color
     # @return [StdoutLogger] a new logger
     # @api private
     def stdout_logger(stdout, color, colorize)

@@ -41,9 +41,14 @@ module Kitchen
       @data || Hash.new
     end
   end
+
 end
 
 describe Kitchen::Config do
+  # Explicitly enable tty to test colorize default option later
+  before do
+    Kitchen.stubs(:tty?).returns(true)
+  end
 
   let(:loader)  { Kitchen::DummyLoader.new }
   let(:config)  { Kitchen::Config.new(opts) }
@@ -55,7 +60,8 @@ describe Kitchen::Config do
       :log_root       => "/tmp/logs",
       :test_base_path => "/testing/yo",
       :log_level      => :debug,
-      :log_overwrite  => false
+      :log_overwrite  => false,
+      :colorize       => false
     }
   end
 
@@ -70,7 +76,8 @@ describe Kitchen::Config do
       :kitchen_root => "/tmp/that/place",
       :test_base_path => "/testing/yo",
       :log_level => :debug,
-      :log_overwrite  => false
+      :log_overwrite  => false,
+      :colorize => false
     }
   end
 
@@ -149,6 +156,19 @@ describe Kitchen::Config do
       opts.delete(:log_overwrite)
 
       config.log_overwrite.must_equal true
+    end
+  end
+
+  describe "#colorize" do
+
+    it "returns its colorize" do
+      config.colorize.must_equal false
+    end
+
+    it "uses true by default" do
+      opts.delete(:colorize)
+
+      config.colorize.must_equal true
     end
   end
 
@@ -339,7 +359,8 @@ describe Kitchen::Config do
         :logdev => "/tmp/logs/tiny-unax.log",
         :log_overwrite => false,
         :level => 0,
-        :progname => "tiny-unax"
+        :progname => "tiny-unax",
+        :colorize => false
       )
 
       config.instances
