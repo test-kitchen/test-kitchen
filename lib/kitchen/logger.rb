@@ -80,8 +80,10 @@ module Kitchen
     def populate_loggers(options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
-      @loggers << stdout_logger(options[:stdout], options[:color], options[:colorize]) if options[:stdout]
-      @loggers << stdout_logger($stdout, options[:color], options[:colorize]) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], options[:color], options[:colorize]) if
+        options[:stdout]
+      @loggers << stdout_logger($stdout, options[:color], options[:colorize]) if
+        @loggers.empty?
     end
     private :populate_loggers
 
