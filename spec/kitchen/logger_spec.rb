@@ -23,7 +23,6 @@ require "kitchen"
 describe Kitchen::Logger do
 
   before do
-    Kitchen.stubs(:tty?).returns(true)
     @orig_stdout = $stdout
     $stdout = StringIO.new
   end
@@ -37,7 +36,7 @@ describe Kitchen::Logger do
   end
 
   let(:opts) do
-    { :color => :red }
+    { :color => :red, :colorize => true }
   end
 
   let(:logger) do
@@ -110,7 +109,7 @@ describe Kitchen::Logger do
     end
 
     it "sets up a simple STDOUT logger by default with no color" do
-      Kitchen.stubs(:tty?).returns(false)
+      opts[:colorize] = false
       opts.delete(:stdout)
       logger.info("hello")
 
@@ -124,7 +123,7 @@ describe Kitchen::Logger do
     end
 
     it "accepts a :stdout option to redirect output with no color" do
-      Kitchen.stubs(:tty?).returns(false)
+      opts[:colorize] = false
       logger.info("hello")
 
       stdout.string.must_equal "       hello\n"
@@ -141,7 +140,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to banner with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.banner("yo")
 
         stdout.string.must_equal "-----> yo\n"
@@ -154,7 +153,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to debug with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.debug("yo")
 
         stdout.string.must_equal "D      yo\n"
@@ -167,7 +166,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to info with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.info("yo")
 
         stdout.string.must_equal "       yo\n"
@@ -180,7 +179,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to error with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.error("yo")
 
         stdout.string.must_equal ">>>>>> yo\n"
@@ -193,7 +192,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to warn with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.warn("yo")
 
         stdout.string.must_equal "$$$$$$ yo\n"
@@ -206,7 +205,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to fatal with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.fatal("yo")
 
         stdout.string.must_equal "!!!!!! yo\n"
@@ -219,7 +218,7 @@ describe Kitchen::Logger do
       end
 
       it "logs to unknown with no color" do
-        Kitchen.stubs(:tty?).returns(false)
+        opts[:colorize] = false
         logger.unknown("yo")
 
         stdout.string.must_equal "?????? yo\n"
