@@ -1,7 +1,7 @@
 # Change Log
 
-## [1.9.0](https://github.com/test-kitchen/test-kitchen/tree/1.9.0) (2016-05-26)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.8.0...1.9.0)
+## [1.9.0](https://github.com/test-kitchen/test-kitchen/tree/v1.9.0) (2016-05-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.8.0...v1.9.0)
 
 **Implemented enhancements:**
 
@@ -17,24 +17,24 @@
 - Update `chef\_omnbius\_url` default value [\#1028](https://github.com/test-kitchen/test-kitchen/pull/1028) ([schisamo](https://github.com/schisamo))
 - Fix grammar in common\_sandbox warning message [\#1031](https://github.com/test-kitchen/test-kitchen/pull/1031) ([emachnic](https://github.com/emachnic))
 
-## [1.8.0](https://github.com/test-kitchen/test-kitchen/tree/1.8.0) (2016-05-05)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.3...1.8.0)
+## [1.8.0](https://github.com/test-kitchen/test-kitchen/tree/v1.8.0) (2016-05-05)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.3...v1.8.0)
 
 **Implemented enhancements:**
 
 - Add native policyfile resolution support [\#1014](https://github.com/test-kitchen/test-kitchen/pull/1014) ([danielsdeleo](https://github.com/danielsdeleo))
 - Provide the option to run all winrm commands through a scheduled task [\#1012](https://github.com/test-kitchen/test-kitchen/pull/1012) ([mwrock](https://github.com/mwrock))
 
-## [1.7.3](https://github.com/test-kitchen/test-kitchen/tree/1.7.3) (2016-04-13)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.2...1.7.3)
+## [1.7.3](https://github.com/test-kitchen/test-kitchen/tree/v1.7.3) (2016-04-13)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.2...v1.7.3)
 
 **Fixed bugs:**
 
 - Test Kitchen on windows fails to upload data bags [\#1006](https://github.com/test-kitchen/test-kitchen/issues/1006)
 - Fixes busser install for older omnibus windows installs [\#1003](https://github.com/test-kitchen/test-kitchen/pull/1003) ([mwrock](https://github.com/mwrock))
 
-## [1.7.2](https://github.com/test-kitchen/test-kitchen/tree/1.7.2) (2016-04-07)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...1.7.2)
+## [1.7.2](https://github.com/test-kitchen/test-kitchen/tree/v1.7.2) (2016-04-07)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...v1.7.2)
 
 **Merged pull requests:**
 
