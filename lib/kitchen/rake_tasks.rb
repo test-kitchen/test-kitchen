@@ -31,7 +31,14 @@ module Kitchen
     #
     # @yield [self] gives itself to the block
     def initialize
-      @config = Kitchen::Config.new
+      @loader = Kitchen::Loader::YAML.new(
+        :project_config => ENV["KITCHEN_YAML"],
+        :local_config => ENV["KITCHEN_LOCAL_YAML"],
+        :global_config => ENV["KITCHEN_GLOBAL_YAML"]
+      )
+      @config = Kitchen::Config.new(
+        :loader => @loader
+      )
       Kitchen.logger = Kitchen.default_file_logger(nil, false)
       yield self if block_given?
       define
