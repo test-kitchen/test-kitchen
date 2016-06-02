@@ -15,10 +15,11 @@ receive a veto from the Lieutenant or the Project Lead.
 ## Maintainers
 
 * [Adam Leff](https://github.com/adamleff)
-* [Jennifer Davis](https://github.com/iennae)
-* [Matt Wrock](https://github.com/mwrock)
-* [Steven Murawski](http://github.com/smurawski)
 * [Chris Hartmann](https://github.com/chris-rock)
-* [Sean Omeara](http://github.com/someara)
-* [Robb Kidd](https://github.com/robbkidd)
+* [Jennifer Davis](https://github.com/iennae)
 * [Kimball Johnson](https://github.com/drrk)
+* [Lamont Granquist](https://github.com/lamont-granquist)
+* [Matt Wrock](https://github.com/mwrock)
+* [Robb Kidd](https://github.com/robbkidd)
+* [Sean Omeara](http://github.com/someara)
+* [Steven Murawski](http://github.com/smurawski)
