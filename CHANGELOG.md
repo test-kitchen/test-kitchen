@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.9.1](https://github.com/test-kitchen/test-kitchen/tree/v1.9.1) (2016-06-02)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.0...v1.9.1)
+
+**Implemented enhancements:**
+
+- Allow rake task to use env var [\#1046](https://github.com/test-kitchen/test-kitchen/pull/1046) ([smurawski](https://github.com/smurawski))
+- Add color options [\#1032](https://github.com/test-kitchen/test-kitchen/pull/1032) ([jorhett](https://github.com/jorhett))
+- Add support for SSH connection debugging. [\#990](https://github.com/test-kitchen/test-kitchen/pull/990) ([rhass](https://github.com/rhass))
+
 ## [1.9.0](https://github.com/test-kitchen/test-kitchen/tree/v1.9.0) (2016-05-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.8.0...v1.9.0)
 
