@@ -299,7 +299,7 @@ module Kitchen
           waits = []
           locals.map do |local|
             waits.push connection.upload_path(local, remote)
-            waits.shift.wait while waits.length >= ssh_sessions
+            waits.shift.wait while waits.length >= config[:ssh_sessions]
           end
           waits.each(&:wait)
         end
