@@ -54,7 +54,7 @@ module Kitchen
       default_config :sudo, true
       default_config :port, 22
       # needs to be one less than the configured sshd_config MaxSessions
-      default_config :ssh_sessions, 9
+      default_config :max_ssh_sessions, 9
 
       # Creates a new Driver object using the provided configuration data
       # which will be merged with any default configuration.
@@ -296,18 +296,22 @@ module Kitchen
         info("Transferring files to #{instance.to_str}")
         debug("TIMING: scp asynch upload (Kitchen::Driver::SSHBase)")
         elapsed = Benchmark.measure do
-          waits = []
-          locals.map do |local|
-            waits.push connection.upload_path(local, remote)
-            waits.shift.wait while waits.length >= config[:ssh_sessions]
-          end
-          waits.each(&:wait)
+          transfer_path_async(locals, remote, connection)
         end
         delta = Util.duration(elapsed.real)
         debug("TIMING: scp async upload (Kitchen::Driver::SSHBase) took #{delta}")
         debug("Transfer complete")
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
+      end
+
+      def transfer_path_async(locals, remote, connection)
+        waits = []
+        locals.map do |local|
+          waits.push connection.upload_path(local, remote)
+          waits.shift.wait while waits.length >= config[:max_ssh_sessions]
+        end
+        waits.each(&:wait)
       end
 
       # Blocks until a TCP socket is available where a remote SSH server

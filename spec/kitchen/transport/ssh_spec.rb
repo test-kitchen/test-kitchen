@@ -208,8 +208,8 @@ describe Kitchen::Transport::Ssh do
       transport[:ssh_key].must_equal os_safe_root_path("/rooty/my_key")
     end
 
-    it "sets :ssh_sessions to 9 by default" do
-      transport[:ssh_sessions].must_equal 9
+    it "sets :max_ssh_sessions to 9 by default" do
+      transport[:max_ssh_sessions].must_equal 9
     end
   end
 
@@ -652,7 +652,13 @@ describe Kitchen::Transport::Ssh::Connection do
   let(:conn)            { net_ssh_connection }
 
   let(:options) do
-    { :logger => logger, :username => "me", :hostname => "foo", :port => 22, :ssh_sessions => 9 }
+    {
+      :logger => logger,
+      :username => "me",
+      :hostname => "foo",
+      :port => 22,
+      :max_ssh_sessions => 9
+    }
   end
 
   let(:connection) do
