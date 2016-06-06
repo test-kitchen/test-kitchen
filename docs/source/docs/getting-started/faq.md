@@ -86,3 +86,13 @@ You can edit the `.kitchen.yml` with a `transport` option, for instance:
 transport:
   username: ubuntu
 ```
+
+### I need to set up a cache or proxy using Vagrant, what are some options for me?
+
+So there are a few things that already exist that sort of cover this in the kitchen world:
+
+- the system level ENV proxies that can be passed through
+- Example of using [polipo](https://www.irif.univ-paris-diderot.fr/~jch/software/polipo/) locally https://gist.github.com/fnichol/7551540
+- vagrant cachier https://github.com/fgrehm/vagrant-cachier
+
+For the system level proxies and the polipo/squid locally you don't need to do much but you'll still need to edit the conf files for yum/apt as appropriate. Vagrant-cachier requires a custom vagrantfile_erb at this point but we've had lots of interest in automatically enabling it if present or at the very least making it a toggleable option.
