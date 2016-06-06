@@ -207,6 +207,10 @@ describe Kitchen::Transport::Ssh do
 
       transport[:ssh_key].must_equal os_safe_root_path("/rooty/my_key")
     end
+
+    it "sets :max_ssh_sessions to 9 by default" do
+      transport[:max_ssh_sessions].must_equal 9
+    end
   end
 
   describe "#connection" do
@@ -648,7 +652,13 @@ describe Kitchen::Transport::Ssh::Connection do
   let(:conn)            { net_ssh_connection }
 
   let(:options) do
-    { :logger => logger, :username => "me", :hostname => "foo", :port => 22 }
+    {
+      :logger => logger,
+      :username => "me",
+      :hostname => "foo",
+      :port => 22,
+      :max_ssh_sessions => 9
+    }
   end
 
   let(:connection) do
@@ -1039,21 +1049,6 @@ describe Kitchen::Transport::Ssh::Connection do
           connection.upload(src.path, "/tmp/remote")
         end
       end
-
-      it "logs upload progress to debug" do
-        assert_scripted do
-          connection.upload(src.path, "/tmp/remote")
-        end
-
-        logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
-        )
-        logged_output.string.lines.count { |l|
-          l =~ debug_line(
-            "Async Uploaded #{src.path} (1234 bytes)"
-          )
-        }.must_equal 1
-      end
     end
 
     describe "for a path" do
@@ -1111,31 +1106,6 @@ describe Kitchen::Transport::Ssh::Connection do
         with_sorted_dir_entries do
           assert_scripted { connection.upload(@dir, "/tmp/remote") }
         end
-      end
-
-      it "logs upload progress to debug" do
-        with_sorted_dir_entries do
-          assert_scripted { connection.upload(@dir, "/tmp/remote") }
-        end
-
-        logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
-        )
-        logged_output.string.lines.count { |l|
-          l =~ debug_line(
-            "Async Uploaded #{@dir}/alpha (15 bytes)"
-          )
-        }.must_equal 1
-        logged_output.string.lines.count { |l|
-          l =~ debug_line(
-            "Async Uploaded #{@dir}/subdir/beta (14 bytes)"
-          )
-        }.must_equal 1
-        logged_output.string.lines.count { |l|
-          l =~ debug_line(
-            "Async Uploaded #{@dir}/zulu (14 bytes)"
-          )
-        }.must_equal 1
       end
     end
 

@@ -46,6 +46,8 @@ module Kitchen
       default_config :username, "root"
       default_config :keepalive, true
       default_config :keepalive_interval, 60
+      # needs to be one less than the configured sshd_config MaxSessions
+      default_config :max_ssh_sessions, 9
       default_config :connection_timeout, 15
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
@@ -149,12 +151,14 @@ module Kitchen
         def upload(locals, remote)
           logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
           elapsed = Benchmark.measure do
-            waits = Array(locals).map do |local|
+            waits = []
+            Array(locals).map do |local|
               opts = File.directory?(local) ? { :recursive => true } : {}
 
-              session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
+              waits.push session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
                 logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
               end
+              waits.shift.wait while waits.length >= max_ssh_sessions
             end
             waits.each(&:wait)
           end
@@ -186,6 +190,10 @@ module Kitchen
           Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout,
           Timeout::Error
         ].freeze
+
+        # @return [Integer] cap on number of parallel ssh sessions we can use
+        # @api private
+        attr_reader :max_ssh_sessions
 
         # @return [Integer] how many times to retry when failing to execute
         #   a command or transfer files
@@ -286,6 +294,7 @@ module Kitchen
           @port                   = @options[:port] # don't delete from options
           @connection_retries     = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
+          @max_ssh_sessions       = @options.delete(:max_ssh_sessions)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
         end
 
@@ -335,6 +344,7 @@ module Kitchen
           :timeout                => data[:connection_timeout],
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
+          :max_ssh_sessions       => data[:max_ssh_sessions],
           :max_wait_until_ready   => data[:max_wait_until_ready]
         }
 
