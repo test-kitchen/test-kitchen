@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.9.2](https://github.com/test-kitchen/test-kitchen/tree/v1.9.2) (2016-06-09)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.1...v1.9.2)
+
+**Implemented enhancements:**
+
+- add max scp session handling [\#1047](https://github.com/test-kitchen/test-kitchen/pull/1047) ([lamont-granquist](https://github.com/lamont-granquist))
+
+**Fixed bugs:**
+
+- Message: SCP upload failed \(open failed \(1\)\) [\#1035](https://github.com/test-kitchen/test-kitchen/issues/1035)
+
 ## [v1.9.1](https://github.com/test-kitchen/test-kitchen/tree/v1.9.1) (2016-06-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.0...v1.9.1)
 
