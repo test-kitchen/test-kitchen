@@ -1055,6 +1055,71 @@ POLICYFILE
             end
           end
         end
+        describe "with a fallback policyfile" do
+
+          let(:config) do
+            {
+              :policyfile => "foo-policy.rb",
+              :test_base_path => "/basist",
+              :kitchen_root => "/rooty"
+            }
+          end
+
+          before do
+            Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+            Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
+            provisioner.stubs(:supports_policyfile?).returns(true)
+          end
+
+          describe "when the policyfile exists" do
+
+            let(:policyfile_path) { "#{kitchen_root}/foo-policy.rb" }
+            let(:policyfile_lock_path) { "#{kitchen_root}/foo-policy.lock.json" }
+
+            before do
+              File.open(policyfile_path, "wb") do |file|
+                file.write(<<-POLICYFILE)
+name 'wat'
+run_list 'wat'
+cookbook 'wat'
+POLICYFILE
+              end
+              File.open(policyfile_lock_path, "wb") do |file|
+                file.write(<<-POLICYFILE)
+{
+  "name": "wat"
+}
+POLICYFILE
+              end
+            end
+
+            it "uses uses the policyfile to resolve dependencies" do
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+              resolver.expects(:resolve)
+
+              provisioner.create_sandbox
+            end
+
+            it "passes the correct path to the policyfile resolver" do
+              Kitchen::Provisioner::Chef::Policyfile.
+                expects(:new).
+                with(policyfile_path, instance_of(String), anything).
+                returns(resolver)
+
+              Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+              resolver.expects(:resolve)
+
+              provisioner.create_sandbox
+            end
+          end
+          describe "when the policyfile doesn't exist" do
+
+            it "raises a UserError" do
+              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+            end
+
+          end
+        end
       end
 
       describe "with a Berksfile under kitchen_root" do

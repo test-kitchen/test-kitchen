@@ -92,7 +92,7 @@ module Kitchen
         #   kitchen root
         # @api private
         def policyfile
-          basename = config[:policyfile_path] || "Policyfile.rb"
+          basename = config[:policyfile_path] || config[:policyfile] || "Policyfile.rb"
           File.join(config[:kitchen_root], basename)
         end
 
