@@ -92,29 +92,45 @@ module Kitchen
         #   kitchen root
         # @api private
         def policyfile
-          basename = config[:policyfile_path] || "Policyfile.rb"
-          File.join(config[:kitchen_root], basename)
+          if [nil, "policyfile", :policyfile].include?(config[:preferred_resolver])
+            basename = config[:policyfile_path] || "Policyfile.rb"
+            File.join(config[:kitchen_root], basename)
+          else
+            return ""
+          end
         end
 
         # @return [String] an absolute path to a Berksfile, relative to the
         #   kitchen root
         # @api private
         def berksfile
-          File.join(config[:kitchen_root], "Berksfile")
+          if [nil, "berksfile", :berksfile].include?(config[:preferred_resolver])
+            File.join(config[:kitchen_root], "Berksfile")
+          else
+            return ""
+          end
         end
 
         # @return [String] an absolute path to a Cheffile, relative to the
         #   kitchen root
         # @api private
         def cheffile
-          File.join(config[:kitchen_root], "Cheffile")
+          if [nil, "cheffile", :cheffile].include?(config[:preferred_resolver])
+            File.join(config[:kitchen_root], "Cheffile")
+          else
+            return ""
+          end
         end
 
         # @return [String] an absolute path to a cookbooks/ directory, relative
         #   to the kitchen root
         # @api private
         def cookbooks_dir
-          File.join(config[:kitchen_root], "cookbooks")
+          if [nil, "cookbooks_dir", :cookbooks_dir].include?(config[:preferred_resolver])
+            File.join(config[:kitchen_root], "cookbooks")
+          else
+            return ""
+          end
         end
 
         # Copies a cookbooks/ directory into the sandbox path.
@@ -197,7 +213,11 @@ module Kitchen
         #   kitchen root
         # @api private
         def metadata_rb
-          File.join(config[:kitchen_root], "metadata.rb")
+          if [nil, "metadata_rb", :metadata_rb].include?(config[:preferred_resolver])
+            File.join(config[:kitchen_root], "metadata.rb")
+          else
+            return ""
+          end
         end
 
         # Generates a list of all typical cookbook files needed in a Chef run,
@@ -253,11 +273,25 @@ module Kitchen
           FileUtils.mkdir_p(File.join(sandbox_path, "cache"))
         end
 
+        # Validates config[:preferred_solver] is a valid resolver.
+        #
+        # @api private
+        def validate_preferred_resolver
+          # List of valid options for config[:preferred_resolver]. The empty string
+          # is the string version of nil, which is the default option.
+          resolvers = ["policyfile", "berksfile", "cheffile", "cookbooks_dir", "metadata_rb", ""]
+          if !resolvers.include?(config[:preferred_resolver].to_s)
+            raise(UserError, "Valid options for config[:preferred_resolver] are " \
+                  "#{resolvers.join(", ")}and nil")
+          end
+        end
+
         # Prepares Chef cookbooks for inclusion in the sandbox path.
         #
         # @api private
         # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         def prepare_cookbooks
+          validate_preferred_resolver
           if File.exist?(policyfile)
             resolve_with_policyfile
           elsif File.exist?(berksfile)

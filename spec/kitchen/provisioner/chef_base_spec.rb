@@ -101,6 +101,10 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:cookbook_files_glob].must_match %r{,recipes/}
     end
 
+    it ":preferred_resolver defaults to nil" do
+      provisioner[:preferred_resolver].must_equal nil
+    end
+
     it ":data_path uses calculate_path and is expanded" do
       provisioner[:data_path].
         must_equal os_safe_root_path("/rooty/<calculated>/data")
@@ -134,6 +138,245 @@ describe Kitchen::Provisioner::ChefBase do
     it "...secret_key_path uses calculate_path and is expanded" do
       provisioner[:encrypted_data_bag_secret_key_path].
         must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
+    end
+  end
+
+  describe "#load_needed_dependencies!" do
+
+    describe "#load_cookbook_dependency_resolver!" do
+
+      before do
+        @policyfile = "/rooty/Policyfile.rb"
+        @berksfile = "/rooty/Berksfile"
+        @cheffile = "/rooty/Cheffile"
+
+        if defined?(ChefConfig)
+          provisioner.stubs(:defined?).
+            with(ChefConfig::WorkstationConfigLoader).
+            returns(false)
+        end
+      end
+
+      describe "with a nil value for config[:preferred_resolver]" do
+
+        let(:config) do
+          { :test_base_path => "/basist",
+            :kitchen_root => "/rooty",
+            :preferred_resolver => nil
+          }
+        end
+
+        describe "when a Policyfile exists" do
+
+          it "loads Kitchen::Provisioner::Chef::Policyfile" do
+            ::File.stubs(:exist?).with(@policyfile).returns(true)
+            ::File.stubs(:exist?).with(@berksfile).returns(false)
+            ::File.stubs(:exist?).with(@cheffile).returns(false)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!)
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!).never
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Berksfile exists" do
+          it "loads Kitchen::Provisioner::Chef::Berkshelf" do
+            ::File.stubs(:exist?).with(@policyfile).returns(false)
+            ::File.stubs(:exist?).with(@berksfile).returns(true)
+            ::File.stubs(:exist?).with(@cheffile).returns(false)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!).never
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!)
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Cheffile exists" do
+          it "loads Kitchen::Provisioner::Chef::Librarian" do
+            ::File.stubs(:exist?).with(@policyfile).returns(false)
+            ::File.stubs(:exist?).with(@berksfile).returns(false)
+            ::File.stubs(:exist?).with(@cheffile).returns(true)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!).never
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!).never
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!)
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Policyfile and a Berksfile and a Cheffile do exist" do
+
+          it "loads Kitchen::Provisioner::Chef::Policyfile" do
+            ::File.stubs(:exist?).with(@policyfile).returns(true)
+            ::File.stubs(:exist?).with(@berksfile).returns(true)
+            ::File.stubs(:exist?).with(@cheffile).returns(true)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!)
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!).never
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Berksfile and a Cheffile exist" do
+
+          it "does not load Kitchen::Provisioner::Chef::Berkshelf" do
+            ::File.stubs(:exist?).with(@policyfile).returns(false)
+            ::File.stubs(:exist?).with(@berksfile).returns(true)
+            ::File.stubs(:exist?).with(@cheffile).returns(true)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!).never
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!)
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+      end
+
+      describe "with a policyfile for config[:preferred_resolver]" do
+
+        let(:config) do
+          { :test_base_path => "/basist",
+            :kitchen_root => "/rooty",
+            :preferred_resolver => "policyfile"
+          }
+        end
+
+        describe "when a Policyfile exists" do
+
+          it "loads Kitchen::Provisioner::Chef::Policyfile" do
+            ::File.expects(:exist?).with(@policyfile).returns(true)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!)
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Berksfile exists" do
+          it "does not load Kitchen::Provisioner::Chef::Berkshelf" do
+            ::File.expects(:exist?).with(@policyfile).returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Cheffile exists" do
+          it "does not load Kitchen::Provisioner::Chef::Librarian" do
+            ::File.expects(:exist?).with(@policyfile).returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+      end
+
+      describe "with a berksfile for config[:preferred_resolver]" do
+
+        let(:config) do
+          { :test_base_path => "/basist",
+            :kitchen_root => "/rooty",
+            :preferred_resolver => "berksfile"
+          }
+        end
+
+        describe "when a Policyfile exists" do
+
+          it "does not load Kitchen::Provisioner::Chef::Policyfile" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@berksfile).returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Berksfile exists" do
+          it "loads Kitchen::Provisioner::Chef::Berkshelf" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@berksfile).returns(true)
+
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!)
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Cheffile exists" do
+          it "does not load Kitchen::Provisioner::Chef::Librarian" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@berksfile).returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+      end
+
+      describe "with a cheffile for config[:preferred_resolver]" do
+
+        let(:config) do
+          { :test_base_path => "/basist",
+            :kitchen_root => "/rooty",
+            :preferred_resolver => "cheffile"
+          }
+        end
+
+        describe "when a Policyfile exists" do
+
+          it "does not load Kitchen::Provisioner::Chef::Policyfile" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@cheffile).returns(false)
+
+            Kitchen::Provisioner::Chef::Policyfile.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Berksfile exists" do
+          it "loads Kitchen::Provisioner::Chef::Berkshelf" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@cheffile).returns(false)
+
+            Kitchen::Provisioner::Chef::Berkshelf.expects(:load!).never
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+
+        describe "when a Cheffile exists" do
+          it "does not load Kitchen::Provisioner::Chef::Librarian" do
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with("").returns(false)
+            ::File.expects(:exist?).with(@cheffile).returns(true)
+
+            Kitchen::Provisioner::Chef::Librarian.expects(:load!)
+
+            provisioner.send(:load_cookbook_dependency_resolver!)
+          end
+        end
+      end
     end
   end
 
