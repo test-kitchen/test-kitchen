@@ -169,11 +169,15 @@ module Kitchen
         end
       end
 
+      def preferred_resolver
+        config[:preferred_resolver]
+      end
+
       # @return [String] an absolute path to a Policyfile, relative to the
       #   kitchen root
       # @api private
       def policyfile
-        if [nil, "policyfile", :policyfile].include?(config[:preferred_resolver])
+        if [nil, "policyfile", :policyfile].include?(preferred_resolver)
           basename = config[:policyfile_path] || "Policyfile.rb"
           File.join(config[:kitchen_root], basename)
         else
@@ -185,7 +189,7 @@ module Kitchen
       #   kitchen root
       # @api private
       def berksfile
-        if [nil, "berksfile", :berksfile].include?(config[:preferred_resolver])
+        if [nil, "berksfile", :berksfile].include?(preferred_resolver)
           File.join(config[:kitchen_root], "Berksfile")
         else
           return ""
@@ -196,7 +200,7 @@ module Kitchen
       #   kitchen root
       # @api private
       def cheffile
-        if [nil, "cheffile", :cheffile].include?(config[:preferred_resolver])
+        if [nil, "cheffile", :cheffile].include?(preferred_resolver)
           File.join(config[:kitchen_root], "Cheffile")
         else
           return ""
@@ -290,11 +294,14 @@ module Kitchen
         ].join("\n")
       end
 
-      # Load cookbook dependency resolver code, if required.
-      #
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         super
+        load_cookbook_dependency_resolver!
+      end
+
+      # Load cookbook dependency resolver code, if required.
+      def load_cookbook_dependency_resolver!
         if File.exist?(policyfile)
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
           Chef::Policyfile.load!(logger)
