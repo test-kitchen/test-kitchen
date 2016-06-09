@@ -54,6 +54,8 @@ module Kitchen
       default_config :log_file, nil
       default_config :log_level, "auto"
       default_config :profile_ruby, false
+      # The older policyfile_zero used `policyfile` so support it for compat.
+      default_config :policyfile, nil
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
@@ -167,7 +169,7 @@ module Kitchen
       #   kitchen root
       # @api private
       def policyfile
-        policyfile_basename = config[:policyfile_path] || "Policyfile.rb"
+        policyfile_basename = config[:policyfile_path] || config[:policyfile] || "Policyfile.rb"
         File.join(config[:kitchen_root], policyfile_basename)
       end
 
@@ -350,7 +352,7 @@ module Kitchen
       # @raise [UserError]
       # @api private
       def sanity_check_sandbox_options!
-        if config[:policyfile_path] && !File.exist?(policyfile)
+        if (config[:policyfile_path] || config[:policyfile]) && !File.exist?(policyfile)
           raise UserError, "policyfile_path set in config "\
             "(#{config[:policyfile_path]} could not be found. " \
             "Expected to find it at full path #{policyfile} " \
