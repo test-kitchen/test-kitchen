@@ -34,6 +34,7 @@ module Kitchen
 
       default_config :retry_on_exit_code, nil
       default_config :max_retries, nil
+      default_config :wait_for_retry, nil
 
       default_config :root_path do |provisioner|
         provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
@@ -62,6 +63,7 @@ module Kitchen
       #
       # @param state [Hash] mutable instance state
       # @raise [ActionFailed] if the action could not be completed
+      # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
         sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
@@ -73,7 +75,12 @@ module Kitchen
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
           conn.execute(prepare_command)
-          conn.execute_with_retry(run_command, config[:retry_on_exit_code], config[:max_retries])
+          conn.execute_with_retry(
+            run_command,
+            config[:retry_on_exit_code],
+            config[:max_retries],
+            config[:wait_for_retry]
+          )
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message

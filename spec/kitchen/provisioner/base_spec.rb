@@ -194,7 +194,7 @@ describe Kitchen::Provisioner::Base do
       connection.expects(:execute).with("install").in_sequence(order)
       connection.expects(:execute).with("init").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
-      connection.expects(:execute_with_retry).with("run", nil, nil).in_sequence(order)
+      connection.expects(:execute_with_retry).with("run", nil, nil, nil).in_sequence(order)
 
       cmd
     end

@@ -113,11 +113,11 @@ describe Kitchen::Transport::Base::Connection do
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
     it "raises ClientError with no retries" do
-      proc { connection.execute_with_retry("hi") }.
+      proc { connection.execute_with_retry("hi", [], nil, nil) }.
         must_raise Kitchen::ClientError
     end
 
-    it "retries three times by default" do
+    it "retries three times" do
       connection.expects(:execute).with("Hi").returns("Hello")
       connection.expects(:debug).with("Attempting to execute command - try 3 of 3.")
       connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
@@ -125,7 +125,7 @@ describe Kitchen::Transport::Base::Connection do
       connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
       connection.expects(:debug).with("Attempting to execute command - try 1 of 3.")
 
-      connection.execute_with_retry("Hi", [123]).must_equal "Hello"
+      connection.execute_with_retry("Hi", [123], 3, 1).must_equal "Hello"
     end
   end
 end

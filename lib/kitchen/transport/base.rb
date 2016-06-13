@@ -114,16 +114,21 @@ module Kitchen
         # @raise [TransportFailed] if the command does not exit successfully,
         #   which may vary by implementation
         # rubocop:disable Lint/UnusedMethodArgument
-        def execute_with_retry(command, retryable_exit_codes = [], max_retries = nil)
+        def execute_with_retry(command, retryable_exit_codes = [], max_retries, wait_time)
           max_retries = 3 if max_retries.nil?
+          wait_time = 30 if wait_time.nil?
           tries = 0
           begin
             tries += 1
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
           rescue Kitchen::Transport::TransportFailed => e
-            retry if (tries < max_retries) && (retryable_exit_codes.include? e.exit_code)
-            raise e
+            if (tries < max_retries) && (retryable_exit_codes.include? e.exit_code)
+              sleep wait_time
+              retry
+            else
+              raise e
+            end
           end
         end
 
