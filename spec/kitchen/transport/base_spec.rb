@@ -54,6 +54,27 @@ describe Kitchen::Transport::Base do
       transport.send(:logger).must_equal Kitchen.logger
     end
   end
+
+  describe Kitchen::Transport::TransportFailed do
+    
+    let(:failure_with_no_exit_code) { Kitchen::Transport::TransportFailed.new("Boom") }
+    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
+
+    describe "when no exit code is provided" do
+
+      it "#exit_code is nil" do
+        failure_with_no_exit_code.exit_code.must_be_nil
+      end
+    end
+
+    describe "when an exit code is provided" do
+
+      it "#exit_code returns the supplied exit code" do
+        failure_with_exit_code.exit_code.must_equal 123
+      end
+    end
+  end
+
 end
 
 describe Kitchen::Transport::Base::Connection do

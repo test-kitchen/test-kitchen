@@ -105,8 +105,10 @@ module Kitchen
             log_stderr_on_warn(stderr)
           elsif exit_code != 0
             log_stderr_on_warn(stderr)
-            raise Transport::WinrmFailed,
-              "WinRM exited (#{exit_code}) for command: [#{command}]"
+            raise Transport::WinrmFailed.new(
+              "WinRM exited (#{exit_code}) for command: [#{command}]",
+              exit_code
+            )
           end
         end
 

@@ -28,7 +28,14 @@ module Kitchen
     # Wrapped exception for any internally raised Transport errors.
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
-    class TransportFailed < TransientFailure; end
+    class TransportFailed < TransientFailure
+      attr_reader :exit_code
+
+      def initialize(message, exit_code = nil)
+        @exit_code = exit_code
+        super(message)
+      end
+    end
 
     # Base class for a transport.
     #

@@ -900,6 +900,14 @@ describe Kitchen::Transport::Ssh::Connection do
         }.must_raise Kitchen::Transport::SshFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
+
+      it "returns the exit code with an SshFailed exception" do
+        begin
+          connection.execute("doit")
+        rescue Kitchen::Transport::SshFailed => e
+          e.exit_code.must_equal 42
+        end
+      end
     end
 
     describe "for an interrupted command" do
