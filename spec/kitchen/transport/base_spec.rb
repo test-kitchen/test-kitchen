@@ -56,7 +56,7 @@ describe Kitchen::Transport::Base do
   end
 
   describe Kitchen::Transport::TransportFailed do
-    
+
     let(:failure_with_no_exit_code) { Kitchen::Transport::TransportFailed.new("Boom") }
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
@@ -106,5 +106,26 @@ describe Kitchen::Transport::Base::Connection do
 
   it "has a #wait_until_ready method that does nothing" do
     connection.wait_until_ready.must_be_nil
+  end
+
+  describe "#execute_with_retry" do
+
+    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
+
+    it "raises ClientError with no retries" do
+      proc { connection.execute_with_retry("hi") }.
+        must_raise Kitchen::ClientError
+    end
+
+    it "retries three times by default" do
+      connection.expects(:execute).with("Hi").returns("Hello")
+      connection.expects(:debug).with("Attempting to execute command - try 3 of 3.")
+      connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
+      connection.expects(:debug).with("Attempting to execute command - try 2 of 3.")
+      connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
+      connection.expects(:debug).with("Attempting to execute command - try 1 of 3.")
+
+      connection.execute_with_retry("Hi", [123]).must_equal "Hello"
+    end
   end
 end

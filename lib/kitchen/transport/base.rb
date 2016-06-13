@@ -108,6 +108,25 @@ module Kitchen
           raise ClientError, "#{self.class}#execute must be implemented"
         end
 
+        # Execute a command on the remote host and retry
+        #
+        # @param command [String] command string to execute
+        # @raise [TransportFailed] if the command does not exit successfully,
+        #   which may vary by implementation
+        # rubocop:disable Lint/UnusedMethodArgument
+        def execute_with_retry(command, retryable_exit_codes = [], max_retries = nil)
+          max_retries = 3 if max_retries.nil?
+          tries = 0
+          begin
+            tries += 1
+            debug("Attempting to execute command - try #{tries} of #{max_retries}.")
+            execute(command)
+          rescue Kitchen::Transport::TransportFailed => e
+            retry if (tries < max_retries) && (retryable_exit_codes.include? e.exit_code)
+            raise e
+          end
+        end
+
         # Builds a LoginCommand which can be used to open an interactive
         # session on the remote host.
         #
