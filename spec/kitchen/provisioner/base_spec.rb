@@ -157,6 +157,7 @@ describe Kitchen::Provisioner::Base do
       FileUtils.mkdir_p(File.join(provisioner.sandbox_path, "stuff"))
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute)
+      connection.stubs(:execute_with_retry)
       connection.stubs(:upload)
     end
 
@@ -193,7 +194,7 @@ describe Kitchen::Provisioner::Base do
       connection.expects(:execute).with("install").in_sequence(order)
       connection.expects(:execute).with("init").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
-      connection.expects(:execute).with("run").in_sequence(order)
+      connection.expects(:execute_with_retry).with("run", nil, nil).in_sequence(order)
 
       cmd
     end

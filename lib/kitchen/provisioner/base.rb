@@ -32,6 +32,9 @@ module Kitchen
       default_config :https_proxy, nil
       default_config :ftp_proxy, nil
 
+      default_config :retry_on_exit_code, nil
+      default_config :max_retries, nil
+
       default_config :root_path do |provisioner|
         provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
       end
@@ -70,7 +73,7 @@ module Kitchen
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
           conn.execute(prepare_command)
-          conn.execute(run_command)
+          conn.execute_with_retry(run_command, config[:retry_on_exit_code], config[:max_retries])
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
