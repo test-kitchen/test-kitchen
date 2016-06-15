@@ -115,7 +115,7 @@ module Kitchen
         #   which may vary by implementation
         # rubocop:disable Lint/UnusedMethodArgument
         def execute_with_retry(command, retryable_exit_codes = [], max_retries, wait_time)
-          max_retries = 3 if max_retries.nil?
+          max_retries = 1 if max_retries.nil?
           wait_time = 30 if wait_time.nil?
           tries = 0
           begin
@@ -123,7 +123,10 @@ module Kitchen
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
           rescue Kitchen::Transport::TransportFailed => e
-            if (tries < max_retries) && (retryable_exit_codes.include? e.exit_code)
+            if (tries <= max_retries) &&
+                !retryable_exit_codes.nil? &&
+                (retryable_exit_codes.include? e.exit_code)
+              close
               sleep wait_time
               retry
             else
