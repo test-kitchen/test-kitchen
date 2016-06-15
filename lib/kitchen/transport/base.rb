@@ -61,7 +61,8 @@ module Kitchen
       # @param state [Hash] mutable instance state
       # @return [Connection] a connection for this transport
       # @raise [TransportFailed] if a connection could not be returned
-      def connection(state) # rubocop:disable Lint/UnusedMethodArgument
+      # rubocop:disable Lint/UnusedMethodArgument
+      def connection(state)
         raise ClientError, "#{self.class}#connection must be implemented"
       end
 
@@ -104,16 +105,18 @@ module Kitchen
         # @param command [String] command string to execute
         # @raise [TransportFailed] if the command does not exit successfully,
         #   which may vary by implementation
-        def execute(command) # rubocop:disable Lint/UnusedMethodArgument
+        def execute(command)
           raise ClientError, "#{self.class}#execute must be implemented"
         end
 
         # Execute a command on the remote host and retry
         #
         # @param command [String] command string to execute
+        # @param retryable_exit_codes [Array] Array of exit codes to retry against
+        # @param max_retries [Fixnum] maximum number of retry attempts
+        # @param wait_time [Fixnum] number of seconds to wait before retrying command
         # @raise [TransportFailed] if the command does not exit successfully,
         #   which may vary by implementation
-        # rubocop:disable Lint/UnusedMethodArgument
         def execute_with_retry(command, retryable_exit_codes = [], max_retries, wait_time)
           max_retries = 1 if max_retries.nil?
           wait_time = 30 if wait_time.nil?
@@ -123,9 +126,7 @@ module Kitchen
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
           rescue Kitchen::Transport::TransportFailed => e
-            if (tries <= max_retries) &&
-                !retryable_exit_codes.nil? &&
-                (retryable_exit_codes.include? e.exit_code)
+            if retry? tries, max_retries, retryable_exit_codes, e.exit_code
               close
               sleep wait_time
               retry
@@ -133,6 +134,12 @@ module Kitchen
               raise e
             end
           end
+        end
+
+        def retry?(current_try, max_retries, retryable_exit_codes, exit_code)
+          current_try <= max_retries &&
+            !retryable_exit_codes.nil? &&
+            retryable_exit_codes.include?(exit_code)
         end
 
         # Builds a LoginCommand which can be used to open an interactive

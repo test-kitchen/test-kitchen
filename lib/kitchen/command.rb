@@ -176,14 +176,19 @@ module Kitchen
           end
         end
         threads.map(&:join)
+        report_errors
+      end
+
+      # private
+
+      def report_errors
         unless @action_errors.empty?
           msg = ["#{@action_errors.length} actions failed.",
-                 @action_errors.map { |e| ">>>>>>     #{e.message}"}].join("\n")
+                 @action_errors.map { |e| ">>>>>>     #{e.message}" }].join("\n")
           raise ActionFailed.new(msg, @action_errors)
         end
       end
 
-      # private
       def concurrency_setting(instances)
         concurrency = 1
         if options[:concurrency]
