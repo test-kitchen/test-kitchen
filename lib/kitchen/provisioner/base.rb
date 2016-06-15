@@ -32,7 +32,7 @@ module Kitchen
       default_config :https_proxy, nil
       default_config :ftp_proxy, nil
 
-      default_config :retry_on_exit_code, nil
+      default_config :retry_on_exit_code, []
       default_config :max_retries, nil
       default_config :wait_for_retry, nil
 
