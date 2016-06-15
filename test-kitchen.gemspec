@@ -34,6 +34,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "pry-byebug"
   gem.add_development_dependency "pry-stack_explorer"
   gem.add_development_dependency "rb-readline"
+  gem.add_development_dependency "overcommit", "= 0.33.0"
   gem.add_development_dependency "winrm", "~> 1.6"
   gem.add_development_dependency "winrm-elevated", "~> 0.4.0"
   gem.add_development_dependency "winrm-fs", "~> 0.4.1"

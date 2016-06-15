@@ -26,9 +26,11 @@ install:
   - ps: net user /add $env:machine_user $env:machine_pass
   - ps: net localgroup administrators $env:machine_user /add
   - ps: $env:PATH="C:\Ruby$env:ruby_version\bin;$env:PATH"
-  - ps: gem install bundler --quiet --no-ri --no-rdoc
   - ps: Invoke-WebRequest -Uri http://curl.haxx.se/ca/cacert.pem -OutFile c:\projects\test_kitchen\certs.pem
   - ps: Write-Host $env:path
+  - gem update --system || gem update --system || gem update --system
+  - gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc
+  - update_rubygems
   - ruby --version
   - gem --version
   - bundler --version
