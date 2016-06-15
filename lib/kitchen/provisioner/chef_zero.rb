@@ -76,13 +76,17 @@ module Kitchen
 
         prefix_command(
           wrap_shell_code(
-            [cmd, *chef_client_args].join(" ").
+            [cmd, *chef_client_args, last_exit_code].join(" ").
             tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
           )
         )
       end
 
       private
+
+      def last_exit_code
+        "; exit $LastExitCode" if powershell_shell?
+      end
 
       # Adds optional flags to a chef-client command, depending on
       # configuration data. Note that this method mutates the incoming Array.
