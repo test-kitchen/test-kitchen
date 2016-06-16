@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.10.0](https://github.com/test-kitchen/test-kitchen/tree/v1.10.0) (2016-06-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.2...v1.10.0)
+
+**Implemented enhancements:**
+
+- Retry `Kitchen::Provisioner\#run\_command` after allowed exit codes [\#1055](https://github.com/test-kitchen/test-kitchen/pull/1055) ([smurawski](https://github.com/smurawski))
+- Add fallback support for `policyfile` for compat with the older policyfile\_zero [\#1053](https://github.com/test-kitchen/test-kitchen/pull/1053) ([coderanger](https://github.com/coderanger))
+
 ## [v1.9.2](https://github.com/test-kitchen/test-kitchen/tree/v1.9.2) (2016-06-09)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.1...v1.9.2)
 
