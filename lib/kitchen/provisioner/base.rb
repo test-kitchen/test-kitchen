@@ -33,8 +33,8 @@ module Kitchen
       default_config :ftp_proxy, nil
 
       default_config :retry_on_exit_code, []
-      default_config :max_retries, nil
-      default_config :wait_for_retry, nil
+      default_config :max_retries, 1
+      default_config :wait_for_retry, 30
 
       default_config :root_path do |provisioner|
         provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"

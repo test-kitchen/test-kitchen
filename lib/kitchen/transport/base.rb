@@ -117,16 +117,14 @@ module Kitchen
         # @param wait_time [Fixnum] number of seconds to wait before retrying command
         # @raise [TransportFailed] if the command does not exit successfully,
         #   which may vary by implementation
-        def execute_with_retry(command, retryable_exit_codes = [], max_retries, wait_time)
-          max_retries = 1 if max_retries.nil?
-          wait_time = 30 if wait_time.nil?
+        def execute_with_retry(command, retryable_exit_codes = [], max_retries = 1, wait_time = 30)
           tries = 0
           begin
             tries += 1
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
           rescue Kitchen::Transport::TransportFailed => e
-            if retry? tries, max_retries, retryable_exit_codes, e.exit_code
+            if retry?(tries, max_retries, retryable_exit_codes, e.exit_code)
               close
               sleep wait_time
               retry

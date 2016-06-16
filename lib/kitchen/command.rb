@@ -170,7 +170,6 @@ module Kitchen
         concurrency.times do
           threads << Thread.new do
             while instance = queue.pop
-              puts "running #{instance.name}"
               run_action_in_thread(action, instance, *args)
             end
           end
