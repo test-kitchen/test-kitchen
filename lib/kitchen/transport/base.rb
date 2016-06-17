@@ -28,7 +28,14 @@ module Kitchen
     # Wrapped exception for any internally raised Transport errors.
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
-    class TransportFailed < TransientFailure; end
+    class TransportFailed < TransientFailure
+      attr_reader :exit_code
+
+      def initialize(message, exit_code = nil)
+        @exit_code = exit_code
+        super(message)
+      end
+    end
 
     # Base class for a transport.
     #
@@ -54,7 +61,8 @@ module Kitchen
       # @param state [Hash] mutable instance state
       # @return [Connection] a connection for this transport
       # @raise [TransportFailed] if a connection could not be returned
-      def connection(state) # rubocop:disable Lint/UnusedMethodArgument
+      # rubocop:disable Lint/UnusedMethodArgument
+      def connection(state)
         raise ClientError, "#{self.class}#connection must be implemented"
       end
 
@@ -97,8 +105,39 @@ module Kitchen
         # @param command [String] command string to execute
         # @raise [TransportFailed] if the command does not exit successfully,
         #   which may vary by implementation
-        def execute(command) # rubocop:disable Lint/UnusedMethodArgument
+        def execute(command)
           raise ClientError, "#{self.class}#execute must be implemented"
+        end
+
+        # Execute a command on the remote host and retry
+        #
+        # @param command [String] command string to execute
+        # @param retryable_exit_codes [Array] Array of exit codes to retry against
+        # @param max_retries [Fixnum] maximum number of retry attempts
+        # @param wait_time [Fixnum] number of seconds to wait before retrying command
+        # @raise [TransportFailed] if the command does not exit successfully,
+        #   which may vary by implementation
+        def execute_with_retry(command, retryable_exit_codes = [], max_retries = 1, wait_time = 30)
+          tries = 0
+          begin
+            tries += 1
+            debug("Attempting to execute command - try #{tries} of #{max_retries}.")
+            execute(command)
+          rescue Kitchen::Transport::TransportFailed => e
+            if retry?(tries, max_retries, retryable_exit_codes, e.exit_code)
+              close
+              sleep wait_time
+              retry
+            else
+              raise e
+            end
+          end
+        end
+
+        def retry?(current_try, max_retries, retryable_exit_codes, exit_code)
+          current_try <= max_retries &&
+            !retryable_exit_codes.nil? &&
+            retryable_exit_codes.include?(exit_code)
         end
 
         # Builds a LoginCommand which can be used to open an interactive

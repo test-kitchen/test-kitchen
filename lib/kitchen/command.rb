@@ -175,12 +175,19 @@ module Kitchen
           end
         end
         threads.map(&:join)
-        unless @action_errors.empty?
-          raise ActionFailed.new("#{@action_errors.length} actions failed.", @action_errors)
-        end
+        report_errors
       end
 
       # private
+
+      def report_errors
+        unless @action_errors.empty?
+          msg = ["#{@action_errors.length} actions failed.",
+                 @action_errors.map { |e| ">>>>>>     #{e.message}" }].join("\n")
+          raise ActionFailed.new(msg, @action_errors)
+        end
+      end
+
       def concurrency_setting(instances)
         concurrency = 1
         if options[:concurrency]
@@ -192,6 +199,8 @@ module Kitchen
 
       def run_action_in_thread(action, instance, *args)
         instance.public_send(action, *args)
+      rescue Kitchen::InstanceFailure => e
+        @action_errors << e
       rescue Kitchen::ActionFailed => e
         new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
         new_error.set_backtrace(e.backtrace)

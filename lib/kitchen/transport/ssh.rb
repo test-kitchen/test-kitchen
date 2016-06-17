@@ -124,8 +124,10 @@ module Kitchen
           exit_code = execute_with_exit_code(command)
 
           if exit_code != 0
-            raise Transport::SshFailed,
-              "SSH exited (#{exit_code}) for command: [#{command}]"
+            raise Transport::SshFailed.new(
+              "SSH exited (#{exit_code}) for command: [#{command}]",
+              exit_code
+            )
           end
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SSH command failed (#{ex.message})"
