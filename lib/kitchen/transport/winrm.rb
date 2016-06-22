@@ -88,6 +88,7 @@ module Kitchen
 
           session.close
         ensure
+          @file_transporter = nil
           @session = nil
         end
 
