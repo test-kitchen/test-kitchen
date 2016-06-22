@@ -658,6 +658,12 @@ describe Kitchen::Transport::Winrm::Connection do
     t
   end
 
+  let(:elevated_runner) do
+    r = mock("elevated_runner")
+    r.responds_like_instance_of(WinRM::Elevated::Runner)
+    r
+  end
+
   let(:connection) do
     Kitchen::Transport::Winrm::Connection.new(options)
   end
@@ -680,6 +686,7 @@ describe Kitchen::Transport::Winrm::Connection do
     before do
       winrm_session.stubs(:create_executor).returns(executor)
       transporter.stubs(:upload)
+      elevated_runner.stubs(:powershell_elevated).returns(response)
       executor.stubs(:close)
       executor.stubs(:run_powershell_script).
         with("doit").yields("ok\n", nil).returns(response)
@@ -700,6 +707,17 @@ describe Kitchen::Transport::Winrm::Connection do
       connection.upload("local", "remote")
       connection.close
       connection.upload("local", "remote")
+    end
+
+    it "clears the elevated_runner executor" do
+      options[:elevated] = true
+      options[:elevated_username] = options[:user]
+      options[:elevated_password] = options[:pass]
+      WinRM::Elevated::Runner.expects(:new).returns(elevated_runner).twice
+
+      connection.execute("doit")
+      connection.close
+      connection.execute("doit")
     end
   end
 
@@ -771,11 +789,6 @@ describe Kitchen::Transport::Winrm::Connection do
           { :stdout => "temp_dir" }
         ])
         o
-      end
-      let(:elevated_runner) do
-        r = mock("elevated_runner")
-        r.responds_like_instance_of(WinRM::Elevated::Runner)
-        r
       end
 
       before do
