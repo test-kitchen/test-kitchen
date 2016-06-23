@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.10.1](https://github.com/test-kitchen/test-kitchen/tree/v1.10.1) (2016-06-23)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.0...v1.10.1)
+
+**Fixed bugs:**
+
+- Reboot resource with new 'reboot and try again' feature [\#1062](https://github.com/test-kitchen/test-kitchen/issues/1062)
+- Fix WinRM Upload Failures After Reboot [\#1064](https://github.com/test-kitchen/test-kitchen/pull/1064) ([smurawski](https://github.com/smurawski))
+
 ## [v1.10.0](https://github.com/test-kitchen/test-kitchen/tree/v1.10.0) (2016-06-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.2...v1.10.0)
 
