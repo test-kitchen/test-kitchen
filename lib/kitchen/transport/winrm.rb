@@ -88,7 +88,9 @@ module Kitchen
 
           session.close
         ensure
+          @file_transporter = nil
           @session = nil
+          @elevated_runner = nil
         end
 
         # (see Base::Connection#execute)
