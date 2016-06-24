@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.10.2](https://github.com/test-kitchen/test-kitchen/tree/v1.10.2) (2016-06-23)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.1...v1.10.2)
+
+**Fixed bugs:**
+
+- Mainly just a gem repackage against a clean repo on a linux machine
+
 ## [v1.10.1](https://github.com/test-kitchen/test-kitchen/tree/v1.10.1) (2016-06-23)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.0...v1.10.1)
 
