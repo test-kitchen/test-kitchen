@@ -45,6 +45,7 @@ module Kitchen
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
       default_config :chef_omnibus_install_options, nil
+      default_config :chef_ignore_proxy, false
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil
@@ -427,7 +428,7 @@ module Kitchen
           File.dirname(__FILE__), %w{.. .. .. support }, handler_filename
         )
         FileUtils.cp(source, File.join(sandbox_path, handler_filename))
-        File.open(File.join(sandbox_path, "client_no_updated_resources.rb"), "wb") do |file|
+        File.open(File.join(sandbox_path, config_no_updates), "wb") do |file|
           file.write(format_config_file(data))
           file.write("\n\n")
           file.write("handler_file = File.join(File.dirname(__FILE__), '#{handler_filename}')\n")
@@ -452,6 +453,10 @@ module Kitchen
         "client.rb"
       end
 
+      def config_no_updates
+        "client_no_updated_resources.rb"
+      end
+
       # Gives the command used to run chef
       # @api private
       def chef_cmd(base_cmd)
@@ -469,21 +474,20 @@ module Kitchen
       # Gives an array of command
       # @api private
       def chef_cmds(base_cmd)
-        cmd = prefix_command(wrap_shell_code(
-          [base_cmd, *chef_args(config_filename), last_exit_code].join(" ").
-          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-        ))
+        cmd = prefix_command(config[:chef_ignore_proxy] ? shell_code(base_cmd, config_filename) : wrap_shell_code(shell_code(base_cmd, config_filename)))
 
         cmds = [cmd].cycle(config[:multiple_converge].to_i).to_a
 
         if config[:enforce_idempotency]
-          idempotent_cmd = prefix_command(wrap_shell_code(
-            [base_cmd, *chef_args("client_no_updated_resources.rb"), last_exit_code].join(" ").
-            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-          ))
+          idempotent_cmd = prefix_command(config[:chef_ignore_proxy] ? shell_code(base_cmd, config_no_updates) : wrap_shell_code(shell_code(base_cmd, config_no_updates)))
           cmds[-1] = idempotent_cmd
         end
         cmds
+      end
+
+      def shell_code(base_cmd, config_filename)
+        [base_cmd, *chef_args(config_filename), last_exit_code].join(" ").
+        tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
       end
     end
   end

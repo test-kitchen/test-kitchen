@@ -355,6 +355,14 @@ describe Kitchen::Provisioner::ChefSolo do
                                         ])
       end
 
+      it "does not export http proxy variables when chef_ignore_proxy is set" do
+        config[:http_proxy] = "http://proxy"
+        config[:https_proxy] = "https://proxy"
+        config[:chef_gnore_proxy] = true
+
+        cmd.wont_match regexify("proxy")
+      end
+
       it "does no powershell PATH reloading for older chef omnibus packages" do
         cmd.wont_match regexify(%{[System.Environment]::})
       end
