@@ -44,10 +44,10 @@ module Kitchen
       define
     end
 
-    private
-
     # @return [Config] a Kitchen::Config
     attr_reader :config
+
+    private
 
     # Generates a test Rake task for each instance and one to test all
     # instances in serial.
