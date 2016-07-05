@@ -1,3 +1,3 @@
 source "https://supermarket.chef.io"
 
-cookbook "filezilla"
+cookbook "test_cookbook", :path => "./test/cookbooks/test_cookbook"

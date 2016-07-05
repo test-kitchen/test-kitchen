@@ -1,3 +1,3 @@
-describe oneget("FileZilla Client 3.14.1") do
-  it { should be_installed }
+describe directory("/tk_test_directory") do
+  it { should exist }
 end
