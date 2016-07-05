@@ -23,4 +23,4 @@ verifier:
 suites:
   - name: default
     run_list:
-      - recipe[filezilla]
+      - recipe[test_cookbook::default]
