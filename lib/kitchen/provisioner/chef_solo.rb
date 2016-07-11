@@ -49,32 +49,29 @@ module Kitchen
         version = config[:require_chef_omnibus]
 
         case version
-          when nil, false, true, 11, "11", "latest"
-            true
+        when nil, false, true, 11, "11", "latest"
+          true
+        else
+          if Gem::Version.correct?(version)
+            Gem::Version.new(version) >= Gem::Version.new("11.0") ? true : false
           else
-            if Gem::Version.correct?(version)
-              Gem::Version.new(version) >= Gem::Version.new("11.0") ? true : false
-            else
-              true
-            end
+            true
+          end
         end
       end
 
       # (see Base#run_command)
-      def run_command # rubocop:disable Metrics/AbcSize
-        if !modern? and config[:log_level] = "auto"
-          config[:log_level] = "info"
-        end
-        level = config[:log_level]
+      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
+      def run_command
+        config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
         cmd = sudo(config[:chef_solo_path]).dup.
           tap { |str| str.insert(0, "& ") if powershell_shell? }
         args = [
           "--config #{remote_path_join(config[:root_path], "solo.rb")}",
-          "--log_level #{level}",
+          "--log_level #{config[:log_level]}",
           "--no-color",
           "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
         ]
-
         args << " --force-formatter" if modern?
         args << "--logfile #{config[:log_file]}" if config[:log_file]
         args << "--profile-ruby" if config[:profile_ruby]
