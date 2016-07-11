@@ -52,7 +52,11 @@ module Kitchen
       default_config :attributes, {}
       default_config :config_path, nil
       default_config :log_file, nil
-      default_config :log_level, "auto"
+      if Gem.loaded_specs['ohai'].version < Gem::Version.new("8.5.1")
+        default_config :log_level, "info"
+      else
+        default_config :log_level, "auto"
+      end
       default_config :profile_ruby, false
       # The older policyfile_zero used `policyfile` so support it for compat.
       default_config :policyfile, nil
