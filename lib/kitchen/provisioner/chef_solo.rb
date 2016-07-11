@@ -62,6 +62,9 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command # rubocop:disable Metrics/AbcSize
+        if !modern? and config[:log_level] = "auto"
+          config[:log_level] = "info"
+        end
         level = config[:log_level]
         cmd = sudo(config[:chef_solo_path]).dup.
           tap { |str| str.insert(0, "& ") if powershell_shell? }
