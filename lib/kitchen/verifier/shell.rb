@@ -58,6 +58,12 @@ module Kitchen
         prepare_upload
       end
 
+      def install_command
+        cmd = "#{sudo('mkdir')} -p #{config[:root_path]}/#{config[:upload_path]}"
+        debug(cmd)
+        cmd
+      end
+
       def prepare_upload
         return unless config[:upload_path]
         FileUtils.cp_r(config[:upload_path], sandbox_path, :preserve => true)
