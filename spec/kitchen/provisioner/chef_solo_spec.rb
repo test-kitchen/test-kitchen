@@ -401,6 +401,11 @@ describe Kitchen::Provisioner::ChefSolo do
         cmd.must_match regexify(" --log_level auto", :partial_line)
       end
 
+      it "sets log level flag on chef-solo to info by default if running Chef < 11" do
+        config[:require_chef_omnibus] = "10.34.6"
+        cmd.must_match regexify(" --log_level info", :partial_line)
+      end
+
       it "set log level flag for custom level" do
         config[:log_level] = :extreme
 
@@ -409,6 +414,11 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "sets force formatter flag on chef-solo" do
         cmd.must_match regexify(" --force-formatter", :partial_line)
+      end
+
+      it "does not set force formatter flag on chef-solo if running Chef < 11" do
+        config[:require_chef_omnibus] = "10.34.6"
+        cmd.wont_match regexify(" --force-formatter", :partial_line)
       end
 
       it "sets no color flag on chef-solo" do
