@@ -75,6 +75,7 @@ module Kitchen
         args << " --force-formatter" if modern?
         args << "--logfile #{config[:log_file]}" if config[:log_file]
         args << "--profile-ruby" if config[:profile_ruby]
+        args << "--legacy-mode" if config[:legacy_mode]
 
         prefix_command(
           wrap_shell_code(

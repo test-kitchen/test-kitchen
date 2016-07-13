@@ -447,6 +447,18 @@ describe Kitchen::Provisioner::ChefSolo do
 
         cmd.wont_match regexify(" --profile-ruby", :partial_line)
       end
+
+      it "sets legacy-mode flag when config element is set" do
+        config[:legacy_mode] = true
+
+        cmd.must_match regexify(" --legacy-mode", :partial_line)
+      end
+
+      it "does not set legacy-mode flag when config element is falsey" do
+        config[:legacy_mode] = false
+
+        cmd.wont_match regexify(" --legacy-mode", :partial_line)
+      end
     end
 
     describe "for powershell shells on windows os types" do
