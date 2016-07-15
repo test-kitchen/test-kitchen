@@ -188,7 +188,7 @@ module Kitchen
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
-          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
           Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout,
           Timeout::Error
         ].freeze
