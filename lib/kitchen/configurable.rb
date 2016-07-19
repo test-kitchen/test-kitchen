@@ -313,7 +313,8 @@ module Kitchen
 
     def env_wrapped(code)
       code_parts = proxy_settings
-      code_parts << shell_env_var('TEST_KITCHEN', 1)
+      code_parts << shell_env_var("TEST_KITCHEN", 1)
+      code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
       code_parts << code
       code_parts.join("\n")
     end

@@ -732,7 +732,8 @@ describe Kitchen::Configurable do
       ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
                   "https_proxy" => nil, "HTTPS_PROXY" => nil,
                   "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
-                  "no_proxy"    => nil, "NO_PROXY"    => nil)
+                  "no_proxy"    => nil, "NO_PROXY"    => nil,
+                  "CI"          => nil)
     end
 
     after do
@@ -943,6 +944,18 @@ describe Kitchen::Configurable do
           '
         CODE
       end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          CI="1"; export CI
+          mkdir foo
+          '
+        CODE
+      end
     end
 
     describe "for powershell shells" do
@@ -1083,6 +1096,16 @@ describe Kitchen::Configurable do
           $env:no_proxy = "http://no"
           $env:NO_PROXY = "http://no"
           $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:CI = "1"
           mkdir foo
         CODE
       end
