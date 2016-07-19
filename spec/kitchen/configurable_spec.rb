@@ -732,7 +732,8 @@ describe Kitchen::Configurable do
       ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
                   "https_proxy" => nil, "HTTPS_PROXY" => nil,
                   "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
-                  "no_proxy"    => nil, "NO_PROXY"    => nil)
+                  "no_proxy"    => nil, "NO_PROXY"    => nil,
+                  "CI"          => nil)
     end
 
     after do
@@ -747,6 +748,7 @@ describe Kitchen::Configurable do
       it "uses bourne shell (sh)" do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -759,6 +761,7 @@ describe Kitchen::Configurable do
           sh -c '
           http_proxy="http://proxy"; export http_proxy
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -771,6 +774,7 @@ describe Kitchen::Configurable do
           sh -c '
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -783,6 +787,7 @@ describe Kitchen::Configurable do
           sh -c '
           ftp_proxy="ftp://proxy"; export ftp_proxy
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -801,6 +806,7 @@ describe Kitchen::Configurable do
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
           ftp_proxy="ftp://proxy"; export ftp_proxy
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -814,6 +820,7 @@ describe Kitchen::Configurable do
           sh -c '
           http_proxy="http://proxy"; export http_proxy
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -827,6 +834,7 @@ describe Kitchen::Configurable do
           sh -c '
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -839,6 +847,7 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -851,6 +860,7 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -864,6 +874,7 @@ describe Kitchen::Configurable do
           sh -c '
           ftp_proxy="ftp://proxy"; export ftp_proxy
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -874,6 +885,7 @@ describe Kitchen::Configurable do
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -891,6 +903,7 @@ describe Kitchen::Configurable do
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
           no_proxy="http://no"; export no_proxy
           NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -908,6 +921,7 @@ describe Kitchen::Configurable do
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
           no_proxy="http://no"; export no_proxy
           NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -925,6 +939,19 @@ describe Kitchen::Configurable do
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
           no_proxy="http://no"; export no_proxy
           NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          CI="1"; export CI
           mkdir foo
           '
         CODE
@@ -936,7 +963,7 @@ describe Kitchen::Configurable do
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it "uses powershell shell" do
-        cmd.must_equal("mkdir foo")
+        cmd.must_equal("$env:TEST_KITCHEN = \"1\"\nmkdir foo")
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
@@ -945,6 +972,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -955,6 +983,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -965,6 +994,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:ftp_proxy = "ftp://proxy"
           $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -981,6 +1011,7 @@ describe Kitchen::Configurable do
           $env:HTTPS_PROXY = "https://proxy"
           $env:ftp_proxy = "ftp://proxy"
           $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -992,6 +1023,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -1003,6 +1035,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -1014,6 +1047,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:ftp_proxy = "ftp://proxy"
           $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -1029,6 +1063,7 @@ describe Kitchen::Configurable do
           $env:HTTP_PROXY = "http://proxy"
           $env:no_proxy = "http://no"
           $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -1044,6 +1079,7 @@ describe Kitchen::Configurable do
           $env:HTTPS_PROXY = "https://proxy"
           $env:no_proxy = "http://no"
           $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -1059,6 +1095,17 @@ describe Kitchen::Configurable do
           $env:FTP_PROXY = "ftp://proxy"
           $env:no_proxy = "http://no"
           $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:CI = "1"
           mkdir foo
         CODE
       end
