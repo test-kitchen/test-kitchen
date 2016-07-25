@@ -135,6 +135,7 @@ module Kitchen
       :type => :boolean,
       :desc => "Include all diagnostics"
     log_options
+    test_base_path
     def diagnose(*args)
       update_config!
       perform("diagnose", "diagnose", args, :loader => @loader)
