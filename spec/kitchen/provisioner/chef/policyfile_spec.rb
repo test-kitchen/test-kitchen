@@ -22,58 +22,69 @@ require "kitchen/provisioner/chef/policyfile"
 describe Kitchen::Provisioner::Chef::Policyfile do
   let(:policyfile) { "" }
   let(:path) { "" }
-  let(:null_logger) { double("null_logger", :fatal => nil, :error => nil,
-                                            :warn => nil, :info => nil,
-                                            :debug => nil, :banner => nil) }
-  let(:described_object) { described_class.new(policyfile, path, null_logger) }
+  let(:null_logger) { stub(:fatal => nil, :error => nil, :warn => nil,
+                           :info => nil, :debug => nil, :banner => nil) }
+  let(:described_object) do
+    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, null_logger)
+  end
   let(:os) { "" }
   before do
-    stub_const("RbConfig::CONFIG", "host_os" => os)
+    @original_rbconfig = RbConfig::CONFIG
+    verbose = $VERBOSE
+    $VERBOSE = nil
+    RbConfig.const_set(:CONFIG, "host_os" => os)
+    $VERBOSE = verbose
+  end
+  after do
+    verbose = $VERBOSE
+    $VERBOSE = nil
+    RbConfig.const_set(:CONFIG, @original_rbconfig)
+    $VERBOSE = verbose
   end
 
   # rubocop:disable Metrics/LineLength
   describe "#resolve" do
     subject { described_object.resolve }
 
-    context "on Unix" do
+    describe "on Unix" do
       let(:os) { "linux-gnu" }
 
-      context "with simple paths" do
+      describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
         it do
-          expect(described_object).to receive(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
           subject
         end
       end
 
-      context "with Jenkins-y paths" do
+      describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
         it do
-          expect(described_object).to receive(:run_command).with("chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          described_object.expects(:run_command).with("chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force")
           subject
         end
       end
     end
 
-    context "on Windows" do
+    describe "on Windows" do
       let(:os) { "mswin" }
 
-      context "with simple paths" do
+      describe "with simple paths" do
         let(:policyfile) { "C:\\cookbook\\Policyfile.rb" }
         let(:path) { "C:\\Temp\\kitchen\\cookbooks" }
         it do
-          expect(described_object).to receive(:run_command).with("chef export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force")
+          described_object.expects(:run_command).with("chef export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force")
           subject
         end
       end
 
-      context "with Jenkins-y paths" do
+      describe "with Jenkins-y paths" do
         let(:policyfile) { "C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb" }
         let(:path) { "C:\\Temp\\kitchen\\cookbooks" }
         it do
-          expect(described_object).to receive(:run_command).with("chef export \"C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb\" C:\\Temp\\kitchen\\cookbooks --force")
+          described_object.expects(:run_command).with("chef export \"C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb\" C:\\Temp\\kitchen\\cookbooks --force")
           subject
         end
       end
@@ -83,41 +94,41 @@ describe Kitchen::Provisioner::Chef::Policyfile do
   describe "#compile" do
     subject { described_object.compile }
 
-    context "on Unix" do
+    describe "on Unix" do
       let(:os) { "linux-gnu" }
 
-      context "with simple paths" do
+      describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
         it do
-          expect(described_object).to receive(:run_command).with("chef install /home/user/cookbook/Policyfile.rb")
+          described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb")
           subject
         end
       end
 
-      context "with Jenkins-y paths" do
+      describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         it do
-          expect(described_object).to receive(:run_command).with("chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb")
+          described_object.expects(:run_command).with("chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb")
           subject
         end
       end
     end
 
-    context "on Windows" do
+    describe "on Windows" do
       let(:os) { "mswin" }
 
-      context "with simple paths" do
+      describe "with simple paths" do
         let(:policyfile) { "C:\\cookbook\\Policyfile.rb" }
         it do
-          expect(described_object).to receive(:run_command).with("chef install C:\\cookbook\\Policyfile.rb")
+          described_object.expects(:run_command).with("chef install C:\\cookbook\\Policyfile.rb")
           subject
         end
       end
 
-      context "with Jenkins-y paths" do
+      describe "with Jenkins-y paths" do
         let(:policyfile) { "C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb" }
         it do
-          expect(described_object).to receive(:run_command).with("chef install \"C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb\"")
+          described_object.expects(:run_command).with("chef install \"C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb\"")
           subject
         end
       end
