@@ -22,13 +22,16 @@ require "kitchen/provisioner/chef/policyfile"
 describe Kitchen::Provisioner::Chef::Policyfile do
   let(:policyfile) { "" }
   let(:path) { "" }
-  let(:null_logger) { double("null_logger", fatal: nil, error: nil, warn: nil, info: nil, debug: nil, banner: nil) }
-  subject(:described_object) { described_class.new(policyfile, path, null_logger) }
+  let(:null_logger) { double("null_logger", :fatal => nil, :error => nil,
+                                            :warn => nil, :info => nil,
+                                            :debug => nil, :banner => nil) }
+  let(:described_object) { described_class.new(policyfile, path, null_logger) }
   let(:os) { "" }
   before do
-    stub_const('RbConfig::CONFIG', "host_os" => os)
+    stub_const("RbConfig::CONFIG", "host_os" => os)
   end
 
+  # rubocop:disable Metrics/LineLength
   describe "#resolve" do
     subject { described_object.resolve }
 
@@ -120,4 +123,5 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
   end
+  # rubocop:enable Metrics/LineLength
 end
