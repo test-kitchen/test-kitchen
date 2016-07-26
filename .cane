@@ -5,4 +5,5 @@
 --abc-exclude Kitchen::Driver::SSHBase#verify
 --abc-exclude Kitchen::Configurable#wrap_shell_code
 --style-exclude lib/vendor/**/*.rb
+--style-exclude spec/kitchen/provisioner/chef/policyfile_spec.rb
 --doc-exclude lib/vendor/**/.rb

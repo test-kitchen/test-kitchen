@@ -22,8 +22,10 @@ require "kitchen/provisioner/chef/policyfile"
 describe Kitchen::Provisioner::Chef::Policyfile do
   let(:policyfile) { "" }
   let(:path) { "" }
-  let(:null_logger) { stub(:fatal => nil, :error => nil, :warn => nil,
-                           :info => nil, :debug => nil, :banner => nil) }
+  let(:null_logger) do
+    stub(:fatal => nil, :error => nil, :warn => nil, :info => nil,
+         :debug => nil, :banner => nil)
+  end
   let(:described_object) do
     Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, null_logger)
   end
