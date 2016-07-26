@@ -40,7 +40,6 @@ rescue LoadError
   puts "finstyle/rubocop is not available.  gem install finstyle to do style checking."
 end
 
-
 desc "Run all quality tasks"
 task :quality => [:style, :stats]
 
