@@ -36,7 +36,7 @@ module Kitchen
 
         # Creates a new cookbook resolver.
         #
-        # @param berksfile [String] path to a Berksfile
+        # @param policyfile [String] path to a Policyfile
         # @param path [String] path in which to vendor the resulting
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
