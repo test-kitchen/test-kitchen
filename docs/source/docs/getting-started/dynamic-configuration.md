@@ -44,7 +44,7 @@ You can also specify a path to a global `config.yml`, project or local `.kitchen
 
 ~~~
 export KITCHEN_GLOBAL_YAML=/path/to/your/global/config.yml
-export KITCHEN_PROJECT_YAML=/path/to/your/project/.kitchen.yml
+export KITCHEN_YAML=/path/to/your/project/.kitchen.yml
 export KITCHEN_LOCAL_YAML=/path/to/your/local/.kitchen.local.yml
 ~~~
 
