@@ -146,7 +146,7 @@ module Kitchen
           if options.key?(:forward_agent)
             args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
           end
-         if ssh_gateway
+          if ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
             args += %W[ -o ProxyCommand=#{gateway_command} ]
             args += %W[ -p 22 ] # Should support other ports than 22 for ssh gateways
