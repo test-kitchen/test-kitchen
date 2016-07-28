@@ -19,6 +19,7 @@
 require "kitchen"
 
 require "net/ssh"
+require "net/ssh/gateway"
 require "net/scp"
 require "timeout"
 require "benchmark"
@@ -52,6 +53,9 @@ module Kitchen
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
+
+      default_config :ssh_gateway, nil
+      default_config :ssh_gateway_username, nil
 
       default_config :ssh_key, nil
       expand_path_for :ssh_key
@@ -142,6 +146,13 @@ module Kitchen
           if options.key?(:forward_agent)
             args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
           end
+         if ssh_gateway
+            gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
+            args += %W[ -o ProxyCommand=#{gateway_command} ]
+            args += %W[ -p 22 ] # Should support other ports than 22 for ssh gateways
+          else
+            args += %W[ -p #{port} ]
+          end
           Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
           args += %W[ -p #{port} ]
           args += %W[ #{username}@#{hostname} ]
@@ -226,6 +237,15 @@ module Kitchen
         # @api private
         attr_reader :port
 
+        # @return [String] The ssh gateway to use when connecting to the
+        #   remote SSH host
+        # @api private
+        attr_reader :ssh_gateway
+
+        # @return [String] The username to use when using an ssh gateway
+        # @api private
+        attr_reader :ssh_gateway_username
+
         # Establish an SSH session on the remote host.
         #
         # @param opts [Hash] retry options
@@ -238,8 +258,16 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
-          logger.debug("[SSH] opening connection to #{self}")
-          Net::SSH.start(hostname, username, options)
+          if ssh_gateway
+            logger.debug("[SSH] opening connection to #{self} via " \
+              "#{ssh_gateway_username}@#{ssh_gateway}")
+            Net::SSH::Gateway.new(ssh_gateway,
+              ssh_gateway_username,
+              options.merge(:port => 22)).ssh(hostname, username, options)
+          else
+            logger.debug("[SSH] opening connection to #{self}")
+            Net::SSH.start(hostname, username, options)
+          end
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
@@ -298,6 +326,8 @@ module Kitchen
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_ssh_sessions       = @options.delete(:max_ssh_sessions)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @ssh_gateway            = @options.delete(:ssh_gateway)
+          @ssh_gateway_username   = @options.delete(:ssh_gateway_username)
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -356,6 +386,8 @@ module Kitchen
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
+        opts[:ssh_gateway] = data[:ssh_gateway]     if data.key?(:ssh_gateway)
+        opts[:ssh_gateway_username] = data[:ssh_gateway_username]     if data.key?(:ssh_gateway_username)
 
         opts
       end
