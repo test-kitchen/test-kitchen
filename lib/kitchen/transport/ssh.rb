@@ -148,10 +148,8 @@ module Kitchen
           end
           if ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
-            args += %W[ -o ProxyCommand=#{gateway_command} ]
-            args += %W[ -p 22 ] # Should support other ports than 22 for ssh gateways
-          else
-            args += %W[ -p #{port} ]
+            # Should support other ports than 22 for ssh gateways
+            args += %W[ -o ProxyCommand=#{gateway_command} -p 22 ]
           end
           Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
           args += %W[ -p #{port} ]
@@ -246,6 +244,40 @@ module Kitchen
         # @api private
         attr_reader :ssh_gateway_username
 
+        # Establish an SSH session on the remote host using a gateway host.
+        #
+        # @param opts [Hash] retry options
+        # @option opts [Integer] :retries the number of times to retry before
+        #   failing
+        # @option opts [Float] :delay the number of seconds to wait until
+        #   attempting a retry
+        # @option opts [String] :message an optional message to be logged on
+        #   debug (overriding the default) when a rescuable exception is raised
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def establish_connection_via_gateway(opts)
+          logger.debug("[SSH] opening connection to #{self} via " \
+            "#{ssh_gateway_username}@#{ssh_gateway}")
+          Net::SSH::Gateway.new(ssh_gateway,
+            ssh_gateway_username, options).ssh(hostname, username, options)
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          if (opts[:retries] -= 1) > 0
+            message = if opts[:message]
+              logger.debug("[SSH] connection failed (#{e.inspect})")
+              opts[:message]
+            else
+              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                "(#{e.inspect})"
+            end
+            logger.info(message)
+            sleep(opts[:delay])
+            retry
+          else
+            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+            raise SshFailed, "SSH session could not be established"
+          end
+        end
+
         # Establish an SSH session on the remote host.
         #
         # @param opts [Hash] retry options
@@ -258,16 +290,8 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
-          if ssh_gateway
-            logger.debug("[SSH] opening connection to #{self} via " \
-              "#{ssh_gateway_username}@#{ssh_gateway}")
-            Net::SSH::Gateway.new(ssh_gateway,
-              ssh_gateway_username,
-              options.merge(:port => 22)).ssh(hostname, username, options)
-          else
-            logger.debug("[SSH] opening connection to #{self}")
-            Net::SSH.start(hostname, username, options)
-          end
+          logger.debug("[SSH] opening connection to #{self}")
+          Net::SSH.start(hostname, username, options)
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
@@ -337,10 +361,17 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def session(retry_options = {})
-          @session ||= establish_connection({
-            :retries => connection_retries.to_i,
-            :delay   => connection_retry_sleep.to_i
-          }.merge(retry_options))
+          if ssh_gateway
+            @session ||= establish_connection_via_gateway({
+              :retries => connection_retries.to_i,
+              :delay   => connection_retry_sleep.to_i
+            }.merge(retry_options))
+          else
+            @session ||= establish_connection({
+              :retries => connection_retries.to_i,
+              :delay   => connection_retry_sleep.to_i
+            }.merge(retry_options))
+          end
         end
 
         # String representation of object, reporting its connection details and
@@ -377,7 +408,9 @@ module Kitchen
           :connection_retries     => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
           :max_ssh_sessions       => data[:max_ssh_sessions],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          :max_wait_until_ready   => data[:max_wait_until_ready],
+          :ssh_gateway            => data[:ssh_gateway],
+          :ssh_gateway_username   => data[:ssh_gateway_username]
         }
 
         opts[:keys_only] = true                     if data[:ssh_key]
@@ -386,8 +419,6 @@ module Kitchen
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
-        opts[:ssh_gateway] = data[:ssh_gateway]     if data.key?(:ssh_gateway)
-        opts[:ssh_gateway_username] = data[:ssh_gateway_username]     if data.key?(:ssh_gateway_username)
 
         opts
       end
