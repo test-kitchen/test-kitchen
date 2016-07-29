@@ -40,23 +40,8 @@ rescue LoadError
   puts "finstyle/rubocop is not available.  gem install finstyle to do style checking."
 end
 
-begin
-  if RUBY_ENGINE != "jruby"
-    require "cane/rake_task"
-    desc "Run cane to check quality metrics"
-    Cane::RakeTask.new do |cane|
-      cane.canefile = "./.cane"
-    end
-
-    desc "Run all quality tasks"
-    task :quality => [:cane, :style, :stats]
-  else
-    desc "Run all quality tasks"
-    task :quality => [:style, :stats]
-  end
-rescue LoadError
-  puts "cane is not available. (sudo) gem install cane to check quality metrics."
-end
+desc "Run all quality tasks"
+task :quality => [:style, :stats]
 
 begin
   require "yard"
