@@ -256,25 +256,9 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection_via_gateway(opts)
-          logger.debug("[SSH] opening connection to #{self} via " \
-            "#{ssh_gateway_username}@#{ssh_gateway}")
-          Net::SSH::Gateway.new(ssh_gateway,
-            ssh_gateway_username, options).ssh(hostname, username, options)
-        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
-          if (opts[:retries] -= 1) > 0
-            message = if opts[:message]
-              logger.debug("[SSH] connection failed (#{e.inspect})")
-              opts[:message]
-            else
-              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                "(#{e.inspect})"
-            end
-            logger.info(message)
-            sleep(opts[:delay])
-            retry
-          else
-            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
-            raise SshFailed, "SSH session could not be established"
+          retry_connection(opts) do
+            Net::SSH::Gateway.new(ssh_gateway,
+              ssh_gateway_username, options).ssh(hostname, username, options)
           end
         end
 
@@ -290,8 +274,27 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
-          logger.debug("[SSH] opening connection to #{self}")
-          Net::SSH.start(hostname, username, options)
+          retry_connection(opts) do
+            Net::SSH.start(hostname, username, options)
+          end
+        end
+
+        # Connecto to a host executing passed block and properly handling retreis.
+        #
+        # @param opts [Hash] retry options
+        # @option opts [Integer] :retries the number of times to retry before
+        #   failing
+        # @option opts [Float] :delay the number of seconds to wait until
+        #   attempting a retry
+        # @option opts [String] :message an optional message to be logged on
+        #   debug (overriding the default) when a rescuable exception is raised
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def retry_connection(opts)
+          log_msg = "[SSH] opening connection to #{self}"
+          log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}" if ssh_gateway
+          logger.debug(log_msg)
+          yield
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
