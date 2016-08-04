@@ -16,6 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "shellwords"
+require "rbconfig"
+
 require "kitchen/errors"
 require "kitchen/logging"
 require "kitchen/shell_out"
@@ -36,7 +39,7 @@ module Kitchen
 
         # Creates a new cookbook resolver.
         #
-        # @param berksfile [String] path to a Berksfile
+        # @param policyfile [String] path to a Policyfile
         # @param path [String] path in which to vendor the resulting
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
@@ -59,7 +62,7 @@ module Kitchen
         # in the desired path.
         def resolve
           info("Exporting cookbook dependencies from Policyfile #{path}...")
-          run_command("chef export #{policyfile} #{path} --force")
+          run_command("chef export #{escape_path(policyfile)} #{escape_path(path)} --force")
         end
 
         # Runs `chef install` to determine the correct cookbook set and
@@ -67,7 +70,7 @@ module Kitchen
         def compile
           info("Policy lock file doesn't exist, running `chef install` for "\
                "Policyfile #{policyfile}...")
-          run_command("chef install #{policyfile}")
+          run_command("chef install #{escape_path(policyfile)}")
         end
 
         private
@@ -99,6 +102,29 @@ module Kitchen
                          "setting includes the path to the `chef` comand.")
             raise UserError,
               "Could not find the chef executable in your PATH."
+          end
+        end
+
+        # Escape spaces in a path in way that works with both Sh (Unix) and
+        # Windows.
+        #
+        # @param path [String] Path to escape
+        # @return [String]
+        # @api private
+        def escape_path(path)
+          if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+            # I know what you're thinking: "just use Shellwords.escape". That
+            # method produces incorrect results on Windows with certain input
+            # which would be a metacharacter in Sh but is not for one or more of
+            # Windows command line parsing libraries. This covers the 99% case of
+            # spaces in the path without breaking other stuff.
+            if path =~ /[ \t\n\v"]/
+              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| "\\" + m[0] }}\""
+            else
+              path
+            end
+          else
+            Shellwords.escape(path)
           end
         end
       end
