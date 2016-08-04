@@ -20,6 +20,7 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Kimball Johnson](https://github.com/drrk)
 * [Lamont Granquist](https://github.com/lamont-granquist)
 * [Matt Wrock](https://github.com/mwrock)
+* [Noah Kantrowitz](https://github.com/coderanger)
 * [Robb Kidd](https://github.com/robbkidd)
 * [Sean Omeara](http://github.com/someara)
 * [Steven Murawski](http://github.com/smurawski)
