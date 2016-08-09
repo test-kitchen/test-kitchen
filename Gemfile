@@ -1,13 +1,7 @@
 # -*- encoding: utf-8 -*-
 source "https://rubygems.org"
 gemspec
-
-group :guard do
-  gem "guard-minitest"
-  gem "guard-cucumber", "~> 1.4"
-  gem "guard-rubocop"
-  gem "guard-yard"
-end
+gem "rack", "< 2.0"
 
 group :integration do
   gem "berkshelf", "~> 4.3"

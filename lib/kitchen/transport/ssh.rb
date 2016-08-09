@@ -416,9 +416,12 @@ module Kitchen
           :ssh_gateway_username   => data[:ssh_gateway_username]
         }
 
-        opts[:keys_only] = true                     if data[:ssh_key]
-        opts[:keys] = Array(data[:ssh_key])         if data[:ssh_key]
-        opts[:auth_methods] = ["publickey"]         if data[:ssh_key]
+        if data[:ssh_key] && !data.key?(:password)
+          opts[:keys_only] = true
+          opts[:keys] = Array(data[:ssh_key])
+          opts[:auth_methods] = ["publickey"]
+        end
+
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
