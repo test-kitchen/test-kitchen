@@ -531,6 +531,64 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
+      it "does not set :keys_only if :ssh_key is set in config but password is set" do
+        config[:ssh_key] = "ssh_key_from_config"
+        config[:password] = "password"
+
+        klass.expects(:new).with do |hash|
+          hash[:keys_only].nil?
+        end
+
+        make_connection
+      end
+
+      it "does not set :auth_methods if :ssh_key is set in config but password is set" do
+        config[:ssh_key] = "ssh_key_from_config"
+        config[:password] = "password"
+
+        klass.expects(:new).with do |hash|
+          hash[:auth_methods].nil?
+        end
+
+        make_connection
+      end
+
+      it "does not set :keys_only if :ssh_key is set in state but password is set" do
+        state[:ssh_key] = "ssh_key_from_config"
+        config[:ssh_key] = false
+        config[:password] = "password"
+
+        klass.expects(:new).with do |hash|
+          hash[:keys_only].nil?
+        end
+
+        make_connection
+      end
+
+      it "does not set :keys to an array if :ssh_key is set in config but password is set" do
+        config[:kitchen_root] = "/r"
+        config[:ssh_key] = "ssh_key_from_config"
+        config[:password] = "password"
+
+        klass.expects(:new).with do |hash|
+          hash[:keys].nil?
+        end
+
+        make_connection
+      end
+
+      it "does not set :keys to an array if :ssh_key is set in state but password is set" do
+        state[:ssh_key] = "ssh_key_from_state"
+        config[:ssh_key] = "ssh_key_from_config"
+        config[:password] = "password"
+
+        klass.expects(:new).with do |hash|
+          hash[:keys].nil?
+        end
+
+        make_connection
+      end
+
       it "passes in :password if set in config" do
         config[:password] = "password_from_config"
 
