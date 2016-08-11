@@ -1,5 +1,22 @@
 # Change Log
 
+## [v1.11.0](https://github.com/test-kitchen/test-kitchen/tree/v1.11.0) (2016-08-11)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.2...v1.11.0)
+
+**Implemented enhancements:**
+
+- Provide some way for Chef to know it's running under test [\#458](https://github.com/test-kitchen/test-kitchen/issues/458)
+- Dont set ssh key configuration if a password is specified [\#1095](https://github.com/test-kitchen/test-kitchen/pull/1095) ([mwrock](https://github.com/mwrock))
+- Ability to work with Instances over SSH tunnel. [\#1091](https://github.com/test-kitchen/test-kitchen/pull/1091) ([EYurchenko](https://github.com/EYurchenko))
+- Add environment variables $TEST\_KITCHEN and $CI [\#1081](https://github.com/test-kitchen/test-kitchen/pull/1081) ([coderanger](https://github.com/coderanger))
+- Adding test\_base\_path CLI arg to the diagnose command [\#1076](https://github.com/test-kitchen/test-kitchen/pull/1076) ([tyler-ball](https://github.com/tyler-ball))
+- Add legacy\_mode argument for chef\_solo provisioner [\#1073](https://github.com/test-kitchen/test-kitchen/pull/1073) ([SaltwaterC](https://github.com/SaltwaterC))
+- Added support for Chef 10 [\#1072](https://github.com/test-kitchen/test-kitchen/pull/1072) ([acondrat](https://github.com/acondrat))
+
+**Fixed bugs:**
+
+- Escape paths before running policyfile commands [\#1085](https://github.com/test-kitchen/test-kitchen/pull/1085) ([coderanger](https://github.com/coderanger))
+
 ## [v1.10.2](https://github.com/test-kitchen/test-kitchen/tree/v1.10.2) (2016-06-23)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.1...v1.10.2)
 
