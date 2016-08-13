@@ -1,8 +1,9 @@
 language: ruby
 
 rvm:
-  - 2.2.4
-  - 2.1.8
+  - 2.1.9
+  - 2.2.5
+  - 2.3.1
   - ruby-head
 
 env:
@@ -32,7 +33,7 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.4
+    - rvm: 2.2.5
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
       gemfile: Gemfile.proxy_tests
