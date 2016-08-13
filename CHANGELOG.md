@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.11.1](https://github.com/test-kitchen/test-kitchen/tree/v1.11.1) (2016-08-13)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.0...v1.11.1)
+
+**Fixed bugs:**
+
+- Check the actual value, because `password: nil` shouldn't disable sending the key [\#1098](https://github.com/test-kitchen/test-kitchen/pull/1098) ([coderanger](https://github.com/coderanger))
+
 ## [v1.11.0](https://github.com/test-kitchen/test-kitchen/tree/v1.11.0) (2016-08-11)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.2...v1.11.0)
 
