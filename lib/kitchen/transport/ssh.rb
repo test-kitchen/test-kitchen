@@ -416,7 +416,7 @@ module Kitchen
           :ssh_gateway_username   => data[:ssh_gateway_username]
         }
 
-        if data[:ssh_key] && !data.key?(:password)
+        if data[:ssh_key] && !data[:password]
           opts[:keys_only] = true
           opts[:keys] = Array(data[:ssh_key])
           opts[:auth_methods] = ["publickey"]
