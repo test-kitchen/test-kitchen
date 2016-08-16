@@ -30,14 +30,14 @@ module Kitchen
     # Creates Kitchen Rake tasks and allows the callee to configure it.
     #
     # @yield [self] gives itself to the block
-    def initialize
+    def initialize(cfg = {})
       @loader = Kitchen::Loader::YAML.new(
         :project_config => ENV["KITCHEN_YAML"],
         :local_config => ENV["KITCHEN_LOCAL_YAML"],
         :global_config => ENV["KITCHEN_GLOBAL_YAML"]
       )
       @config = Kitchen::Config.new(
-        :loader => @loader
+        { :loader => @loader }.merge(cfg)
       )
       Kitchen.logger = Kitchen.default_file_logger(nil, false)
       yield self if block_given?
