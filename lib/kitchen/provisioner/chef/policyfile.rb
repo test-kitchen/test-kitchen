@@ -68,9 +68,20 @@ module Kitchen
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
-          info("Policy lock file doesn't exist, running `chef install` for "\
-               "Policyfile #{policyfile}...")
+          if File.exist?(lockfile)
+            info("Installing cookbooks for Policyfile #{policyfile} using `chef install`")
+          else
+            info("Policy lock file doesn't exist, running `chef install` for "\
+                 "Policyfile #{policyfile}...")
+          end
           run_command("chef install #{escape_path(policyfile)}")
+        end
+
+        # Return the path to the lockfile corresponding to this policyfile.
+        #
+        # @return [String]
+        def lockfile
+          policyfile.gsub(/\.rb\Z/, ".lock.json")
         end
 
         private
