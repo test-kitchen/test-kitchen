@@ -65,7 +65,7 @@ module Kitchen
           kitchen_commands.each do |cmd|
             namespace cmd do
               # desc "Run #{instance.name} #{cmd} instance"
-              task instance.name { instance.send(cmd) }
+              task instance.name do instance.send(cmd); end
               desc "Run all #{cmd} instances"
               task "all" => config.instances.map(&:name)
             end
