@@ -897,7 +897,7 @@ describe Kitchen::Provisioner::ChefBase do
 
         let(:policyfile_path) { "#{kitchen_root}/Policyfile.rb" }
         let(:policyfile_lock_path) { "#{kitchen_root}/Policyfile.lock.json" }
-        let(:resolver) { stub(:compile => true, :resolve => true, lockfile: policyfile_lock_path) }
+        let(:resolver) { stub(:compile => true, :resolve => true, :lockfile => policyfile_lock_path) }
 
         describe "with the default name `Policyfile.rb`" do
           before do
