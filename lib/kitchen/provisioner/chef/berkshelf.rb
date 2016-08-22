@@ -62,13 +62,9 @@ module Kitchen
           debug("Using Berksfile from #{berksfile}")
 
           ::Berkshelf.ui.mute do
-            if ::Berkshelf::Berksfile.method_defined?(:vendor)
-              # Berkshelf 3.0 requires the directory to not exist
-              FileUtils.rm_rf(path)
-              ::Berkshelf::Berksfile.from_file(berksfile).vendor(path)
-            else
-              ::Berkshelf::Berksfile.from_file(berksfile).install(:path => path)
-            end
+            # Berkshelf requires the directory to not exist
+            FileUtils.rm_rf(path)
+            ::Berkshelf::Berksfile.from_file(berksfile).vendor(path)
           end
         end
 
