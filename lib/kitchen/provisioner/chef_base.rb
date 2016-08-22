@@ -344,6 +344,11 @@ module Kitchen
         installer.install_command
       end
 
+      # Hook used in subclasses to indicate support for policyfiles.
+      #
+      # @abstract
+      # @return [Boolean]
+      # @api private
       def supports_policyfile?
         false
       end
