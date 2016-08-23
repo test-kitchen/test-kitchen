@@ -59,6 +59,9 @@ module Kitchen
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
+      # If set to true (which is the default from `chef generate`), try to update
+      # backend cookbook downloader on every kitchen run.
+      default_config :always_update_cookbooks, false
       default_config :cookbook_files_glob, %w[
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
@@ -281,13 +284,13 @@ module Kitchen
         super
         if File.exist?(policyfile)
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
-          Chef::Policyfile.load!(logger)
+          Chef::Policyfile.load!(:logger => logger)
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
-          Chef::Berkshelf.load!(logger)
+          Chef::Berkshelf.load!(:logger => logger)
         elsif File.exist?(cheffile)
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
-          Chef::Librarian.load!(logger)
+          Chef::Librarian.load!(:logger => logger)
         end
       end
 
@@ -344,6 +347,11 @@ module Kitchen
         installer.install_command
       end
 
+      # Hook used in subclasses to indicate support for policyfiles.
+      #
+      # @abstract
+      # @return [Boolean]
+      # @api private
       def supports_policyfile?
         false
       end

@@ -40,7 +40,7 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(cheffile, path, logger = Kitchen.logger)
+        def initialize(cheffile, path, logger: Kitchen.logger)
           @cheffile   = cheffile
           @path       = path
           @logger     = logger
@@ -50,7 +50,7 @@ module Kitchen
         #
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def self.load!(logger = Kitchen.logger)
+        def self.load!(logger: Kitchen.logger)
           load_librarian!(logger)
         end
 

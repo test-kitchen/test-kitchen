@@ -27,7 +27,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
          :debug => nil, :banner => nil)
   end
   let(:described_object) do
-    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, null_logger)
+    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, :logger => null_logger)
   end
   let(:os) { "" }
   before do
