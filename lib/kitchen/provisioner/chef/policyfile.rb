@@ -44,17 +44,18 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(policyfile, path, logger = Kitchen.logger)
+        def initialize(policyfile, path, logger: Kitchen.logger, always_update: false)
           @policyfile = policyfile
           @path       = path
           @logger     = logger
+          @always_update = always_update
         end
 
         # Loads the library code required to use the resolver.
         #
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def self.load!(logger = Kitchen.logger)
+        def self.load!(logger: Kitchen.logger)
           detect_chef_command!(logger)
         end
 
@@ -68,6 +69,10 @@ module Kitchen
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
+          if always_update
+            info("Updating policy lock using `chef update`")
+            run_command("chef update #{escape_path(policyfile)}")
+          end
           if File.exist?(lockfile)
             info("Installing cookbooks for Policyfile #{policyfile} using `chef install`")
           else
@@ -97,6 +102,10 @@ module Kitchen
         # @return [Kitchen::Logger] a logger to use for output
         # @api private
         attr_reader :logger
+
+        # @return [Boolean] If true, always update cookbooks in the policy.
+        # @api private
+        attr_reader :always_update
 
         # Ensure the `chef` command is in the path.
         #
