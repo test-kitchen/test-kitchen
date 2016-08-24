@@ -94,6 +94,61 @@ describe Kitchen::Driver::Base do
     end
   end
 
+  describe ".sync_folders" do
+
+    let(:mock_connection) { Minitest::Mock.new }
+
+    let(:transport) do
+      class TransportThatYieldsMockConnection
+        def initialize(connection)
+          @connection = connection
+        end
+
+        def connection(*)
+          yield @connection
+        end
+      end
+      TransportThatYieldsMockConnection.new(mock_connection)
+    end
+
+    let(:instance) do
+      stub(
+        :name => "coolbeans",
+        :logger => logger,
+        :busser => busser,
+        :to_str => "instance",
+        :transport => transport
+      )
+    end
+
+    it "syncs no folders by default" do
+      driver.sync_folders(state)
+      mock_connection.verify
+    end
+
+    describe "with synced_folders configured" do
+
+      let(:config) do
+        {
+          :synced_folders => [
+            %w[local_path_a remote_path_a],
+            %w[local_path_b remote_path_b],
+            %w[local_path_c remote_path_c]
+          ]
+        }
+      end
+
+      it "uses its transport to upload synced_folders" do
+        config[:synced_folders].each do |local_path, remote_path|
+          mock_connection.expect(:upload, nil, [local_path, remote_path])
+        end
+        driver.sync_folders(state)
+
+        mock_connection.verify
+      end
+    end
+  end
+
   describe ".no_parallel_for" do
 
     it "registers no serial actions when none are declared" do
