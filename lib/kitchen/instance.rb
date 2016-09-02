@@ -229,6 +229,13 @@ module Kitchen
       end
     end
 
+    # Perform clean.
+    #
+    def clean_action
+      banner "Cleaning remote sandbox"
+      provisioner.clean(state_file.read)
+    end
+
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash

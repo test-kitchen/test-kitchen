@@ -239,6 +239,13 @@ module Kitchen
       perform("login", "login", args)
     end
 
+    desc "clean INSTANCE|REGEXP", "Clean temporary kitchen files from instance"
+    log_options
+    def clean(*args)
+      update_config!
+      perform("clean", "clean", args)
+    end
+
     desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
       "Execute command on one or more instance"
     method_option :command,
