@@ -1,5 +1,15 @@
 # Change Log
 
+## [v1.12.0](https://github.com/test-kitchen/test-kitchen/tree/v1.12.0) (2016-09-02)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.1...v1.12.0)
+
+**Implemented enhancements:**
+
+- Use winrm v2 release gems [\#1061](https://github.com/test-kitchen/test-kitchen/pull/1061) ([mwrock](https://github.com/mwrock))
+- Add a new config option always\_update\_cookbooks [\#1107](https://github.com/test-kitchen/test-kitchen/pull/1107) ([coderanger](https://github.com/coderanger))
+- Always run `chef install` even if the lock file exists. [\#1103](https://github.com/test-kitchen/test-kitchen/pull/1103) ([coderanger](https://github.com/coderanger))
+- support passing Kitchen::Config Hash keys to Kitchen::RakeTasks.new [\#1102](https://github.com/test-kitchen/test-kitchen/pull/1102) ([theckman](https://github.com/theckman))
+
 ## [v1.11.1](https://github.com/test-kitchen/test-kitchen/tree/v1.11.1) (2016-08-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.0...v1.11.1)
 
