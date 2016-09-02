@@ -84,13 +84,12 @@ module Kitchen
       class Connection < Kitchen::Transport::Base::Connection
         # (see Base::Connection#close)
         def close
-          return if @session.nil?
-
-          session.close
+          @unelevated_session.close if @unelevated_session
+          @elevated_session.close if @elevated_session
         ensure
+          @unelevated_session = nil
+          @elevated_session = nil
           @file_transporter = nil
-          @session = nil
-          @elevated_runner = nil
         end
 
         # (see Base::Connection#execute)
@@ -98,9 +97,6 @@ module Kitchen
           return if command.nil?
           logger.debug("[WinRM] #{self} (#{command})")
 
-          if command.length > MAX_COMMAND_SIZE
-            command = run_from_file_command(command)
-          end
           exit_code, stderr = execute_with_exit_code(command)
 
           if logger.debug? && exit_code == 0
@@ -137,7 +133,7 @@ module Kitchen
         # (see Base::Connection#wait_until_ready)
         def wait_until_ready
           delay = 3
-          session(
+          unelevated_session(
             :retry_limit => max_wait_until_ready / delay,
             :retry_delay => delay
           )
@@ -148,11 +144,6 @@ module Kitchen
 
         PING_COMMAND = "Write-Host '[WinRM] Established\n'".freeze
 
-        # Maximum string to send to the transport to execute. WinRM has an 8000 character
-        # command line limit. The original command string is coverted to a base 64 encoded
-        # UTF-16 string which will double the string size.
-        MAX_COMMAND_SIZE = 3000
-
         # @return [Integer] how many times to retry when failing to execute
         #   a command or transfer files
         # @api private
@@ -162,10 +153,6 @@ module Kitchen
         #   when failing to execute a command or transfer files
         # @api private
         attr_reader :connection_retry_sleep
-
-        # @return [String] the endpoint URL of the remote WinRM host
-        # @api private
-        attr_reader :endpoint
 
         # @return [String] display name for the associated instance
         # @api private
@@ -185,11 +172,6 @@ module Kitchen
         # @api private
         attr_reader :rdp_port
 
-        # @return [Symbol] the transport strategy to use when constructing a
-        #   `WinRM::WinRMWebService`
-        # @api private
-        attr_reader :winrm_transport
-
         # @return [Boolean] whether to use winrm-elevated for running commands
         # @api private
         attr_reader :elevated
@@ -202,7 +184,7 @@ module Kitchen
         # @api private
         def create_rdp_doc(opts = {})
           content = Util.outdent!(<<-RDP)
-            full address:s:#{URI.parse(endpoint).host}:#{rdp_port}
+            full address:s:#{URI.parse(options[:endpoint]).host}:#{rdp_port}
             prompt for credentials:i:1
             username:s:#{options[:user]}
           RDP
@@ -227,33 +209,26 @@ module Kitchen
         # @api private
         def execute_with_exit_code(command)
           if elevated
-            unless options[:elevated_username] == options[:user]
-              command = "$env:temp='#{unelevated_temp_dir}';#{command}"
-            end
-            response = elevated_runner.powershell_elevated(
-              command,
-              options[:elevated_username],
-              options[:elevated_password]
-            ) do |stdout, _|
-              logger << stdout if stdout
-            end
+            session = elevated_session
+            command = "$env:temp='#{unelevated_temp_dir}';#{command}"
           else
-            response = session.run_powershell_script(command) do |stdout, _|
-              logger << stdout if stdout
-            end
+            session = unelevated_session
           end
 
-          [response[:exitcode], response.stderr]
+          response = session.run(command) do |stdout, _|
+            logger << stdout if stdout
+          end
+          [response.exitcode, response.stderr]
         end
 
         def unelevated_temp_dir
-          @unelevated_temp_dir ||= session.run_powershell_script("$env:temp").stdout.chomp
+          @unelevated_temp_dir ||= unelevated_session.run("$env:temp").stdout.chomp
         end
 
         # @return [Winrm::FileTransporter] a file transporter
         # @api private
         def file_transporter
-          @file_transporter ||= WinRM::FS::Core::FileTransporter.new(session)
+          @file_transporter ||= WinRM::FS::Core::FileTransporter.new(unelevated_session)
         end
 
         # (see Base#init_options)
@@ -261,9 +236,7 @@ module Kitchen
           super
           @instance_name      = @options.delete(:instance_name)
           @kitchen_root       = @options.delete(:kitchen_root)
-          @endpoint           = @options.delete(:endpoint)
           @rdp_port           = @options.delete(:rdp_port)
-          @winrm_transport    = @options.delete(:winrm_transport)
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
@@ -297,8 +270,8 @@ module Kitchen
         # @api private
         def login_command_for_linux
           args  = %W[-u #{options[:user]}]
-          args += %W[-p #{options[:pass]}] if options.key?(:pass)
-          args += %W[#{URI.parse(endpoint).host}:#{rdp_port}]
+          args += %W[-p #{options[:password]}] if options.key?(:password)
+          args += %W[#{URI.parse(options[:endpoint]).host}:#{rdp_port}]
 
           LoginCommand.new("rdesktop", args)
         end
@@ -333,36 +306,40 @@ module Kitchen
         # the first time.
         #
         # @param retry_options [Hash] retry options for the initial connection
-        # @return [Winrm::CommandExecutor] the command executor session
+        # @return [Winrm::Shells::Powershell] the command shell session
         # @api private
-        def session(retry_options = {})
-          @session ||= service(retry_options).create_executor
+        def unelevated_session(retry_options = {})
+          @unelevated_session ||= connection(retry_options).shell(:powershell)
         end
 
-        # Creates the elevated runner for running elevated commands
+        # Creates an elevated session for running commands via a scheduled task
         #
-        # @return [Winrm::Elevated::Runner] the elevated runner
+        # @return [Winrm::Shells::Elevated] the elevated shell
         # @api private
-        def elevated_runner
-          @elevated_runner ||= WinRM::Elevated::Runner.new(session)
+        def elevated_session(retry_options = {})
+          @elevated_session ||= begin
+            connection(retry_options).shell(:elevated).tap do |shell|
+              shell.username = options[:elevated_username]
+              shell.password = options[:elevated_password]
+            end
+          end
         end
 
-        # Creates a winrm web service instance
+        # Creates a winrm Connection instance
         #
         # @param retry_options [Hash] retry options for the initial connection
-        # @return [Winrm::WinRMWebService] the winrm web service
+        # @return [Winrm::Connection] the winrm connection
         # @api private
-        def service(retry_options = {})
-          @service ||= begin
+        def connection(retry_options = {})
+          @connection ||= begin
             opts = {
               :retry_limit => connection_retries.to_i,
               :retry_delay   => connection_retry_sleep.to_i
             }.merge(retry_options)
 
-            service_args = [endpoint, winrm_transport, options.merge(opts)]
-            svc = ::WinRM::WinRMWebService.new(*service_args)
-            svc.logger = logger
-            svc
+            ::WinRM::Connection.new(options.merge(opts)).tap do |conn|
+              conn.logger = logger
+            end
           end
         end
 
@@ -371,40 +348,15 @@ module Kitchen
         #
         # @api private
         def to_s
-          "#{winrm_transport}::#{endpoint}<#{options.inspect}>"
-        end
-
-        # takes a long (greater than 3000 characters) command and saves it to a
-        # file and uploads it to the test instance.
-        #
-        # @param command [String] a long command to be saved and uploaded
-        # @return [String] a command that executes the uploaded script
-        # @api private
-        def run_from_file_command(command)
-          temp_dir = Dir.mktmpdir("kitchen-long-script")
-          begin
-            script_name = "#{instance_name}-long_script.ps1"
-            script_path = File.join(temp_dir, script_name)
-
-            File.open(script_path, "wb") do |file|
-              file.write(command)
-            end
-
-            target_path = File.join("$env:TEMP", script_name)
-            upload(script_path, target_path)
-
-            %{powershell -ExecutionPolicy Bypass -File "#{target_path}"}
-          ensure
-            FileUtils.rmtree(temp_dir)
-          end
+          "<#{options.inspect}>"
         end
       end
 
       private
 
-      WINRM_SPEC_VERSION = ["~> 1.6"].freeze
-      WINRM_FS_SPEC_VERSION = ["~> 0.4.1"].freeze
-      WINRM_ELEVATED_SPEC_VERSION = ["~> 0.4.0"].freeze
+      WINRM_SPEC_VERSION = ["~> 2.0"].freeze
+      WINRM_FS_SPEC_VERSION = ["~> 1.0"].freeze
+      WINRM_ELEVATED_SPEC_VERSION = ["~> 1.0"].freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
@@ -422,17 +374,17 @@ module Kitchen
           :logger => logger,
           :endpoint => data[:endpoint_template] % data,
           :user => data[:username],
-          :pass => data[:password],
+          :password => data[:password],
           :rdp_port => data[:rdp_port],
           :connection_retries => data[:connection_retries],
           :connection_retry_sleep => data[:connection_retry_sleep],
           :max_wait_until_ready => data[:max_wait_until_ready],
-          :winrm_transport => data[:winrm_transport],
+          :transport => data[:winrm_transport],
           :elevated => data[:elevated],
           :elevated_username => data[:elevated_username] || data[:username],
           :elevated_password => elevated_password
         }
-        opts.merge!(additional_transport_args(opts[:winrm_transport]))
+        opts.merge!(additional_transport_args(opts[:transport]))
         opts
       end
 
