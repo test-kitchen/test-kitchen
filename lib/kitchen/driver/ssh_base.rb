@@ -130,6 +130,12 @@ module Kitchen
         backcompat_merged_state(state)
       end
 
+      # Package an instance.
+      #
+      # (see Base#package)
+      def package(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
       # (see Base#login_command)
       def login_command(state)
         instance.transport.connection(backcompat_merged_state(state)).

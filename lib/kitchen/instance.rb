@@ -229,6 +229,13 @@ module Kitchen
       end
     end
 
+    # Perform package.
+    #
+    def package_action
+      banner "Packaging remote instance"
+      driver.package(state_file.read)
+    end
+
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash
