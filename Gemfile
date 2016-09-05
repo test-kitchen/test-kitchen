@@ -3,11 +3,11 @@ source "https://rubygems.org"
 gemspec
 gem "rack", "< 2.0"
 
-gem "train", :github => "chef/train", :branch => "winrm-v2"
+gem "train", "~> 0.19.0"
 
 group :integration do
   gem "berkshelf", "~> 4.3"
-  gem "kitchen-inspec", :git => "https://github.com/mwrock/kitchen-inspec", :branch => "winrm-v2"
+  gem "kitchen-inspec", "~> 0.15.1"
 end
 
 group :test do
