@@ -94,10 +94,6 @@ module Kitchen
 
       private
 
-      def last_exit_code
-        "; exit $LastExitCode" if powershell_shell?
-      end
-
       # Adds optional flags to a chef-client command, depending on
       # configuration data. Note that this method mutates the incoming Array.
       #

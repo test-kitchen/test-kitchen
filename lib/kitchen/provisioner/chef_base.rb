@@ -151,6 +151,10 @@ module Kitchen
 
       private
 
+      def last_exit_code
+        "; exit $LastExitCode" if powershell_shell?
+      end
+
       # @return [Hash] an option hash for the install commands
       # @api private
       def install_options
