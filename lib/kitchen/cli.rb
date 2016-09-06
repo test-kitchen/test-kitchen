@@ -119,6 +119,7 @@ module Kitchen
       update_config!
       perform("list", "list", args)
     end
+    map :status => :list
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
     method_option :loader,
