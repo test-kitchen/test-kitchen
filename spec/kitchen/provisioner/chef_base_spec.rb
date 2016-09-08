@@ -1321,6 +1321,10 @@ POLICYFILE
             file.must_include %{encrypted_data_bag_secret } +
               %{"/tmp/kitchen/encrypted_data_bag_secret"}
           end
+
+          it "disables deprecation warnings" do
+            file.must_include %{treat_deprecation_warnings_as_errors false}
+          end
         end
 
         it "supports overwriting defaults" do
