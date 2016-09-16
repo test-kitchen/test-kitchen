@@ -255,7 +255,7 @@ module Kitchen
     def reload_ps1_path
       [
         %{$env:PATH},
-        %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")\n\n}
+        %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}\n\n)
       ].join(" = ")
     end
 

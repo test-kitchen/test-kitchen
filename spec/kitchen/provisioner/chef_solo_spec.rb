@@ -500,7 +500,7 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "reloads PATH for older chef omnibus packages" do
         cmd.must_match regexify("$env:PATH = " +
-          %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+          %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}))
       end
 
       it "calls the chef-solo command from :chef_solo_path" do

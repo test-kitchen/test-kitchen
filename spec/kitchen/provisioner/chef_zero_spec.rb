@@ -818,7 +818,7 @@ describe Kitchen::Provisioner::ChefZero do
 
         it "reloads PATH for older chef omnibus packages" do
           cmd.must_match regexify("$env:PATH = " +
-            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+            %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}))
         end
 
         it "calls the chef-client command from :chef_client_path" do
@@ -979,7 +979,7 @@ describe Kitchen::Provisioner::ChefZero do
 
         it "reloads PATH for older chef omnibus packages" do
           cmd.must_match regexify("$env:PATH = " +
-            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+            %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}))
         end
       end
     end
