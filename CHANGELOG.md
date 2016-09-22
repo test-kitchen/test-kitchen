@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.13.1](https://github.com/test-kitchen/test-kitchen/tree/v1.13.1) (2016-09-22)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.0...v1.13.1)
+
+**Implemented enhancements:**
+
+- Allow mixlib-install 2.0 [\#1126](https://github.com/test-kitchen/test-kitchen/pull/1126) ([jkeis
+er](https://github.com/jkeiser))
+
 ## [v1.13.0](https://github.com/test-kitchen/test-kitchen/tree/v1.13.0) (2016-09-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.12.0...v1.13.0)
 
