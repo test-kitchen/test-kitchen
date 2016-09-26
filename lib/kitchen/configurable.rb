@@ -254,9 +254,10 @@ module Kitchen
     # @api private
     def reload_ps1_path
       [
-        %{$env:PATH},
-        %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}\n\n)
-      ].join(" = ")
+        "$env:PATH = try {",
+        "[System.Environment]::GetEnvironmentVariable('PATH','Machine')",
+        "} catch { $env:PATH }\n\n"
+      ].join("\n")
     end
 
     # Builds a shell environment variable assignment string for the
