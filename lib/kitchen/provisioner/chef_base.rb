@@ -48,6 +48,9 @@ module Kitchen
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
       default_config :chef_omnibus_install_options, nil
+      default_config :chef_omnibus_root do |provisioner|
+        provisioner.windows_os? ? "$env:systemdrive\\opscode\\chef" : "/opt/chef"
+      end
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil

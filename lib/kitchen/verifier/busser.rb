@@ -43,11 +43,7 @@ module Kitchen
       end
 
       default_config :ruby_bindir do |verifier|
-        if verifier.windows_os?
-          "$env:systemdrive\\opscode\\chef\\embedded\\bin"
-        else
-          verifier.remote_path_join(%W[#{verifier[:chef_omnibus_root]} embedded bin])
-        end
+        verifier.remote_path_join(%W[#{verifier[:chef_omnibus_root]} embedded bin])
       end
 
       default_config :version, "busser"
