@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.13.2](https://github.com/test-kitchen/test-kitchen/tree/v1.13.2) (2016-09-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.1...v1.13.2)
+
+**Fixed bugs:**
+
+- fix broken path on nano so shell out works [\#1129](https://github.com/test-kitchen/test-kitchen/pull/1129) ([mwrock](https://github.com/mwrock))
+
 ## [v1.13.1](https://github.com/test-kitchen/test-kitchen/tree/v1.13.1) (2016-09-22)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.0...v1.13.1)
 

@@ -17,5 +17,5 @@
 # limitations under the License.
 
 module Kitchen
-  VERSION = "1.13.1"
+  VERSION = "1.13.2"
 end
