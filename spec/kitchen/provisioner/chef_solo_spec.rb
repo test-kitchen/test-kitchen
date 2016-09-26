@@ -499,8 +499,9 @@ describe Kitchen::Provisioner::ChefSolo do
       end
 
       it "reloads PATH for older chef omnibus packages" do
-        cmd.must_match regexify("$env:PATH = " +
-          %(try { [System.Environment]::GetEnvironmentVariable("PATH","Machine") } catch {}))
+        cmd.must_match regexify("$env:PATH = try {\n" \
+        "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
+        "} catch { $env:PATH }")
       end
 
       it "calls the chef-solo command from :chef_solo_path" do
