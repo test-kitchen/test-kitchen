@@ -164,7 +164,6 @@ module Kitchen
           :install_flags => config[:chef_omnibus_install_options],
           :sudo_command => sudo_command
         }.tap do |opts|
-          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           [:install_msi_url, :http_proxy, :https_proxy].each do |key|
             opts[key] = config[key] if config.key? key
           end

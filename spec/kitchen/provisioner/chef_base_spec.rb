@@ -285,8 +285,8 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "will set the install root" do
+        config[:require_chef_omnibus] = true
         config[:chef_omnibus_root] = "/tmp/test"
-        install_opts[:root] = "/tmp/test"
 
         Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, false, install_opts).returns(installer)
