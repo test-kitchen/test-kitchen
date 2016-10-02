@@ -64,7 +64,8 @@ module Kitchen
           color_pad(instance.provisioner.name),
           color_pad(instance.verifier.name),
           color_pad(instance.transport.name),
-          format_last_action(instance.last_action)
+          format_last_action(instance.last_action),
+          format_last_error(instance.last_error)
         ]
       end
 
@@ -84,6 +85,18 @@ module Kitchen
         end
       end
 
+      # Format and color the given last error.
+      #
+      # @param last_error [String] the last error
+      # @return [String] formated last error
+      # @api private
+      def format_last_error(last_error)
+        case last_error
+        when nil then colorize("<None>", :white)
+        else colorize(last_error, :red)
+        end
+      end
+
       # Constructs a list display table and output it to the screen.
       #
       # @param result [Array<Instance>] an array of instances
@@ -93,7 +106,8 @@ module Kitchen
           [
             colorize("Instance", :green), colorize("Driver", :green),
             colorize("Provisioner", :green), colorize("Verifier", :green),
-            colorize("Transport", :green), colorize("Last Action", :green)
+            colorize("Transport", :green), colorize("Last Action", :green),
+            colorize("Last Error", :green)
           ]
         ]
         table += Array(result).map { |i| display_instance(i) }
