@@ -110,6 +110,10 @@ module Kitchen
       :aliases => "-b",
       :type => :boolean,
       :desc => "List the name of each instance only, one per line"
+    method_option :json,
+      :aliases => "-j",
+      :type => :boolean,
+      :desc => "Print data as JSON"
     method_option :debug,
       :aliases => "-d",
       :type => :boolean,

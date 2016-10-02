@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require "kitchen/command"
+require "json"
 
 module Kitchen
 
@@ -35,6 +36,8 @@ module Kitchen
             "please use `kitchen diagnose'."
         elsif options[:bare]
           puts Array(result).map(&:name).join("\n")
+        elsif options[:json]
+          puts JSON.pretty_generate(Array(result).map { |r| to_hash(r) })
         else
           list_table(result)
         end
@@ -112,6 +115,22 @@ module Kitchen
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
+      end
+
+      # Constructs a hashtable representation of a single instance.
+      #
+      # @param result [Hash{Symbol => String}] hash of a single instance
+      # @api private
+      def to_hash(result)
+        {
+          :instance => result.name,
+          :driver => result.driver.name,
+          :provisioner => result.provisioner.name,
+          :verifier => result.verifier.name,
+          :transport => result.transport.name,
+          :last_action => result.last_action,
+          :last_error => result.last_error
+        }
       end
 
       # Outputs a formatted display table.
