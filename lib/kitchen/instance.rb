@@ -274,6 +274,13 @@ module Kitchen
       state_file.read[:last_action]
     end
 
+    # Returns the error encountered on the last action on the instance
+    #
+    # @return [String] the message of the last error
+    def last_error
+      state_file.read[:last_error]
+    end
+
     # Clean up any per-instance resources before exiting.
     #
     # @return [void]
@@ -485,14 +492,17 @@ module Kitchen
         synchronize_or_call(what, state, &block)
       end
       state[:last_action] = what.to_s
+      state[:last_error] = nil
       elapsed
     rescue ActionFailed => e
       log_failure(what, e)
+      state[:last_error] = e.class.name
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{name}.log for more details",
         e.backtrace)
     rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
+      state[:last_error] = e.class.name
       raise ActionFailed,
         "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
     ensure

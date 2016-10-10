@@ -18,7 +18,7 @@ Feature: Test Kitchen defaults
       - name: default
     """
     When I successfully run `kitchen list`
-    Then the output should match /^default-win-81\s+Dummy\s+Dummy\s+Dummy\s+Winrm\s+\<Not Created\>$/
+    Then the output should match /^default-win-81\s+Dummy\s+Dummy\s+Dummy\s+Winrm\s+\<Not Created\>\s+\<None\>$/
 
   Scenario: Non-Windows platforms get the Ssh Transport by default
     Given a file named ".kitchen.yml" with:
@@ -35,4 +35,4 @@ Feature: Test Kitchen defaults
       - name: default
     """
     When I successfully run `kitchen list`
-    Then the output should match /^default-ubuntu-1404\s+Dummy\s+Dummy\s+Dummy\s+Ssh\s+\<Not Created\>$/
+    Then the output should match /^default-ubuntu-1404\s+Dummy\s+Dummy\s+Dummy\s+Ssh\s+\<Not Created\>\s+\<None\>$/
