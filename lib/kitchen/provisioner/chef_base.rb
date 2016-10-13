@@ -67,6 +67,8 @@ module Kitchen
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ].join(",")
+      # to ease upgrades, allow the user to turn deprecation warnings into errors
+      default_config :deprecations_as_errors, false
 
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
@@ -218,7 +220,8 @@ module Kitchen
           :chef_server_url  => "http://127.0.0.1:8889",
           :encrypted_data_bag_secret => remote_path_join(
             root, "encrypted_data_bag_secret"
-          )
+          ),
+          :treat_deprecation_warnings_as_errors => config[:deprecations_as_errors]
         }
       end
 
