@@ -58,6 +58,8 @@ module Kitchen
       default_config :ssh_gateway_port, 22
       default_config :ssh_gateway_username, nil
 
+      default_config :target_host, nil
+
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
@@ -87,6 +89,7 @@ module Kitchen
       # (see Base#connection)
       def connection(state, &block)
         options = connection_options(config.to_hash.merge(state))
+        options[:hostname] = config[:target_host] if config[:target_host]
 
         if @connection && @connection_options == options
           reuse_connection(&block)
