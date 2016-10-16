@@ -281,6 +281,13 @@ module Kitchen
       state_file.read[:last_error]
     end
 
+    # Returns the stored hostname of the instance
+    #
+    # @return [String] the hostaname of the instance
+    def hostname
+      state_file.read[:hostname]
+    end
+
     # Clean up any per-instance resources before exiting.
     #
     # @return [void]
