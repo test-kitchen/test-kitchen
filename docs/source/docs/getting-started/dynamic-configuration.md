@@ -37,7 +37,7 @@ the provisioner.  Since Kitchen 1.7.0 the log level for the provisioner is no lo
 ---
 provisioner:
   name: chef-zero
-  log_level: <%= ENV['CHEF_LOG_LEVEL'] || auto %>
+  log_level: <%= ENV['CHEF_LOG_LEVEL'] || "auto" %>
 ~~~
 
 You can also specify a path to a global `config.yml`, project or local `.kitchen.yml` file by setting the following environment variables:
