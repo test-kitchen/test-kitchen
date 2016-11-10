@@ -47,6 +47,13 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
+      # `chef_omnibus_cache` is an option that will let us be specific with the
+      # directory we want omnibus packages to be cached, it will be useful for
+      # other drivers that can mount or share a folder to avoid downloading the
+      # same software every converge
+      default_config :chef_omnibus_cache do |provisioner|
+        provisioner.windows_os? ? "$env:TEMP\\kitchen\\omnibus" : "/tmp/kitchen/omnibus"
+      end
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -156,6 +163,15 @@ module Kitchen
       # @return [Hash] an option hash for the install commands
       # @api private
       def install_options
+        # Verify if the `-d` option has already been passed, then we
+        # don't use config[:chef_omnibus_cache]
+        cache_dir_option = ' ' << "-d #{config[:chef_omnibus_cache]}"
+        if config[:chef_omnibus_install_options].nil?
+          config[:chef_omnibus_install_options] = cache_dir_option
+        elsif config[:chef_omnibus_install_options].match(/\s*-d\s*/).nil?
+          config[:chef_omnibus_install_options] << cache_dir_option
+        end
+
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
           :omnibus_url => config[:chef_omnibus_url],

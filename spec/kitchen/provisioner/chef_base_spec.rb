@@ -61,6 +61,11 @@ describe Kitchen::Provisioner::ChefBase do
           must_equal "https://omnitruck.chef.io/install.sh"
       end
 
+      it ":chef_omnibus_cache has a default" do
+        provisioner[:chef_omnibus_cache].
+          must_equal "/tmp/kitchen/omnibus"
+      end
+
       it ":chef_metadata_url defaults to nil" do
         provisioner[:chef_metadata_url].must_equal(nil)
       end
@@ -75,6 +80,10 @@ describe Kitchen::Provisioner::ChefBase do
           must_equal "https://omnitruck.chef.io/install.sh"
       end
 
+      it ":chef_omnibus_cache has a default" do
+        provisioner[:chef_omnibus_cache].
+          must_equal "$env:TEMP\\kitchen\\omnibus"
+      end
     end
 
     it ":require_chef_omnibus defaults to true" do
