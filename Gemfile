@@ -9,3 +9,7 @@ group :integration do
   gem "berkshelf", "~> 4.3"
   gem "kitchen-inspec", "~> 0.15.1"
 end
+
+group :test do
+  gem "codeclimate-test-reporter", "~> 1.0", ">= 1.0.3", :require => nil
+end
