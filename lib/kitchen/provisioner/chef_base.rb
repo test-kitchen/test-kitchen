@@ -52,7 +52,7 @@ module Kitchen
       # other drivers that can mount or share a folder to avoid downloading the
       # same software every converge
       default_config :chef_omnibus_cache do |provisioner|
-        provisioner.windows_os? ? "$env:TEMP\\kitchen\\omnibus" : "/tmp/kitchen/omnibus"
+        provisioner.windows_os? ? "$env:TEMP\\omnibus\\cache" : "/tmp/omnibus/cache"
       end
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []

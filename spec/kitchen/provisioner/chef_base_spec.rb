@@ -63,7 +63,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it ":chef_omnibus_cache has a default" do
         provisioner[:chef_omnibus_cache].
-          must_equal "/tmp/kitchen/omnibus"
+          must_equal "/tmp/omnibus/cache"
       end
 
       it ":chef_metadata_url defaults to nil" do
@@ -82,7 +82,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it ":chef_omnibus_cache has a default" do
         provisioner[:chef_omnibus_cache].
-          must_equal "$env:TEMP\\kitchen\\omnibus"
+          must_equal "$env:TEMP\\omnibus\\cache"
       end
     end
 
@@ -304,8 +304,8 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "will not use chef_omnibus_cache if -d options is given" do
         config[:chef_omnibus_cache] = "/tmp/custom/place"
-        config[:chef_omnibus_install_options] = "-d /force/path"
-        install_opts[:install_flags] = "-d /force/path"
+        config[:chef_omnibus_install_options] = "-P cool -d /path -v 123"
+        install_opts[:install_flags] = "-d /path"
 
         Mixlib::Install::ScriptGenerator.expects(:new).
           with("11", false, install_opts).returns(installer)
