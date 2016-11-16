@@ -159,8 +159,9 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://omnitruck.chef.io/install.sh",
-        :project => nil, :install_flags => nil, :sudo_command => "sudo -E",
-        :http_proxy => nil, :https_proxy => nil }
+        :project => nil, :install_flags => "-d /tmp/omnibus/cache",
+        :sudo_command => "sudo -E", :http_proxy => nil, :https_proxy => nil
+      }
     }
 
     it "returns nil if :require_chef_omnibus is falsey" do
@@ -275,7 +276,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "will pass a project, when given" do
         config[:chef_omnibus_install_options] = "-P chefdk"
-        install_opts[:install_flags] = "-P chefdk"
+        install_opts[:install_flags] = "-P chefdk -d /tmp/omnibus/cache"
         install_opts[:project] = "chefdk"
 
         Mixlib::Install::ScriptGenerator.expects(:new).
@@ -298,17 +299,29 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_flags] = "-d /tmp/custom/place"
 
         Mixlib::Install::ScriptGenerator.expects(:new).
-          with("11", false, install_opts).returns(installer)
+          with(default_version, false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will use chef_omnibus_cache even if other options are given" do
+        config[:chef_omnibus_cache] = "/tmp/custom/place"
+        config[:chef_omnibus_install_options] = "-P cool -v 123"
+        install_opts[:install_flags] = "-P cool -v 123 -d /tmp/custom/place"
+        install_opts[:project] = "cool"
+
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
       it "will not use chef_omnibus_cache if -d options is given" do
         config[:chef_omnibus_cache] = "/tmp/custom/place"
         config[:chef_omnibus_install_options] = "-P cool -d /path -v 123"
-        install_opts[:install_flags] = "-d /path"
+        install_opts[:install_flags] = "-P cool -d /path -v 123"
+        install_opts[:project] = "cool"
 
         Mixlib::Install::ScriptGenerator.expects(:new).
-          with("11", false, install_opts).returns(installer)
+          with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -466,6 +479,19 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the powershell flag for Mixlib::Install" do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
+        install_opts_clone[:install_flags] = "-download_directory $env:TEMP\\omnibus\\cache"
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with(default_version, true, install_opts_clone).returns(installer)
+        cmd
+      end
+
+      it "will have the same behavior on windows" do
+        config[:chef_omnibus_cache] = "$env:TEMP\\dummy\\place"
+        config[:chef_omnibus_install_options] = "-version 123"
+        install_opts_clone = install_opts.clone
+        install_opts_clone[:sudo_command] = ""
+        install_opts_clone[:install_flags] = "-version 123"
+        install_opts_clone[:install_flags] << " -download_directory $env:TEMP\\dummy\\place"
         Mixlib::Install::ScriptGenerator.expects(:new).
           with(default_version, true, install_opts_clone).returns(installer)
         cmd
