@@ -293,6 +293,25 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
+      it "will use chef_omnibus_cache to provide a cache directory" do
+        config[:chef_omnibus_cache] = "/tmp/custom/place"
+        install_opts[:install_flags] = "-d /tmp/custom/place"
+
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with("11", false, install_opts).returns(installer)
+        cmd
+      end
+
+      it "will not use chef_omnibus_cache if -d options is given" do
+        config[:chef_omnibus_cache] = "/tmp/custom/place"
+        config[:chef_omnibus_install_options] = "-d /force/path"
+        install_opts[:install_flags] = "-d /force/path"
+
+        Mixlib::Install::ScriptGenerator.expects(:new).
+          with("11", false, install_opts).returns(installer)
+        cmd
+      end
+
       it "will set the install root" do
         config[:chef_omnibus_root] = "/tmp/test"
         install_opts[:root] = "/tmp/test"
