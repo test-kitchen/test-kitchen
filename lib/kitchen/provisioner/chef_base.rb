@@ -163,15 +163,7 @@ module Kitchen
       # @return [Hash] an option hash for the install commands
       # @api private
       def install_options
-        # Verify if the `-d` option has already been passed, then we
-        # don't use config[:chef_omnibus_cache]
-        cache_dir_option = ' ' << "-d #{config[:chef_omnibus_cache]}"
-        if config[:chef_omnibus_install_options].nil?
-          config[:chef_omnibus_install_options] = cache_dir_option
-        elsif config[:chef_omnibus_install_options].match(/\s*-d\s*/).nil?
-          config[:chef_omnibus_install_options] << cache_dir_option
-        end
-
+        verify_omnibus_directory_option
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
           :omnibus_url => config[:chef_omnibus_url],
@@ -183,6 +175,19 @@ module Kitchen
           [:install_msi_url, :http_proxy, :https_proxy].each do |key|
             opts[key] = config[key] if config.key? key
           end
+        end
+      end
+
+      # Verify if the "omnibus_dir_option" has already been passed, if so we
+      # don't use config[:chef_omnibus_cache]
+      #
+      # @api private
+      def verify_omnibus_directory_option
+        cache_dir_option = "#{omnibus_dir_option} #{config[:chef_omnibus_cache]}"
+        if config[:chef_omnibus_install_options].nil?
+          config[:chef_omnibus_install_options] = cache_dir_option
+        elsif config[:chef_omnibus_install_options].match(/\s*#{omnibus_dir_option}\s*/).nil?
+          config[:chef_omnibus_install_options] << " " << cache_dir_option
         end
       end
 
@@ -344,6 +349,13 @@ module Kitchen
         else
           install_from_file(installer.install_command)
         end
+      end
+
+      # @return [String] Correct option per platform to specify the the
+      #                  cache directory
+      # @api private
+      def omnibus_dir_option
+        windows_os? ? "-download_directory" : "-d"
       end
 
       def install_from_file(command)
