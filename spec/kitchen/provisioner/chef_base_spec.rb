@@ -26,7 +26,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
-  let(:driver)          { stub(:cache => nil) }
+  let(:driver)          { stub(:cache_directory => nil) }
   let(:suite)           { stub(:name => "fries") }
   let(:default_version) { true }
 
@@ -316,10 +316,10 @@ describe Kitchen::Provisioner::ChefBase do
         cmd.wont_match(/\Amy_prefix /)
       end
 
-      describe "when driver implements the cache interface" do
-        before { driver.stubs(:cache).returns("/tmp/custom/place") }
+      describe "when driver implements the cache_directory interface" do
+        before { driver.stubs(:cache_directory).returns("/tmp/custom/place") }
 
-        it "will use driver.cache to provide a cache directory" do
+        it "will use driver.cache_directory to provide a cache directory" do
           install_opts[:install_flags] = "-d /tmp/custom/place"
 
           Mixlib::Install::ScriptGenerator.expects(:new).
@@ -327,7 +327,7 @@ describe Kitchen::Provisioner::ChefBase do
           cmd
         end
 
-        it "will use driver.cache even if other options are given" do
+        it "will use driver.cache_directory even if other options are given" do
           config[:chef_omnibus_install_options] = "-P cool -v 123"
           install_opts[:install_flags] = "-P cool -v 123 -d /tmp/custom/place"
           install_opts[:project] = "cool"
@@ -337,7 +337,7 @@ describe Kitchen::Provisioner::ChefBase do
           cmd
         end
 
-        it "will not use driver.cache if -d options is given" do
+        it "will not use driver.cache_directory if -d options is given" do
           config[:chef_omnibus_install_options] = "-P cool -d /path -v 123"
           install_opts[:install_flags] = "-P cool -d /path -v 123"
           install_opts[:project] = "cool"
@@ -486,8 +486,8 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
-      describe "when driver implements the cache" do
-        before { driver.stubs(:cache).returns("$env:TEMP\\dummy\\place") }
+      describe "when driver implements the cache_directory" do
+        before { driver.stubs(:cache_directory).returns("$env:TEMP\\dummy\\place") }
 
         it "will have the same behavior on windows" do
           config[:chef_omnibus_install_options] = "-version 123"

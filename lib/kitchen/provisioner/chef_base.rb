@@ -156,7 +156,7 @@ module Kitchen
       # @return [Hash] an option hash for the install commands
       # @api private
       def install_options
-        add_omnibus_directory_option if instance.driver.cache
+        add_omnibus_directory_option if instance.driver.cache_directory
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
           :omnibus_url => config[:chef_omnibus_url],
@@ -172,11 +172,11 @@ module Kitchen
       end
 
       # Verify if the "omnibus_dir_option" has already been passed, if so we
-      # don't use the @driver.cache
+      # don't use the @driver.cache_directory
       #
       # @api private
       def add_omnibus_directory_option
-        cache_dir_option = "#{omnibus_dir_option} #{instance.driver.cache}"
+        cache_dir_option = "#{omnibus_dir_option} #{instance.driver.cache_directory}"
         if config[:chef_omnibus_install_options].nil?
           config[:chef_omnibus_install_options] = cache_dir_option
         elsif config[:chef_omnibus_install_options].match(/\s*#{omnibus_dir_option}\s*/).nil?

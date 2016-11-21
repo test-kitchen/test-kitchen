@@ -123,7 +123,7 @@ module Kitchen
       # that it can leverage it internally
       #
       # @return path [String] a path of the cache directory
-      def cache
+      def cache_directory
       end
 
       private
