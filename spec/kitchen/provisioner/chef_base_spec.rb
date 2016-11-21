@@ -26,6 +26,7 @@ describe Kitchen::Provisioner::ChefBase do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(:os_type => nil) }
+  let(:driver)          { stub(:cache_directory => nil) }
   let(:suite)           { stub(:name => "fries") }
   let(:default_version) { true }
 
@@ -38,7 +39,8 @@ describe Kitchen::Provisioner::ChefBase do
       :name => "coolbeans",
       :logger => logger,
       :suite => suite,
-      :platform => platform
+      :platform => platform,
+      :driver => driver
     )
   end
 
@@ -74,7 +76,6 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner[:chef_omnibus_url].
           must_equal "https://omnitruck.chef.io/install.sh"
       end
-
     end
 
     it ":require_chef_omnibus defaults to true" do
@@ -150,8 +151,9 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) {
       { :omnibus_url => "https://omnitruck.chef.io/install.sh",
-        :project => nil, :install_flags => nil, :sudo_command => "sudo -E",
-        :http_proxy => nil, :https_proxy => nil }
+        :project => nil, :install_flags => nil,
+        :sudo_command => "sudo -E", :http_proxy => nil, :https_proxy => nil
+      }
     }
 
     it "returns nil if :require_chef_omnibus is falsey" do
@@ -313,6 +315,38 @@ describe Kitchen::Provisioner::ChefBase do
 
         cmd.wont_match(/\Amy_prefix /)
       end
+
+      describe "when driver implements the cache_directory interface" do
+        before { driver.stubs(:cache_directory).returns("/tmp/custom/place") }
+
+        it "will use driver.cache_directory to provide a cache directory" do
+          install_opts[:install_flags] = "-d /tmp/custom/place"
+
+          Mixlib::Install::ScriptGenerator.expects(:new).
+            with(default_version, false, install_opts).returns(installer)
+          cmd
+        end
+
+        it "will use driver.cache_directory even if other options are given" do
+          config[:chef_omnibus_install_options] = "-P cool -v 123"
+          install_opts[:install_flags] = "-P cool -v 123 -d /tmp/custom/place"
+          install_opts[:project] = "cool"
+
+          Mixlib::Install::ScriptGenerator.expects(:new).
+            with(default_version, false, install_opts).returns(installer)
+          cmd
+        end
+
+        it "will not use driver.cache_directory if -d options is given" do
+          config[:chef_omnibus_install_options] = "-P cool -d /path -v 123"
+          install_opts[:install_flags] = "-P cool -d /path -v 123"
+          install_opts[:project] = "cool"
+
+          Mixlib::Install::ScriptGenerator.expects(:new).
+            with(default_version, false, install_opts).returns(installer)
+          cmd
+        end
+      end
     end
 
     describe "for product" do
@@ -450,6 +484,21 @@ describe Kitchen::Provisioner::ChefBase do
           opts[:shell_type].must_equal :ps1
         end.returns(installer)
         cmd
+      end
+
+      describe "when driver implements the cache_directory" do
+        before { driver.stubs(:cache_directory).returns("$env:TEMP\\dummy\\place") }
+
+        it "will have the same behavior on windows" do
+          config[:chef_omnibus_install_options] = "-version 123"
+          install_opts_clone = install_opts.clone
+          install_opts_clone[:sudo_command] = ""
+          install_opts_clone[:install_flags] = "-version 123"
+          install_opts_clone[:install_flags] << " -download_directory $env:TEMP\\dummy\\place"
+          Mixlib::Install::ScriptGenerator.expects(:new).
+            with(default_version, true, install_opts_clone).returns(installer)
+          cmd
+        end
       end
     end
   end

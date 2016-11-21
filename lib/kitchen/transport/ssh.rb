@@ -394,7 +394,7 @@ module Kitchen
       # @param data [Hash] merged configuration and mutable state data
       # @return [Hash] hash of connection options
       # @api private
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def connection_options(data)
         opts = {
           :logger                 => logger,

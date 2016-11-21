@@ -216,6 +216,13 @@ module Kitchen
         @serial_actions += methods
       end
 
+      # Cache directory that a driver could implement to inform the provisioner
+      # that it can leverage it internally
+      #
+      # @return path [String] a path of the cache directory
+      def cache_directory
+      end
+
       private
 
       def backcompat_merged_state(state)
