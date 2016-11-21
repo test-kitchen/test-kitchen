@@ -47,13 +47,6 @@ module Kitchen
 
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
-      # `chef_omnibus_cache` is an option that will let us be specific with the
-      # directory we want omnibus packages to be cached, it will be useful for
-      # other drivers that can mount or share a folder to avoid downloading the
-      # same software every converge
-      default_config :chef_omnibus_cache do |provisioner|
-        provisioner.windows_os? ? "$env:TEMP\\omnibus\\cache" : "/tmp/omnibus/cache"
-      end
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -163,7 +156,7 @@ module Kitchen
       # @return [Hash] an option hash for the install commands
       # @api private
       def install_options
-        verify_omnibus_directory_option
+        add_omnibus_directory_option if instance.driver.cache
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
           :omnibus_url => config[:chef_omnibus_url],
@@ -179,11 +172,11 @@ module Kitchen
       end
 
       # Verify if the "omnibus_dir_option" has already been passed, if so we
-      # don't use config[:chef_omnibus_cache]
+      # don't use the @driver.cache
       #
       # @api private
-      def verify_omnibus_directory_option
-        cache_dir_option = "#{omnibus_dir_option} #{config[:chef_omnibus_cache]}"
+      def add_omnibus_directory_option
+        cache_dir_option = "#{omnibus_dir_option} #{instance.driver.cache}"
         if config[:chef_omnibus_install_options].nil?
           config[:chef_omnibus_install_options] = cache_dir_option
         elsif config[:chef_omnibus_install_options].match(/\s*#{omnibus_dir_option}\s*/).nil?
