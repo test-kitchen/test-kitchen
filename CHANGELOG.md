@@ -1,5 +1,29 @@
 # Change Log
 
+## [v1.14.0](https://github.com/test-kitchen/test-kitchen/tree/v1.14.0) (2016-11-22)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.2...v1.14.0)
+
+**Implemented enhancements:**
+
+- Test Kitchen should use omnitruck's -d option by default [\#809](https://github.com/test-kitchen/test-kitchen/issues/809)
+
+**Closed issues:**
+
+- Kitchen converge fails, doesn't install omnibus,  \[\[WinRM::FS::Core::FileTransporter\] Upload failed [\#1150](https://github.com/test-kitchen/test-kitchen/issues/1150)
+- Re-Enable Code Climate [\#1146](https://github.com/test-kitchen/test-kitchen/issues/1146)
+- kitchen + berkshelf don't work together with the latest versions of gems [\#1144](https://github.com/test-kitchen/test-kitchen/issues/1144)
+- Vagrant drivers brings up virtualbox machine with 'cable connected' disabled option [\#1143](https://github.com/test-kitchen/test-kitchen/issues/1143)
+- kitchen converge throws Berkshelf::LockfileNotFound on Windows [\#1140](https://github.com/test-kitchen/test-kitchen/issues/1140)
+- Inspect tests is an empty value when using the kitchen\_ec2 driver [\#1136](https://github.com/test-kitchen/test-kitchen/issues/1136)
+- kitchen test or verify with --parallel option fails [\#1125](https://github.com/test-kitchen/test-kitchen/issues/1125)
+
+**Merged pull requests:**
+
+- Added `cache` interface for Drivers so that provisioners can leverage  [\#1149](https://github.com/test-kitchen/test-kitchen/pull/1149) ([afiune](https://github.com/afiune))
+- Ensure that we only berks update with a lockfile [\#1145](https://github.com/test-kitchen/test-kitchen/pull/1145) ([thommay](https://github.com/thommay))
+- Added `last\_error` and `--json` to `kitchen list` [\#1135](https://github.com/test-kitchen/test-kitchen/pull/1135) ([BackSlasher](https://github.com/BackSlasher))
+- Allow the user to make deprecations errors [\#1117](https://github.com/test-kitchen/test-kitchen/pull/1117) ([thommay](https://github.com/thommay))
+
 ## [v1.13.2](https://github.com/test-kitchen/test-kitchen/tree/v1.13.2) (2016-09-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.1...v1.13.2)
 
