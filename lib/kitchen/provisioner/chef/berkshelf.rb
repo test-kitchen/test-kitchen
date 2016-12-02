@@ -64,7 +64,7 @@ module Kitchen
 
           ::Berkshelf.ui.mute do
             berksfile_obj = ::Berkshelf::Berksfile.from_file(berksfile)
-            berksfile_obj.update if always_update && berkshelf_obj.lockfile.present?
+            berksfile_obj.update if always_update && berksfile_obj.lockfile.present?
             # Berkshelf requires the directory to not exist
             FileUtils.rm_rf(path)
             berksfile_obj.vendor(path)
