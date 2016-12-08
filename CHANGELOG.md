@@ -1,5 +1,22 @@
 # Change Log
 
+## [v1.14.1](https://github.com/test-kitchen/test-kitchen/tree/v1.14.1) (2016-12-08)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.0...v1.14.1)
+
+**Closed issues:**
+
+- Getting message: "Expected array default value for '--driver'; got "kitchen-vagrant" \(string\)" with every operation [\#1163](https://github.com/test-kitchen/test-kitchen/issues/1163)
+- Possible to specify a custom bootstrap template? [\#1162](https://github.com/test-kitchen/test-kitchen/issues/1162)
+- Deployment of cookbooks do differ from berks package [\#1158](https://github.com/test-kitchen/test-kitchen/issues/1158)
+- Failed to complete \#create action: \[undefined method '\[\]' for nil:NilClass\] [\#1157](https://github.com/test-kitchen/test-kitchen/issues/1157)
+- inspec works, but kitchen verify fails [\#1154](https://github.com/test-kitchen/test-kitchen/issues/1154)
+
+**Merged pull requests:**
+
+- Fix typo in berkshelf chef provisioner. [\#1160](https://github.com/test-kitchen/test-kitchen/pull/1160) ([thommay](https://github.com/thommay))
+- Update MAINTAINERS.md [\#1156](https://github.com/test-kitchen/test-kitchen/pull/1156) ([afiune](https://github.com/afiune))
+- Fix to work with Thor 0.19.2 [\#1155](https://github.com/test-kitchen/test-kitchen/pull/1155) ([coderanger](https://github.com/coderanger))
+
 ## [v1.14.0](https://github.com/test-kitchen/test-kitchen/tree/v1.14.0) (2016-11-22)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.2...v1.14.0)
 
