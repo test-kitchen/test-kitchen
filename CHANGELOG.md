@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.14.2](https://github.com/test-kitchen/test-kitchen/tree/v1.14.2) (2016-12-09)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.1...v1.14.2)
+
+**Merged pull requests:**
+
+- Replace finstyle in favor of chefstyle [\#1166](https://github.com/test-kitchen/test-kitchen/pull/1166) ([afiune](https://github.com/afiune))
+
 ## [v1.14.1](https://github.com/test-kitchen/test-kitchen/tree/v1.14.1) (2016-12-08)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.0...v1.14.1)
 
