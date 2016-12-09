@@ -60,7 +60,7 @@ module Kitchen
                          default_log_overwrite
                        else
                          options[:log_overwrite]
-      end
+                       end
 
       @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
 

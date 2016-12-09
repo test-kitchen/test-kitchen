@@ -270,7 +270,7 @@ module Kitchen
             (!config[:https_proxy] && https_proxy) ||
             (!config[:ftp_proxy] && ftp_proxy)
                      ENV["no_proxy"] || ENV["NO_PROXY"]
-        end
+                   end
         env << " http_proxy=#{http_proxy}"   if http_proxy
         env << " https_proxy=#{https_proxy}" if https_proxy
         env << " ftp_proxy=#{ftp_proxy}"     if ftp_proxy

@@ -55,7 +55,7 @@ module Kitchen
                    formatted_exception(exception.original, "Nested Exception"),
                    formatted_backtrace(exception),
                  ].flatten
-        end
+               end
       end
       arr.flatten
     end
@@ -180,8 +180,6 @@ module Kitchen
     end
     exit 20
   end
-
-  private
 
   # Writes an array of lines to the common Kitchen logger's file device at the
   # given severity level. If the Kitchen logger is set to debug severity, then

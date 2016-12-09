@@ -123,7 +123,7 @@ module Kitchen
               normalize(global_yaml).rmerge(normalize(yaml))
             else
               normalize(yaml)
-        end
+            end
         @process_local ? y.rmerge(normalize(local_yaml)) : y
       end
 
@@ -311,7 +311,7 @@ module Kitchen
                         { default_key => value }
                       else
                         normalize(value)
-          end
+                      end
         else
           hash[key] = normalize(value)
         end

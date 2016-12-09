@@ -299,7 +299,7 @@ module Kitchen
                       else
                         "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
                           "(#{e.inspect})"
-            end
+                      end
             logger.info(message)
             sleep(opts[:delay])
             retry

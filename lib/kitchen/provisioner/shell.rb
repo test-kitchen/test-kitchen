@@ -63,7 +63,7 @@ module Kitchen
           POWERSHELL
                else
                  "#{sudo('rm')} -rf #{data} ; mkdir -p #{root}"
-        end
+               end
 
         wrap_shell_code(code)
       end

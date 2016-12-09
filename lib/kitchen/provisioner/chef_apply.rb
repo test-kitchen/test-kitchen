@@ -89,7 +89,7 @@ module Kitchen
                  init_command_vars_for_powershell(dirs)
                else
                  init_command_vars_for_bourne(dirs)
-        end
+               end
 
         prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
       end

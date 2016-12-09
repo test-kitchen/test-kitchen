@@ -958,7 +958,7 @@ MSG
                 klass.new("dang", 200)
               else
                 klass
-          end
+              end
 
           options[:connection_retries] = 3
           options[:connection_retry_sleep] = 7

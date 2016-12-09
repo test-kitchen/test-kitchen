@@ -209,7 +209,7 @@ module Kitchen
                         config[key].map { |path| File.expand_path(path, root_path) }
                       else
                         File.expand_path(config[key], root_path)
-        end
+                      end
       end
     end
 

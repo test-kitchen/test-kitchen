@@ -281,7 +281,7 @@ module Kitchen
                   update_dna_for_policyfile
                 else
                   config[:attributes].merge(run_list: config[:run_list])
-          end
+                end
 
           info("Preparing dna.json")
           debug("Creating dna.json from #{dna.inspect}")

@@ -210,7 +210,7 @@ module Kitchen
              legacy_ssh_base_login(state)
            else
              transport.connection(state).login_command
-      end
+           end
 
       debug(%{Login command: #{lc.command} #{lc.arguments.join(' ')} } \
         "(Options: #{lc.options})")
@@ -259,7 +259,7 @@ module Kitchen
                         obj.diagnose_plugin
                       else
                         :unknown
-        end
+                      end
       end
       result
     end
