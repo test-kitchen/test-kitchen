@@ -41,7 +41,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "winrm-fs", "~> 1.0"
 
   gem.add_development_dependency "bundler",   "~> 1.3"
-  gem.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "rake",      "~> 12.0"
   gem.add_development_dependency "github_changelog_generator", "1.11.3"
 
   gem.add_development_dependency "aruba",     "~> 0.11"
@@ -59,5 +59,7 @@ Gem::Specification.new do |gem|
   # style and complexity libraries are tightly version pinned as newer releases
   # may introduce new and undesireable style choices which would be immediately
   # enforced in CI
-  gem.add_development_dependency "finstyle",  "1.5.0"
+  #
+  # Replacing finstyle in favor of chefstyle
+  gem.add_development_dependency "chefstyle",  "0.4.0"
 end
