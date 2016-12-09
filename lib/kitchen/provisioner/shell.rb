@@ -38,6 +38,10 @@ module Kitchen
       end
       expand_path_for :script
 
+      default_config :command_interpreter do |provisioner|
+        provisioner.powershell_shell? ? "powershell.exe" : "sh"
+      end
+
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
@@ -73,11 +77,11 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        script = remote_path_join(
+        script = "#{config[:command_interpreter]} " + remote_path_join(
           config[:root_path],
           File.basename(config[:script])
         )
-        code = powershell_shell? ? %{& "#{script}"} : sudo(script)
+        code = powershell_shell? ? "#{script}" : sudo("#{script}")
 
         prefix_command(wrap_shell_code(code))
       end
@@ -112,9 +116,6 @@ module Kitchen
         else
           prepare_stubbed_script
         end
-
-        FileUtils.chmod(0755,
-          File.join(sandbox_path, File.basename(config[:script])))
       end
 
       # Creates a minimal, no-op script in the sandbox path.
