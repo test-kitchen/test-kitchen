@@ -63,6 +63,7 @@ module Kitchen
       def display_instance(instance)
         [
           color_pad(instance.name),
+          format_hostname(instance.hostname),
           color_pad(instance.driver.name),
           color_pad(instance.provisioner.name),
           color_pad(instance.verifier.name),
@@ -100,6 +101,18 @@ module Kitchen
         end
       end
 
+      # Format and color the stored hostname.
+      #
+      # @param hostname [String] the hostname
+      # @return [String] formatted hostname
+      # @api private
+      def format_hostname(hostname)
+        case hostname
+        when nil then colorize("<None>", :white)
+        else colorize(hostname, :white)
+        end
+      end
+
       # Constructs a list display table and output it to the screen.
       #
       # @param result [Array<Instance>] an array of instances
@@ -107,10 +120,10 @@ module Kitchen
       def list_table(result)
         table = [
           [
-            colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Verifier", :green),
-            colorize("Transport", :green), colorize("Last Action", :green),
-            colorize("Last Error", :green)
+            colorize("Instance", :green), colorize("Hostname", :green),
+            colorize("Driver", :green), colorize("Provisioner", :green),
+            colorize("Verifier", :green), colorize("Transport", :green),
+            colorize("Last Action", :green), colorize("Last Error", :green)
           ]
         ]
         table += Array(result).map { |i| display_instance(i) }
@@ -124,6 +137,7 @@ module Kitchen
       def to_hash(result)
         {
           :instance => result.name,
+          :hostname => result.hostname,
           :driver => result.driver.name,
           :provisioner => result.provisioner.name,
           :verifier => result.verifier.name,

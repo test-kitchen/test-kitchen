@@ -22,8 +22,8 @@ Feature: Listing Test Kitchen instances
   Scenario: Listing instances
     When I run `kitchen list`
     Then the exit status should be 0
-    And the output should match /^foobar-ubuntu-1304\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
-    And the output should match /^foobar-centos-64\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
+    And the output should match /^foobar-ubuntu-1304\s+<None>\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
+    And the output should match /^foobar-centos-64\s+<None>\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
 
   Scenario: Listing a single instance with the --json option
     When I run `kitchen list --json`
@@ -33,6 +33,7 @@ Feature: Listing Test Kitchen instances
     [
       {
         "instance": "foobar-ubuntu-1304",
+        "hostname": null,
         "driver": "Dummy",
         "provisioner": "ChefSolo",
         "verifier": "Busser",
@@ -42,6 +43,7 @@ Feature: Listing Test Kitchen instances
       },
       {
         "instance": "foobar-centos-64",
+        "hostname": null,
         "driver": "Dummy",
         "provisioner": "ChefSolo",
         "verifier": "Busser",
@@ -51,6 +53,7 @@ Feature: Listing Test Kitchen instances
       },
       {
         "instance": "foobar-centos-64-with-small-mem",
+        "hostname": null,
         "driver": "Dummy",
         "provisioner": "ChefSolo",
         "verifier": "Busser",
