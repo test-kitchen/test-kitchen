@@ -56,10 +56,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "simplecov", "~> 0.7"
   gem.add_development_dependency "yard",      "~> 0.8"
 
-  # style and complexity libraries are tightly version pinned as newer releases
-  # may introduce new and undesireable style choices which would be immediately
-  # enforced in CI
-  #
   # Replacing finstyle in favor of chefstyle
-  gem.add_development_dependency "chefstyle", "0.4.0"
+  gem.add_development_dependency "chefstyle"
 end
