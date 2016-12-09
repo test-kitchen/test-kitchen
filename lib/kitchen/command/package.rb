@@ -16,13 +16,10 @@
 require "kitchen/command"
 
 module Kitchen
-
   module Command
-
     # Execute command on remote instance.
     #
     class Package < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         results = parse_subcommand(args.first)

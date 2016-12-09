@@ -21,13 +21,11 @@ require "thor/util"
 require "kitchen/errors"
 
 module Kitchen
-
   # A verifier is responsible for running tests post-converge to confirm that
   # the instance is in a known/consistent state.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Verifier
-
     # Default verifier to use
     DEFAULT_PLUGIN = "busser".freeze
 
@@ -47,9 +45,9 @@ module Kitchen
       object
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' verifier from the load path." \
-          " Please ensure that your transport is installed as a gem or" \
-          " included in your Gemfile if using Bundler."
+            "Could not load the '#{plugin}' verifier from the load path." \
+              " Please ensure that your transport is installed as a gem or" \
+              " included in your Gemfile if using Bundler."
     end
   end
 end

@@ -21,17 +21,16 @@ require_relative "../../spec_helper"
 require "kitchen/driver/proxy"
 
 describe Kitchen::Driver::Proxy do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:state)         { Hash.new }
 
   let(:config) do
-    { :host => "foobnoobs.com", :reset_command => "mulligan" }
+    { host: "foobnoobs.com", reset_command: "mulligan" }
   end
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(name: "coolbeans", logger: logger, to_str: "instance")
   end
 
   let(:driver) do
@@ -43,7 +42,6 @@ describe Kitchen::Driver::Proxy do
   end
 
   describe "non-parallel action" do
-
     it "create must be serially executed" do
       Kitchen::Driver::Proxy.serial_actions.must_include :create
     end
@@ -54,7 +52,6 @@ describe Kitchen::Driver::Proxy do
   end
 
   describe "required_config" do
-
     [:host, :reset_command].each do |attr|
       it "requires :#{attr}" do
         config.delete(attr)
@@ -74,7 +71,6 @@ describe Kitchen::Driver::Proxy do
   end
 
   describe "#create" do
-
     it "sets :hostname in state config" do
       driver.stubs(:ssh)
       driver.create(state)
@@ -100,7 +96,6 @@ describe Kitchen::Driver::Proxy do
   end
 
   describe "#destroy" do
-
     before do
       state[:hostname] = "beep"
     end

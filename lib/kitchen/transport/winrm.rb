@@ -120,8 +120,8 @@ module Kitchen
           when /linux/
             login_command_for_linux
           else
-            fail ActionFailed, "Remote login not supported in #{self.class} " \
-              "from host OS '#{RbConfig::CONFIG["host_os"]}'."
+            raise ActionFailed, "Remote login not supported in #{self.class} " \
+              "from host OS '#{RbConfig::CONFIG['host_os']}'."
           end
         end
 
@@ -134,8 +134,8 @@ module Kitchen
         def wait_until_ready
           delay = 3
           unelevated_session(
-            :retry_limit => max_wait_until_ready / delay,
-            :retry_delay => delay
+            retry_limit: max_wait_until_ready / delay,
+            retry_delay: delay
           )
           execute(PING_COMMAND.dup)
         end
@@ -195,7 +195,7 @@ module Kitchen
           if logger.debug?
             debug("Creating RDP document for #{instance_name} (#{rdp_doc_path})")
             debug("------------")
-            IO.read(rdp_doc_path).each_line { |l| debug("#{l.chomp}") }
+            IO.read(rdp_doc_path).each_line { |l| debug(l.chomp.to_s) }
             debug("------------")
           end
         end
@@ -251,14 +251,14 @@ module Kitchen
           error_regexp = /<S S=\"Error\">/
 
           if error_regexp.match(stderr)
-            stderr.
-              split(error_regexp)[1..-2].
-              map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }.
-              each { |line| logger.warn(line) }
+            stderr
+              .split(error_regexp)[1..-2]
+              .map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }
+              .each { |line| logger.warn(line) }
           else
-            stderr.
-              split("\r\n").
-              each { |line| logger.warn(line) }
+            stderr
+              .split("\r\n")
+              .each { |line| logger.warn(line) }
           end
         end
 
@@ -269,9 +269,9 @@ module Kitchen
         # @return [LoginCommand] a login command
         # @api private
         def login_command_for_linux
-          args  = %W[-u #{options[:user]}]
-          args += %W[-p #{options[:password]}] if options.key?(:password)
-          args += %W[#{URI.parse(options[:endpoint]).host}:#{rdp_port}]
+          args  = %W{-u #{options[:user]}}
+          args += %W{-p #{options[:password]}} if options.key?(:password)
+          args += %W{#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
 
           LoginCommand.new("rdesktop", args)
         end
@@ -281,7 +281,7 @@ module Kitchen
         # @return [LoginCommand] a login command
         # @api private
         def login_command_for_mac
-          create_rdp_doc(:mac => true)
+          create_rdp_doc(mac: true)
 
           LoginCommand.new("open", rdp_doc_path)
         end
@@ -333,8 +333,8 @@ module Kitchen
         def connection(retry_options = {})
           @connection ||= begin
             opts = {
-              :retry_limit => connection_retries.to_i,
-              :retry_delay   => connection_retry_sleep.to_i
+              retry_limit: connection_retries.to_i,
+              retry_delay: connection_retry_sleep.to_i,
             }.merge(retry_options)
 
             ::WinRM::Connection.new(options.merge(opts)).tap do |conn|
@@ -369,20 +369,20 @@ module Kitchen
         elevated_password = data[:elevated_password] if data.key?(:elevated_password)
 
         opts = {
-          :instance_name => instance.name,
-          :kitchen_root => data[:kitchen_root],
-          :logger => logger,
-          :endpoint => data[:endpoint_template] % data,
-          :user => data[:username],
-          :password => data[:password],
-          :rdp_port => data[:rdp_port],
-          :connection_retries => data[:connection_retries],
-          :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready => data[:max_wait_until_ready],
-          :transport => data[:winrm_transport],
-          :elevated => data[:elevated],
-          :elevated_username => data[:elevated_username] || data[:username],
-          :elevated_password => elevated_password
+          instance_name: instance.name,
+          kitchen_root: data[:kitchen_root],
+          logger: logger,
+          endpoint: data[:endpoint_template] % data,
+          user: data[:username],
+          password: data[:password],
+          rdp_port: data[:rdp_port],
+          connection_retries: data[:connection_retries],
+          connection_retry_sleep: data[:connection_retry_sleep],
+          max_wait_until_ready: data[:max_wait_until_ready],
+          transport: data[:winrm_transport],
+          elevated: data[:elevated],
+          elevated_username: data[:elevated_username] || data[:username],
+          elevated_password: elevated_password,
         }
         opts.merge!(additional_transport_args(opts[:transport]))
         opts
@@ -392,14 +392,14 @@ module Kitchen
         case transport_type.to_sym
         when :ssl, :negotiate
           {
-            :no_ssl_peer_verification => true,
-            :disable_sspi => false,
-            :basic_auth_only => false
+            no_ssl_peer_verification: true,
+            disable_sspi: false,
+            basic_auth_only: false,
           }
         when :plaintext
           {
-            :disable_sspi => true,
-            :basic_auth_only => true
+            disable_sspi: true,
+            basic_auth_only: true,
           }
         else
           {}
@@ -443,10 +443,10 @@ module Kitchen
         end
       rescue LoadError => e
         message = fail_to_load_gem_message(gem_name,
-          spec_version)
+                                           spec_version)
         logger.fatal(message)
         raise UserError,
-          "Could not load or activate #{gem_name}. (#{e.message})"
+              "Could not load or activate #{gem_name}. (#{e.message})"
       end
 
       def fail_to_load_gem_message(name, version = nil)
@@ -480,7 +480,8 @@ module Kitchen
       end
 
       def silence_warnings
-        old_verbose, $VERBOSE = $VERBOSE, nil
+        old_verbose = $VERBOSE
+        $VERBOSE = nil
         yield
       ensure
         $VERBOSE = old_verbose

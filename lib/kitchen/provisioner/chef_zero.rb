@@ -19,14 +19,11 @@
 require "kitchen/provisioner/chef_base"
 
 module Kitchen
-
   module Provisioner
-
     # Chef Zero provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefZero < ChefBase
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
@@ -38,14 +35,14 @@ module Kitchen
       default_config :chef_zero_port, 8889
 
       default_config :chef_client_path do |provisioner|
-        provisioner.
-          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-client]).
-          tap { |path| path.concat(".bat") if provisioner.windows_os? }
+        provisioner
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
+          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       default_config :ruby_bindir do |provisioner|
-        provisioner.
-          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} embedded bin])
+        provisioner
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
       end
 
       # (see Base#create_sandbox)
@@ -60,11 +57,11 @@ module Kitchen
       def prepare_command
         return if modern?
 
-        gem_bin = remote_path_join(config[:ruby_bindir], "gem").
-          tap { |path| path.concat(".bat") if windows_os? }
+        gem_bin = remote_path_join(config[:ruby_bindir], "gem")
+                  .tap { |path| path.concat(".bat") if windows_os? }
         vars = [
           chef_client_zero_env,
-          shell_var("gem", sudo(gem_bin))
+          shell_var("gem", sudo(gem_bin)),
         ].join("\n").concat("\n")
 
         prefix_command(shell_code_from_file(vars, "chef_zero_prepare_command_legacy"))
@@ -76,8 +73,8 @@ module Kitchen
 
         prefix_command(
           wrap_shell_code(
-            [cmd, *chef_client_args, last_exit_code].join(" ").
-            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+            [cmd, *chef_client_args, last_exit_code].join(" ")
+            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
           )
         )
       end
@@ -99,9 +96,7 @@ module Kitchen
           json = remote_path_join(config[:root_path], "dna.json")
           args << "--json-attributes #{json}"
         end
-        if config[:log_file]
-          args << "--logfile #{config[:log_file]}"
-        end
+        args << "--logfile #{config[:log_file]}" if config[:log_file]
         return unless modern?
 
         # these flags are modern/chef-client local most only and will not work
@@ -112,9 +107,7 @@ module Kitchen
         if config[:chef_zero_port]
           args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
-        if config[:profile_ruby]
-          args << "--profile-ruby"
-        end
+        args << "--profile-ruby" if config[:profile_ruby]
       end
       # rubocop:enable Metrics/CyclomaticComplexity
 
@@ -125,10 +118,10 @@ module Kitchen
       def chef_client_args
         level = config[:log_level]
         args = [
-          "--config #{remote_path_join(config[:root_path], "client.rb")}",
+          "--config #{remote_path_join(config[:root_path], 'client.rb')}",
           "--log_level #{level}",
           "--force-formatter",
-          "--no-color"
+          "--no-color",
         ]
         add_optional_chef_client_args!(args)
 
@@ -149,7 +142,7 @@ module Kitchen
           shell_env_var("CHEF_REPO_PATH", root),
           shell_env_var("GEM_HOME", gem_home),
           shell_env_var("GEM_PATH", gem_path),
-          shell_env_var("GEM_CACHE", gem_cache)
+          shell_env_var("GEM_CACHE", gem_cache),
         ].join("\n").concat("\n")
       end
 
@@ -159,8 +152,8 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def local_mode_command
-        "#{sudo(config[:chef_client_path])} --local-mode".
-          tap { |str| str.insert(0, "& ") if powershell_shell? }
+        "#{sudo(config[:chef_client_path])} --local-mode"
+          .tap { |str| str.insert(0, "& ") if powershell_shell? }
       end
 
       # Determines whether or not local mode (a.k.a chef zero mode) is
@@ -203,7 +196,7 @@ module Kitchen
         debug("Using a vendored chef-client-zero.rb")
 
         source = File.join(File.dirname(__FILE__),
-          %w[.. .. .. support chef-client-zero.rb])
+                           %w{.. .. .. support chef-client-zero.rb})
         FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
@@ -212,7 +205,7 @@ module Kitchen
       # @api private
       def prepare_client_rb
         data = default_config_rb.merge(config[:client_rb])
-        data = data.merge(:named_run_list => config[:named_run_list]) if config[:named_run_list]
+        data = data.merge(named_run_list: config[:named_run_list]) if config[:named_run_list]
 
         info("Preparing client.rb")
         debug("Creating client.rb from #{data.inspect}")
@@ -230,7 +223,7 @@ module Kitchen
         debug("Using a dummy validation.pem")
 
         source = File.join(File.dirname(__FILE__),
-          %w[.. .. .. support dummy-validation.pem])
+                           %w{.. .. .. support dummy-validation.pem})
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
@@ -240,8 +233,8 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def shim_command
-        ruby = remote_path_join(config[:ruby_bindir], "ruby").
-          tap { |path| path.concat(".exe") if windows_os? }
+        ruby = remote_path_join(config[:ruby_bindir], "ruby")
+               .tap { |path| path.concat(".exe") if windows_os? }
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
         "#{chef_client_zero_env}\n#{sudo(ruby)} #{shim}"

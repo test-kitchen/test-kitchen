@@ -22,9 +22,7 @@ require "kitchen/lazy_hash"
 require "kitchen/login_command"
 
 module Kitchen
-
   module Transport
-
     # Wrapped exception for any internally raised Transport errors.
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
@@ -42,7 +40,6 @@ module Kitchen
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
@@ -80,7 +77,6 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection
-
         include Logging
 
         # Create a new Connection instance.
@@ -90,9 +86,7 @@ module Kitchen
         def initialize(options = {})
           init_options(options)
 
-          if block_given?
-            yield self
-          end
+          yield self if block_given?
         end
 
         # Closes the session connection, if it is still active.

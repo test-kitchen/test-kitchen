@@ -19,14 +19,12 @@
 require "delegate"
 
 module Kitchen
-
   # Delegate class which adds the ability to find single and multiple
   # objects by their #name in an Array. Hey, it's better than monkey-patching
   # Array, right?
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Collection < SimpleDelegator
-
     # Returns a single object by its name, or nil if none are found.
     #
     # @param name [String] name of object

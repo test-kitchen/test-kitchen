@@ -20,7 +20,7 @@ rescue LoadError
 end
 
 desc "Run all test suites"
-task :test => [:unit, :features]
+task test: [:unit, :features]
 
 desc "Display LOC stats"
 task :stats do
@@ -31,7 +31,7 @@ task :stats do
 end
 
 begin
-  require "finstyle"
+  require "chefstyle"
   require "rubocop/rake_task"
   RuboCop::RakeTask.new(:style) do |task|
     task.options += ["--display-cop-names", "--no-color"]
@@ -41,7 +41,7 @@ rescue LoadError
 end
 
 desc "Run all quality tasks"
-task :quality => [:style, :stats]
+task quality: [:style, :stats]
 
 begin
   require "yard"
@@ -50,7 +50,7 @@ rescue LoadError
   puts "yard is not available. (sudo) gem install yard to generate yard documentation."
 end
 
-task :default => [:test, :quality]
+task default: [:test, :quality]
 
 begin
   require "github_changelog_generator/task"
@@ -60,7 +60,7 @@ begin
     config.future_release = "v#{Kitchen::VERSION}"
     config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
     config.bug_labels = "bug,Bug".split(",")
-    config.exclude_labels = %w[Duplicate Question Discussion No_Changelog]
+    config.exclude_labels = %w{Duplicate Question Discussion No_Changelog}
   end
 rescue LoadError
   puts "github_changelog_generator is not available." \

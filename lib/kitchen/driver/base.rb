@@ -19,14 +19,11 @@
 require "kitchen/lazy_hash"
 
 module Kitchen
-
   module Driver
-
     # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 

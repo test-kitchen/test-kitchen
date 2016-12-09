@@ -23,7 +23,6 @@ require "kitchen"
 
 module Kitchen
   describe CLI do
-
     let(:cli) { CLI.new }
 
     before do
@@ -51,6 +50,5 @@ module Kitchen
         assert_equal false, cli.config.log_overwrite
       end
     end
-
   end
 end

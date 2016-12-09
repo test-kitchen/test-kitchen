@@ -23,9 +23,7 @@ require "kitchen/shell_out"
 require "kitchen/util"
 
 module Kitchen
-
   class Shelly
-
     include Kitchen::ShellOut
 
     attr_reader :logs
@@ -42,22 +40,20 @@ module Kitchen
 end
 
 describe Kitchen::ShellOut do
-
   let(:command) do
     stub(
-      :run_command => true,
-      :error! => true,
-      :stdout => "",
-      :execution_time => 123
+      run_command: true,
+      error!: true,
+      stdout: "",
+      execution_time: 123
     )
   end
 
   let(:subject) { Kitchen::Shelly.new }
 
   describe "#run_command" do
-
     let(:opts) do
-      { :live_stream => "alogger", :timeout => 60000 }
+      { live_stream: "alogger", timeout: 60_000 }
     end
 
     before do
@@ -89,11 +85,11 @@ describe Kitchen::ShellOut do
     end
 
     it "raises a ShellCommandFailed if the command does not cleanly exit" do
-      command.stubs(:error!).
-        raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
+      command.stubs(:error!)
+             .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
 
-      err = proc { subject.run_command("boom") }.
-        must_raise Kitchen::ShellOut::ShellCommandFailed
+      err = proc { subject.run_command("boom") }
+            .must_raise Kitchen::ShellOut::ShellCommandFailed
       err.message.must_equal "boom bad"
     end
 
@@ -109,25 +105,25 @@ describe Kitchen::ShellOut do
       Mixlib::ShellOut.unstub(:new)
       Mixlib::ShellOut.expects(:new).with("sudo -E yo", opts).returns(command)
 
-      subject.run_command("yo", :use_sudo => true)
+      subject.run_command("yo", use_sudo: true)
     end
 
     it "prepends with custom :sudo_command if :use_sudo is truthy" do
       Mixlib::ShellOut.unstub(:new)
       Mixlib::ShellOut.expects(:new).with("wat yo", opts).returns(command)
 
-      subject.run_command("yo", :use_sudo => true, :sudo_command => "wat")
+      subject.run_command("yo", use_sudo: true, sudo_command: "wat")
     end
 
     it "logs a debug BEGIN message" do
       subject.run_command("echo whoopa\ndoopa\ndo")
 
-      subject.logs.first.
-        must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
+      subject.logs.first
+             .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
     end
 
     it "logs a debug BEGIN message with custom log subject" do
-      subject.run_command("tenac", :log_subject => "thed")
+      subject.run_command("tenac", log_subject: "thed")
 
       subject.logs.first.must_equal "[thed command] BEGIN (tenac)"
     end
@@ -142,7 +138,7 @@ describe Kitchen::ShellOut do
     end
 
     it "logs a debug END message with custom log subject" do
-      subject.run_command("tenac", :log_subject => "thed")
+      subject.run_command("tenac", log_subject: "thed")
 
       subject.logs.last.must_equal "[thed command] END (2m3.00s)"
     end

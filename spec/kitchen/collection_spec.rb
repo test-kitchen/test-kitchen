@@ -22,11 +22,10 @@ require "ostruct"
 require "kitchen/collection"
 
 describe Kitchen::Collection do
-
   let(:collection) do
     Kitchen::Collection.new([
-      obj("one"), obj("two", "a"), obj("two", "b"), obj("three")
-    ])
+                              obj("one"), obj("two", "a"), obj("two", "b"), obj("three")
+                            ])
   end
 
   it "transparently wraps an Array" do
@@ -34,7 +33,6 @@ describe Kitchen::Collection do
   end
 
   describe "#get" do
-
     it "returns a single object by its name" do
       collection.get("three").must_equal obj("three")
     end
@@ -49,7 +47,6 @@ describe Kitchen::Collection do
   end
 
   describe "#get_all" do
-
     it "returns a Collection of objects whose name matches the regex" do
       result = collection.get_all(/(one|three)/)
       result.size.must_equal 2
@@ -66,15 +63,14 @@ describe Kitchen::Collection do
   end
 
   describe "#as_name" do
-
     it "returns an Array of names as strings" do
-      collection.as_names.must_equal %w[one two two three]
+      collection.as_names.must_equal %w{one two two three}
     end
   end
 
   private
 
   def obj(name, extra = nil)
-    OpenStruct.new(:name => name, :extra => extra)
+    OpenStruct.new(name: name, extra: extra)
   end
 end

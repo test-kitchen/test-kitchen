@@ -24,11 +24,8 @@ require "winrm-fs"
 require "winrm-elevated"
 
 module Kitchen
-
   module Transport
-
     class WinRMConnectionDummy < Kitchen::Transport::Winrm::Connection
-
       attr_reader :saved_command, :remote_path, :local_path
 
       def upload(locals, remote)
@@ -41,7 +38,6 @@ module Kitchen
 end
 
 describe Kitchen::Transport::Winrm do
-
   before do
     RbConfig::CONFIG.stubs(:[]).with("host_os").returns("blah")
   end
@@ -52,7 +48,7 @@ describe Kitchen::Transport::Winrm do
   let(:state)         { Hash.new }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(name: "coolbeans", logger: logger, to_str: "instance")
   end
 
   let(:transport) do
@@ -72,7 +68,6 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "default_config" do
-
     it "sets :port to 5985 by default" do
       transport[:port].must_equal 5985
     end
@@ -86,8 +81,8 @@ describe Kitchen::Transport::Winrm do
     end
 
     it "sets a default :endpoint_template value" do
-      transport[:endpoint_template].
-        must_equal "http://%{hostname}:%{port}/wsman"
+      transport[:endpoint_template]
+        .must_equal "http://%{hostname}:%{port}/wsman"
     end
 
     it "sets :rdp_port to 3389 by default" do
@@ -116,7 +111,6 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "#connection" do
-
     let(:klass) { Kitchen::Transport::Winrm::Connection }
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -391,7 +385,6 @@ describe Kitchen::Transport::Winrm do
         end
 
         it "sets :winrm_transport to negotiate" do
-
           klass.expects(:new).with do |hash|
             hash[:transport] == :negotiate &&
               hash[:disable_sspi] == false &&
@@ -413,14 +406,14 @@ describe Kitchen::Transport::Winrm do
         make_connection(state)
         make_connection(state)
 
-        logged_output.string.lines.count { |l|
+        logged_output.string.lines.count do |l|
           l =~ debug_line_with("[WinRM] reusing existing connection ")
-        }.must_equal 1
+        end.must_equal 1
       end
 
       it "returns a new connection when called again if state differs" do
         first_connection  = make_connection(state)
-        second_connection = make_connection(state.merge(:port => 9000))
+        second_connection = make_connection(state.merge(port: 9000))
 
         first_connection.object_id.wont_equal second_connection.object_id
       end
@@ -429,22 +422,21 @@ describe Kitchen::Transport::Winrm do
         first_connection = make_connection(state)
         first_connection.expects(:close)
 
-        make_connection(state.merge(:port => 9000))
+        make_connection(state.merge(port: 9000))
       end
 
       it "logs a debug message a second connection is created" do
         make_connection(state)
-        make_connection(state.merge(:port => 9000))
+        make_connection(state.merge(port: 9000))
 
-        logged_output.string.lines.count { |l|
+        logged_output.string.lines.count do |l|
           l =~ debug_line_with("[WinRM] shutting previous connection ")
-        }.must_equal 1
+        end.must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     describe "called without a block" do
-
       def make_connection(s = state)
         transport.connection(s)
       end
@@ -453,7 +445,6 @@ describe Kitchen::Transport::Winrm do
     end
 
     describe "called with a block" do
-
       def make_connection(s = state)
         transport.connection(s) do |conn|
           conn
@@ -528,8 +519,8 @@ describe Kitchen::Transport::Winrm do
       it "logs a message to fatal when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
         transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs").
-          raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm-fs")
+          .raises(LoadError, "uh oh")
         begin
           transport.finalize_config!(instance)
         rescue # rubocop:disable Lint/HandleExceptions
@@ -543,12 +534,12 @@ describe Kitchen::Transport::Winrm do
       it "raises a UserError when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
         transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs").
-          raises(LoadError, "uh oh")
+        transport.stubs(:require).with("winrm-fs")
+          .raises(LoadError, "uh oh")
 
-        err = proc {
+        err = proc do
           transport.finalize_config!(instance)
-        }.must_raise Kitchen::UserError
+        end.must_raise Kitchen::UserError
         err.message.must_match(/^Could not load or activate winrm-fs\. /)
       end
     end
@@ -607,41 +598,40 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require).with("winrm-fs", anything)
         transport.stubs(:require).raises(LoadError, "uh oh")
 
-        err = proc {
+        err = proc do
           transport.finalize_config!(instance)
-        }.must_raise Kitchen::UserError
+        end.must_raise Kitchen::UserError
         err.message.must_match(/^Could not load or activate winrm\. /)
       end
     end
   end
 
   def debug_line_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def fatal_line_with(msg)
-    %r{^F, .* : #{Regexp.escape(msg)}}
+    /^F, .* : #{Regexp.escape(msg)}/
   end
 end
 
 describe Kitchen::Transport::Winrm::Connection do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
 
   let(:options) do
-    { :logger => logger, :user => "me", :password => "haha",
-      :endpoint => "http://foo:5985/wsman", :winrm_transport => :plaintext,
-      :kitchen_root => "/i/am/root", :instance_name => "coolbeans",
-      :rdp_port => "rdpyeah" }
+    { logger: logger, user: "me", password: "haha",
+      endpoint: "http://foo:5985/wsman", winrm_transport: :plaintext,
+      kitchen_root: "/i/am/root", instance_name: "coolbeans",
+      rdp_port: "rdpyeah" }
   end
 
   let(:info) do
     copts = {
-      :user => "me",
-      :password => "haha",
-      :endpoint => "http://foo:5985/wsman",
-      :winrm_transport => :plaintext
+      user: "me",
+      password: "haha",
+      endpoint: "http://foo:5985/wsman",
+      winrm_transport: :plaintext,
     }
     "<#{copts}>"
   end
@@ -681,11 +671,10 @@ describe Kitchen::Transport::Winrm::Connection do
   end
 
   describe "#close" do
-
     let(:response) do
       o = WinRM::Output.new
       o.exitcode = 0
-      o << { :stdout => "ok\r\n" }
+      o << { stdout: "ok\r\n" }
       o
     end
 
@@ -695,10 +684,10 @@ describe Kitchen::Transport::Winrm::Connection do
       winrm_session.stubs(:shell).with(:powershell).returns(executor)
       executor.stubs(:close)
       elevated_runner.stubs(:close)
-      executor.stubs(:run).
-        with("doit").yields("ok\n", nil).returns(response)
-      executor.stubs(:run).
-        with("$env:temp").yields("ok\n", nil).returns(response)
+      executor.stubs(:run)
+        .with("doit").yields("ok\n", nil).returns(response)
+      executor.stubs(:run)
+        .with("$env:temp").yields("ok\n", nil).returns(response)
     end
 
     it "only closes the shell once for multiple calls" do
@@ -732,24 +721,22 @@ describe Kitchen::Transport::Winrm::Connection do
   end
 
   describe "#execute" do
-
     before do
       winrm_session.stubs(:shell).with(:powershell).returns(executor)
     end
 
     describe "for a successful command" do
-
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 0
-        o << { :stdout => "ok\r\n" }
-        o << { :stderr => "congrats\r\n" }
+        o << { stdout: "ok\r\n" }
+        o << { stderr: "congrats\r\n" }
         o
       end
 
       before do
-        executor.expects(:run).
-          with("doit").yields("ok\n", nil).returns(response)
+        executor.expects(:run)
+          .with("doit").yields("ok\n", nil).returns(response)
       end
 
       it "logger displays command on debug" do
@@ -784,14 +771,14 @@ describe Kitchen::Transport::Winrm::Connection do
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 0
-        o << { :stdout => "ok\r\n" }
-        o << { :stderr => "congrats\r\n" }
+        o << { stdout: "ok\r\n" }
+        o << { stderr: "congrats\r\n" }
         o
       end
       let(:env_temp_response) do
         o = WinRM::Output.new
         o.exitcode = 0
-        o << { :stdout => "temp_dir" }
+        o << { stdout: "temp_dir" }
         o
       end
       let(:elevated_runner) do
@@ -809,10 +796,10 @@ describe Kitchen::Transport::Winrm::Connection do
         before do
           options[:elevated_username] = "username"
           options[:elevated_password] = "password"
-          executor.expects(:run).
-            with("$env:temp").returns(env_temp_response)
-          elevated_runner.expects(:run).
-            with(
+          executor.expects(:run)
+            .with("$env:temp").returns(env_temp_response)
+          elevated_runner.expects(:run)
+            .with(
               "$env:temp='temp_dir';doit"
             ).yields("ok\n", nil).returns(response)
           elevated_runner.expects(:username=).with("username")
@@ -830,10 +817,10 @@ describe Kitchen::Transport::Winrm::Connection do
         before do
           options[:elevated_username] = options[:user]
           options[:elevated_password] = options[:password]
-          executor.expects(:run).
-            with("$env:temp").returns(env_temp_response)
-          elevated_runner.expects(:run).
-            with(
+          executor.expects(:run)
+            .with("$env:temp").returns(env_temp_response)
+          elevated_runner.expects(:run)
+            .with(
               "$env:temp='temp_dir';doit"
             ).yields("ok\n", nil).returns(response)
           elevated_runner.expects(:username=).with(options[:user])
@@ -849,35 +836,34 @@ describe Kitchen::Transport::Winrm::Connection do
     end
 
     describe "for a failed command" do
-
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 1
-        o << { :stderr => "#< CLIXML\r\n" }
-        o << { :stderr => "<Objs Version=\"1.1.0.1\" xmlns=\"http://schemas." }
-        o << { :stderr => "microsoft.com/powershell/2004/04\"><S S=\"Error\">" }
-        o << { :stderr => "doit : The term 'doit' is not recognized as the " }
-        o << { :stderr => "name of a cmdlet, function, _x000D__x000A_</S>" }
-        o << { :stderr => "<S S=\"Error\">script file, or operable program. " }
-        o << { :stderr => "Check the spelling of" }
-        o << { :stderr => "the name, or if a path _x000D__x000A_</S><S S=\"E" }
-        o << { :stderr => "rror\">was included, verify that the path is corr" }
-        o << { :stderr => "ect and try again._x000D__x000A_</S><S S=\"Error" }
-        o << { :stderr => "\">At line:1 char:1_x000D__x000A_</S><S S=\"Error" }
-        o << { :stderr => "\">+ doit_x000D__x000A_</S><S S=\"Error\">+ ~~~~_" }
-        o << { :stderr => "x000D__x000A_</S><S S=\"Error\">    + CategoryInf" }
-        o << { :stderr => "o          : ObjectNotFound: (doit:String) [], Co" }
-        o << { :stderr => "mmandNotFoun _x000D__x000A_</S><S S=\"Error\">   " }
-        o << { :stderr => "dException_x000D__x000A_</S><S S=\"Error\">    + " }
-        o << { :stderr => "FullyQualifiedErrorId : CommandNotFoundException_" }
-        o << { :stderr => "x000D__x000A_</S><S S=\"Error\"> _x000D__x000A_</" }
-        o << { :stderr => "S></Objs>" }
+        o << { stderr: "#< CLIXML\r\n" }
+        o << { stderr: '<Objs Version="1.1.0.1" xmlns="http://schemas.' }
+        o << { stderr: 'microsoft.com/powershell/2004/04"><S S="Error">' }
+        o << { stderr: "doit : The term 'doit' is not recognized as the " }
+        o << { stderr: "name of a cmdlet, function, _x000D__x000A_</S>" }
+        o << { stderr: '<S S="Error">script file, or operable program. ' }
+        o << { stderr: "Check the spelling of" }
+        o << { stderr: 'the name, or if a path _x000D__x000A_</S><S S="E' }
+        o << { stderr: 'rror">was included, verify that the path is corr' }
+        o << { stderr: 'ect and try again._x000D__x000A_</S><S S="Error' }
+        o << { stderr: '">At line:1 char:1_x000D__x000A_</S><S S="Error' }
+        o << { stderr: '">+ doit_x000D__x000A_</S><S S="Error">+ ~~~~_' }
+        o << { stderr: 'x000D__x000A_</S><S S="Error">    + CategoryInf' }
+        o << { stderr: "o          : ObjectNotFound: (doit:String) [], Co" }
+        o << { stderr: 'mmandNotFoun _x000D__x000A_</S><S S="Error">   ' }
+        o << { stderr: 'dException_x000D__x000A_</S><S S="Error">    + ' }
+        o << { stderr: "FullyQualifiedErrorId : CommandNotFoundException_" }
+        o << { stderr: 'x000D__x000A_</S><S S="Error"> _x000D__x000A_</' }
+        o << { stderr: "S></Objs>" }
         o
       end
 
       before do
-        executor.expects(:run).
-          with("doit").yields("nope\n", nil).returns(response)
+        executor.expects(:run)
+          .with("doit").yields("nope\n", nil).returns(response)
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -931,13 +917,12 @@ MSG
       # rubocop:enable Metrics/MethodLength
 
       describe "when a non-zero exit code is returned" do
-
         common_failed_command_specs
 
         it "raises a WinrmFailed exception" do
-          err = proc {
+          err = proc do
             connection.execute("doit")
-          }.must_raise Kitchen::Transport::WinrmFailed
+          end.must_raise Kitchen::Transport::WinrmFailed
           err.message.must_equal "WinRM exited (1) for command: [doit]"
         end
 
@@ -952,7 +937,6 @@ MSG
     end
 
     describe "for a nil command" do
-
       it "does not log on debug" do
         executor.expects(:open).never
         connection.execute(nil)
@@ -968,14 +952,13 @@ MSG
       HTTPClient::KeepAliveDisconnected, HTTPClient::ConnectTimeoutError
     ].each do |klass|
       describe "raising #{klass}" do
-
         before do
           k = if klass == ::WinRM::WinRMHTTPTransportError
             # this exception takes 2 args in its constructor, which is not stock
-            klass.new("dang", 200)
-          else
-            klass
-          end
+                klass.new("dang", 200)
+              else
+                klass
+              end
 
           options[:connection_retries] = 3
           options[:connection_retry_sleep] = 7
@@ -990,7 +973,6 @@ MSG
   end
 
   describe "#login_command" do
-
     let(:login_command) { connection.login_command }
     let(:args)          { login_command.arguments.join(" ") }
     let(:exec_args)     { login_command.exec_args }
@@ -1000,7 +982,6 @@ MSG
     end
 
     describe "for Mac-based workstations" do
-
       before do
         RbConfig::CONFIG.stubs(:[]).with("host_os").returns("darwin14")
       end
@@ -1058,7 +1039,6 @@ MSG
     end
 
     describe "for Windows-based workstations" do
-
       before do
         RbConfig::CONFIG.stubs(:[]).with("host_os").returns("mingw32")
       end
@@ -1114,7 +1094,6 @@ MSG
     end
 
     describe "for Linux-based workstations" do
-
       before do
         RbConfig::CONFIG.stubs(:[]).with("host_os").returns("linux-gnu")
       end
@@ -1144,7 +1123,6 @@ MSG
     end
 
     describe "for unknown workstation platforms" do
-
       before do
         RbConfig::CONFIG.stubs(:[]).with("host_os").returns("cray")
       end
@@ -1158,12 +1136,11 @@ MSG
   end
 
   describe "#upload" do
-
     before do
       winrm_session.stubs(:shell).with(:powershell).returns(executor)
 
-      WinRM::FS::Core::FileTransporter.stubs(:new).
-        with(executor).returns(transporter)
+      WinRM::FS::Core::FileTransporter.stubs(:new)
+        .with(executor).returns(transporter)
       transporter.stubs(:upload)
     end
 
@@ -1171,8 +1148,8 @@ MSG
       it "builds a Winrm::FileTransporter" do
         WinRM::FS::Core::FileTransporter.unstub(:new)
 
-        WinRM::FS::Core::FileTransporter.expects(:new).
-          with(executor).returns(transporter)
+        WinRM::FS::Core::FileTransporter.expects(:new)
+          .with(executor).returns(transporter)
 
         upload
       end
@@ -1180,8 +1157,8 @@ MSG
       it "reuses the Winrm::FileTransporter" do
         WinRM::FS::Core::FileTransporter.unstub(:new)
 
-        WinRM::FS::Core::FileTransporter.expects(:new).
-          with(executor).returns(transporter).once
+        WinRM::FS::Core::FileTransporter.expects(:new)
+          .with(executor).returns(transporter).once
 
         upload
         upload
@@ -1190,18 +1167,16 @@ MSG
     end
 
     describe "for a file" do
-
       def upload # execute every time, not lazily once
-        connection.upload("/tmp/file.txt", "C:\\dest")
+        connection.upload("/tmp/file.txt", 'C:\\dest')
       end
 
       common_specs_for_upload
     end
 
     describe "for a collection of files" do
-
       def upload # execute every time, not lazily once
-        connection.upload(%W[/tmp/file1.txt /tmp/file2.txt], "C:\\dest")
+        connection.upload(%w{/tmp/file1.txt /tmp/file2.txt}, 'C:\\dest')
       end
 
       common_specs_for_upload
@@ -1209,24 +1184,22 @@ MSG
   end
 
   describe "#wait_until_ready" do
-
     before do
       winrm_session.stubs(:shell).with(:powershell).returns(executor)
       options[:max_wait_until_ready] = 300
     end
 
     describe "when connection is successful" do
-
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 0
-        o << { :stdout => "[WinRM] Established\r\n" }
+        o << { stdout: "[WinRM] Established\r\n" }
         o
       end
 
       before do
-        executor.expects(:run).
-          with("Write-Host '[WinRM] Established\n'").returns(response)
+        executor.expects(:run)
+          .with("Write-Host '[WinRM] Established\n'").returns(response)
       end
 
       it "executes an empty command string to ensure working" do
@@ -1235,23 +1208,22 @@ MSG
     end
 
     describe "when connection suceeds but command fails, sad panda" do
-
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 42
-        o << { :stderr => "Ah crap.\r\n" }
+        o << { stderr: "Ah crap.\r\n" }
         o
       end
 
       before do
-        executor.expects(:run).
-          with("Write-Host '[WinRM] Established\n'").returns(response)
+        executor.expects(:run)
+          .with("Write-Host '[WinRM] Established\n'").returns(response)
       end
 
       it "executes an empty command string to ensure working" do
-        err = proc {
+        err = proc do
           connection.wait_until_ready
-        }.must_raise Kitchen::Transport::WinrmFailed
+        end.must_raise Kitchen::Transport::WinrmFailed
         err.message.must_equal "WinRM exited (42) for command: " \
           "[Write-Host '[WinRM] Established\n']"
       end
@@ -1269,24 +1241,24 @@ MSG
   end
 
   def debug_output(output)
-    regexp = %r{^D, .* DEBUG -- : }
-    output.lines.grep(%r{^D, .* DEBUG -- : }).map { |l| l.sub(regexp, "") }.join
+    regexp = /^D, .* DEBUG -- : /
+    output.lines.grep(/^D, .* DEBUG -- : /).map { |l| l.sub(regexp, "") }.join
   end
 
   def debug_line(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}$}
+    /^D, .* : #{Regexp.escape(msg)}$/
   end
 
   def debug_line_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def info_line(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}$}
+    /^I, .* : #{Regexp.escape(msg)}$/
   end
 
   def info_line_with(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}}
+    /^I, .* : #{Regexp.escape(msg)}/
   end
 
   def regexify(string)
@@ -1294,10 +1266,10 @@ MSG
   end
 
   def warn_line(msg)
-    %r{^W, .* : #{Regexp.escape(msg)}$}
+    /^W, .* : #{Regexp.escape(msg)}$/
   end
 
   def warn_line_with(msg)
-    %r{^W, .* : #{Regexp.escape(msg)}}
+    /^W, .* : #{Regexp.escape(msg)}/
   end
 end

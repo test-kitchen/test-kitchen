@@ -24,24 +24,23 @@ require "stringio"
 require "kitchen/verifier/dummy"
 
 describe Kitchen::Verifier::Dummy do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:platform)      { stub(:os_type => nil, :shell_type => nil) }
-  let(:suite)         { stub(:name => "fries") }
+  let(:platform)      { stub(os_type: nil, shell_type: nil) }
+  let(:suite)         { stub(name: "fries") }
   let(:state)         { Hash.new }
 
   let(:config) do
-    { :test_base_path => "/basist", :kitchen_root => "/rooty" }
+    { test_base_path: "/basist", kitchen_root: "/rooty" }
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :to_str => "instance",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: "coolbeans",
+      to_str: "instance",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
@@ -58,7 +57,6 @@ describe Kitchen::Verifier::Dummy do
   end
 
   describe "configuration" do
-
     it "sets :sleep to 0 by default" do
       verifier[:sleep].must_equal 0
     end
@@ -69,7 +67,6 @@ describe Kitchen::Verifier::Dummy do
   end
 
   describe "#call" do
-
     it "calls sleep if :sleep value is greater than 0" do
       config[:sleep] = 12.5
       verifier.expects(:sleep).with(12.5).returns(true)

@@ -21,14 +21,12 @@ require "thor/util"
 require "kitchen/lazy_hash"
 
 module Kitchen
-
   # A mixin for providing configuration-related behavior such as default
   # config (static, computed, inherited), required config, local path
   # expansion, etc.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Configurable
-
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -46,9 +44,7 @@ module Kitchen
     # @return [self] itself, for use in chaining
     # @raise [ClientError] if instance parameter is nil
     def finalize_config!(instance)
-      if instance.nil?
-        raise ClientError, "Instance must be provided to #{self}"
-      end
+      raise ClientError, "Instance must be provided to #{self}" if instance.nil?
 
       @instance = instance
       expand_paths!
@@ -102,7 +98,7 @@ module Kitchen
       [
         File.join(base, instance.suite.name, path),
         File.join(base, path),
-        File.join(Dir.pwd, path)
+        File.join(Dir.pwd, path),
       ].find do |candidate|
         type == :directory ? File.directory?(candidate) : File.file?(candidate)
       end
@@ -119,7 +115,7 @@ module Kitchen
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      result = Hash.new
+      result = {}
       config_keys.sort.each { |k| result[k] = config[k] }
       result
     end
@@ -130,7 +126,7 @@ module Kitchen
     #
     # @return [Hash] a diagnostic hash
     def diagnose_plugin
-      result = Hash.new
+      result = {}
       result[:name] = name
       result.merge!(self.class.diagnose)
       result
@@ -153,7 +149,7 @@ module Kitchen
     # @return [String] joined path for instance's os_type
     def remote_path_join(*parts)
       path = File.join(*parts)
-      windows_os? ? path.gsub("/", "\\") : path.gsub("\\", "/")
+      windows_os? ? path.tr("/", '\\') : path.tr('\\', "/")
     end
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
@@ -210,10 +206,10 @@ module Kitchen
         next if !should_expand || config[key].nil? || config[key] == false
 
         config[key] = if config[key].is_a?(Array)
-          config[key].map { |path| File.expand_path(path, root_path) }
-        else
-          File.expand_path(config[key], root_path)
-        end
+                        config[key].map { |path| File.expand_path(path, root_path) }
+                      else
+                        File.expand_path(config[key], root_path)
+                      end
       end
     end
 
@@ -256,7 +252,7 @@ module Kitchen
       [
         "$env:PATH = try {",
         "[System.Environment]::GetEnvironmentVariable('PATH','Machine')",
-        "} catch { $env:PATH }\n\n"
+        "} catch { $env:PATH }\n\n",
       ].join("\n")
     end
 
@@ -329,8 +325,8 @@ module Kitchen
         if !config.key?(protocol) || config[protocol].nil?
           export_proxy(set_env, protocol)
         elsif proxy_config_setting_present?(protocol)
-          set_env << shell_env_var("#{protocol.downcase}", config[protocol])
-          set_env << shell_env_var("#{protocol.upcase}", config[protocol])
+          set_env << shell_env_var(protocol.downcase.to_s, config[protocol])
+          set_env << shell_env_var(protocol.upcase.to_s, config[protocol])
         end
       end
     end
@@ -356,7 +352,7 @@ module Kitchen
 
     def proxy_from_environment?
       proxy_setting_keys.any? do |protocol|
-        !ENV["#{protocol.downcase}"].nil? || !ENV["#{protocol.upcase}"].nil?
+        !ENV[protocol.downcase.to_s].nil? || !ENV[protocol.upcase.to_s].nil?
       end
     end
 
@@ -370,14 +366,13 @@ module Kitchen
     # @param code [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
     # @api private
     def export_proxy(env, type)
-      env << shell_env_var("#{type}", ENV["#{type}"]) if ENV["#{type}"]
-      env << shell_env_var("#{type.upcase}", ENV["#{type.upcase}"]) if
-        ENV["#{type.upcase}"]
+      env << shell_env_var(type.to_s, ENV[type.to_s]) if ENV[type.to_s]
+      env << shell_env_var(type.upcase.to_s, ENV[type.upcase.to_s]) if
+        ENV[type.upcase.to_s]
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.
     module ClassMethods
-
       # Sets the loaded version of this plugin, usually corresponding to the
       # RubyGems version of the plugin's library. If the plugin does not set
       # this value, then `nil` will be used and reported.
@@ -407,9 +402,9 @@ module Kitchen
       # @return [Hash] a diagnostic hash
       def diagnose
         {
-          :class        => name,
-          :version      => @plugin_version,
-          :api_version  => @api_version
+          class: name,
+          version: @plugin_version,
+          api_version: @api_version,
         }
       end
 
@@ -489,7 +484,7 @@ module Kitchen
       # @yieldparam value [Object] the current value of the attribute
       # @yieldparam object [Object] a reference to the instantiated object
       def required_config(attr, &block)
-        if !block_given?
+        unless block_given?
           klass = self
           block = lambda do |_, value, thing|
             if value.nil? || value.to_s.empty?
@@ -505,7 +500,7 @@ module Kitchen
       #   been merged with any superclass defaults
       # @api private
       def defaults
-        @defaults ||= Hash.new.merge(super_defaults)
+        @defaults ||= {}.merge(super_defaults)
       end
 
       # @return [Hash] a hash of defaults from the included class' superclass
@@ -515,7 +510,7 @@ module Kitchen
         if superclass.respond_to?(:defaults)
           superclass.defaults
         else
-          Hash.new
+          {}
         end
       end
 
@@ -524,7 +519,7 @@ module Kitchen
       #   which has been merged with any superclass expanded paths
       # @api private
       def expanded_paths
-        @expanded_paths ||= Hash.new.merge(super_expanded_paths)
+        @expanded_paths ||= {}.merge(super_expanded_paths)
       end
 
       # @return [Hash] a hash of expanded paths from the included class'
@@ -534,7 +529,7 @@ module Kitchen
         if superclass.respond_to?(:expanded_paths)
           superclass.expanded_paths
         else
-          Hash.new
+          {}
         end
       end
 
@@ -542,7 +537,7 @@ module Kitchen
       #   which has been merged with any superclass valudations
       # @api private
       def validations
-        @validations ||= Hash.new.merge(super_validations)
+        @validations ||= {}.merge(super_validations)
       end
 
       # @return [Hash] a hash of validations from the included class'
@@ -552,7 +547,7 @@ module Kitchen
         if superclass.respond_to?(:validations)
           superclass.validations
         else
-          Hash.new
+          {}
         end
       end
     end

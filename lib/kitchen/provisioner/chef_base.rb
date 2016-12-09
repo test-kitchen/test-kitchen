@@ -37,14 +37,11 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 module Kitchen
-
   module Provisioner
-
     # Common implementation details for Chef-related provisioners.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
-
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
       default_config :chef_omnibus_install_options, nil
@@ -62,11 +59,11 @@ module Kitchen
       # If set to true (which is the default from `chef generate`), try to update
       # backend cookbook downloader on every kitchen run.
       default_config :always_update_cookbooks, false
-      default_config :cookbook_files_glob, %w[
+      default_config :cookbook_files_glob, %w(
         README.* metadata.{json,rb}
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
-      ].join(",")
+      ).join(",")
       # to ease upgrades, allow the user to turn deprecation warnings into errors
       default_config :deprecations_as_errors, false
 
@@ -101,7 +98,7 @@ module Kitchen
       expand_path_for :clients_path
 
       default_config :encrypted_data_bag_secret_key_path do |provisioner|
-        provisioner.calculate_path("encrypted_data_bag_secret_key", :type => :file)
+        provisioner.calculate_path("encrypted_data_bag_secret_key", type: :file)
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
@@ -131,16 +128,16 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        dirs = %w[
+        dirs = %w{
           cookbooks data data_bags environments roles clients
           encrypted_data_bag_secret
-        ].sort.map { |dir| remote_path_join(config[:root_path], dir) }
+        }.sort.map { |dir| remote_path_join(config[:root_path], dir) }
 
         vars = if powershell_shell?
-          init_command_vars_for_powershell(dirs)
-        else
-          init_command_vars_for_bourne(dirs)
-        end
+                 init_command_vars_for_powershell(dirs)
+               else
+                 init_command_vars_for_bourne(dirs)
+               end
 
         prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
       end
@@ -159,10 +156,10 @@ module Kitchen
         add_omnibus_directory_option if instance.driver.cache_directory
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
-          :omnibus_url => config[:chef_omnibus_url],
-          :project => project.nil? ? nil : project[1],
-          :install_flags => config[:chef_omnibus_install_options],
-          :sudo_command => sudo_command
+          omnibus_url: config[:chef_omnibus_url],
+          project: project.nil? ? nil : project[1],
+          install_flags: config[:chef_omnibus_install_options],
+          sudo_command: sudo_command,
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           [:install_msi_url, :http_proxy, :https_proxy].each do |key|
@@ -215,27 +212,27 @@ module Kitchen
         root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']\}")
 
         {
-          :node_name        => instance.name,
-          :checksum_path    => remote_path_join(root, "checksums"),
-          :file_cache_path  => remote_path_join(root, "cache"),
-          :file_backup_path => remote_path_join(root, "backup"),
-          :cookbook_path    => [
+          node_name: instance.name,
+          checksum_path: remote_path_join(root, "checksums"),
+          file_cache_path: remote_path_join(root, "cache"),
+          file_backup_path: remote_path_join(root, "backup"),
+          cookbook_path: [
             remote_path_join(root, "cookbooks"),
-            remote_path_join(root, "site-cookbooks")
+            remote_path_join(root, "site-cookbooks"),
           ],
-          :data_bag_path    => remote_path_join(root, "data_bags"),
-          :environment_path => remote_path_join(root, "environments"),
-          :node_path        => remote_path_join(root, "nodes"),
-          :role_path        => remote_path_join(root, "roles"),
-          :client_path      => remote_path_join(root, "clients"),
-          :user_path        => remote_path_join(root, "users"),
-          :validation_key   => remote_path_join(root, "validation.pem"),
-          :client_key       => remote_path_join(root, "client.pem"),
-          :chef_server_url  => "http://127.0.0.1:8889",
-          :encrypted_data_bag_secret => remote_path_join(
+          data_bag_path: remote_path_join(root, "data_bags"),
+          environment_path: remote_path_join(root, "environments"),
+          node_path: remote_path_join(root, "nodes"),
+          role_path: remote_path_join(root, "roles"),
+          client_path: remote_path_join(root, "clients"),
+          user_path: remote_path_join(root, "users"),
+          validation_key: remote_path_join(root, "validation.pem"),
+          client_key: remote_path_join(root, "client.pem"),
+          chef_server_url: "http://127.0.0.1:8889",
+          encrypted_data_bag_secret: remote_path_join(
             root, "encrypted_data_bag_secret"
           ),
-          :treat_deprecation_warnings_as_errors => config[:deprecations_as_errors]
+          treat_deprecation_warnings_as_errors: config[:deprecations_as_errors],
         }
       end
 
@@ -246,9 +243,9 @@ module Kitchen
       # @return [String] a rendered Chef config file as a String
       # @api private
       def format_config_file(data)
-        data.each.map { |attr, value|
+        data.each.map do |attr, value|
           [attr, format_value(value)].join(" ")
-        }.join("\n")
+        end.join("\n")
       end
 
       # Converts a Ruby object to a String interpretation suitable for writing
@@ -261,9 +258,9 @@ module Kitchen
         if obj.is_a?(String) && obj =~ /^:/
           obj
         elsif obj.is_a?(String)
-          %{"#{obj.gsub(/\\/, "\\\\\\\\")}"}
+          %{"#{obj.gsub(/\\/, '\\\\\\\\')}"}
         elsif obj.is_a?(Array)
-          %{[#{obj.map { |i| format_value(i) }.join(", ")}]}
+          %{[#{obj.map { |i| format_value(i) }.join(', ')}]}
         else
           obj.inspect
         end
@@ -278,7 +275,7 @@ module Kitchen
         [
           shell_var("sudo_rm", sudo("rm")),
           shell_var("dirs", dirs.join(" ")),
-          shell_var("root_path", config[:root_path])
+          shell_var("root_path", config[:root_path]),
         ].join("\n")
       end
 
@@ -289,8 +286,8 @@ module Kitchen
       # @api private
       def init_command_vars_for_powershell(dirs)
         [
-          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})},
-          shell_var("root_path", config[:root_path])
+          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(', ')})},
+          shell_var("root_path", config[:root_path]),
         ].join("\n")
       end
 
@@ -301,13 +298,13 @@ module Kitchen
         super
         if File.exist?(policyfile)
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
-          Chef::Policyfile.load!(:logger => logger)
+          Chef::Policyfile.load!(logger: logger)
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
-          Chef::Berkshelf.load!(:logger => logger)
+          Chef::Berkshelf.load!(logger: logger)
         elsif File.exist?(cheffile)
           debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
-          Chef::Librarian.load!(:logger => logger)
+          Chef::Librarian.load!(logger: logger)
         end
       end
 
@@ -327,9 +324,9 @@ module Kitchen
       # @api private
       def script_for_product
         installer = Mixlib::Install.new({
-          :product_name => config[:product_name],
-          :product_version => config[:product_version],
-          :channel => (config[:channel] || :stable).to_sym
+          product_name: config[:product_name],
+          product_version: config[:product_version],
+          channel: (config[:channel] || :stable).to_sym,
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
           [:platform, :platform_version, :architecture].each do |key|

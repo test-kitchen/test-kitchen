@@ -25,24 +25,23 @@ require "kitchen/verifier/shell"
 require "kitchen/transport/ssh"
 
 describe Kitchen::Verifier::Shell do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:platform)      { stub(:os_type => nil, :shell_type => nil, :name => "coolbeans") }
-  let(:suite)         { stub(:name => "fries") }
+  let(:platform)      { stub(os_type: nil, shell_type: nil, name: "coolbeans") }
+  let(:suite)         { stub(name: "fries") }
   let(:state)         { Hash.new }
 
   let(:config) do
-    { :test_base_path => "/basist", :kitchen_root => "/rooty" }
+    { test_base_path: "/basist", kitchen_root: "/rooty" }
   end
 
   let(:instance) do
     stub(
-      :name => [platform.name, suite.name].join("-"),
-      :to_str => "instance",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: [platform.name, suite.name].join("-"),
+      to_str: "instance",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
@@ -59,7 +58,6 @@ describe Kitchen::Verifier::Shell do
   end
 
   describe "configuration" do
-
     it "sets :sleep to 0 by default" do
       verifier[:sleep].must_equal 0
     end
@@ -74,7 +72,6 @@ describe Kitchen::Verifier::Shell do
   end
 
   describe "#call" do
-
     describe "#shell_out" do
       it "calls sleep if :sleep value is greater than 0" do
         config[:sleep] = 3
@@ -124,12 +121,12 @@ describe Kitchen::Verifier::Shell do
 
       let(:instance) do
         stub(
-          :name => "coolbeans",
-          :to_str => "instance",
-          :logger => logger,
-          :platform => platform,
-          :suite => suite,
-          :transport => transport
+          name: "coolbeans",
+          to_str: "instance",
+          logger: logger,
+          platform: platform,
+          suite: suite,
+          transport: transport
         )
       end
 

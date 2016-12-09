@@ -27,14 +27,11 @@ rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 module Kitchen
-
   module Command
-
     # Command to discover drivers published on RubyGems.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class DriverDiscover < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         # We are introducing the idea of using the Chef configuration as a
@@ -48,7 +45,7 @@ module Kitchen
         specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
         specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
         specs = specs.unshift(["Gem Name", "Latest Stable Release"])
-        print_table(specs, :indent => 4)
+        print_table(specs, indent: 4)
       end
 
       private

@@ -27,7 +27,6 @@ class YamledState
 end
 
 describe Kitchen::StateFile do
-
   let(:state_file)  { Kitchen::StateFile.new("/tmp", "oftheunion") }
   let(:file_name)   { "/tmp/.kitchen/oftheunion.yml" }
 
@@ -42,23 +41,22 @@ describe Kitchen::StateFile do
   end
 
   describe "#read" do
-
     it "returns an empty hash if the file does not exist" do
-      state_file.read.must_equal(Hash.new)
+      state_file.read.must_equal({})
     end
 
     it "returns and empty hash if the file is zero length" do
       stub_state_file!("")
 
-      state_file.read.must_equal(Hash.new)
+      state_file.read.must_equal({})
     end
 
     it "returns a Hash with symbolized keys from the state file" do
       stub_state_file!
 
       state_file.read.must_equal(
-        :cloud_id => 42,
-        :flavor => "extra_crispy"
+        cloud_id: 42,
+        flavor: "extra_crispy"
       )
     end
 
@@ -70,7 +68,7 @@ describe Kitchen::StateFile do
 
       state_file.read.class.wont_equal YamledState
       state_file.read.class.must_equal Hash
-      state_file.read.must_equal(:yoinks => "zoinks")
+      state_file.read.must_equal(yoinks: "zoinks")
     end
 
     it "raises a StateFileLoadError if the state file cannot be parsed" do
@@ -78,11 +76,9 @@ describe Kitchen::StateFile do
 
       proc { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
-
   end
 
   describe "#write" do
-
     it "creates the directory path to the state file" do
       File.directory?("/tmp/.kitchen").must_equal false
       state_file.write({})
@@ -90,14 +86,13 @@ describe Kitchen::StateFile do
     end
 
     it "writes a state file with stringified keys" do
-      state_file.write(:thekey => "thyself")
+      state_file.write(thekey: "thyself")
 
       IO.read(file_name).split("\n").must_include "thekey: thyself"
     end
   end
 
   describe "#destroy" do
-
     it "executes if no file exists" do
       File.exist?(file_name).must_equal false
       state_file.destroy

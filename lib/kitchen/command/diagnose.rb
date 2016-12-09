@@ -22,14 +22,11 @@ require "kitchen/diagnostic"
 require "yaml"
 
 module Kitchen
-
   module Command
-
     # Command to log into to instance.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Diagnose < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         instances = record_failure { load_instances }
@@ -37,7 +34,7 @@ module Kitchen
         loader = record_failure { load_loader }
 
         puts Kitchen::Diagnostic.new(
-          :loader => loader, :instances => instances, :plugins => plugins?
+          loader: loader, instances: instances, plugins: plugins?
         ).read.to_yaml
       end
 
@@ -64,11 +61,7 @@ module Kitchen
       # @return [Hash,nil] a hash or nil
       # @api private
       def load_loader
-        if options[:all] || options[:loader]
-          @loader
-        else
-          nil
-        end
+        @loader if options[:all] || options[:loader]
       end
 
       # Returns a hash with exception detail if an exception is raised in the
@@ -80,11 +73,11 @@ module Kitchen
         yield
       rescue => e
         {
-          :error => {
-            :exception => e.inspect,
-            :message => e.message,
-            :backtrace => e.backtrace
-          }
+          error: {
+            exception: e.inspect,
+            message: e.message,
+            backtrace: e.backtrace,
+          },
         }
       end
     end

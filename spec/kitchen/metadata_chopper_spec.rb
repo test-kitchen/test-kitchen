@@ -21,7 +21,6 @@ require_relative "../spec_helper"
 require "kitchen/metadata_chopper"
 
 describe Kitchen::MetadataChopper do
-
   before do
     FakeFS.activate!
     FileUtils.mkdir_p("/tmp")
@@ -35,7 +34,6 @@ describe Kitchen::MetadataChopper do
   let(:described_class) { Kitchen::MetadataChopper }
 
   describe ".new" do
-
     it "contains a :name attribute" do
       stub_metadata!("banzai")
 
@@ -50,7 +48,6 @@ describe Kitchen::MetadataChopper do
   end
 
   describe ".extract" do
-
     it "returns a tuple" do
       stub_metadata!("foo", "1.2.3")
 

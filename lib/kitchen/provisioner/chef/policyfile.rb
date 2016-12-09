@@ -24,16 +24,12 @@ require "kitchen/logging"
 require "kitchen/shell_out"
 
 module Kitchen
-
   module Provisioner
-
     module Chef
-
       # Chef cookbook resolver that uses Policyfiles to calculate dependencies.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Policyfile
-
         include Logging
         include ShellOut
 
@@ -113,15 +109,15 @@ module Kitchen
         # @raise [UserError] if the `chef` command is not in the PATH
         # @api private
         def self.detect_chef_command!(logger)
-          unless ENV["PATH"].split(File::PATH_SEPARATOR).any? { |p|
+          unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |p|
             File.exist?(File.join(p, "chef"))
-          }
+          end
             logger.fatal("The `chef` executable cannot be found in your " \
                          "PATH. Ensure you have installed ChefDK from " \
                          "https://downloads.chef.io and that your PATH " \
                          "setting includes the path to the `chef` comand.")
             raise UserError,
-              "Could not find the chef executable in your PATH."
+                  "Could not find the chef executable in your PATH."
           end
         end
 
@@ -139,7 +135,7 @@ module Kitchen
             # Windows command line parsing libraries. This covers the 99% case of
             # spaces in the path without breaking other stuff.
             if path =~ /[ \t\n\v"]/
-              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| "\\" + m[0] }}\""
+              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| '\\' + m[0] }}\""
             else
               path
             end
