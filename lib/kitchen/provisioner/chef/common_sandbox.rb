@@ -19,18 +19,14 @@
 require "json"
 
 module Kitchen
-
   module Provisioner
-
     module Chef
-
       # Internal object to manage common sandbox preparation for
       # Chef-related provisioners.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       # @api private
       class CommonSandbox
-
         include Logging
 
         # Constructs a new object, taking config, a sandbox path, and an
@@ -58,9 +54,9 @@ module Kitchen
           prepare(:clients)
           prepare(
             :secret,
-            :type => :file,
-            :dest_name => "encrypted_data_bag_secret",
-            :key_name => :encrypted_data_bag_secret_key_path
+            type: :file,
+            dest_name: "encrypted_data_bag_secret",
+            key_name: :encrypted_data_bag_secret_key_path
           )
         end
 
@@ -84,8 +80,8 @@ module Kitchen
         # @return [Array<String>] an array of absolute paths to files
         # @api private
         def all_files_in_cookbooks
-          Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH).
-            select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
+          Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH)
+             .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
         end
 
         # @return [String] an absolute path to a Policyfile, relative to the
@@ -151,8 +147,8 @@ module Kitchen
           debug("Using metadata.rb from #{metadata_rb}")
 
           cb_name = MetadataChopper.extract(metadata_rb).first || raise(UserError,
-            "The metadata.rb does not define the 'name' key." \
-              " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
+                                                                        "The metadata.rb does not define the 'name' key." \
+                                                                          " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
           cb_path = File.join(tmpbooks_dir, cb_name)
 
@@ -168,8 +164,8 @@ module Kitchen
         def filter_only_cookbook_files
           info("Removing non-cookbook files before transfer")
           FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
-          Dir.glob(File.join(tmpbooks_dir, "**/"), File::FNM_PATHNAME).
-            reverse_each { |fn| FileUtils.rmdir(fn) if Dir.entries(fn).size == 2 }
+          Dir.glob(File.join(tmpbooks_dir, "**/"), File::FNM_PATHNAME)
+             .reverse_each { |fn| FileUtils.rmdir(fn) if Dir.entries(fn).size == 2 }
         end
 
         # @return [Logger] the instance's logger or Test Kitchen's common
@@ -208,8 +204,8 @@ module Kitchen
         def only_cookbook_files
           glob = File.join(tmpbooks_dir, "*", "{#{config[:cookbook_files_glob]}}")
 
-          Dir.glob(glob, File::FNM_DOTMATCH).
-            select { |fn| File.file?(fn) && ! %w[. ..].include?(fn) }
+          Dir.glob(glob, File::FNM_DOTMATCH)
+             .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
         end
 
         # Prepares a generic Chef component source directory or file for
@@ -226,7 +222,7 @@ module Kitchen
         #   basename in the sandbox path (default: `component.to_s`)
         # @api private
         def prepare(component, opts = {})
-          opts = { :type => :directory }.merge(opts)
+          opts = { type: :directory }.merge(opts)
           key_name = opts.fetch(:key_name, "#{component}_path")
           src = config[key_name.to_sym]
           return if src.nil?
@@ -282,9 +278,9 @@ module Kitchen
         # @api private
         def prepare_json
           dna = if File.exist?(policyfile)
-            update_dna_for_policyfile
-          else
-            config[:attributes].merge(:run_list => config[:run_list])
+                  update_dna_for_policyfile
+                else
+                  config[:attributes].merge(run_list: config[:run_list])
           end
 
           info("Preparing dna.json")
@@ -302,14 +298,14 @@ module Kitchen
             warn("Ignored run_list: #{config[:run_list].inspect}")
           end
           policy = Chef::Policyfile.new(policyfile, sandbox_path,
-            :logger => logger,
-            :always_update => config[:always_update_cookbooks])
+                                        logger: logger,
+                                        always_update: config[:always_update_cookbooks])
           Kitchen.mutex.synchronize do
             policy.compile
           end
           policy_name = JSON.parse(IO.read(policy.lockfile))["name"]
           policy_group = "local"
-          config[:attributes].merge(:policy_name => policy_name, :policy_group => policy_group)
+          config[:attributes].merge(policy_name: policy_name, policy_group: policy_group)
         end
 
         # Performs a Policyfile cookbook resolution inside a common mutex.
@@ -318,8 +314,8 @@ module Kitchen
         def resolve_with_policyfile
           Kitchen.mutex.synchronize do
             Chef::Policyfile.new(policyfile, sandbox_path,
-              :logger => logger,
-              :always_update => config[:always_update_cookbooks]).resolve
+                                 logger: logger,
+                                 always_update: config[:always_update_cookbooks]).resolve
           end
         end
 
@@ -329,8 +325,8 @@ module Kitchen
         def resolve_with_berkshelf
           Kitchen.mutex.synchronize do
             Chef::Berkshelf.new(berksfile, tmpbooks_dir,
-              :logger => logger,
-              :always_update => config[:always_update_cookbooks]).resolve
+                                logger: logger,
+                                always_update: config[:always_update_cookbooks]).resolve
           end
         end
 
@@ -339,7 +335,7 @@ module Kitchen
         # @api private
         def resolve_with_librarian
           Kitchen.mutex.synchronize do
-            Chef::Librarian.new(cheffile, tmpbooks_dir, :logger => logger).resolve
+            Chef::Librarian.new(cheffile, tmpbooks_dir, logger: logger).resolve
           end
         end
 
@@ -363,7 +359,6 @@ module Kitchen
         def tmpsitebooks_dir
           File.join(sandbox_path, "cookbooks")
         end
-
       end
     end
   end

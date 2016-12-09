@@ -22,9 +22,7 @@ require "kitchen"
 require "kitchen/version"
 
 module Kitchen
-
   module Driver
-
     # Simple driver that proxies commands through to a test instance whose
     # lifecycle is not managed by Test Kitchen. This driver is useful for long-
     # lived non-ephemeral test instances that are simply "reset" between test
@@ -33,7 +31,6 @@ module Kitchen
     #
     # @author Seth Chisamore <schisamo@opscode.com>
     class Proxy < Kitchen::Driver::SSHBase
-
       plugin_version Kitchen::VERSION
 
       required_config :host

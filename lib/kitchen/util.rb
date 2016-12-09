@@ -17,13 +17,11 @@
 # limitations under the License.
 
 module Kitchen
-
   # Stateless utility methods used in different contexts. Essentially a mini
   # PassiveSupport library.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Util
-
     # Returns the standard library Logger level constants for a given symbol
     # representation.
     #
@@ -140,7 +138,7 @@ module Kitchen
     # @return [String] a string representation of useful helper functions
     def self.shell_helpers
       IO.read(File.join(
-        File.dirname(__FILE__), %w[.. .. support download_helpers.sh]
+                File.dirname(__FILE__), %w{.. .. support download_helpers.sh}
       ))
     end
   end

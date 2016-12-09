@@ -19,12 +19,10 @@
 require "English"
 
 module Kitchen
-
   # All Kitchen errors and exceptions.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Error
-
     # Creates an array of strings, representing a formatted exception,
     # containing backtrace and nested exception info as necessary, that can
     # be viewed by a human.
@@ -49,14 +47,14 @@ module Kitchen
 
       if exception.respond_to?(:original) && exception.original
         arr += if exception.original.is_a? Array
-          exception.original.map do |composite_exception|
-            formatted_trace(composite_exception, "Composite Exception").flatten
-          end
-        else
-          [
-            formatted_exception(exception.original, "Nested Exception"),
-            formatted_backtrace(exception)
-          ].flatten
+                 exception.original.map do |composite_exception|
+                   formatted_trace(composite_exception, "Composite Exception").flatten
+                 end
+               else
+                 [
+                   formatted_exception(exception.original, "Nested Exception"),
+                   formatted_backtrace(exception),
+                 ].flatten
         end
       end
       arr.flatten
@@ -69,7 +67,7 @@ module Kitchen
         [
           "Backtrace".center(22, "-"),
           exception.backtrace,
-          "End Backtrace".center(22, "-")
+          "End Backtrace".center(22, "-"),
         ]
       end
     end
@@ -94,7 +92,7 @@ module Kitchen
         title.center(22, "-"),
         "Class: #{exception.class}",
         "Message: #{exception.message}",
-        "".center(22, "-")
+        "".center(22, "-"),
       ]
     end
   end
@@ -102,7 +100,6 @@ module Kitchen
   # Base exception class from which all Kitchen exceptions derive. This class
   # nests an exception when this class is re-raised from a rescue block.
   class StandardError < ::StandardError
-
     include Error
 
     # @return [::StandardError] the original (wrapped) exception

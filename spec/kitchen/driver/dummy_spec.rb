@@ -23,14 +23,13 @@ require "stringio"
 require "kitchen/driver/dummy"
 
 describe Kitchen::Driver::Dummy do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(name: "coolbeans", logger: logger, to_str: "instance")
   end
 
   let(:driver) do
@@ -46,7 +45,6 @@ describe Kitchen::Driver::Dummy do
   end
 
   describe "default_config" do
-
     it "sets :sleep to 0 by default" do
       driver[:sleep].must_equal 0
     end
@@ -57,7 +55,6 @@ describe Kitchen::Driver::Dummy do
   end
 
   describe "#create" do
-
     it "sets :my_id to a unique value as an example" do
       driver.create(state)
 
@@ -104,7 +101,6 @@ describe Kitchen::Driver::Dummy do
   end
 
   describe "#setup" do
-
     it "calls sleep if :sleep value is greater than 0" do
       config[:sleep] = 12.5
       driver.expects(:sleep).with(12.5).returns(true)
@@ -133,7 +129,6 @@ describe Kitchen::Driver::Dummy do
   end
 
   describe "#verify" do
-
     it "calls sleep if :sleep value is greater than 0" do
       config[:sleep] = 12.5
       driver.expects(:sleep).with(12.5).returns(true)
@@ -162,7 +157,6 @@ describe Kitchen::Driver::Dummy do
   end
 
   describe "#destroy" do
-
     it "removes :my_id from the state hash" do
       state[:my_id] = "90210"
       driver.destroy(state)

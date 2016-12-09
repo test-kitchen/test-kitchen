@@ -21,13 +21,12 @@ require_relative "../../spec_helper"
 require "kitchen"
 
 describe Kitchen::Transport::Base do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:config)          { Hash.new }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger)
+    stub(name: "coolbeans", logger: logger)
   end
 
   let(:transport) do
@@ -39,7 +38,6 @@ describe Kitchen::Transport::Base do
   end
 
   describe "#logger" do
-
     before  { @klog = Kitchen.logger }
     after   { Kitchen.logger = @klog }
 
@@ -56,32 +54,27 @@ describe Kitchen::Transport::Base do
   end
 
   describe Kitchen::Transport::TransportFailed do
-
     let(:failure_with_no_exit_code) { Kitchen::Transport::TransportFailed.new("Boom") }
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
     describe "when no exit code is provided" do
-
       it "#exit_code is nil" do
         failure_with_no_exit_code.exit_code.must_be_nil
       end
     end
 
     describe "when an exit code is provided" do
-
       it "#exit_code returns the supplied exit code" do
         failure_with_exit_code.exit_code.must_equal 123
       end
     end
   end
-
 end
 
 describe Kitchen::Transport::Base::Connection do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:options)         { { :logger => logger } }
+  let(:options)         { { logger: logger } }
 
   let(:connection) do
     Kitchen::Transport::Base::Connection.new(options)
@@ -100,8 +93,8 @@ describe Kitchen::Transport::Base::Connection do
   end
 
   it "has an #upload method which raises a ClientError" do
-    proc { connection.upload(["file"], "/path/to") }.
-      must_raise Kitchen::ClientError
+    proc { connection.upload(["file"], "/path/to") }
+      .must_raise Kitchen::ClientError
   end
 
   it "has a #wait_until_ready method that does nothing" do
@@ -109,12 +102,11 @@ describe Kitchen::Transport::Base::Connection do
   end
 
   describe "#execute_with_retry" do
-
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
     it "raises ClientError with no retries" do
-      proc { connection.execute_with_retry("hi", [], nil, nil) }.
-        must_raise Kitchen::ClientError
+      proc { connection.execute_with_retry("hi", [], nil, nil) }
+        .must_raise Kitchen::ClientError
     end
 
     it "retries three times" do

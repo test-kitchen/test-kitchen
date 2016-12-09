@@ -25,14 +25,11 @@ require "kitchen/provisioner"
 require "kitchen/provisioner/base"
 
 module Kitchen
-
   module Provisioner
-
     class Coolbeans < Kitchen::Provisioner::Base
     end
 
     class ItDepends < Kitchen::Provisioner::Base
-
       attr_reader :verify_call_count
 
       def initialize(config = {})
@@ -46,7 +43,6 @@ module Kitchen
     end
 
     class UnstableDepends < Kitchen::Provisioner::Base
-
       def verify_dependencies
         raise UserError, "Oh noes, you don't have software!"
       end
@@ -55,9 +51,7 @@ module Kitchen
 end
 
 describe Kitchen::Provisioner do
-
   describe ".for_plugin" do
-
     before do
       Kitchen::Provisioner.stubs(:require).returns(true)
     end
@@ -69,7 +63,7 @@ describe Kitchen::Provisioner do
     end
 
     it "returns a provisioner initialized with its config" do
-      provisioner = Kitchen::Provisioner.for_plugin("coolbeans", :foo => "bar")
+      provisioner = Kitchen::Provisioner.for_plugin("coolbeans", foo: "bar")
 
       provisioner[:foo].must_equal "bar"
     end
@@ -92,16 +86,16 @@ describe Kitchen::Provisioner do
     it "raises ClientError if the provisioner could not be required" do
       Kitchen::Provisioner.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Provisioner.for_plugin("coolbeans", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Provisioner.for_plugin("coolbeans", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises ClientError if the provisioner's class constant was not found" do
       # pretend require worked
       Kitchen::Provisioner.stubs(:require).returns(true)
 
-      proc { Kitchen::Provisioner.for_plugin("nope", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Provisioner.for_plugin("nope", {}) }
+        .must_raise Kitchen::ClientError
     end
   end
 end

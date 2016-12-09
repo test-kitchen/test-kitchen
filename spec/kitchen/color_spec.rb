@@ -21,9 +21,7 @@ require_relative "../spec_helper"
 require "kitchen/color"
 
 describe Kitchen::Color do
-
   describe ".escape" do
-
     it "returns an empty string if name is nil" do
       Kitchen::Color.escape(nil).must_equal ""
     end
@@ -42,7 +40,6 @@ describe Kitchen::Color do
   end
 
   describe ".colorize" do
-
     it "returns an ansi escaped string colored yellow" do
       Kitchen::Color.colorize("hello", :yellow).must_equal "\e[33mhello\e[0m"
     end

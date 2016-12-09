@@ -20,22 +20,19 @@ require "thor/group"
 require "thor/util"
 
 module Kitchen
-
   module Generator
-
     # A generator to create a new Kitchen Driver gem project.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class DriverCreate < Thor::Group
-
       include Thor::Actions
 
-      argument :name, :type => :string
+      argument :name, type: :string
 
       class_option :license,
-        :aliases => "-l",
-        :default => "apachev2",
-        :desc => "License type for gem (apachev2, mit, lgplv3, reserved)"
+                   aliases: "-l",
+                   default: "apachev2",
+                   desc: "License type for gem (apachev2, mit, lgplv3, reserved)"
 
       # Invoke the command.
       def create
@@ -87,8 +84,8 @@ module Kitchen
       # @api private
       def initialize_git
         inside(target_dir) do
-          run("git init", :capture => true)
-          run("git add .", :capture => true)
+          run("git init", capture: true)
+          run("git add .", capture: true)
         end
       end
 
@@ -112,16 +109,16 @@ module Kitchen
       # @api private
       def config
         @config ||= {
-          :name => name,
-          :gem_name => "kitchen-#{name}",
-          :gemspec => "kitchen-#{name}.gemspec",
-          :klass_name => ::Thor::Util.camel_case(name),
-          :constant_name => ::Thor::Util.snake_case(name).upcase,
-          :author => author,
-          :email => email,
-          :license => options[:license],
-          :license_string => license_string,
-          :year => Time.now.year
+          name: name,
+          gem_name: "kitchen-#{name}",
+          gemspec: "kitchen-#{name}.gemspec",
+          klass_name: ::Thor::Util.camel_case(name),
+          constant_name: ::Thor::Util.snake_case(name).upcase,
+          author: author,
+          email: email,
+          license: options[:license],
+          license_string: license_string,
+          year: Time.now.year,
         }
       end
 
@@ -169,8 +166,8 @@ module Kitchen
       # @return [String] the license comment/preamble
       # @api private
       def license_comment
-        @license_comment ||= IO.read(File.join(target_dir, license_filename)).
-          gsub(/^/, "# ").gsub(/\s+$/, "")
+        @license_comment ||= IO.read(File.join(target_dir, license_filename))
+                               .gsub(/^/, "# ").gsub(/\s+$/, "")
       end
     end
   end

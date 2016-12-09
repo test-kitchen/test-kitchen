@@ -24,7 +24,6 @@ end
 require "safe_yaml/load"
 
 module Kitchen
-
   # Exception class for any exceptions raised when reading and parsing a state
   # file from disk
   class StateFileLoadError < StandardError; end
@@ -33,7 +32,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class StateFile
-
     # Constructs an new instance taking the kitchen root and instance name.
     #
     # @param kitchen_root [String] path to the Kitchen project's root directory
@@ -54,7 +52,7 @@ module Kitchen
       if File.exist?(file_name) && !File.zero?(file_name)
         Util.symbolized_hash(deserialize_string(read_file))
       else
-        Hash.new
+        {}
       end
     end
 
@@ -65,7 +63,7 @@ module Kitchen
       dir = File.dirname(file_name)
       serialized_string = serialize_hash(Util.stringified_hash(state))
 
-      FileUtils.mkdir_p(dir) if !File.directory?(dir)
+      FileUtils.mkdir_p(dir) unless File.directory?(dir)
       File.open(file_name, "wb") { |f| f.write(serialized_string) }
     end
 
@@ -79,7 +77,7 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       raw = read
-      result = Hash.new
+      result = {}
       raw.keys.sort.each { |k| result[k] = raw[k] }
       result
     end

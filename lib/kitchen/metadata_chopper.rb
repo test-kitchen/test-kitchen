@@ -17,14 +17,12 @@
 # limitations under the License.
 
 module Kitchen
-
   # A rather insane and questionable class to quickly consume a metadata.rb
   # file and return the cookbook name and version attributes.
   #
   # @see https://twitter.com/fnichol/status/281650077901144064
   # @see https://gist.github.com/4343327
   class MetadataChopper < Hash
-
     # Return an Array containing the cookbook name and version attributes,
     # or nil values if they could not be parsed.
     #

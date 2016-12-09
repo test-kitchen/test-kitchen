@@ -24,11 +24,9 @@ require "securerandom"
 require "kitchen/base64_stream"
 
 describe Kitchen::Base64Stream do
-
-  SHORT_BODIES = %w[you test wakkawakkawakka]
+  SHORT_BODIES = %w{you test wakkawakkawakka}.freeze
 
   describe ".strict_encode" do
-
     SHORT_BODIES.each do |body|
       it "encodes short payload ('#{body}') from input IO to output IO" do
         output = StringIO.new("", "wb")
@@ -41,7 +39,7 @@ describe Kitchen::Base64Stream do
     end
 
     it "encodes a large payload from input IO to output IO" do
-      body = SecureRandom.random_bytes(1048576 * 8)
+      body = SecureRandom.random_bytes(1_048_576 * 8)
       output = StringIO.new("", "wb")
       StringIO.open(body) do |input|
         Kitchen::Base64Stream.strict_encode(input, output)
@@ -52,7 +50,6 @@ describe Kitchen::Base64Stream do
   end
 
   describe ".strict_decode" do
-
     SHORT_BODIES.map { |b| Base64.strict_encode64(b) }.each do |body|
       it "decodes short payload ('#{body}') from input IO to output IO" do
         output = StringIO.new("", "wb")
@@ -65,7 +62,7 @@ describe Kitchen::Base64Stream do
     end
 
     it "decodes a large payload from input IO to output IO" do
-      body = Base64.strict_encode64(SecureRandom.hex(1048576 * 8))
+      body = Base64.strict_encode64(SecureRandom.hex(1_048_576 * 8))
       output = StringIO.new("", "wb")
       StringIO.open(body) do |input|
         Kitchen::Base64Stream.strict_decode(input, output)

@@ -20,7 +20,6 @@ require "fileutils"
 require "logger"
 
 module Kitchen
-
   # Logging implementation for Kitchen. By default the console/stdout output
   # will be displayed differently than the file log output. Therefor, this
   # class wraps multiple loggers that conform to the stdlib `Logger` class
@@ -28,7 +27,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Logger
-
     include ::Logger::Severity
 
     # @return [IO] the log device
@@ -59,9 +57,9 @@ module Kitchen
     #   (default: `$stdout.tty?`)
     def initialize(options = {})
       @log_overwrite = if options[:log_overwrite].nil?
-        default_log_overwrite
-      else
-        options[:log_overwrite]
+                         default_log_overwrite
+                       else
+                         options[:log_overwrite]
       end
 
       @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
@@ -88,7 +86,6 @@ module Kitchen
     private :populate_loggers
 
     class << self
-
       private
 
       # @api private
@@ -297,7 +294,7 @@ module Kitchen
       logger = StdoutLogger.new(stdout)
       if colorize
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize("#{msg}", color).concat("\n")
+          Color.colorize(msg.to_s, color).concat("\n")
         end
       else
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
@@ -340,8 +337,7 @@ module Kitchen
     # Internal class which adds a #banner method call that displays the
     # message with a callout arrow.
     class LogdevLogger < ::Logger
-
-      alias_method :super_info, :info
+      alias super_info info
 
       # Dump one or more messages to info.
       #
@@ -370,9 +366,9 @@ module Kitchen
       # @api private
       def format_line(line)
         case line
-        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ""))
-        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ""))
-        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ""))
+        when /^-----> / then banner(line.gsub(/^[ >-]{6} /, ""))
+        when /^>>>>>> / then error(line.gsub(/^[ >-]{6} /, ""))
+        when /^       / then info(line.gsub(/^[ >-]{6} /, ""))
         else info(line)
         end
       end
@@ -381,7 +377,6 @@ module Kitchen
     # Internal class which reformats logging methods for display as console
     # output.
     class StdoutLogger < LogdevLogger
-
       # Log a debug message
       #
       # @param msg [String] a message

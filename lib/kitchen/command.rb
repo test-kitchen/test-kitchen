@@ -19,14 +19,11 @@
 require "thread"
 
 module Kitchen
-
   module Command
-
     # Base class for CLI commands.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Logging
 
       # Contstructs a new Command object.
@@ -150,7 +147,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     module RunAction
-
       # Run an instance action (create, converge, setup, verify, destroy) on
       # a collection of instances. The instance actions will take place in a
       # seperate thread of execution which may or may not be running

@@ -22,22 +22,21 @@ require "kitchen"
 require "kitchen/provisioner/chef_apply"
 
 describe Kitchen::Provisioner::ChefApply do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil) }
-  let(:suite)           { stub(:name => "fries") }
+  let(:platform)        { stub(os_type: nil) }
+  let(:suite)           { stub(name: "fries") }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r" }
+    { test_base_path: "/b", kitchen_root: "/r" }
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: "coolbeans",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
@@ -54,7 +53,6 @@ describe Kitchen::Provisioner::ChefApply do
   end
 
   describe "default config" do
-
     it "sets :chef_apply_path to a path using :chef_omnibus_root" do
       config[:chef_omnibus_root] = "/nice/place"
 
@@ -63,7 +61,6 @@ describe Kitchen::Provisioner::ChefApply do
   end
 
   describe "#create_sandbox" do
-
     before do
       @root = Dir.mktmpdir
       config[:kitchen_root] = @root
@@ -79,15 +76,13 @@ describe Kitchen::Provisioner::ChefApply do
   end
 
   describe "#run_command" do
-
     before do
-      config[:run_list] = %w[appry_recipe1 appry_recipe2]
+      config[:run_list] = %w{appry_recipe1 appry_recipe2}
     end
 
     let(:cmd) { provisioner.run_command }
 
     describe "for bourne shells" do
-
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do

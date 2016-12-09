@@ -19,14 +19,11 @@
 require "kitchen/command"
 
 module Kitchen
-
   module Command
-
     # Execute command on remote instance.
     #
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Exec < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         results = parse_subcommand(args.first)

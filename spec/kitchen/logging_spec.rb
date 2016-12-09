@@ -21,7 +21,6 @@ require_relative "../spec_helper"
 require "kitchen/logging"
 
 class LoggingDummy
-
   include Kitchen::Logging
 
   attr_reader :logger
@@ -31,8 +30,7 @@ class LoggingDummy
   end
 
   class Logger
-
-    METHODS = [:banner, :debug, :info, :warn, :error, :fatal]
+    METHODS = [:banner, :debug, :info, :warn, :error, :fatal].freeze
 
     attr_reader(*(METHODS.map { |m| "#{m}_msg".to_sym }))
 
@@ -45,7 +43,6 @@ class LoggingDummy
 end
 
 describe Kitchen::Logging do
-
   let(:logger)  { LoggingDummy::Logger.new }
   let(:subject) { LoggingDummy.new(logger) }
 

@@ -17,14 +17,11 @@
 # limitations under the License.
 
 module Kitchen
-
   # Mixin module that delegates logging methods to a local `#logger`.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Logging
-
     class << self
-
       private
 
       # @api private

@@ -20,14 +20,11 @@ require "kitchen/command"
 require "json"
 
 module Kitchen
-
   module Command
-
     # Command to list one or more instances.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class List < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         result = parse_subcommand(args.first)
@@ -68,7 +65,7 @@ module Kitchen
           color_pad(instance.verifier.name),
           color_pad(instance.transport.name),
           format_last_action(instance.last_action),
-          format_last_error(instance.last_error)
+          format_last_error(instance.last_error),
         ]
       end
 
@@ -111,7 +108,7 @@ module Kitchen
             colorize("Provisioner", :green), colorize("Verifier", :green),
             colorize("Transport", :green), colorize("Last Action", :green),
             colorize("Last Error", :green)
-          ]
+          ],
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
@@ -123,13 +120,13 @@ module Kitchen
       # @api private
       def to_hash(result)
         {
-          :instance => result.name,
-          :driver => result.driver.name,
-          :provisioner => result.provisioner.name,
-          :verifier => result.verifier.name,
-          :transport => result.transport.name,
-          :last_action => result.last_action,
-          :last_error => result.last_error
+          instance: result.name,
+          driver: result.driver.name,
+          provisioner: result.provisioner.name,
+          verifier: result.verifier.name,
+          transport: result.transport.name,
+          last_action: result.last_action,
+          last_error: result.last_error,
         }
       end
 

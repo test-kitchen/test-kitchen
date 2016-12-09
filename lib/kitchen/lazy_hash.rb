@@ -19,7 +19,6 @@
 require "delegate"
 
 module Kitchen
-
   # A modifed Hash object that may contain callables as a value which must be
   # executed in the context of another object. This allows for delayed
   # evaluation of a hash value while still looking and largely feeling like a
@@ -101,7 +100,7 @@ module Kitchen
     #
     # @return [Hash] a new hash
     def to_hash
-      hash = Hash.new
+      hash = {}
       __getobj__.keys.each { |key| hash[key] = self[key] }
       hash
     end

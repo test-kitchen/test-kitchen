@@ -19,14 +19,11 @@
 require "kitchen/provisioner/chef_base"
 
 module Kitchen
-
   module Provisioner
-
     # Chef Solo provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefSolo < ChefBase
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
@@ -34,9 +31,9 @@ module Kitchen
       default_config :solo_rb, {}
 
       default_config :chef_solo_path do |provisioner|
-        provisioner.
-          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-solo]).
-          tap { |path| path.concat(".bat") if provisioner.windows_os? }
+        provisioner
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-solo})
+          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       # (see Base#create_sandbox)
@@ -64,13 +61,13 @@ module Kitchen
       # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def run_command
         config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
-        cmd = sudo(config[:chef_solo_path]).dup.
-          tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = sudo(config[:chef_solo_path]).dup
+                                           .tap { |str| str.insert(0, "& ") if powershell_shell? }
         args = [
-          "--config #{remote_path_join(config[:root_path], "solo.rb")}",
+          "--config #{remote_path_join(config[:root_path], 'solo.rb')}",
           "--log_level #{config[:log_level]}",
           "--no-color",
-          "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
+          "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
         ]
         args << " --force-formatter" if modern?
         args << "--logfile #{config[:log_file]}" if config[:log_file]
@@ -79,10 +76,10 @@ module Kitchen
 
         prefix_command(
           wrap_shell_code(
-            [cmd, *args].join(" ").
-            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+            [cmd, *args].join(" ")
+            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+          )
         )
-      )
       end
 
       private

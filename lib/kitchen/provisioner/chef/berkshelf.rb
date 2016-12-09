@@ -20,17 +20,13 @@ require "kitchen/errors"
 require "kitchen/logging"
 
 module Kitchen
-
   module Provisioner
-
     module Chef
-
       # Chef cookbook resolver that uses Berkshelf and a Berksfile to calculate
       # dependencies.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Berkshelf
-
         include Logging
 
         # Creates a new cookbook resolver.
@@ -109,7 +105,7 @@ module Kitchen
             " `gem install berkshelf` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
           raise UserError,
-            "Could not load or activate Berkshelf (#{e.message})"
+                "Could not load or activate Berkshelf (#{e.message})"
         end
       end
     end

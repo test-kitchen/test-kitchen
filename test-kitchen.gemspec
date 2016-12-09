@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://kitchen.ci"
 
   gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
-  gem.executables   = %w[kitchen]
+  gem.executables   = %w{kitchen}
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
@@ -61,5 +61,5 @@ Gem::Specification.new do |gem|
   # enforced in CI
   #
   # Replacing finstyle in favor of chefstyle
-  gem.add_development_dependency "chefstyle",  "0.4.0"
+  gem.add_development_dependency "chefstyle", "0.4.0"
 end

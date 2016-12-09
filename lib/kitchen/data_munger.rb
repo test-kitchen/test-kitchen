@@ -19,7 +19,6 @@
 require "vendor/hash_recursive_merge"
 
 module Kitchen
-
   # Class to handle recursive merging of configuration between platforms,
   # suites, and common data.
   #
@@ -32,7 +31,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class DataMunger
-
     # Constructs a new DataMunger object.
     #
     # @param data [Hash] the incoming user data hash
@@ -135,9 +133,9 @@ module Kitchen
 
     def combine_arrays!(root, key, *namespaces)
       if root.key?(key)
-        root[key] = namespaces.
-          map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten.
-          compact
+        root[key] = namespaces
+                    .map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
+                    .compact
       end
     end
 
@@ -219,11 +217,11 @@ module Kitchen
     def convert_legacy_busser_format_at!(root)
       if root.key?(:busser)
         bdata = root.delete(:busser)
-        bdata = { :version => bdata } if bdata.is_a?(String)
+        bdata = { version: bdata } if bdata.is_a?(String)
         bdata[:name] = "busser" if bdata[:name].nil?
 
-        vdata = root.fetch(:verifier, Hash.new)
-        vdata = { :name => vdata } if vdata.is_a?(String)
+        vdata = root.fetch(:verifier, {})
+        vdata = { name: vdata } if vdata.is_a?(String)
         root[:verifier] = bdata.rmerge(vdata)
       end
     end
@@ -275,10 +273,10 @@ module Kitchen
     # @api private
     def convert_legacy_chef_paths_format!
       data.fetch(:suites, []).each do |suite|
-        %w[
+        %w{
           data data_bags encrypted_data_bag_secret_key
           environments nodes roles
-        ].each do |key|
+        }.each do |key|
           move_chef_data_to_provisioner_at!(suite, "#{key}_path".to_sym)
         end
       end
@@ -364,15 +362,15 @@ module Kitchen
     # @api private
     def convert_legacy_driver_format_at!(root)
       if root.key?(:driver_config)
-        ddata = root.fetch(:driver, Hash.new)
-        ddata = { :name => ddata } if ddata.is_a?(String)
+        ddata = root.fetch(:driver, {})
+        ddata = { name: ddata } if ddata.is_a?(String)
         root[:driver] = root.delete(:driver_config).rmerge(ddata)
       end
 
       if root.key?(:driver_plugin)
-        ddata = root.fetch(:driver, Hash.new)
-        ddata = { :name => ddata } if ddata.is_a?(String)
-        root[:driver] = { :name => root.delete(:driver_plugin) }.rmerge(ddata)
+        ddata = root.fetch(:driver, {})
+        ddata = { name: ddata } if ddata.is_a?(String)
+        root[:driver] = { name: root.delete(:driver_plugin) }.rmerge(ddata)
       end
     end
 
@@ -485,17 +483,17 @@ module Kitchen
     #   longer are Drivers responsible for this.
     # @api private
     def convert_legacy_driver_http_proxy_format_at!(root)
-      ddata = root.fetch(:driver, Hash.new)
+      ddata = root.fetch(:driver, {})
 
       [:http_proxy, :https_proxy].each do |key|
         next unless ddata.is_a?(Hash) && ddata.key?(key)
 
-        pdata = root.fetch(:provisioner, Hash.new)
-        pdata = { :name => pdata } if pdata.is_a?(String)
+        pdata = root.fetch(:provisioner, {})
+        pdata = { name: pdata } if pdata.is_a?(String)
         root[:provisioner] = { key => ddata.fetch(key) }.rmerge(pdata)
 
-        vdata = root.fetch(:verifier, Hash.new)
-        vdata = { :name => vdata } if vdata.is_a?(String)
+        vdata = root.fetch(:verifier, {})
+        vdata = { name: vdata } if vdata.is_a?(String)
         root[:verifier] = { key => ddata.fetch(key) }.rmerge(vdata)
       end
     end
@@ -581,11 +579,11 @@ module Kitchen
     # @api private
     def convert_legacy_require_chef_omnibus_format_at!(root)
       key = :require_chef_omnibus
-      ddata = root.fetch(:driver, Hash.new)
+      ddata = root.fetch(:driver, {})
 
       if ddata.is_a?(Hash) && ddata.key?(key)
-        pdata = root.fetch(:provisioner, Hash.new)
-        pdata = { :name => pdata } if pdata.is_a?(String)
+        pdata = root.fetch(:provisioner, {})
+        pdata = { name: pdata } if pdata.is_a?(String)
         root[:provisioner] =
           { key => root.fetch(:driver).delete(key) }.rmerge(pdata)
       end
@@ -699,9 +697,9 @@ module Kitchen
     # @api private
     def move_chef_data_to_provisioner_at!(root, key)
       if root.key?(key)
-        pdata = root.fetch(:provisioner, Hash.new)
-        pdata = { :name => pdata } if pdata.is_a?(String)
-        if !root.fetch(key, nil).nil?
+        pdata = root.fetch(:provisioner, {})
+        pdata = { name: pdata } if pdata.is_a?(String)
+        unless root.fetch(key, nil).nil?
           root[:provisioner] = pdata.rmerge(key => root.delete(key))
         end
       end
@@ -755,8 +753,8 @@ module Kitchen
     #   new Hash otherwise
     # @api private
     def normalized_common_data(key, default_key)
-      cdata = data.fetch(key, Hash.new)
-      cdata = cdata.nil? ? Hash.new : cdata.dup
+      cdata = data.fetch(key, {})
+      cdata = cdata.nil? ? {} : cdata.dup
       cdata = { default_key => cdata } if cdata.is_a?(String)
       cdata
     end
@@ -799,7 +797,7 @@ module Kitchen
     #   new Hash otherwise
     # @api private
     def normalized_default_data(key, default_key, suite, platform)
-      ddata = kitchen_config.fetch(:defaults, Hash.new).fetch(key, Hash.new).dup
+      ddata = kitchen_config.fetch(:defaults, {}).fetch(key, {}).dup
       ddata = { default_key => ddata.call(suite, platform) } if ddata.is_a?(Proc)
       ddata = { default_key => ddata } if ddata.is_a?(String)
       ddata
@@ -853,8 +851,8 @@ module Kitchen
     #   new Hash otherwise
     # @api private
     def normalized_platform_data(key, default_key, platform)
-      pdata = platform_data_for(platform).fetch(key, Hash.new)
-      pdata = pdata.nil? ? Hash.new : pdata.dup
+      pdata = platform_data_for(platform).fetch(key, {})
+      pdata = pdata.nil? ? {} : pdata.dup
       pdata = { default_key => pdata } if pdata.is_a?(String)
       namespace_array!(pdata, :run_list, :platform)
       pdata
@@ -908,8 +906,8 @@ module Kitchen
     #   new Hash otherwise
     # @api private
     def normalized_suite_data(key, default_key, suite)
-      sdata = suite_data_for(suite).fetch(key, Hash.new)
-      sdata = sdata.nil? ? Hash.new : sdata.dup
+      sdata = suite_data_for(suite).fetch(key, {})
+      sdata = sdata.nil? ? {} : sdata.dup
       sdata = { default_key => sdata } if sdata.is_a?(String)
       namespace_array!(sdata, :run_list, :suite)
       sdata
@@ -923,7 +921,7 @@ module Kitchen
     #   Hash if not found
     # @api private
     def platform_data_for(name)
-      data.fetch(:platforms, Hash.new).find(-> { Hash.new }) do |platform|
+      data.fetch(:platforms, {}).find(-> { Hash.new }) do |platform|
         platform.fetch(:name, nil) == name
       end
     end
@@ -939,7 +937,7 @@ module Kitchen
     # @param key [Symbol] the key to search for
     # @api private
     def set_kitchen_config_at!(root, key)
-      kdata = data.fetch(:kitchen, Hash.new)
+      kdata = data.fetch(:kitchen, {})
 
       root.delete(key) if root.key?(key)
       root[key] = kitchen_config.fetch(key) if kitchen_config.key?(key)
@@ -954,7 +952,7 @@ module Kitchen
     #   Hash if not found
     # @api private
     def suite_data_for(name)
-      data.fetch(:suites, Hash.new).find(-> { Hash.new }) do |suite|
+      data.fetch(:suites, {}).find(-> { Hash.new }) do |suite|
         suite.fetch(:name, nil) == name
       end
     end

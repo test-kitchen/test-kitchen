@@ -19,15 +19,12 @@
 require "kitchen"
 
 module Kitchen
-
   module Transport
-
     # Dummy transport for Kitchen. This transport does nothing but report what would
     # happen if this transport did anything of consequence. As a result it may
     # be a useful transport to use when debugging or developing new features or
     # plugins.
     class Dummy < Kitchen::Transport::Base
-
       kitchen_transport_api_version 1
 
       plugin_version Kitchen::VERSION
@@ -42,7 +39,6 @@ module Kitchen
 
       # TODO: comment
       class Connection < Kitchen::Transport::Base::Connection
-
         # (see Base#execute)
         def execute(command)
           report(:execute, command)

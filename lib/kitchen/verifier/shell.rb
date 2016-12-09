@@ -19,9 +19,7 @@
 require "kitchen/verifier/base"
 
 module Kitchen
-
   module Verifier
-
     # Shell verifier for Kitchen. This verifier just execute shell command from local.
     #
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
@@ -87,7 +85,7 @@ module Kitchen
       end
 
       def merge_state_to_env(state)
-        env_state = { :environment => {} }
+        env_state = { environment: {} }
         env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
         env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
         env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name

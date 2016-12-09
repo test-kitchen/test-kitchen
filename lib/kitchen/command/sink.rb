@@ -19,34 +19,31 @@
 require "kitchen/command"
 
 module Kitchen
-
   module Command
-
     # Command to... include the sink.
     #
     # @author Seth Vargo <sethvargo@gmail.com>
     class Sink < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         puts [
           "",
           "                    ___              ",
           "                   ' _ '.            ",
-          "                 / /` `\\ \\         ",
+          '                 / /` `\\ \\         ',
           "                 | |   [__]          ",
           "                 | |    {{           ",
           "                 | |    }}           ",
           "              _  | |  _ {{           ",
           "  ___________<_>_| |_<_>}}________   ",
           "      .=======^=(___)=^={{====.      ",
-          "     / .----------------}}---. \\    ",
-          "    / /                 {{    \\ \\  ",
-          "   / /                  }}     \\ \\ ",
+          '     / .----------------}}---. \\    ',
+          '    / /                 {{    \\ \\  ',
+          '   / /                  }}     \\ \\ ',
           "  (  '========================='  )  ",
           "   '-----------------------------'   ",
-          "                                     ",  # necessary newline
-          ""
+          "                                     ", # necessary newline
+          "",
         ].map(&:rstrip).join("\n")
       end
     end

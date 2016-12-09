@@ -23,11 +23,8 @@ require "stringio"
 require "kitchen"
 
 module Kitchen
-
   module Provisioner
-
     class TestingDummy < Kitchen::Provisioner::Base
-
       attr_reader :called_create_sandbox, :called_cleanup_sandbox
 
       def install_command
@@ -62,10 +59,9 @@ module Kitchen
 end
 
 describe Kitchen::Provisioner::Base do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
+  let(:platform)        { stub(os_type: nil, shell_type: nil) }
   let(:config)          { Hash.new }
 
   let(:transport) do
@@ -76,11 +72,11 @@ describe Kitchen::Provisioner::Base do
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :to_str => "instance",
-      :logger => logger,
-      :platform => platform,
-      :transport => transport
+      name: "coolbeans",
+      to_str: "instance",
+      logger: logger,
+      platform: platform,
+      transport: transport
     )
   end
 
@@ -89,9 +85,7 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "configuration" do
-
     describe "for unix operating systems" do
-
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":root_path defaults to /tmp/kitchen" do
@@ -108,11 +102,10 @@ describe Kitchen::Provisioner::Base do
     end
 
     describe "for windows operating systems" do
-
       before { platform.stubs(:os_type).returns("windows") }
 
-      it ":root_path defaults to $env:TEMP\\kitchen" do
-        provisioner[:root_path].must_equal "$env:TEMP\\kitchen"
+      it ':root_path defaults to $env:TEMP\\kitchen' do
+        provisioner[:root_path].must_equal '$env:TEMP\\kitchen'
       end
 
       it ":sudo defaults to nil" do
@@ -138,7 +131,6 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "#call" do
-
     let(:state) { Hash.new }
     let(:cmd)   { provisioner.call(state) }
 
@@ -202,8 +194,8 @@ describe Kitchen::Provisioner::Base do
     it "logs to info" do
       cmd
 
-      logged_output.string.
-        must_match(/INFO -- : Transferring files to instance$/)
+      logged_output.string
+                   .must_match(/INFO -- : Transferring files to instance$/)
     end
 
     it "uploads sandbox files" do
@@ -219,29 +211,27 @@ describe Kitchen::Provisioner::Base do
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
-      connection.stubs(:upload).
-        raises(Kitchen::Transport::TransportFailed.new("dang"))
+      connection.stubs(:upload)
+                .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
-      connection.stubs(:execute).
-        raises(Kitchen::Transport::TransportFailed.new("dang"))
+      connection.stubs(:execute)
+                .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
   [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
-
     it "has a #{cmd} method" do
       provisioner.public_send(cmd).must_be_nil
     end
   end
 
   describe "sandbox" do
-
     after do
       begin
         provisioner.cleanup_sandbox
@@ -257,8 +247,8 @@ describe Kitchen::Provisioner::Base do
       provisioner.create_sandbox
 
       File.directory?(provisioner.sandbox_path).must_equal true
-      format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4].
-        must_equal "0755"
+      format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4]
+        .must_equal "0755"
     end
 
     it "#create_sandbox logs an info message" do
@@ -270,8 +260,8 @@ describe Kitchen::Provisioner::Base do
     it "#create_sandbox logs a debug message" do
       provisioner.create_sandbox
 
-      logged_output.string.
-        must_match debug_line_starting_with("Creating local sandbox in ")
+      logged_output.string
+                   .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
     it "#cleanup_sandbox deletes the sandbox directory" do
@@ -285,23 +275,21 @@ describe Kitchen::Provisioner::Base do
       provisioner.create_sandbox
       provisioner.cleanup_sandbox
 
-      logged_output.string.
-        must_match debug_line_starting_with("Cleaning up local sandbox in ")
+      logged_output.string
+                   .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
     def info_line(msg)
-      %r{^I, .* : #{Regexp.escape(msg)}$}
+      /^I, .* : #{Regexp.escape(msg)}$/
     end
 
     def debug_line_starting_with(msg)
-      %r{^D, .* : #{Regexp.escape(msg)}}
+      /^D, .* : #{Regexp.escape(msg)}/
     end
   end
 
   describe "#sudo" do
-
     describe "with :sudo set" do
-
       before { config[:sudo] = true }
 
       it "prepends sudo command" do
@@ -316,7 +304,6 @@ describe Kitchen::Provisioner::Base do
     end
 
     describe "with :sudo falsey" do
-
       before { config[:sudo] = false }
 
       it "does not include sudo command" do
@@ -332,9 +319,7 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "#sudo_command" do
-
     describe "with :sudo set" do
-
       before { config[:sudo] = true }
 
       it "returns the default sudo_command" do
@@ -349,7 +334,6 @@ describe Kitchen::Provisioner::Base do
     end
 
     describe "with :sudo falsey" do
-
       before { config[:sudo] = false }
 
       it "returns empty string for default sudo_command" do
@@ -365,9 +349,7 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "#prefix_command" do
-
     describe "with :command_prefix set" do
-
       before { config[:command_prefix] = "my_prefix" }
 
       it "prepends the command with the prefix" do
@@ -376,7 +358,6 @@ describe Kitchen::Provisioner::Base do
     end
 
     describe "with :command_prefix unset" do
-
       before { config[:command_prefix] = nil }
 
       it "returns an unaltered command" do

@@ -17,13 +17,11 @@
 # limitations under the License.
 
 module Kitchen
-
   # Value object to track a shell command that will be passed to Kernel.exec
   # for execution.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class LoginCommand
-
     # @return [String] login command
     attr_reader :command
 

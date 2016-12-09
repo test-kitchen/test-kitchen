@@ -25,9 +25,7 @@ require "timeout"
 require "benchmark"
 
 module Kitchen
-
   module Transport
-
     # Wrapped exception for any internally raised SSH-related errors.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
@@ -38,7 +36,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
-
       kitchen_transport_api_version 1
 
       plugin_version Kitchen::VERSION
@@ -110,7 +107,6 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
-
         # (see Base::Connection#close)
         def close
           return if @session.nil?
@@ -139,21 +135,21 @@ module Kitchen
 
         # (see Base::Connection#login_command)
         def login_command
-          args  = %W[ -o UserKnownHostsFile=/dev/null ]
-          args += %W[ -o StrictHostKeyChecking=no ]
-          args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
-          args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
+          args  = %w{ -o UserKnownHostsFile=/dev/null }
+          args += %w{ -o StrictHostKeyChecking=no }
+          args += %w{ -o IdentitiesOnly=yes } if options[:keys]
+          args += %W{ -o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'} }
           if options.key?(:forward_agent)
-            args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
+            args += %W{ -o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'} }
           end
           if ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
             # Should support other ports than 22 for ssh gateways
-            args += %W[ -o ProxyCommand=#{gateway_command} -p 22 ]
+            args += %W{ -o ProxyCommand=#{gateway_command} -p 22 }
           end
-          Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
-          args += %W[ -p #{port} ]
-          args += %W[ #{username}@#{hostname} ]
+          Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key} } }
+          args += %W{ -p #{port} }
+          args += %W{ #{username}@#{hostname} }
 
           LoginCommand.new("ssh", args)
         end
@@ -164,7 +160,7 @@ module Kitchen
           elapsed = Benchmark.measure do
             waits = []
             Array(locals).map do |local|
-              opts = File.directory?(local) ? { :recursive => true } : {}
+              opts = File.directory?(local) ? { recursive: true } : {}
 
               waits.push session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
                 logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
@@ -183,9 +179,9 @@ module Kitchen
         def wait_until_ready
           delay = 3
           session(
-            :retries  => max_wait_until_ready / delay,
-            :delay    => delay,
-            :message  => "Waiting for SSH service on #{hostname}:#{port}, " \
+            retries: max_wait_until_ready / delay,
+            delay: delay,
+            message: "Waiting for SSH service on #{hostname}:#{port}, " \
               "retrying in #{delay} seconds"
           )
           execute(PING_COMMAND.dup)
@@ -258,7 +254,7 @@ module Kitchen
         def establish_connection_via_gateway(opts)
           retry_connection(opts) do
             Net::SSH::Gateway.new(ssh_gateway,
-              ssh_gateway_username, options).ssh(hostname, username, options)
+                                  ssh_gateway_username, options).ssh(hostname, username, options)
           end
         end
 
@@ -298,11 +294,11 @@ module Kitchen
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
-              logger.debug("[SSH] connection failed (#{e.inspect})")
-              opts[:message]
-            else
-              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                "(#{e.inspect})"
+                        logger.debug("[SSH] connection failed (#{e.inspect})")
+                        opts[:message]
+                      else
+                        "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                          "(#{e.inspect})"
             end
             logger.info(message)
             sleep(opts[:delay])
@@ -321,11 +317,9 @@ module Kitchen
         def execute_with_exit_code(command)
           exit_code = nil
           session.open_channel do |channel|
-
             channel.request_pty
 
             channel.exec(command) do |_ch, _success|
-
               channel.on_data do |_ch, data|
                 logger << data
               end
@@ -366,13 +360,13 @@ module Kitchen
         def session(retry_options = {})
           if ssh_gateway
             @session ||= establish_connection_via_gateway({
-              :retries => connection_retries.to_i,
-              :delay   => connection_retry_sleep.to_i
+              retries: connection_retries.to_i,
+              delay: connection_retry_sleep.to_i,
             }.merge(retry_options))
           else
             @session ||= establish_connection({
-              :retries => connection_retries.to_i,
-              :delay   => connection_retry_sleep.to_i
+              retries: connection_retries.to_i,
+              delay: connection_retry_sleep.to_i,
             }.merge(retry_options))
           end
         end
@@ -397,23 +391,23 @@ module Kitchen
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def connection_options(data)
         opts = {
-          :logger                 => logger,
-          :user_known_hosts_file  => "/dev/null",
-          :paranoid               => false,
-          :hostname               => data[:hostname],
-          :port                   => data[:port],
-          :username               => data[:username],
-          :compression            => data[:compression],
-          :compression_level      => data[:compression_level],
-          :keepalive              => data[:keepalive],
-          :keepalive_interval     => data[:keepalive_interval],
-          :timeout                => data[:connection_timeout],
-          :connection_retries     => data[:connection_retries],
-          :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_ssh_sessions       => data[:max_ssh_sessions],
-          :max_wait_until_ready   => data[:max_wait_until_ready],
-          :ssh_gateway            => data[:ssh_gateway],
-          :ssh_gateway_username   => data[:ssh_gateway_username]
+          logger: logger,
+          user_known_hosts_file: "/dev/null",
+          paranoid: false,
+          hostname: data[:hostname],
+          port: data[:port],
+          username: data[:username],
+          compression: data[:compression],
+          compression_level: data[:compression_level],
+          keepalive: data[:keepalive],
+          keepalive_interval: data[:keepalive_interval],
+          timeout: data[:connection_timeout],
+          connection_retries: data[:connection_retries],
+          connection_retry_sleep: data[:connection_retry_sleep],
+          max_ssh_sessions: data[:max_ssh_sessions],
+          max_wait_until_ready: data[:max_wait_until_ready],
+          ssh_gateway: data[:ssh_gateway],
+          ssh_gateway_username: data[:ssh_gateway_username],
         }
 
         if data[:ssh_key] && !data[:password]

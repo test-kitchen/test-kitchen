@@ -17,7 +17,6 @@
 # limitations under the License.
 
 module Kitchen
-
   # Base configuration class for Kitchen. This class exposes configuration such
   # as the location of the Kitchen config file, instances, log_levels, etc.
   # This object is a factory object, meaning that it is responsible for
@@ -48,7 +47,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
-
     # @return [String] the absolute path to the root of a Test Kitchen project
     # @api private
     attr_reader :kitchen_root
@@ -209,18 +207,18 @@ module Kitchen
     # @api private
     def kitchen_config
       @kitchen_config ||= {
-        :defaults => {
-          :driver       => Driver::DEFAULT_PLUGIN,
-          :provisioner  => Provisioner::DEFAULT_PLUGIN,
-          :verifier     => Verifier::DEFAULT_PLUGIN,
-          :transport    => lambda { |_suite, platform|
+        defaults: {
+          driver: Driver::DEFAULT_PLUGIN,
+          provisioner: Provisioner::DEFAULT_PLUGIN,
+          verifier: Verifier::DEFAULT_PLUGIN,
+          transport: lambda do |_suite, platform|
             platform =~ /^win/i ? "winrm" : Transport::DEFAULT_PLUGIN
-          }
+          end,
         },
-        :kitchen_root   => kitchen_root,
-        :test_base_path => test_base_path,
-        :log_level      => log_level,
-        :log_overwrite  => log_overwrite
+        kitchen_root: kitchen_root,
+        test_base_path: test_base_path,
+        log_level: log_level,
+        log_overwrite: log_overwrite,
       }
     end
 
@@ -245,14 +243,14 @@ module Kitchen
     # @api private
     def new_instance(suite, platform, index)
       Instance.new(
-        :driver       => new_driver(suite, platform),
-        :logger       => new_instance_logger(suite, platform, index),
-        :suite        => suite,
-        :platform     => platform,
-        :provisioner  => new_provisioner(suite, platform),
-        :transport    => new_transport(suite, platform),
-        :verifier     => new_verifier(suite, platform),
-        :state_file   => new_state_file(suite, platform)
+        driver: new_driver(suite, platform),
+        logger: new_instance_logger(suite, platform, index),
+        suite: suite,
+        platform: platform,
+        provisioner: new_provisioner(suite, platform),
+        transport: new_transport(suite, platform),
+        verifier: new_verifier(suite, platform),
+        state_file: new_state_file(suite, platform)
       )
     end
 
@@ -268,13 +266,13 @@ module Kitchen
       name = instance_name(suite, platform)
       log_location = File.join(log_root, "#{name}.log").to_s
       Logger.new(
-        :stdout   => STDOUT,
-        :color    => Color::COLORS[index % Color::COLORS.size].to_sym,
-        :logdev   => log_location,
-        :level    => Util.to_logger_level(log_level),
-        :log_overwrite => log_overwrite,
-        :progname => name,
-        :colorize => @colorize
+        stdout: STDOUT,
+        color: Color::COLORS[index % Color::COLORS.size].to_sym,
+        logdev: log_location,
+        level: Util.to_logger_level(log_level),
+        log_overwrite: log_overwrite,
+        progname: name,
+        colorize: @colorize
       )
     end
 
