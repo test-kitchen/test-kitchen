@@ -77,6 +77,10 @@ module Kitchen
       end
       expand_path_for :data_bags_path
 
+      # If set to true, then encrypt the data bags from data_bags_path with the provided
+      # encrypted_data_bag_secret_key when they get pushed into the box
+      default_config :encrypt_data_bags, false
+
       default_config :environments_path do |provisioner|
         provisioner.calculate_path("environments")
       end

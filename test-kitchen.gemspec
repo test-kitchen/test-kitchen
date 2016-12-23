@@ -30,6 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "safe_yaml",       "~> 1.0"
   gem.add_dependency "thor",            "~> 0.18"
   gem.add_dependency "mixlib-install",  ">= 1.2", "< 3.0"
+  gem.add_dependency "chef",            "~> 12.17"
 
   gem.add_development_dependency "pry"
   gem.add_development_dependency "pry-byebug"
