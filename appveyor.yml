@@ -12,7 +12,7 @@ environment:
   SSL_CERT_FILE: c:\projects\test_kitchen\certs.pem
 
   matrix:
-    - ruby_version: "21"
+    - ruby_version: "23"
 
 clone_folder: c:\projects\test_kitchen
 clone_depth: 1
