@@ -99,7 +99,7 @@ module Kitchen
         prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
 
-          #{cmd} test
+          #{cmd} test #{plugins.join(" ").gsub!("busser-", "")}
         CMD
       end
 

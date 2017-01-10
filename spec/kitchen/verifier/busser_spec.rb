@@ -487,7 +487,7 @@ describe Kitchen::Verifier::Busser do
         it "runs busser's test" do
           config[:root_path] = '\\b'
 
-          cmd.must_match regexify(%{& \\b\\bin\\busser.bat test})
+          cmd.must_match regexify(%{& \\b\\bin\\busser.bat test}, :partial_line)
         end
       end
     end
