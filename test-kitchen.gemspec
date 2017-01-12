@@ -40,8 +40,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "winrm-elevated", "~> 1.0"
   gem.add_development_dependency "winrm-fs", "~> 1.0"
 
-  gem.add_development_dependency "bundler",
-  gem.add_development_dependency "rake",
+  gem.add_development_dependency "bundler"
+  gem.add_development_dependency "rake"
   gem.add_development_dependency "github_changelog_generator", "1.11.3"
 
   gem.add_development_dependency "aruba",     "~> 0.11"
@@ -53,8 +53,8 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "countloc",  "~> 0.4"
   gem.add_development_dependency "maruku",    "~> 0.6"
-  gem.add_development_dependency "simplecov",
-  gem.add_development_dependency "yard",
+  gem.add_development_dependency "simplecov"
+  gem.add_development_dependency "yard"
 
   # Replacing finstyle in favor of chefstyle
   gem.add_development_dependency "chefstyle"
