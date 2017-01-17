@@ -317,7 +317,7 @@ module Kitchen
     end
 
     def proxy_setting_keys
-      [:http_proxy, :https_proxy, :ftp_proxy]
+      [:http_proxy, :https_proxy, :ftp_proxy, :no_proxy]
     end
 
     def resolve_proxy_settings_from_config
