@@ -792,6 +792,7 @@ describe Kitchen::Configurable do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
         config[:ftp_proxy] = "ftp://proxy"
+        config[:no_proxy] = "http://no"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
@@ -801,6 +802,8 @@ describe Kitchen::Configurable do
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
           ftp_proxy="ftp://proxy"; export ftp_proxy
           FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
           mkdir foo
           '
         CODE
