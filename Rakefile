@@ -37,7 +37,7 @@ begin
     task.options += ["--display-cop-names", "--no-color"]
   end
 rescue LoadError
-  puts "finstyle/rubocop is not available.  gem install finstyle to do style checking."
+  puts "chefstyle is not available.  gem install chefstyle to do style checking."
 end
 
 desc "Run all quality tasks"
