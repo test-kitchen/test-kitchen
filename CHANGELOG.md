@@ -1,9 +1,27 @@
 # Change Log
 
+## [v1.15.0](https://github.com/test-kitchen/test-kitchen/tree/v1.15.0) (2017-01-12)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.2...v1.15.0)
+
+**Implemented enhancements:**
+
+- Display the last action's success [\#1124](https://github.com/test-kitchen/test-kitchen/issues/1124)
+- Relax dependencies to bring in newer gem versions [\#1176](https://github.com/test-kitchen/test-kitchen/pull/1176) ([lamont-granquist](https://github.com/lamont-granquist))
+- Make RakeTask\#config public. [\#1069](https://github.com/test-kitchen/test-kitchen/pull/1069) ([gregsymons](https://github.com/gregsymons))
+
+**Fixed bugs:**
+
+- Fix busser trying to run bats when bats tests don't exist [\#1133](https://github.com/test-kitchen/test-kitchen/pull/1133) ([amontalban](https://github.com/amontalban))
+
+**Closed issues:**
+
+- "incompatible character encodings: UTF-8 and ASCII-8BIT" when using cyrillic letters in cookbook [\#1170](https://github.com/test-kitchen/test-kitchen/issues/1170)
+- ssh\_key is not read and sent to the args for ssh transport [\#1169](https://github.com/test-kitchen/test-kitchen/issues/1169)
+
 ## [v1.14.2](https://github.com/test-kitchen/test-kitchen/tree/v1.14.2) (2016-12-09)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.1...v1.14.2)
 
-**Merged pull requests:**
+**Implemented enhancements:**
 
 - Replace finstyle in favor of chefstyle [\#1166](https://github.com/test-kitchen/test-kitchen/pull/1166) ([afiune](https://github.com/afiune))
 
