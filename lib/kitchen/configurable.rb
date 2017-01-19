@@ -309,7 +309,7 @@ module Kitchen
     end
 
     def env_wrapped(code)
-      code_parts = proxy_settings
+      code_parts = resolve_proxy_settings_from_config
       code_parts << shell_env_var("TEST_KITCHEN", 1)
       code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
       code_parts << code
@@ -317,7 +317,7 @@ module Kitchen
     end
 
     def proxy_setting_keys
-      [:http_proxy, :https_proxy, :ftp_proxy]
+      [:http_proxy, :https_proxy, :ftp_proxy, :no_proxy]
     end
 
     def resolve_proxy_settings_from_config
@@ -329,19 +329,6 @@ module Kitchen
           set_env << shell_env_var(protocol.upcase.to_s, config[protocol])
         end
       end
-    end
-
-    def proxy_settings
-      env = resolve_proxy_settings_from_config
-
-      # if http_proxy was set from environment variable or https_proxy was set
-      # from environment variable, or ftp_proxy was set from environment
-      # variable, include no_proxy environment variable, if set.
-      if !proxy_from_config? && proxy_from_environment?
-        env << shell_env_var("no_proxy", ENV["no_proxy"]) if ENV["no_proxy"]
-        env << shell_env_var("NO_PROXY", ENV["NO_PROXY"]) if ENV["NO_PROXY"]
-      end
-      env
     end
 
     def proxy_from_config?
