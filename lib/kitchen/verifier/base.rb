@@ -227,6 +227,49 @@ module Kitchen
       def prefix_command(script)
         config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
       end
+
+      # Returns an Array of common helper filenames currently residing on the
+      # local workstation.
+      #
+      # @return [Array<String>] array of helper files
+      # @api private
+      def helper_files
+        glob = File.join(config[:test_base_path], "helpers", "*/**/*")
+        Dir.glob(glob).reject { |f| File.directory?(f) }
+      end
+
+      # Copies all common testing helper files into the suites directory in
+      # the sandbox.
+      #
+      # @api private
+      def prepare_helpers
+        base = File.join(config[:test_base_path], "helpers")
+
+        helper_files.each do |src|
+          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(src, dest, preserve: true)
+        end
+      end
+
+      # Copies all test suite files into the suites directory in the sandbox.
+      #
+      # @api private
+      def prepare_suites
+        base = File.join(config[:test_base_path], config[:suite_name])
+
+        local_suite_files.each do |src|
+          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(src, dest, preserve: true)
+        end
+      end
+
+      # @return [String] path to suites directory under sandbox path
+      # @api private
+      def sandbox_suites_dir
+        File.join(sandbox_path, "suites")
+      end
     end
   end
 end
