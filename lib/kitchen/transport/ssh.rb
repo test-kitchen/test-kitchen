@@ -416,6 +416,10 @@ module Kitchen
           opts[:auth_methods] = ["publickey"]
         end
 
+        if data[:ssh_key_only]
+          opts[:auth_methods] = ["publickey"]
+        end
+
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)

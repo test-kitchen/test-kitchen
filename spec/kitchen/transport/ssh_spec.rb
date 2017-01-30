@@ -195,6 +195,10 @@ describe Kitchen::Transport::Ssh do
       transport[:ssh_key].must_equal nil
     end
 
+    it "sets :ssh_key_only to nil by default" do
+      transport[:ssh_key_only].must_equal nil
+    end
+
     it "expands :ssh_path path if set" do
       config[:kitchen_root] = "/rooty"
       config[:ssh_key] = "my_key"
@@ -577,6 +581,16 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:keys].nil?
+        end
+
+        make_connection
+      end
+
+      it "sets :auth_methods to only publickey if :ssh_key_only is set in config" do
+        config[:ssh_key_only] = true
+
+        klass.expects(:new).with do |hash|
+          hash[:auth_methods] == ["publickey"]
         end
 
         make_connection
