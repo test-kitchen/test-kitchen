@@ -50,7 +50,7 @@ module Kitchen
         super
         prepare_chef_client_zero_rb
         prepare_validation_pem
-        prepare_client_rb
+        prepare_config_rb
       end
 
       # (see Base#prepare_command)
@@ -71,19 +71,10 @@ module Kitchen
       def run_command
         cmd = modern? ? local_mode_command : shim_command
 
-        prefix_command(
-          wrap_shell_code(
-            [cmd, *chef_client_args, last_exit_code].join(" ")
-            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-          )
-        )
+        chef_cmd(cmd)
       end
 
       private
-
-      def last_exit_code
-        "; exit $LastExitCode" if powershell_shell?
-      end
 
       # Adds optional flags to a chef-client command, depending on
       # configuration data. Note that this method mutates the incoming Array.
@@ -115,10 +106,10 @@ module Kitchen
       #
       # @return [Array<String>] an array of command line arguments
       # @api private
-      def chef_client_args
+      def chef_args(client_rb_filename)
         level = config[:log_level]
         args = [
-          "--config #{remote_path_join(config[:root_path], 'client.rb')}",
+          "--config #{remote_path_join(config[:root_path], client_rb_filename)}",
           "--log_level #{level}",
           "--force-formatter",
           "--no-color",
@@ -198,21 +189,6 @@ module Kitchen
         source = File.join(File.dirname(__FILE__),
                            %w{.. .. .. support chef-client-zero.rb})
         FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
-      end
-
-      # Writes a client.rb configuration file to the sandbox directory.
-      #
-      # @api private
-      def prepare_client_rb
-        data = default_config_rb.merge(config[:client_rb])
-        data = data.merge(named_run_list: config[:named_run_list]) if config[:named_run_list]
-
-        info("Preparing client.rb")
-        debug("Creating client.rb from #{data.inspect}")
-
-        File.open(File.join(sandbox_path, "client.rb"), "wb") do |file|
-          file.write(format_config_file(data))
-        end
       end
 
       # Writes a fake (but valid) validation.pem into the sandbox directory.

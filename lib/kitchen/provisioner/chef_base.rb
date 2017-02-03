@@ -67,6 +67,10 @@ module Kitchen
       # to ease upgrades, allow the user to turn deprecation warnings into errors
       default_config :deprecations_as_errors, false
 
+      default_config :multiple_converge, 1
+
+      default_config :enforce_idempotency, false
+
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
@@ -149,6 +153,10 @@ module Kitchen
       end
 
       private
+
+      def last_exit_code
+        "; exit $LastExitCode" if powershell_shell?
+      end
 
       # @return [Hash] an option hash for the install commands
       # @api private
@@ -392,6 +400,90 @@ module Kitchen
             "Either use a different provisioner, or delete/rename " \
             "#{policyfile}"
         end
+      end
+
+      # Writes a configuration file to the sandbox directory.
+      # @api private
+      def prepare_config_rb
+        data = default_config_rb.merge(config[config_filename.tr(".", "_").to_sym])
+        data = data.merge(:named_run_list => config[:named_run_list]) if config[:named_run_list]
+
+        info("Preparing #{config_filename}")
+        debug("Creating #{config_filename} from #{data.inspect}")
+
+        File.open(File.join(sandbox_path, config_filename), "wb") do |file|
+          file.write(format_config_file(data))
+        end
+
+        prepare_config_idempotency_check if config[:enforce_idempotency]
+      end
+
+      # Writes a configuration file to the sandbox directory
+      # to check for idempotency of the run.
+      # @api private
+      def prepare_config_idempotency_check
+        handler_filename = "chef-client-fail-if-update-handler.rb"
+        source = File.join(
+          File.dirname(__FILE__), %w{.. .. .. support }, handler_filename
+        )
+        FileUtils.cp(source, File.join(sandbox_path, handler_filename))
+        File.open(File.join(sandbox_path, "client_no_updated_resources.rb"), "wb") do |file|
+          file.write(format_config_file(data))
+          file.write("\n\n")
+          file.write("handler_file = File.join(File.dirname(__FILE__), '#{handler_filename}')\n")
+          file.write "Chef::Config.from_file(handler_file)\n"
+        end
+      end
+
+      # Returns an Array of command line arguments for the chef client.
+      #
+      # @return [Array<String>] an array of command line arguments
+      # @api private
+      def chef_args(_config_filename)
+        raise "You must override in sub classes!"
+      end
+
+      # Returns a filename for the configuration file
+      # defaults to client.rb
+      #
+      # @return [String] a filename
+      # @api private
+      def config_filename
+        "client.rb"
+      end
+
+      # Gives the command used to run chef
+      # @api private
+      def chef_cmd(base_cmd)
+        if windows_os?
+          separator = [
+            "; if ($LastExitCode -ne 0) { ",
+            "throw \"Command failed with exit code $LastExitCode.\" } ;",
+          ].join
+        else
+          separator = " && "
+        end
+        chef_cmds(base_cmd).join(separator)
+      end
+
+      # Gives an array of command
+      # @api private
+      def chef_cmds(base_cmd)
+        cmd = prefix_command(wrap_shell_code(
+          [base_cmd, *chef_args(config_filename), last_exit_code].join(" ").
+          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+        ))
+
+        cmds = [cmd].cycle(config[:multiple_converge].to_i).to_a
+
+        if config[:enforce_idempotency]
+          idempotent_cmd = prefix_command(wrap_shell_code(
+            [base_cmd, *chef_args("client_no_updated_resources.rb"), last_exit_code].join(" ").
+            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+          ))
+          cmds[-1] = idempotent_cmd
+        end
+        cmds
       end
     end
   end

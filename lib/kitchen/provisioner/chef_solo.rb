@@ -36,10 +36,15 @@ module Kitchen
           .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
+      # (see Base#config_filename)
+      def config_filename
+        "solo.rb"
+      end
+
       # (see Base#create_sandbox)
       def create_sandbox
         super
-        prepare_solo_rb
+        prepare_config_rb
       end
 
       def modern?
@@ -58,13 +63,23 @@ module Kitchen
       end
 
       # (see Base#run_command)
-      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def run_command
         config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
         cmd = sudo(config[:chef_solo_path]).dup
                                            .tap { |str| str.insert(0, "& ") if powershell_shell? }
+
+        chef_cmd(cmd)
+      end
+
+      private
+
+      # Returns an Array of command line arguments for the chef client.
+      #
+      # @return [Array<String>] an array of command line arguments
+      # @api private
+      def chef_args(solo_rb_filename)
         args = [
-          "--config #{remote_path_join(config[:root_path], 'solo.rb')}",
+          "--config #{remote_path_join(config[:root_path], solo_rb_filename)}",
           "--log_level #{config[:log_level]}",
           "--no-color",
           "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
@@ -74,28 +89,7 @@ module Kitchen
         args << "--profile-ruby" if config[:profile_ruby]
         args << "--legacy-mode" if config[:legacy_mode]
 
-        prefix_command(
-          wrap_shell_code(
-            [cmd, *args].join(" ")
-            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-          )
-        )
-      end
-
-      private
-
-      # Writes a solo.rb configuration file to the sandbox directory.
-      #
-      # @api private
-      def prepare_solo_rb
-        data = default_config_rb.merge(config[:solo_rb])
-
-        info("Preparing solo.rb")
-        debug("Creating solo.rb from #{data.inspect}")
-
-        File.open(File.join(sandbox_path, "solo.rb"), "wb") do |file|
-          file.write(format_config_file(data))
-        end
+        args
       end
     end
   end
