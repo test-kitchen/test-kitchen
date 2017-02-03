@@ -8,7 +8,6 @@ require "kitchen"
 require "kitchen/cli"
 
 class ArubaHelper
-
   def initialize(argv, stdin = STDIN, stdout = STDOUT, stderr = STDERR, kernel = Kernel)
     @argv = argv
     @stdin = stdin
@@ -48,11 +47,11 @@ After do |s|
   # Restore environment variables to their original settings, if they have
   # been saved off
   env = aruba.environment
-  env.to_h.keys.select { |key| key =~ /^_CUKE_/ }.
-    each do |backup_key|
-      env[backup_key.sub(/^_CUKE_/, "")] = env[backup_key]
-      env.delete(backup_key)
-    end
+  env.to_h.keys.select { |key| key =~ /^_CUKE_/ }
+     .each do |backup_key|
+    env[backup_key.sub(/^_CUKE_/, "")] = env[backup_key]
+    env.delete(backup_key)
+  end
 
   @cleanup_dirs.each { |dir| FileUtils.rm_rf(dir) }
 end
@@ -67,7 +66,7 @@ def restore_envvar(key)
 end
 
 def unbundlerize
-  keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
+  keys = %w{BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT}
 
   keys.each { |key| backup_envvar(key); aruba.environment.delete(key) }
   yield

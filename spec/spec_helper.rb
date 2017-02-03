@@ -18,10 +18,7 @@
 
 gem "minitest"
 
-if ENV["CODECLIMATE_REPO_TOKEN"]
-  require "codeclimate-test-reporter"
-  CodeClimate::TestReporter.start
-elsif ENV["COVERAGE"]
+if ENV["CODECLIMATE_REPO_TOKEN"] || ENV["COVERAGE"]
   require "simplecov"
   SimpleCov.profiles.define "gem" do
     command_name "Specs"
@@ -74,7 +71,7 @@ end
 
 def os_safe_root_path(root_path)
   if running_tests_on_windows?
-    "#{File.join(ENV["SystemDrive"], root_path)}"
+    File.join(ENV["SystemDrive"], root_path).to_s
   else
     root_path
   end

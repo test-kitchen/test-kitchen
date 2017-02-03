@@ -23,56 +23,51 @@ require "logger"
 require "kitchen/util"
 
 describe Kitchen::Util do
-
   describe ".to_logger_level" do
-
     it "returns nil for invalid symbols" do
       Kitchen::Util.to_logger_level(:nope).must_be_nil
     end
 
-    %w[debug info warn error fatal].each do |level|
+    %w{debug info warn error fatal}.each do |level|
       it "returns Logger::#{level.upcase} for :#{level} input" do
-        Kitchen::Util.to_logger_level(level.to_sym).
-          must_equal Logger.const_get(level.upcase)
+        Kitchen::Util.to_logger_level(level.to_sym)
+                     .must_equal Logger.const_get(level.upcase)
       end
     end
   end
 
   describe ".from_logger_level" do
-
     it "returns :fatal for invalid symbols" do
       Kitchen::Util.from_logger_level("nope").must_equal :fatal
     end
 
-    %w[debug info warn error fatal].each do |level|
+    %w{debug info warn error fatal}.each do |level|
       it "returns :#{level} for Logger::#{level.upcase} input" do
-        Kitchen::Util.from_logger_level(Logger.const_get(level.upcase)).
-          must_equal(level.to_sym)
+        Kitchen::Util.from_logger_level(Logger.const_get(level.upcase))
+                     .must_equal(level.to_sym)
       end
     end
   end
 
   describe ".symbolized_hash" do
-
     it "returns itself if not a hash" do
       obj = Object.new
       Kitchen::Util.symbolized_hash(obj).must_equal obj
     end
 
     it "preserves a symbolized hash" do
-      hash = { :one => [{ :two => "three" }] }
+      hash = { one: [{ two: "three" }] }
       Kitchen::Util.symbolized_hash(hash).must_equal hash
     end
 
     it "converts string keys into symbols" do
-      Kitchen::Util.
-        symbolized_hash("one" => [{ "two" => :three, :four => "five" }]).
-        must_equal(:one => [{ :two => :three, :four => "five" }])
+      Kitchen::Util
+        .symbolized_hash("one" => [{ "two" => :three, :four => "five" }])
+        .must_equal(one: [{ two: :three, four: "five" }])
     end
   end
 
   describe ".stringified_hash" do
-
     it "returns itself if not a hash" do
       obj = Object.new
       Kitchen::Util.stringified_hash(obj).must_equal obj
@@ -84,14 +79,13 @@ describe Kitchen::Util do
     end
 
     it "converts symbol keys into strings" do
-      Kitchen::Util.
-        stringified_hash(:one => [{ :two => :three, "four" => "five" }]).
-        must_equal("one" => [{ "two" => :three, "four" => "five" }])
+      Kitchen::Util
+        .stringified_hash(one: [{ :two => :three, "four" => "five" }])
+        .must_equal("one" => [{ "two" => :three, "four" => "five" }])
     end
   end
 
   describe ".duration" do
-
     it "turns nil into a zero" do
       Kitchen::Util.duration(nil).must_equal "(0m0.00s)"
     end
@@ -101,12 +95,11 @@ describe Kitchen::Util do
     end
 
     it "formats large values into minutes and seconds" do
-      Kitchen::Util.duration(48033).must_equal "(800m33.00s)"
+      Kitchen::Util.duration(48_033).must_equal "(800m33.00s)"
     end
   end
 
   describe ".wrap_unix_command" do
-
     it "returns the wrapped command" do
     end
 
@@ -124,7 +117,6 @@ describe Kitchen::Util do
   end
 
   describe ".outdent!" do
-
     it "modifies the argument string in place, destructively" do
       string = "yep"
 
@@ -145,10 +137,9 @@ describe Kitchen::Util do
   end
 
   describe ".shell_helpers" do
-
-    %w[
+    %w{
       exists do_wget do_curl do_fetch do_perl do_python do_download
-    ].each do |func|
+    }.each do |func|
       it "contains a #{func} shell function" do
         Kitchen::Util.shell_helpers.must_match "#{func}() {"
       end
@@ -159,7 +150,7 @@ describe Kitchen::Util do
     end
 
     def regexify(str)
-      Regexp.new("^\s+" + Regexp.escape(str) + "$")
+      Regexp.new("^ +" + Regexp.escape(str) + "$")
     end
   end
 end

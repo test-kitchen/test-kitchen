@@ -22,8 +22,44 @@ Feature: Listing Test Kitchen instances
   Scenario: Listing instances
     When I run `kitchen list`
     Then the exit status should be 0
-    And the output should match /^foobar-ubuntu-1304\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>$/
-    And the output should match /^foobar-centos-64\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>$/
+    And the output should match /^foobar-ubuntu-1304\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
+    And the output should match /^foobar-centos-64\s+Dummy\s+ChefSolo\s+Busser\s+Ssh\s+\<Not Created\>\s+\<None\>$/
+
+  Scenario: Listing a single instance with the --json option
+    When I run `kitchen list --json`
+    Then the exit status should be 0
+    And the output should contain exactly:
+    """
+    [
+      {
+        "instance": "foobar-ubuntu-1304",
+        "driver": "Dummy",
+        "provisioner": "ChefSolo",
+        "verifier": "Busser",
+        "transport": "Ssh",
+        "last_action": null,
+        "last_error": null
+      },
+      {
+        "instance": "foobar-centos-64",
+        "driver": "Dummy",
+        "provisioner": "ChefSolo",
+        "verifier": "Busser",
+        "transport": "Ssh",
+        "last_action": null,
+        "last_error": null
+      },
+      {
+        "instance": "foobar-centos-64-with-small-mem",
+        "driver": "Dummy",
+        "provisioner": "ChefSolo",
+        "verifier": "Busser",
+        "transport": "Ssh",
+        "last_action": null,
+        "last_error": null
+      }
+    ]
+    """
 
   Scenario: Listing instances with the --bare option
     When I run `kitchen list --bare`

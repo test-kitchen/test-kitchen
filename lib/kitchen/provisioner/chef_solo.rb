@@ -19,14 +19,11 @@
 require "kitchen/provisioner/chef_base"
 
 module Kitchen
-
   module Provisioner
-
     # Chef Solo provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefSolo < ChefBase
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
@@ -34,9 +31,9 @@ module Kitchen
       default_config :solo_rb, {}
 
       default_config :chef_solo_path do |provisioner|
-        provisioner.
-          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-solo]).
-          tap { |path| path.concat(".bat") if provisioner.windows_os? }
+        provisioner
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-solo})
+          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       # (see Base#config_filename)
@@ -68,8 +65,8 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
-        cmd = sudo(config[:chef_solo_path]).dup.
-          tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = sudo(config[:chef_solo_path]).dup
+                                           .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         chef_cmd(cmd)
       end
@@ -85,7 +82,7 @@ module Kitchen
           "--config #{remote_path_join(config[:root_path], solo_rb_filename)}",
           "--log_level #{config[:log_level]}",
           "--no-color",
-          "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}"
+          "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
         ]
         args << " --force-formatter" if modern?
         args << "--logfile #{config[:log_file]}" if config[:log_file]

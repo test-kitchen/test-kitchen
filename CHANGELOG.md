@@ -1,5 +1,99 @@
 # Change Log
 
+## [v1.15.0](https://github.com/test-kitchen/test-kitchen/tree/v1.15.0) (2017-01-12)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.2...v1.15.0)
+
+**Implemented enhancements:**
+
+- Display the last action's success [\#1124](https://github.com/test-kitchen/test-kitchen/issues/1124)
+- Relax dependencies to bring in newer gem versions [\#1176](https://github.com/test-kitchen/test-kitchen/pull/1176) ([lamont-granquist](https://github.com/lamont-granquist))
+- Make RakeTask\#config public. [\#1069](https://github.com/test-kitchen/test-kitchen/pull/1069) ([gregsymons](https://github.com/gregsymons))
+
+**Fixed bugs:**
+
+- Fix busser trying to run bats when bats tests don't exist [\#1133](https://github.com/test-kitchen/test-kitchen/pull/1133) ([amontalban](https://github.com/amontalban))
+
+**Closed issues:**
+
+- "incompatible character encodings: UTF-8 and ASCII-8BIT" when using cyrillic letters in cookbook [\#1170](https://github.com/test-kitchen/test-kitchen/issues/1170)
+- ssh\_key is not read and sent to the args for ssh transport [\#1169](https://github.com/test-kitchen/test-kitchen/issues/1169)
+
+## [v1.14.2](https://github.com/test-kitchen/test-kitchen/tree/v1.14.2) (2016-12-09)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.1...v1.14.2)
+
+**Implemented enhancements:**
+
+- Replace finstyle in favor of chefstyle [\#1166](https://github.com/test-kitchen/test-kitchen/pull/1166) ([afiune](https://github.com/afiune))
+
+## [v1.14.1](https://github.com/test-kitchen/test-kitchen/tree/v1.14.1) (2016-12-08)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.0...v1.14.1)
+
+**Closed issues:**
+
+- Getting message: "Expected array default value for '--driver'; got "kitchen-vagrant" \(string\)" with every operation [\#1163](https://github.com/test-kitchen/test-kitchen/issues/1163)
+- Possible to specify a custom bootstrap template? [\#1162](https://github.com/test-kitchen/test-kitchen/issues/1162)
+- Deployment of cookbooks do differ from berks package [\#1158](https://github.com/test-kitchen/test-kitchen/issues/1158)
+- Failed to complete \#create action: \[undefined method '\[\]' for nil:NilClass\] [\#1157](https://github.com/test-kitchen/test-kitchen/issues/1157)
+- inspec works, but kitchen verify fails [\#1154](https://github.com/test-kitchen/test-kitchen/issues/1154)
+
+**Merged pull requests:**
+
+- Fix typo in berkshelf chef provisioner. [\#1160](https://github.com/test-kitchen/test-kitchen/pull/1160) ([thommay](https://github.com/thommay))
+- Update MAINTAINERS.md [\#1156](https://github.com/test-kitchen/test-kitchen/pull/1156) ([afiune](https://github.com/afiune))
+- Fix to work with Thor 0.19.2 [\#1155](https://github.com/test-kitchen/test-kitchen/pull/1155) ([coderanger](https://github.com/coderanger))
+
+## [v1.14.0](https://github.com/test-kitchen/test-kitchen/tree/v1.14.0) (2016-11-22)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.2...v1.14.0)
+
+**Implemented enhancements:**
+
+- Test Kitchen should use omnitruck's -d option by default [\#809](https://github.com/test-kitchen/test-kitchen/issues/809)
+
+**Closed issues:**
+
+- Kitchen converge fails, doesn't install omnibus,  \[\[WinRM::FS::Core::FileTransporter\] Upload failed [\#1150](https://github.com/test-kitchen/test-kitchen/issues/1150)
+- Re-Enable Code Climate [\#1146](https://github.com/test-kitchen/test-kitchen/issues/1146)
+- kitchen + berkshelf don't work together with the latest versions of gems [\#1144](https://github.com/test-kitchen/test-kitchen/issues/1144)
+- Vagrant drivers brings up virtualbox machine with 'cable connected' disabled option [\#1143](https://github.com/test-kitchen/test-kitchen/issues/1143)
+- kitchen converge throws Berkshelf::LockfileNotFound on Windows [\#1140](https://github.com/test-kitchen/test-kitchen/issues/1140)
+- Inspect tests is an empty value when using the kitchen\_ec2 driver [\#1136](https://github.com/test-kitchen/test-kitchen/issues/1136)
+- kitchen test or verify with --parallel option fails [\#1125](https://github.com/test-kitchen/test-kitchen/issues/1125)
+
+**Merged pull requests:**
+
+- Added `cache` interface for Drivers so that provisioners can leverage  [\#1149](https://github.com/test-kitchen/test-kitchen/pull/1149) ([afiune](https://github.com/afiune))
+- Ensure that we only berks update with a lockfile [\#1145](https://github.com/test-kitchen/test-kitchen/pull/1145) ([thommay](https://github.com/thommay))
+- Added `last\_error` and `--json` to `kitchen list` [\#1135](https://github.com/test-kitchen/test-kitchen/pull/1135) ([BackSlasher](https://github.com/BackSlasher))
+- Allow the user to make deprecations errors [\#1117](https://github.com/test-kitchen/test-kitchen/pull/1117) ([thommay](https://github.com/thommay))
+
+## [v1.13.2](https://github.com/test-kitchen/test-kitchen/tree/v1.13.2) (2016-09-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.1...v1.13.2)
+
+**Fixed bugs:**
+
+- fix broken path on nano so shell out works [\#1129](https://github.com/test-kitchen/test-kitchen/pull/1129) ([mwrock](https://github.com/mwrock))
+
+## [v1.13.1](https://github.com/test-kitchen/test-kitchen/tree/v1.13.1) (2016-09-22)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.0...v1.13.1)
+
+**Implemented enhancements:**
+
+- Allow mixlib-install 2.0 [\#1126](https://github.com/test-kitchen/test-kitchen/pull/1126) ([jkeis
+er](https://github.com/jkeiser))
+
+## [v1.13.0](https://github.com/test-kitchen/test-kitchen/tree/v1.13.0) (2016-09-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.12.0...v1.13.0)
+
+**Implemented enhancements:**
+
+- Add `kitchen status` command [\#87](https://github.com/test-kitchen/test-kitchen/issues/87)
+- Add support for Windows Nano installs via chef provisioners [\#1119](https://github.com/test-kitchen/test-kitchen/pull/1119) ([mwrock](https://github.com/mwrock))
+- Add package driver command [\#1074](https://github.com/test-kitchen/test-kitchen/pull/1074) ([neillturner](https://github.com/neillturner))
+
+**Fixed bugs:**
+
+- SSH Transport: Bastion proxy results in broken pipe error [\#1079](https://github.com/test-kitchen/test-kitchen/issues/1079)
+
 ## [v1.12.0](https://github.com/test-kitchen/test-kitchen/tree/v1.12.0) (2016-09-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.1...v1.12.0)
 

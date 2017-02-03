@@ -22,22 +22,21 @@ require "kitchen"
 require "kitchen/provisioner/chef_solo"
 
 describe Kitchen::Provisioner::ChefSolo do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil) }
-  let(:suite)           { stub(:name => "fries") }
+  let(:platform)        { stub(os_type: nil) }
+  let(:suite)           { stub(name: "fries") }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r" }
+    { test_base_path: "/b", kitchen_root: "/r" }
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: "coolbeans",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
@@ -54,9 +53,7 @@ describe Kitchen::Provisioner::ChefSolo do
   end
 
   describe "default config" do
-
     describe "for unix operating systems" do
-
       before { platform.stubs(:os_type).returns("unix") }
 
       it "sets :chef_solo_path to a path using :chef_omnibus_root" do
@@ -67,14 +64,13 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     describe "for windows operating systems" do
-
       before { platform.stubs(:os_type).returns("windows") }
 
       it "sets :chef_solo_path to a path using :chef_omnibus_root" do
-        config[:chef_omnibus_root] = "$env:systemdrive\\nice\\place"
+        config[:chef_omnibus_root] = '$env:systemdrive\\nice\\place'
 
-        provisioner[:chef_solo_path].
-          must_equal "$env:systemdrive\\nice\\place\\bin\\chef-solo.bat"
+        provisioner[:chef_solo_path]
+          .must_equal '$env:systemdrive\\nice\\place\\bin\\chef-solo.bat'
       end
     end
 
@@ -84,7 +80,6 @@ describe Kitchen::Provisioner::ChefSolo do
   end
 
   describe "#create_sandbox" do
-
     before do
       @root = Dir.mktmpdir
       config[:kitchen_root] = @root
@@ -99,7 +94,6 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     describe "solo.rb file" do
-
       let(:file) do
         IO.read(sandbox_path("solo.rb")).lines.map(&:chomp)
       end
@@ -119,12 +113,11 @@ describe Kitchen::Provisioner::ChefSolo do
       it "logs a message on debug" do
         provisioner.create_sandbox
 
-        logged_output.string.
-          must_match debug_line_starting_with("Creating solo.rb from {")
+        logged_output.string
+                     .must_match debug_line_starting_with("Creating solo.rb from {")
       end
 
       describe "defaults" do
-
         # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         def self.common_solo_rb_specs
           it "sets node_name to the instance name" do
@@ -188,7 +181,6 @@ describe Kitchen::Provisioner::ChefSolo do
         # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
         describe "for unix os types" do
-
           before do
             platform.stubs(:os_type).returns("unix")
             provisioner.create_sandbox
@@ -200,23 +192,21 @@ describe Kitchen::Provisioner::ChefSolo do
         end
 
         describe "for windows os types with full path" do
-
           before do
             platform.stubs(:os_type).returns("windows")
-            config[:root_path] = "\\a\\b"
+            config[:root_path] = '\\a\\b'
             provisioner.create_sandbox
           end
 
-          let(:base) { "\\\\a\\\\b\\\\" }
+          let(:base) { '\\\\a\\\\b\\\\' }
 
           common_solo_rb_specs
         end
 
         describe "for windows os types with $env:TEMP prefixed paths" do
-
           before do
             platform.stubs(:os_type).returns("windows")
-            config[:root_path] = "$env:TEMP\\a"
+            config[:root_path] = '$env:TEMP\\a'
             provisioner.create_sandbox
           end
 
@@ -228,9 +218,9 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "supports overwriting defaults" do
         config[:solo_rb] = {
-          :node_name => "eagles",
-          :user_path => "/a/b/c/u",
-          :client_key => "lol"
+          node_name: "eagles",
+          user_path: "/a/b/c/u",
+          client_key: "lol",
         }
         provisioner.create_sandbox
 
@@ -241,7 +231,7 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "supports adding new configuration" do
         config[:solo_rb] = {
-          :dark_secret => "golang"
+          dark_secret: "golang",
         }
         provisioner.create_sandbox
 
@@ -250,7 +240,7 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "formats array values correctly" do
         config[:solo_rb] = {
-          :foos => %w[foo1 foo2]
+          foos: %w{foo1 foo2},
         }
         provisioner.create_sandbox
 
@@ -259,7 +249,7 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "formats integer values correctly" do
         config[:solo_rb] = {
-          :foo => 7
+          foo: 7,
         }
         provisioner.create_sandbox
 
@@ -268,7 +258,7 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "formats symbol-looking string values correctly" do
         config[:solo_rb] = {
-          :foo => ":bar"
+          foo: ":bar",
         }
         provisioner.create_sandbox
 
@@ -277,8 +267,8 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "formats boolean values correctly" do
         config[:solo_rb] = {
-          :foo => false,
-          :bar => true
+          foo: false,
+          bar: true,
         }
         provisioner.create_sandbox
 
@@ -293,11 +283,9 @@ describe Kitchen::Provisioner::ChefSolo do
   end
 
   describe "#run_command" do
-
     let(:cmd) { provisioner.run_command }
 
     describe "common behavior" do
-
       before { platform.stubs(:shell_type).returns("fake") }
 
       it "prefixs the whole command with the command_prefix if set" do
@@ -314,7 +302,6 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     describe "for bourne shells" do
-
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do
@@ -342,18 +329,18 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-        ])
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                        ])
       end
 
       it "exports all http proxy variables when both are set" do
@@ -361,11 +348,11 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[1..4].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                        ])
       end
 
       it "does no powershell PATH reloading for older chef omnibus packages" do
@@ -474,7 +461,6 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     describe "for powershell shells on windows os types" do
-
       before do
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
@@ -496,18 +482,18 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
-        ])
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                        ])
       end
 
       it "exports all http proxy variables when both are set" do
@@ -515,46 +501,47 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[0..3].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n},
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                        ])
       end
 
       it "reloads PATH for older chef omnibus packages" do
-        cmd.must_match regexify("$env:PATH = " +
-          %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+        cmd.must_match regexify("$env:PATH = try {\n" \
+        "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
+        "} catch { $env:PATH }")
       end
 
       it "calls the chef-solo command from :chef_solo_path" do
-        config[:chef_solo_path] = "\\r\\chef-solo.bat"
+        config[:chef_solo_path] = '\\r\\chef-solo.bat'
 
-        cmd.must_match regexify("& \\r\\chef-solo.bat ", :partial_line)
+        cmd.must_match regexify('& \\r\\chef-solo.bat ', :partial_line)
       end
 
       it "sets config flag on chef-solo" do
         cmd.must_match regexify(
-          " --config $env:TEMP\\kitchen\\solo.rb", :partial_line)
+          ' --config $env:TEMP\\kitchen\\solo.rb', :partial_line)
       end
 
       it "sets config flag for custom root_path" do
-        config[:root_path] = "\\a\\b"
+        config[:root_path] = '\\a\\b'
 
         cmd.must_match regexify(
-          " --config \\a\\b\\solo.rb", :partial_line)
+          ' --config \\a\\b\\solo.rb', :partial_line)
       end
 
       it "sets json attributes flag on chef-solo" do
         cmd.must_match regexify(
-          " --json-attributes $env:TEMP\\kitchen\\dna.json", :partial_line)
+          ' --json-attributes $env:TEMP\\kitchen\\dna.json', :partial_line)
       end
 
       it "sets json attribtes flag for custom root_path" do
-        config[:root_path] = "\\booyah"
+        config[:root_path] = '\\booyah'
 
         cmd.must_match regexify(
-          " --json-attributes \\booyah\\dna.json", :partial_line)
+          ' --json-attributes \\booyah\\dna.json', :partial_line)
       end
 
       it "sets log level flag on chef-solo to auto by default" do
@@ -580,19 +567,19 @@ describe Kitchen::Provisioner::ChefSolo do
       end
 
       it "sets logfile flag for custom value" do
-        config[:log_file] = "\\a\\out.log"
+        config[:log_file] = '\\a\\out.log'
 
-        cmd.must_match regexify(" --logfile \\a\\out.log", :partial_line)
+        cmd.must_match regexify(' --logfile \\a\\out.log', :partial_line)
       end
     end
   end
 
   def info_line(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}$}
+    /^I, .* : #{Regexp.escape(msg)}$/
   end
 
   def debug_line_starting_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def regexify(str, line = :whole_line)

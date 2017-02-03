@@ -21,9 +21,8 @@ require_relative "../spec_helper"
 require "kitchen/login_command"
 
 describe Kitchen::LoginCommand do
-
   let(:cmd)   { "" }
-  let(:argv)  { Array.new }
+  let(:argv)  { [] }
   let(:opts)  { Hash.new }
 
   let(:login_command) { Kitchen::LoginCommand.new(cmd, argv, opts) }
@@ -51,7 +50,7 @@ describe Kitchen::LoginCommand do
   it "#options returns the options hash from the constructor" do
     opts[:cake] = "yummy"
 
-    login_command.options.must_equal(:cake => "yummy")
+    login_command.options.must_equal(cake: "yummy")
   end
 
   it "#exec_args returns an array of arguments for Kernel.exec" do
@@ -63,6 +62,6 @@ describe Kitchen::LoginCommand do
 
     opts[:charlie] = "delta"
     login_command.exec_args.must_equal [
-      "alpha", "-o", "beta", { :charlie => "delta" }]
+      "alpha", "-o", "beta", { charlie: "delta" }]
   end
 end

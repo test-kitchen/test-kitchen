@@ -17,14 +17,11 @@
 # limitations under the License.
 
 module Kitchen
-
   module Provisioner
-
     # Base class for a provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
@@ -37,7 +34,7 @@ module Kitchen
       default_config :wait_for_retry, 30
 
       default_config :root_path do |provisioner|
-        provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
+        provisioner.windows_os? ? '$env:TEMP\\kitchen' : "/tmp/kitchen"
       end
 
       default_config :sudo do |provisioner|
@@ -205,7 +202,7 @@ module Kitchen
       def shell_code_from_file(vars, file)
         src_file = File.join(
           File.dirname(__FILE__),
-          %w[.. .. .. support],
+          %w{.. .. .. support},
           file + (powershell_shell? ? ".ps1" : ".sh")
         )
 

@@ -17,14 +17,12 @@
 # limitations under the License.
 
 module Kitchen
-
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
   # and machine architecture.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Platform
-
     # @return [String] logical name of this platform
     attr_reader :name
 
@@ -61,7 +59,7 @@ module Kitchen
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      { :os_type => os_type, :shell_type => shell_type }
+      { os_type: os_type, shell_type: shell_type }
     end
   end
 end

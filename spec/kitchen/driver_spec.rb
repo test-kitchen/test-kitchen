@@ -26,14 +26,11 @@ require "kitchen/driver"
 require "kitchen/driver/base"
 
 module Kitchen
-
   module Driver
-
     class Coolbeans < Kitchen::Driver::Base
     end
 
     class ItDepends < Kitchen::Driver::Base
-
       attr_reader :verify_call_count
 
       def initialize(config = {})
@@ -47,7 +44,6 @@ module Kitchen
     end
 
     class UnstableDepends < Kitchen::Driver::Base
-
       def verify_dependencies
         raise UserError, "Oh noes, you don't have software!"
       end
@@ -56,9 +52,7 @@ module Kitchen
 end
 
 describe Kitchen::Driver do
-
   describe ".for_plugin" do
-
     before do
       Kitchen::Driver.stubs(:require).returns(true)
     end
@@ -70,7 +64,7 @@ describe Kitchen::Driver do
     end
 
     it "returns a driver initialized with its config" do
-      driver = Kitchen::Driver.for_plugin("coolbeans", :jelly => "beans")
+      driver = Kitchen::Driver.for_plugin("coolbeans", jelly: "beans")
 
       driver[:jelly].must_equal "beans"
     end
@@ -93,20 +87,20 @@ describe Kitchen::Driver do
     it "raises ClientError if the driver could not be required" do
       Kitchen::Driver.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Driver.for_plugin("coolbeans", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Driver.for_plugin("coolbeans", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises ClientError if the driver's class constant could not be found" do
       Kitchen::Driver.stubs(:require).returns(true) # pretend require worked
 
-      proc { Kitchen::Driver.for_plugin("nope", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Driver.for_plugin("nope", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises UserError if #verify_dependencies fails" do
-      proc { Kitchen::Driver.for_plugin("unstable_depends", {}) }.
-        must_raise Kitchen::UserError
+      proc { Kitchen::Driver.for_plugin("unstable_depends", {}) }
+        .must_raise Kitchen::UserError
     end
   end
 end

@@ -24,3 +24,4 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Robb Kidd](https://github.com/robbkidd)
 * [Sean Omeara](http://github.com/someara)
 * [Steven Murawski](http://github.com/smurawski)
+* [Salim Afiune](http://github.com/afiune)

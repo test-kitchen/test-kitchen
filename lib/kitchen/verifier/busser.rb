@@ -22,31 +22,28 @@ require "digest"
 require "kitchen/verifier/base"
 
 module Kitchen
-
   module Verifier
-
     # Command string generator to interface with Busser. The commands that are
     # generated are safe to pass to an SSH command or as an unix command
     # argument (escaped in single quotes).
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Busser < Kitchen::Verifier::Base
-
       kitchen_verifier_api_version 1
 
       plugin_version Kitchen::VERSION
 
       default_config :busser_bin do |verifier|
-        verifier.
-          remote_path_join(%W[#{verifier[:root_path]} bin busser]).
-          tap { |path| path.concat(".bat") if verifier.windows_os? }
+        verifier
+          .remote_path_join(%W{#{verifier[:root_path]} bin busser})
+          .tap { |path| path.concat(".bat") if verifier.windows_os? }
       end
 
       default_config :ruby_bindir do |verifier|
         if verifier.windows_os?
-          "$env:systemdrive\\opscode\\chef\\embedded\\bin"
+          '$env:systemdrive\\opscode\\chef\\embedded\\bin'
         else
-          verifier.remote_path_join(%W[#{verifier[:chef_omnibus_root]} embedded bin])
+          verifier.remote_path_join(%W{#{verifier[:chef_omnibus_root]} embedded bin})
         end
       end
 
@@ -73,8 +70,8 @@ module Kitchen
       def init_command
         return if local_suite_files.empty?
 
-        cmd = sudo(config[:busser_bin]).dup.
-          tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = sudo(config[:busser_bin]).dup
+                                       .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
@@ -96,13 +93,13 @@ module Kitchen
       def run_command
         return if local_suite_files.empty?
 
-        cmd = sudo(config[:busser_bin]).dup.
-          tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = sudo(config[:busser_bin]).dup
+                                       .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
 
-          #{cmd} test
+          #{cmd} test #{plugins.join(" ").gsub!("busser-", "")}
         CMD
       end
 
@@ -150,9 +147,9 @@ module Kitchen
           shell_env_var("BUSSER_ROOT", root),
           shell_env_var("GEM_HOME", gem_home),
           shell_env_var("GEM_PATH", gem_path),
-          shell_env_var("GEM_CACHE", gem_cache)
-        ].join("\n").
-          tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+          shell_env_var("GEM_CACHE", gem_cache),
+        ].join("\n")
+          .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
       end
 
       # Determines whether or not a local workstation file exists under a
@@ -172,7 +169,10 @@ module Kitchen
       # @api private
       def gem_install_args
         gem, version = config[:version].split("@")
-        gem, version = "busser", gem if gem =~ /^\d+\.\d+\.\d+/
+        if gem =~ /^\d+\.\d+\.\d+/
+          version = gem
+          gem = "busser"
+        end
 
         root = config[:root_path]
         gem_bin = remote_path_join(root, "bin")
@@ -198,8 +198,8 @@ module Kitchen
       end
 
       def install_command_vars
-        ruby = remote_path_join(config[:ruby_bindir], "ruby").
-          tap { |path| path.concat(".exe") if windows_os? }
+        ruby = remote_path_join(config[:ruby_bindir], "ruby")
+               .tap { |path| path.concat(".exe") if windows_os? }
         gem = remote_path_join(config[:ruby_bindir], "gem")
 
         [
@@ -209,7 +209,7 @@ module Kitchen
           shell_var("version", config[:version]),
           shell_var("gem_install_args", gem_install_args),
           shell_var("busser", sudo(config[:busser_bin])),
-          shell_var("plugins", plugins.join(" "))
+          shell_var("plugins", plugins.join(" ")),
         ].join("\n")
       end
 
@@ -234,11 +234,11 @@ module Kitchen
       #   plugin gem names
       # @api private
       def plugins
-        non_suite_dirs = %w[data data_bags environments nodes roles]
+        non_suite_dirs = %w{data data_bags environments nodes roles}
         glob = File.join(config[:test_base_path], config[:suite_name], "*")
-        Dir.glob(glob).reject { |d|
+        Dir.glob(glob).reject do |d|
           !File.directory?(d) || non_suite_dirs.include?(File.basename(d))
-        }.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
+        end.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
       end
 
       # Copies all common testing helper files into the suites directory in
@@ -251,7 +251,7 @@ module Kitchen
         helper_files.each do |src|
           dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
           FileUtils.mkdir_p(File.dirname(dest))
-          FileUtils.cp(src, dest, :preserve => true)
+          FileUtils.cp(src, dest, preserve: true)
         end
       end
 
@@ -264,7 +264,7 @@ module Kitchen
         local_suite_files.each do |src|
           dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
           FileUtils.mkdir_p(File.dirname(dest))
-          FileUtils.cp(src, dest, :preserve => true)
+          FileUtils.cp(src, dest, preserve: true)
         end
       end
 

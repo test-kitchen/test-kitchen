@@ -20,13 +20,11 @@ require "kitchen/util"
 require "kitchen/version"
 
 module Kitchen
-
   # Combines and compiles diagnostic information about a Test Kitchen
   # configuration suitable for support and troubleshooting.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Diagnostic
-
     # Constructs a new Diagnostic object with an optional loader and optional
     # instances array.
     #
@@ -41,7 +39,7 @@ module Kitchen
       @loader = options.fetch(:loader, nil)
       @instances = options.fetch(:instances, [])
       @plugins = options.fetch(:plugins, false)
-      @result = Hash.new
+      @result = {}
     end
 
     # Returns a Hash with stringified keys containing diagnostic information.
@@ -98,12 +96,12 @@ module Kitchen
       return unless @plugins
 
       if error_hash?(instances)
-        result[:plugins] = { :error => instances[:error] }
+        result[:plugins] = { error: instances[:error] }
       elsif instances.empty?
-        result[:plugins] = Hash.new
+        result[:plugins] = {}
       else
         plugins = {
-          :driver => [], :provisioner => [], :transport => [], :verifier => []
+          driver: [], provisioner: [], transport: [], verifier: []
         }
         instances.map(&:diagnose_plugins).each do |plugin_hash|
           plugin_hash.each { |type, plugin| plugins[type] << plugin }
@@ -120,7 +118,7 @@ module Kitchen
     #
     # @api private
     def prepare_instances
-      result[:instances] = Hash.new
+      result[:instances] = {}
       if error_hash?(instances)
         result[:instances][:error] = instances[:error]
       else

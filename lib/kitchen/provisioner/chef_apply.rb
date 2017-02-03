@@ -48,22 +48,19 @@
 require "kitchen/provisioner/chef_base"
 
 module Kitchen
-
   module Provisioner
-
     # Chef Apply provisioner.
     #
     # @author SAWANOBORI Yukihiko <sawanoboriyu@higanworks.com>)
     class ChefApply < ChefBase
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
 
       default_config :chef_apply_path do |provisioner|
-        provisioner.
-          remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-apply]).
-          tap { |path| path.concat(".bat") if provisioner.windows_os? }
+        provisioner
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-apply})
+          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       default_config :apply_path do |provisioner|
@@ -84,15 +81,15 @@ module Kitchen
 
       # (see ChefBase#init_command)
       def init_command
-        dirs = %w[
+        dirs = %w{
           apply
-        ].sort.map { |dir| remote_path_join(config[:root_path], dir) }
+        }.sort.map { |dir| remote_path_join(config[:root_path], dir) }
 
         vars = if powershell_shell?
-          init_command_vars_for_powershell(dirs)
-        else
-          init_command_vars_for_bourne(dirs)
-        end
+                 init_command_vars_for_powershell(dirs)
+               else
+                 init_command_vars_for_bourne(dirs)
+               end
 
         prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
       end
@@ -102,18 +99,18 @@ module Kitchen
         level = config[:log_level]
         lines = []
         config[:run_list].map do |recipe|
-          cmd = sudo(config[:chef_apply_path]).dup.
-            tap { |str| str.insert(0, "& ") if powershell_shell? }
+          cmd = sudo(config[:chef_apply_path]).dup
+                                              .tap { |str| str.insert(0, "& ") if powershell_shell? }
           args = [
             "apply/#{recipe}.rb",
             "--log_level #{level}",
-            "--no-color"
+            "--no-color",
           ]
           args << "--logfile #{config[:log_file]}" if config[:log_file]
 
           lines << wrap_shell_code(
-            [cmd, *args].join(" ").
-            tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
+            [cmd, *args].join(" ")
+            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
           )
         end
 

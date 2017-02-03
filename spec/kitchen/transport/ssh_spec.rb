@@ -86,13 +86,9 @@ end
 # An upstream patch to Net::SSH will be required to retire this yak shave ;)
 require "net/ssh/test/channel"
 module Net
-
   module SSH
-
     module Test
-
       class Channel
-
         def sends_request_pty
           pty_data = ["xterm", 80, 24, 640, 480, "\0"]
 
@@ -115,14 +111,13 @@ module Net
 end
 
 describe Kitchen::Transport::Ssh do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
   let(:instance) do
-    stub(:name => "coolbeans", :logger => logger, :to_str => "instance")
+    stub(name: "coolbeans", logger: logger, to_str: "instance")
   end
 
   let(:transport) do
@@ -138,7 +133,6 @@ describe Kitchen::Transport::Ssh do
   end
 
   describe "default_config" do
-
     it "sets :port to 22 by default" do
       transport[:port].must_equal 22
     end
@@ -201,6 +195,10 @@ describe Kitchen::Transport::Ssh do
       transport[:ssh_key].must_equal nil
     end
 
+    it "sets :ssh_key_only to nil by default" do
+      transport[:ssh_key_only].must_equal nil
+    end
+
     it "expands :ssh_path path if set" do
       config[:kitchen_root] = "/rooty"
       config[:ssh_key] = "my_key"
@@ -214,7 +212,6 @@ describe Kitchen::Transport::Ssh do
   end
 
   describe "#connection" do
-
     let(:klass) { Kitchen::Transport::Ssh::Connection }
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -589,6 +586,16 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
+      it "sets :auth_methods to only publickey if :ssh_key_only is set in config" do
+        config[:ssh_key_only] = true
+
+        klass.expects(:new).with do |hash|
+          hash[:auth_methods] == ["publickey"]
+        end
+
+        make_connection
+      end
+
       it "passes in :password if set in config" do
         config[:password] = "password_from_config"
 
@@ -642,14 +649,14 @@ describe Kitchen::Transport::Ssh do
         make_connection(state)
         make_connection(state)
 
-        logged_output.string.lines.count { |l|
+        logged_output.string.lines.count do |l|
           l =~ debug_line_with("[SSH] reusing existing connection ")
-        }.must_equal 1
+        end.must_equal 1
       end
 
       it "returns a new connection when called again if state differs" do
         first_connection  = make_connection(state)
-        second_connection = make_connection(state.merge(:port => 9000))
+        second_connection = make_connection(state.merge(port: 9000))
 
         first_connection.object_id.wont_equal second_connection.object_id
       end
@@ -658,22 +665,21 @@ describe Kitchen::Transport::Ssh do
         first_connection = make_connection(state)
         first_connection.expects(:close)
 
-        make_connection(state.merge(:port => 9000))
+        make_connection(state.merge(port: 9000))
       end
 
       it "logs a debug message a second connection is created" do
         make_connection(state)
-        make_connection(state.merge(:port => 9000))
+        make_connection(state.merge(port: 9000))
 
-        logged_output.string.lines.count { |l|
+        logged_output.string.lines.count do |l|
           l =~ debug_line_with("[SSH] shutting previous connection ")
-        }.must_equal 1
+        end.must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     describe "called without a block" do
-
       def make_connection(s = state)
         transport.connection(s)
       end
@@ -682,7 +688,6 @@ describe Kitchen::Transport::Ssh do
     end
 
     describe "called with a block" do
-
       def make_connection(s = state)
         transport.connection(s) do |conn|
           conn
@@ -694,12 +699,11 @@ describe Kitchen::Transport::Ssh do
   end
 
   def debug_line_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 end
 
 describe Kitchen::Transport::Ssh::Connection do
-
   include Net::SSH::Test
   # sadly, Net:SSH::Test includes a #connection method so we'll alias this one
   # before redefining it
@@ -711,11 +715,11 @@ describe Kitchen::Transport::Ssh::Connection do
 
   let(:options) do
     {
-      :logger => logger,
-      :username => "me",
-      :hostname => "foo",
-      :port => 22,
-      :max_ssh_sessions => 9
+      logger: logger,
+      username: "me",
+      hostname: "foo",
+      port: 22,
+      max_ssh_sessions: 9,
     }
   end
 
@@ -734,7 +738,6 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   describe "establishing a connection" do
-
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
@@ -742,7 +745,6 @@ describe Kitchen::Transport::Ssh::Connection do
       Timeout::Error
     ].each do |klass|
       describe "raising #{klass}" do
-
         before do
           Net::SSH.stubs(:start).raises(klass)
           options[:connection_retries] = 3
@@ -751,9 +753,9 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         it "raises an SshFailed exception" do
-          e = proc {
+          e = proc do
             connection.execute("nope")
-          }.must_raise Kitchen::Transport::SshFailed
+          end.must_raise Kitchen::Transport::SshFailed
           e.message.must_match regexify("SSH session could not be established")
         end
 
@@ -764,9 +766,9 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.count { |l|
+          logged_output.string.lines.count do |l|
             l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
-          }.must_equal 3
+          end.must_equal 3
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -787,10 +789,10 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.count { |l|
+          logged_output.string.lines.count do |l|
             l =~ info_line_with(
               "[SSH] connection failed, retrying in 7 seconds")
-          }.must_equal 2
+          end.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -800,16 +802,15 @@ describe Kitchen::Transport::Ssh::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.lines.count { |l|
+          logged_output.string.lines.count do |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          }.must_equal 1
+          end.must_equal 1
         end
       end
     end
   end
 
   describe "#close" do
-
     before do
       story do |script|
         channel = script.opens_channel
@@ -848,9 +849,7 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   describe "#execute" do
-
     describe "for a successful command" do
-
       before do
         story do |script|
           channel = script.opens_channel
@@ -894,7 +893,6 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     describe "for a failed command" do
-
       before do
         story do |script|
           channel = script.opens_channel
@@ -953,9 +951,9 @@ describe Kitchen::Transport::Ssh::Connection do
       end
 
       it "raises an SshFailed exception" do
-        err = proc {
+        err = proc do
           connection.execute("doit")
-        }.must_raise Kitchen::Transport::SshFailed
+        end.must_raise Kitchen::Transport::SshFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
 
@@ -969,7 +967,6 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     describe "for an interrupted command" do
-
       let(:conn) { mock("session") }
 
       before do
@@ -979,15 +976,14 @@ describe Kitchen::Transport::Ssh::Connection do
       it "raises SshFailed when an SSH exception is raised" do
         conn.stubs(:open_channel).raises(Net::SSH::Exception)
 
-        e = proc {
+        e = proc do
           connection.execute("nope")
-        }.must_raise Kitchen::Transport::SshFailed
+        end.must_raise Kitchen::Transport::SshFailed
         e.message.must_match regexify("SSH command failed")
       end
     end
 
     describe "for a nil command" do
-
       it "does not log on debug" do
         connection.execute(nil)
 
@@ -997,7 +993,6 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   describe "#login_command" do
-
     let(:login_command) { connection.login_command }
     let(:args)          { login_command.arguments.join(" ") }
 
@@ -1063,7 +1058,7 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     it "sets SSH keys options if given" do
-      options[:keys] = %w[one two]
+      options[:keys] = %w{one two}
 
       args.must_match regexify(" -i one ")
       args.must_match regexify(" -i two ")
@@ -1081,9 +1076,7 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   describe "#upload" do
-
     describe "for a file" do
-
       let(:content) { "a" * 1234 }
 
       let(:src) do
@@ -1176,7 +1169,6 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     describe "for a failed upload" do
-
       let(:conn) { mock("session") }
 
       before do
@@ -1186,23 +1178,21 @@ describe Kitchen::Transport::Ssh::Connection do
       it "raises SshFailed when an SSH exception is raised" do
         conn.stubs(:scp).raises(Net::SSH::Exception)
 
-        e = proc {
+        e = proc do
           connection.upload("nope", "fail")
-        }.must_raise Kitchen::Transport::SshFailed
+        end.must_raise Kitchen::Transport::SshFailed
         e.message.must_match regexify("SCP upload failed")
       end
     end
   end
 
   describe "#wait_until_ready" do
-
     before do
       options[:max_wait_until_ready] = 300
       connection.stubs(:sleep)
     end
 
     describe "when failing to connect" do
-
       before do
         Net::SSH.stubs(:start).raises(Errno::ECONNREFUSED)
       end
@@ -1214,16 +1204,16 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        logged_output.string.lines.count { |l|
+        logged_output.string.lines.count do |l|
           l =~ info_line_with(
             "Waiting for SSH service on foo:22, retrying in 3 seconds")
-        }.must_equal((300 / 3) - 1)
-        logged_output.string.lines.count { |l|
+        end.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count do |l|
           l =~ debug_line_with("[SSH] connection failed ")
-        }.must_equal((300 / 3) - 1)
-        logged_output.string.lines.count { |l|
+        end.must_equal((300 / 3) - 1)
+        logged_output.string.lines.count do |l|
           l =~ warn_line_with("[SSH] connection failed, terminating ")
-        }.must_equal 1
+        end.must_equal 1
       end
 
       it "sleeps for 3 seconds between retries" do
@@ -1239,7 +1229,6 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     describe "when connection is successful" do
-
       before do
         story do |script|
           channel = script.opens_channel
@@ -1278,15 +1267,15 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   def debug_line(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}$}
+    /^D, .* : #{Regexp.escape(msg)}$/
   end
 
   def debug_line_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def info_line_with(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}}
+    /^I, .* : #{Regexp.escape(msg)}/
   end
 
   def regexify(string)
@@ -1294,6 +1283,6 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   def warn_line_with(msg)
-    %r{^W, .* : #{Regexp.escape(msg)}}
+    /^W, .* : #{Regexp.escape(msg)}/
   end
 end

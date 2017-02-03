@@ -32,16 +32,13 @@ require "kitchen/util"
 require "kitchen/verifier"
 
 module Kitchen
-
   class DummyLoader
-
     attr_writer :data
 
     def read
-      @data || Hash.new
+      @data || {}
     end
   end
-
 end
 
 describe Kitchen::Config do
@@ -55,34 +52,33 @@ describe Kitchen::Config do
 
   let(:opts) do
     {
-      :loader         => loader,
-      :kitchen_root   => "/tmp/that/place",
-      :log_root       => "/tmp/logs",
-      :test_base_path => "/testing/yo",
-      :log_level      => :debug,
-      :log_overwrite  => false,
-      :colorize       => false
+      loader: loader,
+      kitchen_root: "/tmp/that/place",
+      log_root: "/tmp/logs",
+      test_base_path: "/testing/yo",
+      log_level: :debug,
+      log_overwrite: false,
+      colorize: false,
     }
   end
 
   let(:default_kitchen_config) do
     {
-      :defaults => {
-        :driver => "dummy",
-        :provisioner => "chef_solo",
-        :transport => "ssh",
-        :verifier => "busser"
+      defaults: {
+        driver: "dummy",
+        provisioner: "chef_solo",
+        transport: "ssh",
+        verifier: "busser",
       },
-      :kitchen_root => "/tmp/that/place",
-      :test_base_path => "/testing/yo",
-      :log_level => :debug,
-      :log_overwrite  => false,
-      :colorize => false
+      kitchen_root: "/tmp/that/place",
+      test_base_path: "/testing/yo",
+      log_level: :debug,
+      log_overwrite: false,
+      colorize: false,
     }
   end
 
   describe "#loader" do
-
     it "returns its loader" do
       config.loader.must_equal loader
     end
@@ -95,7 +91,6 @@ describe Kitchen::Config do
   end
 
   describe "#kitchen_root" do
-
     it "returns its kitchen root" do
       config.kitchen_root.must_equal "/tmp/that/place"
     end
@@ -108,7 +103,6 @@ describe Kitchen::Config do
   end
 
   describe "#log_root" do
-
     it "returns its log root" do
       config.log_root.must_equal "/tmp/logs"
     end
@@ -121,7 +115,6 @@ describe Kitchen::Config do
   end
 
   describe "#test_base_path" do
-
     it "returns its base test path" do
       config.test_base_path.must_equal "/testing/yo"
     end
@@ -134,7 +127,6 @@ describe Kitchen::Config do
   end
 
   describe "#log_level" do
-
     it "returns its log level" do
       config.log_level.must_equal :debug
     end
@@ -147,7 +139,6 @@ describe Kitchen::Config do
   end
 
   describe "#log_overwrite" do
-
     it "returns its log level" do
       config.log_overwrite.must_equal false
     end
@@ -160,7 +151,6 @@ describe Kitchen::Config do
   end
 
   describe "#colorize" do
-
     it "returns its colorize" do
       config.colorize.must_equal false
     end
@@ -173,7 +163,6 @@ describe Kitchen::Config do
   end
 
   describe "#platforms" do
-
     before do
       Kitchen::DataMunger.stubs(:new).returns(munger)
       Kitchen::Platform.stubs(:new).returns("platform")
@@ -181,12 +170,12 @@ describe Kitchen::Config do
 
     let(:munger) do
       stub(
-        :platform_data => [{ :one => "a" }, { :two => "b" }]
+        platform_data: [{ one: "a" }, { two: "b" }]
       )
     end
 
     it "loader loads data" do
-      loader.expects(:read).returns(Hash.new)
+      loader.expects(:read).returns({})
 
       config.platforms
     end
@@ -194,10 +183,10 @@ describe Kitchen::Config do
     it "constructs a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+      Kitchen::DataMunger.expects(:new).with do |data, kitchen_config|
         data.must_equal "datum"
         kitchen_config.is_a?(Hash).must_equal true
-      }.returns(munger)
+      end.returns(munger)
 
       config.platforms
     end
@@ -209,24 +198,23 @@ describe Kitchen::Config do
     end
 
     it "contructs Platform objects" do
-      Kitchen::Platform.expects(:new).with(:one => "a")
-      Kitchen::Platform.expects(:new).with(:two => "b")
+      Kitchen::Platform.expects(:new).with(one: "a")
+      Kitchen::Platform.expects(:new).with(two: "b")
 
       config.platforms
     end
 
     it "returns a Collection of platforms" do
-      Kitchen::Platform.stubs(:new).
-        with(:one => "a").returns(stub(:name => "one"))
-      Kitchen::Platform.stubs(:new).
-        with(:two => "b").returns(stub(:name => "two"))
+      Kitchen::Platform.stubs(:new)
+                       .with(one: "a").returns(stub(name: "one"))
+      Kitchen::Platform.stubs(:new)
+                       .with(two: "b").returns(stub(name: "two"))
 
-      config.platforms.as_names.must_equal %w[one two]
+      config.platforms.as_names.must_equal %w{one two}
     end
   end
 
   describe "#suites" do
-
     before do
       Kitchen::DataMunger.stubs(:new).returns(munger)
       Kitchen::Suite.stubs(:new).returns("suite")
@@ -234,12 +222,12 @@ describe Kitchen::Config do
 
     let(:munger) do
       stub(
-        :suite_data => [{ :one => "a" }, { :two => "b" }]
+        suite_data: [{ one: "a" }, { two: "b" }]
       )
     end
 
     it "loader loads data" do
-      loader.expects(:read).returns(Hash.new)
+      loader.expects(:read).returns({})
 
       config.suites
     end
@@ -247,10 +235,10 @@ describe Kitchen::Config do
     it "constucts a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
-      Kitchen::DataMunger.expects(:new).with { |data, kitchen_config|
+      Kitchen::DataMunger.expects(:new).with do |data, kitchen_config|
         data.must_equal "datum"
         kitchen_config.is_a?(Hash).must_equal true
-      }.returns(munger)
+      end.returns(munger)
 
       config.suites
     end
@@ -262,38 +250,37 @@ describe Kitchen::Config do
     end
 
     it "contructs Suite objects" do
-      Kitchen::Suite.expects(:new).with(:one => "a")
-      Kitchen::Suite.expects(:new).with(:two => "b")
+      Kitchen::Suite.expects(:new).with(one: "a")
+      Kitchen::Suite.expects(:new).with(two: "b")
 
       config.suites
     end
 
     it "returns a Collection of suites" do
-      Kitchen::Suite.stubs(:new).
-        with(:one => "a").returns(stub(:name => "one"))
-      Kitchen::Suite.stubs(:new).
-        with(:two => "b").returns(stub(:name => "two"))
+      Kitchen::Suite.stubs(:new)
+                    .with(one: "a").returns(stub(name: "one"))
+      Kitchen::Suite.stubs(:new)
+                    .with(two: "b").returns(stub(name: "two"))
 
-      config.suites.as_names.must_equal %w[one two]
+      config.suites.as_names.must_equal %w{one two}
     end
   end
 
   describe "#instances" do
-
     let(:platforms) do
-      [stub(:name => "unax")]
+      [stub(name: "unax")]
     end
 
     let(:suites) do
-      [stub(:name => "tiny", :includes => [], :excludes => [])]
+      [stub(name: "tiny", includes: [], excludes: [])]
     end
 
     let(:munger) do
       stub(
-        :driver_data_for => { "junk" => true },
-        :provisioner_data_for => { "junk" => true },
-        :transport_data_for => { "junk" => true },
-        :verifier_data_for => { "junk" => true }
+        driver_data_for: { "junk" => true },
+        provisioner_data_for: { "junk" => true },
+        transport_data_for: { "junk" => true },
+        verifier_data_for: { "junk" => true }
       )
     end
 
@@ -312,41 +299,41 @@ describe Kitchen::Config do
     end
 
     it "constructs a Driver object" do
-      munger.expects(:driver_data_for).with("tiny", "unax").
-        returns(:name => "drivey", :datum => "lots")
+      munger.expects(:driver_data_for).with("tiny", "unax")
+            .returns(name: "drivey", datum: "lots")
       Kitchen::Driver.unstub(:for_plugin)
-      Kitchen::Driver.expects(:for_plugin).
-        with("drivey", :name => "drivey", :datum => "lots")
+      Kitchen::Driver.expects(:for_plugin)
+                     .with("drivey", name: "drivey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Provisioner object" do
-      munger.expects(:provisioner_data_for).with("tiny", "unax").
-        returns(:name => "provey", :datum => "lots")
+      munger.expects(:provisioner_data_for).with("tiny", "unax")
+            .returns(name: "provey", datum: "lots")
       Kitchen::Provisioner.unstub(:for_plugin)
-      Kitchen::Provisioner.expects(:for_plugin).
-        with("provey", :name => "provey", :datum => "lots")
+      Kitchen::Provisioner.expects(:for_plugin)
+                          .with("provey", name: "provey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Transport object" do
-      munger.expects(:transport_data_for).with("tiny", "unax").
-        returns(:name => "transey", :datum => "lots")
+      munger.expects(:transport_data_for).with("tiny", "unax")
+            .returns(name: "transey", datum: "lots")
       Kitchen::Transport.unstub(:for_plugin)
-      Kitchen::Transport.expects(:for_plugin).
-        with("transey", :name => "transey", :datum => "lots")
+      Kitchen::Transport.expects(:for_plugin)
+                        .with("transey", name: "transey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Verifier object" do
-      munger.expects(:verifier_data_for).with("tiny", "unax").
-        returns(:name => "vervey", :datum => "lots")
+      munger.expects(:verifier_data_for).with("tiny", "unax")
+            .returns(name: "vervey", datum: "lots")
       Kitchen::Verifier.unstub(:for_plugin)
-      Kitchen::Verifier.expects(:for_plugin).
-        with("vervey", :name => "vervey", :datum => "lots")
+      Kitchen::Verifier.expects(:for_plugin)
+                       .with("vervey", name: "vervey", datum: "lots")
 
       config.instances
     end
@@ -354,13 +341,13 @@ describe Kitchen::Config do
     it "constructs a Logger object" do
       Kitchen::Logger.unstub(:new)
       Kitchen::Logger.expects(:new).with(
-        :stdout => STDOUT,
-        :color => :cyan,
-        :logdev => "/tmp/logs/tiny-unax.log",
-        :log_overwrite => false,
-        :level => 0,
-        :progname => "tiny-unax",
-        :colorize => false
+        stdout: STDOUT,
+        color: :cyan,
+        logdev: "/tmp/logs/tiny-unax.log",
+        log_overwrite: false,
+        level: 0,
+        progname: "tiny-unax",
+        colorize: false
       )
 
       config.instances
@@ -377,14 +364,14 @@ describe Kitchen::Config do
       Kitchen::Instance.unstub(:new)
 
       Kitchen::Instance.expects(:new).with(
-        :driver => "driver",
-        :logger => "logger",
-        :suite => suites.first,
-        :platform => platforms.first,
-        :provisioner => "provisioner",
-        :transport => "transport",
-        :verifier => "verifier",
-        :state_file => "state_file"
+        driver: "driver",
+        logger: "logger",
+        suite: suites.first,
+        platform: platforms.first,
+        provisioner: "provisioner",
+        transport: "transport",
+        verifier: "verifier",
+        state_file: "state_file"
       )
 
       config.instances
@@ -392,17 +379,16 @@ describe Kitchen::Config do
   end
 
   describe "using Suite#includes" do
-
     it "selects only platforms in a suite's includes array" do
       config.stubs(:platforms).returns([
-        stub(:name => "good"),
-        stub(:name => "nope"),
-        stub(:name => "one")
-      ])
+                                         stub(name: "good"),
+                                         stub(name: "nope"),
+                                         stub(name: "one"),
+                                       ])
       config.stubs(:suites).returns([
-        stub(:name => "selecta", :includes => %w[good one], :excludes => []),
-        stub(:name => "allem", :includes => [], :excludes => [])
-      ])
+                                      stub(name: "selecta", includes: %w{good one}, excludes: []),
+                                      stub(name: "allem", includes: [], excludes: []),
+                                    ])
 
       config.instances.as_names.must_equal [
         "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]
@@ -410,17 +396,16 @@ describe Kitchen::Config do
   end
 
   describe "using Suite#excludes" do
-
     it "selects only platforms in a suite's includes array" do
       config.stubs(:platforms).returns([
-        stub(:name => "good"),
-        stub(:name => "nope"),
-        stub(:name => "one")
-      ])
+                                         stub(name: "good"),
+                                         stub(name: "nope"),
+                                         stub(name: "one"),
+                                       ])
       config.stubs(:suites).returns([
-        stub(:name => "selecta", :includes => [], :excludes => ["nope"]),
-        stub(:name => "allem", :includes => [], :excludes => [])
-      ])
+                                      stub(name: "selecta", includes: [], excludes: ["nope"]),
+                                      stub(name: "allem", includes: [], excludes: []),
+                                    ])
 
       config.instances.as_names.must_equal [
         "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]

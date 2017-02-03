@@ -19,13 +19,11 @@
 require "mixlib/shellout"
 
 module Kitchen
-
   # Mixin that wraps a command shell out invocation, providing a #run_command
   # method.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module ShellOut
-
     # Wrapped exception for any interally raised shell out commands.
     class ShellCommandFailed < TransientFailure; end
 
@@ -59,9 +57,9 @@ module Kitchen
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
       if options.fetch(:use_sudo, false)
-        cmd = "#{options.fetch(:sudo_command, "sudo -E")} #{cmd}"
+        cmd = "#{options.fetch(:sudo_command, 'sudo -E')} #{cmd}"
       end
-      subject = "[#{options.fetch(:log_subject, "local")} command]"
+      subject = "[#{options.fetch(:log_subject, 'local')} command]"
 
       debug("#{subject} BEGIN (#{cmd})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
@@ -87,7 +85,7 @@ module Kitchen
       filtered_opts = options.reject do |key, _value|
         [:use_sudo, :sudo_command, :log_subject, :quiet].include?(key)
       end
-      { :live_stream => logger, :timeout => 60000 }.merge(filtered_opts)
+      { live_stream: logger, timeout: 60_000 }.merge(filtered_opts)
     end
   end
 end

@@ -14,7 +14,6 @@
 # Source::      http://gist.github.com/gists/6391/
 #
 module HashRecursiveMerge
-
   #
   # Recursive version of Hash#merge!
   #
@@ -74,7 +73,6 @@ module HashRecursiveMerge
       r[key] = oldval.class == self.class ? oldval.rmerge(newval) : newval
     end
   end
-
 end
 
 class Hash

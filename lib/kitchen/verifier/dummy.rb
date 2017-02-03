@@ -19,9 +19,7 @@
 require "kitchen/verifier/base"
 
 module Kitchen
-
   module Verifier
-
     # Dummy verifier for Kitchen. This verifier does nothing but report what
     # would happen if this verifier did anything of consequence. As a result
     # it may be a useful verifier to use when debugging or developing new
@@ -29,7 +27,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Verifier::Base
-
       kitchen_verifier_api_version 1
 
       plugin_version Kitchen::VERSION

@@ -19,14 +19,11 @@
 require "kitchen/lazy_hash"
 
 module Kitchen
-
   module Driver
-
     # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
@@ -117,6 +114,13 @@ module Kitchen
       #
       def self.kitchen_driver_api_version(version)
         @api_version = version
+      end
+
+      # Cache directory that a driver could implement to inform the provisioner
+      # that it can leverage it internally
+      #
+      # @return path [String] a path of the cache directory
+      def cache_directory
       end
 
       private

@@ -22,31 +22,30 @@ require "kitchen"
 require "kitchen/provisioner/shell"
 
 describe Kitchen::Provisioner::Shell do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
-  let(:suite)           { stub(:name => "fries") }
+  let(:platform)        { stub(os_type: nil, shell_type: nil) }
+  let(:suite)           { stub(name: "fries") }
 
   let(:config) do
-    { :test_base_path => "/basist", :kitchen_root => "/rooty" }
+    { test_base_path: "/basist", kitchen_root: "/rooty" }
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: "coolbeans",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
   let(:provisioner) do
-    Class.new(Kitchen::Provisioner::Shell) {
+    Class.new(Kitchen::Provisioner::Shell) do
       def calculate_path(path, _opts = {})
         "<calculated>/#{path}"
       end
-    }.new(config).finalize_config!(instance)
+    end.new(config).finalize_config!(instance)
   end
 
   it "provisioner api_version is 2" do
@@ -60,9 +59,7 @@ describe Kitchen::Provisioner::Shell do
   end
 
   describe "configuration" do
-
     describe "for bourne shells" do
-
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it ":script uses calculate_path and is expanded" do
@@ -71,7 +68,6 @@ describe Kitchen::Provisioner::Shell do
     end
 
     describe "for powershell shells" do
-
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it ":script uses calculate_path and is expanded" do
@@ -85,11 +81,9 @@ describe Kitchen::Provisioner::Shell do
   end
 
   describe "#init_command" do
-
     let(:cmd) { provisioner.init_command }
 
     describe "for bourne shells" do
-
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do
@@ -105,27 +99,27 @@ describe Kitchen::Provisioner::Shell do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-        ])
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                        ])
       end
 
       it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
-          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
-        ])
+                                          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+                                          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n},
+                                        ])
       end
 
       it "exports all proxy variables when all are set" do
@@ -134,13 +128,13 @@ describe Kitchen::Provisioner::Shell do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[1..6].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
-          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
-          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+                                          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n},
+                                        ])
       end
 
       it "uses sudo for rm when configured" do
@@ -152,10 +146,10 @@ describe Kitchen::Provisioner::Shell do
       it "does not use sudo for rm when configured" do
         config[:sudo] = false
 
-        provisioner.init_command.
-          must_match regexify("rm -rf ", :partial_line)
-        provisioner.init_command.
-          wont_match regexify("sudo -E rm -rf ", :partial_line)
+        provisioner.init_command
+                   .must_match regexify("rm -rf ", :partial_line)
+        provisioner.init_command
+                   .wont_match regexify("sudo -E rm -rf ", :partial_line)
       end
 
       it "removes the data directory" do
@@ -172,7 +166,6 @@ describe Kitchen::Provisioner::Shell do
     end
 
     describe "for powershell shells on windows os types" do
-
       before do
         platform.stubs(:os_type).returns("windows")
         platform.stubs(:shell_type).returns("powershell")
@@ -182,27 +175,27 @@ describe Kitchen::Provisioner::Shell do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
-        ])
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                        ])
       end
 
       it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:ftp_proxy = "ftp://proxy"\n},
-          %{$env:FTP_PROXY = "ftp://proxy"\n}
-        ])
+                                          %{$env:ftp_proxy = "ftp://proxy"\n},
+                                          %{$env:FTP_PROXY = "ftp://proxy"\n},
+                                        ])
       end
 
       it "exports all proxy variables when all are set" do
@@ -211,17 +204,17 @@ describe Kitchen::Provisioner::Shell do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[0..5].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n},
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n},
-          %{$env:ftp_proxy = "ftp://proxy"\n},
-          %{$env:FTP_PROXY = "ftp://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          %{$env:ftp_proxy = "ftp://proxy"\n},
+                                          %{$env:FTP_PROXY = "ftp://proxy"\n},
+                                        ])
       end
 
       it "removes the data directory" do
-        config[:root_path] = "\\route"
+        config[:root_path] = '\\route'
 
         cmd.must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
           if (Test-Path "\\route\\data") {
@@ -231,7 +224,7 @@ describe Kitchen::Provisioner::Shell do
       end
 
       it "creates the :root_path directory" do
-        config[:root_path] = "\\route"
+        config[:root_path] = '\\route'
 
         cmd.must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
           if (-Not (Test-Path "\\route")) {
@@ -243,11 +236,9 @@ describe Kitchen::Provisioner::Shell do
   end
 
   describe "#run_command" do
-
     let(:cmd) { provisioner.run_command }
 
     describe "for bourne shells" do
-
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do
@@ -263,27 +254,27 @@ describe Kitchen::Provisioner::Shell do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-        ])
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                        ])
       end
 
       it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[1..2].must_equal([
-          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
-          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
-        ])
+                                          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+                                          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n},
+                                        ])
       end
 
       it "exports all proxy variables when all are set" do
@@ -292,13 +283,13 @@ describe Kitchen::Provisioner::Shell do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[1..6].must_equal([
-          %{http_proxy="http://proxy"; export http_proxy\n},
-          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
-          %{https_proxy="https://proxy"; export https_proxy\n},
-          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
-          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
-          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n}
-        ])
+                                          %{http_proxy="http://proxy"; export http_proxy\n},
+                                          %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                          %{https_proxy="https://proxy"; export https_proxy\n},
+                                          %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          %{ftp_proxy="ftp://proxy"; export ftp_proxy\n},
+                                          %{FTP_PROXY="ftp://proxy"; export FTP_PROXY\n},
+                                        ])
       end
 
       it "uses sudo for script when configured" do
@@ -326,7 +317,6 @@ describe Kitchen::Provisioner::Shell do
     end
 
     describe "for powershell shells on windows os types" do
-
       before do
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
@@ -336,27 +326,27 @@ describe Kitchen::Provisioner::Shell do
         config[:http_proxy] = "http://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                        ])
       end
 
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n}
-        ])
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                        ])
       end
 
       it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[0..1].must_equal([
-          %{$env:ftp_proxy = "ftp://proxy"\n},
-          %{$env:FTP_PROXY = "ftp://proxy"\n}
-        ])
+                                          %{$env:ftp_proxy = "ftp://proxy"\n},
+                                          %{$env:FTP_PROXY = "ftp://proxy"\n},
+                                        ])
       end
 
       it "exports all proxy variables when all are set" do
@@ -365,17 +355,17 @@ describe Kitchen::Provisioner::Shell do
         config[:ftp_proxy] = "ftp://proxy"
 
         cmd.lines.to_a[0..5].must_equal([
-          %{$env:http_proxy = "http://proxy"\n},
-          %{$env:HTTP_PROXY = "http://proxy"\n},
-          %{$env:https_proxy = "https://proxy"\n},
-          %{$env:HTTPS_PROXY = "https://proxy"\n},
-          %{$env:ftp_proxy = "ftp://proxy"\n},
-          %{$env:FTP_PROXY = "ftp://proxy"\n}
-        ])
+                                          %{$env:http_proxy = "http://proxy"\n},
+                                          %{$env:HTTP_PROXY = "http://proxy"\n},
+                                          %{$env:https_proxy = "https://proxy"\n},
+                                          %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          %{$env:ftp_proxy = "ftp://proxy"\n},
+                                          %{$env:FTP_PROXY = "ftp://proxy"\n},
+                                        ])
       end
 
       it "invokes the bootstrap.ps1 script" do
-        config[:root_path] = "\\r"
+        config[:root_path] = '\\r'
 
         cmd.must_match regexify(%{& "\\r\\bootstrap.ps1"})
       end
@@ -383,7 +373,6 @@ describe Kitchen::Provisioner::Shell do
   end
 
   describe "#create_sandbox" do
-
     before do
       @root = Dir.mktmpdir
       config[:kitchen_root] = @root
@@ -402,7 +391,6 @@ describe Kitchen::Provisioner::Shell do
     end
 
     describe "data files" do
-
       before do
         create_files_under("#{config[:kitchen_root]}/my_data")
         config[:data_path] = "#{config[:kitchen_root]}/my_data"
@@ -440,9 +428,7 @@ describe Kitchen::Provisioner::Shell do
     end
 
     describe "script file" do
-
       describe "with a valid :script file" do
-
         before do
           File.open("#{config[:kitchen_root]}/my_script", "wb") do |file|
             file.write("gonuts")
@@ -476,11 +462,9 @@ describe Kitchen::Provisioner::Shell do
       end
 
       describe "with no :script file" do
-
         before { config[:script] = nil }
 
         describe "for bourne shells" do
-
           before { platform.stubs(:shell_type).returns("bourne") }
 
           it "logs a message on info" do
@@ -505,13 +489,12 @@ describe Kitchen::Provisioner::Shell do
               # Windows doesn't have the concept of executable
               sandbox_path("bootstrap.sh").executable?.must_equal true
             end
-            IO.read(sandbox_path("bootstrap.sh")).
-              must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
+            IO.read(sandbox_path("bootstrap.sh"))
+              .must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
           end
         end
 
         describe "for powershell shells" do
-
           before { platform.stubs(:shell_type).returns("powershell") }
 
           it "logs a message on info" do
@@ -536,8 +519,8 @@ describe Kitchen::Provisioner::Shell do
               # Windows doesn't have the concept of executable
               sandbox_path("bootstrap.ps1").executable?.must_equal true
             end
-            IO.read(sandbox_path("bootstrap.ps1")).
-              must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
+            IO.read(sandbox_path("bootstrap.ps1"))
+              .must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
           end
         end
       end
@@ -558,11 +541,11 @@ describe Kitchen::Provisioner::Shell do
     end
 
     def info_line(msg)
-      %r{^I, .* : #{Regexp.escape(msg)}$}
+      /^I, .* : #{Regexp.escape(msg)}$/
     end
 
     def debug_line(msg)
-      %r{^D, .* : #{Regexp.escape(msg)}$}
+      /^D, .* : #{Regexp.escape(msg)}$/
     end
   end
 

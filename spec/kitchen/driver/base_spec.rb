@@ -23,19 +23,15 @@ require "stringio"
 require "kitchen"
 
 module Kitchen
-
   module Driver
-
     class Speedy < Base
     end
 
     class Dodgy < Base
-
       no_parallel_for :setup
     end
 
     class Slow < Base
-
       no_parallel_for :create, :destroy
       no_parallel_for :verify
     end
@@ -43,22 +39,21 @@ module Kitchen
 end
 
 describe Kitchen::Driver::Base do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
   let(:state)         { Hash.new }
 
   let(:busser) do
-    stub(:setup_cmd => "setup", :sync_cmd => "sync", :run_cmd => "run")
+    stub(setup_cmd: "setup", sync_cmd: "sync", run_cmd: "run")
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :busser => busser,
-      :to_str => "instance"
+      name: "coolbeans",
+      logger: logger,
+      busser: busser,
+      to_str: "instance"
     )
   end
 
@@ -85,7 +80,6 @@ describe Kitchen::Driver::Base do
   end
 
   [:create, :setup, :verify, :destroy].each do |action|
-
     it "has a #{action} method that takes state" do
       # TODO: revert back
       # state = Hash.new
@@ -95,7 +89,6 @@ describe Kitchen::Driver::Base do
   end
 
   describe ".no_parallel_for" do
-
     it "registers no serial actions when none are declared" do
       Kitchen::Driver::Speedy.serial_actions.must_equal nil
     end
@@ -113,9 +106,9 @@ describe Kitchen::Driver::Base do
     end
 
     it "raises a ClientError if value is not an action method" do
-      proc {
+      proc do
         Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
-      }.must_raise Kitchen::ClientError
+      end.must_raise Kitchen::ClientError
     end
   end
 end

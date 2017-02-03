@@ -22,9 +22,7 @@ require "kitchen/lazy_hash"
 require "benchmark"
 
 module Kitchen
-
   module Driver
-
     # Legacy base class for a driver that uses SSH to communication with an
     # instance. This class has been updated to use the Instance's Transport to
     # issue commands and transfer files and no longer uses the `Kitchen:SSH`
@@ -46,7 +44,6 @@ module Kitchen
     #   Drivers. When legacy Driver::SSHBase support is removed, this class
     #   will no longer be available.
     class SSHBase
-
       include ShellOut
       include Configurable
       include Logging
@@ -138,8 +135,8 @@ module Kitchen
 
       # (see Base#login_command)
       def login_command(state)
-        instance.transport.connection(backcompat_merged_state(state)).
-          login_command
+        instance.transport.connection(backcompat_merged_state(state))
+                .login_command
       end
 
       # Executes an arbitrary command on an instance over an SSH connection.
@@ -160,7 +157,7 @@ module Kitchen
       # @deprecated This method should no longer be called directly and exists
       #   to support very old drivers. This will be removed in the future.
       def ssh(ssh_args, command)
-        pseudo_state = { :hostname => ssh_args[0], :username => ssh_args[1] }
+        pseudo_state = { hostname: ssh_args[0], username: ssh_args[1] }
         pseudo_state.merge!(ssh_args[2])
         connection_state = backcompat_merged_state(pseudo_state)
 
@@ -216,12 +213,19 @@ module Kitchen
         @serial_actions += methods
       end
 
+      # Cache directory that a driver could implement to inform the provisioner
+      # that it can leverage it internally
+      #
+      # @return path [String] a path of the cache directory
+      def cache_directory
+      end
+
       private
 
       def backcompat_merged_state(state)
-        driver_ssh_keys = %w[
+        driver_ssh_keys = %w{
           forward_agent hostname password port ssh_key username
-        ].map(&:to_sym)
+        }.map(&:to_sym)
         config.select { |key, _| driver_ssh_keys.include?(key) }.rmerge(state)
       end
 
@@ -233,7 +237,7 @@ module Kitchen
       def build_ssh_args(state)
         combined = config.to_hash.merge(state)
 
-        opts = Hash.new
+        opts = {}
         opts[:user_known_hosts_file] = "/dev/null"
         opts[:paranoid] = false
         opts[:keys_only] = true if combined[:ssh_key]
@@ -265,8 +269,8 @@ module Kitchen
         no_proxy = if (!config[:http_proxy] && http_proxy) ||
             (!config[:https_proxy] && https_proxy) ||
             (!config[:ftp_proxy] && ftp_proxy)
-          ENV["no_proxy"] || ENV["NO_PROXY"]
-        end
+                     ENV["no_proxy"] || ENV["NO_PROXY"]
+                   end
         env << " http_proxy=#{http_proxy}"   if http_proxy
         env << " https_proxy=#{https_proxy}" if https_proxy
         env << " ftp_proxy=#{ftp_proxy}"     if ftp_proxy
@@ -328,12 +332,12 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_sshd(hostname, username = nil, options = {})
-        pseudo_state = { :hostname => hostname }
+        pseudo_state = { hostname: hostname }
         pseudo_state[:username] = username if username
         pseudo_state.merge!(options)
 
-        instance.transport.connection(backcompat_merged_state(pseudo_state)).
-          wait_until_ready
+        instance.transport.connection(backcompat_merged_state(pseudo_state))
+                .wait_until_ready
       end
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
@@ -363,8 +367,8 @@ module Kitchen
       # @see ShellOut#run_command
       def run_command(cmd, options = {})
         base_options = {
-          :use_sudo => config[:use_sudo],
-          :log_subject => Thor::Util.snake_case(self.class.to_s)
+          use_sudo: config[:use_sudo],
+          log_subject: Thor::Util.snake_case(self.class.to_s),
         }.merge(options)
         super(cmd, base_options)
       end

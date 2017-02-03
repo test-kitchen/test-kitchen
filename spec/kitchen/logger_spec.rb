@@ -21,7 +21,6 @@ require_relative "../spec_helper"
 require "kitchen"
 
 describe Kitchen::Logger do
-
   before do
     @orig_stdout = $stdout
     $stdout = StringIO.new
@@ -36,7 +35,7 @@ describe Kitchen::Logger do
   end
 
   let(:opts) do
-    { :color => :red, :colorize => true }
+    { color: :red, colorize: true }
   end
 
   let(:logger) do
@@ -96,7 +95,6 @@ describe Kitchen::Logger do
   end
 
   describe "stdout-based logger" do
-
     let(:stdout) { StringIO.new }
 
     before { opts[:stdout] = stdout }
@@ -130,7 +128,6 @@ describe Kitchen::Logger do
     end
 
     describe "for severity" do
-
       before { opts[:level] = Kitchen::Util.to_logger_level(:debug) }
 
       it "logs to banner" do
@@ -226,7 +223,6 @@ describe Kitchen::Logger do
     end
 
     describe "#<<" do
-
       it "message with a newline are logged on info" do
         logger << "yo\n"
 
@@ -247,7 +243,7 @@ describe Kitchen::Logger do
           "-----> banner",
           "       info",
           ">>>>>> error",
-          "vanilla"
+          "vanilla",
         ].join("\n").concat("\n")
 
         stdout.string.must_equal(
@@ -262,7 +258,7 @@ describe Kitchen::Logger do
         logger << [
           "-----> banner",
           "       info",
-          "partial"
+          "partial",
         ].join("\n")
 
         stdout.string.must_equal(
@@ -294,7 +290,7 @@ describe Kitchen::Logger do
       it "logger chomps carriage return characters" do
         logger << [
           "-----> banner\r",
-          "vanilla\r"
+          "vanilla\r",
         ].join("\n").concat("\n")
 
         stdout.string.must_equal(
@@ -306,16 +302,14 @@ describe Kitchen::Logger do
   end
 
   describe "opened IO logdev-based logger" do
-
     let(:logdev) { StringIO.new }
 
     before { opts[:logdev] = logdev }
 
     describe "for severity" do
-
       before { opts[:level] = Kitchen::Util.to_logger_level(:debug) }
 
-      let(:ts) { "\\[[^\\]]+\\]" }
+      let(:ts) { '\\[[^\\]]+\\]' }
 
       it "logs to banner" do
         logger.banner("yo")
@@ -362,8 +356,7 @@ describe Kitchen::Logger do
   end
 
   describe "file IO logdev-based logger" do
-
-    let(:logfile) { Dir::Tmpname.make_tmpname(%w[kitchen .log], nil) }
+    let(:logfile) { Dir::Tmpname.make_tmpname(%w{kitchen .log}, nil) }
 
     before do
       opts[:logdev] = logfile
@@ -377,10 +370,9 @@ describe Kitchen::Logger do
     end
 
     describe "for severity" do
-
       before { opts[:level] = Kitchen::Util.to_logger_level(:debug) }
 
-      let(:ts) { "\\[[^\\]]+\\]" }
+      let(:ts) { '\\[[^\\]]+\\]' }
 
       it "logs to banner" do
         logger.banner("yo")

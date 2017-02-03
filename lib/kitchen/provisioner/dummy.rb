@@ -19,9 +19,7 @@
 require "kitchen"
 
 module Kitchen
-
   module Provisioner
-
     # Dummy provisioner for Kitchen. This driver does nothing but report what
     # would happen if this provisioner did anything of consequence. As a result
     # it may be a useful provisioner to use when debugging or developing new
@@ -29,7 +27,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Provisioner::Base
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION

@@ -19,13 +19,11 @@
 require "thor/util"
 
 module Kitchen
-
   # A driver is responsible for carrying out the lifecycle activities of an
   # instance, such as creating and destroying an instance.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Driver
-
     # Default driver plugin to use
     DEFAULT_PLUGIN = "dummy".freeze
 
@@ -48,9 +46,9 @@ module Kitchen
       raise
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' driver from the load path." \
-          " Please ensure that your driver is installed as a gem or included" \
-          " in your Gemfile if using Bundler."
+            "Could not load the '#{plugin}' driver from the load path." \
+              " Please ensure that your driver is installed as a gem or included" \
+              " in your Gemfile if using Bundler."
     end
   end
 end

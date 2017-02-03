@@ -33,14 +33,11 @@ module Kitchen
 end
 
 module Kitchen
-
   module Verifier
-
     class Coolbeans < Kitchen::Verifier::Base
     end
 
     class ItDepends < Kitchen::Verifier::Base
-
       attr_reader :verify_call_count
 
       def initialize(config = {})
@@ -54,7 +51,6 @@ module Kitchen
     end
 
     class UnstableDepends < Kitchen::Verifier::Base
-
       def verify_dependencies
         raise UserError, "Oh noes, you don't have software!"
       end
@@ -63,9 +59,7 @@ module Kitchen
 end
 
 describe Kitchen::Verifier do
-
   describe ".for_plugin" do
-
     before do
       Kitchen::Verifier.stubs(:require).returns(true)
     end
@@ -77,7 +71,7 @@ describe Kitchen::Verifier do
     end
 
     it "returns a verifier initialized with its config" do
-      verifier = Kitchen::Verifier.for_plugin("coolbeans", :foo => "bar")
+      verifier = Kitchen::Verifier.for_plugin("coolbeans", foo: "bar")
 
       verifier[:foo].must_equal "bar"
     end
@@ -100,21 +94,21 @@ describe Kitchen::Verifier do
     it "raises ClientError if the verifier could not be required" do
       Kitchen::Verifier.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Verifier.for_plugin("coolbeans", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Verifier.for_plugin("coolbeans", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises ClientError if the verifier's class constant was not found" do
       # pretend require worked
       Kitchen::Verifier.stubs(:require).returns(true)
 
-      proc { Kitchen::Verifier.for_plugin("nope", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Verifier.for_plugin("nope", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises UserError if #verify_dependencies failes" do
-      proc { Kitchen::Verifier.for_plugin("unstable_depends", {}) }.
-        must_raise Kitchen::UserError
+      proc { Kitchen::Verifier.for_plugin("unstable_depends", {}) }
+        .must_raise Kitchen::UserError
     end
   end
 end

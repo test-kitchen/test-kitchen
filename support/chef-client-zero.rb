@@ -33,7 +33,6 @@ require "fileutils"
 ENV["GEM_HOME"] = ENV["GEM_PATH"] = ENV["GEM_CACHE"] = nil
 
 class ChefClientZero
-
   def self.start
     new.run
   end
@@ -52,8 +51,8 @@ class ChefClientZero
     chef_fs.write_pretty_json = true
 
     @server = ChefZero::Server.new(
-      :generate_real_keys => false,
-      :data_store => Chef::ChefFS::ChefFSDataStore.new(chef_fs)
+      generate_real_keys: false,
+      data_store: Chef::ChefFS::ChefFSDataStore.new(chef_fs)
     )
     puts "-----> Starting Chef Zero server in #{chef_fs.fs_description}"
     @server.start_background
@@ -70,7 +69,7 @@ class ChefClientZero
 
   def run_chef_client
     system("chef-client", *ARGV)
-    fail if $CHILD_STATUS != 0
+    raise if $CHILD_STATUS != 0
   end
 end
 

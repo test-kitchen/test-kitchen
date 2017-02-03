@@ -21,14 +21,11 @@ require "kitchen/configurable"
 require "kitchen/logging"
 
 module Kitchen
-
   module Verifier
-
     # Base class for a verifier.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
@@ -37,7 +34,7 @@ module Kitchen
       default_config :ftp_proxy, nil
 
       default_config :root_path do |verifier|
-        verifier.windows_os? ? "$env:TEMP\\verifier" : "/tmp/verifier"
+        verifier.windows_os? ? '$env:TEMP\\verifier' : "/tmp/verifier"
       end
 
       default_config :sudo do |verifier|
@@ -202,7 +199,7 @@ module Kitchen
       def shell_code_from_file(vars, file)
         src_file = File.join(
           File.dirname(__FILE__),
-          %w[.. .. .. support],
+          %w{.. .. .. support},
           file + (powershell_shell? ? ".ps1" : ".sh")
         )
 
