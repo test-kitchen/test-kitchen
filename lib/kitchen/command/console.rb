@@ -46,7 +46,7 @@ module Kitchen
           [
             "[#{pry.input_array.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}#{char} ",
+            "#{":#{nest_level}" unless nest_level == 0}#{char} ",
           ].join
         end
       end
