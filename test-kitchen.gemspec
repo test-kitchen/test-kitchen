@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.required_ruby_version = ">= 1.9.1"
+  gem.required_ruby_version = ">= 2.2.2"
 
   gem.add_dependency "mixlib-shellout", ">= 1.2", "< 3.0"
   gem.add_dependency "net-scp",         "~> 1.1"
@@ -42,7 +42,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "github_changelog_generator", "1.11.3"
+  gem.add_development_dependency "github_changelog_generator", "1.14.3"
 
   gem.add_development_dependency "aruba",     "~> 0.11"
   gem.add_development_dependency "fakefs",    "~> 0.4"
@@ -56,6 +56,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "simplecov"
   gem.add_development_dependency "yard"
 
-  # Replacing finstyle in favor of chefstyle
   gem.add_development_dependency "chefstyle"
 end
