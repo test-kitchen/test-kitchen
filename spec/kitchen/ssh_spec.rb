@@ -20,6 +20,7 @@ require_relative "../spec_helper"
 
 require "kitchen/ssh"
 require "tmpdir"
+require "net/ssh/test"
 
 # Hack to sort results in `Dir.entries` only within the yielded block, to limit
 # the "behavior pollution" to other code. This was needed for Net::SCP, as
@@ -50,67 +51,6 @@ def with_sorted_dir_entries
   end
 end
 
-# Terrible hack to deal with Net::SSH:Test::Extensions which monkey patches
-# `IO.select` with a version for testing Net::SSH code. Unfortunetly this
-# impacts other code, so we'll "un-patch" this after each spec and "re-patch"
-# it before the next one.
-require "net/ssh/test"
-def depatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_real
-    end
-  end
-end
-# We need to immediately call depatch so that `IO.select` is in a good state
-# _right now_.  The require immediately monkeypatches it and we only want
-# it monkey patched inside each ssh test
-depatch_io
-
-def repatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_test
-    end
-  end
-end
-
-# Major hack-and-a-half to add basic `Channel#request_pty` support to
-# Net::SSH's testing framework. The `Net::SSH::Test::LocalPacket` does not
-# recognize the `"pty-req"` request type, so bombs out whenever this channel
-# request is sent.
-#
-# This "make-work" fix adds a method (`#sends_request_pty`) which works just
-# like `#sends_exec` expcept that it enqueues a patched subclass of
-# `LocalPacket` which can deal with the `"pty-req"` type.
-#
-# An upstream patch to Net::SSH will be required to retire this yak shave ;)
-require "net/ssh/test/channel"
-module Net
-  module SSH
-    module Test
-      class Channel
-        def sends_request_pty
-          pty_data = ["xterm", 80, 24, 640, 480, "\0"]
-
-          script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types # rubocop:disable Lint/NestedMethodDefinition
-              if @type == 98 && @data[1] == "pty-req"
-                @types ||= [
-                  :long, :string, :bool, :string,
-                  :long, :long, :long, :long, :string
-                ]
-              else
-                super
-              end
-            end
-          end.new(:channel_request, remote_id, "pty-req", false, *pty_data)
-        end
-      end
-    end
-  end
-end
-
 describe Kitchen::SSH do
   include Net::SSH::Test
 
@@ -118,17 +58,12 @@ describe Kitchen::SSH do
   let(:logger)        { Logger.new(logged_output) }
   let(:opts)          { Hash.new }
   let(:ssh)           { Kitchen::SSH.new("foo", "me", opts) }
-  let(:conn)          { connection }
+  let(:conn)          { Net::SSH::Test::Extensions::IO.with_test_extension { connection } }
 
   before do
-    repatch_io
     logger.level = Logger::DEBUG
     opts[:logger] = logger
     Net::SSH.stubs(:start).returns(conn)
-  end
-
-  after do
-    depatch_io
   end
 
   describe "establishing a connection" do
@@ -293,7 +228,7 @@ describe Kitchen::SSH do
       end
 
       it "raises an SSHFailed exception" do
-        err = proc { ssh.exec("doit") }.must_raise Kitchen::SSHFailed
+        err = proc { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
     end
@@ -479,8 +414,10 @@ describe Kitchen::SSH do
     it "shuts down the connection when block closes" do
       conn.expects(:shutdown!)
 
-      Kitchen::SSH.new("foo", "me", opts) do |ssh|
-        ssh.exec("doit")
+      Net::SSH::Test::Extensions::IO.with_test_extension do
+        Kitchen::SSH.new("foo", "me", opts) do |ssh|
+          ssh.exec("doit")
+        end
       end
     end
   end
@@ -576,16 +513,18 @@ describe Kitchen::SSH do
     it "returns a truthy value" do
       TCPSocket.stubs(:new).returns(tcp_socket)
 
-      result = ssh.send(:test_ssh)
-      result.wont_equal nil
-      result.wont_equal false
+      Net::SSH::Test::Extensions::IO.with_test_extension do
+        result = ssh.send(:test_ssh)
+        result.wont_equal nil
+        result.wont_equal false
+      end
     end
 
     it "closes socket when finished" do
       TCPSocket.stubs(:new).returns(tcp_socket)
       tcp_socket.expects(:close)
 
-      ssh.send(:test_ssh)
+      Net::SSH::Test::Extensions::IO.with_test_extension { ssh.send(:test_ssh) }
     end
 
     [
@@ -631,7 +570,7 @@ describe Kitchen::SSH do
 
     it "logs to info for each retry" do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
-      ssh.wait
+      Net::SSH::Test::Extensions::IO.with_test_extension { ssh.wait }
 
       logged_output.string.lines.count do |l|
         l =~ info_line_with("Waiting for foo:22...")
