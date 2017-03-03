@@ -1,5 +1,31 @@
 # Change Log
 
+## [v1.16.0](https://github.com/test-kitchen/test-kitchen/tree/v1.16.0) (2017-03-03)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.15.0...v1.16.0)
+
+**Implemented enhancements:**
+
+- Enforce suite idempotency [\#874](https://github.com/test-kitchen/test-kitchen/issues/874)
+- Export no\_proxy from kitchen config [\#1178](https://github.com/test-kitchen/test-kitchen/pull/1178) ([itmustbejj](https://github.com/itmustbejj))
+- Adding transport option "ssh\_key\_only". [\#1141](https://github.com/test-kitchen/test-kitchen/pull/1141) ([cliles](https://github.com/cliles))
+- Run chef-client twice in chef-zero provisioner [\#875](https://github.com/test-kitchen/test-kitchen/pull/875) ([kamaradclimber](https://github.com/kamaradclimber))
+
+**Fixed bugs:**
+
+- Pinning thor to match berks [\#1189](https://github.com/test-kitchen/test-kitchen/pull/1189) ([cheeseplus](https://github.com/cheeseplus))
+
+**Closed issues:**
+
+- Message: Could not load the 'ansible\_playbook' provisioner from the load path [\#1197](https://github.com/test-kitchen/test-kitchen/issues/1197)
+- pull or push in a docker registry with kitchen [\#1186](https://github.com/test-kitchen/test-kitchen/issues/1186)
+- Compat issues with net-ssh 4.x [\#1184](https://github.com/test-kitchen/test-kitchen/issues/1184)
+- Changelog was not updated for the 1.15.0 release [\#1183](https://github.com/test-kitchen/test-kitchen/issues/1183)
+- Could not load or activate Berkshelf [\#1172](https://github.com/test-kitchen/test-kitchen/issues/1172)
+- WinRm - I/O Operation Aborted [\#1142](https://github.com/test-kitchen/test-kitchen/issues/1142)
+- Guest hostname does not get set if converge times out during vagrant VM boot [\#1128](https://github.com/test-kitchen/test-kitchen/issues/1128)
+- I'm trying to run kitchen converge but getting the converge IO error [\#1075](https://github.com/test-kitchen/test-kitchen/issues/1075)
+- Documentation for support for Encrypted Data Bags [\#384](https://github.com/test-kitchen/test-kitchen/issues/384)
+
 ## [v1.15.0](https://github.com/test-kitchen/test-kitchen/tree/v1.15.0) (2017-01-12)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.2...v1.15.0)
 
