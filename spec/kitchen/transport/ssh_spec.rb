@@ -19,6 +19,7 @@
 require_relative "../../spec_helper"
 
 require "kitchen/transport/ssh"
+require "net/ssh/test"
 
 # Hack to sort results in `Dir.entries` only within the yielded block, to limit
 # the "behavior pollution" to other code. This was needed for Net::SCP, as
@@ -49,67 +50,6 @@ def with_sorted_dir_entries
   end
 end
 
-# Terrible hack to deal with Net::SSH:Test::Extensions which monkey patches
-# `IO.select` with a version for testing Net::SSH code. Unfortunetly this
-# impacts other code, so we'll "un-patch" this after each spec and "re-patch"
-# it before the next one.
-require "net/ssh/test"
-def depatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_real
-    end
-  end
-end
-# We need to immediately call depatch so that `IO.select` is in a good state
-# _right now_.  The require immediately monkeypatches it and we only want
-# it monkey patched inside each ssh test
-depatch_io
-
-def repatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_test
-    end
-  end
-end
-
-# Major hack-and-a-half to add basic `Channel#request_pty` support to
-# Net::SSH's testing framework. The `Net::SSH::Test::LocalPacket` does not
-# recognize the `"pty-req"` request type, so bombs out whenever this channel
-# request is sent.
-#
-# This "make-work" fix adds a method (`#sends_request_pty`) which works just
-# like `#sends_exec` expcept that it enqueues a patched subclass of
-# `LocalPacket` which can deal with the `"pty-req"` type.
-#
-# An upstream patch to Net::SSH will be required to retire this yak shave ;)
-require "net/ssh/test/channel"
-module Net
-  module SSH
-    module Test
-      class Channel
-        def sends_request_pty
-          pty_data = ["xterm", 80, 24, 640, 480, "\0"]
-
-          script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types # rubocop:disable Lint/NestedMethodDefinition
-              if @type == 98 && @data[1] == "pty-req"
-                @types ||= [
-                  :long, :string, :bool, :string,
-                  :long, :long, :long, :long, :string
-                ]
-              else
-                super
-              end
-            end
-          end.new(:channel_request, remote_id, "pty-req", false, *pty_data)
-        end
-      end
-    end
-  end
-end
-
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
@@ -121,7 +61,7 @@ describe Kitchen::Transport::Ssh do
   end
 
   let(:transport) do
-    Kitchen::Transport::Ssh.new(config).finalize_config!(instance)
+    Net::SSH::Test::Extensions::IO.with_test_extension { Kitchen::Transport::Ssh.new(config).finalize_config!(instance) }
   end
 
   it "provisioner api_version is 1" do
@@ -711,7 +651,7 @@ describe Kitchen::Transport::Ssh::Connection do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:conn)            { net_ssh_connection }
+  let(:conn)            { Net::SSH::Test::Extensions::IO.with_test_extension { net_ssh_connection } }
 
   let(:options) do
     {
@@ -728,13 +668,8 @@ describe Kitchen::Transport::Ssh::Connection do
   end
 
   before do
-    repatch_io
     logger.level = Logger::DEBUG
     Net::SSH.stubs(:start).returns(conn)
-  end
-
-  after do
-    depatch_io
   end
 
   describe "establishing a connection" do
@@ -952,14 +887,14 @@ describe Kitchen::Transport::Ssh::Connection do
 
       it "raises an SshFailed exception" do
         err = proc do
-          connection.execute("doit")
+          assert_scripted { connection.execute("doit") }
         end.must_raise Kitchen::Transport::SshFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
 
       it "returns the exit code with an SshFailed exception" do
         begin
-          connection.execute("doit")
+          assert_scripted { connection.execute("doit") }
         rescue Kitchen::Transport::SshFailed => e
           e.exit_code.must_equal 42
         end
