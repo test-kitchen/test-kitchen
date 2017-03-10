@@ -42,7 +42,8 @@ matrix:
         - sudo usermod -p `openssl passwd -1 'travis'` travis
         - gem install bundler
         - sudo apt-get update
-        - sudo apt-get -y install squid3 git curl
+        - sudo apt-get -y install squid3 git curl apache2-utils
+        - sudo htpasswd -b -c /etc/squid3/passwords proxy proxy
       env:
         - global:
           - machine_user=travis
