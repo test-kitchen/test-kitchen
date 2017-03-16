@@ -76,6 +76,16 @@ module Kitchen
       end
       expand_path_for :data_path
 
+      default_config :berksfile_path do |provisioner|
+        provisioner.calculate_path("berksfile")
+      end
+      expand_path_for :berksfile_path
+
+      default_config :cheffile_path do |provisioner|
+        provisioner.calculate_path("cheffile")
+      end
+      expand_path_for :cheffile_path
+
       default_config :data_bags_path do |provisioner|
         provisioner.calculate_path("data_bags")
       end
@@ -201,14 +211,22 @@ module Kitchen
       #   kitchen root
       # @api private
       def berksfile
-        File.join(config[:kitchen_root], "Berksfile")
+        if config[:berksfile_path]
+          File.expand_path(config[:berksfile_path])
+        else
+          File.join(config[:kitchen_root], "Berksfile")
+        end
       end
 
       # @return [String] an absolute path to a Cheffile, relative to the
       #   kitchen root
       # @api private
       def cheffile
-        File.join(config[:kitchen_root], "Cheffile")
+        if config[:cheffile_path]
+          File.expand_path(config[:cheffile_path])
+        else
+          File.join(config[:kitchen_root], "Cheffile")
+        end
       end
 
       # Generates a Hash with default values for a solo.rb or client.rb Chef
