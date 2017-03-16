@@ -51,6 +51,9 @@ module Kitchen
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
 
+      default_config :ssh_config, nil
+      expand_path_for :ssh_config
+
       default_config :ssh_gateway, nil
       default_config :ssh_gateway_username, nil
 
@@ -139,6 +142,7 @@ module Kitchen
           args += %w{ -o StrictHostKeyChecking=no }
           args += %w{ -o IdentitiesOnly=yes } if options[:keys]
           args += %W{ -o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'} }
+          args += %W{ -F #{options[:ssh_config]} } if options[:ssh_config]
           if options.key?(:forward_agent)
             args += %W{ -o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'} }
           end
@@ -230,6 +234,11 @@ module Kitchen
         #   remote SSH host
         # @api private
         attr_reader :port
+
+        # @return [String] The ssh configfile to use when connecting to the
+        #   remote SSH host
+        # @api private
+        attr_reader :ssh_config
 
         # @return [String] The ssh gateway to use when connecting to the
         #   remote SSH host
@@ -347,6 +356,7 @@ module Kitchen
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @max_ssh_sessions       = @options.delete(:max_ssh_sessions)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @ssh_config             = @options.delete(:ssh_config)
           @ssh_gateway            = @options.delete(:ssh_gateway)
           @ssh_gateway_username   = @options.delete(:ssh_gateway_username)
         end
@@ -406,6 +416,7 @@ module Kitchen
           connection_retry_sleep: data[:connection_retry_sleep],
           max_ssh_sessions: data[:max_ssh_sessions],
           max_wait_until_ready: data[:max_wait_until_ready],
+          ssh_config: data[:ssh_config],
           ssh_gateway: data[:ssh_gateway],
           ssh_gateway_username: data[:ssh_gateway_username],
         }
