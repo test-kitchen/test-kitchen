@@ -63,7 +63,7 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
-        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
+        sandbox_dirs = Dir.glob(File.join(sandbox_path, "*")) + Dir.glob(File.join(sandbox_path, ".[1-0a-zA-Z]*"))
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
