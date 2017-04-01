@@ -133,9 +133,8 @@ module Kitchen
 
         if config.key?(:require_chef_omnibus)
           add_config_deprecation! :warn, "require_chef_omnibus", <<-EOF
-  Use product_version with product_name and channel settings
-    or
-  Set skip_bootstrap to true to skip the provisioner bootstrap installation
+  To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
+  To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
 EOF
         elsif config[:skip_bootstrap] == true
           # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
@@ -147,7 +146,8 @@ EOF
 
         if config.key?(:chef_omnibus_url)
           add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF
-  Use install_script_url
+  To override the install script url use 'install_script_url'.
+  Note that Windows will now automatically use the appropriate install.ps1 script.
 EOF
         else
           config[:chef_omnibus_url] = config[:install_script_url]
