@@ -194,23 +194,6 @@ EOF
 
       private
 
-      # def add_config_deprecation!(log_level, setting_name, message)
-      #   log_levels = [:warn, :error]
-      #   unless log_levels.include?(log_level)
-      #     raise ArgumentError, "Config deprecation log level must be one of: #{log_levels}.join("\n")"
-      #   end
-      #   message.prepend("#{setting_name} setting will be removed in version 2.0\n")
-      #   config_deprecations << { log_level: log_level, message: message }
-      # end
-
-      # def check_for_config_deprecations!
-      #   warnings = config_deprecations.find_all { |dep| dep[:log_level] == :warn }
-      #   errors = config_deprecations.find_all { |dep| dep[:log_level] == :error }
-
-      #   warn(warnings.map { |warning| warning[:message] }.join("\n")) unless warnings.empty?
-      #   raise DeprecationError, errors.map { |error| error[:message] }.join("\n") unless errors.empty?
-      # end
-
       def last_exit_code
         "; exit $LastExitCode" if powershell_shell?
       end
