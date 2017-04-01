@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: Patrick Wright (<patrick@chef.io>)
 #
-# Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) 2013, 2017 Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,12 +43,10 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
-      attr_reader :config_deprecations
-
-      # Setting product_name to nil for now as it is the currently the pivot point
-      # between require_chef_omnibus. This will keep the existing behavior in place until
+      # Setting product_name to nil for now as it is currently the pivot point
+      # between the two install paths. This will keep the existing behavior in place until
       # we are ready to make this the default. Then we will need to validate that either chef or chefdk
-      # are the only products allowed.
+      # are the only products allowed. Default: chef
       default_config :product_name
 
       default_config :product_version, :latest
@@ -132,26 +131,22 @@ module Kitchen
       def initialize(config = {})
         super(config)
 
-        @config_deprecations = []
-
         if config.key?(:require_chef_omnibus)
-          add_config_deprecation! :warn, <<-EOF
-require_chef_omnibus setting will be removed in version 2.0
+          add_config_deprecation! :warn, "require_chef_omnibus", <<-EOF
   Use product_version with product_name and channel settings
     or
   Set skip_bootstrap to true to skip the provisioner bootstrap installation
 EOF
+        elsif config[:skip_bootstrap] == true
+          # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
+          config[:require_chef_omnibus] = false
         else
           # Ensure this is set to true if not set. product_name will take precedence when set.
           config[:require_chef_omnibus] = true
         end
 
-        # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
-        config[:require_chef_omnibus] = false if config[:skip_bootstrap] == true
-
         if config.key?(:chef_omnibus_url)
-          add_config_deprecation! :warn, <<-EOF
-chef_omnibus_url setting will be removed in version 2.0
+          add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF
   Use install_script_url
 EOF
         else
@@ -199,18 +194,22 @@ EOF
 
       private
 
-      def add_config_deprecation!(type, message)
-        # TODO: raise ArgumentError for invalid type
-        config_deprecations << { type: type, message: message }
-      end
+      # def add_config_deprecation!(log_level, setting_name, message)
+      #   log_levels = [:warn, :error]
+      #   unless log_levels.include?(log_level)
+      #     raise ArgumentError, "Config deprecation log level must be one of: #{log_levels}.join("\n")"
+      #   end
+      #   message.prepend("#{setting_name} setting will be removed in version 2.0\n")
+      #   config_deprecations << { log_level: log_level, message: message }
+      # end
 
-      def check_for_config_deprecations!
-        warnings = config_deprecations.find_all { |dep| dep[:type] == :warn }
-        errors = config_deprecations.find_all { |dep| dep[:type] == :error }
+      # def check_for_config_deprecations!
+      #   warnings = config_deprecations.find_all { |dep| dep[:log_level] == :warn }
+      #   errors = config_deprecations.find_all { |dep| dep[:log_level] == :error }
 
-        warn(warnings.map { |warning| warning[:message] }.join("\n")) unless warnings.empty?
-        raise DeprecationError, errors.map { |error| error[:message] }.join("\n") unless errors.empty?
-      end
+      #   warn(warnings.map { |warning| warning[:message] }.join("\n")) unless warnings.empty?
+      #   raise DeprecationError, errors.map { |error| error[:message] }.join("\n") unless errors.empty?
+      # end
 
       def last_exit_code
         "; exit $LastExitCode" if powershell_shell?
