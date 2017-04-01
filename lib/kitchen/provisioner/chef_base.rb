@@ -153,8 +153,6 @@ EOF
           config[:chef_omnibus_url] = config[:install_script_url]
         end
 
-        check_for_config_deprecations!
-
         if defined?(ChefConfig::WorkstationConfigLoader)
           ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
         end

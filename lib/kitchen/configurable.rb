@@ -50,6 +50,7 @@ module Kitchen
       expand_paths!
       validate_config!
       load_needed_dependencies!
+      check_for_config_deprecations!
 
       self
     end
@@ -172,6 +173,27 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
       ["windows"].include?(instance.platform.os_type)
+    end
+
+    # Add a new config deprecation message to the config_deprecations collection.
+    # Setting a log level of :warn will log the warning and provide details on how to
+    # proactively fix the deprecation.
+    # Setting a log level of :error will raise a DeprecationError with the details for each
+    # provisioner setting.
+    #
+    # @param log_level [Symbol] deprecation log level
+    # @param setting_name [String] name of the deprecated provisioner setting
+    # @param message [String] message providing details to fix the issue
+    # @raise [ArgumentError] if an invalid log level is set
+    def add_config_deprecation!(log_level, setting_name, message)
+      log_levels = [:warn, :error]
+      unless log_levels.include?(log_level)
+        raise ArgumentError, "Config deprecation log level must be one of: #{log_levels.join(",")}"
+      end
+
+      tense = log_level == :error ? "has been" : "will be"
+      message.prepend("#{setting_name} setting #{tense} deprecated\n")
+      config_deprecations << { log_level: log_level, message: message }
     end
 
     private
@@ -356,6 +378,39 @@ module Kitchen
       env << shell_env_var(type.to_s, ENV[type.to_s]) if ENV[type.to_s]
       env << shell_env_var(type.upcase.to_s, ENV[type.upcase.to_s]) if
         ENV[type.upcase.to_s]
+    end
+
+    # Returns an array containing any added config deprecations
+    #
+    # @return [Array<Hash>] the array of deprecations
+    def config_deprecations
+      @config_deprecations ||= []
+    end
+
+    # Detects any config deprecations and either logs a warning or raises an exception for errors
+    #
+    # @raise [DeprecationError] if any deprecation errors are added to the collection
+    def check_for_config_deprecations!
+      return if config_deprecations.empty?
+
+      warnings = []
+      errors = []
+
+      config_deprecations.each do |dep|
+        if dep[:log_level] == :error
+          errors << dep
+        else
+          warnings << dep
+        end
+      end
+
+      unless warnings.empty?
+        warn warnings.map { |w| w[:message] }.join("\n")
+      end
+
+      unless errors.empty?
+        raise DeprecationError, errors.map { |e| e[:message] }.join("\n")
+      end
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.
