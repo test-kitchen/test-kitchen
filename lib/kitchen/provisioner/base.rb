@@ -260,7 +260,7 @@ module Kitchen
       def add_config_deprecation!(log_level, setting_name, message)
         log_levels = [:warn, :error]
         unless log_levels.include?(log_level)
-          raise ArgumentError, "Config deprecation log level must be one of: #{log_levels.join("\n")}"
+          raise ArgumentError, "Config deprecation log level must be one of: #{log_levels.join(",")}"
         end
         message.prepend("#{setting_name} setting will be removed in version 2.0\n")
         config_deprecations << { log_level: log_level, message: message }
