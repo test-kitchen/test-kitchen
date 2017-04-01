@@ -270,6 +270,8 @@ module Kitchen
       #
       # @raise [DeprecationError] if any deprecation errors are added to the collection
       def check_for_config_deprecations!
+        return if config_deprecations.empty?
+
         warnings = []
         errors = []
 
