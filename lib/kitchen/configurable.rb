@@ -405,7 +405,9 @@ module Kitchen
       end
 
       unless warnings.empty?
-        warn warnings.map { |w| w[:message] }.join("\n")
+        caller[0].instance_eval do
+          warn warnings.map { |w| w[:message] }.join("\n")
+        end
       end
 
       unless errors.empty?
