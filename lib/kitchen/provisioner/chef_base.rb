@@ -42,8 +42,25 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
-      default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
+      attr_reader :config_deprecations
+
+      # Setting product_name to nil for now as it is the currently the pivot point
+      # between require_chef_omnibus. This will keep the existing behavior in place until
+      # we are ready to make this the default. Then we will need to validate that either chef or chefdk
+      # are the only products allowed.
+      default_config :product_name
+
+      default_config :product_version, :latest
+
+      default_config :channel, :stable
+
+      default_config :skip_bootstrap, false
+
+      default_config :install_script_url do |provisioner|
+        ext = provisioner.windows_os? ? "ps1" : "sh"
+        "https://omnitruck.chef.io/install.#{ext}"
+      end
+
       default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
@@ -115,6 +132,34 @@ module Kitchen
       def initialize(config = {})
         super(config)
 
+        @config_deprecations = []
+
+        if config.key?(:require_chef_omnibus)
+          add_config_deprecation! :warn, <<-EOF
+require_chef_omnibus setting will be removed in version 2.0
+  Use product_version with product_name and channel settings
+    or
+  Set skip_bootstrap to true to skip the provisioner bootstrap installation
+EOF
+        else
+          # Ensure this is set to true if not set. product_name will take precedence when set.
+          config[:require_chef_omnibus] = true
+        end
+
+        # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
+        config[:require_chef_omnibus] = false if config[:skip_bootstrap] == true
+
+        if config.key?(:chef_omnibus_url)
+          add_config_deprecation! :warn, <<-EOF
+chef_omnibus_url setting will be removed in version 2.0
+  Use install_script_url
+EOF
+        else
+          config[:chef_omnibus_url] = config[:install_script_url]
+        end
+
+        check_for_config_deprecations!
+
         if defined?(ChefConfig::WorkstationConfigLoader)
           ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
         end
@@ -153,6 +198,19 @@ module Kitchen
       end
 
       private
+
+      def add_config_deprecation!(type, message)
+        # TODO: raise ArgumentError for invalid type
+        config_deprecations << { type: type, message: message }
+      end
+
+      def check_for_config_deprecations!
+        warnings = config_deprecations.find_all { |dep| dep[:type] == :warn }
+        errors = config_deprecations.find_all { |dep| dep[:type] == :error }
+
+        warn(warnings.map { |warning| warning[:message] }.join("\n")) unless warnings.empty?
+        raise DeprecationError, errors.map { |error| error[:message] }.join("\n") unless errors.empty?
+      end
 
       def last_exit_code
         "; exit $LastExitCode" if powershell_shell?
@@ -334,7 +392,7 @@ module Kitchen
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
-          channel: (config[:channel] || :stable).to_sym,
+          channel: config[:channel].to_sym,
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
           [:platform, :platform_version, :architecture].each do |key|
