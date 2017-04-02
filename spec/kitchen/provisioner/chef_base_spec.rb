@@ -164,7 +164,7 @@ describe Kitchen::Provisioner::ChefBase do
         {
           test_base_path: "/basist",
           kitchen_root: "/rooty",
-          skip_bootstrap: true
+          skip_bootstrap: true,
         }
       end
 
@@ -178,7 +178,7 @@ describe Kitchen::Provisioner::ChefBase do
         {
           test_base_path: "/basist",
           kitchen_root: "/rooty",
-          require_chef_omnibus: "1.2.3"
+          require_chef_omnibus: "1.2.3",
         }
       end
 
@@ -216,6 +216,14 @@ describe Kitchen::Provisioner::ChefBase do
 
       it ":chef_omnibus_url is set to default" do
         provisioner[:chef_omnibus_url].must_equal "https://omnitruck.chef.io/install.sh"
+      end
+
+      describe "for windows" do
+        before { platform.stubs(:os_type).returns("windows") }
+
+        it ":chef_omnibus_url is set to default" do
+          provisioner[:chef_omnibus_url].must_equal "https://omnitruck.chef.io/install.ps1"
+        end
       end
     end
   end
