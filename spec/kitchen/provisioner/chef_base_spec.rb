@@ -75,7 +75,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it ":chef_omnibus_url has a default" do
         provisioner[:chef_omnibus_url]
-          .must_equal "https://omnitruck.chef.io/install.sh"
+          .must_equal "https://omnitruck.chef.io/install.ps1"
       end
 
       it ":install_script_url has a default" do
@@ -553,6 +553,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the powershell flag for Mixlib::Install" do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
+        install_opts_clone[:omnibus_url] = "https://omnitruck.chef.io/install.ps1"
         Mixlib::Install::ScriptGenerator.expects(:new)
                                         .with(default_version, true, install_opts_clone).returns(installer)
         cmd
@@ -574,6 +575,7 @@ describe Kitchen::Provisioner::ChefBase do
           config[:chef_omnibus_install_options] = "-version 123"
           install_opts_clone = install_opts.clone
           install_opts_clone[:sudo_command] = ""
+          install_opts_clone[:omnibus_url] = "https://omnitruck.chef.io/install.ps1"
           install_opts_clone[:install_flags] = "-version 123"
           install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
           Mixlib::Install::ScriptGenerator.expects(:new)

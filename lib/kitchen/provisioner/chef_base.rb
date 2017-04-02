@@ -150,7 +150,7 @@ EOF
   Note that Windows will now automatically use the appropriate install.ps1 script.
 EOF
         else
-          config[:chef_omnibus_url] = "https://omnitruck.chef.io/install.sh"
+          config[:chef_omnibus_url] = config[:install_script_url]
         end
 
         if defined?(ChefConfig::WorkstationConfigLoader)
