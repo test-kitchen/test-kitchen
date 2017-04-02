@@ -60,6 +60,11 @@ describe Kitchen::Provisioner::ChefBase do
           .must_equal "https://omnitruck.chef.io/install.sh"
       end
 
+      it ":install_script_url has a default" do
+        provisioner[:install_script_url]
+          .must_equal "https://omnitruck.chef.io/install.sh"
+      end
+
       it ":chef_metadata_url defaults to nil" do
         provisioner[:chef_metadata_url].must_equal(nil)
       end
@@ -72,10 +77,31 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner[:chef_omnibus_url]
           .must_equal "https://omnitruck.chef.io/install.sh"
       end
+
+      it ":install_script_url has a default" do
+        provisioner[:install_script_url]
+          .must_equal "https://omnitruck.chef.io/install.ps1"
+      end
     end
 
     it ":require_chef_omnibus defaults to true" do
       provisioner[:require_chef_omnibus].must_equal true
+    end
+
+    it ":product_name defaults to nil" do
+      provisioner[:product_name].must_equal nil
+    end
+
+    it ":product_version defaults to :latest" do
+      provisioner[:product_version].must_equal :latest
+    end
+
+    it ":channel defaults to :stable" do
+      provisioner[:channel].must_equal :stable
+    end
+
+    it ":skip_bootstrap defaults to false" do
+      provisioner[:skip_bootstrap].must_equal false
     end
 
     it ":chef_omnibus_install_options defaults to nil" do
@@ -131,6 +157,66 @@ describe Kitchen::Provisioner::ChefBase do
     it "...secret_key_path uses calculate_path and is expanded" do
       provisioner[:encrypted_data_bag_secret_key_path]
         .must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
+    end
+
+    describe "for setting skip_bootstrap to true" do
+      let(:config) do
+        {
+          test_base_path: "/basist",
+          kitchen_root: "/rooty",
+          skip_bootstrap: true
+        }
+      end
+
+      it ":require_chef_omnibus is set to false" do
+        provisioner[:require_chef_omnibus].must_equal false
+      end
+    end
+
+    describe "for setting require_chef_omnibus to 1.2.3" do
+      let(:config) do
+        {
+          test_base_path: "/basist",
+          kitchen_root: "/rooty",
+          require_chef_omnibus: "1.2.3"
+        }
+      end
+
+      it ":require_chef_omnibus is set to 1.2.3" do
+        provisioner[:require_chef_omnibus].must_equal "1.2.3"
+      end
+    end
+
+    describe "for not setting require_chef_omnibus" do
+      let(:provisioner) do
+        c = config
+        config.delete(:require_chef_omnibus)
+        Class.new(Kitchen::Provisioner::ChefBase) do
+          def calculate_path(path, _opts = {})
+            "<calculated>/#{path}"
+          end
+        end.new(c).finalize_config!(instance)
+      end
+
+      it ":require_chef_omnibus is set to true" do
+        provisioner[:require_chef_omnibus].must_equal true
+      end
+    end
+
+    describe "for not setting chef_omnibus_url" do
+      let(:provisioner) do
+        c = config
+        config.delete(:chef_omnibus_url)
+        Class.new(Kitchen::Provisioner::ChefBase) do
+          def calculate_path(path, _opts = {})
+            "<calculated>/#{path}"
+          end
+        end.new(c).finalize_config!(instance)
+      end
+
+      it ":chef_omnibus_url is set to default" do
+        provisioner[:chef_omnibus_url].must_equal "https://omnitruck.chef.io/install.sh"
+      end
     end
   end
 
