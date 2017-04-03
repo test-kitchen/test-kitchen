@@ -57,7 +57,7 @@ module Kitchen
         init_config(config)
 
         if config.key?(:chef_omnibus_root)
-          add_config_deprecation! :warn, "Verifier: chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :pending, "Verifier: chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
             Product root paths are managed automatically.
           EOF
         end

@@ -51,7 +51,7 @@ module Kitchen
         init_config(config)
 
         if config.key?(:ruby_bindir)
-          add_config_deprecation! :warn, "Verifier: ruby_bindir", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :pending, "Verifier: ruby_bindir", <<-EOF.gsub(/^\s*/, "")
             Ruby bin directory is managed automatically.
           EOF
         end
