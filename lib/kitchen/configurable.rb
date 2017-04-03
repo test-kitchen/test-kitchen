@@ -405,14 +405,19 @@ module Kitchen
       end
 
       unless warnings.empty?
-        caller[0].instance_eval do
-          warn warnings.map { |w| w[:message] }.join("\n")
-        end
+        output = concat_messages(warnings)
+        caller[0].instance_eval { warn(output) }
       end
 
-      unless errors.empty?
-        raise DeprecationError, errors.map { |e| e[:message] }.join("\n")
-      end
+      raise DeprecationError, concat_messages(errors) unless errors.empty?
+    end
+
+    # Join config deprecation messages into a single message.
+    #
+    # @param [Array<Hash>] of config deprecations
+    # @return [String] of concatenated deprecation messages
+    def concat_messages(deprecations)
+      deprecations.map { |d| d[:message] }.join("\n")
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.
