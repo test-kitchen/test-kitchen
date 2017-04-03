@@ -40,9 +40,14 @@ module Kitchen
           .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
-      default_config :ruby_bindir do |provisioner|
-        provisioner
-          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
+      def initialize(config = {})
+        super(config)
+
+        if config.key?(:ruby_bindir)
+          add_config_deprecation! :warn, "Provisioner: ruby_bindir", <<-EOF.gsub(/^\s*/, "")
+            Ruby bin directory is managed automatically.
+          EOF
+        end
       end
 
       # (see Base#create_sandbox)
@@ -57,7 +62,7 @@ module Kitchen
       def prepare_command
         return if modern?
 
-        gem_bin = remote_path_join(config[:ruby_bindir], "gem")
+        gem_bin = remote_path_join(ruby_bindir, "gem")
                   .tap { |path| path.concat(".bat") if windows_os? }
         vars = [
           chef_client_zero_env,
@@ -209,7 +214,7 @@ module Kitchen
       # @return [String] the command string
       # @api private
       def shim_command
-        ruby = remote_path_join(config[:ruby_bindir], "ruby")
+        ruby = remote_path_join(ruby_bindir, "ruby")
                .tap { |path| path.concat(".exe") if windows_os? }
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
@@ -222,6 +227,19 @@ module Kitchen
       # @api private
       def supports_policyfile?
         true
+      end
+
+      # Return ruby bin directory. This method will be removed once
+      # chef_omnibus_root and ruby_bindir are deprecated.
+      #
+      # @return [String] ruby bin directory
+      # @api private
+      def ruby_bindir
+        if config.key?(:ruby_bindir)
+          config[:ruby_bindir]
+        else
+          remote_path_join(%W{#{config[:chef_omnibus_root]} embedded bin})
+        end
       end
     end
   end

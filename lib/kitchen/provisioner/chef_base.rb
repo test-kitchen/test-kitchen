@@ -126,7 +126,7 @@ module Kitchen
         super(config)
 
         if config.key?(:require_chef_omnibus)
-          add_config_deprecation! :warn, "require_chef_omnibus", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: require_chef_omnibus", <<-EOF.gsub(/^\s*/, "")
             To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
             To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
           EOF
@@ -139,7 +139,7 @@ module Kitchen
         end
 
         if config.key?(:chef_omnibus_url)
-          add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: chef_omnibus_url", <<-EOF.gsub(/^\s*/, "")
             Install script URLs are managed automatically.
           EOF
         else
@@ -147,7 +147,7 @@ module Kitchen
         end
 
         if config.key?(:chef_omnibus_install_options)
-          add_config_deprecation! :warn, "chef_omnibus_install_options", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: chef_omnibus_install_options", <<-EOF.gsub(/^\s*/, "")
             Set 'product_name' to chef or chefdk to install the select package.
             Use 'product_version' to set the version of the pacakge. Default: latest.
             Use 'channel' to select which repository to query for the package: stable, current, unstable. Default: stable.
@@ -157,19 +157,19 @@ module Kitchen
         end
 
         if config.key?(:chef_metadata_url)
-          add_config_deprecation! :warn, "chef_metadata_url", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: chef_metadata_url", <<-EOF.gsub(/^\s*/, "")
             'chef_metadata_url' is no longer used and can be safely removed from the config.
           EOF
         end
 
         if config.key?(:install_msi_url)
-          add_config_deprecation! :warn, "install_msi_url", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: install_msi_url", <<-EOF.gsub(/^\s*/, "")
             'install_msi_url' is no longer used and can be safely removed from the config.
           EOF
         end
 
         if config.key?(:chef_omnibus_root)
-          add_config_deprecation! :warn, "chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :warn, "Provisioner: chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
             Product root paths are managed automatically.
           EOF
         end
@@ -228,7 +228,6 @@ module Kitchen
           install_flags: config[:chef_omnibus_install_options],
           sudo_command: sudo_command,
         }.tap do |opts|
-          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           [:install_msi_url, :http_proxy, :https_proxy].each do |key|
             opts[key] = config[key] if config.key? key
           end

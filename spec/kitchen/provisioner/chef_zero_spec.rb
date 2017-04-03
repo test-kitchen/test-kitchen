@@ -62,12 +62,6 @@ describe Kitchen::Provisioner::ChefZero do
         provisioner[:chef_client_path]
           .must_equal "/nice/place/bin/chef-client"
       end
-
-      it "sets :ruby_bindir to use an Omnibus Ruby" do
-        config[:chef_omnibus_root] = "/nice"
-
-        provisioner[:ruby_bindir].must_equal "/nice/embedded/bin"
-      end
     end
 
     describe "for windows operating systems" do
@@ -78,12 +72,6 @@ describe Kitchen::Provisioner::ChefZero do
 
         provisioner[:chef_client_path]
           .must_equal '$env:systemdrive\\nice\\place\\bin\\chef-client.bat'
-      end
-
-      it "sets :ruby_bindir to use an Omnibus Ruby" do
-        config[:chef_omnibus_root] = 'c:\\nice'
-
-        provisioner[:ruby_bindir].must_equal 'c:\\nice\\embedded\\bin'
       end
     end
 

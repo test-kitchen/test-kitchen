@@ -356,15 +356,6 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
-      it "will set the install root" do
-        config[:chef_omnibus_root] = "/tmp/test"
-        install_opts[:root] = "/tmp/test"
-
-        Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
-        cmd
-      end
-
       it "will set the msi url" do
         config[:install_msi_url] = "http://blah/blah.msi"
         install_opts[:install_msi_url] = "http://blah/blah.msi"
