@@ -55,14 +55,6 @@ module Kitchen
 
       default_config :skip_bootstrap, false
 
-      # This is currently set the same value as chef_omnibus_url because of a defect
-      # in mixlib-install's ScriptGenerator that still requires the .sh
-      # file type for Windows platforms. In the new API the default
-      # install script URLs are managed automatically. This setting will
-      # allow users to override endpoints. This feature needs to be added
-      # to mixlib-install. When this is done this default setting will be set to nil.
-      default_config :install_script_url, "https://omnitruck.chef.io/install.sh"
-
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil
@@ -148,10 +140,10 @@ EOF
 
         if config.key?(:chef_omnibus_url)
           add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF
-  To override the install script url use 'install_script_url'.
+  Install script URLs are managed internally.
 EOF
         else
-          config[:chef_omnibus_url] = config[:install_script_url]
+          config[:chef_omnibus_url] = "https://omnitruck.chef.io/install.sh"
         end
 
         if config.key?(:chef_omnibus_install_options)
