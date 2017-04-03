@@ -60,7 +60,6 @@ module Kitchen
         "https://omnitruck.chef.io/install.#{ext}"
       end
 
-      default_config :chef_omnibus_install_options, nil
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil
@@ -151,6 +150,16 @@ EOF
 EOF
         else
           config[:chef_omnibus_url] = config[:install_script_url]
+        end
+
+        if config.key?(:chef_omnibus_install_options)
+          add_config_deprecation! :warn, "chef_omnibus_install_options", <<-EOF
+  Set 'product_name' to chef or chefdk to install the select package.
+  Use 'product_version' to set the version of the pacakge. Default: latest.
+  Use 'channel' to select which repository to query for the package: stable, current, unstable. Default: stable.
+EOF
+        else
+          config[:chef_omnibus_install_options] = nil
         end
 
         if defined?(ChefConfig::WorkstationConfigLoader)
