@@ -62,7 +62,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it ":install_script_url has a default" do
         provisioner[:install_script_url]
-          .must_equal nil
+          .must_equal "https://omnitruck.chef.io/install.sh"
       end
 
       it ":chef_metadata_url defaults to nil" do
