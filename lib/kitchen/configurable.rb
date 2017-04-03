@@ -192,7 +192,7 @@ module Kitchen
       end
 
       tense = log_level == :error ? "has been" : "will be"
-      message.prepend("#{setting_name} setting #{tense} deprecated\n")
+      message.prepend("** #{setting_name} setting #{tense} deprecated\n")
       config_deprecations << { log_level: log_level, message: message }
     end
 

@@ -126,10 +126,10 @@ module Kitchen
         super(config)
 
         if config.key?(:require_chef_omnibus)
-          add_config_deprecation! :warn, "require_chef_omnibus", <<-EOF
-  To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
-  To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
-EOF
+          add_config_deprecation! :warn, "require_chef_omnibus", <<-EOF.gsub(/^\s*/, "")
+            To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
+            To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
+          EOF
         elsif config[:skip_bootstrap] == true
           # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
           config[:require_chef_omnibus] = false
@@ -139,21 +139,39 @@ EOF
         end
 
         if config.key?(:chef_omnibus_url)
-          add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF
-  Install script URLs are managed internally.
-EOF
+          add_config_deprecation! :warn, "chef_omnibus_url", <<-EOF.gsub(/^\s*/, "")
+            Install script URLs are managed automatically.
+          EOF
         else
           config[:chef_omnibus_url] = "https://omnitruck.chef.io/install.sh"
         end
 
         if config.key?(:chef_omnibus_install_options)
-          add_config_deprecation! :warn, "chef_omnibus_install_options", <<-EOF
-  Set 'product_name' to chef or chefdk to install the select package.
-  Use 'product_version' to set the version of the pacakge. Default: latest.
-  Use 'channel' to select which repository to query for the package: stable, current, unstable. Default: stable.
-EOF
+          add_config_deprecation! :warn, "chef_omnibus_install_options", <<-EOF.gsub(/^\s*/, "")
+            Set 'product_name' to chef or chefdk to install the select package.
+            Use 'product_version' to set the version of the pacakge. Default: latest.
+            Use 'channel' to select which repository to query for the package: stable, current, unstable. Default: stable.
+          EOF
         else
           config[:chef_omnibus_install_options] = nil
+        end
+
+        if config.key?(:chef_metadata_url)
+          add_config_deprecation! :warn, "chef_metadata_url", <<-EOF.gsub(/^\s*/, "")
+            'chef_metadata_url' is no longer used and can be safely removed from the config.
+          EOF
+        end
+
+        if config.key?(:install_msi_url)
+          add_config_deprecation! :warn, "install_msi_url", <<-EOF.gsub(/^\s*/, "")
+            'install_msi_url' is no longer used and can be safely removed from the config.
+          EOF
+        end
+
+        if config.key?(:chef_omnibus_root)
+          add_config_deprecation! :warn, "chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
+            Product root paths are managed automatically.
+          EOF
         end
 
         if defined?(ChefConfig::WorkstationConfigLoader)
