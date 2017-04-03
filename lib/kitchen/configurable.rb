@@ -176,17 +176,18 @@ module Kitchen
     end
 
     # Add a new config deprecation message to the config_deprecations collection.
+    # Setting a log level of :pending will take no action
     # Setting a log level of :warn will log the warning and provide details on how to
     # proactively fix the deprecation.
-    # Setting a log level of :error will raise a DeprecationError with the details for each
-    # provisioner setting.
+    # Setting a log level of :error will raise a DeprecationError with the
+    # details for each setting.
     #
     # @param log_level [Symbol] deprecation log level
-    # @param setting_name [String] name of the deprecated provisioner setting
+    # @param setting_name [String] name of the deprecated setting
     # @param message [String] message providing details to fix the issue
     # @raise [ArgumentError] if an invalid log level is set
     def add_config_deprecation!(log_level, setting_name, message)
-      log_levels = [:warn, :error]
+      log_levels = [:pending, :warn, :error]
       unless log_levels.include?(log_level)
         raise ArgumentError, "Config deprecation log level must be one of: #{log_levels.join(",")}"
       end
@@ -397,10 +398,13 @@ module Kitchen
       errors = []
 
       config_deprecations.each do |dep|
-        if dep[:log_level] == :error
+        case dep[:log_level]
+        when :error
           errors << dep
-        else
+        when :warn
           warnings << dep
+        else
+          # into the nether
         end
       end
 
