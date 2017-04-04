@@ -162,11 +162,11 @@ module Kitchen
           EOF
         end
 
-        if config.key?(:install_msi_url)
-          add_config_deprecation! :pending, "Provisioner: install_msi_url", <<-EOF.gsub(/^\s*/, "")
-            'install_msi_url' is no longer used and can be safely removed from the config.
-          EOF
-        end
+        # TODO: This is used by ScriptGenerator. Not currently supported by Mixlib::Install
+        # if config.key?(:install_msi_url)
+        #   add_config_deprecation! :pending, "Provisioner: install_msi_url", <<-EOF.gsub(/^\s*/, "")
+        #   EOF
+        # end
 
         if config.key?(:chef_omnibus_root)
           add_config_deprecation! :pending, "Provisioner: chef_omnibus_root", <<-EOF.gsub(/^\s*/, "")
