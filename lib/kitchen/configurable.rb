@@ -177,9 +177,9 @@ module Kitchen
 
     # Add a new config deprecation message to the config_deprecations collection.
     #
-    # @param type [String] deprecation type
-    # @param setting_section [String] name of the config section
-    # @param setting_name [String] name of the deprecated setting
+    # @param type [String, Symbol] deprecation type
+    # @param setting_section [String, Symbol] name of the config section
+    # @param setting_name [String, Symbol] name of the deprecated setting
     # @param opts [Hash] options
     # @options opts [Symbol] :message providing deprecation details
     # @raise [ArgumentError] if an invalid argument value is set
@@ -198,7 +198,7 @@ module Kitchen
         raise ArgumentError, "setting_section must be one of: #{sections.join(",")}"
       end
 
-      raise ArgumentError, "setting_name must be non-empty string" if setting_name.to_s.empty?
+      raise ArgumentError, "setting_name must be a non-empty" if setting_name.to_s.empty?
 
       config_deprecations << {
         type: type,
