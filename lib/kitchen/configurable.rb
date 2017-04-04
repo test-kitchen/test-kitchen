@@ -176,25 +176,22 @@ module Kitchen
     end
 
     # Add a new config deprecation message to the config_deprecations collection.
-    # Setting a log level of :pending will take no action
-    # Setting a log level of :warn will log the warning and provide details on how to
-    # proactively fix the deprecation.
-    # Setting a log level of :error will raise a DeprecationError with the
-    # details for each setting.
+    # Types:
+    #   :pending will take no action
+    #   :warn will log the warning and provide details on how to proactively fix the deprecation.
+    #   :error will raise a DeprecationError with the details for each setting.
     #
-    # @param log_level [Symbol] deprecation log level
+    # @param type [Symbol] deprecation type
     # @param setting_name [String] name of the deprecated setting
     # @param message [String] message providing details to fix the issue
-    # @raise [ArgumentError] if an invalid log level is set
-    def add_config_deprecation!(log_level, setting_name, message)
-      log_levels = [:pending, :warn, :error]
-      unless log_levels.include?(log_level)
-        raise ArgumentError, "Config deprecation log level must be one of: #{log_levels.join(",")}"
+    # @raise [ArgumentError] if an invalid type is set
+    def add_config_deprecation!(type, setting_name, message)
+      types = [:pending, :warn, :error]
+      unless types.include?(type)
+        raise ArgumentError, "Config deprecation type must be one of: #{types.join(",")}"
       end
 
-      tense = log_level == :error ? "has been" : "will be"
-      message.prepend("** #{setting_name} setting #{tense} deprecated\n")
-      config_deprecations << { log_level: log_level, message: message }
+      config_deprecations << { type: type, message: message }
     end
 
     private
@@ -398,7 +395,7 @@ module Kitchen
       errors = []
 
       config_deprecations.each do |dep|
-        case dep[:log_level]
+        case dep[:type]
         when :error
           errors << dep
         when :warn
