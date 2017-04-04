@@ -178,12 +178,12 @@ module Kitchen
     # Add a new config deprecation message to the config_deprecations collection.
     #
     # @param type [String, Symbol] deprecation type
-    # @param setting_section [String, Symbol] name of the config section
-    # @param setting_name [String, Symbol] name of the deprecated setting
+    # @param section [String, Symbol] name of the config section
+    # @param name [String, Symbol] name of the deprecated config
     # @param opts [Hash] options
     # @options opts [Symbol] :message providing deprecation details
     # @raise [ArgumentError] if an invalid argument value is set
-    def add_config_deprecation!(type, setting_section, setting_name, opts = {})
+    def add_config_deprecation!(type, section, name, opts = {})
       message = opts.fetch(:message, "")
 
       types = %w{bypass warn error}
@@ -194,16 +194,16 @@ module Kitchen
         raise ArgumentError, "type must be one of: #{types.join(",")}"
       end
 
-      unless sections.include?(setting_section.to_s)
-        raise ArgumentError, "setting_section must be one of: #{sections.join(",")}"
+      unless sections.include?(section.to_s)
+        raise ArgumentError, "section must be one of: #{sections.join(",")}"
       end
 
-      raise ArgumentError, "setting_name must be non-empty" if setting_name.to_s.empty?
+      raise ArgumentError, "name must be non-empty" if name.to_s.empty?
 
       config_deprecations << {
         type: type,
-        section: setting_section,
-        name: setting_name,
+        section: section,
+        name: name,
         message: message,
       }
     end
