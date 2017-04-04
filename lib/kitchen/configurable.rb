@@ -198,7 +198,7 @@ module Kitchen
         raise ArgumentError, "setting_section must be one of: #{sections.join(",")}"
       end
 
-      raise ArgumentError, "setting_name must be a non-empty" if setting_name.to_s.empty?
+      raise ArgumentError, "setting_name must be non-empty" if setting_name.to_s.empty?
 
       config_deprecations << {
         type: type,
