@@ -126,10 +126,11 @@ module Kitchen
         super(config)
 
         if config.key?(:require_chef_omnibus)
-          add_config_deprecation! :bypass, :provisioner, :require_chef_omnibus, message: <<-EOF.gsub(/^\s*/, "")
+          message = <<-EOF.gsub(/^\s*/, "")
             To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
             To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
           EOF
+          add_config_deprecation! :bypass, :provisioner, :require_chef_omnibus, message: message
         elsif config[:skip_bootstrap] == true
           # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
           config[:require_chef_omnibus] = false
