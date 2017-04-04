@@ -44,7 +44,7 @@ module Kitchen
         super(config)
 
         if config.key?(:ruby_bindir)
-          add_config_deprecation! :pending, "Provisioner: ruby_bindir", <<-EOF.gsub(/^\s*/, "")
+          add_config_deprecation! :bypass, :provisioner, :ruby_bindir, message: <<-EOF.gsub(/^\s*/, "")
             Ruby bin directory is managed automatically.
           EOF
         end

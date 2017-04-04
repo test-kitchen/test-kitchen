@@ -176,22 +176,36 @@ module Kitchen
     end
 
     # Add a new config deprecation message to the config_deprecations collection.
-    # Types:
-    #   :pending will take no action
-    #   :warn will log the warning and provide details on how to proactively fix the deprecation.
-    #   :error will raise a DeprecationError with the details for each setting.
     #
-    # @param type [Symbol] deprecation type
+    # @param type [String] deprecation type
+    # @param setting_section [String] name of the config section
     # @param setting_name [String] name of the deprecated setting
-    # @param message [String] message providing details to fix the issue
-    # @raise [ArgumentError] if an invalid type is set
-    def add_config_deprecation!(type, setting_name, message)
-      types = [:pending, :warn, :error]
-      unless types.include?(type)
-        raise ArgumentError, "Config deprecation type must be one of: #{types.join(",")}"
+    # @param opts [Hash] options
+    # @options opts [Symbol] :message providing deprecation details
+    # @raise [ArgumentError] if an invalid argument value is set
+    def add_config_deprecation!(type, setting_section, setting_name, opts = {})
+      message = opts.fetch(:message, "")
+
+      types = %w{bypass warn error}
+      # TODO: Figure out a better name for this
+      sections = %w{provisioner transport verifier driver}
+
+      unless types.include?(type.to_s)
+        raise ArgumentError, "type must be one of: #{types.join(",")}"
       end
 
-      config_deprecations << { type: type, message: message }
+      unless sections.include?(setting_section.to_s)
+        raise ArgumentError, "setting_section must be one of: #{sections.join(",")}"
+      end
+
+      raise ArgumentError, "setting_name must be non-empty string" if setting_name.to_s.empty?
+
+      config_deprecations << {
+        type: type,
+        section: setting_section,
+        name: setting_name,
+        message: message,
+      }
     end
 
     private
@@ -405,12 +419,13 @@ module Kitchen
         end
       end
 
-      unless warnings.empty?
-        output = concat_messages(warnings)
-        caller[0].instance_eval { warn(output) }
-      end
+      # TODO: Manage this when ready to start logging
+      # unless warnings.empty?
+      #   output = concat_messages(warnings)
+      #   caller[0].instance_eval { warn(output) }
+      # end
 
-      raise DeprecationError, concat_messages(errors) unless errors.empty?
+      # raise DeprecationError, concat_messages(errors) unless errors.empty?
     end
 
     # Join config deprecation messages into a single message.
