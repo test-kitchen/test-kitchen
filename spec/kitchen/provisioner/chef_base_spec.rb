@@ -483,6 +483,15 @@ describe Kitchen::Provisioner::ChefBase do
         end.returns(installer)
         cmd
       end
+
+      it "will set the install command options if given" do
+        config[:http_proxy] = "http://my_proxy"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:http_proxy].must_equal "http://my_proxy"
+        end.returns(installer)
+        cmd
+      end
     end
 
     describe "for bourne shells" do
