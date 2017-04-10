@@ -390,26 +390,31 @@ module Kitchen
       # @return [String] contents of product based install script
       # @api private
       def script_for_product
-        install_command_options = {}
-        install_command_options[:http_proxy] = config[:http_proxy] if config[:http_proxy]
-
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
           channel: config[:channel].to_sym,
+          install_command_options: install_command_options,
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
+
           [:platform, :platform_version, :architecture].each do |key|
             opts[key] = config[key] if config[key]
           end
-          opts[:install_command_options] = install_command_options unless install_command_options.empty?
         end)
         config[:chef_omnibus_root] = installer.root
+
         if powershell_shell?
           installer.install_command
         else
           install_from_file(installer.install_command)
         end
+      end
+
+      def install_command_options
+        install_command_options = {}
+        install_command_options[:http_proxy] = config[:http_proxy] if config[:http_proxy]
+        install_command_options.empty? ? nil : install_command_options
       end
 
       # @return [String] Correct option per platform to specify the the
