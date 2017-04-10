@@ -13,3 +13,5 @@ end
 group :test do
   gem "codeclimate-test-reporter", "~> 1.0", ">= 1.0.3", require: nil
 end
+
+gem "mixlib-install", github: "chef/mixlib-install"

@@ -390,6 +390,9 @@ module Kitchen
       # @return [String] contents of product based install script
       # @api private
       def script_for_product
+        install_command_options = {}
+        install_command_options[:http_proxy] = config[:http_proxy] if config[:http_proxy]
+
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
@@ -399,6 +402,7 @@ module Kitchen
           [:platform, :platform_version, :architecture].each do |key|
             opts[key] = config[key] if config[key]
           end
+          opts[:install_command_options] = install_command_options unless install_command_options.empty?
         end)
         config[:chef_omnibus_root] = installer.root
         if powershell_shell?
