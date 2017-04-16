@@ -246,6 +246,7 @@ module Kitchen
         opts[:port] = combined[:port] if combined[:port]
         opts[:keys] = Array(combined[:ssh_key]) if combined[:ssh_key]
         opts[:logger] = logger
+        opts[:compression] = true
 
         [combined[:hostname], combined[:username], opts]
       end
