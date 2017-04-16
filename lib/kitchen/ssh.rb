@@ -263,7 +263,7 @@ module Kitchen
           end
         end
       end
-      session.loop
+      session.loop { !exit_code }
       exit_code
     end
 
