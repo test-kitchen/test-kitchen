@@ -288,6 +288,7 @@ module Kitchen
       def run_remote(command, connection)
         return if command.nil?
 
+        command = "#{config[:cmd_prefix]} #{command}" if config[:cmd_prefix]
         connection.exec(env_cmd(command))
       rescue SSHFailed, Net::SSH::Exception => ex
         raise ActionFailed, ex.message
