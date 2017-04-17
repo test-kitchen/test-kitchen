@@ -340,10 +340,14 @@ module Kitchen
         end
 
         # @return [String] an absolute path to a site-cookbooks/ directory,
-        #   relative to the kitchen root
+        #   configured site_cookbooks_path(Default: relative to the kitchen root)
         # @api private
         def site_cookbooks_dir
-          File.join(config[:kitchen_root], "site-cookbooks")
+          if @config[:site_cookbooks_path]
+            @config[:site_cookbooks_path]
+          else
+            File.join(config[:kitchen_root], "site-cookbooks")
+          end
         end
 
         # @return [String] an absolute path to a cookbooks/ directory in the
