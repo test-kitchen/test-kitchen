@@ -217,6 +217,7 @@ main() {
 
     do_download "$chef_omnibus_url" /tmp/install.sh;
     $sudo_sh /tmp/install.sh $install_flags;
+    rm $tmp_stderr /tmp/install.sh;
   else
     echo "-----> Chef Omnibus installation detected (${pretty_version})";
   fi
