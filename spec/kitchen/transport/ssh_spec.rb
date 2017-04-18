@@ -151,6 +151,14 @@ describe Kitchen::Transport::Ssh do
     end
   end
 
+  describe "#username" do
+    it "returns the configured username" do
+      config[:username] = "my_user"
+
+      transport.username.must_equal "my_user"
+    end
+  end
+
   describe "#connection" do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
 

@@ -75,6 +75,15 @@ module Kitchen
         end
       end
 
+      # Returns the configured username. This is occassionally needed
+      # by an instance's driver to perform other tasks, such as a
+      # password reset for the transport user on a GCE Windows instance.
+      #
+      # @return [String] Configured username for the transport
+      def username
+        config[:username]
+      end
+
       # A Connection instance can be generated and re-generated, given new
       # connection details such as connection port, hostname, credentials, etc.
       # This object is responsible for carrying out the actions on the remote
