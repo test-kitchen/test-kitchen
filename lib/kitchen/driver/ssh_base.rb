@@ -21,6 +21,8 @@ require "thor/util"
 require "kitchen/lazy_hash"
 require "benchmark"
 
+require 'rubygems/package'
+
 module Kitchen
   module Driver
     # Legacy base class for a driver that uses SSH to communication with an
@@ -72,12 +74,63 @@ module Kitchen
         provisioner.create_sandbox
         sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
 
+        useTar=true
+
+        instance.transport.connection(backcompat_merged_state(state)) do |conn|
+          begin
+            conn.execute("tar --help > /dev/null")
+            debug("Will use tar to speed up process")
+          rescue Kitchen::Transport::TransportFailed => ex
+            debug("Tar is not installed on target, using standard copy")
+            useTar=false
+          end
+        end
+
         instance.transport.connection(backcompat_merged_state(state)) do |conn|
           conn.execute(env_cmd(provisioner.install_command))
           conn.execute(env_cmd(provisioner.init_command))
-          info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, provisioner[:root_path])
-          debug("Transfer complete")
+           
+          if (useTar)
+            info("Compression data")
+            # `cd #{provisioner.sandbox_path};tar czf archive.tar.gz * --exclude=archive.tar.gz`
+
+            File.open("#{provisioner.sandbox_path}/archive.tar", "wb") do |file|
+              Gem::Package::TarWriter.new(file) do |tar|
+                Dir[File.join(provisioner.sandbox_path, "**/*")].each do |file|
+                  mode = File.stat(file).mode
+                  relative_file = file[(provisioner.sandbox_path.size+1)..-1]
+                  if (relative_file == "archive.tar") 
+                    next
+                  end
+                  if File.directory?(file)
+                    tar.mkdir relative_file, mode
+                  else
+                    tar.add_file relative_file, mode do |tf|
+                      File.open(file, "rb") { |f| tf.write f.read }
+                    end
+                  end
+                end
+              end
+            end
+            Zlib::GzipWriter.open("#{provisioner.sandbox_path}/archive.tar.gz") do |gz|
+              File.open("#{provisioner.sandbox_path}/archive.tar").each do |line|
+                gz.write line
+              end
+              gz.close
+            end
+          
+
+            info("Transferring compressed data")
+            conn.upload("#{provisioner.sandbox_path}/archive.tar.gz", provisioner[:root_path])
+            info("Exploding data into #{provisioner[:root_path]}")
+            conn.execute("cd #{provisioner[:root_path]} ; tar xfz archive.tar.gz")
+            debug("Transfer complete (compressed version)")
+          else # no tar so transfering manually
+            info("Transferring files to #{instance.to_str}")
+            conn.upload(sandbox_dirs, provisioner[:root_path])
+            debug("Transfer complete")
+          end
+
           conn.execute(env_cmd(provisioner.prepare_command))
           conn.execute(env_cmd(provisioner.run_command))
         end
