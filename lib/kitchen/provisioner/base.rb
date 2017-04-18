@@ -69,7 +69,9 @@ module Kitchen
           conn.execute(install_command)
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, config[:root_path])
+          for f in sandbox_dirs
+            conn.upload(f, config[:root_path])
+          end
           debug("Transfer complete")
           conn.execute(prepare_command)
           conn.execute_with_retry(

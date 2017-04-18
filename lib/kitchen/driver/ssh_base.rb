@@ -76,7 +76,9 @@ module Kitchen
           conn.execute(env_cmd(provisioner.install_command))
           conn.execute(env_cmd(provisioner.init_command))
           info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, provisioner[:root_path])
+          for f in sandbox_dirs
+            conn.upload(f, provisioner[:root_path])
+          end
           debug("Transfer complete")
           conn.execute(env_cmd(provisioner.prepare_command))
           conn.execute(env_cmd(provisioner.run_command))
