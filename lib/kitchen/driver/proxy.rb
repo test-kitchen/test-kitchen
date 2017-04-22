@@ -30,7 +30,7 @@ module Kitchen
     # the driver was created.
     #
     # @author Seth Chisamore <schisamo@opscode.com>
-    class Proxy < Kitchen::Driver::SSHBase
+    class Proxy < Kitchen::Driver::Base
       plugin_version Kitchen::VERSION
 
       required_config :host
@@ -42,29 +42,36 @@ module Kitchen
       def create(state)
         # TODO: Once this isn't using SSHBase, it should call `super` to support pre_create_command.
         state[:hostname] = config[:host]
-        reset_instance(state)
+        state[:username] = config[:username] unless config[:username].nil?
+        state[:password] = config[:password] unless config[:password].nil?
+        wait_until_ready(state)
+        reset_instance(state) if config[:reset_command]
       end
 
       # (see Base#destroy)
       def destroy(state)
         return if state[:hostname].nil?
-        reset_instance(state)
+        reset_instance(state) if config[:reset_command]
         state.delete(:hostname)
       end
 
       private
 
       # Resets the non-Kitchen managed instance using by issuing a command
-      # over SSH.
+      # over the transport.
       #
       # @param state [Hash] the state hash
       # @api private
       def reset_instance(state)
-        if (cmd = config[:reset_command])
-          info("Resetting instance state with command: #{cmd}")
-          ssh(build_ssh_args(state), cmd)
-        end
+        cmd = config[:reset_command]
+        info("Resetting instance state with command: #{cmd}")
+        instance.transport.connection(state).execute(cmd)
       end
+
+      def wait_until_ready(state)
+        instance.transport.connection(state).wait_until_ready
+      end
+
     end
   end
 end

@@ -66,24 +66,24 @@ describe Kitchen::Driver::Proxy do
 
   describe "#create" do
     it "sets :hostname in state config" do
-      driver.stubs(:ssh)
+      driver.stubs(:reset_instance)
+      driver.stubs(:wait_until_ready)
       driver.create(state)
 
       state[:hostname].must_equal "foobnoobs.com"
     end
 
     it "calls the reset command over ssh" do
-      driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "foobnoobs.com"
-        cmd.must_equal "mulligan"
-      end
+      driver.expects(:reset_instance)
+      driver.stubs(:wait_until_ready)
 
       driver.create(state)
     end
 
     it "skips ssh call if :reset_command is falsey" do
       config[:reset_command] = false
-      driver.expects(:ssh).never
+      driver.expects(:reset_instance).never
+      driver.stubs(:wait_until_ready)
 
       driver.create(state)
     end
@@ -95,31 +95,28 @@ describe Kitchen::Driver::Proxy do
     end
 
     it "deletes :hostname in state config" do
-      driver.stubs(:ssh)
+      driver.stubs(:reset_instance)
       driver.destroy(state)
 
       state[:hostname].must_be_nil
     end
 
     it "calls the reset command over ssh" do
-      driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "beep"
-        cmd.must_equal "mulligan"
-      end
+      driver.expects(:reset_instance)
 
       driver.destroy(state)
     end
 
     it "skips ssh call if :hostname is not in state config" do
       state.delete(:hostname)
-      driver.expects(:ssh).never
+      driver.expects(:reset_instance).never
 
       driver.destroy(state)
     end
 
     it "skips ssh call if :reset_command is falsey" do
       config[:reset_command] = false
-      driver.expects(:ssh).never
+      driver.expects(:reset_instance).never
 
       driver.destroy(state)
     end
