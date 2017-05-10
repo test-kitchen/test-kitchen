@@ -142,6 +142,6 @@ default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        Created        <
 Ok, we have an instance created and ready for some Chef code. Onward!
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="writing-recipe">Next - Writing a Recipe</a>
-<a class="sidebar--footer--back" href="creating-cookbook">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/writing-recipe">Next - Writing a Recipe</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/creating-cookbook">Back to previous step</a>
 </div>

@@ -53,6 +53,6 @@ server-centos-73     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <
 Woah, we've doubled our number of instances! Yes, that is going to happen. This explosion of test cases is just one reason why testing is hard.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="adding-test">Next - Adding a Test</a>
-<a class="sidebar--footer--back" href="adding-feature">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/adding-test">Next - Adding a Test</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-feature">Back to previous step</a>
 </div>

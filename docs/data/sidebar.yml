@@ -26,8 +26,6 @@ sidebar_links:
   link: '/docs/getting-started/adding-platform'
 - title: Dynamic Configuration
   link: '/docs/getting-started/dynamic-configuration'
-# - title: Fixing Converge
-#   link: '/docs/getting-started/fixing-converge'
 - title: Adding a Feature
   link: '/docs/getting-started/adding-feature'
 - title: Adding a Suite

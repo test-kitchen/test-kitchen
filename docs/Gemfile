@@ -16,6 +16,8 @@ gem 'middleman', '~> 4.1'
 gem 'middleman-livereload'
 gem 'middleman-autoprefixer'
 gem "middleman-syntax"
+gem 'middleman-s3_sync', '>= 4.0.0'
+gem 'mime-types'
 
 gem 'rubocop', require: false
 gem 'scss_lint', require: false

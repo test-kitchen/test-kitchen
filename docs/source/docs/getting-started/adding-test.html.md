@@ -165,6 +165,6 @@ Yes, you can specify one or more instances with the same Ruby regular expression
 Okay, no recipe called `server` in our Git cookbook. Let's go create one.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="adding-recipe">Next - Adding a Recipe</a>
-<a class="sidebar--footer--back" href="adding-suite">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/adding-recipe">Next - Adding a Recipe</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-suite">Back to previous step</a>
 </div>

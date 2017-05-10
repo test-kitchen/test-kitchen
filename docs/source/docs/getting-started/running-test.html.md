@@ -153,6 +153,6 @@ default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <
 Back to square one.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="adding-platform">Next - Adding a Platform</a>
-<a class="sidebar--footer--back" href="running-verify">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/adding-platform">Next - Adding a Platform</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/running-verify">Back to previous step</a>
 </div>

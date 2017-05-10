@@ -140,6 +140,6 @@ server-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <N
 Now let's backfill the other platforms.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="excluding-platforms">Next - Excluding Platforms</a>
-<a class="sidebar--footer--back" href="adding-recipe">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/excluding-platforms">Next - Excluding Platforms</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-recipe">Back to previous step</a>
 </div>

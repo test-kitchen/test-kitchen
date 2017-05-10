@@ -44,6 +44,6 @@ Here we are telling the verifier with the `inspec_tests` key to look in this dir
 Can you guess what this does even if you haven't seen an InSpec test before? If not, then take a look at InSpec's [package resource documentation](http://inspec.io/docs/reference/resources/package/). Otherwise your friends in the [Chef Community Slack](http://community-slack.chef.io/) should be able to help.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="running-verify">Next - Running Kitchen Verify</a>
-<a class="sidebar--footer--back" href="manually-verifying">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/running-verify">Next - Running Kitchen Verify</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/manually-verifying">Back to previous step</a>
 </div>

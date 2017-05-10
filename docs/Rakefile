@@ -1,28 +1,25 @@
-require "fileutils"
-require "git"
-require "logger"
-
-$stdout.sync = true
-logger = Logger.new(STDOUT)
-
-task :default => ['assets:precompile']
-
-desc "pubish to S3"
-task :publish => [:pull, :push]
-
-desc "git pull"
-task :pull do
-  git = Git.open(Dir.pwd, :log => logger)
-  git.pull
+desc 'Remove all files in the build directory'
+task :clean do |t, args|
+  # kill the old package dir
+  rm_r 'build' rescue nil
 end
 
-task :push do
-  # GO TO YOUR HOME BUCKET
+desc 'Compile all files into the build directory'
+task :build do
+  puts '## Compiling static pages'
+  status = system 'bundle exec middleman build'
+  puts status ? 'Build successful.' : 'Build failed.'
 end
 
-desc "build assets"
-namespace :assets do
-  task :precompile do
-    sh "bundle exec middleman build --clean --verbose"
-  end
+desc 'Deploy to S3 and invalidate Cloudfront after a Git commit/push'
+task :deploy do
+
+  puts '## Deploy starting...'
+  puts '## Syncing to S3...'
+  system "bundle exec middleman s3_sync"
+  puts '## Deploy complete.'
+end
+
+desc 'Publish (clean, build, deploy)'
+task :publish => [:clean, :build, :deploy] do
 end

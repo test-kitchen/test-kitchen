@@ -55,6 +55,6 @@ Test Kitchen is modular so that one may use a variety of different drivers (Vagr
 
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="getting-help">Next - Getting Help</a>
-<a class="sidebar--footer--back" href="">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/getting-help">Next - Getting Help</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/">Back to previous step</a>
 </div>

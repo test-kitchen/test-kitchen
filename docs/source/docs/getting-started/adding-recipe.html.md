@@ -131,6 +131,6 @@ See what the Chef run told you?
 Hey, that's exactly what we need to do!
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="adding-dependency">Next - Adding a Dependency</a>
-<a class="sidebar--footer--back" href="adding-test">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/adding-dependency">Next - Adding a Dependency</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-test">Back to previous step</a>
 </div>

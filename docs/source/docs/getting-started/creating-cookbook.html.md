@@ -38,6 +38,6 @@ recipes/default.rb
 As suggested, make sure you've changed into the new cookbook directory via `cd git_cookbook`. Next we'll talk about what just happened and how kitchen configuration works.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="kitchen-yml">Next - The .kitchen.yml</a>
-<a class="sidebar--footer--back" href="getting-help">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/kitchen-yml">Next - The .kitchen.yml</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/getting-help">Back to previous step</a>
 </div>

@@ -189,6 +189,6 @@ default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <
 ~~~
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="dynamic-configuration">Next - Dynamic Configuration</a>
-<a class="sidebar--footer--back" href="running-test">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/dynamic-configuration">Next - Dynamic Configuration</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/running-test">Back to previous step</a>
 </div>

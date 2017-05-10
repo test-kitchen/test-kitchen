@@ -127,6 +127,6 @@ A lot of time and effort has gone into ensuring that the exit code of Test Kitch
 This exit code behavior is a fundamental prerequisite for any tool working in a Continuous Integration (CI) environment.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="manually-verifying">Next - Manually Verifying</a>
-<a class="sidebar--footer--back" href="running-converge">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/manually-verifying">Next - Manually Verifying</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/running-converge">Back to previous step</a>
 </div>

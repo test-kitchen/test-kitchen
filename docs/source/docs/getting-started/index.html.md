@@ -9,5 +9,5 @@ The best way to understand what kitchen does is to see it in action so we're goi
 For the sake of consistency through the guide, we'll be referring to Test Kitchen as just "kitchen".
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="getting-started/installing">Next - Installing</a>
+<a class="button primary-cta" href="/docs/getting-started/installing">Next - Installing</a>
 </div>

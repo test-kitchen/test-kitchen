@@ -75,6 +75,6 @@ $ kitchen destroy
 Okay, let's cut it off here, ship it!
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="next-steps">Next Steps</a>
-<a class="sidebar--footer--back" href="adding-dependency">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/next-steps">Next Steps</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-dependency">Back to previous step</a>
 </div>

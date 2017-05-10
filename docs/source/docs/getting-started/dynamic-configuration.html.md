@@ -51,6 +51,6 @@ provisioner:
 Now that we have learned a few clever new ways to configure kitchen, let's add a new
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="adding-feature">Next - Adding a Feature</a>
-<a class="sidebar--footer--back" href="adding-platform">Back to previous step</a>
+<a class="button primary-cta" href="/docs/getting-started/adding-feature">Next - Adding a Feature</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-platform">Back to previous step</a>
 </div>
