@@ -1,0 +1,44 @@
+---
+sidebar_links:
+- title: Introduction
+  link: '/docs/getting-started'
+- title: Installing
+  link: '/docs/getting-started/installing'
+- title: Getting Help
+  link: '/docs/getting-started/getting-help'
+- title: Creating a Cookbook
+  link: '/docs/getting-started/creating-cookbook'
+- title: The .kitchen.yml
+  link: '/docs/getting-started/kitchen-yml'
+- title: Writing a Recipe
+  link: '/docs/getting-started/writing-recipe'
+- title: Running Kitchen Converge
+  link: '/docs/getting-started/running-converge'
+- title: Manually Verifying
+  link: '/docs/getting-started/manually-verifying'
+- title: Writing a Test
+  link: '/docs/getting-started/writing-test'
+- title: Running Kitchen Verify
+  link: '/docs/getting-started/running-verify'
+- title: Running Kitchen Test
+  link: '/docs/getting-started/running-test'
+- title: Adding a Platform
+  link: '/docs/getting-started/adding-platform'
+- title: Dynamic Configuration
+  link: '/docs/getting-started/dynamic-configuration'
+# - title: Fixing Converge
+#   link: '/docs/getting-started/fixing-converge'
+- title: Adding a Feature
+  link: '/docs/getting-started/adding-feature'
+- title: Adding a Suite
+  link: '/docs/getting-started/adding-suite'
+- title: Adding a Test
+  link: '/docs/getting-started/adding-test'
+- title: Adding a Recipe
+  link: '/docs/getting-started/adding-recipe'
+- title: Adding a Dependency
+  link: '/docs/getting-started/adding-dependency'
+- title: Excluding Platforms
+  link: '/docs/getting-started/excluding-platforms'
+- title: Next Steps
+  link: '/docs/getting-started/next-steps'

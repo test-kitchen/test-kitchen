@@ -1,0 +1,75 @@
+---
+title:  Welcome to Test Kitchen - KitchenCI
+---
+.home--hero.row
+  .columns.medium-12.text-center
+    h1.home--heading Your Infrastructure Code Deserves Tests Too
+    = link_to 'Get Started', '/docs/getting-started', \
+      class: 'button primary-cta'
+.row
+  .columns.large-4
+    .home--text
+      h2.body-heading What is Test Kitchen?
+      p
+        | Test Kitchen provides a test harness to execute your infrastructure
+          code on one or more platforms in isolation.
+      p
+        | A driver plugin architecture is used which lets you run your code on various
+          cloud providers and virtualization technologies such as
+          <a href="https://rubygems.org/gems/kitchen-ec2">Amazon EC2</a>,
+          <a href="https://rubygems.org/gems/kitchen-bluebox">Blue Box</a>,
+          <a href="https://rubygems.org/gems/kitchen-cloudstack">CloudStack</a>,
+          <a href="https://rubygems.org/gems/kitchen-digitalocean">Digital Ocean</a>,
+          <a href="https://rubygems.org/gems/kitchen-rackspace">Rackspace</a>,
+          <a href="https://rubygems.org/gems/kitchen-openstack">OpenStack</a>,
+          <a href="https://rubygems.org/gems/kitchen-vagrant">Vagrant</a>,
+          <a href="https://rubygems.org/gems/kitchen-docker">Docker</a>,
+          <a href="https://rubygems.org/gems/kitchen-lxc">LXC containers</a>,
+          and more.
+      p
+        | Many testing frameworks are already supported out of the box
+          including <a href="https://github.com/sstephenson/bats">Bats</a>,
+          <a href="https://code.google.com/p/shunit2/">shUnit2</a>,
+          <a href="https://www.relishapp.com/rspec">RSpec</a>,
+          <a href="//serverspec.org/">Serverspec</a>, with others being created weekly
+      p
+        | For Chef workflows, cookbook dependency resolver tools such as
+          <a href="//berkshelf.com/">Berkshelf</a> and
+          <a href="https://github.com/applicationsonline/librarian-chef">Librarian-Chef</a>
+          are supported or you can simply have a <code>cookbooks/</code>
+          directory and Test Kitchen will know what to do.
+      p
+        | Support for Test Kitchen is already included in many Chef community cookbooks
+          such as the <a href="https://github.com/opscode-cookbooks/mysql">MySQL</a>,
+          <a href="https://github.com/opscode-cookbooks/nginx">nginx</a>,
+          <a href="https://github.com/opscode-cookbooks/chef-server">Chef Server</a>,
+          and <a href="https://github.com/hw-cookbooks/runit">runit</a> cookbooks.
+  .columns.large-8
+    .row.home--image-row
+      .columns.medium-6.medium-text-right
+        img.home--terminal src="/images/terminal-1.svg" onerror="this.src='/images/terminal-1.png'"
+      .columns.medium-6.home--logos
+        img.home--logos--img src="/images/logos-group.svg" onerror="this.src='/images/logos-group.png'"
+    .row.home--image-row
+      .columns.medium-6.medium-text-right
+        img.home--terminal src="/images/terminal-2.svg" onerror="this.src='/images/terminal-2.png'"
+      .columns.medium-6
+        .home--text
+          h2.body-heading How do I run Test Kitchen?
+          p
+            | There are five basic commands you'll use to provision platforms
+              and test your infrastructure code.
+    .row.home--image-row
+      .columns.medium-6.medium-text-right
+        img.home--terminal src="/images/terminal-3.svg" onerror="this.src='/images/terminal-3.png'"
+      .columns.medium-6
+        .home--text
+          h2.body-heading How do I get started?
+          p
+            | Chef users can obtain Test Kitchen by simply installing the
+              <a href="https://downloads.chef.io/chefdk/">Chef Development Kit - Chef DK</a>.
+              Non-Chef users will need to install the test-kitchen gem.
+          p
+            | For more comprehensive instructions, check out the
+              <a href="/docs/getting-started">Getting Started Guide</a>.
+          = link_to 'Learn More', '', class: 'button secondary-cta'
