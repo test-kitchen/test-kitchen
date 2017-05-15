@@ -35,7 +35,7 @@ recipes/default.rb
 
 > **Congratulations. You've authored a Chef cookbook.**
 
-As suggested, make sure you've changed into the new cookbook directory via `cd git_cookbook`. Next we'll talk about what just happened and how kitchen configuration works.
+Make sure you've changed into the new cookbook directory via `cd git_cookbook`. Next we'll talk about what just happened and how kitchen configuration works.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/kitchen-yml">Next - The .kitchen.yml</a>

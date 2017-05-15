@@ -10,5 +10,5 @@
           li
             = link_to item.title, item.link, \
               class: "sidebar--link #{link_classes(current_resource.url, item.link)}"
-    .columns.medium-9
+    .content.columns.medium-9
       == yield

@@ -20,7 +20,7 @@ Unfortunately Hyper-V doesn't like other hypervisors running at the same time an
 
 ###### ChefDK
 
-First, install the [ChefDK](https://downloads.chef.io/chefdk). This package includes Chef, Test Kitchen, Berkshelf, and a variety of useful tools for the Chef ecosystem.
+First, install the [ChefDK](https://downloads.chef.io/chefdk). This package includes Chef, Kitchen, Berkshelf, and a variety of useful tools for the Chef ecosystem.
 
 ~~~
 $ chef --version
@@ -51,7 +51,7 @@ Vagrant 1.9.4
 
 We've just installed CheDK, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for test-kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
 
-Test Kitchen is modular so that one may use a variety of different drivers (Vagrant, EC2, Docker), provisioners (Chef, Salt, Puppet), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef, and InSpec.
+Kitchen is modular so that one may use a variety of different drivers (Vagrant, EC2, Docker), provisioners (Chef, Ansible, Puppet), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef, and InSpec.
 
 
 <div class="sidebar--footer">

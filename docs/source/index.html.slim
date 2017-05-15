@@ -6,7 +6,7 @@ title:  Welcome to Kitchen - KitchenCI
     h1.home--heading Your Infrastructure Code Deserves Tests Too
     = link_to 'Get Started', '/docs/getting-started', \
       class: 'button primary-cta'
-.row
+.row.content
   .columns.large-4
     .home--text
       h2.body-heading What is Kitchen?
@@ -36,12 +36,12 @@ title:  Welcome to Kitchen - KitchenCI
 
       p
         | For Chef workflows, cookbook dependency resolution via
-          <a href="//berkshelf.com/">Berkshelf</a> or
+          <a href="https://docs.chef.io/berkshelf.html/">Berkshelf</a> or
           <a href="https://docs.chef.io/config_rb_policyfile.html">Policyfiles</a>
           is supported or you can simply have a <code>cookbooks/</code>
           directory and Kitchen will know what to do.
       p
-        | Kitchen is used by nearly all Chef community cookbooks and is the integration
+        | Kitchen is used by all Chef community cookbooks and is the integration
           testing tool of choice for cookbooks.
   .columns.large-8
     .row.home--image-row
@@ -65,9 +65,9 @@ title:  Welcome to Kitchen - KitchenCI
         .home--text
           h2.body-heading How do I get started?
           p
-            | Chef users can obtain Kitchen by simply installing the
-              <a href="https://downloads.chef.io/chefdk/">Chef Development Kit - Chef DK</a>.
-              Non-Chef users will need to install the <code>test-kitchen</code> gem.
+            | Most users can obtain Kitchen by installing the
+              <a href="https://downloads.chef.io/chefdk/">Chef Development Kit (ChefDK)</a>.
+              Users may still install the gem directly with `gem install test-kitchen`
           p
             | For more comprehensive instructions, check out the
               <a href="/docs/getting-started">Getting Started Guide</a>.

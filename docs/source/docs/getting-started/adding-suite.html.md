@@ -4,16 +4,17 @@ title: Adding a Suite
 
 ##### Adding a Suite
 
-We're going to call our new Test Kitchen Suite `"server"` by opening `.kitchen.yml` in your editor of choice so that it looks similar to:
+We're going to call our new suite `"server"` by editing `.kitchen.yml` in your editor of choice so that it looks similar to:
 
-~~~
+~~~yaml
 ---
 driver:
   name: vagrant
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 13
+  product_name: chef
+  product_version: 13.0.118
 
 verifier:
   name: inspec

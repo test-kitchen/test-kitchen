@@ -10,14 +10,20 @@ If you're a skeptical person then you might be asking:
 
 Let's verify this right now.
 
-Test Kitchen has a **login** subcommand for just these kinds of situations:
+Kitchen has a **login** subcommand for just these kinds of situations:
 
 ~~~
-$ kitchen login default-ubuntu-1604
-Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 3.5.0-23-generic x86_64)
+Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-75-generic x86_64)
 
- * Documentation:  https://help.ubuntu.com/
-Last login: Sat Nov 30 21:56:59 2013 from 10.0.2.2
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+Last login: Mon May 15 14:56:09 2017 from 10.0.2.2
 vagrant@default-ubuntu-1604:~$
 ~~~
 
@@ -27,7 +33,7 @@ As you can see by the prompt above we are now in the `default-ubuntu-1604` insta
 # which git
 /usr/bin/git
 # git --version
-git version 1.7.9.5
+git version 2.7.4
 ~~~
 
 Rockin. Now we can exit out back to our workstation:

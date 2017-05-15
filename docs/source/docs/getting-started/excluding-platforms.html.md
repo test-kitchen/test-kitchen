@@ -4,11 +4,23 @@ title: Excluding Platforms
 
 ##### Excluding Platforms
 
-I'm going to spare us all a great deal of pain and say that getting CentOS working with Git Daemon and runit is, well, kinda nuts. Ultimately not worth it for the sake of this guide. So should we leave a Platform/Suite combination lying around that we know we won't support? Naw!
+Perhaps our enterprise has standardized on Ubuntu 16.04 for server tasks so we really only care about testing that our `server` recipe works on that platform. That said we still want to be able to test our default recipe against CentOS.
+
+Let's give `kitchen list` a look:
+
+~~~
+$ kitchen list
+Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
+default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+server-ubuntu-1604   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
+server-centos-73     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+~~~
 
 > **Add a platform name to an `excludes` array in a suite to remove the platform/suite combination from testing.**
 
-Let's exclude the `server-centos-73` instance so that it doesn't accidentally get run. Update `.kitchen.yml` to look like the following:
+Let's exclude the `centos-7.3` platform from the `server` suite so that it
+doesn't accidentally get run. Update `.kitchen.yml` to look like the following:
 
 ~~~yaml
 ---
@@ -17,7 +29,8 @@ driver:
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 13
+  product_name: chef
+  product_version: 13.0.118
 
 verifier:
   name: inspec
@@ -72,9 +85,16 @@ $ kitchen destroy
 -----> Kitchen is finished. (0m17.39s)
 ~~~
 
-Okay, let's cut it off here, ship it!
+Now that we've completed our git daemon feature and made sure we're testing it on only the
+platform we care about we've come to the end of our guide!
+
+#### Congratulations!
+
+You've just written a valid Chef cookbook, complete with tests, that is ready to
+be improved upon further. Before you leave, check out some further resources to
+help you along your testing journey.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/next-steps">Next Steps</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-dependency">Back to previous step</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-recipe">Back to previous step</a>
 </div>

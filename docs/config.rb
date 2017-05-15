@@ -2,7 +2,7 @@
 # Page options, layouts, aliases and proxies
 ###
 
-activate :syntax
+activate :syntax, :inline_theme => Rouge::Themes::Base16::Monokai.new
 set :markdown_engine, :kramdown
 
 # the only true server time

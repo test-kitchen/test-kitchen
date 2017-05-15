@@ -4,14 +4,15 @@ title: Adding a Platform
 
 Now that we are masters of the Ubuntu platform, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-7.3` line to your platforms list so that it resembles:
 
-~~~
+~~~yaml
 ---
 driver:
   name: vagrant
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 13
+  product_name: chef
+  product_version: 13.0.118
 
 verifier:
   name: inspec

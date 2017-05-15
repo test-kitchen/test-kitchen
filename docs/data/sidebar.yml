@@ -10,22 +10,22 @@ sidebar_links:
   link: '/docs/getting-started/creating-cookbook'
 - title: The .kitchen.yml
   link: '/docs/getting-started/kitchen-yml'
+- title: Instances
+  link: '/docs/getting-started/instances'
 - title: Writing a Recipe
   link: '/docs/getting-started/writing-recipe'
-- title: Running Kitchen Converge
+- title: kitchen converge
   link: '/docs/getting-started/running-converge'
 - title: Manually Verifying
   link: '/docs/getting-started/manually-verifying'
 - title: Writing a Test
   link: '/docs/getting-started/writing-test'
-- title: Running Kitchen Verify
+- title: kitchen verify
   link: '/docs/getting-started/running-verify'
-- title: Running Kitchen Test
+- title: kitchen test
   link: '/docs/getting-started/running-test'
 - title: Adding a Platform
   link: '/docs/getting-started/adding-platform'
-- title: Dynamic Configuration
-  link: '/docs/getting-started/dynamic-configuration'
 - title: Adding a Feature
   link: '/docs/getting-started/adding-feature'
 - title: Adding a Suite
@@ -34,8 +34,6 @@ sidebar_links:
   link: '/docs/getting-started/adding-test'
 - title: Adding a Recipe
   link: '/docs/getting-started/adding-recipe'
-- title: Adding a Dependency
-  link: '/docs/getting-started/adding-dependency'
 - title: Excluding Platforms
   link: '/docs/getting-started/excluding-platforms'
 - title: Next Steps

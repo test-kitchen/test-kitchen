@@ -136,10 +136,3 @@ Instance            Driver   Provisioner  Verifier  Transport  Last Action    La
 server-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
 server-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
-
-Now let's backfill the other platforms.
-
-<div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/excluding-platforms">Next - Excluding Platforms</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-recipe">Back to previous step</a>
-</div>
