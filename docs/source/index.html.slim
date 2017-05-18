@@ -38,11 +38,13 @@ title:  Welcome to Kitchen - KitchenCI
         | For Chef workflows, cookbook dependency resolution via
           <a href="https://docs.chef.io/berkshelf.html/">Berkshelf</a> or
           <a href="https://docs.chef.io/config_rb_policyfile.html">Policyfiles</a>
-          is supported or you can simply have a <code>cookbooks/</code>
-          directory and Kitchen will know what to do.
+          is supported or include a <code>cookbooks/</code> directory and
+          Kitchen will know what to do.
       p
-        | Kitchen is used by all Chef community cookbooks and is the integration
-          testing tool of choice for cookbooks.
+        | Kitchen is used by all
+          <a href="github.com/chef-cookbooks/">Chef-managed community
+          cookbooks</a> and is the integration testing tool of choice for
+          cookbooks.
   .columns.large-8
     .row.home--image-row
       .columns.medium-6.medium-text-right
@@ -56,8 +58,8 @@ title:  Welcome to Kitchen - KitchenCI
         .home--text
           h2.body-heading How do I run Kitchen?
           p
-            | There are five basic commands you'll use to provision platforms
-              and test your infrastructure code.
+            | There are five basic commands to provision platforms and test
+              infrastructure code.
     .row.home--image-row
       .columns.medium-6.medium-text-right
         img.home--terminal src="/images/terminal-3.svg" onerror="this.src='/images/terminal-3.png'"
@@ -65,8 +67,9 @@ title:  Welcome to Kitchen - KitchenCI
         .home--text
           h2.body-heading How do I get started?
           p
-            | Most users can obtain Kitchen by installing the
-              <a href="https://downloads.chef.io/chefdk/">Chef Development Kit (ChefDK)</a>.
-              Users may still install the gem directly with <code>gem install test-kitchen</code>.
-    
+            | Install the <a href="https://downloads.chef.io/chefdk/">Chef
+              Development Kit (ChefDK)</a> to get started.  Alternatively,
+              install the gem directly with <code>gem install
+              test-kitchen</code>.
+
           = link_to 'Get Started', '/docs/getting-started', class: 'button secondary-cta'
