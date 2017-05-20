@@ -1,3 +1,4 @@
+@ignore
 Feature: Running a console command
   In order to interactively explore Kitchen's internals and wiring
   As an opterator
