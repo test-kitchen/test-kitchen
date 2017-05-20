@@ -23,7 +23,6 @@ bundler_args: --without guard integration
 
 script:
   - bundle exec rake
-  - bundle exec codeclimate-test-reporter
   - bundle install --with integration
   - export KITCHEN_YAML=.kitchen.ci.yml
   - bundle exec kitchen verify ubuntu
