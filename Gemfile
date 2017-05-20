@@ -6,8 +6,8 @@ gem "rack", "< 2.0"
 gem "train", "~> 0.22"
 
 group :integration do
-  gem "berkshelf", "~> 4.3"
-  gem "kitchen-inspec", "~> 0.15.1"
+  gem "berkshelf"
+  gem "kitchen-inspec"
 end
 
 group :test do
