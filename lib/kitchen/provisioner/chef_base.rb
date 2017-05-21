@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Author:: Patrick Wright (<patrick@chef.io>)
 #
-# Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) 2013, 2017 Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,9 +43,18 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
-      default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
-      default_config :chef_omnibus_install_options, nil
+      # Setting product_name to nil for now as it is currently the pivot point
+      # between the two install paths. This will keep the existing behavior in place until
+      # we are ready to make this the default. Then we will need to validate that either chef or chefdk
+      # are the only products allowed. Default: chef
+      default_config :product_name
+
+      default_config :product_version, :latest
+
+      default_config :channel, :stable
+
+      default_config :skip_bootstrap, false
+
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil
@@ -115,6 +125,56 @@ module Kitchen
       def initialize(config = {})
         super(config)
 
+        if config.key?(:require_chef_omnibus)
+          message = <<-EOF.gsub(/^\s*/, "")
+            To install a specific version use 'product_version' along with the 'product_name' and 'channel' settings.
+            To skip the provisioner bootstrap installation set 'skip_bootstrap' to true.
+          EOF
+          add_config_deprecation! :bypass, :provisioner, :require_chef_omnibus, message: message
+        elsif config[:skip_bootstrap] == true
+          # New setting that will replace multi-use require_chef_omnibus for skipping bootstrap installations.
+          config[:require_chef_omnibus] = false
+        else
+          # Ensure this is set to true if not set. product_name will take precedence when set.
+          config[:require_chef_omnibus] = true
+        end
+
+        if config.key?(:chef_omnibus_url)
+          add_config_deprecation! :bypass, :provisioner, :chef_omnibus_url, message: <<-EOF.gsub(/^\s*/, "")
+            Install script URLs are managed automatically.
+          EOF
+        else
+          config[:chef_omnibus_url] = "https://omnitruck.chef.io/install.sh"
+        end
+
+        if config.key?(:chef_omnibus_install_options)
+          add_config_deprecation! :bypass, :provisioner, :chef_omnibus_install_options, message: <<-EOF.gsub(/^\s*/, "")
+            Set 'product_name' to chef or chefdk to install the select package.
+            Use 'product_version' to set the version of the pacakge. Default: latest.
+            Use 'channel' to select which repository to query for the package: stable, current, unstable. Default: stable.
+          EOF
+        else
+          config[:chef_omnibus_install_options] = nil
+        end
+
+        if config.key?(:chef_metadata_url)
+          add_config_deprecation! :bypass, :provisioner, :chef_metadata_url, message: <<-EOF.gsub(/^\s*/, "")
+            'chef_metadata_url' is no longer used and can be safely removed from the config.
+          EOF
+        end
+
+        # TODO: This is used by ScriptGenerator. Not currently supported by Mixlib::Install
+        # if config.key?(:install_msi_url)
+        #   add_config_deprecation! :bypass, "Provisioner: install_msi_url", <<-EOF.gsub(/^\s*/, "")
+        #   EOF
+        # end
+
+        if config.key?(:chef_omnibus_root)
+          add_config_deprecation! :bypass, :provisioner, :chef_omnibus_root, message: <<-EOF.gsub(/^\s*/, "")
+            Product root paths are managed automatically.
+          EOF
+        end
+
         if defined?(ChefConfig::WorkstationConfigLoader)
           ChefConfig::WorkstationConfigLoader.new(config[:config_path]).load
         end
@@ -169,7 +229,6 @@ module Kitchen
           install_flags: config[:chef_omnibus_install_options],
           sudo_command: sudo_command,
         }.tap do |opts|
-          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           [:install_msi_url, :http_proxy, :https_proxy].each do |key|
             opts[key] = config[key] if config.key? key
           end
@@ -334,19 +393,28 @@ module Kitchen
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
-          channel: (config[:channel] || :stable).to_sym,
+          channel: config[:channel].to_sym,
+          install_command_options: install_command_options,
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
+
           [:platform, :platform_version, :architecture].each do |key|
             opts[key] = config[key] if config[key]
           end
         end)
         config[:chef_omnibus_root] = installer.root
+
         if powershell_shell?
           installer.install_command
         else
           install_from_file(installer.install_command)
         end
+      end
+
+      def install_command_options
+        install_command_options = {}
+        install_command_options[:http_proxy] = config[:http_proxy] if config[:http_proxy]
+        install_command_options.empty? ? nil : install_command_options
       end
 
       # @return [String] Correct option per platform to specify the the

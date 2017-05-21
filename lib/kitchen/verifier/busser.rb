@@ -39,14 +39,6 @@ module Kitchen
           .tap { |path| path.concat(".bat") if verifier.windows_os? }
       end
 
-      default_config :ruby_bindir do |verifier|
-        if verifier.windows_os?
-          '$env:systemdrive\\opscode\\chef\\embedded\\bin'
-        else
-          verifier.remote_path_join(%W{#{verifier[:chef_omnibus_root]} embedded bin})
-        end
-      end
-
       default_config :version, "busser"
 
       expand_path_for :test_base_path
@@ -57,6 +49,12 @@ module Kitchen
       # @param config [Hash] provided driver configuration
       def initialize(config = {})
         init_config(config)
+
+        if config.key?(:ruby_bindir)
+          add_config_deprecation! :bypass, :verifier, :ruby_bindir, message: <<-EOF.gsub(/^\s*/, "")
+            Ruby bin directory is managed automatically.
+          EOF
+        end
       end
 
       # (see Base#create_sandbox)
@@ -198,9 +196,14 @@ module Kitchen
       end
 
       def install_command_vars
-        ruby = remote_path_join(config[:ruby_bindir], "ruby")
+        ruby_bindir = if config.key?(:ruby_bindir)
+                        config[:ruby_bindir]
+                      else
+                        remote_path_join(%W{#{config[:chef_omnibus_root]} embedded bin})
+                      end
+        ruby = remote_path_join(ruby_bindir, "ruby")
                .tap { |path| path.concat(".exe") if windows_os? }
-        gem = remote_path_join(config[:ruby_bindir], "gem")
+        gem = remote_path_join(ruby_bindir, "gem")
 
         [
           busser_env,

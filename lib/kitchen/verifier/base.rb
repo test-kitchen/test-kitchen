@@ -41,8 +41,6 @@ module Kitchen
         verifier.windows_os? ? nil : true
       end
 
-      default_config :chef_omnibus_root, "/opt/chef"
-
       default_config :sudo_command do |verifier|
         verifier.windows_os? ? nil : "sudo -E"
       end
@@ -57,6 +55,12 @@ module Kitchen
       # @param config [Hash] provided verifier configuration
       def initialize(config = {})
         init_config(config)
+
+        if config.key?(:chef_omnibus_root)
+          add_config_deprecation! :bypass, :verifier, :chef_omnibus_root, message: <<-EOF.gsub(/^\s*/, "")
+            Product root paths are managed automatically.
+          EOF
+        end
       end
 
       # Runs the verifier on the instance.

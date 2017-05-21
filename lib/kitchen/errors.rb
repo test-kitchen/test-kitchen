@@ -136,6 +136,9 @@ module Kitchen
   # Exception class capturing what caused an instance to die.
   class InstanceFailure < TransientFailure; end
 
+  # Exception class for any deprecation errors
+  class DeprecationError < StandardError; end
+
   # Yields to a code block in order to consistently emit a useful crash/error
   # message and exit appropriately. There are two primary failure conditions:
   # an expected instance failure, and any other unexpected failures.

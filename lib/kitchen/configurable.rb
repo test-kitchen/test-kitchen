@@ -50,6 +50,7 @@ module Kitchen
       expand_paths!
       validate_config!
       load_needed_dependencies!
+      check_for_config_deprecations!
 
       self
     end
@@ -172,6 +173,39 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
       ["windows"].include?(instance.platform.os_type)
+    end
+
+    # Add a new config deprecation message to the config_deprecations collection.
+    #
+    # @param type [String, Symbol] deprecation type
+    # @param section [String, Symbol] name of the config section
+    # @param name [String, Symbol] name of the deprecated config
+    # @param opts [Hash] options
+    # @options opts [Symbol] :message providing deprecation details
+    # @raise [ArgumentError] if an invalid argument value is set
+    def add_config_deprecation!(type, section, name, opts = {})
+      message = opts.fetch(:message, "")
+
+      types = %w{bypass warn error}
+      # TODO: Figure out a better name for this
+      sections = %w{provisioner transport verifier driver}
+
+      unless types.include?(type.to_s)
+        raise ArgumentError, "type must be one of: #{types.join(",")}"
+      end
+
+      unless sections.include?(section.to_s)
+        raise ArgumentError, "section must be one of: #{sections.join(",")}"
+      end
+
+      raise ArgumentError, "name must be non-empty" if name.to_s.empty?
+
+      config_deprecations << {
+        type: type,
+        section: section,
+        name: name,
+        message: message,
+      }
     end
 
     private
@@ -356,6 +390,50 @@ module Kitchen
       env << shell_env_var(type.to_s, ENV[type.to_s]) if ENV[type.to_s]
       env << shell_env_var(type.upcase.to_s, ENV[type.upcase.to_s]) if
         ENV[type.upcase.to_s]
+    end
+
+    # Returns an array containing any added config deprecations
+    #
+    # @return [Array<Hash>] the array of deprecations
+    def config_deprecations
+      @config_deprecations ||= []
+    end
+
+    # Detects any config deprecations and either logs a warning or raises an exception for errors
+    #
+    # @raise [DeprecationError] if any deprecation errors are added to the collection
+    def check_for_config_deprecations!
+      return if config_deprecations.empty?
+
+      warnings = []
+      errors = []
+
+      config_deprecations.each do |dep|
+        case dep[:type]
+        when :error
+          errors << dep
+        when :warn
+          warnings << dep
+        else
+          # into the nether
+        end
+      end
+
+      # TODO: Manage this when ready to start logging
+      # unless warnings.empty?
+      #   output = concat_messages(warnings)
+      #   caller[0].instance_eval { warn(output) }
+      # end
+
+      # raise DeprecationError, concat_messages(errors) unless errors.empty?
+    end
+
+    # Join config deprecation messages into a single message.
+    #
+    # @param [Array<Hash>] of config deprecations
+    # @return [String] of concatenated deprecation messages
+    def concat_messages(deprecations)
+      deprecations.map { |d| d[:message] }.join("\n")
     end
 
     # Class methods which will be mixed in on inclusion of Configurable module.

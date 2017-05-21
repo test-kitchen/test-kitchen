@@ -75,6 +75,7 @@ describe Kitchen::Verifier::Busser do
   before do
     @root = Dir.mktmpdir
     config[:test_base_path] = @root
+    config[:chef_omnibus_root] = "/opt/chef" # Set in provisioner
   end
 
   after do
@@ -102,10 +103,6 @@ describe Kitchen::Verifier::Busser do
         platform.stubs(:os_type).returns("unix")
       end
 
-      it ":ruby_bindir defaults the an Omnibus Chef installation" do
-        verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
-      end
-
       it ":busser_bin defaults to a binstub under :root_path" do
         config[:root_path] = "/beep"
 
@@ -115,11 +112,6 @@ describe Kitchen::Verifier::Busser do
 
     describe "for windows operating systems" do
       before { platform.stubs(:os_type).returns("windows") }
-
-      it ":ruby_bindir defaults the an Omnibus Chef installation" do
-        verifier[:ruby_bindir]
-          .must_equal '$env:systemdrive\\opscode\\chef\\embedded\\bin'
-      end
 
       it ":busser_bin defaults to a binstub under :root_path" do
         config[:root_path] = '\\beep'
@@ -223,21 +215,22 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for bourne shells" do
+        let(:ruby_bindir) { "/opt/chef/embedded/bin" }
+
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
-          config[:ruby_bindir] = "/rbd"
           config[:root_path] = "/r"
         end
 
         common_bourne_variable_specs
 
         it "sets path to ruby command" do
-          cmd.must_match regexify(%{ruby="/rbd/ruby"})
+          cmd.must_match regexify(%{ruby="#{ruby_bindir}/ruby"})
         end
 
         it "sets path to gem command" do
-          cmd.must_match regexify(%{gem="/rbd/gem"})
+          cmd.must_match regexify(%{gem="#{ruby_bindir}/gem"})
         end
 
         it "sets version for busser" do
@@ -270,22 +263,23 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
+        let(:ruby_bindir) { "\\opt\\chef\\embedded\\bin" }
+
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = '\\rbd'
           config[:root_path] = '\\r'
         end
 
         common_powershell_variable_specs
 
         it "sets path to ruby command" do
-          cmd.must_match regexify(%{$ruby = "\\rbd\\ruby.exe"})
+          cmd.must_match regexify(%{$ruby = "#{ruby_bindir}\\ruby.exe"})
         end
 
         it "sets path to gem command" do
-          cmd.must_match regexify(%{$gem = "\\rbd\\gem"})
+          cmd.must_match regexify(%{$gem = "#{ruby_bindir}\\gem"})
         end
 
         it "sets version for busser" do
@@ -361,7 +355,6 @@ describe Kitchen::Verifier::Busser do
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
-          config[:ruby_bindir] = "/rbd"
           config[:root_path] = "/r"
         end
 
@@ -388,7 +381,6 @@ describe Kitchen::Verifier::Busser do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = '\\rbd'
           config[:root_path] = '\\r'
         end
 
@@ -451,7 +443,6 @@ describe Kitchen::Verifier::Busser do
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
-          config[:ruby_bindir] = "/rbd"
           config[:root_path] = "/r"
         end
 
@@ -478,7 +469,6 @@ describe Kitchen::Verifier::Busser do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = '\\rbd'
           config[:root_path] = '\\r'
         end
 
