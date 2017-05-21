@@ -64,8 +64,3 @@ matrix:
 
 notifications:
   irc: "chat.freenode.net#kitchenci"
-
-addons:
-  code_climate:
-    repo_token:
-      secure: "lcqi3hbalLTinxwsl+um1aN1dgijBrODSMseGEJMJGkofz3VZ+Ofuuwp9x9VjvewuiUFHsiPD5SQ6hx8N+L3wXB6qA+HTmIrXecL7VjehbImEyOuu4/++vcTdpTINAd2Qt/KuJ1eY0okSwVmvtX1VD8gYD8yrlMKdj6uexf8Bgs="
