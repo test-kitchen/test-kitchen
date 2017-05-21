@@ -11,7 +11,7 @@ env:
     - machine_pass=travis
     - machine_port=22
 
-dist: trusty
+dist: precise
 sudo: required
 #cache: bundler
 
