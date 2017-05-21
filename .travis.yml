@@ -13,7 +13,7 @@ env:
 
 dist: trusty
 sudo: required
-cache: bundler
+#cache: bundler
 
 before_install:
   - sudo usermod -p `openssl passwd -1 'travis'` travis
