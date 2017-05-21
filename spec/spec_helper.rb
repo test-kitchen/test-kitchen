@@ -18,7 +18,7 @@
 
 gem "minitest"
 
-if ENV["CODECLIMATE_REPO_TOKEN"] || ENV["COVERAGE"]
+begin
   require "simplecov"
   SimpleCov.profiles.define "gem" do
     command_name "Specs"
@@ -30,6 +30,8 @@ if ENV["CODECLIMATE_REPO_TOKEN"] || ENV["COVERAGE"]
     add_group "Libraries", "/lib/"
   end
   SimpleCov.start "gem"
+rescue LoadError
+  puts "add simplecov to Gemfile.local or GEMFILE_MOD to generate code coverage"
 end
 
 require "fakefs/safe"

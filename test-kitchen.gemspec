@@ -53,9 +53,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "countloc",  "~> 0.4"
   gem.add_development_dependency "maruku",    "~> 0.6"
-  gem.add_development_dependency "simplecov"
   gem.add_development_dependency "yard"
 
-  # Replacing finstyle in favor of chefstyle
   gem.add_development_dependency "chefstyle"
 end
