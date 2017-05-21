@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require "json"
+require "chef/encrypted_data_bag_item"
 
 module Kitchen
   module Provisioner
@@ -58,6 +59,8 @@ module Kitchen
             dest_name: "encrypted_data_bag_secret",
             key_name: :encrypted_data_bag_secret_key_path
           )
+
+          encrypt_data_bags if @config[:encrypt_data_bags]
         end
 
         private
@@ -239,6 +242,34 @@ module Kitchen
           when :file
             FileUtils.mkdir_p(File.dirname(dest))
             FileUtils.cp_r(src, dest)
+          end
+        end
+
+        # Take the data bags that we have copied to the box, and encrypt each with the
+        # provided data bag secret key. This allows users to create unencrypted data bags
+        # for their tests that they can then use via Chef::EncryptedDataBagItem.load
+        #
+        # This will only target data bags at sandbox/data_bags/**/*.json, and will need to
+        # be run after the data bags have been copied into place.
+        #
+        # @api private
+        def encrypt_data_bags
+          secret_key_path = config[:encrypted_data_bag_secret_key_path]
+          unless secret_key_path && File.exists?(secret_key_path)
+            raise "Kitchen requires encrypted_data_bag_secret_key_path to encrypt data bags!"
+          end
+
+          # The strip is important- this is how Chef reads the secret file, and we'll need
+          # to do the same if Chef is to decrypt these.
+          secret_key = File.read(secret_key_path).strip
+          data_bags_glob = File.join(sandbox_path, "data_bags", "**", "*.json")
+
+          Dir[data_bags_glob].each do |data_bag_file|
+            data_bag = JSON.parse(File.read(data_bag_file))
+            data_bag_enc = ::Chef::EncryptedDataBagItem.
+              encrypt_data_bag_item(data_bag, secret_key)
+
+            File.write(data_bag_file, JSON.pretty_generate(data_bag_enc))
           end
         end
 

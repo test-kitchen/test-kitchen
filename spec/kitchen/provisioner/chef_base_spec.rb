@@ -94,6 +94,10 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:log_file].must_equal nil
     end
 
+    it ":encrypt_data_bags default to false" do
+      provisioner[:encrypt_data_bags].must_equal false
+    end
+
     it ":cookbook_files_glob includes recipes" do
       provisioner[:cookbook_files_glob].must_match %r{,recipes/}
     end
@@ -753,6 +757,41 @@ describe Kitchen::Provisioner::ChefBase do
           logged_output.string.must_match debug_line(
             "Using #{thing} from #{config[:kitchen_root]}/my_#{thing}")
         end
+      end
+    end
+
+    # This flag asks kitchen to encrypt the provisioned data bags with the given secret
+    # key, so we need to determine if the data bags we have provisioned in the host can
+    # be successfully decrypted.
+    describe "when :encrypt_data_bags is true" do
+      before do
+        config[:encrypt_data_bags] = true
+        config[:encrypted_data_bag_secret_key_path] =
+          secret_key_path = "#{config[:kitchen_root]}/my_secret"
+        config[:data_bags_path] =
+          my_data_bags_path = "#{config[:kitchen_root]}/my_data_bags"
+
+        File.write(secret_key_path, secret)
+        create_files_under("#{config[:kitchen_root]}/my_data_bags")
+        File.write("#{my_data_bags_path}/#{data_bag_file}", data_bag.to_json)
+      end
+
+      let(:secret) { "much-entropy" }
+      let(:data_bag_file) { "bag_enc.json" }
+      let(:data_bag) do
+        {
+          "id" => "bag_enc",
+          "password" => "sensitive_data",
+        }
+      end
+
+      it "encrypts the data bags copied from :data_bags_path with secret" do
+        provisioner.create_sandbox
+
+        sandbox_data_bag = JSON.parse(File.read(sandbox_path("data_bags/#{data_bag_file}")))
+        edb = Chef::EncryptedDataBagItem.new(sandbox_data_bag, secret)
+
+        edb["password"].must_equal data_bag["password"]
       end
     end
 
