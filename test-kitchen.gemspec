@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.required_ruby_version = ">= 1.9.1"
+  gem.required_ruby_version = ">= 2.3"
 
   gem.add_dependency "mixlib-shellout", ">= 1.2", "< 3.0"
   gem.add_dependency "net-scp",         "~> 1.1"
