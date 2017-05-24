@@ -2,6 +2,8 @@
 # the following line to use 'http://'
 source 'https://rubygems.org'
 
+ruby '~> 2.3.3'
+
 gem 'slim', '>= 3.0'
 
 # For faster file watcher updates on Windows:
