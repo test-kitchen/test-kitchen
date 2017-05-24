@@ -21,8 +21,7 @@ installed. Test files musts end in `*_spec.rb`
         `-- default
             `-- serverspec
                 |-- Gemfile
-                |-- localhost
-                |   `-- httpd_spec.rb
+                |-- httpd_spec.rb
                 `-- spec_helper.rb
 
 ~~~
