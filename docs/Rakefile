@@ -11,6 +11,11 @@ task :build do
   puts status ? 'Build successful.' : 'Build failed.'
 end
 
+desc 'Preview the site locally'
+task :preview do
+  system 'bundle exec middleman server'
+end
+
 desc 'Deploy to S3 and invalidate Cloudfront after a Git commit/push'
 task :deploy do
 
