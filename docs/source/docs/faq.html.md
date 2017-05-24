@@ -6,34 +6,10 @@ title: "Frequently Asked Questions"
 
 These are frequently asked questions or tips that don't have a better home just yet.
 
-##### The defaults are way too small or missing something, how do I change the default Vagrant machine?
-
-Sometimes you'd like to add another NIC to your vm, or bump up the memory. You might have a `forwarded_port` you'd like
-to add also. The following snippet is a couple suggestions how. You can even turn on the `auto_correct` if you think
-you'll need it.
-
-~~~yaml
-  name: vagrant
-  network:
-    - ["forwarded_port", {guest: 80, host: 8080, auto_correct: true}]
-    - ["forwarded_port", {guest: 443, host: 8443}]
-    - ["private_network", {ip: "10.0.0.1"}]
-  customize:
-    cpus: 2
-    memory: 4096
-~~~
-
-As you can see this very close to the [Vagrantfile forwarded_port](https://docs.vagrantup.com/v2/networking/forwarded_ports.html)
-and works exactly like how you'd expect it to.
-
-Doubly, as you can see the [Vagrantfile private_network](https://docs.vagrantup.com/v2/networking/private_network.html)
-looks just like you'd expect it to.
-
-If you would like more information the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) github page has more.
 
 ##### How do I add another driver other than Vagrant?
 
-First, you need to make sure that the driver might already [exist](https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md),
+First, you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md),
 if it does:
 
 ~~~bash
@@ -41,34 +17,39 @@ if it does:
 ~$ vi cookbooks/demo/.kitchen.yml # wherever your .kitchen.yml is for your cookbook
 ~~~
 
-Read the examples in, for instance, [kitchen-openstack](https://github.com/test-kitchen/kitchen-openstack#minimum-configuration)
-or [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean#installation-and-setup)
-and edit your `.kitchen.yml`.
+Examples:
 
-It's suggested after doing this, to run `kitchen list` to verify that everything
-is setup and working as suspected. There is a strong chance that the flavors, or
-image names are different per driver, so you'll need to do the legwork to confirm.
+- [kitchen-openstack](https://github.com/test-kitchen/kitchen-openstack#minimum-configuration)
+- [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean#installation-and-setup)
 
-##### When would I want to use .kitchen.local.yml or .kitchen.cloud.yml?
+Edit the `.kitchen.yml` as appropriate and run `kitchen list` to verify that everything
+is working as expected. There is a strong chance that the flavors, or
+image names are different per driver, so when migrating between drivers be prepared
+to change these at the very least.
 
-A `.kitchen.local.yml` or `.kitchen.cloud.yml` is an override for the `.kitchen.yml`
-in the directory already.
+##### What is the deal with `.kitchen.BLAH.yml`?
 
-`.kitchen.local.yml`s are useful for instances where you want to have a "standard"
-override on your laptop to talk to your cloud/system of choice.
+Although there is no strict configuration supporting this, a convention has emerged among the
+community that for public cookbooks the default `.kitchen.yml` remains vagrant and any additional drivers get their own configuration file in the form of `.kitchen.DRIVER.yml`
 
-`.kitchen.cloud.yml`s are useful for a shared cloud based `.kitchen.yml` for
-everyone, for instance the [rabbitmq](https://github.com/jjasghar/rabbitmq/blob/master/.kitchen.cloud.yml)
-has one for verifying on Digital Ocean. With a simple bash alias, you can change
-and verify that it works as expected:
+- .kitchen.ec2.yml
+- .kitchen.dokken.yml
+
+These are meant to be used in place `.kitchen.yml` via the environment variable `KITCHEN_YAML`
+Note that it is `YAML` not `YML`.
 
 ~~~bash
-$ alias cloud_testing='export KITCHEN_YAML=.kitchen.cloud.yml && chef exec kitchen list'
+$ KITCHEN_YAML=.kitchen.ec2.yml kitchen list
+
+OR
+
+$ export KITCHEN_YAML=.kitchen.ec2.yml
+$ kitchen list
 ~~~
 
-This is per setup of course, but you should get the point here.
+Certain drivers, like `kitchen-dokken` [recommend](https://github.com/someara/kitchen-dokken#usage) setting `KITCHEN_LOCAL_YAML` environment variable to ensure these configs are used when there are multiple in a directory.
 
-##### How do I update just test-kitchen if I'm using Chef-DK?
+##### How do I update just test-kitchen if I'm using ChefDK?
 
 To borrow from this [discourse post](https://discourse.chef.io/t/updating-to-test-kitchen-1-6-0-in-a-chefdk-0-11-2-or-lesser/7899), one can:
 
@@ -77,11 +58,11 @@ chef gem install appbundle-updater
 appbundle-updater chefdk test-kitchen v1.6.0 # or whatever version you want update to
 ~~~
 
-The appbundle-updater gem can update a "appbundled" gem in a chef or chefdk omnibus install and reference a specific git branch, tag or sha. The above uses it to pull down the v1.6.0 tag of the test-kitchen repo and then propperly pins that inside an existing chefdk installation.
+The appbundle-updater gem can update an "appbundled" gem in a chef or chefdk omnibus install and reference a specific git branch, tag or sha. The above uses it to pull down the v1.6.0 tag of the test-kitchen repo and then properly pins that inside an existing ChefDK installation.
 
 ##### How do I change the user to access the instance?
 
-You can edit the `.kitchen.yml` with a `transport` option, for instance:
+Add/edit the `transport` section in `.kitchen.yml`, for instance:
 
 ~~~yaml
 transport:

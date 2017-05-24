@@ -17,7 +17,8 @@ page '/*.txt', layout: false
 
 # With alternative layout
 # page "/path/to/file.html", layout: :otherlayout
-page 'docs/*', layout: :sidebar
+page 'docs/getting-started/*', layout: :sidebar
+page 'docs/*', layout: :docs
 
 # Proxy pages (http://middlemanapp.com/basics/dynamic-pages/)
 # proxy "/this-page-has-no-template.html", "/template-file.html", locals: {
