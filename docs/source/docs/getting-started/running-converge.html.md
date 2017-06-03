@@ -80,5 +80,5 @@ This exit code behavior is a fundamental prerequisite for any tool working in a 
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/manually-verifying">Next - Manually Verifying</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/running-converge">Back to previous step</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/writing-recipe">Back to previous step</a>
 </div>

@@ -55,5 +55,5 @@ Remember, you can also ask for assistance in the [Chef Community Slack](http://c
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/creating-cookbook">Next - Creating a Cookbook</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/getting-help">Back to previous step</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/installing">Back to previous step</a>
 </div>

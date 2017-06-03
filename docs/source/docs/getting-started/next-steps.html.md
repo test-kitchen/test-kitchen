@@ -17,5 +17,5 @@ From here, there are a few resources that can help you along your infrastructure
 Everyone can contribute to making kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/kitchen-docs) and open a [pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)!
 
 <div class="sidebar--footer">
-<a class="sidebar--footer--back" href="/docs/getting-started/dynamic-configuration">Back to previous step</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/excluding-platforms">Back to previous step</a>
 </div>
