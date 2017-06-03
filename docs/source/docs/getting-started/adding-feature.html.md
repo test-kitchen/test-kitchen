@@ -25,5 +25,5 @@ Let's work through this step by step.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/adding-suite">Next - Adding a Suite</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/dynamic-configuration">Back to previous step</a>
+<a class="sidebar--footer--back" href="/docs/getting-started/adding-platform">Back to previous step</a>
 </div>
