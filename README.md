@@ -2,10 +2,6 @@
 
 [![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
 [![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.svg?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
-[![Code Climate](https://codeclimate.com/github/test-kitchen/test-kitchen.svg)](https://codeclimate.com/github/test-kitchen/test-kitchen)
-[![Test Coverage](https://codeclimate.com/github/test-kitchen/test-kitchen/coverage.svg)](https://codeclimate.com/github/test-kitchen/test-kitchen)
-[![Dependency Status](https://gemnasium.com/test-kitchen/test-kitchen.svg)](https://gemnasium.com/test-kitchen/test-kitchen)
-[![Inline docs](http://inch-ci.org/github/test-kitchen/test-kitchen.svg?branch=master)](http://inch-ci.org/github/test-kitchen/test-kitchen)
 
 |             |                                               |
 |-------------|-----------------------------------------------|
@@ -82,11 +78,14 @@ subcommands and their usage:
 $ kitchen help test
 ```
 
-More verbose logging (for both test-kitchen and the chef-solo/chef-zero provisioners) can be specified when running test-kitchen form the command line using:
+More verbose logging for test-kitchen can be specified when running test-kitchen from the command line using:
 
 ```
 $ kitchen test -l debug
 ```
+
+For the provisioner (e.g. chef-solo or chef-zero) add a `log_level` item to the provisioner section of the `.kitchen.yml`
+For more information see the Documentation.  This is a change since version 1.7.0
 
 ## Documentation
 
@@ -96,6 +95,10 @@ read and contribute to improve them!
 ## Versioning
 
 Test Kitchen aims to adhere to [Semantic Versioning 2.0.0][semver].
+
+## Community and Ecosystem
+
+If you would like to see a few of the plugins or ecosystem helpers, please look at [ECOSYSTEM.md][ecosystem].
 
 ## Development
 
@@ -133,3 +136,4 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [semver]: http://semver.org/
 [twitter]: https://twitter.com/kitchenci
 [website]: http://kitchen.ci
+[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md

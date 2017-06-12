@@ -3,6 +3,9 @@ Feature: Add Test Kitchen support to an existing project
   As an operator
   I want to run a command to initialize my project
 
+  Background:
+    Given a sandboxed GEM_HOME directory named "kitchen-init"
+
   @spawn
   Scenario: Displaying help
     When I run `kitchen help init`
@@ -15,8 +18,7 @@ Feature: Add Test Kitchen support to an existing project
 
   @spawn
   Scenario: Running init with default values
-    Given a sandboxed GEM_HOME directory named "kitchen-init"
-    And I have a git repository
+    Given I have a git repository
     When I run `kitchen init`
     Then the exit status should be 0
     And a directory named "test/integration/default" should exist
@@ -31,6 +33,8 @@ Feature: Add Test Kitchen support to an existing project
     And a file named "Rakefile" should not exist
     And a file named "Thorfile" should not exist
     And a gem named "kitchen-vagrant" is installed
+    And a file named "chefignore" should exist
+    And the file "chefignore" should contain ".kitchen"
 
   Scenario: Running init that creates a Gemfile
     When I successfully run `kitchen init --create-gemfile`
@@ -163,15 +167,15 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Rakefile" should contain:
     """
     begin
-      require "kitchen/rake_tasks"
+      require 'kitchen/rake_tasks'
       Kitchen::RakeTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+      puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
     end
     """
 
   Scenario: Running without git doesn't make a .gitignore
-    When I successfully run `kitchen init`
+    When I successfully run `kitchen init --no-driver`
     Then the exit status should be 0
     And a file named ".gitignore" should not exist
 
@@ -182,10 +186,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Thorfile" should contain:
     """
     begin
-      require "kitchen/thor_tasks"
+      require 'kitchen/thor_tasks'
       Kitchen::ThorTasks.new
     rescue LoadError
-      puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+      puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
     end
     """
 
@@ -213,12 +217,58 @@ Feature: Add Test Kitchen support to an existing project
 
     platforms:
       - name: ubuntu-14.04
-      - name: centos-7.1
+      - name: centos-7.2
 
     suites:
       - name: default
         run_list:
           - recipe[ntp::default]
+        attributes:
+
+    """
+
+  Scenario: Running init with an empty file metadata.rb sets an empty run list
+    Given an empty file named "metadata.rb"
+    When I successfully run `kitchen init`
+    Then the file ".kitchen.yml" should contain exactly:
+    """
+    ---
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
+
+    platforms:
+      - name: ubuntu-14.04
+      - name: centos-7.2
+
+    suites:
+      - name: default
+        run_list:
+        attributes:
+
+    """
+
+  Scenario: Running init with no metadata.rb file sets an empty run list
+    Given a file named "metadata.rb" does not exist
+    When I successfully run `kitchen init`
+    Then the file ".kitchen.yml" should contain exactly:
+    """
+    ---
+    driver:
+      name: vagrant
+
+    provisioner:
+      name: chef_solo
+
+    platforms:
+      - name: ubuntu-14.04
+      - name: centos-7.2
+
+    suites:
+      - name: default
+        run_list:
         attributes:
 
     """

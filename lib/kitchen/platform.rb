@@ -17,14 +17,12 @@
 # limitations under the License.
 
 module Kitchen
-
   # A target operating system environment in which convergence integration
   # will take place. This may represent a specific operating system, version,
   # and machine architecture.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Platform
-
     # @return [String] logical name of this platform
     attr_reader :name
 
@@ -44,18 +42,24 @@ module Kitchen
         raise ClientError, "Platform#new requires option :name"
       end
       @os_type = options.fetch(:os_type) do
-        @name.downcase =~ /^win/ ? "windows" : "unix"
+        windows?(options) ? "windows" : "unix"
       end
       @shell_type = options.fetch(:shell_type) do
-        @name.downcase =~ /^win/ ? "powershell" : "bourne"
+        windows?(options) ? "powershell" : "bourne"
       end
+    end
+
+    def windows?(options)
+      @name.downcase =~ /^win/ || (
+        !options[:transport].nil? && options[:transport][:name] == "winrm"
+      )
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      { :os_type => os_type, :shell_type => shell_type }
+      { os_type: os_type, shell_type: shell_type }
     end
   end
 end

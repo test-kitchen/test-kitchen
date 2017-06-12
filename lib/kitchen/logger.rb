@@ -20,7 +20,6 @@ require "fileutils"
 require "logger"
 
 module Kitchen
-
   # Logging implementation for Kitchen. By default the console/stdout output
   # will be displayed differently than the file log output. Therefor, this
   # class wraps multiple loggers that conform to the stdlib `Logger` class
@@ -28,7 +27,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Logger
-
     include ::Logger::Severity
 
     # @return [IO] the log device
@@ -54,17 +52,19 @@ module Kitchen
     #   messages (default: `"Kitchen"`)
     # @option options [IO] :stdout a standard out IO object to use
     #   (default: `$stdout`)
+    # @option options [Boolean] :colorize whether to colorize output
+    #   when Test Kitchen runs.
+    #   (default: `$stdout.tty?`)
     def initialize(options = {})
-      color = options[:color]
       @log_overwrite = if options[:log_overwrite].nil?
-        default_log_overwrite
-      else
-        options[:log_overwrite]
-      end
+                         default_log_overwrite
+                       else
+                         options[:log_overwrite]
+                       end
 
       @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
 
-      populate_loggers(color, options)
+      populate_loggers(options)
 
       # These setters cannot be called until @loggers are populated because
       # they are delegated
@@ -75,16 +75,17 @@ module Kitchen
     # Pulled out for Rubocop complexity issues
     #
     # @api private
-    def populate_loggers(color, options)
+    def populate_loggers(options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
-      @loggers << stdout_logger(options[:stdout], color) if options[:stdout]
-      @loggers << stdout_logger($stdout, color) if @loggers.empty?
+      @loggers << stdout_logger(options[:stdout], options[:color], options[:colorize]) if
+        options[:stdout]
+      @loggers << stdout_logger($stdout, options[:color], options[:colorize]) if
+        @loggers.empty?
     end
     private :populate_loggers
 
     class << self
-
       private
 
       # @api private
@@ -286,13 +287,14 @@ module Kitchen
     #
     # @param stdout [IO] the IO object that represents stdout (or similar)
     # @param color [Symbol] color to use when outputing messages
+    # @param colorize [Boolean] whether to enable color
     # @return [StdoutLogger] a new logger
     # @api private
-    def stdout_logger(stdout, color)
+    def stdout_logger(stdout, color, colorize)
       logger = StdoutLogger.new(stdout)
-      if Kitchen.tty?
+      if colorize
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize("#{msg}", color).concat("\n")
+          Color.colorize(msg.to_s, color).concat("\n")
         end
       else
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
@@ -335,21 +337,17 @@ module Kitchen
     # Internal class which adds a #banner method call that displays the
     # message with a callout arrow.
     class LogdevLogger < ::Logger
-
-      alias_method :super_info, :info
+      alias super_info info
 
       # Dump one or more messages to info.
       #
       # @param msg [String] a message
       def <<(msg)
         @buffer ||= ""
-        lines, _, remainder = msg.rpartition("\n")
-        if lines.empty?
-          @buffer << remainder
-        else
-          lines.insert(0, @buffer)
-          lines.split("\n").each { |l| format_line(l.chomp) }
-          @buffer = ""
+        @buffer += msg
+        while i = @buffer.index("\n")
+          format_line(@buffer[0, i].chomp)
+          @buffer[0, i + 1] = ""
         end
       end
 
@@ -368,9 +366,9 @@ module Kitchen
       # @api private
       def format_line(line)
         case line
-        when %r{^-----> } then banner(line.gsub(%r{^[ >-]{6} }, ""))
-        when %r{^>>>>>> } then error(line.gsub(%r{^[ >-]{6} }, ""))
-        when %r{^       } then info(line.gsub(%r{^[ >-]{6} }, ""))
+        when /^-----> / then banner(line.gsub(/^[ >-]{6} /, ""))
+        when /^>>>>>> / then error(line.gsub(/^[ >-]{6} /, ""))
+        when /^       / then info(line.gsub(/^[ >-]{6} /, ""))
         else info(line)
         end
       end
@@ -379,7 +377,6 @@ module Kitchen
     # Internal class which reformats logging methods for display as console
     # output.
     class StdoutLogger < LogdevLogger
-
       # Log a debug message
       #
       # @param msg [String] a message

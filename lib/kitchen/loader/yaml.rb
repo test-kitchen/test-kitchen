@@ -27,9 +27,7 @@ end
 require "safe_yaml/load"
 
 module Kitchen
-
   module Loader
-
     # YAML file loader for Test Kitchen configuration. This class is
     # responisble for parsing the main YAML file and the local YAML if it
     # exists. Local file configuration will win over the default configuration.
@@ -38,7 +36,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class YAML
-
       # Creates a new loader that can parse and load YAML files.
       #
       # @param options [Hash] configuration for a new loader
@@ -70,7 +67,7 @@ module Kitchen
       #
       # @return [Hash] merged configuration data
       def read
-        if !File.exist?(config_file)
+        unless File.exist?(config_file)
           raise UserError, "Kitchen YAML file #{config_file} does not exist."
         end
 
@@ -81,7 +78,7 @@ module Kitchen
       #
       # @return [Hash] a diagnostic hash
       def diagnose
-        result = Hash.new
+        result = {}
         result[:process_erb] = @process_erb
         result[:process_local] = @process_local
         result[:process_global] = @process_global
@@ -123,10 +120,10 @@ module Kitchen
       # @api private
       def combined_hash
         y = if @process_global
-          normalize(global_yaml).rmerge(normalize(yaml))
-        else
-          normalize(yaml)
-        end
+              normalize(global_yaml).rmerge(normalize(yaml))
+            else
+              normalize(yaml)
+            end
         @process_local ? y.rmerge(normalize(local_yaml)) : y
       end
 
@@ -239,7 +236,7 @@ module Kitchen
           failure_hash(e, file)
         end
 
-        { :filename => file, :raw_data => hash }
+        { filename: file, raw_data: hash }
       end
 
       # Generates a Hash respresenting a failure, given an Exception object.
@@ -250,11 +247,11 @@ module Kitchen
       # @api private
       def failure_hash(e, file = nil)
         result = {
-          :error => {
-            :exception => e.inspect,
-            :message => e.message,
-            :backtrace => e.backtrace
-          }
+          error: {
+            exception: e.inspect,
+            message: e.message,
+            backtrace: e.backtrace,
+          },
         }
         result[:error][:raw_file] = IO.read(file) unless file.nil?
         result
@@ -268,7 +265,7 @@ module Kitchen
       # @api private
       def normalize(obj)
         if obj.is_a?(Hash)
-          obj.inject(Hash.new) { |h, (k, v)| normalize_hash(h, k, v); h }
+          obj.inject({}) { |h, (k, v)| normalize_hash(h, k, v); h }
         else
           obj
         end
@@ -308,13 +305,13 @@ module Kitchen
         case key
         when "driver", "provisioner", "busser"
           hash[key] = if value.nil?
-            Hash.new
-          elsif value.is_a?(String)
-            default_key = key == "busser" ? "version" : "name"
-            { default_key => value }
-          else
-            normalize(value)
-          end
+                        {}
+                      elsif value.is_a?(String)
+                        default_key = key == "busser" ? "version" : "name"
+                        { default_key => value }
+                      else
+                        normalize(value)
+                      end
         else
           hash[key] = normalize(value)
         end
@@ -329,9 +326,9 @@ module Kitchen
       # @raise [UserError] if the string document cannot be parsed
       # @api private
       def parse_yaml_string(string, file_name)
-        return Hash.new if string.nil? || string.empty?
+        return {} if string.nil? || string.empty?
 
-        result = SafeYAML.load(string) || Hash.new
+        result = SafeYAML.load(string) || {}
         unless result.is_a?(Hash)
           raise UserError, "Error parsing #{file_name} as YAML " \
             "(Result of parse was not a Hash, but was a #{result.class}).\n" \

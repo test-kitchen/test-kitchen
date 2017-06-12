@@ -1,0 +1,27 @@
+---
+driver:
+  name: proxy
+  host: localhost
+  reset_command: "echo hello"
+  port: <%= ENV["machine_port"] %>
+  username: <%= ENV["machine_user"] %>
+  password: <%= ENV["machine_pass"] %>
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: ubuntu-14.04
+
+verifier:
+  name: busser
+
+suites:
+  # We run a different test based upon the configuration - basically each TK
+  # test asserts that the expected configuration is transfered to the target
+  # machine
+  - name: default
+    run_list:
+      - recipe[test::tk_<%= ENV['TK_SUITE_NAME'] %>_test]
+  # TODO a machine which doesn't setup squid and doesn't copy across
+  # proxy settings

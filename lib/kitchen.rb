@@ -53,9 +53,7 @@ require "kitchen/version"
 #
 # @author Fletcher Nichol <fnichol@nichol.ca>
 module Kitchen
-
   class << self
-
     # @return [Logger] the common Kitchen logger
     attr_accessor :logger
 
@@ -73,7 +71,7 @@ module Kitchen
     #
     # @return [Logger] a logger
     def default_logger
-      Logger.new(:stdout => $stdout, :level => Util.to_logger_level(env_log))
+      Logger.new(stdout: $stdout, level: Util.to_logger_level(env_log))
     end
 
     # Returns a default file logger which emits on standard output and to a
@@ -89,10 +87,10 @@ module Kitchen
       log_location = log_location.to_s
 
       Logger.new(
-          :stdout => $stdout,
-          :logdev => log_location,
-          :level => Util.to_logger_level(level),
-          :log_overwrite => log_overwrite
+        stdout: $stdout,
+        logdev: log_location,
+        level: Util.to_logger_level(level),
+        log_overwrite: log_overwrite
       )
     end
 

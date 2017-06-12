@@ -19,14 +19,11 @@
 require "thread"
 
 module Kitchen
-
   module Command
-
     # Base class for CLI commands.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Logging
 
       # Contstructs a new Command object.
@@ -150,7 +147,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     module RunAction
-
       # Run an instance action (create, converge, setup, verify, destroy) on
       # a collection of instances. The instance actions will take place in a
       # seperate thread of execution which may or may not be running
@@ -159,25 +155,54 @@ module Kitchen
       # @param action [String] action to perform
       # @param instances [Array<Instance>] an array of instances
       def run_action(action, instances, *args)
-        concurrency = 1
-        if options[:concurrency]
-          concurrency = options[:concurrency] || instances.size
-          concurrency = instances.size if concurrency > instances.size
-        end
+        concurrency = concurrency_setting(instances)
 
         queue = Queue.new
         instances.each { |i| queue << i }
         concurrency.times { queue << nil }
 
         threads = []
+        @action_errors = []
         concurrency.times do
           threads << Thread.new do
             while instance = queue.pop
-              instance.public_send(action, *args)
+              run_action_in_thread(action, instance, *args)
             end
           end
         end
         threads.map(&:join)
+        report_errors
+      end
+
+      # private
+
+      def report_errors
+        unless @action_errors.empty?
+          msg = ["#{@action_errors.length} actions failed.",
+                 @action_errors.map { |e| ">>>>>>     #{e.message}" }].join("\n")
+          raise ActionFailed.new(msg, @action_errors)
+        end
+      end
+
+      def concurrency_setting(instances)
+        concurrency = 1
+        if options[:concurrency]
+          concurrency = options[:concurrency] || instances.size
+          concurrency = instances.size if concurrency > instances.size
+        end
+        concurrency
+      end
+
+      def run_action_in_thread(action, instance, *args)
+        instance.public_send(action, *args)
+      rescue Kitchen::InstanceFailure => e
+        @action_errors << e
+      rescue Kitchen::ActionFailed => e
+        new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
+        new_error.set_backtrace(e.backtrace)
+        @action_errors << new_error
+      ensure
+        instance.cleanup!
       end
     end
   end

@@ -21,7 +21,6 @@ require_relative "spec_helper"
 require "kitchen"
 
 describe "Kitchen" do
-
   let(:stdout) { StringIO.new }
 
   before do
@@ -39,7 +38,6 @@ describe "Kitchen" do
   end
 
   describe "defaults" do
-
     it "sets DEFAULT_LOG_LEVEL to :info" do
       Kitchen::DEFAULT_LOG_LEVEL.must_equal :info
     end
@@ -66,8 +64,8 @@ describe "Kitchen" do
   end
 
   it ".source_root returns the root path of the gem" do
-    Kitchen.source_root.
-      must_equal Pathname.new(File.expand_path("../..", __FILE__))
+    Kitchen.source_root
+      .must_equal Pathname.new(File.expand_path("../..", __FILE__))
   end
 
   it ".default_logger is a Kitchen::Logger" do
@@ -93,8 +91,8 @@ describe "Kitchen" do
   it ".default_file_logger returns a logger that uses a file" do
     Kitchen.default_file_logger.warn("uhoh")
 
-    IO.read(File.join(%w[.kitchen logs kitchen.log])).
-      must_match %r{ -- Kitchen: uhoh$}
+    IO.read(File.join(%w{.kitchen logs kitchen.log}))
+      .must_match %r{ -- Kitchen: uhoh$}
   end
 
   it ".default_file_logger accepts a level and log_overwrite" do

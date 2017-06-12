@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require_relative "../../spec_helper"
+require_relative "../ssh_spec"
 
 require "logger"
 require "stringio"
@@ -25,11 +26,8 @@ require "kitchen/verifier/base"
 require "kitchen/transport/base"
 
 module Kitchen
-
   module Verifier
-
     class TestingDummy < Kitchen::Verifier::Base
-
       attr_reader :called_create_sandbox, :called_cleanup_sandbox
 
       def install_command
@@ -64,11 +62,10 @@ module Kitchen
 end
 
 describe Kitchen::Verifier::Base do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil, :shell_type => nil) }
-  let(:suite)           { stub(:name => "germany") }
+  let(:platform)        { stub(os_type: nil, shell_type: nil) }
+  let(:suite)           { stub(name: "germany") }
   let(:config)          { Hash.new }
 
   let(:transport) do
@@ -79,12 +76,12 @@ describe Kitchen::Verifier::Base do
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :to_str => "instance",
-      :logger => logger,
-      :platform => platform,
-      :suite => suite,
-      :transport => transport
+      name: "coolbeans",
+      to_str: "instance",
+      logger: logger,
+      platform: platform,
+      suite: suite,
+      transport: transport
     )
   end
 
@@ -93,9 +90,7 @@ describe Kitchen::Verifier::Base do
   end
 
   describe "configuration" do
-
     describe "for unix operating systems" do
-
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":sudo defaults to true" do
@@ -112,7 +107,6 @@ describe Kitchen::Verifier::Base do
     end
 
     describe "for windows operating systems" do
-
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":sudo defaults to nil" do
@@ -123,8 +117,8 @@ describe Kitchen::Verifier::Base do
         verifier[:sudo_command].must_equal nil
       end
 
-      it ":root_path defaults to $env:TEMP\\verifier" do
-        verifier[:root_path].must_equal "$env:TEMP\\verifier"
+      it ':root_path defaults to $env:TEMP\\verifier' do
+        verifier[:root_path].must_equal '$env:TEMP\\verifier'
       end
     end
 
@@ -139,10 +133,13 @@ describe Kitchen::Verifier::Base do
     it ":http_proxys defaults to nil" do
       verifier[:https_proxy].must_equal nil
     end
+
+    it ":ftp_proxy defaults to nil" do
+      verifier[:ftp_proxy].must_equal nil
+    end
   end
 
   describe "#call" do
-
     let(:state) { Hash.new }
     let(:cmd)   { verifier.call(state) }
 
@@ -205,8 +202,8 @@ describe Kitchen::Verifier::Base do
     it "logs to info" do
       cmd
 
-      logged_output.string.
-        must_match(/INFO -- : Transferring files to instance$/)
+      logged_output.string
+                   .must_match(/INFO -- : Transferring files to instance$/)
     end
 
     it "uploads sandbox files" do
@@ -222,29 +219,27 @@ describe Kitchen::Verifier::Base do
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
-      connection.stubs(:upload).
-        raises(Kitchen::Transport::TransportFailed.new("dang"))
+      connection.stubs(:upload)
+                .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
-      connection.stubs(:execute).
-        raises(Kitchen::Transport::TransportFailed.new("dang"))
+      connection.stubs(:execute)
+                .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
   [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
-
     it "has a #{cmd} method" do
       verifier.public_send(cmd).must_be_nil
     end
   end
 
   describe "sandbox" do
-
     after do
       begin
         verifier.cleanup_sandbox
@@ -260,8 +255,8 @@ describe Kitchen::Verifier::Base do
       verifier.create_sandbox
 
       File.directory?(verifier.sandbox_path).must_equal true
-      format("%o", File.stat(verifier.sandbox_path).mode)[1, 4].
-        must_equal "0755"
+      format("%o", File.stat(verifier.sandbox_path).mode)[1, 4]
+        .must_equal "0755"
     end
 
     it "#create_sandbox logs an info message" do
@@ -273,8 +268,8 @@ describe Kitchen::Verifier::Base do
     it "#create_sandbox logs a debug message" do
       verifier.create_sandbox
 
-      logged_output.string.
-        must_match debug_line_starting_with("Creating local sandbox in ")
+      logged_output.string
+                   .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
     it "#cleanup_sandbox deletes the sandbox directory" do
@@ -288,23 +283,21 @@ describe Kitchen::Verifier::Base do
       verifier.create_sandbox
       verifier.cleanup_sandbox
 
-      logged_output.string.
-        must_match debug_line_starting_with("Cleaning up local sandbox in ")
+      logged_output.string
+                   .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
     def info_line(msg)
-      %r{^I, .* : #{Regexp.escape(msg)}$}
+      /^I, .* : #{Regexp.escape(msg)}$/
     end
 
     def debug_line_starting_with(msg)
-      %r{^D, .* : #{Regexp.escape(msg)}}
+      /^D, .* : #{Regexp.escape(msg)}/
     end
   end
 
   describe "#sudo" do
-
     describe "with :sudo set" do
-
       before { config[:sudo] = true }
 
       it "prepends sudo command" do
@@ -319,7 +312,6 @@ describe Kitchen::Verifier::Base do
     end
 
     describe "with :sudo falsey" do
-
       before { config[:sudo] = false }
 
       it "does not include sudo command" do
@@ -330,6 +322,24 @@ describe Kitchen::Verifier::Base do
         config[:sudo_command] = "blueto -Ohai"
 
         verifier.send(:sudo, "wakka").must_equal("wakka")
+      end
+    end
+  end
+
+  describe "#prefix_command" do
+    describe "with :command_prefix set" do
+      before { config[:command_prefix] = "my_prefix" }
+
+      it "prepends the command with the prefix" do
+        verifier.send(:prefix_command, "my_command").must_equal("my_prefix my_command")
+      end
+    end
+
+    describe "with :command_prefix unset" do
+      before { config[:command_prefix] = nil }
+
+      it "returns an unaltered command" do
+        verifier.send(:prefix_command, "my_command").must_equal("my_command")
       end
     end
   end

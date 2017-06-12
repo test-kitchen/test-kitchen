@@ -20,38 +20,35 @@ require "rubygems/gem_runner"
 require "thor/group"
 
 module Kitchen
-
   module Generator
-
     # A project initialization generator, to help prepare a cookbook project
     # for testing with Kitchen.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Init < Thor::Group
-
       include Thor::Actions
 
       class_option :driver,
-        :type => :array,
-        :aliases => "-D",
-        :default => "kitchen-vagrant",
-        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
+                   type: :array,
+                   aliases: "-D",
+                   default: %w{kitchen-vagrant},
+                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
         D
 
       class_option :provisioner,
-        :type => :string,
-        :aliases => "-P",
-        :default => "chef_solo",
-        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
+                   type: :string,
+                   aliases: "-P",
+                   default: "chef_solo",
+                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
         D
 
       class_option :create_gemfile,
-        :type => :boolean,
-        :default => false,
-        :desc => <<-D.gsub(/^\s+/, "").gsub(/\n/, " ")
+                   type: :boolean,
+                   default: false,
+                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           Whether or not to create a Gemfile if one does not exist.
           Default: false
         D
@@ -61,6 +58,7 @@ module Kitchen
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
         create_kitchen_yaml
+        create_chefignore
         prepare_rakefile
         prepare_thorfile
         create_test_dir
@@ -77,18 +75,23 @@ module Kitchen
       # @api private
       def create_kitchen_yaml
         cookbook_name = if File.exist?(File.expand_path("metadata.rb"))
-          MetadataChopper.extract("metadata.rb").first
-        else
-          nil
-        end
+                          MetadataChopper.extract("metadata.rb").first
+                        end
         run_list = cookbook_name ? "recipe[#{cookbook_name}::default]" : nil
         driver_plugin = Array(options[:driver]).first || "dummy"
 
         template("kitchen.yml.erb", ".kitchen.yml",
-          :driver_plugin => driver_plugin.sub(/^kitchen-/, ""),
-          :provisioner => options[:provisioner],
-          :run_list => Array(run_list)
-        )
+                 driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
+                 provisioner: options[:provisioner],
+                 run_list: Array(run_list)
+                )
+      end
+
+      # Creates the `chefignore` file.
+      #
+      # @api private
+      def create_chefignore
+        template("chefignore.erb", "chefignore")
       end
 
       # @return [true,false] whether or not a Gemfile needs to be initialized
@@ -135,10 +138,10 @@ module Kitchen
         rakedoc = <<-RAKE.gsub(/^ {10}/, "")
 
           begin
-            require "kitchen/rake_tasks"
+            require 'kitchen/rake_tasks'
             Kitchen::RakeTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+            puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         RAKE
         append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
@@ -153,10 +156,10 @@ module Kitchen
         thordoc = <<-THOR.gsub(/^ {10}/, "")
 
           begin
-            require "kitchen/thor_tasks"
+            require 'kitchen/thor_tasks'
             Kitchen::ThorTasks.new
           rescue LoadError
-            puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
+            puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         THOR
         append_to_file(File.join(destination_root, "Thorfile"), thordoc)
@@ -185,7 +188,7 @@ module Kitchen
       def append_to_gitignore(line)
         create_file(".gitignore") unless File.exist?(File.join(destination_root, ".gitignore"))
 
-        if IO.readlines(File.join(destination_root, ".gitignore")).grep(%r{^#{line}}).empty?
+        if IO.readlines(File.join(destination_root, ".gitignore")).grep(/^#{line}/).empty?
           append_to_file(".gitignore", "#{line}\n")
         end
       end
@@ -213,7 +216,7 @@ module Kitchen
       #
       # @api private
       def add_gem_to_gemfile
-        if not_in_file?("Gemfile", %r{gem ('|")test-kitchen('|")})
+        if not_in_file?("Gemfile", /gem ('|")test-kitchen('|")/)
           append_to_file("Gemfile", %{gem "test-kitchen"\n})
           @display_bundle_msg = true
         end
@@ -238,7 +241,7 @@ module Kitchen
       #
       # @api private
       def add_driver_to_gemfile(driver_gem)
-        if not_in_file?("Gemfile", %r{gem ('|")#{driver_gem}('|")})
+        if not_in_file?("Gemfile", /gem ('|")#{driver_gem}('|")/)
           append_to_file("Gemfile", %{gem "#{driver_gem}"\n})
           @display_bundle_msg = true
         end
@@ -277,7 +280,7 @@ module Kitchen
       #
       # @api private
       def unbundlerize
-        keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w[RUBYOPT]
+        keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w{RUBYOPT}
 
         keys.each { |key| ENV["__#{key}"] = ENV[key]; ENV.delete(key) }
         yield

@@ -17,13 +17,11 @@
 # limitations under the License.
 
 module Kitchen
-
   # A logical configuration representing a test case or fixture that will be
   # executed on a platform.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Suite
-
     # @return [String] logical name of this suite
     attr_reader :name
 

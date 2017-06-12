@@ -27,10 +27,9 @@ require_relative "../spec_helper"
 # in terms of PowerShell invocations).
 
 describe "PowerShell script max size" do
-
   MAX_POWERSHELL_SIZE = 3010
 
-  Dir.glob(File.join(File.dirname(__FILE__), "../../support/*.ps1*")).each do|script|
+  Dir.glob(File.join(File.dirname(__FILE__), "../../support/*.ps1*")).each do |script|
     base = File.basename(script)
 
     it "support/#{base} size must be less than #{MAX_POWERSHELL_SIZE} bytes" do

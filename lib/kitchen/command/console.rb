@@ -19,18 +19,15 @@
 require "kitchen/command"
 
 module Kitchen
-
   module Command
-
     # Command to launch a Pry-based Kitchen console..
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Console < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         require "pry"
-        Pry.start(@config, :prompt => [prompt(">"), prompt("*")])
+        Pry.start(@config, prompt: [prompt(">"), prompt("*")])
       rescue LoadError
         warn %{Make sure you have the pry gem installed. You can install it with:}
         warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
@@ -45,13 +42,13 @@ module Kitchen
       # @return [proc] a prompt proc
       # @api private
       def prompt(char)
-        proc { |target_self, nest_level, pry|
+        proc do |target_self, nest_level, pry|
           [
             "[#{pry.input_array.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level.zero?}#{char} "
+            "#{":#{nest_level}" unless nest_level == 0}#{char} ",
           ].join
-        }
+        end
       end
     end
   end

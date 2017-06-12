@@ -1,0 +1,47 @@
+version: "master-{build}"
+
+os: Windows Server 2012 R2
+platform:
+  - x64
+
+environment:
+  machine_user: test_user
+  machine_pass: Pass@word1
+  machine_port: 5985
+  KITCHEN_YAML: .kitchen.ci.yml
+  SSL_CERT_FILE: c:\projects\test_kitchen\certs.pem
+
+  matrix:
+    - ruby_version: "23"
+
+clone_folder: c:\projects\test_kitchen
+clone_depth: 1
+skip_tags: true
+
+branches:
+  only:
+    - master
+
+install:
+  - ps: net user /add $env:machine_user $env:machine_pass
+  - ps: net localgroup administrators $env:machine_user /add
+  - ps: $env:PATH="C:\Ruby$env:ruby_version\bin;$env:PATH"
+  - ps: Write-Host $env:path
+  - appveyor DownloadFile http://curl.haxx.se/ca/cacert.pem -FileName c:\projects\test_kitchen\certs.pem
+  - set SSL_CERT_FILE=c:\projects\test_kitchen\certs.pem
+  - gem update --system || gem update --system || gem update --system
+  - gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc
+  - update_rubygems
+  - ruby --version
+  - gem --version
+  - bundler --version
+
+build_script:
+  - bundle install --without guard integration
+
+test_script:
+  - SET SPEC_OPTS=--format progress
+  - bundle exec rake unit
+  - bundle exec rake quality
+  - bundle install --with integration
+  - bundle exec kitchen verify windows

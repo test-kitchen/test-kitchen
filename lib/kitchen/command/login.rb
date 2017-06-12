@@ -19,14 +19,11 @@
 require "kitchen/command"
 
 module Kitchen
-
   module Command
-
     # Command to log into to instance.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Login < Kitchen::Command::Base
-
       # Invoke the command.
       def call
         results = parse_subcommand(args.first)

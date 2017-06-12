@@ -20,21 +20,18 @@ require "kitchen/provisioner/base"
 require "kitchen/version"
 
 module Kitchen
-
   module Provisioner
-
     # Basic shell provisioner.
     #
     # @author Chris Lundquist (<chris.ludnquist@github.com>)
     class Shell < Base
-
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
 
       default_config :script do |provisioner|
         src = provisioner.powershell_shell? ? "bootstrap.ps1" : "bootstrap.sh"
-        provisioner.calculate_path(src, :type => :file)
+        provisioner.calculate_path(src, type: :file)
       end
       expand_path_for :script
 
@@ -56,7 +53,7 @@ module Kitchen
         data = remote_path_join(root, "data")
 
         code = if powershell_shell?
-          Util.outdent!(<<-POWERSHELL)
+                 Util.outdent!(<<-POWERSHELL)
             if (Test-Path "#{data}") {
               Remove-Item "#{data}" -Recurse -Force
             }
@@ -64,9 +61,9 @@ module Kitchen
               New-Item "#{root}" -ItemType directory | Out-Null
             }
           POWERSHELL
-        else
-          "#{sudo("rm")} -rf #{data} ; mkdir -p #{root}"
-        end
+               else
+                 "#{sudo('rm')} -rf #{data} ; mkdir -p #{root}"
+               end
 
         wrap_shell_code(code)
       end
@@ -79,7 +76,7 @@ module Kitchen
         )
         code = powershell_shell? ? %{& "#{script}"} : sudo(script)
 
-        wrap_shell_code(code)
+        prefix_command(wrap_shell_code(code))
       end
 
       private
@@ -114,7 +111,7 @@ module Kitchen
         end
 
         FileUtils.chmod(0755,
-          File.join(sandbox_path, File.basename(config[:script])))
+                        File.join(sandbox_path, File.basename(config[:script])))
       end
 
       # Creates a minimal, no-op script in the sandbox path.

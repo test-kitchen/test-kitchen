@@ -1,12 +1,16 @@
+$ErrorActionPreference = "stop"
+
 Function Check-UpdateChef($root, $version) {
   if (-Not (Test-Path $root)) { return $true }
   elseif ("$version" -eq "true") { return $false }
   elseif ("$version" -eq "latest") { return $true }
+  Try { $chef_version = (Get-Content $root\version-manifest.txt | select-object -first 1) }
+  Catch {
+    Try { $chef_version = (& $root\bin\chef-solo.bat -v) }
+    Catch { $chef_version = " " }
+  }
 
-  Try { $chef_version = (& $root\bin\chef-solo.bat -v).split(" ", 2)[1] }
-  Catch { $chef_version = "" }
-
-  if ($chef_version.StartsWith($version)) { return $false }
+  if ($chef_version.split(" ", 2)[1].StartsWith($version)) { return $false }
   else { return $true }
 }
 
@@ -64,13 +68,18 @@ Function Unresolve-Path($p) {
   else { return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p) }
 }
 
-$chef_omnibus_root = Unresolve-Path $chef_omnibus_root
-$msi = Unresolve-Path $msi
+Try {
+  $chef_omnibus_root = Unresolve-Path $chef_omnibus_root
+  $msi = Unresolve-Path $msi
 
-if (Check-UpdateChef $chef_omnibus_root $version) {
-  Write-Host "-----> Installing Chef Omnibus ($pretty_version)`n"
-  Download-Chef "$chef_metadata_url" $msi
-  Install-Chef $msi
-} else {
-  Write-Host "-----> Chef Omnibus installation detected ($pretty_version)`n"
+  if (Check-UpdateChef $chef_omnibus_root $version) {
+    Write-Host "-----> Installing Chef Omnibus ($pretty_version)`n"
+    Download-Chef "$chef_metadata_url" $msi
+    Install-Chef $msi
+  } else {
+    Write-Host "-----> Chef Omnibus installation detected ($pretty_version)`n"
+}
+Catch {
+  Write-Error ($_ | ft -Property * | out-string) -ErrorAction Continue
+  exit 1
 }

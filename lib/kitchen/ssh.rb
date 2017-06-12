@@ -25,7 +25,6 @@ require "kitchen/errors"
 require "kitchen/login_command"
 
 module Kitchen
-
   # Wrapped exception for any internally raised SSH-related errors.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
@@ -36,7 +35,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class SSH
-
     # Constructs a new SSH object.
     #
     # @example basic usage
@@ -94,14 +92,24 @@ module Kitchen
     # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload!(local, remote, options = {}, &progress)
       if progress.nil?
-        progress = lambda { |_ch, name, sent, total|
-          if sent == total
-            logger.debug("Uploaded #{name} (#{total} bytes)")
-          end
-        }
+        progress = lambda do |_ch, name, sent, total|
+          logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
+        end
       end
 
       session.scp.upload!(local, remote, options, &progress)
+    end
+
+    def upload(local, remote, options = {}, &progress)
+      if progress.nil?
+        progress = lambda do |_ch, name, sent, total|
+          if sent == total
+            logger.debug("Async Uploaded #{name} (#{total} bytes)")
+          end
+        end
+      end
+
+      session.scp.upload(local, remote, options, &progress)
     end
 
     # Uploads a recursive directory to remote host.
@@ -113,9 +121,14 @@ module Kitchen
     # @option options [true,false] :recursive recursive copy (default: `true`)
     # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload_path!(local, remote, options = {}, &progress)
-      options = { :recursive => true }.merge(options)
+      options = { recursive: true }.merge(options)
 
       upload!(local, remote, options, &progress)
+    end
+
+    def upload_path(local, remote, options = {}, &progress)
+      options = { recursive: true }.merge(options)
+      upload(local, remote, options, &progress)
     end
 
     # Shuts down the session connection, if it is still active.
@@ -138,16 +151,16 @@ module Kitchen
     #
     # @return [LoginCommand] the login command
     def login_command
-      args  = %W[ -o UserKnownHostsFile=/dev/null ]
-      args += %W[ -o StrictHostKeyChecking=no ]
-      args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
-      args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
+      args  = %w{ -o UserKnownHostsFile=/dev/null }
+      args += %w{ -o StrictHostKeyChecking=no }
+      args += %w{ -o IdentitiesOnly=yes } if options[:keys]
+      args += %W{ -o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'} }
       if options.key?(:forward_agent)
-        args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
+        args += %W{ -o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'} }
       end
-      Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
-      args += %W[ -p #{port} ]
-      args += %W[ #{username}@#{hostname} ]
+      Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key} } }
+      args += %W{ -p #{port} }
+      args += %W{ #{username}@#{hostname} }
 
       LoginCommand.new("ssh", args)
     end
@@ -158,7 +171,7 @@ module Kitchen
     SOCKET_EXCEPTIONS = [
       SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH,
       Errno::ENETUNREACH, IOError
-    ]
+    ].freeze
 
     # @return [String] the remote hostname
     # @api private
@@ -192,7 +205,7 @@ module Kitchen
       rescue_exceptions = [
         Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
         Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-        Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
+        Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout
       ]
       retries = options[:ssh_retries] || 3
 
@@ -234,11 +247,9 @@ module Kitchen
     def exec_with_exit(cmd)
       exit_code = nil
       session.open_channel do |channel|
-
         channel.request_pty
 
         channel.exec(cmd) do |_ch, _success|
-
           channel.on_data do |_ch, data|
             logger << data
           end

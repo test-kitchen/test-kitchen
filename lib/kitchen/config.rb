@@ -17,7 +17,6 @@
 # limitations under the License.
 
 module Kitchen
-
   # Base configuration class for Kitchen. This class exposes configuration such
   # as the location of the Kitchen config file, instances, log_levels, etc.
   # This object is a factory object, meaning that it is responsible for
@@ -48,7 +47,6 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Config
-
     # @return [String] the absolute path to the root of a Test Kitchen project
     # @api private
     attr_reader :kitchen_root
@@ -77,6 +75,14 @@ module Kitchen
     # @api private
     attr_accessor :log_overwrite
 
+    # @return [String] an absolute path to the directory containing test suites
+    # @api private
+    attr_accessor :test_base_path
+
+    # @return [Boolean] whether to force color output or not in logger
+    # @api private
+    attr_accessor :colorize
+
     # Creates a new configuration, representing a particular testing
     # configuration for a project.
     #
@@ -100,6 +106,7 @@ module Kitchen
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
       @log_level      = options.fetch(:log_level) { Kitchen::DEFAULT_LOG_LEVEL }
       @log_overwrite  = options.fetch(:log_overwrite) { Kitchen::DEFAULT_LOG_OVERWRITE }
+      @colorize       = options.fetch(:colorize) { Kitchen.tty? }
       @log_root       = options.fetch(:log_root) { default_log_root }
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
     end
@@ -200,18 +207,18 @@ module Kitchen
     # @api private
     def kitchen_config
       @kitchen_config ||= {
-        :defaults => {
-          :driver       => Driver::DEFAULT_PLUGIN,
-          :provisioner  => Provisioner::DEFAULT_PLUGIN,
-          :verifier     => Verifier::DEFAULT_PLUGIN,
-          :transport    => lambda { |_suite, platform|
+        defaults: {
+          driver: Driver::DEFAULT_PLUGIN,
+          provisioner: Provisioner::DEFAULT_PLUGIN,
+          verifier: Verifier::DEFAULT_PLUGIN,
+          transport: lambda do |_suite, platform|
             platform =~ /^win/i ? "winrm" : Transport::DEFAULT_PLUGIN
-          }
+          end,
         },
-        :kitchen_root   => kitchen_root,
-        :test_base_path => test_base_path,
-        :log_level      => log_level,
-        :log_overwrite  => log_overwrite
+        kitchen_root: kitchen_root,
+        test_base_path: test_base_path,
+        log_level: log_level,
+        log_overwrite: log_overwrite,
       }
     end
 
@@ -236,14 +243,14 @@ module Kitchen
     # @api private
     def new_instance(suite, platform, index)
       Instance.new(
-        :driver       => new_driver(suite, platform),
-        :logger       => new_instance_logger(suite, platform, index),
-        :suite        => suite,
-        :platform     => platform,
-        :provisioner  => new_provisioner(suite, platform),
-        :transport    => new_transport(suite, platform),
-        :verifier     => new_verifier(suite, platform),
-        :state_file   => new_state_file(suite, platform)
+        driver: new_driver(suite, platform),
+        logger: new_instance_logger(suite, platform, index),
+        suite: suite,
+        platform: platform,
+        provisioner: new_provisioner(suite, platform),
+        transport: new_transport(suite, platform),
+        verifier: new_verifier(suite, platform),
+        state_file: new_state_file(suite, platform)
       )
     end
 
@@ -259,12 +266,13 @@ module Kitchen
       name = instance_name(suite, platform)
       log_location = File.join(log_root, "#{name}.log").to_s
       Logger.new(
-        :stdout   => STDOUT,
-        :color    => Color::COLORS[index % Color::COLORS.size].to_sym,
-        :logdev   => log_location,
-        :level    => Util.to_logger_level(log_level),
-        :log_overwrite => log_overwrite,
-        :progname => name
+        stdout: STDOUT,
+        color: Color::COLORS[index % Color::COLORS.size].to_sym,
+        logdev: log_location,
+        level: Util.to_logger_level(log_level),
+        log_overwrite: log_overwrite,
+        progname: name,
+        colorize: @colorize
       )
     end
 

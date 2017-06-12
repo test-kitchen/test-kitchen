@@ -19,14 +19,12 @@
 require "thor/util"
 
 module Kitchen
-
   # A transport is responsible for the communication with an instance,
   # that is remote comands and other actions such as file transfer,
   # login, etc.
   #
   # @author Salim Afiune <salim@afiunemaya.com.mx>
   module Transport
-
     # Default transport to use
     DEFAULT_PLUGIN = "ssh".freeze
 
@@ -46,9 +44,9 @@ module Kitchen
       object
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' transport from the load path." \
-          " Please ensure that your transport is installed as a gem or" \
-          " included in your Gemfile if using Bundler."
+            "Could not load the '#{plugin}' transport from the load path." \
+              " Please ensure that your transport is installed as a gem or" \
+              " included in your Gemfile if using Bundler."
     end
   end
 end

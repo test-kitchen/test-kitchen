@@ -22,44 +22,39 @@ require "kitchen"
 require "kitchen/errors"
 
 describe Kitchen::Error do
-
   let(:exception) { Kitchen::StandardError.new("shoot") }
 
   describe ".formatted_exception" do
-
     it "returns an array of a formatted message" do
       Kitchen::Error.formatted_exception(exception).must_equal([
-        "------Exception-------",
-        "Class: Kitchen::StandardError",
-        "Message: shoot",
-        "----------------------"
-      ])
+                                                                 "------Exception-------",
+                                                                 "Class: Kitchen::StandardError",
+                                                                 "Message: shoot",
+                                                                 "----------------------",
+                                                               ])
     end
 
     it "takes a customized title" do
-      Kitchen::Error.formatted_exception(exception, "Trouble").first.
-        must_equal("-------Trouble--------")
+      Kitchen::Error.formatted_exception(exception, "Trouble").first
+                    .must_equal("-------Trouble--------")
     end
   end
 
   describe ".formatted_exception" do
-
     it "returns an array of a formatted message with a nil backtrace" do
       Kitchen::Error.formatted_trace(exception).must_equal([
-        "------Exception-------",
-        "Class: Kitchen::StandardError",
-        "Message: shoot",
-        "------Backtrace-------",
-        nil,
-        "----------------------"
-      ])
+                                                             "------Exception-------",
+                                                             "Class: Kitchen::StandardError",
+                                                             "Message: shoot",
+                                                             "----------------------",
+                                                           ])
     end
 
     it "returns an array containing the exception's backtrace" do
       begin
         raise Kitchen::StandardError, "shoot"
       rescue => e
-        Kitchen::Error.formatted_trace(e)[4...-1].must_equal e.backtrace
+        Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
       end
     end
 
@@ -70,23 +65,42 @@ describe Kitchen::Error do
         e = Kitchen::StandardError.new("shoot")
 
         Kitchen::Error.formatted_trace(e).must_equal([
-          "------Exception-------",
-          "Class: Kitchen::StandardError",
-          "Message: shoot",
-          "---Nested Exception---",
-          "Class: IOError",
-          "Message: no disk, yo",
-          "------Backtrace-------",
-          nil,
-          "----------------------"
-        ])
+                                                       "------Exception-------",
+                                                       "Class: Kitchen::StandardError",
+                                                       "Message: shoot",
+                                                       "----------------------",
+                                                       "---Nested Exception---",
+                                                       "Class: IOError",
+                                                       "Message: no disk, yo",
+                                                       "----------------------",
+                                                     ])
       end
+    end
+
+    it "returns an array when an error has more than one error in original" do
+      error_array = []
+      error_array << Kitchen::StandardError.new("one")
+      error_array << Kitchen::StandardError.new("two")
+      composite_error = Kitchen::StandardError.new("array", error_array)
+
+      Kitchen::Error.formatted_trace(composite_error).must_equal([
+                                                                   "------Exception-------",
+                                                                   "Class: Kitchen::StandardError",
+                                                                   "Message: array",
+                                                                   "----------------------",
+                                                                   "-Composite Exception--",
+                                                                   "Class: Kitchen::StandardError",
+                                                                   "Message: one", "----------------------",
+                                                                   "-Composite Exception--",
+                                                                   "Class: Kitchen::StandardError",
+                                                                   "Message: two",
+                                                                   "----------------------"
+                                                                 ])
     end
   end
 end
 
 describe Kitchen::StandardError do
-
   it "is a kind of Kitchen::Error" do
     Kitchen::StandardError.new("oops").must_be_kind_of Kitchen::Error
   end
@@ -112,7 +126,6 @@ end
   Kitchen::UserError, Kitchen::ClientError, Kitchen::TransientFailure
 ].each do |klass|
   describe klass do
-
     it "is a kind of Kitchen::StandardError" do
       klass.new("oops").must_be_kind_of Kitchen::StandardError
     end
@@ -123,7 +136,6 @@ end
   Kitchen::ActionFailed, Kitchen::InstanceFailure
 ].each do |klass|
   describe klass do
-
     it "is a kind of Kitchen::TransientFailure" do
       klass.new("oops").must_be_kind_of Kitchen::TransientFailure
     end
@@ -131,11 +143,9 @@ end
 end
 
 describe Kitchen do
-
   describe ".with_friendly_errors" do
-
     let(:logger_io) { StringIO.new }
-    let(:logger)    { Kitchen::Logger.new(:logdev => logger_io) }
+    let(:logger)    { Kitchen::Logger.new(logdev: logger_io) }
 
     before do
       Kitchen.stubs(:tty?).returns(true)
@@ -151,7 +161,6 @@ describe Kitchen do
     end
 
     describe "for instance failures" do
-
       def go_boom
         Kitchen.with_friendly_errors do
           begin
@@ -176,7 +185,7 @@ describe Kitchen do
           ">>>>>> ------Exception-------",
           ">>>>>> Class: IOError",
           ">>>>>> Message: no stuff",
-          ">>>>>> ----------------------"
+          ">>>>>> ----------------------",
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
 
         begin
@@ -193,7 +202,7 @@ describe Kitchen do
           ">>>>>> ------Exception-------",
           ">>>>>> Class: IOError",
           ">>>>>> Message: no stuff",
-          ">>>>>> ----------------------"
+          ">>>>>> ----------------------",
         ].join("\n").concat("\n")
 
         begin
@@ -223,7 +232,6 @@ describe Kitchen do
     end
 
     describe "for unexpected failures" do
-
       def go_boom
         Kitchen.with_friendly_errors do
           begin
@@ -249,7 +257,7 @@ describe Kitchen do
           ">>>>>> Message: ah crap",
           ">>>>>> ----------------------",
           ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
-          ">>>>>> Also try running `kitchen diagnose --all` for configuration\n"
+          ">>>>>> Also try running `kitchen diagnose --all` for configuration\n",
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
 
         begin
@@ -267,7 +275,7 @@ describe Kitchen do
           ">>>>>> Message: ah crap",
           ">>>>>> ----------------------",
           ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
-          ">>>>>> Also try running `kitchen diagnose --all` for configuration"
+          ">>>>>> Also try running `kitchen diagnose --all` for configuration",
         ].join("\n").concat("\n")
 
         begin
@@ -281,12 +289,12 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string.
-            must_match(/ERROR -- Kitchen: ------Exception-------$/)
-          logger_io.string.
-            must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
-          logger_io.string.
-            must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
+          logger_io.string
+                   .must_match(/ERROR -- Kitchen: ------Exception-------$/)
+          logger_io.string
+                   .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
+          logger_io.string
+                   .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
         end
       end
 
@@ -296,12 +304,12 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string.
-            must_match(/DEBUG -- Kitchen: ------Exception-------$/)
-          logger_io.string.
-            must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
-          logger_io.string.
-            must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
+          logger_io.string
+                   .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
+          logger_io.string
+                   .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
+          logger_io.string
+                   .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
         end
       end
     end

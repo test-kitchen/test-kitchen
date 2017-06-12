@@ -21,26 +21,31 @@ require "rake/tasklib"
 require "kitchen"
 
 module Kitchen
-
   # Kitchen Rake task generator.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class RakeTasks < ::Rake::TaskLib
-
     # Creates Kitchen Rake tasks and allows the callee to configure it.
     #
     # @yield [self] gives itself to the block
-    def initialize
-      @config = Kitchen::Config.new
+    def initialize(cfg = {})
+      @loader = Kitchen::Loader::YAML.new(
+        project_config: ENV["KITCHEN_YAML"],
+        local_config: ENV["KITCHEN_LOCAL_YAML"],
+        global_config: ENV["KITCHEN_GLOBAL_YAML"]
+      )
+      @config = Kitchen::Config.new(
+        { loader: @loader }.merge(cfg)
+      )
       Kitchen.logger = Kitchen.default_file_logger(nil, false)
       yield self if block_given?
       define
     end
 
-    private
-
     # @return [Config] a Kitchen::Config
     attr_reader :config
+
+    private
 
     # Generates a test Rake task for each instance and one to test all
     # instances in serial.

@@ -21,14 +21,11 @@ require "kitchen/command"
 require "benchmark"
 
 module Kitchen
-
   module Command
-
     # Command to run a single action one or more instances.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Action < Kitchen::Command::Base
-
       include RunAction
 
       # Invoke the command.

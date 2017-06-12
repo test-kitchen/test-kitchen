@@ -20,18 +20,15 @@ require "benchmark"
 require "fileutils"
 
 module Kitchen
-
   # An instance of a suite running on a platform. A created instance may be a
   # local virtual machine, cloud instance, container, or even a bare metal
   # server, which is determined by the platform's driver.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class Instance
-
     include Logging
 
     class << self
-
       # @return [Hash] a hash of mutxes, arranged by Driver class names
       # @api private
       attr_accessor :mutexes
@@ -42,7 +39,7 @@ module Kitchen
       # @param platform [Platform,#name] a Platform
       # @return [String] a normalized, consistent name for an instance
       def name_for(suite, platform)
-        "#{suite.name}-#{platform.name}".gsub(%r{[_,/]}, "-").gsub(/\./, "")
+        "#{suite.name}-#{platform.name}".gsub(%r{[_,/]}, "-").delete(".")
       end
     end
 
@@ -210,12 +207,12 @@ module Kitchen
       end
 
       lc = if legacy_ssh_base_driver?
-        legacy_ssh_base_login(state)
-      else
-        transport.connection(state).login_command
-      end
+             legacy_ssh_base_login(state)
+           else
+             transport.connection(state).login_command
+           end
 
-      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} } \
+      debug(%{Login command: #{lc.command} #{lc.arguments.join(' ')} } \
         "(Options: #{lc.options})")
       Kernel.exec(*lc.exec_args)
     end
@@ -229,11 +226,18 @@ module Kitchen
       end
     end
 
+    # Perform package.
+    #
+    def package_action
+      banner "Packaging remote instance"
+      driver.package(state_file.read)
+    end
+
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      result = Hash.new
+      result = {}
       [
         :platform, :state_file, :driver, :provisioner, :transport, :verifier
       ].each do |sym|
@@ -248,14 +252,14 @@ module Kitchen
     #
     # @return [Hash] a diagnostic hash
     def diagnose_plugins
-      result = Hash.new
+      result = {}
       [:driver, :provisioner, :verifier, :transport].each do |sym|
         obj = send(sym)
         result[sym] = if obj.respond_to?(:diagnose_plugin)
-          obj.diagnose_plugin
-        else
-          :unknown
-        end
+                        obj.diagnose_plugin
+                      else
+                        :unknown
+                      end
       end
       result
     end
@@ -265,6 +269,20 @@ module Kitchen
     # @return [String] a named action which was last successfully completed
     def last_action
       state_file.read[:last_action]
+    end
+
+    # Returns the error encountered on the last action on the instance
+    #
+    # @return [String] the message of the last error
+    def last_error
+      state_file.read[:last_error]
+    end
+
+    # Clean up any per-instance resources before exiting.
+    #
+    # @return [void]
+    def cleanup!
+      @transport.cleanup! if @transport
     end
 
     private
@@ -300,7 +318,7 @@ module Kitchen
 
       if driver.class.serial_actions
         Kitchen.mutex.synchronize do
-          self.class.mutexes ||= Hash.new
+          self.class.mutexes ||= {}
           self.class.mutexes[driver.class] = Mutex.new
         end
       end
@@ -384,6 +402,20 @@ module Kitchen
       self
     end
 
+    # returns true, if the verifier is busser
+    def verifier_busser?(verifier)
+      !defined?(Kitchen::Verifier::Busser).nil? && verifier.is_a?(Kitchen::Verifier::Busser)
+    end
+
+    # returns true, if the verifier is dummy
+    def verifier_dummy?(verifier)
+      !defined?(Kitchen::Verifier::Dummy).nil? && verifier.is_a?(Kitchen::Verifier::Dummy)
+    end
+
+    def use_legacy_ssh_verifier?(verifier)
+      verifier_busser?(verifier) || verifier_dummy?(verifier)
+    end
+
     # Perform the verify action.
     #
     # @see Driver::Base#verify
@@ -392,8 +424,12 @@ module Kitchen
     def verify_action
       banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
-        if legacy_ssh_base_driver?
+        # use special handling for legacy driver
+        if legacy_ssh_base_driver? && use_legacy_ssh_verifier?(verifier)
           legacy_ssh_base_verify(state)
+        elsif legacy_ssh_base_driver?
+          # read ssh options from legacy driver
+          verifier.call(driver.legacy_state(state))
         else
           verifier.call(state)
         end
@@ -453,16 +489,19 @@ module Kitchen
         synchronize_or_call(what, state, &block)
       end
       state[:last_action] = what.to_s
+      state[:last_error] = nil
       elapsed
     rescue ActionFailed => e
       log_failure(what, e)
+      state[:last_error] = e.class.name
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{name}.log for more details",
-        e.backtrace)
+            e.backtrace)
     rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
+      state[:last_error] = e.class.name
       raise ActionFailed,
-        "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+            "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
     ensure
       state_file.write(state)
     end
@@ -477,15 +516,15 @@ module Kitchen
     # @param state [Hash] a mutable state hash for this instance
     # @param block [Proc] a block to be called
     # @api private
-    def synchronize_or_call(what, state, &block)
+    def synchronize_or_call(what, state)
       if Array(driver.class.serial_actions).include?(what)
         debug("#{to_str} is synchronizing on #{driver.class}##{what}")
         self.class.mutexes[driver.class].synchronize do
           debug("#{to_str} is messaging #{driver.class}##{what}")
-          block.call(state)
+          yield(state)
         end
       else
-        block.call(state)
+        yield(state)
       end
     end
 
@@ -597,7 +636,6 @@ module Kitchen
     # @api private
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class FSM
-
       # Returns an Array of all transitions to bring an Instance from its last
       # reported transistioned state into the desired transitioned state.
       #
@@ -618,7 +656,7 @@ module Kitchen
         end
       end
 
-      TRANSITIONS = [:destroy, :create, :converge, :setup, :verify]
+      TRANSITIONS = [:destroy, :create, :converge, :setup, :verify].freeze
 
       # Determines the index of a state in the state lifecycle vector. Woah.
       #

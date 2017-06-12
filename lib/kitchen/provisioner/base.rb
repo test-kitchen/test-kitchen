@@ -17,23 +17,24 @@
 # limitations under the License.
 
 module Kitchen
-
   module Provisioner
-
     # Base class for a provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
       default_config :http_proxy, nil
-
       default_config :https_proxy, nil
+      default_config :ftp_proxy, nil
+
+      default_config :retry_on_exit_code, []
+      default_config :max_retries, 1
+      default_config :wait_for_retry, 30
 
       default_config :root_path do |provisioner|
-        provisioner.windows_os? ? "$env:TEMP\\kitchen" : "/tmp/kitchen"
+        provisioner.windows_os? ? '$env:TEMP\\kitchen' : "/tmp/kitchen"
       end
 
       default_config :sudo do |provisioner|
@@ -43,6 +44,8 @@ module Kitchen
       default_config :sudo_command do |provisioner|
         provisioner.windows_os? ? nil : "sudo -E"
       end
+
+      default_config :command_prefix, nil
 
       expand_path_for :test_base_path
 
@@ -57,6 +60,7 @@ module Kitchen
       #
       # @param state [Hash] mutable instance state
       # @raise [ActionFailed] if the action could not be completed
+      # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
         sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
@@ -68,7 +72,12 @@ module Kitchen
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
           conn.execute(prepare_command)
-          conn.execute(run_command)
+          conn.execute_with_retry(
+            run_command,
+            config[:retry_on_exit_code],
+            config[:max_retries],
+            config[:wait_for_retry]
+          )
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
@@ -176,11 +185,9 @@ module Kitchen
       #
       # @param version [Integer,String] a version number
       #
-      # rubocop:disable Style/TrivialAccessors
       def self.kitchen_provisioner_api_version(version)
         @api_version = version
       end
-      # rubocop:enable Style/TrivialAccessors
 
       private
 
@@ -195,7 +202,7 @@ module Kitchen
       def shell_code_from_file(vars, file)
         src_file = File.join(
           File.dirname(__FILE__),
-          %w[.. .. .. support],
+          %w{.. .. .. support},
           file + (powershell_shell? ? ".ps1" : ".sh")
         )
 
@@ -205,10 +212,31 @@ module Kitchen
       # Conditionally prefixes a command with a sudo command.
       #
       # @param command [String] command to be prefixed
-      # @return [String] the command, conditionaly prefixed with sudo
+      # @return [String] the command, conditionally prefixed with sudo
       # @api private
       def sudo(script)
-        config[:sudo] ? "#{config[:sudo_command]} #{script}" : script
+        "#{sudo_command} #{script}".lstrip
+      end
+
+      # Returns the sudo command to use or empty string if sudo is not configured
+      #
+      # @return [String] the sudo command if sudo config is true
+      # @api private
+      def sudo_command
+        config[:sudo] ? config[:sudo_command].to_s : ""
+      end
+
+      # Conditionally prefixes a command with a command prefix.
+      # This should generally be done after a command has been
+      # conditionally prefixed by #sudo as certain platforms, such as
+      # Cisco Nexus, require all commands to be run with a prefix to
+      # obtain outbound network access.
+      #
+      # @param command [String] command to be prefixed
+      # @return [String] the command, conditionally prefixed with the configured prefix
+      # @api private
+      def prefix_command(script)
+        config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
       end
     end
   end

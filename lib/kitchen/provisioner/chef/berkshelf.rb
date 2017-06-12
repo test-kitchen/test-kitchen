@@ -20,17 +20,13 @@ require "kitchen/errors"
 require "kitchen/logging"
 
 module Kitchen
-
   module Provisioner
-
     module Chef
-
       # Chef cookbook resolver that uses Berkshelf and a Berksfile to calculate
       # dependencies.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Berkshelf
-
         include Logging
 
         # Creates a new cookbook resolver.
@@ -40,17 +36,18 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(berksfile, path, logger = Kitchen.logger)
+        def initialize(berksfile, path, logger: Kitchen.logger, always_update: false)
           @berksfile  = berksfile
           @path       = path
           @logger     = logger
+          @always_update = always_update
         end
 
         # Loads the library code required to use the resolver.
         #
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def self.load!(logger = Kitchen.logger)
+        def self.load!(logger: Kitchen.logger)
           load_berkshelf!(logger)
         end
 
@@ -62,13 +59,11 @@ module Kitchen
           debug("Using Berksfile from #{berksfile}")
 
           ::Berkshelf.ui.mute do
-            if ::Berkshelf::Berksfile.method_defined?(:vendor)
-              # Berkshelf 3.0 requires the directory to not exist
-              FileUtils.rm_rf(path)
-              ::Berkshelf::Berksfile.from_file(berksfile).vendor(path)
-            else
-              ::Berkshelf::Berksfile.from_file(berksfile).install(:path => path)
-            end
+            berksfile_obj = ::Berkshelf::Berksfile.from_file(berksfile)
+            berksfile_obj.update if always_update && berksfile_obj.lockfile.present?
+            # Berkshelf requires the directory to not exist
+            FileUtils.rm_rf(path)
+            berksfile_obj.vendor(path)
           end
         end
 
@@ -85,6 +80,10 @@ module Kitchen
         # @return [Kitchen::Logger] a logger to use for output
         # @api private
         attr_reader :logger
+
+        # @return [Boolean] If true, always update cookbooks in Berkshelf.
+        # @api private
+        attr_reader :always_update
 
         # Load the Berkshelf-specific libary code.
         #
@@ -106,7 +105,7 @@ module Kitchen
             " `gem install berkshelf` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
           raise UserError,
-            "Could not load or activate Berkshelf (#{e.message})"
+                "Could not load or activate Berkshelf (#{e.message})"
         end
       end
     end

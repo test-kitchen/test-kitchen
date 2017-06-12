@@ -3,7 +3,9 @@
 .bundle
 .config
 .yardoc
-Gemfile.lock
+binstubs
+Gemfile*.lock
+Gemfile.local
 InstalledFiles
 _yardoc
 coverage
@@ -23,3 +25,4 @@ tmp
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml
+Berksfile.lock

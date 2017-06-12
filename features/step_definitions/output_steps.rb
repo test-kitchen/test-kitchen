@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
 
 Then(/^the stdout should match \/([^\/]*)\/$/) do |expected|
-  assert_matching_output(expected, all_stdout)
+  expect(last_command_started).to have_output_on_stdout(Regexp.new(expected))
 end

@@ -21,12 +21,10 @@ require "thor"
 require "kitchen"
 
 module Kitchen
-
   # Kitchen Thor task generator.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class ThorTasks < Thor
-
     namespace :kitchen
 
     # Creates Kitchen Thor tasks and allows the callee to configure it.
@@ -52,14 +50,14 @@ module Kitchen
     def define
       config.instances.each do |instance|
         self.class.desc instance.name, "Run #{instance.name} test instance"
-        self.class.send(:define_method, instance.name.gsub(/-/, "_")) do
+        self.class.send(:define_method, instance.name.tr("-", "_")) do
           instance.test(:always)
         end
       end
 
       self.class.desc "all", "Run all test instances"
       self.class.send(:define_method, :all) do
-        config.instances.each { |i| invoke i.name.gsub(/-/, "_") }
+        config.instances.each { |i| invoke i.name.tr("-", "_") }
       end
     end
   end

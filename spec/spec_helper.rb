@@ -18,10 +18,7 @@
 
 gem "minitest"
 
-if ENV["CODECLIMATE_REPO_TOKEN"]
-  require "codeclimate-test-reporter"
-  CodeClimate::TestReporter.start
-elsif ENV["COVERAGE"]
+begin
   require "simplecov"
   SimpleCov.profiles.define "gem" do
     command_name "Specs"
@@ -33,6 +30,8 @@ elsif ENV["COVERAGE"]
     add_group "Libraries", "/lib/"
   end
   SimpleCov.start "gem"
+rescue LoadError
+  puts "add simplecov to Gemfile.local or GEMFILE_MOD to generate code coverage"
 end
 
 require "fakefs/safe"
@@ -43,7 +42,20 @@ require "tempfile"
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO
   def self.read(*args)
-    File.open(args[0], "rb") { |f| f.read(args[1]) }
+    length = args[1]
+    offset = args[2]
+    opt = args[3]
+    if length.is_a? Hash
+      opt = length
+      length = nil
+    elsif offset.is_a? Hash
+      opt = offset
+    end
+    if opt && opt.key?(:mode)
+      File.open(args[0], opt) { |f| f.read(length) }
+    else
+      File.open(args[0], "rb", opt) { |f| f.read(length) }
+    end
   end
 end
 
@@ -53,4 +65,20 @@ def with_fake_fs
   yield
   FakeFS.deactivate!
   FakeFS::FileSystem.clear
+end
+
+def running_tests_on_windows?
+  ENV["OS"] == "Windows_NT"
+end
+
+def os_safe_root_path(root_path)
+  if running_tests_on_windows?
+    File.join(ENV["SystemDrive"], root_path).to_s
+  else
+    root_path
+  end
+end
+
+def padded_octal_string(integer)
+  integer.to_s(8).rjust(4, "0")
 end

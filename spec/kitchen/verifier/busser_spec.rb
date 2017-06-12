@@ -22,20 +22,19 @@ require "kitchen"
 require "kitchen/verifier/busser"
 
 describe Kitchen::Verifier::Busser do
-
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { Hash.new }
-  let(:platform)      { stub(:os_type => nil, :shell_type => nil) }
-  let(:suite)         { stub(:name => "germany") }
+  let(:platform)      { stub(os_type: nil, shell_type: nil) }
+  let(:suite)         { stub(name: "germany") }
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :platform => platform,
-      :suite => suite,
-      :to_str => "instance"
+      name: "coolbeans",
+      logger: logger,
+      platform: platform,
+      suite: suite,
+      to_str: "instance"
     )
   end
 
@@ -46,30 +45,30 @@ describe Kitchen::Verifier::Busser do
   let(:files) do
     {
       "mondospec/charlie" => {
-        :content => "charlie",
-        :perms => "0764"
+        content: "charlie",
+        perms: (running_tests_on_windows? ? "0644" : "0764"),
       },
       "minispec/beta" => {
-        :content => "beta",
-        :perms => "0644"
+        content: "beta",
+        perms: "0644",
       },
       "abba/alpha" => {
-        :content => "alpha",
-        :perms => "0440"
-      }
+        content: "alpha",
+        perms: (running_tests_on_windows? ? "0444" : "0440"),
+      },
     }
   end
 
   let(:helper_files) do
     {
       "minispec/spec_helper" => {
-        :content => "helping",
-        :perms => "0644"
+        content: "helping",
+        perms: "0644",
       },
       "abba/common" => {
-        :content => "yeppers",
-        :perms => "0664"
-      }
+        content: "yeppers",
+        perms: (running_tests_on_windows? ? "0644" : "0664"),
+      },
     }
   end
 
@@ -98,10 +97,10 @@ describe Kitchen::Verifier::Busser do
   end
 
   describe "configuration" do
-
     describe "for unix operating systems" do
-
-      before { platform.stubs(:os_type).returns("unix") }
+      before do
+        platform.stubs(:os_type).returns("unix")
+      end
 
       it ":ruby_bindir defaults the an Omnibus Chef installation" do
         verifier[:ruby_bindir].must_equal "/opt/chef/embedded/bin"
@@ -115,18 +114,17 @@ describe Kitchen::Verifier::Busser do
     end
 
     describe "for windows operating systems" do
-
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":ruby_bindir defaults the an Omnibus Chef installation" do
-        verifier[:ruby_bindir].
-          must_equal "$env:systemdrive\\opscode\\chef\\embedded\\bin"
+        verifier[:ruby_bindir]
+          .must_equal '$env:systemdrive\\opscode\\chef\\embedded\\bin'
       end
 
       it ":busser_bin defaults to a binstub under :root_path" do
-        config[:root_path] = "\\beep"
+        config[:root_path] = '\\beep'
 
-        verifier[:busser_bin].must_equal "\\beep\\bin\\busser.bat"
+        verifier[:busser_bin].must_equal '\\beep\\bin\\busser.bat'
       end
     end
 
@@ -135,7 +133,6 @@ describe Kitchen::Verifier::Busser do
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.common_bourne_variable_specs
     it "uses bourne shell" do
       cmd.must_match(/\Ash -c '$/)
@@ -162,9 +159,7 @@ describe Kitchen::Verifier::Busser do
       cmd.must_match regexify(%{GEM_CACHE="/r/gems/cache"; export GEM_CACHE})
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.common_powershell_variable_specs
     it "sets the BUSSER_ROOT environment variable" do
       cmd.must_match regexify(%{$env:BUSSER_ROOT = "\\r"})
@@ -182,16 +177,12 @@ describe Kitchen::Verifier::Busser do
       cmd.must_match regexify(%{$env:GEM_CACHE = "\\r\\gems\\cache"})
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   describe "#install_command" do
-
     let(:cmd) { verifier.install_command }
 
     describe "with no suite test files" do
-
       describe "for bourne shells" do
-
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
@@ -200,7 +191,6 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
@@ -213,9 +203,26 @@ describe Kitchen::Verifier::Busser do
     end
 
     describe "with suite test files" do
+      describe "common behavior" do
+        before do
+          platform.stubs(:shell_type).returns("fake")
+          create_test_files
+        end
+
+        it "prefixs the whole command with the command_prefix if set" do
+          config[:command_prefix] = "my_prefix"
+
+          cmd.must_match(/\Amy_prefix /)
+        end
+
+        it "does not prefix the command if command_prefix is not set" do
+          config[:command_prefix] = nil
+
+          cmd.wont_match(/\Amy_prefix /)
+        end
+      end
 
       describe "for bourne shells" do
-
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
@@ -241,7 +248,9 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{gem_install_args="busser --no-rdoc --no-ri"})
+            'gem_install_args="busser --no-rdoc --no-ri --no-format-executable' \
+            ' -n /r/bin --no-user-install"'
+          )
         end
 
         it "prepends sudo for busser binstub command when :sudo is set" do
@@ -261,13 +270,12 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = "\\rbd"
-          config[:root_path] = "\\r"
+          config[:ruby_bindir] = '\\rbd'
+          config[:root_path] = '\\r'
         end
 
         common_powershell_variable_specs
@@ -288,7 +296,9 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            %{$gem_install_args = "busser --no-rdoc --no-ri"})
+            '$gem_install_args = "busser --no-rdoc --no-ri --no-format-executable' \
+            ' -n \\r\\bin --no-user-install"'
+          )
         end
 
         it "sets path to busser binstub command" do
@@ -304,13 +314,10 @@ describe Kitchen::Verifier::Busser do
   end
 
   describe "#init_command" do
-
     let(:cmd) { verifier.init_command }
 
     describe "with no suite test files" do
-
       describe "for bourne shells" do
-
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
@@ -319,7 +326,6 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
@@ -332,9 +338,26 @@ describe Kitchen::Verifier::Busser do
     end
 
     describe "with suite test files" do
+      describe "common behavior" do
+        before do
+          platform.stubs(:shell_type).returns("fake")
+          create_test_files
+        end
+
+        it "prefixs the whole command with the command_prefix if set" do
+          config[:command_prefix] = "my_prefix"
+
+          cmd.must_match(/\Amy_prefix /)
+        end
+
+        it "does not prefix the command if command_prefix is not set" do
+          config[:command_prefix] = nil
+
+          cmd.wont_match(/\Amy_prefix /)
+        end
+      end
 
       describe "for bourne shells" do
-
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
@@ -361,19 +384,18 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = "\\rbd"
-          config[:root_path] = "\\r"
+          config[:ruby_bindir] = '\\rbd'
+          config[:root_path] = '\\r'
         end
 
         common_powershell_variable_specs
 
         it "runs busser's suite cleanup" do
-          config[:root_path] = "\\b"
+          config[:root_path] = '\\b'
 
           cmd.must_match regexify(%{& \\b\\bin\\busser.bat suite cleanup})
         end
@@ -382,13 +404,10 @@ describe Kitchen::Verifier::Busser do
   end
 
   describe "#run_command" do
-
     let(:cmd) { verifier.run_command }
 
     describe "with no suite test files" do
-
       describe "for bourne shells" do
-
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
@@ -397,7 +416,6 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
@@ -410,9 +428,26 @@ describe Kitchen::Verifier::Busser do
     end
 
     describe "with suite test files" do
+      describe "common behavior" do
+        before do
+          platform.stubs(:shell_type).returns("fake")
+          create_test_files
+        end
+
+        it "prefixs the whole command with the command_prefix if set" do
+          config[:command_prefix] = "my_prefix"
+
+          cmd.must_match(/\Amy_prefix /)
+        end
+
+        it "does not prefix the command if command_prefix is not set" do
+          config[:command_prefix] = nil
+
+          cmd.wont_match(/\Amy_prefix /)
+        end
+      end
 
       describe "for bourne shells" do
-
         before do
           platform.stubs(:shell_type).returns("bourne")
           create_test_files
@@ -439,28 +474,26 @@ describe Kitchen::Verifier::Busser do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
           create_test_files
-          config[:ruby_bindir] = "\\rbd"
-          config[:root_path] = "\\r"
+          config[:ruby_bindir] = '\\rbd'
+          config[:root_path] = '\\r'
         end
 
         common_powershell_variable_specs
 
         it "runs busser's test" do
-          config[:root_path] = "\\b"
+          config[:root_path] = '\\b'
 
-          cmd.must_match regexify(%{& \\b\\bin\\busser.bat test})
+          cmd.must_match regexify(%{& \\b\\bin\\busser.bat test}, :partial_line)
         end
       end
     end
   end
 
   describe "#create_sandbox" do
-
     before do
       create_test_files
     end
@@ -495,7 +528,6 @@ describe Kitchen::Verifier::Busser do
   end
 
   describe "Busser legacy behavior for code calling old method names" do
-
     let(:busser) { verifier }
 
     it "responds to #setup_cmd which calls #install_command" do
@@ -543,6 +575,6 @@ describe Kitchen::Verifier::Busser do
   end
 
   def warn_line_with(msg)
-    %r{^W, .* : #{Regexp.escape(msg)}}
+    /^W, .* : #{Regexp.escape(msg)}/
   end
 end

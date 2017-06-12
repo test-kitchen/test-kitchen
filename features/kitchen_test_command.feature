@@ -36,7 +36,7 @@ Feature: Running a full test instance test
   Scenario: Running a single instance never destroying an instance
     When I successfully run `kitchen test client-beans --destroy=never`
     And I successfully run `kitchen list client-beans`
-    Then the output should match /^client-beans\s+.+\s+Verified$/
+    Then the output should match /^client-beans\s+.+\s+Verified\s+\<None\>$/
 
   @spawn
   Scenario: Running a single instance always destroying an instance
@@ -49,7 +49,7 @@ Feature: Running a full test instance test
     When I run `kitchen test client-beans --destroy=always`
     Then the exit status should not be 0
     When I successfully run `kitchen list client-beans`
-    Then the output should match /^client-beans\s+.+\s+\<Not Created\>$/
+    Then the output should match /^client-beans\s+.+\s+\<Not Created\>\s+\<None\>$/
 
   @spawn
   Scenario: Running a single instance not destroying an instance on failure
@@ -62,14 +62,14 @@ Feature: Running a full test instance test
     When I run `kitchen test client-beans --destroy=passing`
     Then the exit status should not be 0
     When I successfully run `kitchen list client-beans`
-    Then the output should match /^client-beans\s+.+\s+Created$/
+    Then the output should match /^client-beans\s+.+\s+Created\s+Kitchen::ActionFailed$/
 
   @spawn
   Scenario: Running a single instance destroying an instance on success
     When I run `kitchen test client-beans --destroy=passing`
     Then the exit status should be 0
     When I successfully run `kitchen list client-beans`
-    Then the output should match /^client-beans\s+.+\s+\<Not Created\>$/
+    Then the output should match /^client-beans\s+.+\s+\<Not Created\>\s+\<None\>$/
 
   @spawn
   Scenario: Running all instances
@@ -82,7 +82,7 @@ Feature: Running a full test instance test
     Then the output should contain "Kitchen is finished."
     And the exit status should be 0
     When I successfully run `kitchen list`
-    Then the output should match /^client-cool\s+.+\s+\<Not Created\>$/
-    Then the output should match /^client-beans\s+.+\s+\<Not Created\>$/
-    Then the output should match /^server-cool\s+.+\s+\<Not Created\>$/
-    Then the output should match /^server-beans\s+.+\s+\<Not Created\>$/
+    Then the output should match /^client-cool\s+.+\s+\<Not Created\>\s+\<None\>$/
+    Then the output should match /^client-beans\s+.+\s+\<Not Created\>\s+\<None\>$/
+    Then the output should match /^server-cool\s+.+\s+\<Not Created\>\s+\<None\>$/
+    Then the output should match /^server-beans\s+.+\s+\<Not Created\>\s+\<None\>$/

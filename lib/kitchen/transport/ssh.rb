@@ -19,12 +19,13 @@
 require "kitchen"
 
 require "net/ssh"
+require "net/ssh/gateway"
 require "net/scp"
+require "timeout"
+require "benchmark"
 
 module Kitchen
-
   module Transport
-
     # Wrapped exception for any internally raised SSH-related errors.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
@@ -35,7 +36,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Ssh < Kitchen::Transport::Base
-
       kitchen_transport_api_version 1
 
       plugin_version Kitchen::VERSION
@@ -44,24 +44,40 @@ module Kitchen
       default_config :username, "root"
       default_config :keepalive, true
       default_config :keepalive_interval, 60
+      # needs to be one less than the configured sshd_config MaxSessions
+      default_config :max_ssh_sessions, 9
       default_config :connection_timeout, 15
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
 
+      default_config :ssh_gateway, nil
+      default_config :ssh_gateway_username, nil
+
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
-      default_config :compression, "zlib"
-      required_config :compression do |attr, value, transport|
-        if !%W[zlib none].include?(value)
-          raise UserError, "#{transport} :#{attr} value may only " \
-            "be set to `none' or `zlib'."
-        end
-      end
+      # compression disabled by default for speed
+      default_config :compression, false
+      required_config :compression
 
       default_config :compression_level do |transport|
-        transport[:compression] == "none" ? 0 : 6
+        transport[:compression] == false ? 0 : 6
+      end
+
+      def finalize_config!(instance)
+        super
+
+        # zlib was never a valid value and breaks in net-ssh >= 2.10
+        # TODO: remove these backwards compatiable casts in 2.0
+        case config[:compression]
+        when "zlib"
+          config[:compression] = "zlib@openssh.com"
+        when "none"
+          config[:compression] = false
+        end
+
+        self
       end
 
       # (see Base#connection)
@@ -75,6 +91,15 @@ module Kitchen
         end
       end
 
+      # (see Base#cleanup!)
+      def cleanup!
+        if @connection
+          logger.debug("[SSH] shutting previous connection #{@connection}")
+          @connection.close
+          @connection = @connection_options = nil
+        end
+      end
+
       # A Connection instance can be generated and re-generated, given new
       # connection details such as connection port, hostname, credentials, etc.
       # This object is responsible for carrying out the actions on the remote
@@ -82,7 +107,6 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
-
         # (see Base::Connection#close)
         def close
           return if @session.nil?
@@ -100,8 +124,10 @@ module Kitchen
           exit_code = execute_with_exit_code(command)
 
           if exit_code != 0
-            raise Transport::SshFailed,
-              "SSH exited (#{exit_code}) for command: [#{command}]"
+            raise Transport::SshFailed.new(
+              "SSH exited (#{exit_code}) for command: [#{command}]",
+              exit_code
+            )
           end
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SSH command failed (#{ex.message})"
@@ -109,29 +135,42 @@ module Kitchen
 
         # (see Base::Connection#login_command)
         def login_command
-          args  = %W[ -o UserKnownHostsFile=/dev/null ]
-          args += %W[ -o StrictHostKeyChecking=no ]
-          args += %W[ -o IdentitiesOnly=yes ] if options[:keys]
-          args += %W[ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} ]
+          args  = %w{ -o UserKnownHostsFile=/dev/null }
+          args += %w{ -o StrictHostKeyChecking=no }
+          args += %w{ -o IdentitiesOnly=yes } if options[:keys]
+          args += %W{ -o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'} }
           if options.key?(:forward_agent)
-            args += %W[ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} ]
+            args += %W{ -o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'} }
           end
-          Array(options[:keys]).each { |ssh_key| args += %W[ -i #{ssh_key} ] }
-          args += %W[ -p #{port} ]
-          args += %W[ #{username}@#{hostname} ]
+          if ssh_gateway
+            gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
+            # Should support other ports than 22 for ssh gateways
+            args += %W{ -o ProxyCommand=#{gateway_command} -p 22 }
+          end
+          Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key} } }
+          args += %W{ -p #{port} }
+          args += %W{ #{username}@#{hostname} }
 
           LoginCommand.new("ssh", args)
         end
 
         # (see Base::Connection#upload)
         def upload(locals, remote)
-          Array(locals).each do |local|
-            opts = File.directory?(local) ? { :recursive => true } : {}
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
+          elapsed = Benchmark.measure do
+            waits = []
+            Array(locals).map do |local|
+              opts = File.directory?(local) ? { recursive: true } : {}
 
-            session.scp.upload!(local, remote, opts) do |_ch, name, sent, total|
-              logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
+              waits.push session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
+                logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
+              end
+              waits.shift.wait while waits.length >= max_ssh_sessions
             end
+            waits.each(&:wait)
           end
+          delta = Util.duration(elapsed.real)
+          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SCP upload failed (#{ex.message})"
         end
@@ -140,9 +179,9 @@ module Kitchen
         def wait_until_ready
           delay = 3
           session(
-            :retries  => max_wait_until_ready / delay,
-            :delay    => delay,
-            :message  => "Waiting for SSH service on #{hostname}:#{port}, " \
+            retries: max_wait_until_ready / delay,
+            delay: delay,
+            message: "Waiting for SSH service on #{hostname}:#{port}, " \
               "retrying in #{delay} seconds"
           )
           execute(PING_COMMAND.dup)
@@ -153,10 +192,15 @@ module Kitchen
         PING_COMMAND = "echo '[SSH] Established'".freeze
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
-          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
-          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-          Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Timeout::Error
+          Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
+          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
+          Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout,
+          Timeout::Error
         ].freeze
+
+        # @return [Integer] cap on number of parallel ssh sessions we can use
+        # @api private
+        attr_reader :max_ssh_sessions
 
         # @return [Integer] how many times to retry when failing to execute
         #   a command or transfer files
@@ -187,6 +231,33 @@ module Kitchen
         # @api private
         attr_reader :port
 
+        # @return [String] The ssh gateway to use when connecting to the
+        #   remote SSH host
+        # @api private
+        attr_reader :ssh_gateway
+
+        # @return [String] The username to use when using an ssh gateway
+        # @api private
+        attr_reader :ssh_gateway_username
+
+        # Establish an SSH session on the remote host using a gateway host.
+        #
+        # @param opts [Hash] retry options
+        # @option opts [Integer] :retries the number of times to retry before
+        #   failing
+        # @option opts [Float] :delay the number of seconds to wait until
+        #   attempting a retry
+        # @option opts [String] :message an optional message to be logged on
+        #   debug (overriding the default) when a rescuable exception is raised
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def establish_connection_via_gateway(opts)
+          retry_connection(opts) do
+            Net::SSH::Gateway.new(ssh_gateway,
+                                  ssh_gateway_username, options).ssh(hostname, username, options)
+          end
+        end
+
         # Establish an SSH session on the remote host.
         #
         # @param opts [Hash] retry options
@@ -199,17 +270,36 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
-          logger.debug("[SSH] opening connection to #{self}")
-          Net::SSH.start(hostname, username, options)
+          retry_connection(opts) do
+            Net::SSH.start(hostname, username, options)
+          end
+        end
+
+        # Connecto to a host executing passed block and properly handling retreis.
+        #
+        # @param opts [Hash] retry options
+        # @option opts [Integer] :retries the number of times to retry before
+        #   failing
+        # @option opts [Float] :delay the number of seconds to wait until
+        #   attempting a retry
+        # @option opts [String] :message an optional message to be logged on
+        #   debug (overriding the default) when a rescuable exception is raised
+        # @return [Net::SSH::Connection::Session] the SSH connection session
+        # @api private
+        def retry_connection(opts)
+          log_msg = "[SSH] opening connection to #{self}"
+          log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}" if ssh_gateway
+          logger.debug(log_msg)
+          yield
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
-              logger.debug("[SSH] connection failed (#{e.inspect})")
-              opts[:message]
-            else
-              "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                "(#{e.inspect})"
-            end
+                        logger.debug("[SSH] connection failed (#{e.inspect})")
+                        opts[:message]
+                      else
+                        "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                          "(#{e.inspect})"
+                      end
             logger.info(message)
             sleep(opts[:delay])
             retry
@@ -227,11 +317,9 @@ module Kitchen
         def execute_with_exit_code(command)
           exit_code = nil
           session.open_channel do |channel|
-
             channel.request_pty
 
             channel.exec(command) do |_ch, _success|
-
               channel.on_data do |_ch, data|
                 logger << data
               end
@@ -257,7 +345,10 @@ module Kitchen
           @port                   = @options[:port] # don't delete from options
           @connection_retries     = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
+          @max_ssh_sessions       = @options.delete(:max_ssh_sessions)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
+          @ssh_gateway            = @options.delete(:ssh_gateway)
+          @ssh_gateway_username   = @options.delete(:ssh_gateway_username)
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -267,10 +358,17 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def session(retry_options = {})
-          @session ||= establish_connection({
-            :retries => connection_retries.to_i,
-            :delay   => connection_retry_sleep.to_i
-          }.merge(retry_options))
+          if ssh_gateway
+            @session ||= establish_connection_via_gateway({
+              retries: connection_retries.to_i,
+              delay: connection_retry_sleep.to_i,
+            }.merge(retry_options))
+          else
+            @session ||= establish_connection({
+              retries: connection_retries.to_i,
+              delay: connection_retry_sleep.to_i,
+            }.merge(retry_options))
+          end
         end
 
         # String representation of object, reporting its connection details and
@@ -290,29 +388,41 @@ module Kitchen
       # @param data [Hash] merged configuration and mutable state data
       # @return [Hash] hash of connection options
       # @api private
-      def connection_options(data) # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def connection_options(data)
         opts = {
-          :logger                 => logger,
-          :user_known_hosts_file  => "/dev/null",
-          :paranoid               => false,
-          :hostname               => data[:hostname],
-          :port                   => data[:port],
-          :username               => data[:username],
-          :compression            => data[:compression],
-          :compression_level      => data[:compression_level],
-          :keepalive              => data[:keepalive],
-          :keepalive_interval     => data[:keepalive_interval],
-          :timeout                => data[:connection_timeout],
-          :connection_retries     => data[:connection_retries],
-          :connection_retry_sleep => data[:connection_retry_sleep],
-          :max_wait_until_ready   => data[:max_wait_until_ready]
+          logger: logger,
+          user_known_hosts_file: "/dev/null",
+          paranoid: false,
+          hostname: data[:hostname],
+          port: data[:port],
+          username: data[:username],
+          compression: data[:compression],
+          compression_level: data[:compression_level],
+          keepalive: data[:keepalive],
+          keepalive_interval: data[:keepalive_interval],
+          timeout: data[:connection_timeout],
+          connection_retries: data[:connection_retries],
+          connection_retry_sleep: data[:connection_retry_sleep],
+          max_ssh_sessions: data[:max_ssh_sessions],
+          max_wait_until_ready: data[:max_wait_until_ready],
+          ssh_gateway: data[:ssh_gateway],
+          ssh_gateway_username: data[:ssh_gateway_username],
         }
 
-        opts[:keys_only] = true                     if data[:ssh_key]
-        opts[:keys] = Array(data[:ssh_key])         if data[:ssh_key]
-        opts[:auth_methods] = ["publickey"]         if data[:ssh_key]
+        if data[:ssh_key] && !data[:password]
+          opts[:keys_only] = true
+          opts[:keys] = Array(data[:ssh_key])
+          opts[:auth_methods] = ["publickey"]
+        end
+
+        if data[:ssh_key_only]
+          opts[:auth_methods] = ["publickey"]
+        end
+
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
+        opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
 
         opts
       end
@@ -324,11 +434,7 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def create_new_connection(options, &block)
-        if @connection
-          logger.debug("[SSH] shutting previous connection #{@connection}")
-          @connection.close
-        end
-
+        cleanup!
         @connection_options = options
         @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)
       end

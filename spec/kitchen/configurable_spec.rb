@@ -24,11 +24,8 @@ require "kitchen/errors"
 require "kitchen/configurable"
 
 module Kitchen
-
   module Thing
-
     class Tiny
-
       include Kitchen::Configurable
 
       attr_reader :instance
@@ -40,12 +37,10 @@ module Kitchen
     end
 
     class Versioned < Tiny
-
       plugin_version "1.8.17"
     end
 
     class StaticDefaults
-
       include Kitchen::Configurable
 
       default_config :beans, "kidney"
@@ -53,7 +48,7 @@ module Kitchen
       default_config :edible, true
       default_config :fetch_command, "curl"
       default_config :success_path, "./success"
-      default_config :bunch_of_paths, %W[./a ./b ./c]
+      default_config :bunch_of_paths, %w{./a ./b ./c}
       default_config :beans_url do |subject|
         "http://gim.me/#{subject[:beans]}"
       end
@@ -84,7 +79,6 @@ module Kitchen
     end
 
     class SubclassDefaults < StaticDefaults
-
       default_config :yea, "ya"
       default_config :fetch_command, "wget"
       default_config :fetch_url, "http://no.beans"
@@ -99,11 +93,10 @@ module Kitchen
 end
 
 describe Kitchen::Configurable do
-
   let(:config)    { Hash.new }
   let(:platform)  { stub }
   let(:instance) do
-    stub(:name => "coolbeans", :to_str => "<instance>", :platform => platform)
+    stub(name: "coolbeans", to_str: "<instance>", platform: platform)
   end
 
   let(:subject) do
@@ -111,14 +104,13 @@ describe Kitchen::Configurable do
   end
 
   describe "creation and setup" do
-
     it "#instance returns its instance" do
       subject.instance.must_equal instance
     end
 
     it "#finalize_config! raises ClientError if instance is nil" do
-      proc { Kitchen::Thing::Tiny.new({}).finalize_config!(nil) }.
-        must_raise(Kitchen::ClientError)
+      proc { Kitchen::Thing::Tiny.new({}).finalize_config!(nil) }
+        .must_raise(Kitchen::ClientError)
     end
 
     it "#finalize_config! returns self for chaining" do
@@ -128,22 +120,19 @@ describe Kitchen::Configurable do
   end
 
   describe "configuration" do
-
     describe "provided from the outside" do
-
       it "returns provided config" do
-        config[:fruit] = %w[apples oranges]
+        config[:fruit] = %w{apples oranges}
         config[:cool_enough] = true
 
-        subject[:fruit].must_equal %w[apples oranges]
+        subject[:fruit].must_equal %w{apples oranges}
         subject[:cool_enough].must_equal true
       end
     end
 
     describe "using static default_config statements" do
-
       let(:config) do
-        { :need_it => true, :a_default => true }
+        { need_it: true, a_default: true }
       end
 
       let(:subject) do
@@ -183,9 +172,8 @@ describe Kitchen::Configurable do
     end
 
     describe "using inherited static default_config statements" do
-
       let(:config) do
-        { :need_it => true, :a_default => "please" }
+        { need_it: true, a_default: "please" }
       end
 
       let(:subject) do
@@ -216,9 +204,8 @@ describe Kitchen::Configurable do
     end
 
     describe "using static required_config statements" do
-
       let(:config) do
-        { :a_default => true }
+        { a_default: true }
       end
 
       let(:subject) do
@@ -269,7 +256,6 @@ describe Kitchen::Configurable do
     end
 
     describe "using inherited static require_config statements" do
-
       let(:subject) do
         Kitchen::Thing::SubclassDefaults.new(config).finalize_config!(instance)
       end
@@ -301,9 +287,8 @@ describe Kitchen::Configurable do
     end
 
     describe "using static expand_path_for statements" do
-
       let(:config) do
-        { :need_it => "a", :a_default => "b", :kitchen_root => "/tmp/yo/self" }
+        { need_it: "a", a_default: "b", kitchen_root: "/tmp/yo/self" }
       end
 
       let(:subject) do
@@ -311,25 +296,27 @@ describe Kitchen::Configurable do
       end
 
       it "expands a default value" do
-        subject[:success_path].must_equal "/tmp/yo/self/success"
+        subject[:success_path].must_equal os_safe_root_path("/tmp/yo/self/success")
       end
 
       it "uses provided config over default_config" do
         config[:success_path] = "mine"
 
-        subject[:success_path].must_equal "/tmp/yo/self/mine"
+        subject[:success_path].must_equal os_safe_root_path("/tmp/yo/self/mine")
       end
 
       it "leaves a full path expanded" do
         config[:success_path] = "/the/other/one"
 
-        subject[:success_path].must_equal "/the/other/one"
+        subject[:success_path].must_equal os_safe_root_path("/the/other/one")
       end
 
       it "expands all items if path is an array" do
-        subject[:bunch_of_paths].must_equal %W[
+        paths = %w{
           /tmp/yo/self/a /tmp/yo/self/b /tmp/yo/self/c
-        ]
+        }
+        os_safe_paths = paths.collect { |path| os_safe_root_path(path) }
+        subject[:bunch_of_paths].must_equal os_safe_paths
       end
 
       it "doesn't expand path with a falsy expand_path_for value" do
@@ -342,7 +329,7 @@ describe Kitchen::Configurable do
         config[:something_else] = "is_set"
         config[:complex_path] = "./complex"
 
-        subject[:complex_path].must_equal "/tmp/yo/self/complex"
+        subject[:complex_path].must_equal os_safe_root_path("/tmp/yo/self/complex")
       end
 
       it "leaves a nil config value as nil" do
@@ -359,9 +346,8 @@ describe Kitchen::Configurable do
     end
 
     describe "using inherited static expand_path_for statements" do
-
       let(:config) do
-        { :need_it => "a", :a_default => "please", :kitchen_root => "/rooty" }
+        { need_it: "a", a_default: "please", kitchen_root: "/rooty" }
       end
 
       let(:subject) do
@@ -369,7 +355,7 @@ describe Kitchen::Configurable do
       end
 
       it "contains expand_path_for from superclass" do
-        subject[:success_path].must_equal "/rooty/success"
+        subject[:success_path].must_equal os_safe_root_path("/rooty/success")
       end
 
       it "uses its own expand_path_for over inherited expand_path_for" do
@@ -380,7 +366,7 @@ describe Kitchen::Configurable do
     end
 
     it "#config_keys returns an array of config key names" do
-      subject = Kitchen::Thing::Tiny.new(:ice_cream => "dragon")
+      subject = Kitchen::Thing::Tiny.new(ice_cream: "dragon")
 
       subject.config_keys.sort.must_equal [:ice_cream]
     end
@@ -391,14 +377,13 @@ describe Kitchen::Configurable do
   end
 
   describe "#diagnose" do
-
     it "returns an empty hash for no config" do
       subject.diagnose.must_equal Hash.new
     end
 
     it "returns a hash of config" do
       config[:alpha] = "beta"
-      subject.diagnose.must_equal(:alpha => "beta")
+      subject.diagnose.must_equal(alpha: "beta")
     end
 
     it "returns a hash with sorted keys" do
@@ -410,35 +395,33 @@ describe Kitchen::Configurable do
   end
 
   describe "#diagnose_plugin" do
-
     it "returns a plugin hash for a plugin without version" do
       subject.diagnose_plugin.must_equal(
-        :name => "Tiny", :class => "Kitchen::Thing::Tiny",
-        :version => nil, :api_version => nil
+        name: "Tiny", class: "Kitchen::Thing::Tiny",
+        version: nil, api_version: nil
       )
     end
 
     it "returns a plugin hash for a plugin with version" do
       subject = Kitchen::Thing::Versioned.new(config).finalize_config!(instance)
       subject.diagnose_plugin.must_equal(
-        :name => "Versioned", :class => "Kitchen::Thing::Versioned",
-        :version => "1.8.17", :api_version => nil
+        name: "Versioned", class: "Kitchen::Thing::Versioned",
+        version: "1.8.17", api_version: nil
       )
     end
   end
 
   describe "#calculate_path" do
-
     let(:config) do
-      { :test_base_path => "/the/basest" }
+      { test_base_path: "/the/basest" }
     end
 
     let(:suite) do
-      stub(:name => "ultimate")
+      stub(name: "ultimate")
     end
 
     let(:instance) do
-      stub(:name => "coolbeans", :to_str => "<instance>", :suite => suite)
+      stub(name: "coolbeans", to_str: "<instance>", suite: suite)
     end
 
     let(:subject) do
@@ -455,7 +438,6 @@ describe Kitchen::Configurable do
     end
 
     describe "for directories" do
-
       before do
         FileUtils.mkdir_p(File.join(Dir.pwd, "winner"))
         FileUtils.mkdir_p("/the/basest/winner")
@@ -463,8 +445,8 @@ describe Kitchen::Configurable do
       end
 
       it "prefers a path containing base path and suite name if it exists" do
-        subject.calculate_path("winner").
-          must_equal "/the/basest/ultimate/winner"
+        subject.calculate_path("winner")
+               .must_equal "/the/basest/ultimate/winner"
       end
 
       it "prefers a path containing base path if it exists" do
@@ -490,13 +472,12 @@ describe Kitchen::Configurable do
       it "uses a custom base path" do
         FileUtils.mkdir_p("/custom/ultimate/winner")
 
-        subject.calculate_path("winner", :base_path => "/custom").
-          must_equal "/custom/ultimate/winner"
+        subject.calculate_path("winner", base_path: "/custom")
+               .must_equal "/custom/ultimate/winner"
       end
     end
 
     describe "for files" do
-
       before do
         FileUtils.mkdir_p(Dir.pwd)
         FileUtils.touch(File.join(Dir.pwd, "winner"))
@@ -507,15 +488,15 @@ describe Kitchen::Configurable do
       end
 
       it "prefers a path containing base path and suite name if it exists" do
-        subject.calculate_path("winner", :type => :file).
-          must_equal "/the/basest/ultimate/winner"
+        subject.calculate_path("winner", type: :file)
+               .must_equal "/the/basest/ultimate/winner"
       end
 
       it "prefers a path containing base path if it exists" do
         FileUtils.rm_rf("/the/basest/ultimate/winner")
 
-        subject.calculate_path("winner", :type => :file).
-          must_equal "/the/basest/winner"
+        subject.calculate_path("winner", type: :file)
+               .must_equal "/the/basest/winner"
       end
 
       it "prefers a path in the current working directory if it exists" do
@@ -523,7 +504,7 @@ describe Kitchen::Configurable do
         FileUtils.rm_rf("/the/basest/winner")
         pwd_dir = File.join(Dir.pwd, "winner")
 
-        subject.calculate_path("winner", :type => :file).must_equal pwd_dir
+        subject.calculate_path("winner", type: :file).must_equal pwd_dir
       end
 
       it "raises a UserError if test_base_path key is not set" do
@@ -536,14 +517,13 @@ describe Kitchen::Configurable do
         FileUtils.mkdir_p("/custom/ultimate")
         FileUtils.touch(File.join("/custom/ultimate", "winner"))
 
-        subject.calculate_path("winner", :type => :file, :base_path => "/custom").
-          must_equal "/custom/ultimate/winner"
+        subject.calculate_path("winner", type: :file, base_path: "/custom")
+               .must_equal "/custom/ultimate/winner"
       end
     end
   end
 
   describe "#remote_path_join" do
-
     it "returns unix style path separators for unix os_type" do
       platform.stubs(:os_type).returns("unix")
 
@@ -553,36 +533,35 @@ describe Kitchen::Configurable do
     it "returns windows style path separators for windows os_type" do
       platform.stubs(:os_type).returns("windows")
 
-      subject.remote_path_join("a", "b", "c").must_equal "a\\b\\c"
+      subject.remote_path_join("a", "b", "c").must_equal 'a\\b\\c'
     end
 
     it "accepts combinations of strings and arrays" do
       platform.stubs(:os_type).returns("unix")
 
-      subject.remote_path_join(%W[a b], "c", %W[d e]).must_equal "a/b/c/d/e"
+      subject.remote_path_join(%w{a b}, "c", %w{d e}).must_equal "a/b/c/d/e"
     end
 
     it "accepts a single array" do
       platform.stubs(:os_type).returns("windows")
 
-      subject.remote_path_join(%W[a b]).must_equal "a\\b"
+      subject.remote_path_join(%w{a b}).must_equal 'a\\b'
     end
 
     it "converts all windows path separators to unix for unix os_type" do
       platform.stubs(:os_type).returns("unix")
 
-      subject.remote_path_join("\\a\\b", "c/d").must_equal "/a/b/c/d"
+      subject.remote_path_join('\\a\\b', "c/d").must_equal "/a/b/c/d"
     end
 
     it "converts all unix path separators to windows for windows os_type" do
       platform.stubs(:os_type).returns("windows")
 
-      subject.remote_path_join("/a/b", "c\\d").must_equal "\\a\\b\\c\\d"
+      subject.remote_path_join("/a/b", 'c\\d').must_equal '\\a\\b\\c\\d'
     end
   end
 
   describe "#windows_os?" do
-
     it "for windows type platform returns true" do
       platform.stubs(:os_type).returns("windows")
 
@@ -609,7 +588,6 @@ describe Kitchen::Configurable do
   end
 
   describe "#unix_os?" do
-
     it "for windows type platform returns false" do
       platform.stubs(:os_type).returns("windows")
 
@@ -636,7 +614,6 @@ describe Kitchen::Configurable do
   end
 
   describe "#powershell_shell?" do
-
     it "for powershell type shell returns true" do
       platform.stubs(:shell_type).returns("powershell")
 
@@ -663,7 +640,6 @@ describe Kitchen::Configurable do
   end
 
   describe "#bourne_shell?" do
-
     it "for powershell type shell returns false" do
       platform.stubs(:shell_type).returns("powershell")
 
@@ -690,24 +666,22 @@ describe Kitchen::Configurable do
   end
 
   describe "#shell_env_var" do
-
     it "for powershell type shells returns a powershell environment variable" do
       platform.stubs(:shell_type).returns("powershell")
 
-      subject.send(:shell_env_var, "foo", "bar").
-        must_equal %{$env:foo = "bar"}
+      subject.send(:shell_env_var, "foo", "bar")
+             .must_equal %{$env:foo = "bar"}
     end
 
     it "for bourne type shells returns a bourne environment variable" do
       platform.stubs(:shell_type).returns("bourne")
 
-      subject.send(:shell_env_var, "foo", "bar").
-        must_equal %{foo="bar"; export foo}
+      subject.send(:shell_env_var, "foo", "bar")
+             .must_equal %{foo="bar"; export foo}
     end
   end
 
   describe "#shell_var" do
-
     it "for powershell type shells returns a powershell variable" do
       platform.stubs(:shell_type).returns("powershell")
 
@@ -722,17 +696,29 @@ describe Kitchen::Configurable do
   end
 
   describe "#wrap_shell_code" do
-
     let(:cmd) { subject.send(:wrap_shell_code, "mkdir foo") }
 
-    describe "for bourne shells" do
+    before do
+      @original_env = ENV.to_hash
+      ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
+                  "https_proxy" => nil, "HTTPS_PROXY" => nil,
+                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
+                  "no_proxy"    => nil, "NO_PROXY"    => nil,
+                  "CI"          => nil)
+    end
 
+    after do
+      ENV.clear
+      ENV.replace(@original_env)
+    end
+
+    describe "for bourne shells" do
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell (sh)" do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
-
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -745,6 +731,7 @@ describe Kitchen::Configurable do
           sh -c '
           http_proxy="http://proxy"; export http_proxy
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
@@ -757,14 +744,30 @@ describe Kitchen::Configurable do
           sh -c '
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
           mkdir foo
           '
         CODE
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports all http proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
+        config[:no_proxy] = "http://no"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
@@ -772,6 +775,156 @@ describe Kitchen::Configurable do
           HTTP_PROXY="http://proxy"; export HTTP_PROXY
           https_proxy="https://proxy"; export https_proxy
           HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports http_proxy & HTTP_PROXY from workstation when :http_proxy isn't set" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY from workstation when :https_proxy isn't set" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "does not export http_proxy or HTTP_PROXY when :http_proxy is empty" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+        config[:http_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "does not export https_proxy or HTTPS_PROXY when :https_proxy is empty" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+        config[:https_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports ftp_proxy & FTP_PROXY from workstation when :ftp_proxy isn't set" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "does not export ftp_proxy or FTP_PROXY when :ftp_proxy is empty" do
+        config[:ftp_proxy] = ""
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when http_proxy is set from workstation" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          http_proxy="http://proxy"; export http_proxy
+          HTTP_PROXY="http://proxy"; export HTTP_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when https_proxy is set from workstation" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          https_proxy="https://proxy"; export https_proxy
+          HTTPS_PROXY="https://proxy"; export HTTPS_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when ftp_proxy is set from workstation" do
+        ENV["ftp_proxy"]  = "ftp://proxy"
+        ENV["FTP_PROXY"]  = "ftp://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          ftp_proxy="ftp://proxy"; export ftp_proxy
+          FTP_PROXY="ftp://proxy"; export FTP_PROXY
+          no_proxy="http://no"; export no_proxy
+          NO_PROXY="http://no"; export NO_PROXY
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          CI="1"; export CI
           mkdir foo
           '
         CODE
@@ -779,11 +932,10 @@ describe Kitchen::Configurable do
     end
 
     describe "for powershell shells" do
-
       before { platform.stubs(:shell_type).returns("powershell") }
 
       it "uses powershell shell" do
-        cmd.must_equal("\nmkdir foo")
+        cmd.must_equal("$env:TEST_KITCHEN = \"1\"\nmkdir foo")
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
@@ -792,6 +944,7 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
@@ -802,19 +955,129 @@ describe Kitchen::Configurable do
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:TEST_KITCHEN = "1"
           mkdir foo
         CODE
       end
 
-      it "exports all http proxy variables when both are set" do
+      it "exports ftp_proxy & FTP_PROXY when :ftp_proxy is set" do
+        config[:ftp_proxy] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports all http proxy variables when all are set" do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
+        config[:ftp_proxy] = "ftp://proxy"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:http_proxy = "http://proxy"
           $env:HTTP_PROXY = "http://proxy"
           $env:https_proxy = "https://proxy"
           $env:HTTPS_PROXY = "https://proxy"
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports http_proxy & HTTP_PROXY from workstation when :http_proxy isn't set" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports https_proxy & HTTPS_PROXY from workstation when :https_proxy isn't set" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports ftp_proxy & FTP_PROXY from workstation when :ftp_proxy isn't set" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when http_proxy is set from workstation" do
+        ENV["http_proxy"] = "http://proxy"
+        ENV["HTTP_PROXY"] = "http://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:http_proxy = "http://proxy"
+          $env:HTTP_PROXY = "http://proxy"
+          $env:no_proxy = "http://no"
+          $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when https_proxy is set from workstation" do
+        ENV["https_proxy"] = "https://proxy"
+        ENV["HTTPS_PROXY"] = "https://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:https_proxy = "https://proxy"
+          $env:HTTPS_PROXY = "https://proxy"
+          $env:no_proxy = "http://no"
+          $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports no_proxy & NO_PROXY from workstation when ftp_proxy is set from workstation" do
+        ENV["ftp_proxy"] = "ftp://proxy"
+        ENV["FTP_PROXY"] = "ftp://proxy"
+        ENV["no_proxy"]   = "http://no"
+        ENV["NO_PROXY"]   = "http://no"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:ftp_proxy = "ftp://proxy"
+          $env:FTP_PROXY = "ftp://proxy"
+          $env:no_proxy = "http://no"
+          $env:NO_PROXY = "http://no"
+          $env:TEST_KITCHEN = "1"
+          mkdir foo
+        CODE
+      end
+
+      it "exports CI when CI is set" do
+        ENV["CI"] = "1"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:CI = "1"
           mkdir foo
         CODE
       end
@@ -826,14 +1089,13 @@ describe Kitchen::Configurable do
   end
 
   describe "#logger" do
-
     before  { @klog = Kitchen.logger }
     after   { Kitchen.logger = @klog }
 
     it "returns the instance's logger" do
       logger = stub("logger")
-      instance = stub(:logger => logger)
-      subject = Kitchen::Thing::Tiny.new(config.merge(:instance => instance))
+      instance = stub(logger: logger)
+      subject = Kitchen::Thing::Tiny.new(config.merge(instance: instance))
       subject.send(:logger).must_equal logger
     end
 

@@ -22,22 +22,21 @@ require "kitchen"
 require "kitchen/provisioner/chef_zero"
 
 describe Kitchen::Provisioner::ChefZero do
-
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:platform)        { stub(:os_type => nil) }
-  let(:suite)           { stub(:name => "fries") }
+  let(:platform)        { stub(os_type: nil) }
+  let(:suite)           { stub(name: "fries") }
 
   let(:config) do
-    { :test_base_path => "/b", :kitchen_root => "/r", :log_level => :info }
+    { test_base_path: "/b", kitchen_root: "/r" }
   end
 
   let(:instance) do
     stub(
-      :name => "coolbeans",
-      :logger => logger,
-      :suite => suite,
-      :platform => platform
+      name: "coolbeans",
+      logger: logger,
+      suite: suite,
+      platform: platform
     )
   end
 
@@ -54,16 +53,14 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   describe "default config" do
-
     describe "for unix operating systems" do
-
       before { platform.stubs(:os_type).returns("unix") }
 
       it "sets :chef_client_path to a path using :chef_omnibus_root" do
         config[:chef_omnibus_root] = "/nice/place"
 
-        provisioner[:chef_client_path].
-          must_equal "/nice/place/bin/chef-client"
+        provisioner[:chef_client_path]
+          .must_equal "/nice/place/bin/chef-client"
       end
 
       it "sets :ruby_bindir to use an Omnibus Ruby" do
@@ -74,20 +71,19 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     describe "for windows operating systems" do
-
       before { platform.stubs(:os_type).returns("windows") }
 
       it "sets :chef_client_path to a path using :chef_omnibus_root" do
-        config[:chef_omnibus_root] = "$env:systemdrive\\nice\\place"
+        config[:chef_omnibus_root] = '$env:systemdrive\\nice\\place'
 
-        provisioner[:chef_client_path].
-          must_equal "$env:systemdrive\\nice\\place\\bin\\chef-client.bat"
+        provisioner[:chef_client_path]
+          .must_equal '$env:systemdrive\\nice\\place\\bin\\chef-client.bat'
       end
 
       it "sets :ruby_bindir to use an Omnibus Ruby" do
-        config[:chef_omnibus_root] = "c:\\nice"
+        config[:chef_omnibus_root] = 'c:\\nice'
 
-        provisioner[:ruby_bindir].must_equal "c:\\nice\\embedded\\bin"
+        provisioner[:ruby_bindir].must_equal 'c:\\nice\\embedded\\bin'
       end
     end
 
@@ -109,7 +105,6 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   describe "#create_sandbox" do
-
     before do
       @root = Dir.mktmpdir
       config[:kitchen_root] = @root
@@ -124,7 +119,6 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     describe "client.rb file" do
-
       let(:file) do
         IO.read(sandbox_path("client.rb")).lines.map(&:chomp)
       end
@@ -144,12 +138,11 @@ describe Kitchen::Provisioner::ChefZero do
       it "logs a message on debug" do
         provisioner.create_sandbox
 
-        logged_output.string.
-          must_match debug_line_starting_with("Creating client.rb from {")
+        logged_output.string
+                     .must_match debug_line_starting_with("Creating client.rb from {")
       end
 
       describe "defaults" do
-
         # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         def self.common_client_rb_specs
           it "sets node_name to the instance name" do
@@ -213,7 +206,6 @@ describe Kitchen::Provisioner::ChefZero do
         # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
         describe "for unix os types" do
-
           before do
             platform.stubs(:os_type).returns("unix")
             provisioner.create_sandbox
@@ -225,23 +217,21 @@ describe Kitchen::Provisioner::ChefZero do
         end
 
         describe "for windows os types with full path" do
-
           before do
             platform.stubs(:os_type).returns("windows")
-            config[:root_path] = "\\a\\b"
+            config[:root_path] = '\\a\\b'
             provisioner.create_sandbox
           end
 
-          let(:base) { "\\\\a\\\\b\\\\" }
+          let(:base) { '\\\\a\\\\b\\\\' }
 
           common_client_rb_specs
         end
 
         describe "for windows os types with $env:TEMP prefixed paths" do
-
           before do
             platform.stubs(:os_type).returns("windows")
-            config[:root_path] = "$env:TEMP\\a"
+            config[:root_path] = '$env:TEMP\\a'
             provisioner.create_sandbox
           end
 
@@ -253,9 +243,9 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "supports overwriting defaults" do
         config[:client_rb] = {
-          :node_name => "eagles",
-          :user_path => "/a/b/c/u",
-          :client_key => "lol"
+          node_name: "eagles",
+          user_path: "/a/b/c/u",
+          client_key: "lol",
         }
         provisioner.create_sandbox
 
@@ -266,7 +256,7 @@ describe Kitchen::Provisioner::ChefZero do
 
       it " supports adding new configuration" do
         config[:client_rb] = {
-          :dark_secret => "golang"
+          dark_secret: "golang",
         }
         provisioner.create_sandbox
 
@@ -275,7 +265,7 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "formats array values correctly" do
         config[:client_rb] = {
-          :foos => %w[foo1 foo2]
+          foos: %w{foo1 foo2},
         }
         provisioner.create_sandbox
 
@@ -284,7 +274,7 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "formats integer values correctly" do
         config[:client_rb] = {
-          :foo => 7
+          foo: 7,
         }
         provisioner.create_sandbox
 
@@ -293,7 +283,7 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "formats symbol-looking string values correctly" do
         config[:client_rb] = {
-          :foo => ":bar"
+          foo: ":bar",
         }
         provisioner.create_sandbox
 
@@ -302,8 +292,8 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "formats boolean values correctly" do
         config[:client_rb] = {
-          :foo => false,
-          :bar => true
+          foo: false,
+          bar: true,
         }
         provisioner.create_sandbox
 
@@ -313,7 +303,6 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     describe "validation.pem file" do
-
       it "creates file" do
         provisioner.create_sandbox
 
@@ -329,15 +318,13 @@ describe Kitchen::Provisioner::ChefZero do
       it "logs a message on debug" do
         provisioner.create_sandbox
 
-        logged_output.string.
-          must_match debug_line_starting_with("Using a dummy validation.pem")
+        logged_output.string
+                     .must_match debug_line_starting_with("Using a dummy validation.pem")
       end
     end
 
     describe "chef-client-zero.rb file" do
-
       describe "for modern Chef versions" do
-
         before { config[:require_chef_omnibus] = "11.10" }
 
         it "does not create the file" do
@@ -362,7 +349,6 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       describe "for old Chef versions" do
-
         before { config[:require_chef_omnibus] = "10.20" }
 
         it "creates the file when using an old Chef version" do
@@ -374,8 +360,8 @@ describe Kitchen::Provisioner::ChefZero do
         it "logs a message on info" do
           provisioner.create_sandbox
 
-          logged_output.string.
-            must_match info_line("Preparing chef-client-zero.rb")
+          logged_output.string
+                       .must_match info_line("Preparing chef-client-zero.rb")
         end
 
         it "logs a message on debug" do
@@ -393,11 +379,9 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   describe "#prepare_command" do
-
     let(:cmd) { provisioner.prepare_command }
 
     describe "for modern Chef versions" do
-
       before { config[:require_chef_omnibus] = "11.10" }
 
       it "returns nil" do
@@ -406,11 +390,9 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     describe "for old Chef versions" do
-
       before { config[:require_chef_omnibus] = "10.20" }
 
       describe "for bourne shells" do
-
         before do
           platform.stubs(:shell_type).returns("bourne")
           config[:ruby_bindir] = "/rbd"
@@ -429,18 +411,18 @@ describe Kitchen::Provisioner::ChefZero do
           config[:http_proxy] = "http://proxy"
 
           cmd.lines.to_a[1..2].must_equal([
-            %{http_proxy="http://proxy"; export http_proxy\n},
-            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
-          ])
+                                            %{http_proxy="http://proxy"; export http_proxy\n},
+                                            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                          ])
         end
 
         it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[1..2].must_equal([
-            %{https_proxy="https://proxy"; export https_proxy\n},
-            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-          ])
+                                            %{https_proxy="https://proxy"; export https_proxy\n},
+                                            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          ])
         end
 
         it "exports all http proxy variables when both are set" do
@@ -448,11 +430,11 @@ describe Kitchen::Provisioner::ChefZero do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[1..4].must_equal([
-            %{http_proxy="http://proxy"; export http_proxy\n},
-            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
-            %{https_proxy="https://proxy"; export https_proxy\n},
-            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-          ])
+                                            %{http_proxy="http://proxy"; export http_proxy\n},
+                                            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                            %{https_proxy="https://proxy"; export https_proxy\n},
+                                            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          ])
         end
 
         it "sets the CHEF_REPO_PATH environment variable" do
@@ -497,30 +479,29 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
-          config[:root_path] = "\\r"
-          config[:ruby_bindir] = "\\rbd"
+          config[:root_path] = '\\r'
+          config[:ruby_bindir] = '\\rbd'
         end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
           config[:http_proxy] = "http://proxy"
 
           cmd.lines.to_a[0..1].must_equal([
-            %{$env:http_proxy = "http://proxy"\n},
-            %{$env:HTTP_PROXY = "http://proxy"\n}
-          ])
+                                            %{$env:http_proxy = "http://proxy"\n},
+                                            %{$env:HTTP_PROXY = "http://proxy"\n},
+                                          ])
         end
 
         it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[0..1].must_equal([
-            %{$env:https_proxy = "https://proxy"\n},
-            %{$env:HTTPS_PROXY = "https://proxy"\n}
-          ])
+                                            %{$env:https_proxy = "https://proxy"\n},
+                                            %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          ])
         end
 
         it "exports all http proxy variables when both are set" do
@@ -528,36 +509,36 @@ describe Kitchen::Provisioner::ChefZero do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[0..3].must_equal([
-            %{$env:http_proxy = "http://proxy"\n},
-            %{$env:HTTP_PROXY = "http://proxy"\n},
-            %{$env:https_proxy = "https://proxy"\n},
-            %{$env:HTTPS_PROXY = "https://proxy"\n}
-          ])
+                                            %{$env:http_proxy = "http://proxy"\n},
+                                            %{$env:HTTP_PROXY = "http://proxy"\n},
+                                            %{$env:https_proxy = "https://proxy"\n},
+                                            %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          ])
         end
 
         it "sets the CHEF_REPO_PATH environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:CHEF_REPO_PATH = "\\r"})
         end
 
         it "sets the GEM_HOME environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_HOME = "\\r\\chef-client-zero-gems"})
         end
 
         it "sets the GEM_PATH environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_PATH = "\\r\\chef-client-zero-gems"})
         end
 
         it "sets the GEM_CACHE environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_CACHE = "\\r\\chef-client-zero-gems\\cache"})
@@ -571,7 +552,6 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   describe "#run_command" do
-
     let(:cmd) { provisioner.run_command }
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -634,11 +614,22 @@ describe Kitchen::Provisioner::ChefZero do
       it "does not set logfile flag by default" do
         cmd.wont_match regexify(" --logfile ", :partial_line)
       end
+
+      it "prefixs the whole command with the command_prefix if set" do
+        config[:command_prefix] = "my_prefix"
+
+        cmd.must_match(/\Amy_prefix /)
+      end
+
+      it "does not prefix the command if command_prefix is not set" do
+        config[:command_prefix] = nil
+
+        cmd.wont_match(/\Amy_prefix /)
+      end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     describe "for modern Chef versions" do
-
       before { config[:require_chef_omnibus] = "11.10" }
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -674,11 +665,23 @@ describe Kitchen::Provisioner::ChefZero do
 
           cmd.wont_match regexify(" --chef-zero-port ", :partial_line)
         end
+
+        it "sets profile-ruby flag when config element is set" do
+          config[:profile_ruby] = true
+
+          cmd.must_match regexify(
+            " --profile-ruby", :partial_line)
+        end
+
+        it "does not set profile-ruby flag when config element is falsey" do
+          config[:profile_ruby] = false
+
+          cmd.wont_match regexify(" --profile-ruby", :partial_line)
+        end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       describe "for bourne shells" do
-
         before { platform.stubs(:shell_type).returns("bourne") }
 
         let(:base) { "/tmp/kitchen/" }
@@ -697,22 +700,34 @@ describe Kitchen::Provisioner::ChefZero do
           cmd.must_match(/'\Z/)
         end
 
+        it "contains a standard second run if multiple_converge is set to 2" do
+          config[:multiple_converge] = 2
+          cmd.must_match(/chef-client.*&&.*chef-client.*/m)
+          cmd.wont_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+        end
+
+        it "contains a specific second run if enforce_idempotency is set" do
+          config[:multiple_converge] = 2
+          config[:enforce_idempotency] = true
+          cmd.must_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+        end
+
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
           config[:http_proxy] = "http://proxy"
 
           cmd.lines.to_a[1..2].must_equal([
-            %{http_proxy="http://proxy"; export http_proxy\n},
-            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n}
-          ])
+                                            %{http_proxy="http://proxy"; export http_proxy\n},
+                                            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                          ])
         end
 
         it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[1..2].must_equal([
-            %{https_proxy="https://proxy"; export https_proxy\n},
-            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-          ])
+                                            %{https_proxy="https://proxy"; export https_proxy\n},
+                                            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          ])
         end
 
         it "exports all http proxy variables when both are set" do
@@ -720,11 +735,11 @@ describe Kitchen::Provisioner::ChefZero do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[1..4].must_equal([
-            %{http_proxy="http://proxy"; export http_proxy\n},
-            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
-            %{https_proxy="https://proxy"; export https_proxy\n},
-            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n}
-          ])
+                                            %{http_proxy="http://proxy"; export http_proxy\n},
+                                            %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
+                                            %{https_proxy="https://proxy"; export https_proxy\n},
+                                            %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
+                                          ])
         end
 
         it "does no powershell PATH reloading for older chef omnibus packages" do
@@ -748,35 +763,46 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
         end
 
-        let(:base) { "$env:TEMP\\kitchen\\" }
-        let(:custom_base) { "\\a\\b\\" }
-        let(:custom_root) { "\\a\\b" }
+        let(:base) { '$env:TEMP\\kitchen\\' }
+        let(:custom_base) { '\\a\\b\\' }
+        let(:custom_root) { '\\a\\b' }
 
         common_shell_specs
         common_modern_shell_specs
+
+        it "contains a standard second run if multiple_converge is set to 2" do
+          config[:multiple_converge] = 2
+          cmd.must_match(/chef-client.*;.*chef-client.*/m)
+          cmd.wont_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+        end
+
+        it "contains a specific second run if enforce_idempotency is set" do
+          config[:multiple_converge] = 2
+          config[:enforce_idempotency] = true
+          cmd.must_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+        end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
           config[:http_proxy] = "http://proxy"
 
           cmd.lines.to_a[0..1].must_equal([
-            %{$env:http_proxy = "http://proxy"\n},
-            %{$env:HTTP_PROXY = "http://proxy"\n}
-          ])
+                                            %{$env:http_proxy = "http://proxy"\n},
+                                            %{$env:HTTP_PROXY = "http://proxy"\n},
+                                          ])
         end
 
         it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[0..1].must_equal([
-            %{$env:https_proxy = "https://proxy"\n},
-            %{$env:HTTPS_PROXY = "https://proxy"\n}
-          ])
+                                            %{$env:https_proxy = "https://proxy"\n},
+                                            %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          ])
         end
 
         it "exports all http proxy variables when both are set" do
@@ -784,33 +810,32 @@ describe Kitchen::Provisioner::ChefZero do
           config[:https_proxy] = "https://proxy"
 
           cmd.lines.to_a[0..3].must_equal([
-            %{$env:http_proxy = "http://proxy"\n},
-            %{$env:HTTP_PROXY = "http://proxy"\n},
-            %{$env:https_proxy = "https://proxy"\n},
-            %{$env:HTTPS_PROXY = "https://proxy"\n}
-          ])
+                                            %{$env:http_proxy = "http://proxy"\n},
+                                            %{$env:HTTP_PROXY = "http://proxy"\n},
+                                            %{$env:https_proxy = "https://proxy"\n},
+                                            %{$env:HTTPS_PROXY = "https://proxy"\n},
+                                          ])
         end
 
         it "reloads PATH for older chef omnibus packages" do
-          cmd.must_match regexify("$env:PATH = " +
-            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+          cmd.must_match regexify("$env:PATH = try {\n" \
+          "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
+          "} catch { $env:PATH }")
         end
 
         it "calls the chef-client command from :chef_client_path" do
-          config[:chef_client_path] = "\\r\\chef-client.bat"
+          config[:chef_client_path] = '\\r\\chef-client.bat'
 
-          cmd.must_match regexify("& \\r\\chef-client.bat ", :partial_line)
+          cmd.must_match regexify('& \\r\\chef-client.bat ', :partial_line)
         end
       end
     end
 
     describe "for old Chef versions" do
-
       before do
         config[:require_chef_omnibus] = "10.20"
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def self.common_old_shell_specs
         it "does not set local mode flag" do
           cmd.wont_match regexify(" --local-mode", :partial_line)
@@ -830,7 +855,6 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       describe "for bourne shells" do
-
         before do
           platform.stubs(:shell_type).returns("bourne")
           config[:ruby_bindir] = "/r/bin"
@@ -904,69 +928,69 @@ describe Kitchen::Provisioner::ChefZero do
       end
 
       describe "for powershell shells on windows os types" do
-
         before do
           platform.stubs(:shell_type).returns("powershell")
           platform.stubs(:os_type).returns("windows")
-          config[:ruby_bindir] = "\\r\\bin"
+          config[:ruby_bindir] = '\\r\\bin'
         end
 
-        let(:base) { "$env:TEMP\\kitchen\\" }
-        let(:custom_base) { "\\a\\b\\" }
-        let(:custom_root) { "\\a\\b" }
+        let(:base) { '$env:TEMP\\kitchen\\' }
+        let(:custom_base) { '\\a\\b\\' }
+        let(:custom_root) { '\\a\\b' }
 
         common_shell_specs
         common_old_shell_specs
 
         it "calls ruby from :ruby_bindir" do
-          config[:root_path] = "\\x"
+          config[:root_path] = '\\x'
 
           cmd.must_match regexify(
-            "\\r\\bin\\ruby.exe \\x\\chef-client-zero.rb ", :partial_line)
+            '\\r\\bin\\ruby.exe \\x\\chef-client-zero.rb ', :partial_line)
         end
 
         it "sets the CHEF_REPO_PATH environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:CHEF_REPO_PATH = "\\r"})
         end
 
         it "sets the GEM_HOME environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_HOME = "\\r\\chef-client-zero-gems"})
         end
 
         it "sets the GEM_PATH environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_PATH = "\\r\\chef-client-zero-gems"})
         end
 
         it "sets the GEM_CACHE environment variable" do
-          config[:root_path] = "\\r"
+          config[:root_path] = '\\r'
 
           cmd.must_match regexify(
             %{$env:GEM_CACHE = "\\r\\chef-client-zero-gems\\cache"})
         end
 
         it "reloads PATH for older chef omnibus packages" do
-          cmd.must_match regexify("$env:PATH = " +
-            %{[System.Environment]::GetEnvironmentVariable("PATH","Machine")})
+          cmd.must_match regexify("$env:PATH = try {\n" \
+          "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
+          "} catch { $env:PATH }")
         end
       end
     end
   end
 
   def info_line(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}$}
+    /^I, .* : #{Regexp.escape(msg)}$/
   end
 
   def debug_line_starting_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def regexify(str, line = :whole_line)

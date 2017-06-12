@@ -25,14 +25,11 @@ require "kitchen/transport"
 require "kitchen/transport/base"
 
 module Kitchen
-
   module Transport
-
     class Coolbeans < Kitchen::Transport::Base
     end
 
     class ItDepends < Kitchen::Transport::Base
-
       attr_reader :verify_call_count
 
       def initialize(config = {})
@@ -46,7 +43,6 @@ module Kitchen
     end
 
     class UnstableDepends < Kitchen::Transport::Base
-
       def verify_dependencies
         raise UserError, "Oh noes, you don't have software!"
       end
@@ -55,9 +51,7 @@ module Kitchen
 end
 
 describe Kitchen::Transport do
-
   describe ".for_plugin" do
-
     before do
       Kitchen::Transport.stubs(:require).returns(true)
     end
@@ -69,7 +63,7 @@ describe Kitchen::Transport do
     end
 
     it "returns a transport initialized with its config" do
-      transport = Kitchen::Transport.for_plugin("coolbeans", :foo => "bar")
+      transport = Kitchen::Transport.for_plugin("coolbeans", foo: "bar")
 
       transport[:foo].must_equal "bar"
     end
@@ -92,21 +86,21 @@ describe Kitchen::Transport do
     it "raises ClientError if the transport could not be required" do
       Kitchen::Transport.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Transport.for_plugin("coolbeans", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Transport.for_plugin("coolbeans", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises ClientError if the transport's class constant was not found" do
       # pretend require worked
       Kitchen::Transport.stubs(:require).returns(true)
 
-      proc { Kitchen::Transport.for_plugin("nope", {}) }.
-        must_raise Kitchen::ClientError
+      proc { Kitchen::Transport.for_plugin("nope", {}) }
+        .must_raise Kitchen::ClientError
     end
 
     it "raises UserError if #verify_dependencies failes" do
-      proc { Kitchen::Transport.for_plugin("unstable_depends", {}) }.
-        must_raise Kitchen::UserError
+      proc { Kitchen::Transport.for_plugin("unstable_depends", {}) }
+        .must_raise Kitchen::UserError
     end
   end
 end

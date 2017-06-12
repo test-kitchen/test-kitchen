@@ -19,14 +19,12 @@
 require "thor/util"
 
 module Kitchen
-
   # A provisioner is responsible for generating the commands necessary to
   # install set up and use a configuration management tool such as Chef and
   # Puppet.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Provisioner
-
     # Default provisioner to use
     DEFAULT_PLUGIN = "chef_solo".freeze
 
@@ -46,9 +44,9 @@ module Kitchen
       object
     rescue LoadError, NameError
       raise ClientError,
-        "Could not load the '#{plugin}' provisioner from the load path." \
-          " Please ensure that your provisioner is installed as a gem or" \
-          " included in your Gemfile if using Bundler."
+            "Could not load the '#{plugin}' provisioner from the load path." \
+              " Please ensure that your provisioner is installed as a gem or" \
+              " included in your Gemfile if using Bundler."
     end
   end
 end

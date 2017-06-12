@@ -18,9 +18,9 @@
 
 require_relative "../spec_helper"
 
-require "net/ssh/test"
 require "kitchen/ssh"
 require "tmpdir"
+require "net/ssh/test"
 
 # Hack to sort results in `Dir.entries` only within the yielded block, to limit
 # the "behavior pollution" to other code. This was needed for Net::SCP, as
@@ -36,7 +36,7 @@ def with_sorted_dir_entries
     class << self
       alias_method :__entries__, :entries unless method_defined?(:__entries__)
 
-      def entries(*args)
+      def entries(*args) # rubocop:disable Lint/NestedMethodDefinition
         send(:__entries__, *args).sort
       end
     end
@@ -51,97 +51,28 @@ def with_sorted_dir_entries
   end
 end
 
-# Terrible hack to deal with Net::SSH:Test::Extensions which monkey patches
-# `IO.select` with a version for testing Net::SSH code. Unfortunetly this
-# impacts other code, so we'll "un-patch" this after each spec and "re-patch"
-# it before the next one.
-
-def depatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_real
-    end
-  end
-end
-
-def repatch_io
-  IO.class_exec do
-    class << self
-      alias_method :select, :select_for_test
-    end
-  end
-end
-
-# Major hack-and-a-half to add basic `Channel#request_pty` support to
-# Net::SSH's testing framework. The `Net::SSH::Test::LocalPacket` does not
-# recognize the `"pty-req"` request type, so bombs out whenever this channel
-# request is sent.
-#
-# This "make-work" fix adds a method (`#sends_request_pty`) which works just
-# like `#sends_exec` expcept that it enqueues a patched subclass of
-# `LocalPacket` which can deal with the `"pty-req"` type.
-#
-# An upstream patch to Net::SSH will be required to retire this yak shave ;)
-
-module Net
-
-  module SSH
-
-    module Test
-
-      class Channel
-
-        def sends_request_pty
-          pty_data = ["xterm", 80, 24, 640, 480, "\0"]
-
-          script.events << Class.new(Net::SSH::Test::LocalPacket) do
-            def types
-              if @type == 98 && @data[1] == "pty-req"
-                @types ||= [
-                  :long, :string, :bool, :string,
-                  :long, :long, :long, :long, :string
-                ]
-              else
-                super
-              end
-            end
-          end.new(:channel_request, remote_id, "pty-req", false, *pty_data)
-        end
-      end
-    end
-  end
-end
-
 describe Kitchen::SSH do
-
   include Net::SSH::Test
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:opts)          { Hash.new }
   let(:ssh)           { Kitchen::SSH.new("foo", "me", opts) }
-  let(:conn)          { connection }
+  let(:conn)          { Net::SSH::Test::Extensions::IO.with_test_extension { connection } }
 
   before do
-    repatch_io
     logger.level = Logger::DEBUG
     opts[:logger] = logger
     Net::SSH.stubs(:start).returns(conn)
   end
 
-  after do
-    depatch_io
-  end
-
   describe "establishing a connection" do
-
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
-      Net::SSH::Disconnect, Net::SSH::AuthenticationFailed
+      Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout
     ].each do |klass|
       describe "raising #{klass}" do
-
         before do
           Net::SSH.stubs(:start).raises(klass)
           opts[:ssh_retries] = 3
@@ -158,9 +89,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count do |l|
             l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
-          }.size.must_equal opts[:ssh_retries]
+          end.must_equal opts[:ssh_retries]
         end
 
         it "sleeps for 1 second between retries" do
@@ -179,9 +110,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count do |l|
             l =~ info_line_with("[SSH] connection failed, retrying ")
-          }.size.must_equal 2
+          end.must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -190,18 +121,16 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.select { |l|
+          logged_output.string.lines.count do |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          }.size.must_equal 1
+          end.must_equal 1
         end
       end
     end
   end
 
   describe "#exec" do
-
     describe "for a successful command" do
-
       before do
         story do |script|
           channel = script.opens_channel
@@ -245,7 +174,6 @@ describe Kitchen::SSH do
     end
 
     describe "for a failed command" do
-
       before do
         story do |script|
           channel = script.opens_channel
@@ -300,14 +228,13 @@ describe Kitchen::SSH do
       end
 
       it "raises an SSHFailed exception" do
-        err = proc { ssh.exec("doit") }.must_raise Kitchen::SSHFailed
+        err = proc { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
     end
   end
 
   describe "#upload!" do
-
     let(:content) { "a" * 1234 }
 
     let(:src) do
@@ -320,8 +247,9 @@ describe Kitchen::SSH do
 
     before do
       expect_scp_session("-t /tmp/remote") do |channel|
+        file_mode = running_tests_on_windows? ? 0644 : 0755
         channel.gets_data("\0")
-        channel.sends_data("C0755 1234 #{File.basename(src.path)}\n")
+        channel.sends_data("C#{padded_octal_string(file_mode)} 1234 #{File.basename(src.path)}\n")
         channel.gets_data("\0")
         channel.sends_data("a" * 1234)
         channel.sends_data("\0")
@@ -354,9 +282,14 @@ describe Kitchen::SSH do
   end
 
   describe "#upload_path!" do
-
     before do
       @dir = Dir.mktmpdir("local")
+
+      # Since File.chmod is a NOOP on Windows
+      @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
+      @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
+      @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
+
       FileUtils.chmod(0700, @dir)
       File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
       FileUtils.chmod(0644, "#{@dir}/alpha")
@@ -369,16 +302,16 @@ describe Kitchen::SSH do
 
       expect_scp_session("-t -r /tmp/remote") do |channel|
         channel.gets_data("\0")
-        channel.sends_data("D0700 0 #{File.basename(@dir)}\n")
+        channel.sends_data("D#{padded_octal_string(@tmp_dir_mode)} 0 #{File.basename(@dir)}\n")
         channel.gets_data("\0")
-        channel.sends_data("C0644 15 alpha\n")
+        channel.sends_data("C#{padded_octal_string(@alpha_file_mode)} 15 alpha\n")
         channel.gets_data("\0")
         channel.sends_data("alpha-contents\n")
         channel.sends_data("\0")
         channel.gets_data("\0")
         channel.sends_data("D0755 0 subdir\n")
         channel.gets_data("\0")
-        channel.sends_data("C0555 14 beta\n")
+        channel.sends_data("C#{padded_octal_string(@beta_file_mode)} 14 beta\n")
         channel.gets_data("\0")
         channel.sends_data("beta-contents\n")
         channel.sends_data("\0")
@@ -428,7 +361,6 @@ describe Kitchen::SSH do
   end
 
   describe "#shutdown" do
-
     before do
       story do |script|
         channel = script.opens_channel
@@ -467,7 +399,6 @@ describe Kitchen::SSH do
   end
 
   describe "block form" do
-
     before do
       story do |script|
         channel = script.opens_channel
@@ -483,14 +414,15 @@ describe Kitchen::SSH do
     it "shuts down the connection when block closes" do
       conn.expects(:shutdown!)
 
-      Kitchen::SSH.new("foo", "me", opts) do |ssh|
-        ssh.exec("doit")
+      Net::SSH::Test::Extensions::IO.with_test_extension do
+        Kitchen::SSH.new("foo", "me", opts) do |ssh|
+          ssh.exec("doit")
+        end
       end
     end
   end
 
   describe "#login_command" do
-
     let(:login_command) { ssh.login_command }
     let(:args)          { login_command.arguments.join(" ") }
 
@@ -556,7 +488,7 @@ describe Kitchen::SSH do
     end
 
     it "sets SSH keys options if given" do
-      opts[:keys] = %w[one two]
+      opts[:keys] = %w{one two}
 
       args.must_match regexify(" -i one ")
       args.must_match regexify(" -i two ")
@@ -574,24 +506,25 @@ describe Kitchen::SSH do
   end
 
   describe "#test_ssh" do
-
-    let(:tcp_socket) { stub(:select_for_read? => true, :close => true) }
+    let(:tcp_socket) { stub(select_for_read?: true, close: true) }
 
     before { ssh.stubs(:sleep) }
 
     it "returns a truthy value" do
       TCPSocket.stubs(:new).returns(tcp_socket)
 
-      result = ssh.send(:test_ssh)
-      result.wont_equal nil
-      result.wont_equal false
+      Net::SSH::Test::Extensions::IO.with_test_extension do
+        result = ssh.send(:test_ssh)
+        result.wont_equal nil
+        result.wont_equal false
+      end
     end
 
     it "closes socket when finished" do
       TCPSocket.stubs(:new).returns(tcp_socket)
       tcp_socket.expects(:close)
 
-      ssh.send(:test_ssh)
+      Net::SSH::Test::Extensions::IO.with_test_extension { ssh.send(:test_ssh) }
     end
 
     [
@@ -599,7 +532,6 @@ describe Kitchen::SSH do
       Errno::ENETUNREACH, IOError
     ].each do |klass|
       describe "when #{klass} is raised" do
-
         before { TCPSocket.stubs(:new).raises(klass) }
 
         it "returns false" do
@@ -618,7 +550,6 @@ describe Kitchen::SSH do
       Errno::EPERM, Errno::ETIMEDOUT
     ].each do |klass|
       describe "when #{klass} is raised" do
-
         it "returns false when #{klass} is raised" do
           TCPSocket.stubs(:new).raises(klass)
 
@@ -629,22 +560,21 @@ describe Kitchen::SSH do
   end
 
   describe "#wait" do
-
     let(:not_ready) do
-      stub(:select_for_read? => false, :idle! => true, :close => true)
+      stub(select_for_read?: false, idle!: true, close: true)
     end
 
     let(:ready) do
-      stub(:select_for_read? => true, :close => true)
+      stub(select_for_read?: true, close: true)
     end
 
     it "logs to info for each retry" do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
-      ssh.wait
+      Net::SSH::Test::Extensions::IO.with_test_extension { ssh.wait }
 
-      logged_output.string.lines.select { |l|
+      logged_output.string.lines.count do |l|
         l =~ info_line_with("Waiting for foo:22...")
-      }.size.must_equal 2
+      end.must_equal 2
     end
   end
 
@@ -666,18 +596,18 @@ describe Kitchen::SSH do
   end
 
   def debug_line(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}$}
+    /^D, .* : #{Regexp.escape(msg)}$/
   end
 
   def debug_line_with(msg)
-    %r{^D, .* : #{Regexp.escape(msg)}}
+    /^D, .* : #{Regexp.escape(msg)}/
   end
 
   def info_line_with(msg)
-    %r{^I, .* : #{Regexp.escape(msg)}}
+    /^I, .* : #{Regexp.escape(msg)}/
   end
 
   def warn_line_with(msg)
-    %r{^W, .* : #{Regexp.escape(msg)}}
+    /^W, .* : #{Regexp.escape(msg)}/
   end
 end

@@ -20,17 +20,13 @@ require "kitchen/errors"
 require "kitchen/logging"
 
 module Kitchen
-
   module Provisioner
-
     module Chef
-
       # Chef cookbook resolver that uses Librarian-Chef and a Cheffile to
       # calculate dependencies.
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Librarian
-
         include Logging
 
         # Creates a new cookbook resolver.
@@ -40,7 +36,7 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(cheffile, path, logger = Kitchen.logger)
+        def initialize(cheffile, path, logger: Kitchen.logger)
           @cheffile   = cheffile
           @path       = path
           @logger     = logger
@@ -50,7 +46,7 @@ module Kitchen
         #
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def self.load!(logger = Kitchen.logger)
+        def self.load!(logger: Kitchen.logger)
           load_librarian!(logger)
         end
 
@@ -62,7 +58,7 @@ module Kitchen
           debug("Using Cheffile from #{cheffile}")
 
           env = ::Librarian::Chef::Environment.new(
-            :project_path => File.dirname(cheffile))
+            project_path: File.dirname(cheffile))
           env.config_db.local["path"] = path
           ::Librarian::Action::Resolve.new(env).run
           ::Librarian::Action::Install.new(env).run
@@ -104,7 +100,7 @@ module Kitchen
             " `gem install librarian-chef` or add the following to your" \
             " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
           raise UserError,
-            "Could not load or activate Librarian-Chef (#{e.message})"
+                "Could not load or activate Librarian-Chef (#{e.message})"
         end
       end
     end

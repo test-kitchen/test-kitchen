@@ -21,32 +21,33 @@ require "kitchen/configurable"
 require "kitchen/logging"
 
 module Kitchen
-
   module Verifier
-
     # Base class for a verifier.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
       default_config :http_proxy, nil
-
       default_config :https_proxy, nil
+      default_config :ftp_proxy, nil
 
       default_config :root_path do |verifier|
-        verifier.windows_os? ? "$env:TEMP\\verifier" : "/tmp/verifier"
+        verifier.windows_os? ? '$env:TEMP\\verifier' : "/tmp/verifier"
       end
 
       default_config :sudo do |verifier|
         verifier.windows_os? ? nil : true
       end
 
+      default_config :chef_omnibus_root, "/opt/chef"
+
       default_config :sudo_command do |verifier|
         verifier.windows_os? ? nil : "sudo -E"
       end
+
+      default_config :command_prefix, nil
 
       default_config(:suite_name) { |busser| busser.instance.suite.name }
 
@@ -181,11 +182,9 @@ module Kitchen
       #
       # @param version [Integer,String] a version number
       #
-      # rubocop:disable Style/TrivialAccessors
       def self.kitchen_verifier_api_version(version)
         @api_version = version
       end
-      # rubocop:enable Style/TrivialAccessors
 
       private
 
@@ -200,7 +199,7 @@ module Kitchen
       def shell_code_from_file(vars, file)
         src_file = File.join(
           File.dirname(__FILE__),
-          %w[.. .. .. support],
+          %w{.. .. .. support},
           file + (powershell_shell? ? ".ps1" : ".sh")
         )
 
@@ -214,6 +213,19 @@ module Kitchen
       # @api private
       def sudo(script)
         config[:sudo] ? "#{config[:sudo_command]} #{script}" : script
+      end
+
+      # Conditionally prefixes a command with a command prefix.
+      # This should generally be done after a command has been
+      # conditionally prefixed by #sudo as certain platforms, such as
+      # Cisco Nexus, require all commands to be run with a prefix to
+      # obtain outbound network access.
+      #
+      # @param command [String] command to be prefixed
+      # @return [String] the command, conditionally prefixed with the configured prefix
+      # @api private
+      def prefix_command(script)
+        config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
       end
     end
   end

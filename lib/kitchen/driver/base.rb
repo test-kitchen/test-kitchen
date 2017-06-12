@@ -19,14 +19,11 @@
 require "kitchen/lazy_hash"
 
 module Kitchen
-
   module Driver
-
     # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
-
       include Configurable
       include Logging
 
@@ -50,6 +47,13 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
+      end
+
+      # Package an instance.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @raise [ActionFailed] if the action could not be completed
+      def package(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
       class << self
@@ -108,11 +112,16 @@ module Kitchen
       #
       # @param version [Integer,String] a version number
       #
-      # rubocop:disable Style/TrivialAccessors
       def self.kitchen_driver_api_version(version)
         @api_version = version
       end
-      # rubocop:enable Style/TrivialAccessors
+
+      # Cache directory that a driver could implement to inform the provisioner
+      # that it can leverage it internally
+      #
+      # @return path [String] a path of the cache directory
+      def cache_directory
+      end
 
       private
 

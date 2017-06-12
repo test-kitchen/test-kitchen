@@ -19,9 +19,7 @@
 require "kitchen"
 
 module Kitchen
-
   module Driver
-
     # Dummy driver for Kitchen. This driver does nothing but report what would
     # happen if this driver did anything of consequence. As a result it may
     # be a useful driver to use when debugging or developing new features or
@@ -29,7 +27,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Dummy < Kitchen::Driver::Base
-
       kitchen_driver_api_version 2
 
       plugin_version Kitchen::VERSION
