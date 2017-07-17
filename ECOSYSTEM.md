@@ -17,7 +17,7 @@ The following are in the test-kitchen organization
 The following are written by the [chef][chef] organization.
 
 [kitchen-appbundle-updater][appbundle-updater] | [kitchen-inspec][inspec] |
----- | ---- | ---- | ---- | ---- | ----
+---- | ---- |
 [![Status](https://travis-ci.org/chef/kitchen-appbundle-updater.svg?branch=master)](https://travis-ci.org/chef/kitchen-appbundle-updater)| [![Status](https://travis-ci.org/chef/kitchen-inspec.svg?branch=master)](https://travis-ci.org/chef/kitchen-inspec) |
 [![Gem Version](https://badge.fury.io/rb/kitchen-appbundle-updater.svg)](http://badge.fury.io/rb/kitchen-appbundle-updater) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
 
