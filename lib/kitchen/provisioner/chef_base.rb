@@ -415,13 +415,13 @@ module Kitchen
           file.write(format_config_file(data))
         end
 
-        prepare_config_idempotency_check if config[:enforce_idempotency]
+        prepare_config_idempotency_check(data) if config[:enforce_idempotency]
       end
 
       # Writes a configuration file to the sandbox directory
       # to check for idempotency of the run.
       # @api private
-      def prepare_config_idempotency_check
+      def prepare_config_idempotency_check(data)
         handler_filename = "chef-client-fail-if-update-handler.rb"
         source = File.join(
           File.dirname(__FILE__), %w{.. .. .. support }, handler_filename
