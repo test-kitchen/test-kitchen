@@ -12,7 +12,6 @@ From here, there are a few resources that can help you along your infrastructure
 * Check out the [test-kitchen repo](https://github.com/test-kitchen/test-kitchen) on GitHub
 * Submit an [issue](https://github.com/test-kitchen/test-kitchen/issues)
 * Write a blog post describing getting started with kitchen, or an interesting problem kitchen has allowed you to solve
-* Take a look at the excellent O'Reilly book [Test-driven Infrastructure with Chef](http://shop.oreilly.com/product/0636920030973.do)
 
 Everyone can contribute to making kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/kitchen-docs) and open a [pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)!
 
