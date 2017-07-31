@@ -630,12 +630,12 @@ describe Kitchen::Loader::YAML do
 
         it "uses an error hash with the exception" do
           loader.diagnose[:global_config][:raw_data][:error][:exception]
-            .must_match /Kitchen::UserError/
+            .must_match(/Kitchen::UserError/)
         end
 
         it "uses an error hash with the exception message" do
           loader.diagnose[:global_config][:raw_data][:error][:message]
-            .must_match /Error parsing/
+            .must_match(/Error parsing/)
         end
 
         it "uses an error hash with the exception backtrace" do
@@ -658,12 +658,12 @@ describe Kitchen::Loader::YAML do
 
         it "uses an error hash with the exception" do
           loader.diagnose[:project_config][:raw_data][:error][:exception]
-            .must_match /Kitchen::UserError/
+            .must_match(/Kitchen::UserError/)
         end
 
         it "uses an error hash with the exception message" do
           loader.diagnose[:project_config][:raw_data][:error][:message]
-            .must_match /Error parsing/
+            .must_match(/Error parsing/)
         end
 
         it "uses an error hash with the exception backtrace" do
@@ -686,12 +686,12 @@ describe Kitchen::Loader::YAML do
 
         it "uses an error hash with the exception" do
           loader.diagnose[:local_config][:raw_data][:error][:exception]
-            .must_match /Kitchen::UserError/
+            .must_match(/Kitchen::UserError/)
         end
 
         it "uses an error hash with the exception message" do
           loader.diagnose[:local_config][:raw_data][:error][:message]
-            .must_match /Error parsing/
+            .must_match(/Error parsing/)
         end
 
         it "uses an error hash with the exception backtrace" do
@@ -714,12 +714,12 @@ describe Kitchen::Loader::YAML do
 
         it "uses an error hash with the exception" do
           loader.diagnose[:combined_config][:raw_data][:error][:exception]
-            .must_match /Kitchen::UserError/
+            .must_match(/Kitchen::UserError/)
         end
 
         it "uses an error hash with the exception message" do
           loader.diagnose[:combined_config][:raw_data][:error][:message]
-            .must_match /Error parsing/
+            .must_match(/Error parsing/)
         end
 
         it "uses an error hash with the exception backtrace" do
