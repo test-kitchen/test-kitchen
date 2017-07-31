@@ -335,7 +335,7 @@ describe Kitchen::Configurable do
       it "leaves a nil config value as nil" do
         config[:success_path] = nil
 
-        subject[:success_path].must_equal nil
+        subject[:success_path].must_be_nil
       end
 
       it "leaves a false config value as false" do

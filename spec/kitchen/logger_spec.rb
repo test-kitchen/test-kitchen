@@ -69,7 +69,7 @@ describe Kitchen::Logger do
   end
 
   it "datetime_format is nil by default" do
-    logger.datetime_format.must_equal nil
+    logger.datetime_format.must_be_nil
   end
 
   it "sets datetime_format after creation" do

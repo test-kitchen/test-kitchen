@@ -132,11 +132,11 @@ describe Kitchen::Transport::Ssh do
     end
 
     it "sets :ssh_key to nil by default" do
-      transport[:ssh_key].must_equal nil
+      transport[:ssh_key].must_be_nil
     end
 
     it "sets :ssh_key_only to nil by default" do
-      transport[:ssh_key_only].must_equal nil
+      transport[:ssh_key_only].must_be_nil
     end
 
     it "expands :ssh_path path if set" do

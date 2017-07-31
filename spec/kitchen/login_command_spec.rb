@@ -44,7 +44,7 @@ describe Kitchen::LoginCommand do
   end
 
   it "#options defaults to an empty hash" do
-    Kitchen::LoginCommand.new(cmd, argv, nil).options.must_equal {}
+    Kitchen::LoginCommand.new(cmd, argv).options.must_equal Hash.new
   end
 
   it "#options returns the options hash from the constructor" do

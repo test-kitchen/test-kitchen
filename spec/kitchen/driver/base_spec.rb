@@ -90,7 +90,7 @@ describe Kitchen::Driver::Base do
 
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
-      Kitchen::Driver::Speedy.serial_actions.must_equal nil
+      Kitchen::Driver::Speedy.serial_actions.must_be_nil
     end
 
     it "registers a single serial action method" do

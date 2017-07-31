@@ -34,7 +34,7 @@ describe Kitchen::Platform do
     klass.new(name: "p", os_type: "unix").os_type.must_equal "unix"
     klass.new(name: "p", os_type: "windows").os_type.must_equal "windows"
     klass.new(name: "p", os_type: "unicorn").os_type.must_equal "unicorn"
-    klass.new(name: "p", os_type: nil).os_type.must_equal nil
+    klass.new(name: "p", os_type: nil).os_type.must_be_nil
   end
 
   it "#os_type defaults to `unix` when not provided" do
@@ -59,7 +59,7 @@ describe Kitchen::Platform do
     klass.new(name: "p", shell_type: "unicorn")
          .shell_type.must_equal "unicorn"
     klass.new(name: "p", shell_type: nil)
-         .shell_type.must_equal nil
+         .shell_type.must_be_nil
   end
 
   it "#shell_type defaults to `bourne` when not provided" do

@@ -110,11 +110,11 @@ describe Kitchen::Verifier::Base do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":sudo defaults to nil" do
-        verifier[:sudo].must_equal nil
+        verifier[:sudo].must_be_nil
       end
 
       it ":sudo_command defaults to nil" do
-        verifier[:sudo_command].must_equal nil
+        verifier[:sudo_command].must_be_nil
       end
 
       it ':root_path defaults to $env:TEMP\\verifier' do
@@ -127,15 +127,15 @@ describe Kitchen::Verifier::Base do
     end
 
     it ":http_proxy defaults to nil" do
-      verifier[:http_proxy].must_equal nil
+      verifier[:http_proxy].must_be_nil
     end
 
     it ":http_proxys defaults to nil" do
-      verifier[:https_proxy].must_equal nil
+      verifier[:https_proxy].must_be_nil
     end
 
     it ":ftp_proxy defaults to nil" do
-      verifier[:ftp_proxy].must_equal nil
+      verifier[:ftp_proxy].must_be_nil
     end
   end
 

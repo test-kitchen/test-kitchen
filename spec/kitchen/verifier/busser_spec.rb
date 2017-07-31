@@ -186,7 +186,7 @@ describe Kitchen::Verifier::Busser do
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
 
@@ -197,7 +197,7 @@ describe Kitchen::Verifier::Busser do
         end
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
     end
@@ -321,7 +321,7 @@ describe Kitchen::Verifier::Busser do
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
 
@@ -332,7 +332,7 @@ describe Kitchen::Verifier::Busser do
         end
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
     end
@@ -411,7 +411,7 @@ describe Kitchen::Verifier::Busser do
         before { platform.stubs(:shell_type).returns("bourne") }
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
 
@@ -422,7 +422,7 @@ describe Kitchen::Verifier::Busser do
         end
 
         it "returns nil" do
-          cmd.must_equal nil
+          cmd.must_be_nil
         end
       end
     end

@@ -96,7 +96,7 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     it "does not set :chef_zero_host" do
-      provisioner[:chef_zero_host].must_equal nil
+      provisioner[:chef_zero_host].must_be_nil
     end
 
     it "sets :chef_zero_port to 8889" do
@@ -385,7 +385,7 @@ describe Kitchen::Provisioner::ChefZero do
       before { config[:require_chef_omnibus] = "11.10" }
 
       it "returns nil" do
-        cmd.must_equal nil
+        cmd.must_be_nil
       end
     end
 

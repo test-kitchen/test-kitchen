@@ -61,7 +61,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it ":chef_metadata_url defaults to nil" do
-        provisioner[:chef_metadata_url].must_equal(nil)
+        provisioner[:chef_metadata_url].must_be_nil
       end
     end
 
@@ -79,7 +79,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":chef_omnibus_install_options defaults to nil" do
-      provisioner[:chef_omnibus_install_options].must_equal nil
+      provisioner[:chef_omnibus_install_options].must_be_nil
     end
 
     it ":run_list defaults to an empty array" do
@@ -91,7 +91,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":log_file defaults to nil" do
-      provisioner[:log_file].must_equal nil
+      provisioner[:log_file].must_be_nil
     end
 
     it ":cookbook_files_glob includes recipes" do
@@ -156,7 +156,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       installer.expects(:root).never
       installer.expects(:install_command).never
-      cmd.must_equal nil
+      cmd.must_be_nil
     end
 
     describe "common behaviour" do
