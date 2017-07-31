@@ -42,7 +42,7 @@ module Kitchen
         end
         ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
 
-        specs = fetch_gem_specs.sort { |x, y| x[0] <=> y[0] }
+        specs = fetch_gem_specs.sort_by { |spec| spec[0] }
         specs = specs[0, 49].push(["...", "..."]) if specs.size > 49
         specs = specs.unshift(["Gem Name", "Latest Stable Release"])
         print_table(specs, indent: 4)
