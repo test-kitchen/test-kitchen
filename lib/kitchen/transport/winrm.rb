@@ -82,6 +82,13 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
+        # (see Base::Connection#initialize)
+        def initialize(config = {})
+          super(config)
+          @unelevated_session = nil
+          @elevated_session = nil
+        end
+
         # (see Base::Connection#close)
         def close
           @unelevated_session.close if @unelevated_session

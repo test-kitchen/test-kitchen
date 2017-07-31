@@ -47,6 +47,7 @@ module Kitchen
       #
       # @param config [Hash] initial provided configuration
       def initialize(config = {})
+        @connection = nil
         init_config(config)
       end
 

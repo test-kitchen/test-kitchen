@@ -57,8 +57,13 @@ class SerialDummyDriver < Kitchen::Driver::Dummy
 
   attr_reader :action_in_mutex
 
+  def initialize(config = {})
+    super(config)
+    @action_in_mutex = {}
+  end
+
   def track_locked(action)
-    @action_in_mutex = {} unless @action_in_mutex
+    @action_in_mutex ||= {}
     @action_in_mutex[action] = Kitchen::Instance.mutexes[self.class].locked?
   end
 

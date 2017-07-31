@@ -390,8 +390,8 @@ module Kitchen
       def diagnose
         {
           class: name,
-          version: @plugin_version,
-          api_version: @api_version,
+          version: @plugin_version ||= nil,
+          api_version: @api_version ||= nil,
         }
       end
 
