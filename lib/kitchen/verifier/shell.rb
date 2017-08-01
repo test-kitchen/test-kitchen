@@ -35,12 +35,30 @@ module Kitchen
       default_config :shellout_opts, {}
       default_config :live_stream, $stdout
       default_config :remote_exec, false
+      default_config :transfer_files, false
 
       # (see Base#call)
       def call(state)
         info("[#{name}] Verify on instance=#{instance} with state=#{state}")
         sleep_if_set
         merge_state_to_env(state)
+        if config[:transfer_files]
+          create_sandbox
+          sandbox_dirs = Dir.glob(File.join(sandbox_path, "*"))
+          begin
+            instance.transport.connection(state) do |conn|
+              conn.execute(install_command)
+              conn.execute(init_command)
+              info("Transferring files to #{instance.to_str}")
+              conn.upload(sandbox_dirs, config[:root_path])
+              debug("Transfer complete")
+            end
+          rescue Kitchen::Transport::TransportFailed => ex
+            raise ActionFailed, ex.message
+          ensure
+            cleanup_sandbox
+          end
+        end
         if config[:remote_exec]
           instance.transport.connection(state) do |conn|
             conn.execute(config[:command])
@@ -59,6 +77,13 @@ module Kitchen
           shellout
           nil
         end
+      end
+
+      # (see Base#create_sandbox)
+      def create_sandbox
+        super
+        prepare_helpers
+        prepare_suites
       end
 
       private
@@ -93,6 +118,16 @@ module Kitchen
           env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
         end
         config[:shellout_opts].merge!(env_state)
+      end
+
+      # Returns an Array of test suite filenames for the related suite currently
+      # residing on the local workstation. No files are excluded.
+      #
+      # @return [Array<String>] array of suite files
+      # @api private
+      def local_suite_files
+        glob = File.join(config[:test_base_path], config[:suite_name], "*/**/*")
+        Dir.glob(glob).reject { |f| File.directory?(f) }
       end
     end
   end
