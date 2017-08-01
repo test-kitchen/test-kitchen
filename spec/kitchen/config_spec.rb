@@ -35,8 +35,12 @@ module Kitchen
   class DummyLoader
     attr_writer :data
 
+    def initialize
+      @data = {}
+    end
+
     def read
-      @data || {}
+      @data
     end
   end
 end

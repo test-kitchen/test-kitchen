@@ -77,7 +77,7 @@ describe Kitchen::Transport::Winrm do
     end
 
     it "sets :password to nil by default" do
-      transport[:password].must_equal nil
+      transport[:password].must_be_nil
     end
 
     it "sets a default :endpoint_template value" do

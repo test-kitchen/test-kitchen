@@ -107,6 +107,12 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
+        # (see Base::Connection#initialize)
+        def initialize(config = {})
+          super(config)
+          @session = nil
+        end
+
         # (see Base::Connection#close)
         def close
           return if @session.nil?

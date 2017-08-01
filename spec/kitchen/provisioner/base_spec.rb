@@ -109,24 +109,24 @@ describe Kitchen::Provisioner::Base do
       end
 
       it ":sudo defaults to nil" do
-        provisioner[:sudo].must_equal nil
+        provisioner[:sudo].must_be_nil
       end
 
       it ":sudo_command defaults to nil" do
-        provisioner[:sudo_command].must_equal nil
+        provisioner[:sudo_command].must_be_nil
       end
     end
 
     it ":http_proxy defaults to nil" do
-      provisioner[:http_proxy].must_equal nil
+      provisioner[:http_proxy].must_be_nil
     end
 
     it ":http_proxys defaults to nil" do
-      provisioner[:https_proxy].must_equal nil
+      provisioner[:https_proxy].must_be_nil
     end
 
     it ":ftp_proxy defaults to nil" do
-      provisioner[:ftp_proxy].must_equal nil
+      provisioner[:ftp_proxy].must_be_nil
     end
   end
 

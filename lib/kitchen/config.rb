@@ -56,11 +56,6 @@ module Kitchen
     # @api private
     attr_reader :log_root
 
-    # @return [String] the absolute path to the directory containing test
-    #   suites and other testing-related file and directories
-    # @api private
-    attr_reader :test_base_path
-
     # @return [#read] the data loader that responds to a `#read` message,
     #   returning a Hash data structure
     # @api private

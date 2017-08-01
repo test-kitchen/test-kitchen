@@ -104,7 +104,7 @@ describe Kitchen::Driver::SSHBase do
   end
 
   it "plugin_version is not set" do
-    driver.diagnose_plugin[:version].must_equal nil
+    driver.diagnose_plugin[:version].must_be_nil
   end
 
   describe "configuration" do
@@ -778,7 +778,7 @@ describe Kitchen::Driver::SSHBase do
 
     describe ".no_parallel_for" do
       it "registers no serial actions when none are declared" do
-        Kitchen::Driver::SpeedyCompat.serial_actions.must_equal nil
+        Kitchen::Driver::SpeedyCompat.serial_actions.must_be_nil
       end
 
       it "registers a single serial action method" do
