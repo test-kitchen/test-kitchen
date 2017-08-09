@@ -70,7 +70,7 @@ module Kitchen
       def converge(state) # rubocop:disable Metrics/AbcSize
         provisioner = instance.provisioner
         provisioner.create_sandbox
-        sandbox_dirs = Dir.glob("#{provisioner.sandbox_path}/*")
+        sandbox_dirs = Util.list_directory(provisioner.sandbox_path)
 
         instance.transport.connection(backcompat_merged_state(state)) do |conn|
           conn.execute(env_cmd(provisioner.install_command))
@@ -102,7 +102,7 @@ module Kitchen
       def verify(state) # rubocop:disable Metrics/AbcSize
         verifier = instance.verifier
         verifier.create_sandbox
-        sandbox_dirs = Dir.glob(File.join(verifier.sandbox_path, "*"))
+        sandbox_dirs = Util.list_directory(verifier.sandbox_path)
 
         instance.transport.connection(backcompat_merged_state(state)) do |conn|
           conn.execute(env_cmd(verifier.init_command))

@@ -80,7 +80,7 @@ module Kitchen
         # @return [Array<String>] an array of absolute paths to files
         # @api private
         def all_files_in_cookbooks
-          Dir.glob(File.join(tmpbooks_dir, "**/*"), File::FNM_DOTMATCH)
+          Util.list_directory(tmpbooks_dir, include_dot: true, recurse: true)
              .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
         end
 
@@ -152,7 +152,7 @@ module Kitchen
 
           cb_path = File.join(tmpbooks_dir, cb_name)
 
-          glob = Dir.glob("#{config[:kitchen_root]}/**")
+          glob = Util.list_directory(config[:kitchen_root])
 
           FileUtils.mkdir_p(cb_path)
           FileUtils.cp_r(glob, cb_path)
@@ -164,8 +164,8 @@ module Kitchen
         def filter_only_cookbook_files
           info("Removing non-cookbook files before transfer")
           FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
-          Dir.glob(File.join(tmpbooks_dir, "**/"), File::FNM_PATHNAME)
-             .reverse_each { |fn| FileUtils.rmdir(fn) if Dir.entries(fn).size == 2 }
+          Util.list_directory(tmpbooks_dir, recurse: true)
+            .reverse_each { |fn| FileUtils.rmdir(fn) if File.directory?(fn) && Dir.entries(fn).size == 2 }
         end
 
         # @return [Logger] the instance's logger or Test Kitchen's common
@@ -202,10 +202,9 @@ module Kitchen
         # @return [Array<String>] an array of absolute paths to files
         # @api private
         def only_cookbook_files
-          glob = File.join(tmpbooks_dir, "*", "{#{config[:cookbook_files_glob]}}")
-
-          Dir.glob(glob, File::FNM_DOTMATCH)
-             .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
+          glob = File.join("*", "{#{config[:cookbook_files_glob]}}")
+          Util.safe_glob(tmpbooks_dir, glob, File::FNM_DOTMATCH)
+            .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
         end
 
         # Prepares a generic Chef component source directory or file for
@@ -235,7 +234,7 @@ module Kitchen
           case opts[:type]
           when :directory
             FileUtils.mkdir_p(dest)
-            FileUtils.cp_r(Dir.glob("#{src}/*"), dest)
+            FileUtils.cp_r(Util.list_directory(src), dest)
           when :file
             FileUtils.mkdir_p(File.dirname(dest))
             FileUtils.cp_r(src, dest)

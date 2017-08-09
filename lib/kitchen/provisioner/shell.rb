@@ -93,7 +93,7 @@ module Kitchen
 
         tmpdata_dir = File.join(sandbox_path, "data")
         FileUtils.mkdir_p(tmpdata_dir)
-        FileUtils.cp_r(Dir.glob("#{config[:data_path]}/*"), tmpdata_dir)
+        FileUtils.cp_r(Util.list_directory(config[:data_path]), tmpdata_dir)
       end
 
       # Copies the executable script to the sandbox directory or creates a

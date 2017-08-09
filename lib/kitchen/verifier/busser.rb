@@ -193,8 +193,8 @@ module Kitchen
       # @return [Array<String>] array of helper files
       # @api private
       def helper_files
-        glob = File.join(config[:test_base_path], "helpers", "*/**/*")
-        Dir.glob(glob).reject { |f| File.directory?(f) }
+        glob = File.join("helpers", "*/**/*")
+        Util.safe_glob(config[:test_base_path], glob).reject { |f| File.directory?(f) }
       end
 
       def install_command_vars
@@ -221,8 +221,7 @@ module Kitchen
       # @api private
       def local_suite_files
         base = File.join(config[:test_base_path], config[:suite_name])
-        glob = File.join(base, "*/**/*")
-        Dir.glob(glob).reject do |f|
+        Util.safe_glob(base, "*/**/*").reject do |f|
           chef_data_dir?(base, f) || File.directory?(f)
         end
       end
@@ -235,8 +234,7 @@ module Kitchen
       # @api private
       def plugins
         non_suite_dirs = %w{data data_bags environments nodes roles}
-        glob = File.join(config[:test_base_path], config[:suite_name], "*")
-        Dir.glob(glob).reject do |d|
+        Util.list_directory(File.join(config[:test_base_path], config[:suite_name])).reject do |d|
           !File.directory?(d) || non_suite_dirs.include?(File.basename(d))
         end.map { |d| "busser-#{File.basename(d)}" }.sort.uniq
       end
