@@ -143,7 +143,7 @@ module Kitchen
     end
 
     # Lists the contents of the given directory. path will be prepended
-    # to the list returned
+    # to the list returned. '.' and '..' are never returned.
     #
     # @param path [String] the directory to list
     # @param include_dot [Boolean] if true, dot files will be included
@@ -171,9 +171,9 @@ module Kitchen
                 else
                   []
                 end
-        Dir.glob(glob_pattern, *flags).map do |f|
-          File.join(path, f)
-        end
+        Dir.glob(glob_pattern, *flags)
+          .reject { |f| [".", ".."].include?(f) }
+          .map { |f| File.join(path, f) }
       end
     end
 

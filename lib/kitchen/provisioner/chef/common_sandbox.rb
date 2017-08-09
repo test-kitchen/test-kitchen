@@ -81,7 +81,7 @@ module Kitchen
         # @api private
         def all_files_in_cookbooks
           Util.list_directory(tmpbooks_dir, include_dot: true, recurse: true)
-             .select { |fn| File.file?(fn) && ! %w{. ..}.include?(fn) }
+             .select { |fn| File.file?(fn) }
         end
 
         # @return [String] an absolute path to a Policyfile, relative to the

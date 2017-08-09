@@ -175,10 +175,10 @@ describe Kitchen::Util do
 
     it "lists one level with no dot files by default" do
       listed = Kitchen::Util.list_directory(@root)
-      expected = [
-        "foo",
-        "bar",
-      ].map { |f| File.join(@root, f) }
+      expected = %w{
+        foo
+        bar
+      }.map { |f| File.join(@root, f) }
       (listed - expected).must_equal []
       (expected - listed).must_equal []
     end
@@ -186,11 +186,9 @@ describe Kitchen::Util do
     it "matches dot files only when include_dot" do
       listed = Kitchen::Util.list_directory(@root, include_dot: true)
       expected = [
-        ".",
-        "..",
         "foo",
         ".foo",
-        "bar"
+        "bar",
       ].map { |f| File.join(@root, f) }
       (listed - expected).must_equal []
       (expected - listed).must_equal []
@@ -201,7 +199,7 @@ describe Kitchen::Util do
       expected = [
         "foo",
         "bar",
-        "bar/baz"
+        "bar/baz",
       ].map { |f| File.join(@root, f) }
       (listed - expected).must_equal []
       (expected - listed).must_equal []
@@ -210,13 +208,12 @@ describe Kitchen::Util do
     it "recusivly lists and provides dots when recurse and include_dot" do
       listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
       expected = [
-        ".",
         "foo",
         ".foo",
         "bar",
         "bar/baz",
         "bar/.",
-        "bar/.baz"
+        "bar/.baz",
       ].map { |f| File.join(@root, f) }
       (listed - expected).must_equal []
       (expected - listed).must_equal []
