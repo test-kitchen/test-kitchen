@@ -159,7 +159,6 @@ describe Kitchen::Util do
       @root = Dir.mktmpdir
       FileUtils.touch(File.join(@root, "foo"))
       Dir.mkdir(File.join(@root, "bar"))
-      FileUtils.touch(File.join(@root, "foo"))
       FileUtils.touch(File.join(@root, ".foo"))
       FileUtils.touch(File.join(@root, "bar", "baz"))
       FileUtils.touch(File.join(@root, "bar", ".baz"))
@@ -217,6 +216,35 @@ describe Kitchen::Util do
       ].map { |f| File.join(@root, f) }
       (listed - expected).must_equal []
       (expected - listed).must_equal []
+    end
+  end
+
+  describe ".safe_glob" do
+    before do
+      @root = Dir.mktmpdir
+      FileUtils.touch(File.join(@root, "foo"))
+      Dir.mkdir(File.join(@root, "bar"))
+      FileUtils.touch(File.join(@root, "foo"))
+      FileUtils.touch(File.join(@root, "foo.rb"))
+      FileUtils.touch(File.join(@root, "bar", "baz.rb"))
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+    end
+
+    it "globs without parameters" do
+      Kitchen::Util.safe_glob(@root, "**/*").must_equal Dir.glob(File.join(@root, "**/*"))
+    end
+
+    it "globs with parameters" do
+      Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal(
+        Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH))
+    end
+
+    it "globs a folder that does not exist" do
+      dne_dir = File.join(@root, "notexist")
+      Kitchen::Util.safe_glob(dne_dir, "**/*").must_equal Dir.glob(File.join(dne_dir, "**/*"))
     end
   end
 end
