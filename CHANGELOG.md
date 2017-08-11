@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.17.0](https://github.com/test-kitchen/test-kitchen/tree/v1.17.0) (2017-08-11)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.16.0...v1.17.0)
+
+**Fixed bugs:**
+
+- Fix Dir.glob usage [\#1258](https://github.com/test-kitchen/test-kitchen/pull/1258) ([jaym](https://github.com/jaym))
+
 ## [v1.16.0](https://github.com/test-kitchen/test-kitchen/tree/v1.16.0) (2017-03-03)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.15.0...v1.16.0)
 
