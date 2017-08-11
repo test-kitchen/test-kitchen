@@ -153,4 +153,98 @@ describe Kitchen::Util do
       Regexp.new("^ +" + Regexp.escape(str) + "$")
     end
   end
+
+  describe ".list_directory" do
+    before do
+      @root = Dir.mktmpdir
+      FileUtils.touch(File.join(@root, "foo"))
+      Dir.mkdir(File.join(@root, "bar"))
+      FileUtils.touch(File.join(@root, ".foo"))
+      FileUtils.touch(File.join(@root, "bar", "baz"))
+      FileUtils.touch(File.join(@root, "bar", ".baz"))
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+    end
+
+    it "returns [] when the directory does not exist" do
+      Kitchen::Util.list_directory(File.join(@root, "notexist")).must_equal []
+    end
+
+    it "lists one level with no dot files by default" do
+      listed = Kitchen::Util.list_directory(@root)
+      expected = %w{
+        foo
+        bar
+      }.map { |f| File.join(@root, f) }
+      (listed - expected).must_equal []
+      (expected - listed).must_equal []
+    end
+
+    it "matches dot files only when include_dot" do
+      listed = Kitchen::Util.list_directory(@root, include_dot: true)
+      expected = [
+        "foo",
+        ".foo",
+        "bar",
+      ].map { |f| File.join(@root, f) }
+      (listed - expected).must_equal []
+      (expected - listed).must_equal []
+    end
+
+    it "recusivly lists only when recurse" do
+      listed = Kitchen::Util.list_directory(@root, recurse: true)
+      expected = [
+        "foo",
+        "bar",
+        "bar/baz",
+      ].map { |f| File.join(@root, f) }
+      (listed - expected).must_equal []
+      (expected - listed).must_equal []
+    end
+
+    it "recusivly lists and provides dots when recurse and include_dot" do
+      listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
+      expected = [
+        "foo",
+        ".foo",
+        "bar",
+        "bar/baz",
+        "bar/.",
+        "bar/.baz",
+      ].map { |f| File.join(@root, f) }
+      (listed - expected).must_equal []
+      (expected - listed).must_equal []
+    end
+  end
+
+  describe ".safe_glob" do
+    before do
+      @root = Dir.mktmpdir
+      FileUtils.touch(File.join(@root, "foo"))
+      Dir.mkdir(File.join(@root, "bar"))
+      FileUtils.touch(File.join(@root, "foo"))
+      FileUtils.touch(File.join(@root, "foo.rb"))
+      FileUtils.touch(File.join(@root, "bar", "baz.rb"))
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+    end
+
+    it "globs without parameters" do
+      Kitchen::Util.safe_glob(@root, "**/*").must_equal Dir.glob(File.join(@root, "**/*"))
+    end
+
+    it "globs with parameters" do
+      Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal(
+        Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH))
+    end
+
+    it "globs a folder that does not exist" do
+      dne_dir = File.join(@root, "notexist")
+      Kitchen::Util.safe_glob(dne_dir, "**/*").must_equal Dir.glob(File.join(dne_dir, "**/*"))
+    end
+  end
 end
