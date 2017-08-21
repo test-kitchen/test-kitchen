@@ -314,6 +314,11 @@ describe Kitchen::Provisioner::Shell do
 
         cmd.must_match(/^TEST=yes/)
       end
+
+      it "accepts arguments when configured" do
+        config[:arguments] = "--php 70 --mysql 57"
+        cmd.must_match(/--php 70 --mysql 57/)
+      end
     end
 
     describe "for powershell shells on windows os types" do
