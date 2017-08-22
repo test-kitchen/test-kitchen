@@ -106,6 +106,27 @@ module Kitchen
       end
       expand_path_for :encrypted_data_bag_secret_key_path
 
+      #
+      # New configuration options per RFC 091
+      # https://github.com/chef/chef-rfc/blob/master/rfc091-deprecate-kitchen-settings.md
+      #
+
+      # Setting product_name to nil. It is currently the pivot point
+      # between the two install paths (Mixlib::Install::ScriptGenerator and Mixlib::Install)
+      default_config :product_name
+
+      default_config :product_version, :latest
+
+      default_config :channel, :stable
+
+      default_config :install_strategy, "once"
+
+      default_config :platform
+
+      default_config :platform_version
+
+      default_config :architecture
+
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
       # together.  For example, we want to configure proxy settings in 1
@@ -149,6 +170,7 @@ module Kitchen
       # (see Base#install_command)
       def install_command
         return unless config[:require_chef_omnibus] || config[:product_name]
+        return if config[:product_name] && config[:install_strategy] == "skip"
         prefix_command(sudo(install_script_contents))
       end
 
@@ -334,7 +356,10 @@ module Kitchen
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
-          channel: (config[:channel] || :stable).to_sym,
+          channel: config[:channel].to_sym,
+          install_command_options: {
+            install_strategy: config[:install_strategy],
+          },
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
           [:platform, :platform_version, :architecture].each do |key|
