@@ -10,14 +10,14 @@ Some of these are included in `chef-dk` and some are not.
 There are drivers not included in this list, and it is not intended to be
 exhaustive. However, as a sample of some of the supported platforms:
 
-- kitchen-vagrant: Vagrant driver for Kitchen
-- kitchen-google: Google Compute Engine driver for Test-Kitchen.
-- kitchen-hyperv: Hyper-V Driver for Test-Kitchen
-- kitchen-docker: A Test Kitchen Driver for Docker
-- kitchen-digitalocean: A Test Kitchen driver for DigitalOcean
-- kitchen-ec2: A Test Kitchen Driver for Amazon EC2
-- kitchen-azurerm: A driver for Test Kitchen that works with Azure Resource Manager
-- kitchen-rackspace: A Rackspace Cloud driver for Test Kitchen
+- [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant): Vagrant driver for Kitchen
+- [kitchen-google](https://github.com/test-kitchen/kitchen-google): Google Compute Engine driver for Test-Kitchen.
+- [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv): Hyper-V Driver for Test-Kitchen
+- [kitchen-docker](https://github.com/test-kitchen/kitchen-docker): A Test Kitchen Driver for Docker
+- [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean): A Test Kitchen driver for DigitalOcean
+- [kitchen-ec2](https://github.com/test-kitchen/kitchen-ec2): A Test Kitchen Driver for Amazon EC2
+- [kitchen-azurerm](https://github.com/test-kitchen/kitchen-azurerm): A driver for Test Kitchen that works with Azure Resource Manager
+- [kitchen-rackspace](https://github.com/test-kitchen/kitchen-rackspace): A Rackspace Cloud driver for Test Kitchen
 
 Some notes about specific drivers below.
 
