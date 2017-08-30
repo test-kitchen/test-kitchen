@@ -13,15 +13,13 @@ driver:
 
 provisioner:
   name: chef_zero
-  product_name: chef
-  product_version: 13.0.118
 
 verifier:
   name: inspec
 
 platforms:
   - name: ubuntu-16.04
-  - name: centos-7.3
+  - name: centos-7
 
 suites:
   - name: default
@@ -46,9 +44,9 @@ Now run `kitchen list` to see our new suite in action:
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 server-ubuntu-1604   Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-server-centos-73     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+server-centos-7      Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 Woah, we've doubled our number of instances! Yes, that is going to happen. This explosion of test cases is just one reason why testing is hard.

@@ -15,8 +15,6 @@ driver:
 
 provisioner:
   name: chef_zero
-  product_name: chef
-  product_version: 13.0.118
 
 verifier:
   name: inspec

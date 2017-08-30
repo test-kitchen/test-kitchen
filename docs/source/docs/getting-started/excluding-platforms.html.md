@@ -12,14 +12,14 @@ Let's give `kitchen list` a look:
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 server-ubuntu-1604   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
-server-centos-73     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+server-centos-7      Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 > **Add a platform name to an `excludes` array in a suite to remove the platform/suite combination from testing.**
 
-Let's exclude the `centos-7.3` platform from the `server` suite so that it
+Let's exclude the `centos-7` platform from the `server` suite so that it
 doesn't accidentally get run. Update `.kitchen.yml` to look like the following:
 
 ~~~yaml
@@ -29,15 +29,13 @@ driver:
 
 provisioner:
   name: chef_zero
-  product_name: chef
-  product_version: 13.0.118
 
 verifier:
   name: inspec
 
 platforms:
   - name: ubuntu-16.04
-  - name: centos-7.3
+  - name: centos-7
 
 suites:
   - name: default
@@ -55,7 +53,7 @@ suites:
         - test/smoke/server
     attributes:
     excludes:
-      - centos-7.3
+      - centos-7
 ~~~
 
 Now let's run `kitchen list` to ensure the instance is gone:
@@ -64,7 +62,7 @@ Now let's run `kitchen list` to ensure the instance is gone:
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 server-ubuntu-1604   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
 ~~~
 
@@ -75,8 +73,8 @@ $ kitchen destroy
 -----> Starting Kitchen (v1.16.0)
 -----> Destroying <default-ubuntu-1604>...
        Finished destroying <default-ubuntu-1604> (0m0.00s).
------> Destroying <default-centos-73>...
-       Finished destroying <default-centos-73> (0m0.00s).
+-----> Destroying <default-centos-7>...
+       Finished destroying <default-centos-7> (0m0.00s).
 -----> Destroying <server-ubuntu-1604>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...

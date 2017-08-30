@@ -134,5 +134,5 @@ In our case, Kitchen uses Berkshelf to fetch a version of `runit` that fits the 
 $ kitchen list server
 Instance            Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 server-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
-server-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+server-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
