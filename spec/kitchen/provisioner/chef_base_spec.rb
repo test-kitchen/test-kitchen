@@ -132,6 +132,30 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:encrypted_data_bag_secret_key_path]
         .must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
     end
+
+    it ":product_name default to nil" do
+      provisioner[:product_name].must_be_nil
+    end
+
+    it ":product_version defaults to :latest" do
+      provisioner[:product_version].must_equal :latest
+    end
+
+    it ":channel defaults to :stable" do
+      provisioner[:channel].must_equal :stable
+    end
+
+    it ":platform default to nil" do
+      provisioner[:platform].must_be_nil
+    end
+
+    it ":platform_version default to nil" do
+      provisioner[:platform_version].must_be_nil
+    end
+
+    it ":architecture default to nil" do
+      provisioner[:architecture].must_be_nil
+    end
   end
 
   describe "#install_command" do
@@ -415,6 +439,33 @@ describe Kitchen::Provisioner::ChefBase do
         Mixlib::Install.expects(:new).with do |opts|
           opts[:channel].must_equal :stable
         end.returns(installer)
+        cmd
+      end
+
+      it "will set install_strategy to once when not given" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:install_strategy].must_equal "once"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set install_strategy when given" do
+        config[:install_strategy] = "always"
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:install_strategy].must_equal "always"
+        end.returns(installer)
+        cmd
+      end
+    end
+
+    describe "when install_strategy is skipped" do
+      before do
+        config[:product_name] = "my_product"
+        config[:install_strategy] = "skip"
+      end
+
+      it "will not return installer when install_strategy is set to skip" do
+        Mixlib::Install.expects(:new).never
         cmd
       end
     end
