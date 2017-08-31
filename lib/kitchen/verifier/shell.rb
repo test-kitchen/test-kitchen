@@ -38,7 +38,7 @@ module Kitchen
 
       # (see Base#call)
       def call(state)
-        info("[#{name}] Verify on instance=#{instance} with state=#{state}")
+        info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
         merge_state_to_env(state)
         if config[:remote_exec]
