@@ -156,6 +156,14 @@ describe Kitchen::Provisioner::ChefBase do
     it ":architecture default to nil" do
       provisioner[:architecture].must_be_nil
     end
+
+    it ":download_url default to nil" do
+      provisioner[:download_url].must_be_nil
+    end
+
+    it ":checksum default to nil" do
+      provisioner[:checksum].must_be_nil
+    end
   end
 
   describe "#install_command" do
@@ -453,6 +461,17 @@ describe Kitchen::Provisioner::ChefBase do
         config[:install_strategy] = "always"
         Mixlib::Install.expects(:new).with do |opts|
           opts[:install_command_options][:install_strategy].must_equal "always"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set the download_url and checksum if given" do
+        config[:download_url] = "http://url/path"
+        config[:checksum] = "abcd"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:download_url_override].must_equal "http://url/path"
+          opts[:install_command_options][:checksum].must_equal "abcd"
         end.returns(installer)
         cmd
       end

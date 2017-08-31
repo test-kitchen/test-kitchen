@@ -127,6 +127,10 @@ module Kitchen
 
       default_config :architecture
 
+      default_config :download_url
+
+      default_config :checksum
+
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
       # together.  For example, we want to configure proxy settings in 1
@@ -364,6 +368,11 @@ module Kitchen
           opts[:shell_type] = :ps1 if powershell_shell?
           [:platform, :platform_version, :architecture].each do |key|
             opts[key] = config[key] if config[key]
+          end
+
+          if config[:download_url]
+            opts[:install_command_options][:download_url_override] = config[:download_url]
+            opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
           end
         end)
         config[:chef_omnibus_root] = installer.root
