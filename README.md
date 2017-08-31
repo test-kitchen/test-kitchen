@@ -3,12 +3,12 @@
 [![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
 [![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.svg?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
 
-|             |                                               |
-|-------------|-----------------------------------------------|
-| Website     | http://kitchen.ci                             |
-| Source Code | http://kitchen.ci/docs/getting-started/       |
-| IRC         | [#kitchenci][irc] channel on Freenode, [transcript][irc_log] thanks to [BotBot.me][botbotme] |
-| Twitter     | [@kitchenci][twitter]                         |
+|             |                                                                                 |
+| ----------- | --------------------------------------------------------------------------------|
+| Website     | [http://kitchen.ci][website]													|
+| Source Code | [http://kitchen.ci/docs/getting-started/][guide]								|
+| Slack       | [#test-kitchen][slack] channel on Chef Community Slack, [transcript][slack_log]	|
+| Twitter     | [@kitchenci][twitter]															|
 
 > **Test Kitchen is an integration tool for developing and testing
 > infrastructure code and software on isolated target platforms.**
@@ -124,16 +124,15 @@ a growing community of [contributors][contributors].
 
 Apache License, Version 2.0 (see [LICENSE][license])
 
-[botbotme]: https://botbot.me/
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
+[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
 [fnichol]: https://github.com/fnichol
 [guide]: http://kitchen.ci/docs/getting-started/
-[irc]: http://webchat.freenode.net/?channels=kitchenci
-[irc_log]: https://botbot.me/freenode/kitchenci/
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
 [semver]: http://semver.org/
+[slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
+[slack_log]: https://chefcommunity.slackarchive.io/test-kitchen
 [twitter]: https://twitter.com/kitchenci
 [website]: http://kitchen.ci
-[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
