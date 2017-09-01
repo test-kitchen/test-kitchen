@@ -61,6 +61,3 @@ matrix:
         - sudo cat /var/log/squid3/access.log
   allow_failures:
     - rvm: ruby-head
-
-notifications:
-  irc: "chat.freenode.net#kitchenci"
