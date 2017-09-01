@@ -25,3 +25,4 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Sean Omeara](http://github.com/someara)
 * [Steven Murawski](http://github.com/smurawski)
 * [Salim Afiune](http://github.com/afiune)
+* [Tim Smith](http://github.com/tas50)
