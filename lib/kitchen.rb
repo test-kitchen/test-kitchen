@@ -24,6 +24,7 @@ require "kitchen/logger"
 require "kitchen/logging"
 require "kitchen/shell_out"
 require "kitchen/configurable"
+require "kitchen/telemetry"
 require "kitchen/util"
 
 require "kitchen/provisioner"

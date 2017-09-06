@@ -18,6 +18,7 @@
 
 require "benchmark"
 require "fileutils"
+require "kitchen/telemetry"
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a
@@ -376,6 +377,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def create_action
+      Kitchen::Telemetry.send(event: "create", properties: driver.telemetry)
       perform_action(:create, "Creating")
     end
 

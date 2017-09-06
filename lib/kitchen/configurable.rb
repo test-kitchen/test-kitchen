@@ -133,6 +133,16 @@ module Kitchen
       result
     end
 
+    # Returns a Hash of useful information for telemetry
+    #
+    # @return [Hash] a hash of interesting stuff
+    def telemetry
+      {
+        driver_name: name,
+        driver_version: self.class.version,
+      }
+    end
+
     # Returns the name of this plugin, suitable for display in a CLI.
     #
     # @return [String] name of this plugin
@@ -419,6 +429,9 @@ module Kitchen
         @plugin_version = version
       end
 
+      def version
+        @plugin_version
+      end
       # Returns a Hash of configuration and other useful diagnostic
       # information.
       #
