@@ -37,7 +37,7 @@ begin
     task.options += ["--display-cop-names", "--no-color"]
   end
 rescue LoadError
-  puts "chefstyle is not available.  gem install chefstyle to do style checking."
+  puts "chefstyle is not available. (sudo) gem install chefstyle to do style checking."
 end
 
 desc "Run all quality tasks"
@@ -64,5 +64,5 @@ begin
   end
 rescue LoadError
   puts "github_changelog_generator is not available." \
-       " gem install github_changelog_generator to generate changelogs"
+       " (sudo) gem install github_changelog_generator to generate changelogs"
 end

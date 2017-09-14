@@ -19,7 +19,7 @@ before_install:
   - sudo usermod -p `openssl passwd -1 'travis'` travis
   - gem --version
 
-bundler_args: --without changelog
+bundler_args: --without changelog pry docs
 
 script:
   - bundle exec rake

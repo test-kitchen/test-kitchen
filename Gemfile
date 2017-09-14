@@ -13,6 +13,20 @@ group :changelog do
   gem "github_changelog_generator", "1.11.3"
 end
 
+group :debug do
+  gem "pry"
+  gem "pry-byebug"
+  gem "pry-stack_explorer"
+end
+
+group :chefstyle do
+  gem "chefstyle"
+end
+
+group :docs do
+  gem "yard"
+end
+
 instance_eval(ENV["GEMFILE_MOD"]) if ENV["GEMFILE_MOD"]
 
 # If you want to load debugging tools into the bundle exec sandbox,
