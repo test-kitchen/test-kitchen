@@ -475,6 +475,37 @@ describe Kitchen::Provisioner::ChefBase do
         end.returns(installer)
         cmd
       end
+
+      it "will set the http_proxy and https_proxy if given" do
+        config[:http_proxy] = "http://url/path:8000"
+        config[:https_proxy] = "http://url/path:8000"
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:http_proxy].must_equal "http://url/path:8000"
+          opts[:install_command_options][:https_proxy].must_equal "http://url/path:8000"
+        end.returns(installer)
+        cmd
+      end
+
+      it "will set the http_proxy only for powershell" do
+        config[:http_proxy] = "http://url/path:8000"
+        config[:https_proxy] = "http://url/path:8000"
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:http_proxy].must_equal "http://url/path:8000"
+          opts[:install_command_options][:https_proxy].must_be_nil
+        end.returns(installer)
+        cmd
+      end
+
+      it "will not set proxies when not given" do
+        Mixlib::Install.expects(:new).with do |opts|
+          opts[:install_command_options][:http_proxy].must_be_nil
+        end.returns(installer)
+        cmd
+      end
     end
 
     describe "when install_strategy is skipped" do

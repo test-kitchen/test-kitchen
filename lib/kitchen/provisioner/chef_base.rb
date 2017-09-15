@@ -374,6 +374,17 @@ module Kitchen
             opts[:install_command_options][:download_url_override] = config[:download_url]
             opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
           end
+
+          proxies = {}.tap do |prox|
+            [:http_proxy, :https_proxy, :ftp_proxy, :no_proxy].each do |key|
+              prox[key] = config[key] if config[key]
+            end
+
+            # install.ps1 only supports http_proxy
+            prox.delete_if { |p| [:https_proxy, :ftp_proxy, :no_proxy].include?(p) } if powershell_shell?
+          end
+
+          opts[:install_command_options].merge!(proxies)
         end)
         config[:chef_omnibus_root] = installer.root
         if powershell_shell?
