@@ -42,7 +42,7 @@ module Kitchen
     def send(data = {})
       data[:properties][:host] = host
       data[:properties][:version] = version
-      @telemetry.send(data)
+      @telemetry.deliver(data)
     end
 
     class << self
