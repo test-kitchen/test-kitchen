@@ -176,9 +176,9 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets the :paranoid flag to false" do
+      it "sets the :verify_host_key flag to false" do
         klass.expects(:new).with do |hash|
-          hash[:paranoid] == false
+          hash[:verify_host_key] == false
         end
 
         make_connection
