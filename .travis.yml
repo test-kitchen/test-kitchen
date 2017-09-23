@@ -1,22 +1,17 @@
+sudo: required
+dist: trusty
+services: docker
+
 language: ruby
+cache: bundler
 
 rvm:
   - 2.3
   - 2.4
   - ruby-head
 
-env:
-  - global:
-    - machine_user=travis
-    - machine_pass=travis
-    - machine_port=22
-
-dist: precise
-sudo: required
-#cache: bundler
 
 before_install:
-  - sudo usermod -p `openssl passwd -1 'travis'` travis
   - gem --version
 
 bundler_args: --without changelog pry docs
@@ -24,8 +19,8 @@ bundler_args: --without changelog pry docs
 script:
   - bundle exec rake
   - bundle install --with integration
-  - export KITCHEN_YAML=.kitchen.ci.yml
-  - bundle exec kitchen verify ubuntu
+  - export KITCHEN_YAML=.kitchen.dokken.yml
+  - bundle exec kitchen test
 
 branches:
   only:
@@ -33,7 +28,7 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.3.4
+    - rvm: 2.4
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
       gemfile: Gemfile.proxy_tests

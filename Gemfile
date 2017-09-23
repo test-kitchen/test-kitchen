@@ -7,6 +7,7 @@ gem "train", "~> 0.22"
 group :integration do
   gem "berkshelf"
   gem "kitchen-inspec"
+  gem "kitchen-dokken"
 end
 
 group :changelog do
