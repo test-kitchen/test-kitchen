@@ -12,6 +12,7 @@ rvm:
 
 
 before_install:
+  - gem install kitchen-vagrant 
   - gem --version
 
 bundler_args: --without changelog pry docs
