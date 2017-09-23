@@ -3,21 +3,19 @@ dist: trusty
 services: docker
 
 language: ruby
-cache: bundler
 
 rvm:
   - 2.3
-  - 2.4
+  - 2.4.2
   - ruby-head
 
 
 before_install:
   - gem --version
 
-bundler_args: --without changelog pry docs
+bundler_args: --with integration --without changelog debug docs
 
 script:
-  - bundle install --with integration
   - bundle exec rake
   - export KITCHEN_YAML=.kitchen.dokken.yml
   - bundle exec kitchen test
