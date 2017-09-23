@@ -17,8 +17,8 @@ before_install:
 bundler_args: --without changelog pry docs
 
 script:
-  - bundle exec rake
   - bundle install --with integration
+  - bundle exec rake
   - export KITCHEN_YAML=.kitchen.dokken.yml
   - bundle exec kitchen test
 
