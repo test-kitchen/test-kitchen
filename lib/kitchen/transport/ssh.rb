@@ -399,7 +399,7 @@ module Kitchen
         opts = {
           logger: logger,
           user_known_hosts_file: "/dev/null",
-          paranoid: false,
+          verify_host_key: false,
           hostname: data[:hostname],
           port: data[:port],
           username: data[:username],

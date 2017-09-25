@@ -828,9 +828,9 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :paranoid option set to false" do
+      it "with :verify_host_key option set to false" do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:paranoid].must_equal false
+          opts[:verify_host_key].must_equal false
         end.returns(connection)
 
         cmd

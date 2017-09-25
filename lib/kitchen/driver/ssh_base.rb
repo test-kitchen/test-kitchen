@@ -239,7 +239,7 @@ module Kitchen
 
         opts = {}
         opts[:user_known_hosts_file] = "/dev/null"
-        opts[:paranoid] = false
+        opts[:verify_host_key] = false
         opts[:keys_only] = true if combined[:ssh_key]
         opts[:password] = combined[:password] if combined[:password]
         opts[:forward_agent] = combined[:forward_agent] if combined.key? :forward_agent
