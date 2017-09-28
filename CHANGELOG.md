@@ -1,5 +1,21 @@
 # Change Log
 
+## [v1.18.0](https://github.com/test-kitchen/test-kitchen/tree/v1.18.0) (2017-09-21)
+
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.17.0...v1.18.0)
+
+**Implemented enhancements:**
+
+- Add ability to pass arguments to shell provisioner [#917](https://github.com/test-kitchen/test-kitchen/issues/917)
+- Add proxy support when using product_name [#1276](https://github.com/test-kitchen/test-kitchen/pull/1276) ([wrightp](https://github.com/wrightp))
+- Add download_url and checksum provisioner config options [#1267](https://github.com/test-kitchen/test-kitchen/pull/1267) ([wrightp](https://github.com/wrightp))
+- New install_strategy option used in conjunction with product_name [#1262](https://github.com/test-kitchen/test-kitchen/pull/1262) ([wrightp](https://github.com/wrightp))
+- Allow command line arguments config in shell provisioner [#943](https://github.com/test-kitchen/test-kitchen/pull/943) ([mmckinst](https://github.com/mmckinst))
+
+**Fixed bugs:**
+
+- Shell verifier: Print instance name instead of object [#1263](https://github.com/test-kitchen/test-kitchen/pull/1263) ([rbngzlv](https://github.com/rbngzlv))
+
 ## [v1.17.0](https://github.com/test-kitchen/test-kitchen/tree/v1.17.0) (2017-08-11)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.16.0...v1.17.0)
 
