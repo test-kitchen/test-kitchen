@@ -34,7 +34,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       required_config :host
-      required_config :reset_command
+      default_config :reset_command, nil
 
       no_parallel_for :create, :destroy
 

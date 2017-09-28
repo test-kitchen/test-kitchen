@@ -52,21 +52,15 @@ describe Kitchen::Driver::Proxy do
   end
 
   describe "required_config" do
-    [:host, :reset_command].each do |attr|
-      it "requires :#{attr}" do
-        config.delete(attr)
-
-        begin
-          driver
-          flunk "UserError must be raised for missing :#{attr}"
-        rescue Kitchen::UserError => e
-          e.message.must_match regexify("config[:#{attr}] cannot be blank")
-        end
-      end
+    it "requires host" do
+      config.delete(:host)
+      err = assert_raises(Kitchen::UserError) { driver }
+      err.message.must_include "config[:host] cannot be blank"
     end
 
-    def regexify(str)
-      Regexp.new(Regexp.escape(str))
+    it "does not require reset_command" do
+      config.delete(:reset_command)
+      driver # Just make sure it doesn't raise
     end
   end
 
