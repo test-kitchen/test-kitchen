@@ -1,5 +1,33 @@
 # Change Log
 
+## [v1.18.0](https://github.com/test-kitchen/test-kitchen/tree/v1.18.0) (2017-09-28)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.17.0...v1.18.0)
+
+**Fixed bugs:**
+
+- Shell verifier: Print instance name instead of object [\#1263](https://github.com/test-kitchen/test-kitchen/pull/1263) ([rbngzlv](https://github.com/rbngzlv))
+
+**Merged pull requests:**
+
+- reset\_command doesn't actually need to be required [\#1286](https://github.com/test-kitchen/test-kitchen/pull/1286) ([coderanger](https://github.com/coderanger))
+- Continue to support older net-ssh while fixing 4.2 deprecation [\#1285](https://github.com/test-kitchen/test-kitchen/pull/1285) ([cheeseplus](https://github.com/cheeseplus))
+- Update winrm-fs and make winrm\* gems proper deps [\#1284](https://github.com/test-kitchen/test-kitchen/pull/1284) ([cheeseplus](https://github.com/cheeseplus))
+- Pin to net-ssh 4.1.0 for now [\#1283](https://github.com/test-kitchen/test-kitchen/pull/1283) ([cheeseplus](https://github.com/cheeseplus))
+- idempotent\_check: Allow specificaton of enforce\_idempotency [\#1282](https://github.com/test-kitchen/test-kitchen/pull/1282) ([MarkGibbons](https://github.com/MarkGibbons))
+- Support renamed net-ssh option `verify\_host\_key` [\#1281](https://github.com/test-kitchen/test-kitchen/pull/1281) ([cheeseplus](https://github.com/cheeseplus))
+- Reorganized a section and added kitchen-vcenter [\#1279](https://github.com/test-kitchen/test-kitchen/pull/1279) ([jjasghar](https://github.com/jjasghar))
+- Add proxy support when using product\_name [\#1276](https://github.com/test-kitchen/test-kitchen/pull/1276) ([wrightp](https://github.com/wrightp))
+- Remove Ruby 1.8.7 compat code [\#1274](https://github.com/test-kitchen/test-kitchen/pull/1274) ([tas50](https://github.com/tas50))
+- Move extra dev deps to the Gemfile [\#1273](https://github.com/test-kitchen/test-kitchen/pull/1273) ([tas50](https://github.com/tas50))
+- Add tas50 as a maintainer [\#1270](https://github.com/test-kitchen/test-kitchen/pull/1270) ([tas50](https://github.com/tas50))
+- Swap IRC for Slack in the readme [\#1269](https://github.com/test-kitchen/test-kitchen/pull/1269) ([tas50](https://github.com/tas50))
+- Remove rack pin for Ruby 2.1 & move changelog gen to gemfile [\#1268](https://github.com/test-kitchen/test-kitchen/pull/1268) ([tas50](https://github.com/tas50))
+- Add download\_url and checksum provisioner config options [\#1267](https://github.com/test-kitchen/test-kitchen/pull/1267) ([wrightp](https://github.com/wrightp))
+- Add kitchen-terraform to the readme [\#1266](https://github.com/test-kitchen/test-kitchen/pull/1266) ([tas50](https://github.com/tas50))
+- New install\_strategy option used in conjunction with product\_name [\#1262](https://github.com/test-kitchen/test-kitchen/pull/1262) ([wrightp](https://github.com/wrightp))
+- Allow command line arguments config in shell provisioner [\#943](https://github.com/test-kitchen/test-kitchen/pull/943) ([mmckinst](https://github.com/mmckinst))
+
+
 ## [v1.17.0](https://github.com/test-kitchen/test-kitchen/tree/v1.17.0) (2017-08-11)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.16.0...v1.17.0)
 
