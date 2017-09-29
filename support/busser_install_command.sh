@@ -1,3 +1,9 @@
+
+# Ensure that $BUSSER_ROOT is owned by the current user, which migh not be the
+# case if parts of $BUSSER_ROOT are mounted via vagrant synched folders.
+# See https://github.com/test-kitchen/test-kitchen/issues/671 
+sudo chown -R $USER:$USER $BUSSER_ROOT
+
 $gem list busser -i 2>&1 >/dev/null
 if test $? -ne 0; then
   echo "-----> Installing Busser ($version)"
