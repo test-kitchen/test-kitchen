@@ -39,7 +39,7 @@ module Kitchen
   #
   # @example fetching an instance by name
   #
-  #   Kitchen::Config.new.instances.get("default-ubuntu-12.04")
+  #   Kitchen::Config.new.instances.get("default-ubuntu-16.04")
   #
   # @example fetching all instances matching a regular expression
   #

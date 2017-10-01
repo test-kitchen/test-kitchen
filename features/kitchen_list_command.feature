@@ -117,7 +117,7 @@ Feature: Listing Test Kitchen instances
     provisioner: chef_solo
 
     platforms:
-      - name: ubuntu-12.04
+      - name: ubuntu-16.04
 
     suites:
       - name: gdb01-master
