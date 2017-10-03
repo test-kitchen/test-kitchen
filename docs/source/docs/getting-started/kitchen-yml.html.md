@@ -37,7 +37,15 @@ suites:
 Very briefly we can cover the common sections you're likely to find in a `.kitchen.yml` file:
 
 * `driver`: Set and configure the driver. We're explicitly setting it via `name: vagrant` even though this is the default.
-* `transport`: Configure settings for the transport layer (SSH/WinRM). No configuration is needed of this for our guide as default values suffice.
+* `transport`: Configure settings for the transport layer (SSH/WinRM). No configuration is needed of this for our guide as default values suffice. However, be aware that if  `winrm-elevated 0.4.0` is used, this additional configuration is needed:
+
+~~~yaml
+---
+transport:
+  name: winrm
+  elevated: true
+~~~
+
 * `provisioner`: This tells Kitchen how to run Chef, to apply the code in our cookbook to the machine under test.  The default and simplest approach is to use `chef_zero`, but other options are available, and ultimately Kitchen doesn't care how the infrastructure is built - it could theoretically be with Puppet, Ansible, or Perl for all it cares.
 * `verifier`: This is where we configure the behaviour of the Kitchen Verifier - this component that is responsible for executing tests against the machine after Chef has converged.
 * `platforms`: This is a list of operation systems on which we want to run our code. Note that the operating system's version, architecture, cloud environment, etc. might be relevant to what Kitchen considers a **Platform**.
