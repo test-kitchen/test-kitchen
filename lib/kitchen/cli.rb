@@ -19,7 +19,6 @@
 require "thor"
 
 require "kitchen"
-require "kitchen/generator/driver_create"
 require "kitchen/generator/init"
 
 module Kitchen
@@ -284,47 +283,6 @@ module Kitchen
       and one or more gems will be added to the project's Gemfile.
     D
     tasks["init"].options = Kitchen::Generator::Init.class_options
-
-    # Thor class for kitchen driver commands.
-    #
-    # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Driver < Thor
-      include PerformCommand
-
-      register Kitchen::Generator::DriverCreate, "create",
-               "create [NAME]", "Create a new Kitchen Driver gem project"
-      long_desc <<-D, for: "create"
-        Create will generate a project scaffold for a brand new Test Kitchen
-        Driver RubyGem. For example:
-
-        > kitchen driver create foobar
-
-        will create a project scaffold for a RubyGem called `kitchen-foobar'.
-      D
-      tasks["create"].options = Kitchen::Generator::DriverCreate.class_options
-
-      desc "discover", "Discover Test Kitchen drivers published on RubyGems"
-      long_desc <<-D
-        Discover will perform a search aginst the RubyGems service for any
-        published gems of the form: "kitchen-*". Note that it it cannot be
-        guarenteed that every result is a driver, but chances are good most
-        relevant drivers will be returned.
-      D
-      method_option :chef_config_path,
-                    default: nil,
-                    desc: "Path to chef config file containing proxy configuration to use"
-      def discover
-        perform("discover", "driver_discover", args)
-      end
-
-      # @return [String] basename
-      def self.basename
-        super + " driver"
-      end
-    end
-
-    register Kitchen::CLI::Driver, "driver",
-             "driver", "Driver subcommands"
 
     no_tasks do
       def invoke_task(command, *args)
