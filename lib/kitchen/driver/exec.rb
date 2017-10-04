@@ -13,21 +13,27 @@
 # limitations under the License.
 #
 
-require "kitchen"
-require "kitchen/version"
+require "kitchen/driver/base"
+require "kitchen/shell_out"
 require "kitchen/transport/exec"
+require "kitchen/version"
 
 module Kitchen
   module Driver
     # Simple driver that runs commands locally. As with the proxy driver, this
     # has no isolation in general.
     class Exec < Kitchen::Driver::Base
+      include ShellOut
+
       plugin_version Kitchen::VERSION
 
       default_config :reset_command, nil
 
-      no_parallel_for :create, :destroy
+      no_parallel_for :create, :converge, :destroy
 
+      # Hack to inject to Exec transport in too.
+      #
+      # @api private
       def finalize_config!(instance)
         super.tap do
           instance.transport = Kitchen::Transport::Exec.new
@@ -41,9 +47,7 @@ module Kitchen
 
       # (see Base#destroy)
       def destroy(state)
-        return if state[:hostname].nil?
         reset_instance(state)
-        state.delete(:hostname)
       end
 
       private
@@ -56,7 +60,7 @@ module Kitchen
       def reset_instance(state)
         if cmd = config[:reset_command]
           info("Resetting instance state with command: #{cmd}")
-          ssh(build_ssh_args(state), cmd)
+          run_command(cmd)
         end
       end
     end
