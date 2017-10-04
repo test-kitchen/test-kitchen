@@ -54,20 +54,20 @@ module Kitchen
 
     # @return [Driver::Base] driver object which will manage this instance's
     #   lifecycle actions
-    attr_reader :driver
+    attr_accessor :driver
 
     # @return [Provisioner::Base] provisioner object which will the setup
     #   and invocation instructions for configuration management and other
     #   automation tools
-    attr_reader :provisioner
+    attr_accessor :provisioner
 
     # @return [Transport::Base] transport object which will communicate with
     #   an instance.
-    attr_reader :transport
+    attr_accessor :transport
 
     # @return [Verifier] verifier object for instance to manage the verifier
     #   installation on this instance
-    attr_reader :verifier
+    attr_accessor :verifier
 
     # @return [Logger] the logger for this instance
     attr_reader :logger
