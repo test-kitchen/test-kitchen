@@ -59,6 +59,34 @@ class IO
   end
 end
 
+# Hack to sort results in `Dir.entries` only within the yielded block, to limit
+# the "behavior pollution" to other code. This was needed for Net::SCP, as
+# recursive directory upload doesn't sort the file and directory upload
+# candidates which leads to different results based on the underlying
+# filesystem (i.e. lexically sorted, inode insertion, mtime/atime, total
+# randomness, etc.)
+#
+# See: https://github.com/net-ssh/net-scp/blob/a24948/lib/net/scp/upload.rb#L52
+
+$_sort_dir_entries = false
+Dir.singleton_class.prepend(Module.new {
+  def entries(*args)
+    super.tap do |rv|
+      rv.sort! if $_sort_dir_entries
+    end
+  end
+})
+
+def with_sorted_dir_entries(&block)
+  begin
+    old_sort_dir_entries = $_sort_dir_entries
+    $_sort_dir_entries = true
+    block.call
+  ensure
+    $_sort_dir_entries = old_sort_dir_entries
+  end
+end
+
 def with_fake_fs
   FakeFS.activate!
   FileUtils.mkdir_p("/tmp")

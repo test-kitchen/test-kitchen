@@ -21,35 +21,6 @@ require_relative "../../spec_helper"
 require "kitchen/transport/ssh"
 require "net/ssh/test"
 
-# Hack to sort results in `Dir.entries` only within the yielded block, to limit
-# the "behavior pollution" to other code. This was needed for Net::SCP, as
-# recursive directory upload doesn't sort the file and directory upload
-# candidates which leads to different results based on the underlying
-# filesystem (i.e. lexically sorted, inode insertion, mtime/atime, total
-# randomness, etc.)
-#
-# See: https://github.com/net-ssh/net-scp/blob/a24948/lib/net/scp/upload.rb#L52
-
-def with_sorted_dir_entries
-  Dir.class_exec do
-    class << self
-      alias_method :__entries__, :entries unless method_defined?(:__entries__)
-
-      def entries(*args) # rubocop:disable Lint/NestedMethodDefinition
-        send(:__entries__, *args).sort
-      end
-    end
-  end
-
-  yield
-
-  Dir.class_exec do
-    class << self
-      alias_method :entries, :__entries__
-    end
-  end
-end
-
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
