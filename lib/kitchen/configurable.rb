@@ -304,7 +304,7 @@ module Kitchen
     # @return [String] wrapped shell code
     # @api private
     def wrap_shell_code(code)
-      return env_wrapped code if powershell_shell?
+      return env_wrapped(code) if powershell_shell?
       Util.wrap_command((env_wrapped code))
     end
 
