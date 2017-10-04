@@ -284,17 +284,6 @@ module Kitchen
     D
     tasks["init"].options = Kitchen::Generator::Init.class_options
 
-    no_tasks do
-      def invoke_task(command, *args)
-        if command.name == "help" && args.first.first == "driver"
-          Kitchen::CLI::Driver.task_help(shell, args.first.last)
-        else
-          super
-        end
-      end
-      alias_method :invoke_command, :invoke_task
-    end
-
     private
 
     # Ensure the any failing commands exit non-zero.
