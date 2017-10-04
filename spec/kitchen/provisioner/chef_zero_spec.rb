@@ -310,7 +310,7 @@ describe Kitchen::Provisioner::ChefZero do
         config[:enforce_idempotency] = true
         provisioner.create_sandbox
 
-        file_no_updated_resources.join.must_match /handler_file =.*chef-client-fail-if-update-handler.rb/
+        file_no_updated_resources.join.must_match(/handler_file =.*chef-client-fail-if-update-handler.rb/)
       end
     end
 
