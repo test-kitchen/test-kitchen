@@ -39,7 +39,8 @@ module Kitchen
 
         # (see Base#execute)
         def execute(command)
-          run_command(command) if command && command != ''
+          return if command.nil?
+          run_command(command)
         end
 
         # "Upload" the files by copying them locally.
