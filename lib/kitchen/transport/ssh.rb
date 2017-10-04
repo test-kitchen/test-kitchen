@@ -436,7 +436,7 @@ module Kitchen
 
         # disable host key verification. The hash key to use
         # depends on the version of net-ssh in use.
-        opts[verify_host_key_option] = false
+        opts[:verify_host_key_option] = false
 
         opts
       end
