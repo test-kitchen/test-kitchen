@@ -132,7 +132,6 @@ module Kitchen
         else
           info("No provisioner script file specified, skipping")
         end
-
       end
 
     end
