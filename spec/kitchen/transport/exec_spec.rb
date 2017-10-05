@@ -50,7 +50,7 @@ describe Kitchen::Transport::Exec::Connection do
   let(:logger)          { Logger.new(logged_output) }
 
   let(:options) do
-    {logger: logger}
+    { logger: logger }
   end
 
   let(:connection) do

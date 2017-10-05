@@ -22,7 +22,7 @@ describe Kitchen::Driver::Exec do
   let(:state)         { Hash.new }
 
   let(:config) do
-    {reset_command: "mulligan"}
+    { reset_command: "mulligan" }
   end
 
   let(:instance) do
@@ -38,7 +38,7 @@ describe Kitchen::Driver::Exec do
   end
 
   it "sets the transport to exec" do
-    instance.expects(:"transport=").with {|v| v.is_a?(Kitchen::Transport::Exec) }
+    instance.expects(:"transport=").with { |v| v.is_a?(Kitchen::Transport::Exec) }
     driver
   end
 
