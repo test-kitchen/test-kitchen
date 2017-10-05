@@ -87,7 +87,7 @@ module Kitchen
           File.basename(config[:script])
         )
 
-        if config[:arguments]
+        if config[:arguments] && !config[:arguments].empty?
           if config[:arguments].is_a?(Array)
             script = Shellwords.join([script] + config[:arguments])
           else
