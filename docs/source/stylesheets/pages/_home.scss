@@ -37,7 +37,14 @@
   }
 }
 
-
+.home--markdown {
+  position: relative;
+  z-index: 3;
+  border-radius: 5px;
+  width: 90%;
+  text-align: left;
+  float: right;
+}
 
 .home--logos {
   position: relative;
