@@ -48,23 +48,73 @@ title:  Welcome to Kitchen - KitchenCI
   .columns.large-8
     .row.home--image-row
       .columns.medium-6.medium-text-right
-        img.home--terminal src="/images/terminal-1.svg" onerror="this.src='/images/terminal-1.png'"
+        div.home--markdown
+          markdown:
+            ~~~yaml
+            ---
+            driver:
+              name: vagrant
+
+            provisioner:
+              name: chef_zero
+
+            platforms:
+              - name: ubuntu-14.04
+              - name: windows-2012r2
+
+            suites:
+              - name: client
+                run_list:
+                  - recipe[postgresql::client]
+              - name: server
+                run_list:
+                  - recipe[postgresql::server]
+            ~~~
       .columns.medium-6.home--logos
-        img.home--logos--img src="/images/logos-group.svg" onerror="this.src='/images/logos-group.png'"
+        img.home--logos--img src="/images/logos-group.svg" onerror="this.src='/images/logos-group.png'" margin-left="0px"
     .row.home--image-row
       .columns.medium-6.medium-text-right
-        img.home--terminal src="/images/terminal-2.svg" onerror="this.src='/images/terminal-2.png'"
+        div.home--markdown
+          markdown:
+            ~~~bash
+            $ kitchen create
+
+            $ kitchen converge
+
+            $ kitchen setup
+
+            $ kitchen verify
+
+            $ kitchen destroy
+            ~~~
       .columns.medium-6
-        .home--text
+        .home--text--rightcol
           h2.body-heading How do I run Kitchen?
           p
             | There are five basic commands to provision platforms and test
               infrastructure code.
     .row.home--image-row
       .columns.medium-6.medium-text-right
-        img.home--terminal src="/images/terminal-3.svg" onerror="this.src='/images/terminal-3.png'"
+        div.home--markdown
+          markdown:
+            ~~~bash
+            --> Running rspec test suites
+
+              ✔ git binary is found in PATH
+
+            3 tests, 2 failures
+
+            Finished verifying
+
+            <default-ubuntu-1404> (0m0.98s).
+
+            --> Destroying
+
+            --> Kitchen is finished.
+            (1m44.11s)
+            ~~~
       .columns.medium-6
-        .home--text
+        .home--text--rightcol
           h2.body-heading How do I get started?
           p
             | Install the <a href="https://downloads.chef.io/chefdk/">Chef
