@@ -183,8 +183,8 @@ describe Kitchen::Provisioner::Base do
 
     it "invokes the provisioner commands over the transport" do
       order = sequence("order")
-      connection.expects(:execute).with("install").in_sequence(order)
       connection.expects(:execute).with("init").in_sequence(order)
+      connection.expects(:execute).with("install").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
       connection.expects(:execute_with_retry).with("run", [], 1, 30).in_sequence(order)
 

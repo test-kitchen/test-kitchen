@@ -66,11 +66,11 @@ module Kitchen
         sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
-          conn.execute(install_command)
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
+          conn.execute(install_command)
           conn.execute(prepare_command)
           conn.execute_with_retry(
             run_command,
