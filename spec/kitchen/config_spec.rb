@@ -63,6 +63,7 @@ describe Kitchen::Config do
       log_level: :debug,
       log_overwrite: false,
       colorize: false,
+      debug: true,
     }
   end
 
@@ -165,6 +166,19 @@ describe Kitchen::Config do
       config.colorize.must_equal true
     end
   end
+
+  describe "#debug" do
+    it "returns its debug" do
+      config.debug.must_equal true
+    end
+
+    it "uses false by default" do
+      opts.delete(:debug)
+
+      config.debug.must_equal false
+    end
+  end
+
 
   describe "#platforms" do
     before do

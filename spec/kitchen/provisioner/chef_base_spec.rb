@@ -90,6 +90,15 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:attributes].must_equal Hash.new
     end
 
+    it ":log_level defaults to auto" do
+      provisioner[:log_level].must_equal "auto"
+    end
+
+    it ":log_level is debug when in debug mode" do
+      config[:debug] = true
+      provisioner[:log_level].must_equal "debug"
+    end
+
     it ":log_file defaults to nil" do
       provisioner[:log_file].must_be_nil
     end
