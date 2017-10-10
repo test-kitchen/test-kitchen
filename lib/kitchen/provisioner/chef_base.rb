@@ -49,7 +49,9 @@ module Kitchen
       default_config :attributes, {}
       default_config :config_path, nil
       default_config :log_file, nil
-      default_config :log_level, "auto"
+      default_config :log_level do |provisioner|
+        provisioner[:debug] ? "debug" : "auto"
+      end
       default_config :profile_ruby, false
       # The older policyfile_zero used `policyfile` so support it for compat.
       default_config :policyfile, nil
