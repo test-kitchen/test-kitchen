@@ -179,7 +179,6 @@ describe Kitchen::Config do
     end
   end
 
-
   describe "#platforms" do
     before do
       Kitchen::DataMunger.stubs(:new).returns(munger)
