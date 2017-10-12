@@ -163,6 +163,25 @@ describe Kitchen::Provisioner::Shell do
 
         cmd.must_match regexify("mkdir -p /root/path", :partial_line)
       end
+
+      it "respects init_command" do
+        config[:init_command] = "createthingy.rb"
+
+        cmd.must_match regexify("createthingy.rb", :partial_line)
+        cmd.wont_include "mkdir"
+      end
+
+      it "is disabled when init_command is false" do
+        config[:init_command] = false
+
+        cmd.must_be_nil
+      end
+
+      it "respects command" do
+        config[:command] = "asdf"
+
+        cmd.must_be_nil
+      end
     end
 
     describe "for powershell shells on windows os types" do
@@ -318,6 +337,25 @@ describe Kitchen::Provisioner::Shell do
       it "accepts arguments when configured" do
         config[:arguments] = "--php 70 --mysql 57"
         cmd.must_match(/--php 70 --mysql 57/)
+      end
+
+      it "respects run_command" do
+        config[:run_command] = "dothingy.rb"
+
+        cmd.must_match regexify("dothingy.rb", :partial_line)
+        cmd.wont_include "bootstrap"
+      end
+
+      it "is disabled when run_command is false" do
+        config[:run_command] = false
+
+        cmd.must_be_nil
+      end
+
+      it "respects command" do
+        config[:command] = "dothingy.rb"
+
+        cmd.must_match regexify("dothingy.rb", :partial_line)
       end
     end
 
