@@ -41,6 +41,8 @@ module Kitchen
       default_config :init_command, nil
       # Override for the converge command.
       default_config :run_command, nil
+      # Special override to set run_command and disable init_command.
+      default_config :command, nil
       # Add extra arguments to the converge script.
       default_config :arguments, []
 
@@ -48,6 +50,24 @@ module Kitchen
         provisioner.calculate_path("data")
       end
       expand_path_for :data_path
+
+      # Process `command` config option, which is like setting `run_command`
+      # and disabling `init_command`.
+      #
+      # @api private
+      # @see Configurable#finalize_config!
+      def finalize_config!(instance)
+        super.tap do
+          if config[:command]
+            # Check that the user didn't set overlapping stuff.
+            if config[:run_command] || config[:init_command]
+              raise UserError, "Cannot set both `command` and `run_command` or `init_command` for the shell provisioner"
+            end
+            config[:run_command] = config[:command]
+            config[:init_command] = false
+          end
+        end
+      end
 
       # (see Base#create_sandbox)
       def create_sandbox
@@ -58,6 +78,7 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
+        return nil if config[:init_command] == false
         return prefix_command(wrap_shell_code(config[:init_command])) if config[:init_command]
         root = config[:root_path]
         data = remote_path_join(root, "data")
@@ -80,6 +101,7 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
+        return nil if config[:run_command] == false
         return prefix_command(wrap_shell_code(config[:run_command])) if config[:run_command]
         return unless config[:script]
         script = remote_path_join(
