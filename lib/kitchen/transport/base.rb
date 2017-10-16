@@ -64,6 +64,14 @@ module Kitchen
         raise ClientError, "#{self.class}#connection must be implemented"
       end
 
+      # Check system and configuration for common errors.
+      #
+      # @param state [Hash] mutable instance state
+      # @returns [Boolean] Return true if a problem is found.
+      def doctor(state)
+        false
+      end
+
       # Closes the connection, if it is still active.
       #
       # @return [void]

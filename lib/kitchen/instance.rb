@@ -233,6 +233,16 @@ module Kitchen
       driver.package(state_file.read)
     end
 
+    # Check system and configuration for common errors.
+    #
+    def doctor_action
+      banner "The doctor is in"
+      failed = [driver, provisioner, transport, verifier].any? do |obj|
+        obj.doctor(state_file.read)
+      end
+      exit(1) if failed
+    end
+
     # Returns a Hash of configuration and other useful diagnostic information.
     #
     # @return [Hash] a diagnostic hash

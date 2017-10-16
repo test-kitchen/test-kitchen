@@ -82,6 +82,14 @@ module Kitchen
         cleanup_sandbox
       end
 
+      # Check system and configuration for common errors.
+      #
+      # @param state [Hash] mutable instance state
+      # @returns [Boolean] Return true if a problem is found.
+      def doctor(state)
+        false
+      end
+
       # Deletes the sandbox path. Without calling this method, the sandbox path
       # will persist after the process terminates. In other words, cleanup is
       # explicit. This method is safe to call multiple times.

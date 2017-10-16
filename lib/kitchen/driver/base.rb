@@ -56,6 +56,14 @@ module Kitchen
       def package(state) # rubocop:disable Lint/UnusedMethodArgument
       end
 
+      # Check system and configuration for common errors.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @returns [Boolean] Return true if a problem is found.
+      def doctor(state)
+        false
+      end
+
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot
         #   be run concurrently and must be run in serial via a shared mutex
