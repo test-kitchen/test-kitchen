@@ -81,7 +81,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = [:create, :setup, :verify, :destroy]
+        action_methods = [:create, :setup, :converge, :verify, :destroy]
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)
