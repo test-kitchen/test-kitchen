@@ -31,7 +31,9 @@ module Kitchen
 
       no_parallel_for :create, :converge, :destroy
 
-      # Hack to inject to Exec transport in too.
+      # Hack to force using the exec transport when using this driver.
+      # If someone comes up with a use case for using the driver with a different
+      # transport, please let us know.
       #
       # @api private
       def finalize_config!(instance)
