@@ -1,4 +1,4 @@
-$gem list busser -i 2>&1 >/dev/null
+$gem list --no-versions | grep "^busser" 2>&1 >/dev/null
 if test $? -ne 0; then
   echo "-----> Installing Busser ($version)"
   $gem install $gem_install_args
@@ -10,5 +10,12 @@ if test ! -f "$BUSSER_ROOT/bin/busser"; then
   $busser setup
 fi
 
-echo "       Installing Busser plugins: $plugins"
-$busser plugin install $plugins
+for plugin in $plugins; do
+  $gem list --no-versions | grep "^$plugin$" 2>&1 >/dev/null
+  if test $? -ne 0; then
+    echo "-----> Installing Busser plugin: $plugin"
+    $busser plugin install $plugin
+  else
+    echo "-----> Busser plugin detected: $plugin"
+  fi
+done
