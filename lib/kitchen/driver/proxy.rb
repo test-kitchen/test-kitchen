@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require "kitchen"
+require "kitchen/driver/ssh_base"
 require "kitchen/version"
 
 module Kitchen
