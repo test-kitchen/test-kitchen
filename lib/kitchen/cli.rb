@@ -179,6 +179,13 @@ module Kitchen
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
         DESC
+      if action == :converge || action == :verify
+        method_option :debug,
+                      aliases: "-D",
+                      type: :boolean,
+                      default: false,
+                      desc: "Run the #{action} with debugging enabled."
+      end
       test_base_path
       log_options
       define_method(action) do |*args|
@@ -225,6 +232,11 @@ module Kitchen
                   type: :boolean,
                   default: false,
                   desc: "Invoke init command if .kitchen.yml is missing"
+    method_option :debug,
+                  aliases: "-D",
+                  type: :boolean,
+                  default: false,
+                  desc: "Run the converge and verify with debugging enabled."
     test_base_path
     log_options
     def test(*args)
@@ -315,6 +327,8 @@ module Kitchen
         # ensure we have an absolute path
         @config.test_base_path = File.absolute_path(options[:test_base_path])
       end
+
+      @config.debug = options[:debug]
 
       # Now that we have required configs, lets create our file logger
       Kitchen.logger = Kitchen.default_file_logger(

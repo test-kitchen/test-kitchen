@@ -78,6 +78,10 @@ module Kitchen
     # @api private
     attr_accessor :colorize
 
+    # @return [Boolean] whether to enable debugging in the provisioner/verifier plugin or not
+    # @api private
+    attr_accessor :debug
+
     # Creates a new configuration, representing a particular testing
     # configuration for a project.
     #
@@ -104,6 +108,7 @@ module Kitchen
       @colorize       = options.fetch(:colorize) { Kitchen.tty? }
       @log_root       = options.fetch(:log_root) { default_log_root }
       @test_base_path = options.fetch(:test_base_path) { default_test_base_path }
+      @debug          = options.fetch(:debug) { false }
     end
 
     # @return [Collection<Instance>] all instances, resulting from all
@@ -214,6 +219,7 @@ module Kitchen
         test_base_path: test_base_path,
         log_level: log_level,
         log_overwrite: log_overwrite,
+        debug: debug,
       }
     end
 
