@@ -259,6 +259,16 @@ module Kitchen
       perform("package", "package", args)
     end
 
+    desc "doctor INSTANCE|REGEXP", "Check for common system problems"
+    log_options
+    method_option :all,
+                  aliases: "-a",
+                  desc: "Check all instances"
+    def doctor(*args)
+      update_config!
+      perform("doctor", "doctor", args)
+    end
+
     desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
          "Execute command on one or more instance"
     method_option :command,

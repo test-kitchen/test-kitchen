@@ -85,6 +85,14 @@ module Kitchen
         cleanup_sandbox
       end
 
+      # Check system and configuration for common errors.
+      #
+      # @param state [Hash] mutable instance state
+      # @returns [Boolean] Return true if a problem is found.
+      def doctor(state)
+        false
+      end
+
       # Generates a command string which will install and configure the
       # provisioner software on an instance. If no work is required, then `nil`
       # will be returned.
