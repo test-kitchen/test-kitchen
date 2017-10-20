@@ -133,6 +133,27 @@ module Kitchen
 
       default_config :checksum
 
+      # Deprecate config attributes
+      deprecate_config_for :require_chef_omnibus, Util.outdent!(<<-MSG)
+        Message here!
+      MSG
+
+      deprecate_config_for :chef_omnibus_url, Util.outdent!(<<-MSG)
+        Message here!
+      MSG
+
+      deprecate_config_for :chef_omnibus_install_options, Util.outdent!(<<-MSG)
+        Message here!
+      MSG
+
+      deprecate_config_for :install_msi_url, Util.outdent!(<<-MSG)
+        Message here!
+      MSG
+
+      deprecate_config_for :chef_metadata_url, Util.outdent!(<<-MSG)
+        Message here!
+      MSG
+
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
       # together.  For example, we want to configure proxy settings in 1

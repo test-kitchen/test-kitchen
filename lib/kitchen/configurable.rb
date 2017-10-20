@@ -48,6 +48,7 @@ module Kitchen
 
       @instance = instance
       expand_paths!
+      deprecate_config!
       validate_config!
       load_needed_dependencies!
 
@@ -139,6 +140,13 @@ module Kitchen
       self.class.name.split("::").last
     end
 
+    # Returns the parent module of this plugin, suitable for display in a CLI.
+    #
+    # @return [String] parent module of this plugin
+    def module_name
+      self.class.name.split("::")[-2]
+    end
+
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
       ["powershell"].include?(instance.platform.shell_type)
@@ -179,6 +187,7 @@ module Kitchen
     # @return [LzayHash] a configuration hash
     # @api private
     attr_reader :config
+    attr_reader :provided_config
 
     # Initializes an internal configuration hash. The hash may contain
     # callable blocks as values that are meant to be called lazily. This
@@ -187,6 +196,7 @@ module Kitchen
     # @param config [Hash] initial provided configuration
     # @api private
     def init_config(config)
+      @provided_config = config.dup
       @config = LazyHash.new(config, self)
       self.class.defaults.each do |attr, value|
         @config[attr] = value unless @config.key?(attr)
@@ -294,6 +304,19 @@ module Kitchen
     def validate_config!
       self.class.validations.each do |attr, block|
         block.call(attr, config[attr], self)
+      end
+    end
+
+    # Print warning if any deprecated options are set in the configuration file.
+    # Omit warnings for deprecated attributes with default values that have not been
+    # explicity set in the configuration file.
+    #
+    # @api private
+    def deprecate_config!
+      deprecated_configs = self.class.deprecated_configs
+      deprecated_configs.delete_if { |attr, _| !provided_config.keys.include?(attr) }
+      if !deprecated_configs.empty?
+        warn("Deprecated #{module_name.downcase} attributes detected. Run 'kitchen doctor' for details.")
       end
     end
 
@@ -451,6 +474,18 @@ module Kitchen
         expanded_paths[attr] = block_given? ? block : value
       end
 
+      # Set the appropriate deprecation message for a given attribute name
+      #
+      # @example the default usage
+      #
+      #   deprecate_config_for :attribute_name, "Detailed deprecation message."
+      #
+      # @param attr [String] configuration attribute name
+      # @param message [String] attribute deprecation message
+      def deprecate_config_for(attr, message)
+        deprecated_configs[attr] = message
+      end
+
       # Ensures that an attribute must have a non-nil, non-empty String value.
       # The default behavior will be to raise a user error and thereby halting
       # further configuration processing. Good use cases for require_config
@@ -515,6 +550,18 @@ module Kitchen
       def super_expanded_paths
         if superclass.respond_to?(:expanded_paths)
           superclass.expanded_paths
+        else
+          {}
+        end
+      end
+
+      def deprecated_configs
+        @deprecated_configs ||= {}.merge(super_deprecated_configs)
+      end
+
+      def super_deprecated_configs
+        if superclass.respond_to?(:deprecated_configs)
+          superclass.deprecated_configs
         else
           {}
         end
