@@ -134,25 +134,45 @@ module Kitchen
       default_config :checksum
 
       # Deprecate config attributes
-      deprecate_config_for :require_chef_omnibus, Util.outdent!(<<-MSG)
-        Message here!
-      MSG
+      deprecate_config_for :require_chef_omnibus do |provisioner|
+        if provisioner[:require_chef_omnibus] != defaults[:require_chef_omnibus]
+          Util.outdent!(<<-MSG)
+            doctor message here
+          MSG
+        end
+      end
 
-      deprecate_config_for :chef_omnibus_url, Util.outdent!(<<-MSG)
-        Message here!
-      MSG
+      deprecate_config_for :chef_omnibus_url do |provisioner|
+        if provisioner[:chef_omnibus_url] != defaults[:chef_omnibus_url]
+          Util.outdent!(<<-MSG)
+            doctor message here
+          MSG
+        end
+      end
 
-      deprecate_config_for :chef_omnibus_install_options, Util.outdent!(<<-MSG)
-        Message here!
-      MSG
+      deprecate_config_for :chef_omnibus_install_options do |provisioner|
+        if provisioner[:chef_omnibus_install_options]
+          Util.outdent!(<<-MSG)
+            doctor message here
+          MSG
+        end
+      end
 
-      deprecate_config_for :install_msi_url, Util.outdent!(<<-MSG)
-        Message here!
-      MSG
+      deprecate_config_for :install_msi_url do |provisioner|
+        if provisioner[:install_msi_url]
+          Util.outdent!(<<-MSG)
+            doctor message here
+          MSG
+        end
+      end
 
-      deprecate_config_for :chef_metadata_url, Util.outdent!(<<-MSG)
-        Message here!
-      MSG
+      deprecate_config_for :chef_metadata_url do |provisioner|
+        if provisioner[:chef_metadata_url]
+          Util.outdent!(<<-MSG)
+            doctor message here
+          MSG
+        end
+      end
 
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
