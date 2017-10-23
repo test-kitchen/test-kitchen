@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require "kitchen/lazy_hash"
+require "kitchen/shell_out"
 
 module Kitchen
   module Driver
@@ -26,6 +27,9 @@ module Kitchen
     class Base
       include Configurable
       include Logging
+      include ShellOut
+
+      default_config :pre_create_command, nil
 
       # Creates a new Driver object using the provided configuration data
       # which will be merged with any default configuration.
@@ -33,6 +37,7 @@ module Kitchen
       # @param config [Hash] provided driver configuration
       def initialize(config = {})
         init_config(config)
+        pre_create_command
       end
 
       # Creates an instance.
@@ -132,6 +137,18 @@ module Kitchen
       end
 
       private
+
+      # Run command if config[:pre_create_command] is set
+      def pre_create_command
+        if config[:pre_create_command]
+          begin
+            run_command(config[:pre_create_command])
+          rescue ShellCommandFailed => error
+            raise ActionFailed,
+              "pre_create_command '#{config[:pre_create_command]}' failed to execute #{error}"
+          end
+        end
+      end
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
       # event instead.
