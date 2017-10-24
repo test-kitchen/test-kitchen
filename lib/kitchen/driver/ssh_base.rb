@@ -80,6 +80,12 @@ module Kitchen
           debug("Transfer complete")
           conn.execute(env_cmd(provisioner.prepare_command))
           conn.execute(env_cmd(provisioner.run_command))
+          info("Downloading files from #{instance.to_str}")
+          provisioner[:downloads].to_h.each do |remotes, local|
+            debug("Downloading #{Array(remotes).join(', ')} to #{local}")
+            conn.download(remotes, local)
+          end
+          debug("Download complete")
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
