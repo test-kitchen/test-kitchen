@@ -216,14 +216,10 @@ describe Kitchen::Provisioner::Base do
 
       logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
       logged_output.string.must_match(
-        %r{
-          /DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$
-        }
+        %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
       )
       logged_output.string.must_match(
-        %r{
-          /DEBUG -- : Downloading /remote to /local$
-        }
+        %r{DEBUG -- : Downloading /remote to /local$}
       )
       logged_output.string.must_match(/DEBUG -- : Download complete$/)
     end
