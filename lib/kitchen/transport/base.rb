@@ -166,7 +166,9 @@ module Kitchen
         # Download remote files or directories to local host.
         #
         # @param remotes [Array<String>] paths to remote files or directories
-        # @param local [String] path to local destination
+        # @param local [String] path to local destination. If `local` is an
+        #   existing directory, `remote` will be downloaded into the directory
+        #   using its original name
         # @raise [TransportFailed] if the files could not all be downloaded
         #   successfully, which may vary by implementation
         def download(remotes, local) # rubocop:disable Lint/UnusedMethodArgument

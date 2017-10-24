@@ -184,7 +184,9 @@ module Kitchen
 
         # (see Base::Connection#download)
         def download(remotes, local)
-          FileUtils.mkdir_p(local)
+          # ensure the parent dir of the local target exists
+          FileUtils.mkdir_p(File.dirname(local))
+
           Array(remotes).each do |file|
             begin
               logger.debug("Attempting to download '#{file}' as file")
