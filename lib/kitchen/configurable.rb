@@ -140,13 +140,6 @@ module Kitchen
       self.class.name.split("::").last
     end
 
-    # Returns the parent module of this plugin, suitable for display in a CLI.
-    #
-    # @return [String] parent module of this plugin
-    def module_name
-      self.class.name.split("::")[-2]
-    end
-
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
       ["powershell"].include?(instance.platform.shell_type)
@@ -188,6 +181,14 @@ module Kitchen
     # @api private
     attr_reader :config
 
+    # @return [Hash] a hash of the detected deprecated config attributes
+    # @api private
+    attr_reader :deprecated_config
+
+    # @return [Hash] user provided configuration hash
+    # @api private
+    attr_reader :provided_config
+
     # Initializes an internal configuration hash. The hash may contain
     # callable blocks as values that are meant to be called lazily. This
     # method is intended to be included in an object's .initialize method.
@@ -196,6 +197,7 @@ module Kitchen
     # @api private
     def init_config(config)
       @config = LazyHash.new(config, self)
+      @provided_config = config.dup
       self.class.defaults.each do |attr, value|
         @config[attr] = value unless @config.key?(attr)
       end
@@ -221,21 +223,22 @@ module Kitchen
       end
     end
 
-    # Print warning if any deprecated options are set
+    # Initialize detected deprecated configuration hash.
+    # Display warning if deprecations have been detected.
     #
     # @api private
     def deprecate_config!
-      deprecated_configs = LazyHash.new(self.class.deprecated_configs, self).to_hash
-      deprecated_configs.each do |attr, value|
-        message = if value.is_a?(String)
-                    value
-                  elsif value.respond_to?(:call)
-                    value.call(attr, config[attr], self)
-                  else
-                    nil
-                  end
+      deprecated_attributes = LazyHash.new(self.class.deprecated_attributes, self)
+      # Remove items from hash when not provided in the loaded config or when the rendered message is nil
+      @deprecated_config = deprecated_attributes.delete_if { |attr, obj| !provided_config.key?(attr) || obj.nil? }
 
-        warn("#{module_name} attribute '#{attr}' will be deprecated in a future version.") if message
+      if !deprecated_config.empty?
+        warning = Util.outdent!(<<-MSG)
+          Deprecated configuration detected:
+          #{deprecated_config.keys.join("\n")}
+          Run 'kitchen doctor' for details.
+        MSG
+        warn(warning)
       end
     end
 
@@ -494,7 +497,7 @@ module Kitchen
       # @yieldparam object [Object] a reference to the instantiated object
       # @yieldreturn [Object, nil] dynamically computed value for the attribute
       def deprecate_config_for(attr, value = nil, &block)
-        deprecated_configs[attr] = block_given? ? block : value
+        deprecated_attributes[attr] = block_given? ? block : value
       end
 
       # Ensures that an attribute must have a non-nil, non-empty String value.
@@ -566,13 +569,13 @@ module Kitchen
         end
       end
 
-      def deprecated_configs
-        @deprecated_configs ||= {}.merge(super_deprecated_configs)
+      def deprecated_attributes
+        @deprecated_attributes ||= {}.merge(super_deprecated_attributes)
       end
 
-      def super_deprecated_configs
-        if superclass.respond_to?(:deprecated_configs)
-          superclass.deprecated_configs
+      def super_deprecated_attributes
+        if superclass.respond_to?(:deprecated_attributes)
+          superclass.deprecated_attributes
         else
           {}
         end

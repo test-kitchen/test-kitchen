@@ -133,46 +133,58 @@ module Kitchen
 
       default_config :checksum
 
-      # Deprecate config attributes
       deprecate_config_for :require_chef_omnibus do |provisioner|
-        if provisioner[:require_chef_omnibus] != defaults[:require_chef_omnibus]
+        case
+        when provisioner[:require_chef_omnibus] == false
           Util.outdent!(<<-MSG)
-            doctor message here
+            The 'require_chef_omnibus' attribute with value of 'false' will
+            change to use the new 'install_strategy' attribute with a value of 'skip'.
+            'product_name' must be set in order to use 'install_strategy'.
+            Although this seems counterintuitive, it is necessary until
+            'product_name' replaces 'require_chef_omnibus' as the default.
+
+              # New Usage #
+              provisioner:
+                product_name: <chef or chefdk>
+                install_strategy: skip
+          MSG
+        when provisioner[:require_chef_omnibus].to_s.match(/\d/)
+          Util.outdent!(<<-MSG)
+            The 'require_chef_omnibus' attribute with version values will change
+            to use the new 'product_version' attribute.
+            'product_name' must be set in order to use 'product_version'
+            until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+              # New Usage #
+              provisioner:
+                product_name: <chef or chefdk>
+                product_version: #{provisioner[:require_chef_omnibus]}
+          MSG
+        when provisioner[:require_chef_omnibus] == "latest"
+          Util.outdent!(<<-MSG)
+            The 'require_chef_omnibus' attribute with value of 'latest' will change
+            to use the new 'install_strategy' attribute with a value of 'always'.
+            'product_name' must be set in order to use 'install_strategy'
+            until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+              # New Usage #
+              provisioner:
+                product_name: <chef or chefdk>
+                install_strategy: always
           MSG
         end
       end
 
-      deprecate_config_for :chef_omnibus_url do |provisioner|
-        if provisioner[:chef_omnibus_url] != defaults[:chef_omnibus_url]
-          Util.outdent!(<<-MSG)
-            doctor message here
-          MSG
-        end
-      end
+      deprecate_config_for :chef_omnibus_url, Util.outdent!(<<-MSG)
+        Changing the 'chef_omnibus_url' attribute breaks existing functionality. It will
+        be removed in a future version.
+      MSG
 
-      deprecate_config_for :chef_omnibus_install_options do |provisioner|
-        if provisioner[:chef_omnibus_install_options]
-          Util.outdent!(<<-MSG)
-            doctor message here
-          MSG
-        end
-      end
+      deprecate_config_for :chef_omnibus_install_options, "chef_omnibus_install_options doc message"
 
-      deprecate_config_for :install_msi_url do |provisioner|
-        if provisioner[:install_msi_url]
-          Util.outdent!(<<-MSG)
-            doctor message here
-          MSG
-        end
-      end
+      deprecate_config_for :install_msi_url, "install_msi_urldoc message"
 
-      deprecate_config_for :chef_metadata_url do |provisioner|
-        if provisioner[:chef_metadata_url]
-          Util.outdent!(<<-MSG)
-            doctor message here
-          MSG
-        end
-      end
+      deprecate_config_for :chef_metadata_url, "chef_metadata_url doc message"
 
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
@@ -189,6 +201,12 @@ module Kitchen
         # This exports any proxy config present in the Chef config to
         # appropriate environment variables, which Test Kitchen respects
         ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
+      end
+
+      def doctor(state)
+        deprecated_config.each do |attr, msg|
+          info("**** #{attr} deprecated\n#{msg}")
+        end
       end
 
       # (see Base#create_sandbox)
