@@ -163,6 +163,12 @@ describe Kitchen::Provisioner::Shell do
 
         cmd.must_match regexify("mkdir -p /root/path", :partial_line)
       end
+
+      it "respects command" do
+        config[:command] = "asdf"
+
+        cmd.must_be_nil
+      end
     end
 
     describe "for powershell shells on windows os types" do
@@ -319,6 +325,12 @@ describe Kitchen::Provisioner::Shell do
         config[:arguments] = "--php 70 --mysql 57"
         cmd.must_match(/--php 70 --mysql 57/)
       end
+
+      it "respects command" do
+        config[:command] = "dothingy.rb"
+
+        cmd.must_match regexify("dothingy.rb", :partial_line)
+      end
     end
 
     describe "for powershell shells on windows os types" do
@@ -469,6 +481,10 @@ describe Kitchen::Provisioner::Shell do
       describe "with no :script file" do
         before { config[:script] = nil }
 
+        it "has no run command" do
+          provisioner.run_command.must_be_nil
+        end
+
         describe "for bourne shells" do
           before { platform.stubs(:shell_type).returns("bourne") }
 
@@ -482,20 +498,13 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             logged_output.string.must_match info_line(
-              "bootstrap.sh not found so Kitchen will run a stubbed script. " \
-              "Is this intended?")
+              "No provisioner script file specified, skipping")
           end
 
-          it "creates a file in the sandbox directory" do
+          it "does not create a file in the sandbox directory" do
             provisioner.create_sandbox
 
-            sandbox_path("bootstrap.sh").file?.must_equal true
-            unless running_tests_on_windows?
-              # Windows doesn't have the concept of executable
-              sandbox_path("bootstrap.sh").executable?.must_equal true
-            end
-            IO.read(sandbox_path("bootstrap.sh"))
-              .must_match(/NO BOOTSTRAP SCRIPT PRESENT/)
+            sandbox_path("bootstrap.sh").file?.must_equal false
           end
         end
 
@@ -512,20 +521,13 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             logged_output.string.must_match info_line(
-              "bootstrap.ps1 not found so Kitchen will run a stubbed script. " \
-              "Is this intended?")
+              "No provisioner script file specified, skipping")
           end
 
-          it "creates a file in the sandbox directory" do
+          it "does not create a file in the sandbox directory" do
             provisioner.create_sandbox
 
-            sandbox_path("bootstrap.ps1").file?.must_equal true
-            unless running_tests_on_windows?
-              # Windows doesn't have the concept of executable
-              sandbox_path("bootstrap.ps1").executable?.must_equal true
-            end
-            IO.read(sandbox_path("bootstrap.ps1"))
-              .must_match(/Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"/)
+            sandbox_path("bootstrap.ps1").file?.must_equal false
           end
         end
       end

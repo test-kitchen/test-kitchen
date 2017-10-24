@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "shellwords"
+
 require "kitchen/provisioner/base"
 require "kitchen/version"
 
@@ -35,6 +37,12 @@ module Kitchen
       end
       expand_path_for :script
 
+      # Run a single command instead of managing and running a script.
+      default_config :command, nil
+
+      # Add extra arguments to the converge script.
+      default_config :arguments, []
+
       default_config :data_path do |provisioner|
         provisioner.calculate_path("data")
       end
@@ -49,6 +57,7 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
+        return nil if config[:command]
         root = config[:root_path]
         data = remote_path_join(root, "data")
 
@@ -65,18 +74,24 @@ module Kitchen
                  "#{sudo('rm')} -rf #{data} ; mkdir -p #{root}"
                end
 
-        wrap_shell_code(code)
+        prefix_command(wrap_shell_code(code))
       end
 
       # (see Base#run_command)
       def run_command
+        return prefix_command(wrap_shell_code(config[:command])) if config[:command]
+        return unless config[:script]
         script = remote_path_join(
           config[:root_path],
           File.basename(config[:script])
         )
 
-        if config[:arguments]
-          script.concat(" ").concat(config[:arguments])
+        if config[:arguments] && !config[:arguments].empty?
+          if config[:arguments].is_a?(Array)
+            script = Shellwords.join([script] + config[:arguments])
+          else
+            script.concat(" ").concat(config[:arguments].to_s)
+          end
         end
 
         code = powershell_shell? ? %{& "#{script}"} : sudo(script)
@@ -111,30 +126,13 @@ module Kitchen
         if config[:script]
           debug("Using script from #{config[:script]}")
           FileUtils.cp_r(config[:script], sandbox_path)
+          FileUtils.chmod(0755,
+                          File.join(sandbox_path, File.basename(config[:script])))
         else
-          prepare_stubbed_script
-        end
-
-        FileUtils.chmod(0755,
-                        File.join(sandbox_path, File.basename(config[:script])))
-      end
-
-      # Creates a minimal, no-op script in the sandbox path.
-      #
-      # @api private
-      def prepare_stubbed_script
-        base = powershell_shell? ? "bootstrap.ps1" : "bootstrap.sh"
-        config[:script] = File.join(sandbox_path, base)
-        info("#{File.basename(config[:script])} not found " \
-          "so Kitchen will run a stubbed script. Is this intended?")
-        File.open(config[:script], "wb") do |file|
-          if powershell_shell?
-            file.write(%{Write-Host "NO BOOTSTRAP SCRIPT PRESENT`n"\n})
-          else
-            file.write(%{#!/bin/sh\necho "NO BOOTSTRAP SCRIPT PRESENT"\n})
-          end
+          info("No provisioner script file specified, skipping")
         end
       end
+
     end
   end
 end
