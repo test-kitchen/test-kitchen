@@ -137,6 +137,15 @@ module Kitchen
           file_transporter.upload(locals, remote)
         end
 
+        # (see Base::Connection#download)
+        def download(remotes, local)
+          # This looks possible with WinRM::FS::FileManager
+          raise(
+            NotImplementedError,
+            'Downloading files from instance not yet implemented for Windows remotes'
+          )
+        end
+
         # (see Base::Connection#wait_until_ready)
         def wait_until_ready
           delay = 3

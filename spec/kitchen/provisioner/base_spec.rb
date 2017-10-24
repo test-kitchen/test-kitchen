@@ -151,6 +151,11 @@ describe Kitchen::Provisioner::Base do
       connection.stubs(:execute)
       connection.stubs(:execute_with_retry)
       connection.stubs(:upload)
+      connection.stubs(:download)
+      config[:downloads] = {
+        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'] => './test/fixtures',
+        '/remote' => '/local'
+      }
     end
 
     after do
@@ -196,6 +201,8 @@ describe Kitchen::Provisioner::Base do
 
       logged_output.string
                    .must_match(/INFO -- : Transferring files to instance$/)
+      logged_output.string
+                   .must_match(/INFO -- : Downloading files from instance$/)
     end
 
     it "uploads sandbox files" do
@@ -208,6 +215,28 @@ describe Kitchen::Provisioner::Base do
       cmd
 
       logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+      logged_output.string.must_match(
+        %r{
+          /DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$
+        }
+      )
+      logged_output.string.must_match(
+        %r{
+          /DEBUG -- : Downloading /remote to /local$
+        }
+      )
+      logged_output.string.must_match(/DEBUG -- : Download complete$/)
+    end
+
+    it "downloads files" do
+      connection.expects(:download).with(
+        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'],
+        './test/fixtures'
+      )
+
+      connection.expects(:download).with('/remote', '/local')
+
+      cmd
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do

@@ -51,6 +51,10 @@ module Kitchen
           report(:upload, "#{locals.inspect} => #{remote}")
         end
 
+        def download(remotes, local)
+          report(:download, "#{remotes.inspect} => #{local}")
+        end
+
         private
 
         # Report what action is taking place, sleeping if so configured, and

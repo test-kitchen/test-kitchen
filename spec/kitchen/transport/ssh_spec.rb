@@ -1092,6 +1092,37 @@ describe Kitchen::Transport::Ssh::Connection do
     end
   end
 
+  describe "#download" do
+    describe "for a file" do
+      it "downloads a file from a remote over scp" do
+        true.must_equal false
+      end
+    end
+
+    describe "for a path" do
+      it "downloads a file from a remote over scp" do
+        true.must_equal false
+      end
+    end
+
+    describe "for a failed download" do
+      let(:conn) { mock("session") }
+
+      before do
+        Net::SSH.stubs(:start).returns(conn)
+      end
+
+      it "raises SshFailed when an SSH exception is raised" do
+        conn.stubs(:scp).raises(Net::SSH::Exception)
+
+        e = proc do
+          connection.download("nope", "fail")
+        end.must_raise Kitchen::Transport::SshFailed
+        e.message.must_match regexify("SCP download failed")
+      end
+    end
+  end
+
   describe "#wait_until_ready" do
     before do
       options[:max_wait_until_ready] = 300

@@ -270,7 +270,7 @@ describe Kitchen::Driver::SSHBase do
 
   describe "#converge" do
     let(:cmd)         { driver.converge(state) }
-    let(:connection)  { stub(execute: true, upload: true) }
+    let(:connection)  { stub(execute: true, upload: true, download: true) }
 
     before do
       state[:hostname] = "fizzy"
@@ -468,6 +468,20 @@ describe Kitchen::Driver::SSHBase do
         connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new("dang"))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
+      end
+    end
+
+    describe "downloading files" do
+      before do
+        transport.stubs(:connection).yields(connection)
+        connection.stubs(:upload)
+        # create file in sandbox on remote host
+      end
+
+      it "uploads files" do
+        connection.expects(:download).with(["/tmp/sandbox/stuff"], "/rooty")
+
+        cmd
       end
     end
 

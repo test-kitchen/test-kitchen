@@ -97,6 +97,11 @@ describe Kitchen::Transport::Base::Connection do
       .must_raise Kitchen::ClientError
   end
 
+  it "has an #download method which raises a ClientError" do
+    proc { connection.download(["remote"], "local") }
+      .must_raise Kitchen::ClientError
+  end
+
   it "has a #wait_until_ready method that does nothing" do
     connection.wait_until_ready.must_be_nil
   end
