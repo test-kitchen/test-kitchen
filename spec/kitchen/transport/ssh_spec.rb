@@ -1099,7 +1099,7 @@ describe Kitchen::Transport::Ssh::Connection do
     before do
       Net::SSH.stubs(:start).returns(conn)
       conn.stubs(:scp).returns(scp)
-      @local_parent = Dir.mktmpdir('dir')
+      @local_parent = Dir.mktmpdir("dir")
       @local = File.join(@local_parent, "local")
     end
 
@@ -1110,40 +1110,40 @@ describe Kitchen::Transport::Ssh::Connection do
     describe "for a file" do
       it "downloads a file from a remote over scp" do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with('/remote', @local)
+        scp.expects(:download!).with("/remote", @local)
 
-        connection.download('/remote', @local)
+        connection.download("/remote", @local)
       end
     end
 
     describe "for a list of files" do
       it "downloads the files from a remote over scp" do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with('/remote-1', @local)
-        scp.expects(:download!).with('/remote-2', @local)
+        scp.expects(:download!).with("/remote-1", @local)
+        scp.expects(:download!).with("/remote-2", @local)
 
-        connection.download(['/remote-1', '/remote-2'], @local)
+        connection.download(["/remote-1", "/remote-2"], @local)
       end
     end
 
     describe "for a directory" do
       it "downloads the directory from a remote over scp" do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with('/remote-dir', @local).raises(Net::SCP::Error)
-        scp.expects(:download!).with('/remote-dir', @local, recursive: true)
+        scp.expects(:download!).with("/remote-dir", @local).raises(Net::SCP::Error)
+        scp.expects(:download!).with("/remote-dir", @local, recursive: true)
 
-        connection.download('/remote-dir', @local)
+        connection.download("/remote-dir", @local)
       end
     end
 
     describe "for a file that does not exist" do
       it "logs a warning" do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with('/remote', @local).raises(Net::SCP::Error)
-        scp.expects(:download!).with('/remote', @local, recursive: true)
+        scp.expects(:download!).with("/remote", @local).raises(Net::SCP::Error)
+        scp.expects(:download!).with("/remote", @local, recursive: true)
           .raises(Net::SCP::Error)
 
-        connection.download('/remote', @local)
+        connection.download("/remote", @local)
 
         logged_output.string.lines.count do |l|
           l =~ warn_line_with(

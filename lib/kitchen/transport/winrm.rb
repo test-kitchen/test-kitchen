@@ -142,7 +142,7 @@ module Kitchen
           # This looks possible with WinRM::FS::FileManager
           raise(
             NotImplementedError,
-            'Downloading files from instance not yet implemented for Windows remotes'
+            "Downloading files from instance not yet implemented for Windows remotes"
           )
         end
 

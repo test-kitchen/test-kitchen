@@ -277,8 +277,8 @@ describe Kitchen::Driver::SSHBase do
       state[:username] = "bork"
       provisioner.stubs(:[]).with(:root_path).returns("/rooty")
       provisioner.stubs(:[]).with(:downloads).returns(
-        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'] => './test/fixtures',
-        '/remote' => '/local'
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
+        "/remote" => "/local"
       )
       FakeFS.activate!
       FileUtils.mkdir_p("/tmp")
@@ -483,10 +483,10 @@ describe Kitchen::Driver::SSHBase do
 
       it "downloads files" do
         connection.expects(:download).with(
-          ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'],
-          './test/fixtures'
+          ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
+          "./test/fixtures"
         )
-        connection.expects(:download).with('/remote', '/local')
+        connection.expects(:download).with("/remote", "/local")
 
         cmd
       end

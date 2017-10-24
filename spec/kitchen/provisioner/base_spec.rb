@@ -153,8 +153,8 @@ describe Kitchen::Provisioner::Base do
       connection.stubs(:upload)
       connection.stubs(:download)
       config[:downloads] = {
-        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'] => './test/fixtures',
-        '/remote' => '/local'
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
+        "/remote" => "/local",
       }
     end
 
@@ -226,11 +226,11 @@ describe Kitchen::Provisioner::Base do
 
     it "downloads files" do
       connection.expects(:download).with(
-        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'],
-        './test/fixtures'
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
+        "./test/fixtures"
       )
 
-      connection.expects(:download).with('/remote', '/local')
+      connection.expects(:download).with("/remote", "/local")
 
       cmd
     end
