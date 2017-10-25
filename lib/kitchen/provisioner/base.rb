@@ -47,6 +47,8 @@ module Kitchen
 
       default_config :command_prefix, nil
 
+      default_config :downloads, {}
+
       expand_path_for :test_base_path
 
       # Constructs a new provisioner by providing a configuration hash.
