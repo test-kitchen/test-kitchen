@@ -2,7 +2,7 @@
 title: Adding a Platform
 ---
 
-Now that we are masters of the Ubuntu platform, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-7.3` line to your platforms list so that it resembles:
+Now that we have Ubuntu working, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-7` line to your platforms list so that it resembles:
 
 ~~~yaml
 ---
@@ -11,15 +11,13 @@ driver:
 
 provisioner:
   name: chef_zero
-  product_name: chef
-  product_version: 13.0.118
 
 verifier:
   name: inspec
 
 platforms:
   - name: ubuntu-16.04
-  - name: centos-7.3
+  - name: centos-7
 
 suites:
   - name: default
@@ -37,7 +35,7 @@ Now let's check the status of our instances:
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 We're going to use two shortcuts in the next command:
@@ -45,19 +43,19 @@ We're going to use two shortcuts in the next command:
 * Each instance has a simple state machine that tracks where it is in its lifecycle. Given its current state and the desired state, the instance is smart enough to run all actions in between current and desired.
 * Any `kitchen` subcommand that takes an instance name as an argument can take a Ruby regular expression that will be used to glob a list of instances together. This means that `kitchen test ubuntu` would run the **test** action on all instances that had `ubuntu` in their name. Note that the **list** subcommand also takes the regex-globbing argument so feel free to experiment there.
 
-In our next example we'll select the `default-centos-73` instance with simply `73` and will take it from uncreated to verified in one command.
+In our next example we'll select the `default-centos-7` instance with simply `7` and will take it from uncreated to verified in one command.
 
 Let's see how CentOS runs our cookbook:
 
 ~~~
-kitchen verify 73
+kitchen verify 7
 -----> Starting Kitchen (v1.16.0)
------> Creating <default-centos-73>...
+-----> Creating <default-centos-7>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'bento/centos-7.3'...
+       ==> default: Importing base box 'bento/centos-7'...
 ==> default: Matching MAC address for NAT networking...
-       ==> default: Checking if box 'bento/centos-7.3' is up to date...
-       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-centos-73_default_1494253442790_20368
+       ==> default: Checking if box 'bento/centos-7' is up to date...
+       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-centos-7_default_1494253442790_20368
        ==> default: Clearing any previously set network interfaces...
        ==> default: Preparing network interfaces based on configuration...
            default: Adapter 1: nat
@@ -91,9 +89,9 @@ kitchen verify 73
            default: /tmp/omnibus/cache => /Users/cheeseplus/.kitchen/cache
        ==> default: Machine not provisioned because `--no-provision` is specified.
        [SSH] Established
-       Vagrant instance <default-centos-73> created.
-       Finished creating <default-centos-73> (0m42.13s).
------> Converging <default-centos-73>...
+       Vagrant instance <default-centos-7> created.
+       Finished creating <default-centos-7> (0m42.13s).
+-----> Converging <default-centos-7>...
        Preparing files for transfer
        Preparing dna.json
        Resolving cookbook dependencies with Berkshelf 5.6.4...
@@ -124,9 +122,9 @@ kitchen verify 73
        Updating / installing...
           1:chef-13.0.118-1.el7              ################################# [100%]
        Thank you for installing Chef!
-       Transferring files to <default-centos-73>
+       Transferring files to <default-centos-7>
        Starting Chef Client, version 13.0.118
-       Creating a new client identity for default-centos-73 using the validator key.
+       Creating a new client identity for default-centos-7 using the validator key.
        resolving cookbooks for run list: ["git_cookbook::default"]
        Synchronizing Cookbooks:
          - git_cookbook (0.1.0)
@@ -142,10 +140,10 @@ kitchen verify 73
        Running handlers:
        Running handlers complete
        Chef Client finished, 2/2 resources updated in 12 seconds
-       Finished converging <default-centos-73> (0m27.28s).
------> Setting up <default-centos-73>...
-       Finished setting up <default-centos-73> (0m0.00s).
------> Verifying <default-centos-73>...
+       Finished converging <default-centos-7> (0m27.28s).
+-----> Setting up <default-centos-7>...
+       Finished setting up <default-centos-7> (0m0.00s).
+-----> Verifying <default-centos-7>...
        Loaded tests from test/smoke/default
 
 Profile: tests from test/smoke/default
@@ -157,7 +155,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  git should be installed
 
 Test Summary: 1 successful, 0 failures, 0 skipped
-       Finished verifying <default-centos-73> (0m1.52s).
+       Finished verifying <default-centos-7> (0m1.52s).
 -----> Kitchen is finished. (1m11.96s)
 ~~~
 
@@ -168,11 +166,11 @@ kitchen destroy
 -----> Starting Kitchen (v1.16.0)
 -----> Destroying <default-ubuntu-1604>...
        Finished destroying <default-ubuntu-1604> (0m0.00s).
------> Destroying <default-centos-73>...
+-----> Destroying <default-centos-7>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-centos-73> destroyed.
-       Finished destroying <default-centos-73> (0m4.96s).
+       Vagrant instance <default-centos-7> destroyed.
+       Finished destroying <default-centos-7> (0m4.96s).
 -----> Kitchen is finished. (0m6.04s)
 ~~~
 
@@ -186,7 +184,7 @@ Let's make sure everything has been destroyed:
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-73    Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 <div class="sidebar--footer">
