@@ -44,6 +44,7 @@ module Kitchen
 
       # (see Base#create)
       def create(state)
+        super
         reset_instance(state)
       end
 

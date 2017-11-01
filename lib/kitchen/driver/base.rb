@@ -37,7 +37,6 @@ module Kitchen
       # @param config [Hash] provided driver configuration
       def initialize(config = {})
         init_config(config)
-        pre_create_command
       end
 
       # Creates an instance.
@@ -45,6 +44,7 @@ module Kitchen
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
       def create(state) # rubocop:disable Lint/UnusedMethodArgument
+        pre_create_command
       end
 
       # Destroys an instance.

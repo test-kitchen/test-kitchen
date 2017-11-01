@@ -36,6 +36,7 @@ module Kitchen
 
       # (see Base#create)
       def create(state)
+        # Intentionally not calling `super` to avoid pre_create_command.
         state[:my_id] = "#{instance.name}-#{Time.now.to_i}"
         report(:create, state)
       end

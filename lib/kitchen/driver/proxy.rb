@@ -40,6 +40,7 @@ module Kitchen
 
       # (see Base#create)
       def create(state)
+        # TODO: Once this isn't using SSHBase, it should call `super` to support pre_create_command.
         state[:hostname] = config[:host]
         reset_instance(state)
       end
