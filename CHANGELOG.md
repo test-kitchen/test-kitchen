@@ -1,5 +1,64 @@
 # Change Log
 
+## [v1.19.0](https://github.com/test-kitchen/test-kitchen/tree/v1.19.0) (2017-11-1)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.17.0...v1.19.0)
+
+**Release Notes:**
+
+#### Driver Commands Removed
+
+The `kitchen driver` family of commands have been removed. It was not recommended
+to use them and it was judged to be more harm than good to leave them in. If you
+regularly create new drivers and relied on the skeleton generator, check out
+other code skeleton projects like [`chef generate`](https://blog.chef.io/2014/12/09/guest-post-creating-your-own-chef-cookbook-generator/),
+and [Cookiecutter](https://github.com/audreyr/cookiecutter).
+
+#### `kitchen converge -D`
+
+When you want to get debug logging for your provisioner or verifier, you can now
+use the new `-D` (or `--debug`) command line option for `kitchen converge`,
+`kitchen verify`, and `kitchen test`. Support has been added to the Chef provisioners,
+avoiding the need to use the `log_level: debug` configuration option every time.
+
+#### `exec` Driver
+
+A new driver named `exec` is included with Test Kitchen which runs all the
+provisioning and verification commands locally, rather than on a VM. This can
+be used for testing on systems where you've already created the VM yourself and
+installed Test Kitchen on it. Note that this is related but different from the
+included `proxy` driver, which also connects to an existing server, but over
+SSH/WinRM rather than running commands locally.
+
+#### `shell` Provisioner `command`
+
+Previously the included `shell` provisioner allowed running a user-specified bootstrap
+script. This has been extended to allow specifying a `command` option with a
+string to run, rather than managing a script file.
+
+#### Faster Busser
+
+The `busser` verifier has been improved to be faster on the second (or beyond)
+verification, or in other cases where the required gems are already present.
+
+#### `kitchen doctor`
+
+A `kitchen doctor` command has been added, modeled on Homebrew's `brew doctor`.
+This currently doesn't do much, but if you are a Kitchen plugin author, consider
+adding more detailed debugging checks and troubleshooting help to your plugin
+via this system.
+
+**Merged pull requests**
+
+- Basic framework for kitchen doctor [\#1301](https://github.com/test-kitchen/test-kitchen/pull/1301) ([coderanger](https://github.com/coderanger))
+- add kitchen-sparkleformation driver to ECOSYSTEM.md [\#1300](https://github.com/test-kitchen/test-kitchen/pull/1300) ([pesimon](https://github.com/pesimon))
+- Add a --debug command line option [\#1296](https://github.com/test-kitchen/test-kitchen/pull/1296) ([coderanger](https://github.com/coderanger))
+- Exec driver [\#1295](https://github.com/test-kitchen/test-kitchen/pull/1295) ([coderanger](https://github.com/coderanger))
+- Misc cleanups [\#1294](https://github.com/test-kitchen/test-kitchen/pull/1294) ([coderanger](https://github.com/coderanger))
+- Upgrades to the shell provisioner [\#1293](https://github.com/test-kitchen/test-kitchen/pull/1293) ([coderanger](https://github.com/coderanger))
+- Remove the `driver create` and `driver discover` commands [\#1290](https://github.com/test-kitchen/test-kitchen/pull/1290) ([coderanger](https://github.com/coderanger))
+- Adds pre_create_command for running arbitrary commands [\#1243](https://github.com/test-kitchen/test-kitchen/pull/1243) ([sean797](https://github.com/sean797))
+- Added better routine to install Busser+Plugins [\#1083](https://github.com/test-kitchen/test-kitchen/pull/1083) ([yeoldegrove](https://github.com/yeoldegrove))
+
 ## [v1.18.0](https://github.com/test-kitchen/test-kitchen/tree/v1.18.0) (2017-09-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.17.0...v1.18.0)
 
