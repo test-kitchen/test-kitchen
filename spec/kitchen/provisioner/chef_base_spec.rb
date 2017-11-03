@@ -173,6 +173,10 @@ describe Kitchen::Provisioner::ChefBase do
     it ":checksum default to nil" do
       provisioner[:checksum].must_be_nil
     end
+
+    it ":retry_on_exit_code defaults to standard values" do
+      provisioner[:retry_on_exit_code].must_equal [35, 37, 213]
+    end
   end
 
   describe "#install_command" do
