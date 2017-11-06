@@ -69,6 +69,9 @@ module Kitchen
       # to ease upgrades, allow the user to turn deprecation warnings into errors
       default_config :deprecations_as_errors, false
 
+      # Override the default from Base so reboot handling works by default for Chef.
+      default_config :retry_on_exit_code, [35, 213]
+
       default_config :multiple_converge, 1
 
       default_config :enforce_idempotency, false
