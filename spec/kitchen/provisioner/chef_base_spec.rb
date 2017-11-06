@@ -175,7 +175,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":retry_on_exit_code defaults to standard values" do
-      provisioner[:retry_on_exit_code].must_equal [35, 37, 213]
+      provisioner[:retry_on_exit_code].must_equal [35, 213]
     end
   end
 
