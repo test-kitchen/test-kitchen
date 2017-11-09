@@ -138,20 +138,9 @@ module Kitchen
         end
 
         def retry?(current_try, max_retries, retryable_exit_codes, exit_code)
-          retryable_exit_codes_exists = false
-          if !retryable_exit_codes.nil?
-            if retryable_exit_codes.class == String
-              retryable_exit_codes_exists = retryable_exit_codes.include?(exit_code.to_s)
-            elsif retryable_exit_codes[0].class == Array && retryable_exit_codes.class == Array
-              retryable_exit_codes_exists = !retryable_exit_codes.select{|x| x.include?(exit_code)}.empty?
-            elsif retryable_exit_codes[0].class == Integer && retryable_exit_codes.class == Array
-              retryable_exit_codes_exists = retryable_exit_codes.include?(exit_code)
-            else
-              raise TypeError, "Invalid type of retry_on_exit_code"
-            end
-          end
-
-         current_try <= max_retries && retryable_exit_codes_exists
+          current_try <= max_retries &&
+            !retryable_exit_codes.nil? &&
+            retryable_exit_codes.flatten.include?(exit_code)
         end
 
         # Builds a LoginCommand which can be used to open an interactive

@@ -121,15 +121,15 @@ describe Kitchen::Transport::Base::Connection do
     end
   end
 
-    describe "#retry?" do
-      it "raises TypeError with no retries" do
-        proc { connection.execute_with_retry.retry?(2, 2, 35, 35) }
-          .must_raise TypeError
-      end
-
-      it "when value is send in Array in Array" do
-        connection.execute_with_retry.retry?(1, 2, [[35, 1]], 35).must_equal true
-      end
+  describe "#retry?" do
+    it "raises Invalid Type Error for retry_on_exit_code" do
+      proc { connection.retry?(2, 2, "35 1", 35) }
+        .must_raise("undefined method `flatten' for \"35 1\":String")
     end
+
+    it "when value is send in Array in Array" do
+      connection.retry?(1, 2, [[35, 1]], 35).must_equal true
+    end
+  end
 
 end
