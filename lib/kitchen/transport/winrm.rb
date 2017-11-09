@@ -139,11 +139,18 @@ module Kitchen
 
         # (see Base::Connection#download)
         def download(remotes, local)
-          # This looks possible with WinRM::FS::FileManager
-          raise(
-            NotImplementedError,
-            "Downloading files from instance not yet implemented for Windows remotes"
-          )
+          # ensure the parent dir of the local target exists
+          FileUtils.mkdir_p(File.dirname(local))
+
+          Array(remotes).each do |remote|
+            file_manager.download(remote, local)
+          end
+        end
+
+        # @return [Winrm::FileManager] a file transporter
+        # @api private
+        def file_manager
+          @file_manager ||= WinRM::FS::FileManager.new(session)
         end
 
         # (see Base::Connection#wait_until_ready)
