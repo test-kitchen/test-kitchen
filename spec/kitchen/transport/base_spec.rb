@@ -120,4 +120,16 @@ describe Kitchen::Transport::Base::Connection do
       connection.execute_with_retry("Hi", [123], 3, 1).must_equal "Hello"
     end
   end
+
+    describe "#retry?" do
+      it "raises TypeError with no retries" do
+        proc { connection.execute_with_retry.retry?(2, 2, 35, 35) }
+          .must_raise TypeError
+      end
+
+      it "when value is send in Array in Array" do
+        connection.execute_with_retry.retry?(1, 2, [[35, 1]], 35).must_equal true
+      end
+    end
+
 end
