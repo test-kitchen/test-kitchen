@@ -409,7 +409,6 @@ module Kitchen
       def install_from_file(command)
         install_file = "/tmp/chef-installer.sh"
         script = ["cat > #{install_file} <<\"EOL\""]
-        script << "#!/bin/bash"
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
