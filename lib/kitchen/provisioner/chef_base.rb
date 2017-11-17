@@ -174,6 +174,19 @@ module Kitchen
                end
 
         prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
+
+        # Generate an Ohai hint for the driver
+
+        # There is no easy way to determine currently configured Driver
+        # from within a Provisioner. :-(
+        driver_name = Kitchen::Config.new.instances.first.driver.name.downcase
+
+        if driver_name
+          lines << "#{sudo('mkdir')} -p /etc/chef/ohai/hints"
+          lines << "echo '{}' | #{sudo('tee')} -a /etc/chef/ohai/hints/#{driver_name}.json"
+        end
+
+        Util.wrap_command(lines.join("\n"))
       end
 
       # (see Base#install_command)
