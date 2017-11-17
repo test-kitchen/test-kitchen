@@ -1,7 +1,18 @@
 # Change Log
 
+## [v1.19.1](https://github.com/test-kitchen/test-kitchen/tree/v1.19.1) (2017-11-17)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.0...v1.19.1)
+
+**Release Notes:**
+
+Removed an extraneous bash shebang that caused the script generated to install chef-client to fail on certain platforms.
+
+**Merged pull requests**
+
+- Remove extraneous bash shebang. [\#1317](https://github.com/test-kitchen/test-kitchen/pull/1317) ([rhass](https://github.com/rhass))
+
 ## [v1.19.0](https://github.com/test-kitchen/test-kitchen/tree/v1.19.0) (2017-11-1)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.17.0...v1.19.0)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.18.0...v1.19.0)
 
 **Release Notes:**
 
