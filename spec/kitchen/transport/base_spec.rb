@@ -122,12 +122,12 @@ describe Kitchen::Transport::Base::Connection do
   end
 
   describe "#retry?" do
-    it "raises Invalid Type Error for retry_on_exit_code" do
+    it "raises an exception when multiple retryable exit codes are passed as a String" do
       proc { connection.retry?(2, 2, "35 1", 35) }
         .must_raise("undefined method `flatten' for \"35 1\":String")
     end
 
-    it "when value is send in Array in Array" do
+    it "returns true when the retryable exit codes are formatted in a nested array" do
       connection.retry?(1, 2, [[35, 1]], 35).must_equal true
     end
   end
