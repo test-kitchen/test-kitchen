@@ -181,6 +181,14 @@ module Kitchen
           raise SshFailed, "SCP upload failed (#{ex.message})"
         end
 
+        def download(remote, local, recursive = nil)
+          opts = recursive ? { :recursive => true } : {}
+          session.scp.download!(remote, local, opts)
+          logger.debug("Downloaded #{remote} to #{local}")
+        rescue Net::SSH::Exception => ex
+          raise SshFailed, "SCP download failed (#{ex.message})"
+        end
+
         # (see Base::Connection#wait_until_ready)
         def wait_until_ready
           delay = 3

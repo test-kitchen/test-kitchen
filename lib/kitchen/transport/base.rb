@@ -163,6 +163,16 @@ module Kitchen
           raise ClientError, "#{self.class}#upload must be implemented"
         end
 
+        # Dowload files form intstance under test to local host
+        #
+        # @param remote [String] path to remote files or directories
+        # @param local [String] path to local destination
+        # @param recursive [Boolean] if the remote parameter refers to a remote
+        #   directory copy it recursively to local
+        def download(remote, local, recursive = nil) # rubocop:disable Lint/UnusedMethodArgument
+          raise ClientError, "#{self.class}#download must be implemented"
+        end
+
         # Block and return only when the remote host is prepared and ready to
         # execute command and upload files. The semantics and details will
         # vary by implementation, but a round trip through the hosted
