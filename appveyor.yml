@@ -30,7 +30,6 @@ install:
   - appveyor DownloadFile http://curl.haxx.se/ca/cacert.pem -FileName c:\projects\test_kitchen\certs.pem
   - set SSL_CERT_FILE=c:\projects\test_kitchen\certs.pem
   - gem update --system || gem update --system || gem update --system
-  - gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc || gem install bundler --quiet --no-ri --no-rdoc
   - update_rubygems
   - ruby --version
   - gem --version
