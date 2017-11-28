@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.19.2](https://github.com/test-kitchen/test-kitchen/tree/v1.19.2) (2017-11-28)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.1...v1.19.2)
+
+**Release Notes:**
+
+- Updated the winrm-fs depdency from ~> 1.0.2 to ~> 1.1.0 to allow using the newer version
+
 ## [v1.19.1](https://github.com/test-kitchen/test-kitchen/tree/v1.19.1) (2017-11-17)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.0...v1.19.1)
 
