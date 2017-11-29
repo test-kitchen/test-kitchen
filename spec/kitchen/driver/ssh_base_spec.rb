@@ -270,12 +270,16 @@ describe Kitchen::Driver::SSHBase do
 
   describe "#converge" do
     let(:cmd)         { driver.converge(state) }
-    let(:connection)  { stub(execute: true, upload: true) }
+    let(:connection)  { stub(execute: true, upload: true, download: true) }
 
     before do
       state[:hostname] = "fizzy"
       state[:username] = "bork"
       provisioner.stubs(:[]).with(:root_path).returns("/rooty")
+      provisioner.stubs(:[]).with(:downloads).returns(
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
+        "/remote" => "/local"
+      )
       FakeFS.activate!
       FileUtils.mkdir_p("/tmp")
       @original_env = ENV.to_hash
@@ -468,6 +472,43 @@ describe Kitchen::Driver::SSHBase do
         connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new("dang"))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
+      end
+    end
+
+    describe "downloading files" do
+      before do
+        transport.stubs(:connection).yields(connection)
+        connection.stubs(:download)
+      end
+
+      it "downloads files" do
+        connection.expects(:download).with(
+          ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
+          "./test/fixtures"
+        )
+        connection.expects(:download).with("/remote", "/local")
+
+        cmd
+      end
+
+      it "logs to info" do
+        cmd
+
+        logged_output.string.must_match(
+          /INFO -- : Downloading files from instance$/
+        )
+      end
+
+      it "logs to debug" do
+        cmd
+
+        logged_output.string.must_match(
+          %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
+        )
+        logged_output.string.must_match(
+          %r{DEBUG -- : Downloading /remote to /local$}
+        )
+        logged_output.string.must_match(/DEBUG -- : Download complete$/)
       end
     end
 

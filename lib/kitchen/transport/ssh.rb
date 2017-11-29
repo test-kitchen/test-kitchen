@@ -18,6 +18,7 @@
 
 require "kitchen"
 
+require "fileutils"
 require "net/ssh"
 require "net/ssh/gateway"
 require "net/scp"
@@ -179,6 +180,30 @@ module Kitchen
           logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SCP upload failed (#{ex.message})"
+        end
+
+        # (see Base::Connection#download)
+        def download(remotes, local)
+          # ensure the parent dir of the local target exists
+          FileUtils.mkdir_p(File.dirname(local))
+
+          Array(remotes).each do |file|
+            begin
+              logger.debug("Attempting to download '#{file}' as file")
+              session.scp.download!(file, local)
+            rescue Net::SCP::Error
+              begin
+                logger.debug("Attempting to download '#{file}' as directory")
+                session.scp.download!(file, local, recursive: true)
+              rescue Net::SCP::Error
+                logger.warn(
+                  "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
+                )
+              end
+            end
+          end
+        rescue Net::SSH::Exception => ex
+          raise SshFailed, "SCP download failed (#{ex.message})"
         end
 
         # (see Base::Connection#wait_until_ready)

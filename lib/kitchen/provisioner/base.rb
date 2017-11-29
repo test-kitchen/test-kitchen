@@ -47,6 +47,8 @@ module Kitchen
 
       default_config :command_prefix, nil
 
+      default_config :downloads, {}
+
       expand_path_for :test_base_path
 
       # Constructs a new provisioner by providing a configuration hash.
@@ -78,6 +80,12 @@ module Kitchen
             config[:max_retries],
             config[:wait_for_retry]
           )
+          info("Downloading files from #{instance.to_str}")
+          config[:downloads].to_h.each do |remotes, local|
+            debug("Downloading #{Array(remotes).join(', ')} to #{local}")
+            conn.download(remotes, local)
+          end
+          debug("Download complete")
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message

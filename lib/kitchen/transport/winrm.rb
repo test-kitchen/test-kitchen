@@ -137,6 +137,22 @@ module Kitchen
           file_transporter.upload(locals, remote)
         end
 
+        # (see Base::Connection#download)
+        def download(remotes, local)
+          # ensure the parent dir of the local target exists
+          FileUtils.mkdir_p(File.dirname(local))
+
+          Array(remotes).each do |remote|
+            file_manager.download(remote, local)
+          end
+        end
+
+        # @return [Winrm::FileManager] a file transporter
+        # @api private
+        def file_manager
+          @file_manager ||= WinRM::FS::FileManager.new(session)
+        end
+
         # (see Base::Connection#wait_until_ready)
         def wait_until_ready
           delay = 3
