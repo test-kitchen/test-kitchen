@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "date"
-require "safe_yaml/load"
+require "yaml"
 
 module Kitchen
   # Exception class for any exceptions raised when reading and parsing a state
@@ -97,7 +96,7 @@ module Kitchen
     # @raise [StateFileLoadError] if the string document cannot be parsed
     # @api private
     def deserialize_string(string)
-      SafeYAML.load(string)
+      YAML.safe_load(string)
     rescue SyntaxError, Psych::SyntaxError => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end

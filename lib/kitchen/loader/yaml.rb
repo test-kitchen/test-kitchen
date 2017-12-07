@@ -18,8 +18,7 @@
 
 require "erb"
 require "vendor/hash_recursive_merge"
-require "date"
-require "safe_yaml/load"
+require "yaml"
 
 module Kitchen
   module Loader
@@ -323,7 +322,7 @@ module Kitchen
       def parse_yaml_string(string, file_name)
         return {} if string.nil? || string.empty?
 
-        result = SafeYAML.load(string) || {}
+        result = YAML.safe_load(string) || {}
         unless result.is_a?(Hash)
           raise UserError, "Error parsing #{file_name} as YAML " \
             "(Result of parse was not a Hash, but was a #{result.class}).\n" \
