@@ -125,4 +125,16 @@ describe Kitchen::Transport::Base::Connection do
       connection.execute_with_retry("Hi", [123], 3, 1).must_equal "Hello"
     end
   end
+
+  describe "#retry?" do
+    it "raises an exception when multiple retryable exit codes are passed as a String" do
+      proc { connection.retry?(2, 2, "35 1", 35) }
+        .must_raise("undefined method `flatten' for \"35 1\":String")
+    end
+
+    it "returns true when the retryable exit codes are formatted in a nested array" do
+      connection.retry?(1, 2, [[35, 1]], 35).must_equal true
+    end
+  end
+
 end

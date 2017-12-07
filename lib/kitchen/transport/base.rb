@@ -140,7 +140,7 @@ module Kitchen
         def retry?(current_try, max_retries, retryable_exit_codes, exit_code)
           current_try <= max_retries &&
             !retryable_exit_codes.nil? &&
-            retryable_exit_codes.include?(exit_code)
+            retryable_exit_codes.flatten.include?(exit_code)
         end
 
         # Builds a LoginCommand which can be used to open an interactive
