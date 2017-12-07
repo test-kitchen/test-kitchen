@@ -18,6 +18,7 @@
 
 require "erb"
 require "vendor/hash_recursive_merge"
+require "date"
 require "safe_yaml/load"
 
 module Kitchen
