@@ -66,9 +66,7 @@ describe Kitchen::StateFile do
         yoinks: zoinks
       YAML
 
-      state_file.read.class.wont_equal YamledState
-      state_file.read.class.must_equal Hash
-      state_file.read.must_equal(yoinks: "zoinks")
+      proc { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
 
     it "raises a StateFileLoadError if the state file cannot be parsed" do
