@@ -120,6 +120,22 @@ describe Kitchen::Transport::Ssh do
     it "sets :max_ssh_sessions to 9 by default" do
       transport[:max_ssh_sessions].must_equal 9
     end
+
+    it "sets :kitchen_ssh_proxy to nil by default" do
+      transport[:kitchen_ssh_proxy].must_be_nil
+    end
+
+    it "sets :http_proxy_port to nil by default" do
+      transport[:http_proxy_port].must_be_nil
+    end
+
+    it "sets :http_proxy_user to nil by default" do
+      transport[:http_proxy_user].must_be_nil
+    end
+
+    it "sets :http_proxy_password to nil by default" do
+      transport[:http_proxy_password].must_be_nil
+    end
   end
 
   describe "#connection" do
@@ -412,6 +428,19 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:keys_only] == true
+        end
+
+        make_connection
+      end
+
+      it "sets :proxy to proxy if :kitchen_ssh_proxy is set in state" do
+        state[:kitchen_ssh_proxy] = "kitchen_ssh_proxy_from_config"
+        options_http_proxy[:user] = state[:http_proxy_user]
+        options_http_proxy[:password] = state[:http_proxy_password]
+        proxy_conn = Net::SSH::Proxy::HTTP.new("#{state[:kitchen_ssh_proxy]}", state[:http_proxy_port], options_http_proxy)
+
+        klass.expects(:new).with do |hash|
+          hash[:proxy] == proxy_conn
         end
 
         make_connection
