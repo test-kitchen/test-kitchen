@@ -344,9 +344,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      loader.read.class.wont_equal Yamled
-      loader.read.class.must_equal Hash
-      loader.read.must_equal(foo: "bar")
+      proc { loader.read }.must_raise Kitchen::UserError
     end
 
     it "arbitrary objects aren't deserialized in kitchen.local.yml" do
@@ -359,9 +357,7 @@ describe Kitchen::Loader::YAML do
       end
       stub_yaml!({})
 
-      loader.read.class.wont_equal Yamled
-      loader.read.class.must_equal Hash
-      loader.read.must_equal(wakka: "boop")
+      proc { loader.read }.must_raise Kitchen::UserError
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do

@@ -330,7 +330,7 @@ module Kitchen
             "debug your issue."
         end
         result
-      rescue SyntaxError, Psych::SyntaxError
+      rescue SyntaxError, Psych::SyntaxError, Psych::DisallowedClass
         raise UserError, "Error parsing #{file_name} as YAML.\n" \
           "Please run `kitchen diagnose --no-instances --loader' to help " \
           "debug your issue."
