@@ -515,6 +515,34 @@ describe Kitchen::Provisioner::ChefBase do
         end.returns(installer)
         cmd
       end
+
+      describe "when driver implements the cache_directory" do
+
+        describe "for windows" do
+          before { driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place') }
+
+          it "will have the set behavior on windows" do
+            platform.stubs(:shell_type).returns("powershell")
+            platform.stubs(:os_type).returns("windows")
+
+            Mixlib::Install.expects(:new).with do |opts|
+              opts[:install_command_options][:download_directory].must_equal '$env:TEMP\\dummy\\place'
+            end.returns(installer)
+            cmd
+          end
+        end
+
+        describe "for shell" do
+          before { driver.stubs(:cache_directory).returns("/tmp") }
+
+          it "will have the set behavior on non-windows" do
+            Mixlib::Install.expects(:new).with do |opts|
+              opts[:install_command_options][:cmdline_dl_dir].must_equal "/tmp"
+            end.returns(installer)
+            cmd
+          end
+        end
+      end
     end
 
     describe "when install_strategy is skipped" do

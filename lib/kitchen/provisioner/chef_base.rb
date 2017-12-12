@@ -468,7 +468,6 @@ module Kitchen
             opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
           end
 
-          # TODO Validate! Discovered when deprecating chef_omnibus_install_options
           if instance.driver.cache_directory
             download_dir_option = windows_os? ? :download_directory : :cmdline_dl_dir
             opts[:install_command_options][download_dir_option] = instance.driver.cache_directory
