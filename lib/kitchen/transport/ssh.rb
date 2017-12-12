@@ -480,7 +480,7 @@ module Kitchen
           options_http_proxy = {}
           options_http_proxy[:user] = data[:http_proxy_user]
           options_http_proxy[:password] = data[:http_proxy_password]
-          opts[:proxy] = Net::SSH::Proxy::HTTP.new("#{data[:kitchen_ssh_proxy]}", data[:http_proxy_port], options_http_proxy)
+          opts[:proxy] = Net::SSH::Proxy::HTTP.new(data[:kitchen_ssh_proxy], data[:http_proxy_port], options_http_proxy)
         end
 
         if data[:ssh_key_only]

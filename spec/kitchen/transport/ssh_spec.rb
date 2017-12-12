@@ -140,6 +140,7 @@ describe Kitchen::Transport::Ssh do
 
   describe "#connection" do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
+    let(:options_http_proxy)    { Hash.new }
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_connection_specs
