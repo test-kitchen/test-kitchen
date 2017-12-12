@@ -140,10 +140,21 @@ describe Kitchen::Transport::Ssh do
 
   describe "#connection" do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
-    let(:options_http_proxy)    { Hash.new }
+    let(:options_http_proxy) { Hash.new }
+    let(:proxy_conn) do
+      state[:kitchen_ssh_proxy] = "kitchen_ssh_proxy_from_state"
+      state[:http_proxy_port] = "http_proxy_port_from_state"
+      options_http_proxy[:user] = state[:http_proxy_user]
+      options_http_proxy[:password] = state[:http_proxy_password]
+      Net::SSH::Proxy::HTTP.new(state[:kitchen_ssh_proxy], state[:http_proxy_port], options_http_proxy)
+    end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_connection_specs
+      before do
+        Net::SSH::Proxy::HTTP.stubs(:new).returns(proxy_conn)
+      end
+
       it "returns a Kitchen::Transport::Ssh::Connection object" do
         transport.connection(state).must_be_kind_of klass
       end
@@ -435,10 +446,7 @@ describe Kitchen::Transport::Ssh do
       end
 
       it "sets :proxy to proxy if :kitchen_ssh_proxy is set in state" do
-        state[:kitchen_ssh_proxy] = "kitchen_ssh_proxy_from_config"
-        options_http_proxy[:user] = state[:http_proxy_user]
-        options_http_proxy[:password] = state[:http_proxy_password]
-        proxy_conn = Net::SSH::Proxy::HTTP.new("#{state[:kitchen_ssh_proxy]}", state[:http_proxy_port], options_http_proxy)
+        config[:kitchen_ssh_proxy] = true
 
         klass.expects(:new).with do |hash|
           hash[:proxy] == proxy_conn
