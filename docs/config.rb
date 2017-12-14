@@ -5,6 +5,10 @@
 activate :syntax, :inline_theme => Rouge::Themes::Base16::Monokai.new
 set :markdown_engine, :kramdown
 
+config.ignored_sitemap_matchers[:source_dotfiles] = proc { |file|
+file =~ %r{/\.} && file !~ %r{/\.(well-known|htaccess|htpasswd|nojekyll)}
+}
+
 # the only true server time
 #Time.zone = "UTC"
 
