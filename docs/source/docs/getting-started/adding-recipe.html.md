@@ -36,7 +36,7 @@ systemd_unit 'git-daemon.service' do
     DefaultInstance=tty1
     EOU
 
-  action [ :enable, :start ]
+  action [ :create, :enable, :start ]
 end
 ~~~
 
