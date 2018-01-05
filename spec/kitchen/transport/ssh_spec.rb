@@ -121,20 +121,20 @@ describe Kitchen::Transport::Ssh do
       transport[:max_ssh_sessions].must_equal 9
     end
 
-    it "sets :kitchen_ssh_proxy to nil by default" do
-      transport[:kitchen_ssh_proxy].must_be_nil
+    it "sets :ssh_http_proxy to nil by default" do
+      transport[:ssh_http_proxy].must_be_nil
     end
 
-    it "sets :http_proxy_port to nil by default" do
-      transport[:http_proxy_port].must_be_nil
+    it "sets :ssh_http_proxy_port to nil by default" do
+      transport[:ssh_http_proxy_port].must_be_nil
     end
 
-    it "sets :http_proxy_user to nil by default" do
-      transport[:http_proxy_user].must_be_nil
+    it "sets :ssh_http_proxy_user to nil by default" do
+      transport[:ssh_http_proxy_user].must_be_nil
     end
 
-    it "sets :http_proxy_password to nil by default" do
-      transport[:http_proxy_password].must_be_nil
+    it "sets :ssh_http_proxy_password to nil by default" do
+      transport[:ssh_http_proxy_password].must_be_nil
     end
   end
 
@@ -142,11 +142,11 @@ describe Kitchen::Transport::Ssh do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
     let(:options_http_proxy) { Hash.new }
     let(:proxy_conn) do
-      state[:kitchen_ssh_proxy] = "kitchen_ssh_proxy_from_state"
-      state[:http_proxy_port] = "http_proxy_port_from_state"
-      options_http_proxy[:user] = state[:http_proxy_user]
-      options_http_proxy[:password] = state[:http_proxy_password]
-      Net::SSH::Proxy::HTTP.new(state[:kitchen_ssh_proxy], state[:http_proxy_port], options_http_proxy)
+      state[:ssh_http_proxy]        = "ssh_http_proxy_from_state"
+      state[:ssh_http_proxy_port]   = "http_proxy_port_from_state"
+      options_http_proxy[:user]     = state[:ssh_http_proxy_user]
+      options_http_proxy[:password] = state[:ssh_http_proxy_password]
+      Net::SSH::Proxy::HTTP.new(state[:ssh_http_proxy], state[:ssh_http_proxy_port], options_http_proxy)
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -445,8 +445,8 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :proxy to proxy if :kitchen_ssh_proxy is set in state" do
-        config[:kitchen_ssh_proxy] = true
+      it "sets :proxy to proxy if :ssh_http_proxy is set in state" do
+        config[:ssh_http_proxy] = true
 
         klass.expects(:new).with do |hash|
           hash[:proxy] == proxy_conn
