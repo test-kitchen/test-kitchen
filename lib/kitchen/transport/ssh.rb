@@ -440,23 +440,28 @@ module Kitchen
           ssh_gateway_username: data[:ssh_gateway_username],
         }
 
-        if data[:ssh_key] && !data[:password]
-          opts[:keys_only] = true
+        opts[:auth_methods] = Array(data[:auth_methods]) if data[:auth_methods]
+        
+        if data[:ssh_key]
+          opts[:auth_methods] ||= ["publickey"]
           opts[:keys] = Array(data[:ssh_key])
-          opts[:auth_methods] = ["publickey"]
         end
 
-        if data[:ssh_key_only]
-          opts[:auth_methods] = ["publickey"]
+        opts[:keys_only] = true if data[:ssh_key] && !data[:password]
+        opts[:auth_methods] = ["publickey"] if data[:ssh_key_only]
+
+        if data.key?(:password)
+          opts[:auth_methods] << 'password' if opts[:auth_methods]
+          opts[:auth_methods] ||= ["password"]
+          opts[:password] = data[:password]
         end
 
-        opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
 
         # disable host key verification. The hash key to use
         # depends on the version of net-ssh in use.
-        opts[verify_host_key_option] = false
+        opts[:verify_host_key_option] = false
 
         opts
       end
