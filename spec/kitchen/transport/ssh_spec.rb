@@ -143,7 +143,7 @@ describe Kitchen::Transport::Ssh do
     let(:options_http_proxy) { Hash.new }
     let(:proxy_conn) do
       state[:ssh_http_proxy]        = "ssh_http_proxy_from_state"
-      state[:ssh_http_proxy_port]   = "http_proxy_port_from_state"
+      state[:ssh_http_proxy_port]   = "ssh_http_proxy_port_from_state"
       options_http_proxy[:user]     = state[:ssh_http_proxy_user]
       options_http_proxy[:password] = state[:ssh_http_proxy_password]
       Net::SSH::Proxy::HTTP.new(state[:ssh_http_proxy], state[:ssh_http_proxy_port], options_http_proxy)
