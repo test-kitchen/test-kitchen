@@ -21,6 +21,7 @@ require "kitchen"
 require "fileutils"
 require "net/ssh"
 require "net/ssh/gateway"
+require "net/ssh/proxy/http"
 require "net/scp"
 require "timeout"
 require "benchmark"
@@ -54,6 +55,11 @@ module Kitchen
 
       default_config :ssh_gateway, nil
       default_config :ssh_gateway_username, nil
+
+      default_config :ssh_http_proxy, nil
+      default_config :ssh_http_proxy_port, nil
+      default_config :ssh_http_proxy_user, nil
+      default_config :ssh_http_proxy_password, nil
 
       default_config :ssh_key, nil
       expand_path_for :ssh_key
@@ -271,6 +277,26 @@ module Kitchen
         # @api private
         attr_reader :ssh_gateway_username
 
+        # @return [String] The kitchen ssh proxy to use when connecting to the
+        #   remote SSH host via http proxy
+        # @api private
+        attr_reader :ssh_http_proxy
+
+        # @return [Integer] The port to use when using an kitchen ssh proxy
+        #   remote SSH host via http proxy
+        # @api private
+        attr_reader :ssh_http_proxy_port
+
+        # @return [String] The username to use when using an kitchen ssh proxy
+        #   remote SSH host via http proxy
+        # @api private
+        attr_reader :ssh_http_proxy_user
+
+        # @return [String] The password to use when using an kitchen ssh proxy
+        #   remote SSH host via http proxy
+        # @api private
+        attr_reader :ssh_http_proxy_password
+
         # Establish an SSH session on the remote host using a gateway host.
         #
         # @param opts [Hash] retry options
@@ -371,15 +397,19 @@ module Kitchen
         # (see Base::Connection#init_options)
         def init_options(options)
           super
-          @username               = @options.delete(:username)
-          @hostname               = @options.delete(:hostname)
-          @port                   = @options[:port] # don't delete from options
-          @connection_retries     = @options.delete(:connection_retries)
-          @connection_retry_sleep = @options.delete(:connection_retry_sleep)
-          @max_ssh_sessions       = @options.delete(:max_ssh_sessions)
-          @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
-          @ssh_gateway            = @options.delete(:ssh_gateway)
-          @ssh_gateway_username   = @options.delete(:ssh_gateway_username)
+          @username                = @options.delete(:username)
+          @hostname                = @options.delete(:hostname)
+          @port                    = @options[:port] # don't delete from options
+          @connection_retries      = @options.delete(:connection_retries)
+          @connection_retry_sleep  = @options.delete(:connection_retry_sleep)
+          @max_ssh_sessions        = @options.delete(:max_ssh_sessions)
+          @max_wait_until_ready    = @options.delete(:max_wait_until_ready)
+          @ssh_gateway             = @options.delete(:ssh_gateway)
+          @ssh_gateway_username    = @options.delete(:ssh_gateway_username)
+          @ssh_http_proxy          = @options.delete(:ssh_http_proxy)
+          @ssh_http_proxy_user     = @options.delete(:ssh_http_proxy_user)
+          @ssh_http_proxy_password = @options.delete(:ssh_http_proxy_password)
+          @ssh_http_proxy_port     = @options.delete(:ssh_http_proxy_port)
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -444,6 +474,13 @@ module Kitchen
           opts[:keys_only] = true
           opts[:keys] = Array(data[:ssh_key])
           opts[:auth_methods] = ["publickey"]
+        end
+
+        if data[:ssh_http_proxy]
+          options_http_proxy = {}
+          options_http_proxy[:user] = data[:ssh_http_proxy_user]
+          options_http_proxy[:password] = data[:ssh_http_proxy_password]
+          opts[:proxy] = Net::SSH::Proxy::HTTP.new(data[:ssh_http_proxy], data[:ssh_http_proxy_port], options_http_proxy)
         end
 
         if data[:ssh_key_only]

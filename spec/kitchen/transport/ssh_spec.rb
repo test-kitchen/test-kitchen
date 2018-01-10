@@ -120,13 +120,41 @@ describe Kitchen::Transport::Ssh do
     it "sets :max_ssh_sessions to 9 by default" do
       transport[:max_ssh_sessions].must_equal 9
     end
+
+    it "sets :ssh_http_proxy to nil by default" do
+      transport[:ssh_http_proxy].must_be_nil
+    end
+
+    it "sets :ssh_http_proxy_port to nil by default" do
+      transport[:ssh_http_proxy_port].must_be_nil
+    end
+
+    it "sets :ssh_http_proxy_user to nil by default" do
+      transport[:ssh_http_proxy_user].must_be_nil
+    end
+
+    it "sets :ssh_http_proxy_password to nil by default" do
+      transport[:ssh_http_proxy_password].must_be_nil
+    end
   end
 
   describe "#connection" do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
+    let(:options_http_proxy) { Hash.new }
+    let(:proxy_conn) do
+      state[:ssh_http_proxy]        = "ssh_http_proxy_from_state"
+      state[:ssh_http_proxy_port]   = "ssh_http_proxy_port_from_state"
+      options_http_proxy[:user]     = state[:ssh_http_proxy_user]
+      options_http_proxy[:password] = state[:ssh_http_proxy_password]
+      Net::SSH::Proxy::HTTP.new(state[:ssh_http_proxy], state[:ssh_http_proxy_port], options_http_proxy)
+    end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.common_connection_specs
+      before do
+        Net::SSH::Proxy::HTTP.stubs(:new).returns(proxy_conn)
+      end
+
       it "returns a Kitchen::Transport::Ssh::Connection object" do
         transport.connection(state).must_be_kind_of klass
       end
@@ -412,6 +440,16 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:keys_only] == true
+        end
+
+        make_connection
+      end
+
+      it "sets :proxy to proxy if :ssh_http_proxy is set in state" do
+        config[:ssh_http_proxy] = true
+
+        klass.expects(:new).with do |hash|
+          hash[:proxy] == proxy_conn
         end
 
         make_connection
