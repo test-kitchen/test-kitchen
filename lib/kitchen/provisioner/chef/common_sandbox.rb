@@ -234,7 +234,11 @@ module Kitchen
           case opts[:type]
           when :directory
             FileUtils.mkdir_p(dest)
-            FileUtils.cp_r(Util.list_directory(src), dest)
+            if src.kind_of?(Array)
+              src.each { |x| FileUtils.cp_r(Util.list_directory(x), dest) }
+            else
+              FileUtils.cp_r(Util.list_directory(src), dest)
+            end
           when :file
             FileUtils.mkdir_p(File.dirname(dest))
             FileUtils.cp_r(src, dest)
