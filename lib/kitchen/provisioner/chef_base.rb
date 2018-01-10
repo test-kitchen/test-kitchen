@@ -136,6 +136,91 @@ module Kitchen
 
       default_config :checksum
 
+      deprecate_config_for :require_chef_omnibus do |provisioner|
+        case
+        when provisioner[:require_chef_omnibus] == false
+          Util.outdent!(<<-MSG)
+            The 'require_chef_omnibus' attribute with value of 'false' will
+            change to use the new 'install_strategy' attribute with a value of 'skip'.
+
+            Note: 'product_name' must be set in order to use 'install_strategy'.
+            Although this seems counterintuitive, it is necessary until
+            'product_name' replaces 'require_chef_omnibus' as the default.
+
+            # New Usage #
+            provisioner:
+              product_name: <chef or chefdk>
+              install_strategy: skip
+          MSG
+        when provisioner[:require_chef_omnibus].to_s.match(/\d/)
+          Util.outdent!(<<-MSG)
+            The 'require_chef_omnibus' attribute with version values will change
+            to use the new 'product_version' attribute.
+
+            Note: 'product_name' must be set in order to use 'product_version'
+            until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+            # New Usage #
+            provisioner:
+              product_name: <chef or chefdk>
+              product_version: #{provisioner[:require_chef_omnibus]}
+          MSG
+        when provisioner[:require_chef_omnibus] == "latest"
+          Util.outdent!(<<-MSG)
+            The 'require_chef_omnibus' attribute with value of 'latest' will change
+            to use the new 'install_strategy' attribute with a value of 'always'.
+
+            Note: 'product_name' must be set in order to use 'install_strategy'
+            until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+            # New Usage #
+            provisioner:
+              product_name: <chef or chefdk>
+              install_strategy: always
+          MSG
+        end
+      end
+
+      deprecate_config_for :chef_omnibus_url, Util.outdent!(<<-MSG)
+        Changing the 'chef_omnibus_url' attribute breaks existing functionality. It will
+        be removed in a future version.
+      MSG
+
+      deprecate_config_for :chef_omnibus_install_options, Util.outdent!(<<-MSG)
+        The 'chef_omnibus_install_options' attribute will be replaced by using
+        'product_name' and 'channel' attributes.
+
+        Note: 'product_name' must be set in order to use 'channel'
+        until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+        # Deprecated Example #
+        provisioner:
+          chef_omnibus_install_options: -P chefdk -c current
+
+        # New Usage #
+        provisioner:
+          product_name: chefdk
+          channel: current
+      MSG
+
+      deprecate_config_for :install_msi_url, Util.outdent!(<<-MSG)
+        The 'install_msi_url' will be relaced by the 'download_url' attribute.
+        'download_url' will be applied to Bourne and Powershell download scripts.
+
+        Note: 'product_name' must be set in order to use 'download_url'
+        until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+        # New Usage #
+        provisioner:
+          product_name: <chef or chefdk>
+          download_url: http://direct-download-url
+      MSG
+
+      deprecate_config_for :chef_metadata_url, Util.outdent!(<<-MSG)
+        The 'chef_metadata_url' will be removed. The Windows metadata URL will be
+        fully managed by using attribute settings.
+      MSG
+
       # Reads the local Chef::Config object (if present).  We do this because
       # we want to start bring Chef config and ChefDK tool config closer
       # together.  For example, we want to configure proxy settings in 1
@@ -151,6 +236,12 @@ module Kitchen
         # This exports any proxy config present in the Chef config to
         # appropriate environment variables, which Test Kitchen respects
         ChefConfig::Config.export_proxies if defined?(ChefConfig::Config.export_proxies)
+      end
+
+      def doctor(state)
+        deprecated_config.each do |attr, msg|
+          info("**** #{attr} deprecated\n#{msg}")
+        end
       end
 
       # (see Base#create_sandbox)
@@ -378,6 +469,11 @@ module Kitchen
           if config[:download_url]
             opts[:install_command_options][:download_url_override] = config[:download_url]
             opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
+          end
+
+          if instance.driver.cache_directory
+            download_dir_option = windows_os? ? :download_directory : :cmdline_dl_dir
+            opts[:install_command_options][download_dir_option] = instance.driver.cache_directory
           end
 
           proxies = {}.tap do |prox|

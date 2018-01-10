@@ -124,6 +124,14 @@ module Kitchen
       to_hash.each(&block)
     end
 
+    # Returns a new Hash after deleting the key-value pairs for which the block
+    # returns true.
+    #
+    # @return [Hash] a new hash
+    def delete_if(&block)
+      to_hash.delete_if(&block)
+    end
+
     private
 
     # Returns an object or invokes call with context if object is callable.
