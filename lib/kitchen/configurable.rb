@@ -228,6 +228,10 @@ module Kitchen
     #
     # @api private
     def deprecate_config!
+      # We only want to display the deprecation list of config values once per execution on the default config.
+      # This prevents the output of deprecations from being printed for each permutation of test suites.
+      return if defined? @@has_been_warned_of_deprecations
+
       deprecated_attributes = LazyHash.new(self.class.deprecated_attributes, self)
       # Remove items from hash when not provided in the loaded config or when the rendered message is nil
       @deprecated_config = deprecated_attributes.delete_if { |attr, obj| !provided_config.key?(attr) || obj.nil? }
@@ -239,6 +243,9 @@ module Kitchen
           Run 'kitchen doctor' for details.
         MSG
         warn(warning)
+
+        # Set global var that the deprecation message has been printed
+        @@has_been_warned_of_deprecations = true
       end
     end
 
