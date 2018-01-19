@@ -5,8 +5,8 @@ services: docker
 language: ruby
 
 rvm:
-  - 2.3
-  - 2.4.2
+  - 2.3.6
+  - 2.4.3
   - ruby-head
 
 
@@ -26,6 +26,10 @@ branches:
 
 matrix:
   include:
+    - rvm: 2.5.0
+      before_install:
+      # https://github.com/travis-ci/travis-ci/issues/8978
+      - gem update --system
     - rvm: 2.4
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
@@ -54,3 +58,4 @@ matrix:
         - sudo cat /var/log/squid3/access.log
   allow_failures:
     - rvm: ruby-head
+    - rvm: 2.5.0

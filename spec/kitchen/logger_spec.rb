@@ -34,6 +34,11 @@ describe Kitchen::Logger do
     Kitchen::Color.colorize(*args)
   end
 
+  def log_tmpname
+    t = Time.now.strftime("%Y%m%d")
+    "kitchen-#{t}-#{$$}-#{rand(0x100000000).to_s(36)}.log"
+  end
+
   let(:opts) do
     { color: :red, colorize: true }
   end
@@ -356,7 +361,7 @@ describe Kitchen::Logger do
   end
 
   describe "file IO logdev-based logger" do
-    let(:logfile) { Dir::Tmpname.make_tmpname(%w{kitchen .log}, nil) }
+    let(:logfile) { File.join Dir.tmpdir, log_tmpname }
 
     before do
       opts[:logdev] = logfile
