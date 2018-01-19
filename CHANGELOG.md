@@ -1,5 +1,71 @@
 # Change Log
 
+## [v1.20.0](https://github.com/test-kitchen/test-kitchen/tree/v1.20.0) (2018-01-19)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.2...v1.20.0)
+
+**Release Notes:**
+
+#### Multiple paths for data_bags
+
+Allows a user to use data_bags from an array of directories
+
+```
+data_bags_path: 
+  - 'data_bags'
+  - 'test/integrations/data_bags'
+  ```
+
+#### Deprecation Warnings for Configuration Keys
+
+```
+$ kitchen list default-centos-7
+$$$$$$ Deprecated configuration detected:
+require_chef_omnibus
+Run 'kitchen doctor' for details.
+```
+
+```
+$ kitchen doctor
+$$$$$$ Deprecated configuration detected:
+require_chef_omnibus
+Run 'kitchen doctor' for details.
+
+-----> The doctor is in
+       **** require_chef_omnibus deprecated
+The 'require_chef_omnibus' attribute with version values will change
+to use the new 'product_version' attribute.
+
+Note: 'product_name' must be set in order to use 'product_version'
+until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+# New Usage #
+provisioner:
+  product_name: <chef or chefdk>
+  product_version: 12.0.3
+```
+
+#### SSH via an HTTP Proxy
+
+This allows configuring the SSH transport to utilize an HTTP Proxy. The following configuration keys have been added to `transport`:
+
+```
+ssh_http_proxy_user
+ssh_http_proxy_password
+ssh_http_proxy_port
+ssh_http_proxy
+```
+
+**Merged pull requests:**
+
+- Support multiple paths for data bags [\#1313](https://github.com/test-kitchen/test-kitchen/pull/1313) ([thomasdziedzic](https://github.com/thomasdziedzic))
+- Support for configuration deprecation warnings [\#1303](https://github.com/test-kitchen/test-kitchen/pull/1303) ([wrightp](https://github.com/wrightp))
+- Support for SSH via an HTTP Proxy [\#1329](https://github.com/test-kitchen/test-kitchen/pull/1329) ([NAshwini](https://github.com/NAshwini))
+- Add download support to the base transport and provisioner [\#1306](https://github.com/test-kitchen/test-kitchen/pull/1306) ([atheiman](https://github.com/atheiman))
+- Fix download support for WinRM [\#1338](https://github.com/test-kitchen/test-kitchen/pull/1338) ([gtmanfred](https://github.com/gtmanfred))
+- Fix code to validate retry\_on\_exit\_code [\#1312](https://github.com/test-kitchen/test-kitchen/pull/1312) ([NAshwini](https://github.com/NAshwini))
+- Remove safe\_yaml [\#1328](https://github.com/test-kitchen/test-kitchen/pull/1328) ([coderanger](https://github.com/coderanger))
+- Pin minitest to 5.11 [\#1339](https://github.com/test-kitchen/test-kitchen/pull/1339) ([cheeseplus](https://github.com/cheeseplus))
+
 ## [v1.19.2](https://github.com/test-kitchen/test-kitchen/tree/v1.19.2) (2017-11-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.1...v1.19.2)
 
