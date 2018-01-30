@@ -102,6 +102,10 @@ describe Kitchen::Transport::Ssh do
       transport[:max_wait_until_ready].must_equal 600
     end
 
+    it "sets :auth_methods to ssh defaults" do
+      transport[:auth_config].must_equal %w(publickey hostbased password keyboard-interactive)
+    end
+
     it "sets :ssh_key to nil by default" do
       transport[:ssh_key].must_be_nil
     end
@@ -429,6 +433,16 @@ describe Kitchen::Transport::Ssh do
 
         klass.expects(:new).with do |hash|
           hash[:auth_methods] == ["publickey"]
+        end
+
+        make_connection
+      end
+
+      it "sets :auth_methods to to custom provided value if set" do
+        config[:auth_methods] = ["gssapi-with-mic"]
+
+        klass.expects(:new).with do |hash|
+          hash[:auth_methods] == ["gssapi-with-mic"]
         end
 
         make_connection

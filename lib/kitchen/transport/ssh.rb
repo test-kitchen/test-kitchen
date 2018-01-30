@@ -468,6 +468,8 @@ module Kitchen
           max_wait_until_ready: data[:max_wait_until_ready],
           ssh_gateway: data[:ssh_gateway],
           ssh_gateway_username: data[:ssh_gateway_username],
+          auth_methods: data[:auth_methods] ||
+              %w(publickey hostbased password keyboard-interactive),
         }
 
         if data[:ssh_key] && !data[:password]
