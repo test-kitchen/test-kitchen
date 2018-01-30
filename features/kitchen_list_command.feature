@@ -123,7 +123,7 @@ Feature: Listing Test Kitchen instances
       - name: gdb01-master
       - name: logdb01-master
     """
-    When I successfully run `kitchen list gdb01-master-ubuntu-1204 --bare`
+    When I successfully run `kitchen list gdb01-master-ubuntu-1604 --bare`
     Then the output should contain exactly:
     """
     gdb01-master-ubuntu-1604
