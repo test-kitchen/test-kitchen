@@ -154,7 +154,7 @@ module Kitchen
       #     end
       #   end
       def create_sandbox
-        @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
+        @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-", "/tmp")
         File.chmod(0755, sandbox_path)
         info("Preparing files for transfer")
         debug("Creating local sandbox in #{sandbox_path}")
