@@ -117,16 +117,16 @@ Feature: Listing Test Kitchen instances
     provisioner: chef_solo
 
     platforms:
-      - name: ubuntu-12.04
+      - name: ubuntu-16.04
 
     suites:
       - name: gdb01-master
       - name: logdb01-master
     """
-    When I successfully run `kitchen list gdb01-master-ubuntu-1204 --bare`
+    When I successfully run `kitchen list gdb01-master-ubuntu-1604 --bare`
     Then the output should contain exactly:
     """
-    gdb01-master-ubuntu-1204
+    gdb01-master-ubuntu-1604
 
     """
 

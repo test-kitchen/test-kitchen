@@ -11,7 +11,7 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: ubuntu-14.04
+  - name: ubuntu-16.04
 
 verifier:
   name: busser

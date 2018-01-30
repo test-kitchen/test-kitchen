@@ -151,7 +151,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :busser => "bar"
     #       }
     #     ],
@@ -174,7 +174,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :verifier => {
     #           :name => "busser",
     #           :version => "bar
@@ -295,7 +295,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :driver_plugin => "bar"
     #       }
     #     ],
@@ -319,7 +319,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :driver => {
     #           :name => "bar"
     #         }
@@ -391,7 +391,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :driver => {
     #           :http_proxy => "foo"
     #         }
@@ -428,7 +428,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :driver => {
     #           :http_proxy => "foo"
     #         },
@@ -512,7 +512,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :driver => {
     #           :require_chef_omnibus => "10.8.2"
     #         }
@@ -538,7 +538,7 @@ module Kitchen
     #
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :provisioner => {
     #           :require_chef_omnibus => "10.8.2"
     #         }
@@ -635,7 +635,7 @@ module Kitchen
     #   {
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :attributes => { :one => "two" },
     #         :run_list => ["alpha", "bravo"]
     #       }
@@ -655,7 +655,7 @@ module Kitchen
     #   {
     #     :platforms => [
     #       {
-    #         :name => "ubuntu-12.04",
+    #         :name => "ubuntu-16.04",
     #         :provisioner => {
     #           :attributes => { :one => "two" },
     #           :run_list => ["alpha", "bravo"]

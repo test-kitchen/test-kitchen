@@ -29,10 +29,10 @@ Feature: Test Kitchen defaults
     verifier: dummy
 
     platforms:
-      - name: ubuntu-14.04
+      - name: ubuntu-16.04
 
     suites:
       - name: default
     """
     When I successfully run `kitchen list`
-    Then the output should match /^default-ubuntu-1404\s+Dummy\s+Dummy\s+Dummy\s+Ssh\s+\<Not Created\>\s+\<None\>$/
+    Then the output should match /^default-ubuntu-1604\s+Dummy\s+Dummy\s+Dummy\s+Ssh\s+\<Not Created\>\s+\<None\>$/
