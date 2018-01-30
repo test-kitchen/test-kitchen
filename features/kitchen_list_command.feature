@@ -126,7 +126,7 @@ Feature: Listing Test Kitchen instances
     When I successfully run `kitchen list gdb01-master-ubuntu-1204 --bare`
     Then the output should contain exactly:
     """
-    gdb01-master-ubuntu-1204
+    gdb01-master-ubuntu-1604
 
     """
 
