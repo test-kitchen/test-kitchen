@@ -405,6 +405,20 @@ describe Kitchen::Loader::YAML do
       loader.read.must_equal(name: "ahhchoo")
     end
 
+    it "accepts kitchen.yml with alias" do
+      FileUtils.mkdir_p "/tmp"
+      File.open("/tmp/.kitchen.yml", "wb") do |f|
+        f.write <<-'YAML'.gsub(/^ {10}/, "")
+          ---
+          xxx: &k
+            foo: bar
+          yyy: *k
+        YAML
+      end
+
+      loader.read[:yyy].must_equal(foo: "bar")
+    end
+
     it "raises a UserError if there is an ERB processing error" do
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") do |f|
