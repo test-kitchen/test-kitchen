@@ -322,7 +322,7 @@ module Kitchen
       def parse_yaml_string(string, file_name)
         return {} if string.nil? || string.empty?
 
-        result = ::YAML.safe_load(string, [Symbol]) || {}
+        result = ::YAML.safe_load(string, [Symbol], [], true) || {}
         unless result.is_a?(Hash)
           raise UserError, "Error parsing #{file_name} as YAML " \
             "(Result of parse was not a Hash, but was a #{result.class}).\n" \
