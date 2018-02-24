@@ -186,11 +186,22 @@ module Kitchen
       end
 
       # Determines the default absolute path to the Kitchen config YAML file,
-      # based on current working directory.
+      # based on current working directory. We prefer `kitchen.yml` to the
+      # older `.kitchen.yml`.
       #
       # @return [String] an absolute path to a Kitchen config YAML file
       # @api private
       def default_config_file
+        File.exist?(kitchen_yml) ? kitchen_yml : dot_kitchen_yml
+      end
+
+      # The absolute path to an un-hidden Kitchen config YAML file.
+      def kitchen_yml
+        File.join(Dir.pwd, "kitchen.yml")
+      end
+
+      # The absolute path to an hidden Kitchen config YAML file.
+      def dot_kitchen_yml
         File.join(Dir.pwd, ".kitchen.yml")
       end
 
