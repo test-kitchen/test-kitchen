@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/errors"
+require "kitchen/util"
 require "thor/util"
 
 module Kitchen
@@ -43,10 +45,11 @@ module Kitchen
       object.verify_dependencies if first_load
       object
     rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' provisioner from the load path." \
-              " Please ensure that your provisioner is installed as a gem or" \
-              " included in your Gemfile if using Bundler."
+      available_provisioners = Kitchen::Util.plugins_available(self) - %w{base chef_base}
+      raise ClientError, "Could not load the '#{plugin}' provisioner from the load path." \
+         " Did you mean: #{available_provisioners.join(", ")} ?" \
+         " Please ensure that your provisioner is spelled correctly, installed as a gem, or" \
+         " is included in your Gemfile if using Bundler."
     end
   end
 end

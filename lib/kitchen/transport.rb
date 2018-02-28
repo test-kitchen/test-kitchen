@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/errors"
+require "kitchen/util"
 require "thor/util"
 
 module Kitchen
@@ -43,10 +45,11 @@ module Kitchen
       object.verify_dependencies if first_load
       object
     rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' transport from the load path." \
-              " Please ensure that your transport is installed as a gem or" \
-              " included in your Gemfile if using Bundler."
+      available_transports = Kitchen::Util.plugins_available(self) - %w{base}
+      raise ClientError, "Could not load the '#{plugin}' transport from the load path." \
+        " Did you mean: #{available_transports.join(", ")} ?" \
+        " Please ensure that your transport is installed as a gem or" \
+        " included in your Gemfile if using Bundler."
     end
   end
 end

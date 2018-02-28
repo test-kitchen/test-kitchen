@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/errors"
+require "kitchen/util"
 require "thor/util"
 
 module Kitchen
@@ -45,10 +47,11 @@ module Kitchen
     rescue UserError
       raise
     rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' driver from the load path." \
-              " Please ensure that your driver is installed as a gem or included" \
-              " in your Gemfile if using Bundler."
+      available_drivers = Kitchen::Util.plugins_available(self) - %w{base}
+      raise ClientError, "Could not load the '#{plugin}' driver from the load path." \
+        " Did you mean: #{available_drivers.join(", ")} ?" \
+        " Please ensure that your driver is installed as a gem or included" \
+        " in your Gemfile if using Bundler."
     end
   end
 end
