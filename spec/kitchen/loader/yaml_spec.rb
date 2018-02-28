@@ -50,6 +50,15 @@ describe Kitchen::Loader::YAML do
         .must_equal File.expand_path(File.join(Dir.pwd, ".kitchen.yml"))
     end
 
+    it "prefers kitchen.yml to .kitchen.yml" do
+      stub_file(File.join(Dir.pwd, "kitchen.yml"), {})
+      stub_file(File.join(Dir.pwd, ".kitchen.yml"), {})
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:project_config][:filename]
+        .must_equal File.expand_path(File.join(Dir.pwd, "kitchen.yml"))
+    end
+
     it "sets project_config from parameter, if given" do
       stub_file("/tmp/crazyfunkytown.file", {})
       loader = Kitchen::Loader::YAML.new(
