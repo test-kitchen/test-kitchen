@@ -1,5 +1,10 @@
 # Change Log
 
+## [v1.20.1](https://github.com/test-kitchen/test-kitchen/tree/v1.20.1) (2018-02-20)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.20.0...v1.20.1)
+
+- (Re-)Support yaml aliases [\#1359](https://github.com/test-kitchen/test-kitchen/pull/1359) ([limitusus](https://github.com/limitusus))
+
 ## [v1.20.0](https://github.com/test-kitchen/test-kitchen/tree/v1.20.0) (2018-01-19)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.2...v1.20.0)
 
