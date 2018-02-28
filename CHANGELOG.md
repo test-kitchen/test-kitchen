@@ -1,5 +1,17 @@
 # Change Log
 
+# Change Log
+
+## [v1.21.0](https://github.com/test-kitchen/test-kitchen/tree/v1.21.0) (2018-02-28)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.20.1...v1.21.0)
+
+**Release Notes:**
+
+We now prefer a configuration file named `kitchen.yml` over `.kitchen.yml` as this never really needed to be a hidden file. The old standard still works just fine, the only real caveat of the non-hidden file version is that if one has a `kitchen.yml`, then kitchen will also look for `kitchen.local.yml`. The same logic applies if setting the environment variable `KITCHEN_YAML`.
+
+- Prefer kitchen.yml to .kitchen.yml [\#1363](https://github.com/test-kitchen/test-kitchen/pull/1363) ([thommay](https://github.com/thommay))
+- (Re-)Support yaml aliases [\#1359](https://github.com/test-kitchen/test-kitchen/pull/1359) ([limitusus](https://github.com/limitusus))
+
 ## [v1.20.0](https://github.com/test-kitchen/test-kitchen/tree/v1.20.0) (2018-01-19)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.2...v1.20.0)
 
