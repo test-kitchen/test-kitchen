@@ -1,6 +1,6 @@
 version: "master-{build}"
 
-os: Windows Server 2012 R2
+os: Visual Studio 2017
 platform:
   - x64
 
@@ -12,7 +12,7 @@ environment:
   SSL_CERT_FILE: c:\projects\test_kitchen\certs.pem
 
   matrix:
-    - ruby_version: "23"
+    - ruby_version: "24-x64"
 
 clone_folder: c:\projects\test_kitchen
 clone_depth: 1
@@ -31,9 +31,10 @@ install:
   - set SSL_CERT_FILE=c:\projects\test_kitchen\certs.pem
   - gem update --system || gem update --system || gem update --system
   - update_rubygems
+  - gem install bundler --force
   - ruby --version
   - gem --version
-  - bundler --version
+  - bundle --version
 
 build_script:
   - bundle install --without guard integration
