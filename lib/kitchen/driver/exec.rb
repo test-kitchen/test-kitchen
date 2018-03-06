@@ -61,7 +61,7 @@ module Kitchen
       # @param state [Hash] the state hash
       # @api private
       def reset_instance(state)
-        if cmd = config[:reset_command]
+        if (cmd = config[:reset_command])
           info("Resetting instance state with command: #{cmd}")
           run_command(cmd)
         end
