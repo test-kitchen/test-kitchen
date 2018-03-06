@@ -78,29 +78,33 @@ module Kitchen
         # @api private
         attr_reader :logger
 
-        # Load the Librarian-specific libary code.
-        #
-        # @param logger [Kitchen::Logger] the logger to use
-        # @raise [UserError] if the library couldn't be loaded
-        # @api private
-        def self.load_librarian!(logger)
-          first_load = require "librarian/chef/environment"
-          require "librarian/action/resolve"
-          require "librarian/action/install"
+        class << self
+          private
 
-          version = ::Librarian::Chef::VERSION
-          if first_load
-            logger.debug("Librarian-Chef #{version} library loaded")
-          else
-            logger.debug("Librarian-Chef #{version} previously loaded")
+          # Load the Librarian-specific libary code.
+          #
+          # @param logger [Kitchen::Logger] the logger to use
+          # @raise [UserError] if the library couldn't be loaded
+          # @api private
+          def load_librarian!(logger)
+            first_load = require "librarian/chef/environment"
+            require "librarian/action/resolve"
+            require "librarian/action/install"
+
+            version = ::Librarian::Chef::VERSION
+            if first_load
+              logger.debug("Librarian-Chef #{version} library loaded")
+            else
+              logger.debug("Librarian-Chef #{version} previously loaded")
+            end
+          rescue LoadError => e
+            logger.fatal("The `librarian-chef' gem is missing and must be installed" \
+              " or cannot be properly activated. Run" \
+              " `gem install librarian-chef` or add the following to your" \
+              " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
+            raise UserError,
+                  "Could not load or activate Librarian-Chef (#{e.message})"
           end
-        rescue LoadError => e
-          logger.fatal("The `librarian-chef' gem is missing and must be installed" \
-            " or cannot be properly activated. Run" \
-            " `gem install librarian-chef` or add the following to your" \
-            " Gemfile if you are using Bundler: `gem 'librarian-chef'`.")
-          raise UserError,
-                "Could not load or activate Librarian-Chef (#{e.message})"
         end
       end
     end

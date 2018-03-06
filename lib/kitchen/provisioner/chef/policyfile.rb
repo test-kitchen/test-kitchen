@@ -103,24 +103,6 @@ module Kitchen
         # @api private
         attr_reader :always_update
 
-        # Ensure the `chef` command is in the path.
-        #
-        # @param logger [Kitchen::Logger] the logger to use
-        # @raise [UserError] if the `chef` command is not in the PATH
-        # @api private
-        def self.detect_chef_command!(logger)
-          unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |p|
-            File.exist?(File.join(p, "chef"))
-          end
-            logger.fatal("The `chef` executable cannot be found in your " \
-                         "PATH. Ensure you have installed ChefDK from " \
-                         "https://downloads.chef.io and that your PATH " \
-                         "setting includes the path to the `chef` comand.")
-            raise UserError,
-                  "Could not find the chef executable in your PATH."
-          end
-        end
-
         # Escape spaces in a path in way that works with both Sh (Unix) and
         # Windows.
         #
@@ -143,6 +125,29 @@ module Kitchen
             Shellwords.escape(path)
           end
         end
+
+        class << self
+          private
+
+          # Ensure the `chef` command is in the path.
+          #
+          # @param logger [Kitchen::Logger] the logger to use
+          # @raise [UserError] if the `chef` command is not in the PATH
+          # @api private
+          def detect_chef_command!(logger)
+            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |p|
+              File.exist?(File.join(p, "chef"))
+            end
+              logger.fatal("The `chef` executable cannot be found in your " \
+                          "PATH. Ensure you have installed ChefDK from " \
+                          "https://downloads.chef.io and that your PATH " \
+                          "setting includes the path to the `chef` comand.")
+              raise UserError,
+                    "Could not find the chef executable in your PATH."
+            end
+          end
+        end
+
       end
     end
   end
