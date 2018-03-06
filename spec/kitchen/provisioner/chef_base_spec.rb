@@ -768,13 +768,13 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "sets chef component dirs for deletion" do
         config[:root_path] = '\\route'
-        dirs = %w{
-          "\\route\\clients" "\\route\\cookbooks" "\\route\\data"
-          "\\route\\data_bags" "\\route\\encrypted_data_bag_secret"
-          "\\route\\environments" "\\route\\roles"
-        }.join(", ")
+        dirs = %w{ clients cookbooks data data_bags encrypted_data_bag_secret
+                   environments roles
+                 }.map do |dir|
+          "\\route\\#{dir}"
+        end.join(", ")
 
-        cmd.must_match regexify(%{$dirs = @(#{dirs})})
+        cmd.include? "$dirs = @(#{dirs})"
       end
 
       it "sets the root_path from :root_path" do
