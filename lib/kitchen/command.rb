@@ -165,7 +165,7 @@ module Kitchen
         @action_errors = []
         concurrency.times do
           threads << Thread.new do
-            while instance = queue.pop
+            while (instance = queue.pop)
               run_action_in_thread(action, instance, *args)
             end
           end

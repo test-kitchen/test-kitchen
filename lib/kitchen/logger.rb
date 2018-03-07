@@ -345,7 +345,7 @@ module Kitchen
       def <<(msg)
         @buffer ||= ""
         @buffer += msg
-        while i = @buffer.index("\n")
+        while (i = @buffer.index("\n"))
           format_line(@buffer[0, i].chomp)
           @buffer[0, i + 1] = ""
         end

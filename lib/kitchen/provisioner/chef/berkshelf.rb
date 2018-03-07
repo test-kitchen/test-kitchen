@@ -85,27 +85,31 @@ module Kitchen
         # @api private
         attr_reader :always_update
 
-        # Load the Berkshelf-specific libary code.
-        #
-        # @param logger [Kitchen::Logger] the logger to use
-        # @raise [UserError] if the library couldn't be loaded
-        # @api private
-        def self.load_berkshelf!(logger)
-          first_load = require "berkshelf"
+        class << self
+          private
 
-          version = ::Berkshelf::VERSION
-          if first_load
-            logger.debug("Berkshelf #{version} library loaded")
-          else
-            logger.debug("Berkshelf #{version} previously loaded")
+          # Load the Berkshelf-specific libary code.
+          #
+          # @param logger [Kitchen::Logger] the logger to use
+          # @raise [UserError] if the library couldn't be loaded
+          # @api private
+          def load_berkshelf!(logger)
+            first_load = require "berkshelf"
+
+            version = ::Berkshelf::VERSION
+            if first_load
+              logger.debug("Berkshelf #{version} library loaded")
+            else
+              logger.debug("Berkshelf #{version} previously loaded")
+            end
+          rescue LoadError => e
+            logger.fatal("The `berkshelf' gem is missing and must be installed" \
+              " or cannot be properly activated. Run" \
+              " `gem install berkshelf` or add the following to your" \
+              " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
+            raise UserError,
+                  "Could not load or activate Berkshelf (#{e.message})"
           end
-        rescue LoadError => e
-          logger.fatal("The `berkshelf' gem is missing and must be installed" \
-            " or cannot be properly activated. Run" \
-            " `gem install berkshelf` or add the following to your" \
-            " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
-          raise UserError,
-                "Could not load or activate Berkshelf (#{e.message})"
         end
       end
     end

@@ -31,6 +31,10 @@ end
 
 instance_eval(ENV["GEMFILE_MOD"]) if ENV["GEMFILE_MOD"]
 
-# If you want to load debugging tools into the bundle exec sandbox,
-# add these additional dependencies into chef/Gemfile.local
+# To avoid bringing in development or test dependencies that are not
+# absolutely needed, if you want to load tools not present in the gemspec
+# or this Gemfile, add those additional dependencies into a Gemfile.local
+# file which is ignored by this repository.
+# rubocop:disable Security/Eval
 eval(IO.read(__FILE__ + ".local"), binding) if File.exist?(__FILE__ + ".local")
+# rubocop:enable Security/Eval

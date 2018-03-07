@@ -101,7 +101,7 @@ module Kitchen
     # @return [Hash] a new hash
     def to_hash
       hash = {}
-      __getobj__.keys.each { |key| hash[key] = self[key] }
+      __getobj__.each_key { |key| hash[key] = self[key] }
       hash
     end
 

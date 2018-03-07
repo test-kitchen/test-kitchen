@@ -306,15 +306,19 @@ module Kitchen
     D
     tasks["init"].options = Kitchen::Generator::Init.class_options
 
-    private
+    class << self
+      private
 
-    # Ensure the any failing commands exit non-zero.
-    #
-    # @return [true] you die always on failure
-    # @api private
-    def self.exit_on_failure?
-      true
+      # Ensure the any failing commands exit non-zero.
+      #
+      # @return [true] you die always on failure
+      # @api private
+      def exit_on_failure?
+        true
+      end
     end
+
+    private
 
     # @return [Logger] the common logger
     # @api private

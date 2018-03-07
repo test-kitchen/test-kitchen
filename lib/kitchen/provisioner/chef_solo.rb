@@ -64,7 +64,7 @@ module Kitchen
 
       # (see Base#run_command)
       def run_command
-        config[:log_level] = "info" if !modern? && config[:log_level] = "auto"
+        config[:log_level] = "info" if !modern? && config[:log_level] == "auto"
         cmd = sudo(config[:chef_solo_path]).dup
                                            .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
