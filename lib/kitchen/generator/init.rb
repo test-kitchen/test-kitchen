@@ -57,7 +57,12 @@ module Kitchen
       def init
         self.class.source_root(Kitchen.source_root.join("templates", "init"))
 
-        create_kitchen_yaml
+        if options[:driver].include?('kitchen-dokken')
+          create_kitchen_dokken_yaml
+        else
+          create_kitchen_yaml
+        end
+
         create_chefignore
         prepare_rakefile
         prepare_thorfile
@@ -70,21 +75,38 @@ module Kitchen
 
       private
 
+      # Creates a run list if a cookbook metadata is found.
+      #
+      # @api private
+      def create_run_list
+        if File.exist?(File.expand_path("metadata.rb"))
+          cookbook_name = MetadataChopper.extract("metadata.rb").first
+          "recipe[#{cookbook_name}::default]"
+        end
+      end
+
       # Creates the `.kitchen.yml` file.
       #
       # @api private
       def create_kitchen_yaml
-        cookbook_name = if File.exist?(File.expand_path("metadata.rb"))
-                          MetadataChopper.extract("metadata.rb").first
-                        end
-        run_list = cookbook_name ? "recipe[#{cookbook_name}::default]" : nil
-        driver_plugin = Array(options[:driver]).first || "dummy"
+        driver_plugin = Array(options[:driver]).first || 'dummy'
 
-        template("kitchen.yml.erb", ".kitchen.yml",
+        template('kitchen.yml.erb', '.kitchen.yml',
                  driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
                  provisioner: options[:provisioner],
-                 run_list: Array(run_list)
+                 run_list: Array(create_run_list)
                 )
+      end
+
+      # Creates the `.kitchen.yml` file specific to the kitchen-dokken driver
+      #
+      # @api private
+      # @see https://github.com/test-kitchen/test-kitchen/issues/1374 to improve
+      #   the the user-experience for dokken users this will generate a better
+      #   default.
+      def create_kitchen_dokken_yaml
+        template('kitchen-dokken.yml.erb', '.kitchen.yml',
+                 run_list: Array(create_run_list))
       end
 
       # Creates the `chefignore` file.
