@@ -520,10 +520,6 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           sandbox_path("my_script").file?.must_equal true
-          unless running_tests_on_windows?
-            # Windows doesn't have the concept of executable
-            sandbox_path("my_script").executable?.must_equal true
-          end
           IO.read(sandbox_path("my_script")).must_equal "gonuts"
         end
 

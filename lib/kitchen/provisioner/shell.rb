@@ -142,8 +142,6 @@ module Kitchen
         if config[:script]
           debug("Using script from #{config[:script]}")
           FileUtils.cp_r(config[:script], sandbox_path)
-          FileUtils.chmod(0755,
-                          File.join(sandbox_path, File.basename(config[:script])))
         else
           info("No provisioner script file specified, skipping")
         end
