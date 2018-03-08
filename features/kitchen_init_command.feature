@@ -3,9 +3,6 @@ Feature: Add Test Kitchen support to an existing project
   As an operator
   I want to run a command to initialize my project
 
-  Background:
-    Given a sandboxed GEM_HOME directory named "kitchen-init"
-
   @spawn
   Scenario: Displaying help
     When I run `kitchen help init`
@@ -45,10 +42,6 @@ Feature: Add Test Kitchen support to an existing project
     """
     gem "test-kitchen"
     """
-    And the file "Gemfile" should contain:
-    """
-    gem "kitchen-vagrant"
-    """
     And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with an existing Gemfile appends to the Gemfile
@@ -64,7 +57,6 @@ Feature: Add Test Kitchen support to an existing project
     source "https://rubygems.org"
 
     gem "test-kitchen"
-    gem "kitchen-vagrant"
 
     """
     And the output should contain "You must run `bundle install'"
@@ -84,10 +76,8 @@ Feature: Add Test Kitchen support to an existing project
     source "https://rubygems.org"
 
     gem 'test-kitchen'
-    gem "kitchen-vagrant"
 
     """
-    And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with a Gemfile containing the driver gem does not
     re-append
@@ -109,19 +99,6 @@ Feature: Add Test Kitchen support to an existing project
 
     """
     And the output should not contain "You must run `bundle install'"
-
-  Scenario: Running init with multiple drivers appends to the Gemfile
-    Given an empty file named "Gemfile"
-    When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
-    Then the file "Gemfile" should contain:
-    """
-    gem "kitchen-bluebox"
-    """
-    And the file "Gemfile" should contain:
-    """
-    gem "kitchen-wakka"
-    """
-    And the output should contain "You must run `bundle install'"
 
   Scenario: Running init with multiple driver sets the plugin_driver to the
     first driver given

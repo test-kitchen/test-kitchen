@@ -64,7 +64,6 @@ module Kitchen
         create_test_dir
         prepare_gitignore
         prepare_gemfile
-        add_drivers
         display_bundle_message
       end
 
@@ -220,40 +219,6 @@ module Kitchen
           append_to_file("Gemfile", %{gem "test-kitchen"\n})
           @display_bundle_msg = true
         end
-      end
-
-      # Appends driver gems to a Gemfile or installs them.
-      #
-      # @api private
-      def add_drivers
-        return if options[:driver].nil? || options[:driver].empty?
-
-        Array(options[:driver]).each do |driver_gem|
-          if File.exist?(File.join(destination_root, "Gemfile")) || options[:create_gemfile]
-            add_driver_to_gemfile(driver_gem)
-          else
-            install_gem(driver_gem)
-          end
-        end
-      end
-
-      # Appends a driver gem to a Gemfile.
-      #
-      # @api private
-      def add_driver_to_gemfile(driver_gem)
-        if not_in_file?("Gemfile", /gem ('|")#{driver_gem}('|")/)
-          append_to_file("Gemfile", %{gem "#{driver_gem}"\n})
-          @display_bundle_msg = true
-        end
-      end
-
-      # Installs a driver gem.
-      #
-      # @api private
-      def install_gem(driver_gem)
-        unbundlerize { Gem::GemRunner.new.run(["install", driver_gem]) }
-      rescue Gem::SystemExitException => e
-        raise unless e.exit_code == 0
       end
 
       # Displays a bundle warning message to the user.
