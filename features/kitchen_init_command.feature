@@ -23,8 +23,10 @@ Feature: Add Test Kitchen support to an existing project
     Then the exit status should be 0
     And a directory named "test/integration/default" should exist
     And the file ".gitignore" should contain ".kitchen/"
+    And the file ".gitignore" should contain "kitchen.local.yml"
     And the file ".gitignore" should contain ".kitchen.local.yml"
-    And the file ".kitchen.yml" should contain:
+    And the file "kitchen.yml" should exist:
+    And the file "kitchen.yml" should contain:
     """
     driver:
       name: vagrant
@@ -125,7 +127,8 @@ Feature: Add Test Kitchen support to an existing project
     first driver given
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --driver=kitchen-bluebox kitchen-wakka`
-    Then the file ".kitchen.yml" should contain:
+    Then the file "kitchen.yml" should exist
+    Then the file "kitchen.yml" should contain:
     """
     driver:
       name: bluebox
@@ -135,26 +138,26 @@ Feature: Add Test Kitchen support to an existing project
     dummy driver
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
-    Then the file ".kitchen.yml" should contain:
+    Then the file "kitchen.yml" should contain:
     """
     driver:
       name: dummy
     """
 
   Scenario: Running init without a provisioner sets the default provisioner
-    to chef_solo in .kitchen.yml
+    to chef_solo in kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
-    Then the file ".kitchen.yml" should contain:
+    Then the file "kitchen.yml" should contain:
     """
     provisioner:
       name: chef_solo
     """
 
-  Scenario: Running init with a provisioner sets the provisioner in .kitchen.yml
+  Scenario: Running init with a provisioner sets the provisioner in kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver --provisioner=chef_zero`
-    Then the file ".kitchen.yml" should contain:
+    Then the file "kitchen.yml" should contain:
     """
     provisioner:
       name: chef_zero
@@ -206,7 +209,7 @@ Feature: Add Test Kitchen support to an existing project
     support "centos"
     """
     When I successfully run `kitchen init`
-    Then the file ".kitchen.yml" should contain exactly:
+    Then the file "kitchen.yml" should contain exactly:
     """
     ---
     driver:
@@ -230,7 +233,7 @@ Feature: Add Test Kitchen support to an existing project
   Scenario: Running init with an empty file metadata.rb sets an empty run list
     Given an empty file named "metadata.rb"
     When I successfully run `kitchen init`
-    Then the file ".kitchen.yml" should contain exactly:
+    Then the file "kitchen.yml" should contain exactly:
     """
     ---
     driver:
@@ -253,7 +256,7 @@ Feature: Add Test Kitchen support to an existing project
   Scenario: Running init with no metadata.rb file sets an empty run list
     Given a file named "metadata.rb" does not exist
     When I successfully run `kitchen init`
-    Then the file ".kitchen.yml" should contain exactly:
+    Then the file "kitchen.yml" should contain exactly:
     """
     ---
     driver:

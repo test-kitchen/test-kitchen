@@ -80,7 +80,7 @@ module Kitchen
         run_list = cookbook_name ? "recipe[#{cookbook_name}::default]" : nil
         driver_plugin = Array(options[:driver]).first || "dummy"
 
-        template("kitchen.yml.erb", ".kitchen.yml",
+        template("kitchen.yml.erb", "kitchen.yml",
                  driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
                  provisioner: options[:provisioner],
                  run_list: Array(run_list)

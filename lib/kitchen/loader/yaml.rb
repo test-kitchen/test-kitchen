@@ -34,9 +34,9 @@ module Kitchen
       #
       # @param options [Hash] configuration for a new loader
       # @option options [String] :project_config path to the Kitchen
-      #   config YAML file (default: `./.kitchen.yml`)
+      #   config YAML file (default: `./kitchen.yml`)
       # @option options [String] :local_config path to the Kitchen local
-      #   config YAML file (default: `./.kitchen.local.yml`)
+      #   config YAML file (default: `./kitchen.local.yml`)
       # @option options [String] :global_config path to the Kitchen global
       #   config YAML file (default: `$HOME/.kitchen/config.yml`)
       # @option options [String] :process_erb whether or not to process YAML
@@ -192,6 +192,10 @@ module Kitchen
       # @return [String] an absolute path to a Kitchen config YAML file
       # @api private
       def default_config_file
+        if File.exist?(kitchen_yml) && File.exist?(dot_kitchen_yml)
+          raise UserError, "Both #{kitchen_yml} and #{dot_kitchen_yml} found. Please use the un-dotted variant: #{kitchen_yml}."
+        end
+
         File.exist?(kitchen_yml) ? kitchen_yml : dot_kitchen_yml
       end
 
@@ -207,11 +211,21 @@ module Kitchen
 
       # Determines the default absolute path to the Kitchen local YAML file,
       # based on the base Kitchen config YAML file.
-      #
+
       # @return [String] an absolute path to a Kitchen local YAML file
+      # @raise [UserError] if both dotted and undotted versions of the default
+      #   local YAML file exist, e.g. both kitchen.local.yml and .kitchen.local.yml
       # @api private
       def default_local_config_file
-        config_file.sub(/(#{File.extname(config_file)})$/, '.local\1')
+        config_dir, default_local_config = File.split(config_file.sub(/(#{File.extname(config_file)})$/, '.local\1'))
+
+        undot_config = default_local_config.sub(/^\./, "")
+        dot_config = ".#{undot_config}"
+        if File.exist?(File.join(config_dir, undot_config)) && File.exist?(File.join(config_dir, dot_config))
+          raise UserError, "Both #{undot_config} and #{dot_config} found in #{config_dir}. Please use #{default_local_config} which matches your #{config_file}."
+        end
+
+        File.join(config_dir, default_local_config)
       end
 
       # Determines the default absolute path to the Kitchen global YAML file,

@@ -43,6 +43,14 @@ describe Kitchen::Loader::YAML do
 
   describe ".initialize" do
     it "sets project_config based on Dir.pwd by default" do
+      stub_file(File.join(Dir.pwd, "kitchen.yml"), {})
+      loader = Kitchen::Loader::YAML.new
+
+      loader.diagnose[:project_config][:filename]
+        .must_equal File.expand_path(File.join(Dir.pwd, "kitchen.yml"))
+    end
+
+    it "when kitchen.yml not present, falls back to .kitchen.yml" do
       stub_file(File.join(Dir.pwd, ".kitchen.yml"), {})
       loader = Kitchen::Loader::YAML.new
 
@@ -52,11 +60,16 @@ describe Kitchen::Loader::YAML do
 
     it "prefers kitchen.yml to .kitchen.yml" do
       stub_file(File.join(Dir.pwd, "kitchen.yml"), {})
-      stub_file(File.join(Dir.pwd, ".kitchen.yml"), {})
       loader = Kitchen::Loader::YAML.new
 
       loader.diagnose[:project_config][:filename]
         .must_equal File.expand_path(File.join(Dir.pwd, "kitchen.yml"))
+    end
+
+    it "errors when kitchen.yml and .kitchen.yml are both present" do
+      stub_file(File.join(Dir.pwd, "kitchen.yml"), {})
+      stub_file(File.join(Dir.pwd, ".kitchen.yml"), {})
+      proc { Kitchen::Loader::YAML.new }.must_raise Kitchen::UserError
     end
 
     it "sets project_config from parameter, if given" do
@@ -83,6 +96,13 @@ describe Kitchen::Loader::YAML do
 
       loader.diagnose[:local_config][:filename]
         .must_match %r{/tmp/.kitchen.local.yml$}
+    end
+
+    it "errors if both visible and hidden copies of default local_config exist" do
+      stub_file("/tmp/kitchen.local.yml", {})
+      stub_file("/tmp/.kitchen.local.yml", {})
+      proc { Kitchen::Loader::YAML.new(project_config: "/tmp/.kitchen.yml") }
+        .must_raise Kitchen::UserError
     end
 
     it "sets local_config from parameter, if given" do
