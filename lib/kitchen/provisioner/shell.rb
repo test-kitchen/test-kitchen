@@ -77,6 +77,22 @@ module Kitchen
         prefix_command(wrap_shell_code(code))
       end
 
+      # (see Base#prepare_command)
+      def prepare_command
+        # On a windows host, the supplied script does not get marked as executable
+        # due to windows not having the concept of an executable flag
+        #
+        # When the guest instance is *nix, `chmod +x` the script in the guest, prior to executing
+        return unless unix_os? && config[:script] && !config[:command]
+
+        debug "Marking script as executable"
+        script = remote_path_join(
+          config[:root_path],
+          File.basename(config[:script])
+        )
+        prefix_command(wrap_shell_code(sudo("chmod +x #{script}")))
+      end
+
       # (see Base#run_command)
       def run_command
         return prefix_command(wrap_shell_code(config[:command])) if config[:command]

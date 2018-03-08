@@ -241,6 +241,69 @@ describe Kitchen::Provisioner::Shell do
     end
   end
 
+  describe "#prepare_command" do
+    let(:cmd) { provisioner.prepare_command }
+
+    describe "for bourne shells" do
+      before { platform.stubs(:shell_type).returns("bourne") }
+
+      it "uses bourne shell" do
+        cmd.must_match(/\Ash -c '$/)
+        cmd.must_match(/'\Z/)
+      end
+
+      it "ends with a single quote" do
+        cmd.must_match(/'\Z/)
+      end
+
+      it "uses sudo for script when configured" do
+        config[:root_path] = "/r"
+        config[:sudo] = true
+
+        cmd.must_match regexify("sudo -E chmod +x /r/bootstrap.sh", :partial_line)
+      end
+
+      it "does not use sudo for script when configured" do
+        config[:root_path] = "/r"
+        config[:sudo] = false
+
+        cmd.must_match regexify("chmod +x /r/bootstrap.sh", :partial_line)
+        cmd.wont_match regexify("sudo -E chmod +x /r/bootstrap.sh", :partial_line)
+      end
+
+      it "uses command_prefix for script when configured" do
+        config[:command_prefix] = "TEST=yes"
+        config[:root_path] = "/r"
+        config[:sudo] = false
+
+        cmd.must_match(/^TEST=yes/)
+      end
+
+      it "respects command" do
+        config[:command] = "dothingy.rb"
+
+        cmd.must_be_nil
+      end
+    end
+
+    describe "for powershell shells on windows os types" do
+      before do
+        platform.stubs(:shell_type).returns("powershell")
+        platform.stubs(:os_type).returns("windows")
+      end
+
+      it "does nothing when given a script" do
+        cmd.must_be_nil
+      end
+
+      it "respects command" do
+        config[:command] = "dothingy.rb"
+
+        cmd.must_be_nil
+      end
+    end
+  end
+
   describe "#run_command" do
     let(:cmd) { provisioner.run_command }
 
