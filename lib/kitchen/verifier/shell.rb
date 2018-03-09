@@ -84,15 +84,14 @@ module Kitchen
       end
 
       def state_to_env(state)
-        env_state = { environment: {} }
-        env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
-        env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
-        env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
-        state.each_pair do |key, value|
-          env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
-        end
-        env_state.tap do |retval|
-          retval[:environment].merge! config[:shellout_opts][:environment] || {}
+        config[:shellout_opts].to_hash.dup.tap do |env_state|
+          env_state[:environment] ||= {}
+          env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
+          env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
+          env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
+          state.each_pair do |key, value|
+            env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
+          end
         end
       end
     end
