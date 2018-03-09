@@ -84,13 +84,13 @@ describe Kitchen::Verifier::Shell do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
-        verifier.call(state)
-        config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
-        config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
-        config[:shellout_opts][:environment]["KITCHEN_PORT"].must_equal "22"
-        config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
-        config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
-        config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
+        new_opts = verifier.send :state_to_env, state
+        new_opts[:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
+        new_opts[:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+        new_opts[:environment]["KITCHEN_PORT"].must_equal "22"
+        new_opts[:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+        new_opts[:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
+        new_opts[:environment]["KITCHEN_SUITE"].must_equal "fries"
       end
 
       it "raises ActionFailed if set false to :command" do

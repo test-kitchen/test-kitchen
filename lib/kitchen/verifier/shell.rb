@@ -40,13 +40,12 @@ module Kitchen
       def call(state)
         info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
-        merge_state_to_env(state)
         if config[:remote_exec]
           instance.transport.connection(state) do |conn|
             conn.execute(config[:command])
           end
         else
-          shellout
+          shellout state
         end
         debug("[#{name}] Verify completed.")
       end
@@ -73,8 +72,8 @@ module Kitchen
         end
       end
 
-      def shellout
-        cmd = Mixlib::ShellOut.new(config[:command], config[:shellout_opts])
+      def shellout(state)
+        cmd = Mixlib::ShellOut.new(config[:command], state_to_env(state))
         cmd.live_stream = config[:live_stream]
         cmd.run_command
         begin
@@ -84,7 +83,7 @@ module Kitchen
         end
       end
 
-      def merge_state_to_env(state)
+      def state_to_env(state)
         env_state = { environment: {} }
         env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
         env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
@@ -92,7 +91,9 @@ module Kitchen
         state.each_pair do |key, value|
           env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
         end
-        config[:shellout_opts].merge!(env_state)
+        env_state.tap do |retval|
+          retval[:environment].merge! config[:shellout_opts][:environment] || {}
+        end
       end
     end
   end
