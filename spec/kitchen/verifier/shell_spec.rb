@@ -84,13 +84,17 @@ describe Kitchen::Verifier::Shell do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
-        new_opts = verifier.send :state_to_env, state
+        config[:shellout_opts] = {}
+        config[:shellout_opts][:environment] = { FOO: "bar" }
+
+        new_opts = verifier.send :merge_state_to_env, state
         new_opts[:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
         new_opts[:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
         new_opts[:environment]["KITCHEN_PORT"].must_equal "22"
         new_opts[:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
         new_opts[:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
         new_opts[:environment]["KITCHEN_SUITE"].must_equal "fries"
+        new_opts[:environment][:FOO].must_equal "bar"
       end
 
       it "raises ActionFailed if set false to :command" do
@@ -141,17 +145,6 @@ describe Kitchen::Verifier::Shell do
         transport.expects(:connection).with(state).yields(connection)
         verifier.call(state)
       end
-    end
-  end
-
-  describe "#run_command" do
-    it "execute localy and returns nil" do
-      verifier.run_command
-    end
-
-    it "returns string when remote_exec" do
-      config[:remote_exec] = true
-      verifier.run_command.must_equal "true"
     end
   end
 end

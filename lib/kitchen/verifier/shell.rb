@@ -40,27 +40,20 @@ module Kitchen
       def call(state)
         info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
+        @merged_shellout_opts = merge_state_to_env(state)
         if config[:remote_exec]
           instance.transport.connection(state) do |conn|
-            conn.execute(config[:command])
+            conn.execute(remote_command)
           end
         else
-          shellout state
+          shellout
         end
         debug("[#{name}] Verify completed.")
       end
 
-      # for legacy drivers.
-      def run_command
-        if config[:remote_exec]
-          config[:command]
-        else
-          shellout
-          nil
-        end
-      end
-
       private
+
+      attr_reader :merged_shellout_opts
 
       # Sleep for a period of time, if a value is set in the config.
       #
@@ -72,8 +65,8 @@ module Kitchen
         end
       end
 
-      def shellout(state)
-        cmd = Mixlib::ShellOut.new(config[:command], state_to_env(state))
+      def shellout
+        cmd = Mixlib::ShellOut.new(config[:command], merged_shellout_opts)
         cmd.live_stream = config[:live_stream]
         cmd.run_command
         begin
@@ -83,7 +76,11 @@ module Kitchen
         end
       end
 
-      def state_to_env(state)
+      def remote_command
+        config[:command]
+      end
+
+      def merge_state_to_env(state)
         config[:shellout_opts].to_hash.dup.tap do |env_state|
           env_state[:environment] ||= {}
           env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
