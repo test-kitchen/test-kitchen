@@ -16,6 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/errors"
+require "thor/util"
+
 module Kitchen
   # Stateless utility methods used in different contexts. Essentially a mini
   # PassiveSupport library.
@@ -196,15 +199,12 @@ module Kitchen
       end
     end
 
-    def self.plugins_available(module_class)
-      plugin_type = module_class.name.split("::").last.downcase
-      $LOAD_PATH.map { |load_path| Dir[File.expand_path("kitchen/#{plugin_type}/*.rb", load_path)] }
-                .reject { |plugin_paths| plugin_paths.empty? }
-                .flatten
-                .uniq
-                .select { |plugin_path| File.readlines(plugin_path).grep(/^\s*class \w* </).any? }
-                .map { |plugin_path| File.basename(plugin_path).gsub(/\.rb$/, "") }
-                .sort
+    def self.camel_case(a_string)
+      Thor::Util.camel_case(a_string)
+    end
+
+    def self.snake_case(a_string)
+      Thor::Util.snake_case(a_string)
     end
   end
 end

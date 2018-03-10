@@ -16,9 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
-require "kitchen/util"
-require "thor/util"
+require "kitchen/plugin"
 
 module Kitchen
   # A transport is responsible for the communication with an instance,
@@ -37,19 +35,7 @@ module Kitchen
     # @return [Transport::Base] a transport instance
     # @raise [ClientError] if a transport instance could not be created
     def self.for_plugin(plugin, config)
-      first_load = require("kitchen/transport/#{plugin}")
-
-      str_const = Thor::Util.camel_case(plugin)
-      klass = const_get(str_const)
-      object = klass.new(config)
-      object.verify_dependencies if first_load
-      object
-    rescue LoadError, NameError
-      available_transports = Kitchen::Util.plugins_available(self) - %w{base}
-      raise ClientError, "Could not load the '#{plugin}' transport from the load path." \
-        " Did you mean: #{available_transports.join(", ")} ?" \
-        " Please ensure that your transport is installed as a gem or" \
-        " included in your Gemfile if using Bundler."
+      Kitchen::Plugin.load(self, plugin, config)
     end
   end
 end

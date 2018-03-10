@@ -3,6 +3,7 @@
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
 # Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) 2018, Chef Software
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +19,6 @@
 
 require_relative "../spec_helper"
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/logging"
-require "kitchen/shell_out"
 require "kitchen/driver"
 require "kitchen/driver/base"
 
@@ -29,32 +26,21 @@ module Kitchen
   module Driver
     class Coolbeans < Kitchen::Driver::Base
     end
-
-    class ItDepends < Kitchen::Driver::Base
-      attr_reader :verify_call_count
-
-      def initialize(config = {})
-        @verify_call_count = 0
-        super
-      end
-
-      def verify_dependencies
-        @verify_call_count += 1
-      end
-    end
-
-    class UnstableDepends < Kitchen::Driver::Base
-      def verify_dependencies
-        raise UserError, "Oh noes, you don't have software!"
-      end
-    end
   end
 end
 
 describe Kitchen::Driver do
   describe ".for_plugin" do
     before do
-      Kitchen::Driver.stubs(:require).returns(true)
+      Kitchen::Plugin.stubs(:require).returns(true)
+    end
+
+    it "uses Kitchen::Plugin.load" do
+      faux_driver = Object.new
+      Kitchen::Plugin.stubs(:load).returns(faux_driver)
+      driver = Kitchen::Driver.for_plugin("faux", {})
+
+      driver.must_equal faux_driver
     end
 
     it "returns a driver object of the correct class" do
@@ -69,38 +55,28 @@ describe Kitchen::Driver do
       driver[:jelly].must_equal "beans"
     end
 
-    it "calls #verify_dependencies on the driver object" do
-      driver = Kitchen::Driver.for_plugin("it_depends", {})
-
-      driver.verify_call_count.must_equal 1
-    end
-
-    it "calls #verify_dependencies once per driver require" do
-      Kitchen::Driver.stubs(:require).returns(true, false)
-      driver1 = Kitchen::Driver.for_plugin("it_depends", {})
-      driver1.verify_call_count.must_equal 1
-      driver2 = Kitchen::Driver.for_plugin("it_depends", {})
-
-      driver2.verify_call_count.must_equal 0
-    end
-
     it "raises ClientError if the driver could not be required" do
-      Kitchen::Driver.stubs(:require).raises(LoadError)
+      Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Driver.for_plugin("coolbeans", {}) }
-        .must_raise Kitchen::ClientError
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("coolbeans", {}) }
+      error.message.must_include "Could not load the 'coolbeans' driver from the load path."
+      error.message.must_include "Did you mean"
+    end
+
+    it "raises ClientError if driver is found on load path but require still fails" do
+      Kitchen::Plugin.stubs(:require).raises(LoadError, "Some other problem.")
+
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("dummy", {}) }
+      error.message.must_include "Could not load the 'dummy' driver from the load path."
+      error.message.must_include "Some other problem."
+      error.message.wont_include "Did you mean"
     end
 
     it "raises ClientError if the driver's class constant could not be found" do
-      Kitchen::Driver.stubs(:require).returns(true) # pretend require worked
+      Kitchen::Plugin.stubs(:require).returns(true) # pretend require worked
 
-      proc { Kitchen::Driver.for_plugin("nope", {}) }
-        .must_raise Kitchen::ClientError
-    end
-
-    it "raises UserError if #verify_dependencies fails" do
-      proc { Kitchen::Driver.for_plugin("unstable_depends", {}) }
-        .must_raise Kitchen::UserError
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("nope", {}) }
+      error.message.must_include "uninitialized constant Kitchen::Driver::Nope"
     end
   end
 end

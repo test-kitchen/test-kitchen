@@ -18,9 +18,6 @@
 
 require_relative "../spec_helper"
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/logging"
 require "kitchen/provisioner"
 require "kitchen/provisioner/base"
 
@@ -28,32 +25,21 @@ module Kitchen
   module Provisioner
     class Coolbeans < Kitchen::Provisioner::Base
     end
-
-    class ItDepends < Kitchen::Provisioner::Base
-      attr_reader :verify_call_count
-
-      def initialize(config = {})
-        @verify_call_count = 0
-        super
-      end
-
-      def verify_dependencies
-        @verify_call_count += 1
-      end
-    end
-
-    class UnstableDepends < Kitchen::Provisioner::Base
-      def verify_dependencies
-        raise UserError, "Oh noes, you don't have software!"
-      end
-    end
   end
 end
 
 describe Kitchen::Provisioner do
   describe ".for_plugin" do
     before do
-      Kitchen::Provisioner.stubs(:require).returns(true)
+      Kitchen::Plugin.stubs(:require).returns(true)
+    end
+
+    it "uses Kitchen::Plugin.load" do
+      faux_provisioner = Object.new
+      Kitchen::Plugin.stubs(:load).returns(faux_provisioner)
+      provisioner = Kitchen::Provisioner.for_plugin("faux", {})
+
+      provisioner.must_equal faux_provisioner
     end
 
     it "returns a provisioner object of the correct class" do
@@ -68,23 +54,8 @@ describe Kitchen::Provisioner do
       provisioner[:foo].must_equal "bar"
     end
 
-    it "calls #verify_dependencies on the provisioner object" do
-      provisioner = Kitchen::Provisioner.for_plugin("it_depends", {})
-
-      provisioner.verify_call_count.must_equal 1
-    end
-
-    it "calls #verify_dependencies once per provisioner require" do
-      Kitchen::Provisioner.stubs(:require).returns(true, false)
-      provisioner1 = Kitchen::Provisioner.for_plugin("it_depends", {})
-      provisioner1.verify_call_count.must_equal 1
-      provisioner2 = Kitchen::Provisioner.for_plugin("it_depends", {})
-
-      provisioner2.verify_call_count.must_equal 0
-    end
-
     it "raises ClientError if the provisioner could not be required" do
-      Kitchen::Provisioner.stubs(:require).raises(LoadError)
+      Kitchen::Plugin.stubs(:require).raises(LoadError)
 
       proc { Kitchen::Provisioner.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
@@ -92,7 +63,7 @@ describe Kitchen::Provisioner do
 
     it "raises ClientError if the provisioner's class constant was not found" do
       # pretend require worked
-      Kitchen::Provisioner.stubs(:require).returns(true)
+      Kitchen::Plugin.stubs(:require).returns(true)
 
       proc { Kitchen::Provisioner.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
