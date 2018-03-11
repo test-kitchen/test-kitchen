@@ -32,6 +32,7 @@ module Kitchen
 
       default_config :sleep, 0
       default_config :command, "true"
+      default_config :environment, {}
       default_config :shellout_opts, {}
       default_config :live_stream, $stdout
       default_config :remote_exec, false
@@ -40,7 +41,8 @@ module Kitchen
       def call(state)
         info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
-        @merged_shellout_opts = merge_state_to_env(state)
+        @merged_environment = config[:environment].merge(state_to_env(state))
+
         if config[:remote_exec]
           instance.transport.connection(state) do |conn|
             conn.execute(remote_command)
@@ -53,7 +55,7 @@ module Kitchen
 
       private
 
-      attr_reader :merged_shellout_opts
+      attr_reader :merged_environment
 
       # Sleep for a period of time, if a value is set in the config.
       #
@@ -65,8 +67,14 @@ module Kitchen
         end
       end
 
+      def shellout_opts
+        config[:shellout_opts].dup.tap do |options|
+          options[:environment] = merged_environment.merge(options[:environment]) if options.key? :environment
+        end
+      end
+
       def shellout
-        cmd = Mixlib::ShellOut.new(config[:command], merged_shellout_opts)
+        cmd = Mixlib::ShellOut.new(config[:command], shellout_opts)
         cmd.live_stream = config[:live_stream]
         cmd.run_command
         begin
@@ -80,14 +88,13 @@ module Kitchen
         config[:command]
       end
 
-      def merge_state_to_env(state)
-        config[:shellout_opts].to_hash.dup.tap do |env_state|
-          env_state[:environment] ||= {}
-          env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
-          env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
-          env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
+      def state_to_env(state)
+        {}.tap do |env|
+          env["KITCHEN_INSTANCE"] = instance.name
+          env["KITCHEN_PLATFORM"] = instance.platform.name
+          env["KITCHEN_SUITE"] = instance.suite.name
           state.each_pair do |key, value|
-            env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
+            env["KITCHEN_" + key.to_s.upcase] = value.to_s
           end
         end
       end

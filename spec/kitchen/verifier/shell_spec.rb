@@ -84,17 +84,26 @@ describe Kitchen::Verifier::Shell do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
-        config[:shellout_opts] = {}
-        config[:shellout_opts][:environment] = { FOO: "bar" }
 
-        new_opts = verifier.send :merge_state_to_env, state
-        new_opts[:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
-        new_opts[:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
-        new_opts[:environment]["KITCHEN_PORT"].must_equal "22"
-        new_opts[:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
-        new_opts[:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
-        new_opts[:environment]["KITCHEN_SUITE"].must_equal "fries"
-        new_opts[:environment][:FOO].must_equal "bar"
+        verifier.call(state)
+        new_env = verifier.send :merged_environment
+        new_env["KITCHEN_HOSTNAME"].must_equal "testhost"
+        new_env["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+        new_env["KITCHEN_PORT"].must_equal "22"
+        new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+        new_env["KITCHEN_PLATFORM"].must_equal "coolbeans"
+        new_env["KITCHEN_SUITE"].must_equal "fries"
+      end
+
+      it "includes all environment sources" do
+        config[:environment] = { FOO: "bar" }
+        config[:shellout_opts] = { environment: { FOOBAR: "foobar" } }
+
+        verifier.call(state)
+        new_env = verifier.send(:shellout_opts)[:environment]
+        new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+        new_env[:FOO].must_equal "bar"
+        new_env[:FOOBAR].must_equal "foobar"
       end
 
       it "raises ActionFailed if set false to :command" do
