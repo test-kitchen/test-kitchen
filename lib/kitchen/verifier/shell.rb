@@ -73,7 +73,7 @@ module Kitchen
 
       def shellout_opts
         config[:shellout_opts].dup.tap do |options|
-          options[:environment] = merged_environment.merge(options[:environment]) if options.key? :environment
+          options[:environment] = merged_environment.merge(options[:environment] || {})
         end
       end
 
@@ -90,7 +90,7 @@ module Kitchen
 
       def remote_command
         command = "env"
-        merged_environment.each { |k, v| command << " #{k}='#{v.gsub("'", "\\\\'")}'" }
+        merged_environment.each { |k, v| command << " #{k}='#{v.gsub("'", "'\"'\"'")}'" }
         command << " " << config[:command]
       end
 

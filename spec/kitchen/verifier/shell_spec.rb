@@ -165,7 +165,7 @@ describe Kitchen::Verifier::Shell do
 
         verifier.call(state)
         command = verifier.send :remote_command
-        command.must_match(/^env.* FOO='it\\'s escaped!' .*#{config[:command]}$/)
+        command.must_match(/^env.* FOO='it'"'"'s escaped!' .*#{config[:command]}$/)
         command.must_match(/^env.* TEST_KITCHEN='1' .*#{config[:command]}$/)
       end
 
