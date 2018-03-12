@@ -41,11 +41,15 @@ module Kitchen
       def call(state)
         info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
-        @merged_environment = config[:environment].merge(state_to_env(state))
+        @merged_environment = state_to_env(state).merge(config[:environment] || {})
 
         if config[:remote_exec]
-          instance.transport.connection(state) do |conn|
-            conn.execute(remote_command)
+          begin
+            instance.transport.connection(state) do |conn|
+              conn.execute(remote_command)
+            end
+          rescue Kitchen::Transport::TransportFailed => ex
+            raise ActionFailed, ex.message
           end
         else
           shellout
@@ -85,11 +89,14 @@ module Kitchen
       end
 
       def remote_command
-        config[:command]
+        command = "env"
+        merged_environment.each { |k, v| command << " #{k}='#{v.gsub("'", "\\\\'")}'" }
+        command << " " << config[:command]
       end
 
       def state_to_env(state)
         {}.tap do |env|
+          env["TEST_KITCHEN"] = "1"
           env["KITCHEN_INSTANCE"] = instance.name
           env["KITCHEN_PLATFORM"] = instance.platform.name
           env["KITCHEN_SUITE"] = instance.suite.name

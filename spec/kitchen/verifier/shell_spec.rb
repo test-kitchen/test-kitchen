@@ -66,42 +66,47 @@ describe Kitchen::Verifier::Shell do
       verifier[:command].must_equal "true"
     end
 
+    it "sets :remote_exec to 'false' by default" do
+      verifier[:remote_exec].must_equal false
+    end
+
     it "sets :live_stream to stdout by default" do
       verifier[:live_stream].must_equal $stdout
     end
   end
 
   describe "#call" do
+    it "states are set to environment" do
+      state[:hostname] = "testhost"
+      state[:server_id] = "i-xxxxxx"
+      state[:port] = 22
+
+      verifier.call(state)
+      new_env = verifier.send :merged_environment
+      new_env["TEST_KITCHEN"].must_equal "1"
+      new_env["KITCHEN_HOSTNAME"].must_equal "testhost"
+      new_env["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
+      new_env["KITCHEN_PORT"].must_equal "22"
+      new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+      new_env["KITCHEN_PLATFORM"].must_equal "coolbeans"
+      new_env["KITCHEN_SUITE"].must_equal "fries"
+    end
+
+    it "calls sleep if :sleep value is greater than 0" do
+      config[:sleep] = 3
+      verifier.expects(:sleep).with(1).returns(true).at_least(3)
+
+      verifier.call(state)
+    end
+
     describe "#shell_out" do
-      it "calls sleep if :sleep value is greater than 0" do
-        config[:sleep] = 3
-        verifier.expects(:sleep).with(1).returns(true).at_least(3)
-
-        verifier.call(state)
-      end
-
-      it "states are set to environment" do
-        state[:hostname] = "testhost"
-        state[:server_id] = "i-xxxxxx"
-        state[:port] = 22
-
-        verifier.call(state)
-        new_env = verifier.send :merged_environment
-        new_env["KITCHEN_HOSTNAME"].must_equal "testhost"
-        new_env["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
-        new_env["KITCHEN_PORT"].must_equal "22"
-        new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
-        new_env["KITCHEN_PLATFORM"].must_equal "coolbeans"
-        new_env["KITCHEN_SUITE"].must_equal "fries"
-      end
-
       it "includes all environment sources" do
         config[:environment] = { FOO: "bar" }
         config[:shellout_opts] = { environment: { FOOBAR: "foobar" } }
 
         verifier.call(state)
         new_env = verifier.send(:shellout_opts)[:environment]
-        new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+        new_env["TEST_KITCHEN"].must_equal "1"
         new_env[:FOO].must_equal "bar"
         new_env[:FOOBAR].must_equal "foobar"
       end
@@ -134,7 +139,7 @@ describe Kitchen::Verifier::Shell do
 
       let(:instance) do
         stub(
-          name: "coolbeans",
+          name: [platform.name, suite.name].join("-"),
           to_str: "instance",
           logger: logger,
           platform: platform,
@@ -146,13 +151,29 @@ describe Kitchen::Verifier::Shell do
       before do
         transport.stubs(:connection).yields(connection)
         connection.stubs(:execute)
+
+        config[:remote_exec] = true
       end
 
       it "execute command onto instance." do
-        config[:remote_exec] = true
-
         transport.expects(:connection).with(state).yields(connection)
         verifier.call(state)
+      end
+
+      it "includes all environment sources" do
+        config[:environment] = { FOO: "it's escaped!" }
+
+        verifier.call(state)
+        command = verifier.send :remote_command
+        command.must_match(/^env.* FOO='it\\'s escaped!' .*#{config[:command]}$/)
+        command.must_match(/^env.* TEST_KITCHEN='1' .*#{config[:command]}$/)
+      end
+
+      it "raises ActionFailed if set false to :command" do
+        config[:command] = "false"
+        connection.stubs(:execute).raises(Kitchen::Transport::TransportFailed, "'false' exited with code (1)")
+
+        proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
       end
     end
   end
