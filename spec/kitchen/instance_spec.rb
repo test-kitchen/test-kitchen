@@ -57,6 +57,8 @@ class SerialDummyDriver < Kitchen::Driver::Dummy
 
   attr_reader :action_in_mutex
 
+  plugin_version Kitchen::VERSION
+
   def initialize(config = {})
     super(config)
     @action_in_mutex = {}
@@ -80,6 +82,8 @@ end
 
 class LegacyDriver < Kitchen::Driver::SSHBase
   attr_reader :called_converge, :called_setup, :called_verify
+
+  plugin_version Kitchen::VERSION
 
   def converge(_)
     @called_converge
