@@ -432,6 +432,7 @@ module Kitchen
       def version
         @plugin_version
       end
+
       # Returns a Hash of configuration and other useful diagnostic
       # information.
       #
