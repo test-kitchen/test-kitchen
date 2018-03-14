@@ -68,6 +68,10 @@ describe Kitchen::Transport::Winrm do
   end
 
   describe "default_config" do
+    it "sets :scheme to http by default" do
+      transport[:scheme].must_equal "http"
+    end
+
     it "sets :port to 5985 by default" do
       transport[:port].must_equal 5985
     end
@@ -78,11 +82,6 @@ describe Kitchen::Transport::Winrm do
 
     it "sets :password to nil by default" do
       transport[:password].must_be_nil
-    end
-
-    it "sets a default :endpoint_template value" do
-      transport[:endpoint_template]
-        .must_equal "http://%{hostname}:%{port}/wsman"
     end
 
     it "sets :rdp_port to 3389 by default" do
@@ -164,27 +163,37 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
+      it "sets :endpoint when hostname is an IPv6 address" do
+        config[:hostname] = "caec:cec6:c4ef:bb7b:1a78:d055:216d:3a78"
+
+        klass.expects(:new).with do |hash|
+          hash[:endpoint] == "http://[caec:cec6:c4ef:bb7b:1a78:d055:216d:3a78]:5985/wsman"
+        end
+
+        make_connection
+      end
+
       it "sets :endpoint from data in config" do
-        config[:hostname] = "host_from_config"
-        config[:port] = "port_from_config"
+        config[:hostname] = "host-from-config"
+        config[:port] = "42"
         config[:winrm_transport] = "ssl"
 
         klass.expects(:new).with do |hash|
-          hash[:endpoint] == "https://host_from_config:port_from_config/wsman"
+          hash[:endpoint] == "https://host-from-config:42/wsman"
         end
 
         make_connection
       end
 
       it "sets :endpoint from data in state over config data" do
-        state[:hostname] = "host_from_state"
-        config[:hostname] = "host_from_config"
-        state[:port] = "port_from_state"
-        config[:port] = "port_from_config"
+        state[:hostname] = "host-from-state"
+        config[:hostname] = "host-from-config"
+        state[:port] = "42"
+        config[:port] = "43"
         config[:winrm_transport] = "ssl"
 
         klass.expects(:new).with do |hash|
-          hash[:endpoint] == "https://host_from_state:port_from_state/wsman"
+          hash[:endpoint] == "https://host-from-state:42/wsman"
         end
 
         make_connection

@@ -48,12 +48,11 @@ module Kitchen
       default_config :connection_retry_sleep, 1
       default_config :max_wait_until_ready, 600
       default_config :winrm_transport, :negotiate
+      default_config :scheme do |transport|
+        transport[:winrm_transport] == :ssl ? "https" : "http"
+      end
       default_config :port do |transport|
         transport[:winrm_transport] == :ssl ? 5986 : 5985
-      end
-      default_config :endpoint_template do |transport|
-        scheme = transport[:winrm_transport] == :ssl ? "https" : "http"
-        "#{scheme}://%{hostname}:%{port}/wsman"
       end
 
       def finalize_config!(instance)
@@ -388,6 +387,13 @@ module Kitchen
       # @return [Hash] hash of connection options
       # @api private
       def connection_options(data)
+        endpoint = URI::Generic.build(
+          scheme: data.fetch(:scheme),
+          host: data.fetch(:hostname),
+          port: data.fetch(:port),
+          path: "/wsman"
+        ).to_s
+
         elevated_password = data[:password]
         elevated_password = data[:elevated_password] if data.key?(:elevated_password)
 
@@ -395,7 +401,7 @@ module Kitchen
           instance_name: instance.name,
           kitchen_root: data[:kitchen_root],
           logger: logger,
-          endpoint: data[:endpoint_template] % data,
+          endpoint: endpoint,
           user: data[:username],
           password: data[:password],
           rdp_port: data[:rdp_port],
