@@ -30,6 +30,7 @@ module Kitchen
       include ShellOut
 
       default_config :pre_create_command, nil
+      default_config :post_create_command, nil
 
       # Creates a new Driver object using the provided configuration data
       # which will be merged with any default configuration.
