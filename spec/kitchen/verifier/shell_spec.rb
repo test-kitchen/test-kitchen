@@ -151,6 +151,7 @@ describe Kitchen::Verifier::Shell do
       before do
         transport.stubs(:connection).yields(connection)
         connection.stubs(:execute)
+        connection.stubs(:upload)
 
         config[:remote_exec] = true
       end
@@ -165,8 +166,8 @@ describe Kitchen::Verifier::Shell do
 
         verifier.call(state)
         command = verifier.send :remote_command
-        command.must_match(/^env.* FOO='it'"'"'s escaped!' .*#{config[:command]}$/)
-        command.must_match(/^env.* TEST_KITCHEN='1' .*#{config[:command]}$/)
+        command.must_match(/env.* FOO='it'"'"'s escaped!' .*#{config[:command]}/)
+        command.must_match(/env.* TEST_KITCHEN='1' .*#{config[:command]}/)
       end
 
       it "raises ActionFailed if set false to :command" do

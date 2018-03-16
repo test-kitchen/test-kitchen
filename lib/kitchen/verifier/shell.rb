@@ -44,17 +44,29 @@ module Kitchen
         @merged_environment = state_to_env(state).merge(config[:environment] || {})
 
         if config[:remote_exec]
-          begin
-            instance.transport.connection(state) do |conn|
-              conn.execute(remote_command)
-            end
-          rescue Kitchen::Transport::TransportFailed => ex
-            raise ActionFailed, ex.message
-          end
+          super
         else
           shellout
         end
         debug("[#{name}] Verify completed.")
+      end
+
+      # (see Base#create_sandbox)
+      def create_sandbox
+        super
+        prepare_helpers
+        prepare_suite
+      end
+
+      # (see Base#run_command)
+      def run_command
+        if config[:remote_exec]
+          remote_command
+        else
+          warn "Legacy call to Shell Verifier #run_command detected.  Do not call this method directly."
+          shellout
+          nil
+        end
       end
 
       private
@@ -71,12 +83,19 @@ module Kitchen
         end
       end
 
+      # Merges environment variables with :shellout_opts as specified in the config
+      #
+      # @return [Hash] options to be passed to shellout
+      # @api private
       def shellout_opts
         config[:shellout_opts].dup.tap do |options|
           options[:environment] = merged_environment.merge(options[:environment] || {})
         end
       end
 
+      # Executes ShellOut with the appropriate options
+      #
+      # @api private
       def shellout
         cmd = Mixlib::ShellOut.new(config[:command], shellout_opts)
         cmd.live_stream = config[:live_stream]
@@ -88,12 +107,21 @@ module Kitchen
         end
       end
 
+      # Wraps and prepares config[:command] as necessary for remote execution
+      #
+      # @return [String] command to be executed remotely
+      # @api private
       def remote_command
-        command = "env"
+        command = Dir.exist?(sandbox_suites_dir) ? "cd #{config[:root_path]}; " : ""
+        command << "env"
         merged_environment.each { |k, v| command << " #{k}='#{v.gsub("'", "'\"'\"'")}'" }
         command << " " << config[:command]
       end
 
+      # Merges primary environment settings with settings calculated from the state
+      #
+      # @return [Hash] system environment
+      # @api private
       def state_to_env(state)
         {}.tap do |env|
           env["TEST_KITCHEN"] = "1"
@@ -105,6 +133,58 @@ module Kitchen
           end
         end
       end
+
+      # Returns an Array of common helper filenames currently residing on the
+      # local workstation.
+      #
+      # @return [Array<String>] array of helper files
+      # @api private
+      def helper_files
+        Util.safe_glob(File.join(config[:test_base_path], "helpers"), "**/*").reject { |f| File.directory?(f) }
+      end
+
+      # Returns an Array of test suite filenames for the related suite currently
+      # residing on the local workstation.
+      #
+      # @return [Array<String>] array of suite files
+      # @api private
+      def local_suite_files
+        Util.safe_glob(File.join(config[:test_base_path], config[:suite_name]), "**/*").reject { |f| File.directory?(f) }
+      end
+
+      # Copies all common testing helper files into the suites directory in
+      # the sandbox.
+      #
+      # @api private
+      def prepare_helpers
+        base = File.join(config[:test_base_path], "helpers")
+
+        helper_files.each do |src|
+          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(src, dest, preserve: true)
+        end
+      end
+
+      # Copies all test suite files into the suites directory in the sandbox.
+      #
+      # @api private
+      def prepare_suite
+        base = File.join(config[:test_base_path], config[:suite_name])
+
+        local_suite_files.each do |src|
+          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(src, dest, preserve: true)
+        end
+      end
+
+      # @return [String] path to suites directory under sandbox path
+      # @api private
+      def sandbox_suites_dir
+        File.join(sandbox_path, "suites")
+      end
+
     end
   end
 end
