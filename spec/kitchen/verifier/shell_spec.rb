@@ -37,7 +37,7 @@ describe Kitchen::Verifier::Shell do
 
   let(:instance) do
     stub(
-      name: [platform.name, suite.name].join("-"),
+      name: [suite.name, platform.name].join("-"),
       to_str: "instance",
       logger: logger,
       suite: suite,
@@ -87,7 +87,7 @@ describe Kitchen::Verifier::Shell do
       new_env["KITCHEN_HOSTNAME"].must_equal "testhost"
       new_env["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
       new_env["KITCHEN_PORT"].must_equal "22"
-      new_env["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
+      new_env["KITCHEN_INSTANCE"].must_equal "fries-coolbeans"
       new_env["KITCHEN_PLATFORM"].must_equal "coolbeans"
       new_env["KITCHEN_SUITE"].must_equal "fries"
     end
@@ -139,7 +139,7 @@ describe Kitchen::Verifier::Shell do
 
       let(:instance) do
         stub(
-          name: [platform.name, suite.name].join("-"),
+          name: [suite.name, platform.name].join("-"),
           to_str: "instance",
           logger: logger,
           platform: platform,
@@ -156,13 +156,58 @@ describe Kitchen::Verifier::Shell do
         config[:remote_exec] = true
       end
 
+      it "uploads common helper files" do
+        config[:test_base_path] = Dir.mktmpdir("shell_spec")
+        helper_file = "#{config[:test_base_path]}/helpers/foo-helper.sh"
+
+        FileUtils.mkdir_p File.dirname(helper_file)
+        File.write helper_file, "foo"
+
+        verifier.create_sandbox
+        File.read(File.join(verifier.sandbox_path, "suites/foo-helper.sh")).must_equal "foo"
+        FileUtils.rm_rf config[:test_base_path]
+      end
+
+      it "uploads suite files" do
+        config[:test_base_path] = Dir.mktmpdir("shell_spec")
+        suite_file = "#{config[:test_base_path]}/fries/foo-script.sh"
+
+        FileUtils.mkdir_p File.dirname(suite_file)
+        File.write suite_file, "foobar"
+
+        verifier.create_sandbox
+        File.read(File.join(verifier.sandbox_path, "suites/foo-script.sh")).must_equal "foobar"
+        FileUtils.rm_rf config[:test_base_path]
+      end
+
       it "execute command onto instance." do
         transport.expects(:connection).with(state).yields(connection)
+        connection.expects(:execute).with(regexp_matches(/env.* true/))
+        verifier.call(state)
+      end
+
+      it "changes directory if there are sandbox files" do
+        config[:root_path] = "/tmp/verifier"
+        config[:test_base_path] = Dir.mktmpdir("shell_spec")
+        suite_file = "#{config[:test_base_path]}/fries/foo-script.sh"
+
+        FileUtils.mkdir_p File.dirname(suite_file)
+        File.write suite_file, "foobar"
+
+        connection.expects(:execute).with(regexp_matches(/cd #{config[:root_path]};/))
+        verifier.call(state)
+        FileUtils.rm_rf config[:test_base_path]
+      end
+
+      it "does not change directory if the sandbox is empty" do
+        config[:root_path] = "/tmp/verifier"
+        connection.expects(:execute).with(Not(regexp_matches(/cd #{config[:root_path]};/)))
         verifier.call(state)
       end
 
       it "includes all environment sources" do
         config[:environment] = { FOO: "it's escaped!" }
+        config[:command] = "true"
 
         verifier.call(state)
         command = verifier.send :remote_command
