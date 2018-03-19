@@ -14,10 +14,6 @@ Commands:
   kitchen create [INSTANCE|REGEXP|all]            # Change instance state to create. Start one or more instances
   kitchen destroy [INSTANCE|REGEXP|all]           # Change instance state to destroy. Delete all information for one or more instances
   kitchen diagnose [INSTANCE|REGEXP|all]          # Show computed diagnostic configuration
-  kitchen driver                                  # Driver subcommands
-  kitchen driver create [NAME]                    # Create a new Kitchen Driver gem project
-  kitchen driver discover                         # Discover Test Kitchen drivers published on RubyGems
-  kitchen driver help [COMMAND]                   # Describe subcommands or one specific subcommand
   kitchen exec INSTANCE|REGEXP -c REMOTE_COMMAND  # Execute command on one or more instance
   kitchen help [COMMAND]                          # Describe available commands or one specific command
   kitchen init                                    # Adds some configuration to your cookbook so Kitchen can rock

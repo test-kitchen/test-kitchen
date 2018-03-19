@@ -12,7 +12,7 @@ There are a few basic ways of dynamically configuring Kitchen:
 
 To specify a path to a global `config.yml`, project or local `.kitchen.yml` file, set the following environment variables:
 
-~~~
+~~~bash
 export KITCHEN_GLOBAL_YAML=/path/to/your/global/config.yml
 export KITCHEN_YAML=/path/to/your/project/.kitchen.yml
 export KITCHEN_LOCAL_YAML=/path/to/your/local/.kitchen.local.yml
