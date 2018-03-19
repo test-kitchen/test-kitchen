@@ -6,3 +6,5 @@ docs_links:
   link: '/docs/verifiers'
 - title: Examples
   link: '/docs/kitchen-examples'
+- title: Dynamic Configuration
+  link: '/docs/dynamic-configuration'

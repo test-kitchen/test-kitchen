@@ -33,7 +33,7 @@ kitchen version: 1.16.0
 
 ###### VirtualBox
 
-VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Obtain the correct installer for your platform [here](https://www.virtualbox.org/wiki/Downloads).
+VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Obtain the correct installer for your platform [here](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the $PATH with the following:
 
 ~~~
 $ VBoxManage --version
