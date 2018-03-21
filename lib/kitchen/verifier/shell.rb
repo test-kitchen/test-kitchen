@@ -36,6 +36,7 @@ module Kitchen
       default_config :shellout_opts, {}
       default_config :live_stream, $stdout
       default_config :remote_exec, false
+      default_config :sudo, false # 'false' for backwards compatability
 
       # (see Base#call)
       def call(state)
@@ -93,11 +94,18 @@ module Kitchen
         end
       end
 
+      # Wraps command as necessary to honor Base options (proxy, sudo, command_prefix)
+      #
+      # @api private
+      def build_command(command)
+        prefix_command(wrap_shell_code(sudo(command)))
+      end
+
       # Executes ShellOut with the appropriate options
       #
       # @api private
       def shellout
-        cmd = Mixlib::ShellOut.new(config[:command], shellout_opts)
+        cmd = Mixlib::ShellOut.new(build_command(config[:command]), shellout_opts)
         cmd.live_stream = config[:live_stream]
         cmd.run_command
         begin
@@ -112,10 +120,9 @@ module Kitchen
       # @return [String] command to be executed remotely
       # @api private
       def remote_command
-        command = Dir.exist?(sandbox_suites_dir) ? "cd #{config[:root_path]}; " : ""
-        command << "env"
-        merged_environment.each { |k, v| command << " #{k}='#{v.gsub("'", "'\"'\"'")}'" }
-        command << " " << config[:command]
+        command = Dir.exist?(sandbox_suites_dir) ? "cd #{config[:root_path]}\n" : ""
+        merged_environment.each { |k, v| command << shell_env_var(k, v.gsub('"', '\\"')) << "\n" }
+        command << build_command(config[:command])
       end
 
       # Merges primary environment settings with settings calculated from the state
@@ -124,7 +131,6 @@ module Kitchen
       # @api private
       def state_to_env(state)
         {}.tap do |env|
-          env["TEST_KITCHEN"] = "1"
           env["KITCHEN_INSTANCE"] = instance.name
           env["KITCHEN_PLATFORM"] = instance.platform.name
           env["KITCHEN_SUITE"] = instance.suite.name

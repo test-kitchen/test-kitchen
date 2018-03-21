@@ -70,6 +70,10 @@ describe Kitchen::Verifier::Shell do
       verifier[:remote_exec].must_equal false
     end
 
+    it "sets :sudo to 'false' by default" do
+      verifier[:sudo].must_equal false
+    end
+
     it "sets :live_stream to stdout by default" do
       verifier[:live_stream].must_equal $stdout
     end
@@ -83,7 +87,6 @@ describe Kitchen::Verifier::Shell do
 
       verifier.call(state)
       new_env = verifier.send :merged_environment
-      new_env["TEST_KITCHEN"].must_equal "1"
       new_env["KITCHEN_HOSTNAME"].must_equal "testhost"
       new_env["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
       new_env["KITCHEN_PORT"].must_equal "22"
@@ -106,9 +109,48 @@ describe Kitchen::Verifier::Shell do
 
         verifier.call(state)
         new_env = verifier.send(:shellout_opts)[:environment]
-        new_env["TEST_KITCHEN"].must_equal "1"
+        new_env["KITCHEN_INSTANCE"].must_equal "fries-coolbeans"
         new_env[:FOO].must_equal "bar"
         new_env[:FOOBAR].must_equal "foobar"
+
+        command = verifier.send :build_command, verifier[:command]
+        command.must_match(/^TEST_KITCHEN="1";/)
+      end
+
+      describe "#build_command" do
+        it "is called when running locally" do
+          verifier.expects(:build_command).with(verifier[:command]).returns(verifier[:command])
+          verifier.call(state)
+        end
+
+        it "calls sudo when configured" do
+          config[:sudo] = true
+          command = verifier.send(:build_command, verifier[:command]).tr("\n", ";")
+          command.must_match(/sudo -E.+#{verifier[:command]}/)
+        end
+
+        it "honors sudo_command when configured" do
+          config[:sudo] = true
+          config[:sudo_command] = "sudo -i"
+          command = verifier.send(:build_command, verifier[:command]).tr("\n", ";")
+          command.must_match(/sudo -i.+#{verifier[:command]}/)
+        end
+
+        it "adds command_prefix when configured" do
+          config[:command_prefix] = "env FOO=bar"
+          command = verifier.send(:build_command, verifier[:command]).tr("\n", ";")
+          command.must_match(/env FOO=bar.+#{verifier[:command]}/)
+        end
+
+        it "adds proxy settings when configured" do
+          config[:http_proxy] = "http"
+          config[:https_proxy] = "https"
+          config[:ftp_proxy] = "ftp"
+          command = verifier.send(:build_command, verifier[:command])
+          command.must_match(/^HTTP_PROXY="http";/)
+          command.must_match(/^HTTPS_PROXY="https";/)
+          command.must_match(/^FTP_PROXY="ftp";/)
+        end
       end
 
       it "raises ActionFailed if set false to :command" do
@@ -180,9 +222,14 @@ describe Kitchen::Verifier::Shell do
         FileUtils.rm_rf config[:test_base_path]
       end
 
+      it "calls #build_command when running remotely" do
+        verifier.expects(:build_command).with(verifier[:command]).returns(verifier[:command])
+        verifier.call(state)
+      end
+
       it "execute command onto instance." do
         transport.expects(:connection).with(state).yields(connection)
-        connection.expects(:execute).with(regexp_matches(/env.* true/))
+        connection.expects(:execute).with(regexp_matches(/#{verifier[:command]}/))
         verifier.call(state)
       end
 
@@ -194,25 +241,25 @@ describe Kitchen::Verifier::Shell do
         FileUtils.mkdir_p File.dirname(suite_file)
         File.write suite_file, "foobar"
 
-        connection.expects(:execute).with(regexp_matches(/cd #{config[:root_path]};/))
+        connection.expects(:execute).with(regexp_matches(/cd #{config[:root_path]}\n/))
         verifier.call(state)
         FileUtils.rm_rf config[:test_base_path]
       end
 
       it "does not change directory if the sandbox is empty" do
         config[:root_path] = "/tmp/verifier"
-        connection.expects(:execute).with(Not(regexp_matches(/cd #{config[:root_path]};/)))
+        connection.expects(:execute).with(Not(regexp_matches(/cd #{config[:root_path]}\n/)))
         verifier.call(state)
       end
 
       it "includes all environment sources" do
-        config[:environment] = { FOO: "it's escaped!" }
-        config[:command] = "true"
+        config[:environment] = { FOO: 'it\'s "escaped"!' }
 
         verifier.call(state)
         command = verifier.send :remote_command
-        command.must_match(/env.* FOO='it'"'"'s escaped!' .*#{config[:command]}/)
-        command.must_match(/env.* TEST_KITCHEN='1' .*#{config[:command]}/)
+        command.must_match(/^TEST_KITCHEN="1";/)
+        command.must_match(/^KITCHEN_INSTANCE="fries-coolbeans";/)
+        command.must_match(/^FOO="it's \\"escaped\\"!";/)
       end
 
       it "raises ActionFailed if set false to :command" do
