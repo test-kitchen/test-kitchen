@@ -59,12 +59,30 @@ module Kitchen
         prepare_suite
       end
 
+      # (see Base#init_command)
+      def init_command
+        return nil unless config[:remote_exec]
+        root = config[:root_path]
+
+        code = if powershell_shell?
+                 Util.outdent!(<<-POWERSHELL)
+                   if (-Not (Test-Path "#{root}")) {
+                     New-Item "#{root}" -ItemType directory | Out-Null
+                   }
+                 POWERSHELL
+               else
+                 "mkdir -p #{root}"
+               end
+
+        wrap_shell_code(prefix_command(code))
+      end
+
       # (see Base#run_command)
       def run_command
         if config[:remote_exec]
           remote_command
         else
-          warn "Legacy call to Shell Verifier #run_command detected.  Do not call this method directly."
+          warn "DEPRECATED: Legacy call to Shell Verifier #run_command detected.  Do not call this method directly."
           shellout
           nil
         end
@@ -90,7 +108,7 @@ module Kitchen
       # @api private
       def shellout_opts
         config[:shellout_opts].dup.tap do |options|
-          options[:environment] = merged_environment.merge(options[:environment] || {})
+          options[:environment] = (merged_environment || {}).merge(options[:environment] || {})
         end
       end
 
@@ -98,7 +116,8 @@ module Kitchen
       #
       # @api private
       def build_command(command)
-        prefix_command(wrap_shell_code(sudo(command)))
+        command = sudo(command) unless powershell_shell?
+        wrap_shell_code(prefix_command(command))
       end
 
       # Executes ShellOut with the appropriate options
@@ -120,8 +139,11 @@ module Kitchen
       # @return [String] command to be executed remotely
       # @api private
       def remote_command
-        command = Dir.exist?(sandbox_suites_dir) ? "cd #{config[:root_path]}\n" : ""
-        merged_environment.each { |k, v| command << shell_env_var(k, v.gsub('"', '\\"')) << "\n" }
+        command = Util.list_directory(sandbox_path).any? ? "cd #{config[:root_path]}\n" : ""
+        merged_environment.each do |k, v|
+          val = powershell_shell? ? v.gsub('"', '""') : v.gsub('"', '\\"')
+          command << shell_env_var(k, val) << "\n"
+        end
         command << build_command(config[:command])
       end
 
@@ -166,7 +188,7 @@ module Kitchen
         base = File.join(config[:test_base_path], "helpers")
 
         helper_files.each do |src|
-          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          dest = File.join(sandbox_path, src.sub("#{base}/", ""))
           FileUtils.mkdir_p(File.dirname(dest))
           FileUtils.cp(src, dest, preserve: true)
         end
@@ -179,16 +201,10 @@ module Kitchen
         base = File.join(config[:test_base_path], config[:suite_name])
 
         local_suite_files.each do |src|
-          dest = File.join(sandbox_suites_dir, src.sub("#{base}/", ""))
+          dest = File.join(sandbox_path, src.sub("#{base}/", ""))
           FileUtils.mkdir_p(File.dirname(dest))
           FileUtils.cp(src, dest, preserve: true)
         end
-      end
-
-      # @return [String] path to suites directory under sandbox path
-      # @api private
-      def sandbox_suites_dir
-        File.join(sandbox_path, "suites")
       end
 
     end

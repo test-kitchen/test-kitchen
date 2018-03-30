@@ -206,7 +206,7 @@ describe Kitchen::Verifier::Shell do
         File.write helper_file, "foo"
 
         verifier.create_sandbox
-        File.read(File.join(verifier.sandbox_path, "suites/foo-helper.sh")).must_equal "foo"
+        File.read(File.join(verifier.sandbox_path, "foo-helper.sh")).must_equal "foo"
         FileUtils.rm_rf config[:test_base_path]
       end
 
@@ -218,7 +218,7 @@ describe Kitchen::Verifier::Shell do
         File.write suite_file, "foobar"
 
         verifier.create_sandbox
-        File.read(File.join(verifier.sandbox_path, "suites/foo-script.sh")).must_equal "foobar"
+        File.read(File.join(verifier.sandbox_path, "foo-script.sh")).must_equal "foobar"
         FileUtils.rm_rf config[:test_base_path]
       end
 
@@ -267,6 +267,27 @@ describe Kitchen::Verifier::Shell do
         connection.stubs(:execute).raises(Kitchen::Transport::TransportFailed, "'false' exited with code (1)")
 
         proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      end
+
+      describe "with a windows remote" do
+
+        let(:platform) { stub(os_type: "windows", shell_type: "powershell", name: "coolbeans") }
+
+        it "ignores the sudo option when set" do
+          config[:sudo] = true
+          config[:sudo_command] = "sudo"
+
+          connection.expects(:execute).with(Not(regexp_matches(/#{config[:sudo_command]}/)))
+          verifier.call(state)
+        end
+
+        it "quotes environment properly for powershell" do
+          config[:environment] = { FOO: 'it\'s "escaped"!' }
+
+          connection.expects(:execute).with(regexp_matches(/\$env:FOO = "it's ""escaped""!"/))
+          verifier.call(state)
+        end
+
       end
     end
   end
