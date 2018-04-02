@@ -397,7 +397,7 @@ module Kitchen
     #
     # @api private
     def ensure_initialized
-      yaml = ENV["KITCHEN_YAML"] || ".kitchen.yml"
+      yaml = ENV["KITCHEN_YAML"] || ENV["KITCHEN_YML"] || ".kitchen.yml"
 
       if options[:auto_init] && !File.exist?(yaml)
         banner "Invoking init as '#{yaml}' file is missing"
