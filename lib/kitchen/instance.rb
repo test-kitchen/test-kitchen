@@ -18,7 +18,7 @@
 
 require "benchmark"
 require "fileutils"
-require "kitchen/telemetry"
+require "kitchen/telemeter"
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a
@@ -377,8 +377,9 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def create_action
-      Kitchen::Telemetry.send(event: "create", properties: driver.telemetry)
-      perform_action(:create, "Creating")
+      Kitchen::Telemeter.measure_elapsed_time(event: "create", properties: driver.telemetry) do
+        perform_action(:create, "Creating")
+      end
     end
 
     # Perform the converge action.
@@ -390,9 +391,13 @@ module Kitchen
       banner "Converging #{to_str}..."
       elapsed = action(:converge) do |state|
         if legacy_ssh_base_driver?
-          legacy_ssh_base_converge(state)
+          Kitchen::Telemeter.measure_elapsed_time(event: "converge", properties: driver.telemetry) do
+            legacy_ssh_base_converge(state)
+          end
         else
-          provisioner.call(state)
+          Kitchen::Telemeter.measure_elapsed_time(event: "converge", properties: provisioner.telemetry) do
+            provisioner.call(state)
+          end
         end
       end
       info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
@@ -437,12 +442,18 @@ module Kitchen
       elapsed = action(:verify) do |state|
         # use special handling for legacy driver
         if legacy_ssh_base_driver? && use_legacy_ssh_verifier?(verifier)
-          legacy_ssh_base_verify(state)
+          Kitchen::Telemeter.measure_elapsed_time(event: "verify", properties: driver.telemetry) do
+            legacy_ssh_base_verify(state)
+          end
         elsif legacy_ssh_base_driver?
+          Kitchen::Telemeter.measure_elapsed_time(event: "verify", properties: verifier.telemetry) do
           # read ssh options from legacy driver
-          verifier.call(driver.legacy_state(state))
+            verifier.call(driver.legacy_state(state))
+          end
         else
-          verifier.call(state)
+          Kitchen::Telemeter.measure_elapsed_time(event: "verify", properties: verifier.telemetry) do
+            verifier.call(state)
+          end
         end
       end
       info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
@@ -455,7 +466,9 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def destroy_action
-      perform_action(:destroy, "Destroying") { state_file.destroy }
+      Kitchen::Telemeter.measure_elapsed_time(event: "destroy", properties: driver.telemetry) do
+        perform_action(:destroy, "Destroying") { state_file.destroy }
+      end
     end
 
     # Perform an arbitrary action and provide useful logging.

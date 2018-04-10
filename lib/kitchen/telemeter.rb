@@ -19,7 +19,7 @@ require "singleton"
 require "forwardable"
 
 module Kitchen
-  class Telemetry
+  class Telemeter
     include Singleton
 
     def initialize
@@ -39,15 +39,28 @@ module Kitchen
                 end
     end
 
-    def send(data = {})
+    def transmit(data = {})
       data[:properties][:host] = host
       data[:properties][:version] = version
       @telemetry.deliver(data)
     end
 
+    def measure_elapsed_time(data = {}) # yield
+      data[:properties][:timer_id] = SecureRandom.uuid
+      data[:properties][:timer] = "start"
+      transmit data
+      elapsed = Benchmark.measure do
+        yield
+      end
+      data[:properties][:timer] = "end"
+      data[:properties][:duration] = elapsed.real
+      transmit data
+    end
+
     class << self
       extend Forwardable
-      def_delegators :instance, :send
+      def_delegators :instance, :transmit
+      def_delegators :instance, :measure_elapsed_time
     end
   end
 end

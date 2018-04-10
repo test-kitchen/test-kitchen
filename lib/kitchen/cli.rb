@@ -48,11 +48,11 @@ module Kitchen
         }.merge(additional_options)
 
         event = { event: "command-line", properties: { action: task, class: command, args: args } }
-        Kitchen::Telemetry.send(event)
-
-        str_const = Thor::Util.camel_case(command)
-        klass = ::Kitchen::Command.const_get(str_const)
-        klass.new(args, options, command_options).call
+        Kitchen::Telemeter.measure_elapsed_time(event) do
+          str_const = Thor::Util.camel_case(command)
+          klass = ::Kitchen::Command.const_get(str_const)
+          klass.new(args, options, command_options).call
+        end
       end
     end
 

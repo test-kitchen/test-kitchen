@@ -138,8 +138,8 @@ module Kitchen
     # @return [Hash] a hash of interesting stuff
     def telemetry
       {
-        driver_name: name,
-        driver_version: self.class.version,
+        plugin_name: name,
+        plugin_version: self.class.version,
       }
     end
 
