@@ -67,9 +67,9 @@ module Kitchen
       super
       $stdout.sync = true
       @loader = Kitchen::Loader::YAML.new(
-        project_config: ENV["KITCHEN_YAML"],
-        local_config: ENV["KITCHEN_LOCAL_YAML"],
-        global_config: ENV["KITCHEN_GLOBAL_YAML"]
+        project_config: ENV["KITCHEN_YAML"] || ENV["KITCHEN_YML"],
+        local_config: ENV["KITCHEN_LOCAL_YAML"] || ENV["KITCHEN_LOCAL_YML"],
+        global_config: ENV["KITCHEN_GLOBAL_YAML"] || ENV["KITCHEN_GLOBAL_YML"]
       )
       @config = Kitchen::Config.new(
         loader: @loader
