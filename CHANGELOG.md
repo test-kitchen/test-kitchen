@@ -1,5 +1,31 @@
 # Change Log
 
+## [v1.21.0](https://github.com/test-kitchen/test-kitchen/tree/v1.21.0) (2018-04-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.20.0...v1.21.0)
+
+**Release Notes:**
+
+### Configuration UX improvements
+
+Having the kitchen configuration file be hidden has always been a bit odd and so we're moving to using `kitchen.yml` over `.kitchen.yml`.
+This also applies to `kitchen.local.yml` and we've made the change backwards compatible so you're not forced to move over right away. Additionally, we've added support for the environment variables `KITCHEN_YML` and KITCHEN_LOCAL_YML` again preserving compatibility if you're using the `*_YAML` forms.
+
+**Merged pull requests:**
+
+- Support `\*\_YML` for env vars too, for better UX [\#1398](https://github.com/test-kitchen/test-kitchen/pull/1398) ([coderanger](https://github.com/coderanger))
+- allow winrm-fs 1.2.0 [\#1396](https://github.com/test-kitchen/test-kitchen/pull/1396) ([gtmanfred](https://github.com/gtmanfred))
+- added KITCHEN\_YML [\#1392](https://github.com/test-kitchen/test-kitchen/pull/1392) ([jjasghar](https://github.com/jjasghar))
+- Rubocop appeasement [\#1379](https://github.com/test-kitchen/test-kitchen/pull/1379) ([robbkidd](https://github.com/robbkidd))
+- don't add drivers to a project's Gemfile during init [\#1378](https://github.com/test-kitchen/test-kitchen/pull/1378) ([robbkidd](https://github.com/robbkidd))
+- halt if visible & hidden default configs are both present [\#1377](https://github.com/test-kitchen/test-kitchen/pull/1377) ([robbkidd](https://github.com/robbkidd))
+- Update and fix appveyor [\#1373](https://github.com/test-kitchen/test-kitchen/pull/1373) ([cheeseplus](https://github.com/cheeseplus))
+- Support IPv6 addresses for WinRM [\#1371](https://github.com/test-kitchen/test-kitchen/pull/1371) ([jzinn](https://github.com/jzinn))
+- honor root\_path for location of chef installer script [\#1369](https://github.com/test-kitchen/test-kitchen/pull/1369) ([robbkidd](https://github.com/robbkidd))
+- Prefer kitchen.yml to .kitchen.yml [\#1363](https://github.com/test-kitchen/test-kitchen/pull/1363) ([thommay](https://github.com/thommay))
+- Support yaml alias [\#1359](https://github.com/test-kitchen/test-kitchen/pull/1359) ([limitusus](https://github.com/limitusus))
+- Adding Ruby 2.5, updating other versions [\#1348](https://github.com/test-kitchen/test-kitchen/pull/1348) ([cheeseplus](https://github.com/cheeseplus))
+- Update CentOS 7 / Ubuntu to the latest versions [\#1289](https://github.com/test-kitchen/test-kitchen/pull/1289) ([tas50](https://github.com/tas50))
+
 ## [v1.20.0](https://github.com/test-kitchen/test-kitchen/tree/v1.20.0) (2018-01-19)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.2...v1.20.0)
 
