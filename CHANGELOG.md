@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.21.1](https://github.com/test-kitchen/test-kitchen/tree/v1.21.1) (2018-04-18)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.0...v1.21.1)
+
+**Merged pull requests:**
+
+- Revert: honor root\_path for location of chef installer script [\#1369]
+
 ## [v1.21.0](https://github.com/test-kitchen/test-kitchen/tree/v1.21.0) (2018-04-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.20.0...v1.21.0)
 
