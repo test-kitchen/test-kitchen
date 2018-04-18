@@ -503,9 +503,8 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "#{config[:root_path]}/chef-installer.sh"
-        script = ["mkdir -p #{config[:root_path]}"]
-        script << "cat > #{install_file} <<\"EOL\""
+        install_file = "/tmp/chef-installer.sh"
+        script = ["cat > #{install_file} <<\"EOL\""]
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
