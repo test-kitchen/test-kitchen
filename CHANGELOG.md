@@ -1,4 +1,12 @@
 # Change Log
+## [v1.21.2](https://github.com/test-kitchen/test-kitchen/tree/v1.21.2) (2018-05-07)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.1...v1.21.2)
+
+**Merged pull requests:**
+
+- Removing thor upper bound in step with berks [\#1410](https://github.com/test-kitchen/test-kitchen/pull/1410) ([cheeseplus](https://github.com/cheeseplus)
+)
+
 
 ## [v1.21.1](https://github.com/test-kitchen/test-kitchen/tree/v1.21.1) (2018-04-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.0...v1.21.1)
