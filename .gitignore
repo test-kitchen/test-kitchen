@@ -1,5 +1,6 @@
 *.gem
 *.rbc
+*.un~
 .bundle
 .config
 .yardoc

@@ -82,6 +82,10 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:chef_omnibus_install_options].must_be_nil
     end
 
+    it ":chef_ignore_proxy defaults to false" do
+      provisioner[:chef_ignore_proxy].must_equal false
+    end
+
     it ":run_list defaults to an empty array" do
       provisioner[:run_list].must_equal []
     end
