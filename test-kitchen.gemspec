@@ -25,8 +25,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "mixlib-shellout", ">= 1.2", "< 3.0"
   gem.add_dependency "net-scp",         "~> 1.1"
-  gem.add_dependency "net-ssh", ">= 2.9", "< 5.0"
-  gem.add_dependency "net-ssh-gateway", "~> 1.2"
+  gem.add_dependency "net-ssh", ">= 5.0.1"
+  gem.add_dependency "net-ssh-gateway", ">= 2.0"
   gem.add_dependency "thor",            "~> 0.19"
   gem.add_dependency "mixlib-install",  "~> 3.6"
   gem.add_dependency "winrm", "~> 2.0"
