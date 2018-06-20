@@ -136,6 +136,18 @@ describe Kitchen::Transport::Ssh do
     it "sets :ssh_http_proxy_password to nil by default" do
       transport[:ssh_http_proxy_password].must_be_nil
     end
+
+    it "sets :ssh_gateway to nil by default" do
+      transport[:ssh_gateway].must_be_nil
+    end
+
+    it "sets :ssh_gateway_username to nil by default" do
+      transport[:ssh_gateway_username].must_be_nil
+    end
+
+    it "sets :ssh_gateway_port to 22 by default" do
+      transport[:ssh_gateway_port].must_equal 22
+    end
   end
 
   describe "#connection" do
