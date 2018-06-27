@@ -27,7 +27,7 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.5.0
+    - rvm: 2.5.1
       before_install:
       # https://github.com/travis-ci/travis-ci/issues/8978
       - gem update --system
