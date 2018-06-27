@@ -25,5 +25,7 @@ tmp
 .kitchen/
 .kitchen.yml
 .kitchen.local.yml
+kitchen.yml
+kitchen.local.yml
 Berksfile.lock
 *.swp
