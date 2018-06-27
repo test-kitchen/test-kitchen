@@ -5,8 +5,9 @@ services: docker
 language: ruby
 
 rvm:
-  - 2.3.6
-  - 2.4.3
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
   - ruby-head
 
 
@@ -30,7 +31,7 @@ matrix:
       before_install:
       # https://github.com/travis-ci/travis-ci/issues/8978
       - gem update --system
-    - rvm: 2.4
+    - rvm: 2.4.4
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
       gemfile: Gemfile.proxy_tests
