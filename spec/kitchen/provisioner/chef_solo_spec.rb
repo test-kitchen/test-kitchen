@@ -367,7 +367,7 @@ describe Kitchen::Provisioner::ChefSolo do
                                         ])
       end
 
-      it "does no powershell PATH reloading for older chef omnibus packages" do
+      it "does no powershell PATH reloading for older chef packages" do
         cmd.wont_match regexify(%{[System.Environment]::})
       end
 
@@ -520,7 +520,7 @@ describe Kitchen::Provisioner::ChefSolo do
                                         ])
       end
 
-      it "reloads PATH for older chef omnibus packages" do
+      it "reloads PATH for older chef packages" do
         cmd.must_match regexify("$env:PATH = try {\n" \
         "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
         "} catch { $env:PATH }")
