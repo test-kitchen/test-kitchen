@@ -30,6 +30,7 @@ module Kitchen
       include ShellOut
 
       default_config :pre_create_command, nil
+      default_config :post_create_command, nil
 
       # Creates a new Driver object using the provided configuration data
       # which will be merged with any default configuration.
@@ -148,6 +149,11 @@ module Kitchen
               "pre_create_command '#{config[:pre_create_command]}' failed to execute #{error}"
           end
         end
+      end
+
+      # Run command if config[:post_create_command] is set
+      def post_create_command
+        raise ClientError, "#{self.class}#post_create_command must be implemented"
       end
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log

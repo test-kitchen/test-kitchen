@@ -106,6 +106,13 @@ describe Kitchen::Driver::Base do
     end
   end
 
+  describe ".post_create_command" do
+    it "exists in config" do
+      config[:post_create_command] = "echo works 2&>1 > /dev/null"
+      config[:post_create_command] == "echo works 2&>1 > /dev/null"
+    end
+  end
+
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
       Kitchen::Driver::Speedy.serial_actions.must_be_nil
