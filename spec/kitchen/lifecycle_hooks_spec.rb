@@ -101,7 +101,7 @@ describe Kitchen::LifecycleHooks do
   it "runs a local command with a relative cwd option" do
     config.update(post_create: [{ local: "echo foo", cwd: "test" }])
     lifecycle_hooks.expects(:run_command).with("echo foo", {
-      cwd: "/kitchen/test",
+      cwd: os_safe_root_path("/kitchen/test"),
       environment: {
         "KITCHEN_INSTANCE_NAME" => "default-toaster-10",
         "KITCHEN_SUITE_NAME" => "default",
@@ -115,7 +115,7 @@ describe Kitchen::LifecycleHooks do
   it "runs a local command with an absolute cwd option" do
     config.update(post_create: [{ local: "echo foo", cwd: "/test" }])
     lifecycle_hooks.expects(:run_command).with("echo foo", {
-      cwd: "/test",
+      cwd: os_safe_root_path("/test"),
       environment: {
         "KITCHEN_INSTANCE_NAME" => "default-toaster-10",
         "KITCHEN_SUITE_NAME" => "default",
