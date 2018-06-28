@@ -22,11 +22,13 @@ require "kitchen/errors"
 require "kitchen/lifecycle_hooks"
 
 describe Kitchen::LifecycleHooks do
-  let(:state_file) { mock("state_file").tap { |s| s.stubs(read: {}) } }
+  let(:suite) { mock("suite").tap { |i| i.stubs(name: "default") } }
+  let(:platform) { mock("platform").tap { |i| i.stubs(name: "toaster-1.0") } }
+  let(:state_file) { mock("state_file").tap { |s| s.stubs(read: {hostname: "localhost"}) } }
   let(:connection) { mock("connection") }
-  let(:transport) { mock("transport").tap { |t| t.stubs(:connection).with({}).returns(connection) } }
+  let(:transport) { mock("transport").tap { |t| t.stubs(:connection).with({hostname: "localhost"}).returns(connection) } }
   let(:last_action) { :create }
-  let(:instance) { mock("instance").tap { |i| i.stubs(transport: transport, last_action: last_action) } }
+  let(:instance) { mock("instance").tap { |i| i.stubs(name: "default-toaster-10", transport: transport, last_action: last_action, suite: suite, platform: platform) } }
   let(:config) { {} }
   let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new(config).tap { |lh| lh.finalize_config!(instance) } }
 
@@ -34,29 +36,62 @@ describe Kitchen::LifecycleHooks do
     lifecycle_hooks.run_with_hooks(:create, state_file) {}
   end
 
+  # Pull this out because it's used in a bunch of tests.
+  STANDARD_ENV_OPTIONS = {
+    environment: {
+      "KITCHEN_INSTANCE_NAME" => "default-toaster-10",
+      "KITCHEN_SUITE_NAME" => "default",
+      "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
+      "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
+    }
+  }
+
   it "runs a single local command" do
     config.update(post_create: ["echo foo"])
-    lifecycle_hooks.expects(:run_command).with("echo foo", {})
+    lifecycle_hooks.expects(:run_command).with("echo foo", STANDARD_ENV_OPTIONS)
     run_lifecycle_hooks
   end
 
   it "runs multiple local commands" do
     config.update(post_create: ["echo foo", { local: "echo bar" }])
-    lifecycle_hooks.expects(:run_command).with("echo foo", {})
-    lifecycle_hooks.expects(:run_command).with("echo bar", {})
+    lifecycle_hooks.expects(:run_command).with("echo foo", STANDARD_ENV_OPTIONS)
+    lifecycle_hooks.expects(:run_command).with("echo bar", STANDARD_ENV_OPTIONS)
     run_lifecycle_hooks
   end
 
   it "runs multiple local hooks" do
     config.update(pre_create: ["echo foo"], post_create: ["echo bar"])
-    lifecycle_hooks.expects(:run_command).with("echo foo", {})
-    lifecycle_hooks.expects(:run_command).with("echo bar", {})
+    lifecycle_hooks.expects(:run_command).with("echo foo", STANDARD_ENV_OPTIONS)
+    lifecycle_hooks.expects(:run_command).with("echo bar", STANDARD_ENV_OPTIONS)
     run_lifecycle_hooks
   end
 
-  it "runs a local command with options" do
+  it "runs a local command with a user option" do
     config.update(post_create: [{ local: "echo foo", user: "bar" }])
-    lifecycle_hooks.expects(:run_command).with("echo foo", { user: "bar" })
+    lifecycle_hooks.expects(:run_command).with("echo foo", {
+      user: "bar",
+      environment: {
+        "KITCHEN_INSTANCE_NAME" => "default-toaster-10",
+        "KITCHEN_SUITE_NAME" => "default",
+        "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
+        "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
+      }
+    })
+    run_lifecycle_hooks
+  end
+
+  it "runs a local command with environment options" do
+    config.update(post_create: [{ local: "echo foo", environment: {FOO: "one", BAR: "two"} }])
+    lifecycle_hooks.expects(:run_command).with("echo foo", {
+      environment: {
+        "FOO" => "one",
+        "BAR" => "two",
+        "KITCHEN_INSTANCE_NAME" => "default-toaster-10",
+        "KITCHEN_SUITE_NAME" => "default",
+        "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
+        "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
+      }
+    })
     run_lifecycle_hooks
   end
 
@@ -75,8 +110,8 @@ describe Kitchen::LifecycleHooks do
 
   it "runs mixed local and remote commands" do
     config.update(post_create: ["echo foo", { local: "echo bar" }, { remote: "echo baz" }])
-    lifecycle_hooks.expects(:run_command).with("echo foo", {})
-    lifecycle_hooks.expects(:run_command).with("echo bar", {})
+    lifecycle_hooks.expects(:run_command).with("echo foo", STANDARD_ENV_OPTIONS)
+    lifecycle_hooks.expects(:run_command).with("echo bar", STANDARD_ENV_OPTIONS)
     connection.expects(:execute).with("echo baz")
     run_lifecycle_hooks
   end
@@ -86,7 +121,7 @@ describe Kitchen::LifecycleHooks do
 
     it "runs local commands" do
       config.update(post_create: [{local: "echo foo"}])
-      lifecycle_hooks.expects(:run_command).with("echo foo", {})
+      lifecycle_hooks.expects(:run_command).with("echo foo", STANDARD_ENV_OPTIONS)
       run_lifecycle_hooks
     end
 

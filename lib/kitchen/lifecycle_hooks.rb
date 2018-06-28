@@ -46,6 +46,8 @@ module Kitchen
       run(instance, phase, state_file, :post)
     end
 
+    private
+
     # Execute a specific lifecycle hook.
     #
     # @param instance [Instance] The instance object to run against.
@@ -59,35 +61,65 @@ module Kitchen
       # No hooks? We're outta here.
       hook_data = Array(config[hook_key])
       return if hook_data.empty?
-      state = nil
       hook_data.each do |hook|
         # Coerce the common case of a bare string to be a local command. This
         # is to match the behavior of the old `pre_create_command` semi-hook.
         hook = { local: hook } if hook.is_a?(String)
         if hook.include?(:local)
           # Local command execution on the workstation.
-          cmd = hook.delete(:local)
-          run_command(cmd, hook)
+          run_local_hook(instance, state_file, hook)
         elsif hook.include?(:remote)
-          # Check if we're in a state that makes sense to even try.
-          unless instance.last_action
-            if hook[:skippable]
-              # Just not even trying.
-              next
-            else
-              raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
-            end
-          end
           # Remote command execution on the test instance.
-          cmd = hook.delete(:remote)
-          # At least make a token effort to read this file less often.
-          state ||= state_file.read
-          conn = instance.transport.connection(state)
-          conn.execute(cmd)
+          run_remote_hook(instance, state_file, hook)
         else
           raise UserError, "Unknown lifecycle hook target #{hook.inspect}"
         end
       end
+    end
+
+    # Execute a specific local command hook.
+    #
+    # @param instance [Instance] The instance object to run against.
+    # @param state_file [StateFile] Instance state file object.
+    # @param hook [Hash] Hook configration to use.
+    # @return [void]
+    def run_local_hook(instance, state_file, hook)
+      cmd = hook.delete(:local)
+      state = state_file.read
+      environment = {
+        "KITCHEN_INSTANCE_NAME" => instance.name,
+        "KITCHEN_SUITE_NAME" => instance.suite.name,
+        "KITCHEN_PLATFORM_NAME" => instance.platform.name,
+        "KITCHEN_INSTANCE_HOSTNAME" => state[:hostname].to_s,
+      }
+      if hook[:environment]
+        hook[:environment].each do |k, v|
+          environment[k.to_s] = v.to_s
+        end
+      end
+      opts = {}.merge(hook).merge(environment: environment)
+      run_command(cmd, opts)
+    end
+
+    # Execute a specific remote command hook.
+    #
+    # @param instance [Instance] The instance object to run against.
+    # @param state_file [StateFile] Instance state file object.
+    # @param hook [Hash] Hook configration to use.
+    # @return [void]
+    def run_remote_hook(instance, state_file, hook)
+      # Check if we're in a state that makes sense to even try.
+      unless instance.last_action
+        if hook[:skippable]
+          # Just not even trying.
+          return
+        else
+          raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
+        end
+      end
+      cmd = hook.delete(:remote)
+      conn = instance.transport.connection(state_file.read)
+      conn.execute(cmd)
     end
   end
 end
