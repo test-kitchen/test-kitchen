@@ -623,9 +623,10 @@ module Kitchen
 
     def convert_legacy_pre_create_command_at!(root)
       ddata = root[:driver] || {}
-      if ddata.include?(:pre_create_command)
+      if ddata.is_a?(Hash) && ddata.include?(:pre_create_command)
         root[:lifecycle] ||= {}
         root[:lifecycle][:pre_create] ||= []
+        root[:lifecycle][:pre_create] = Array(root[:lifecycle][:pre_create])
         root[:lifecycle][:pre_create] << {local: ddata[:pre_create_command]}
         ddata.delete(:pre_create_command)
       end
