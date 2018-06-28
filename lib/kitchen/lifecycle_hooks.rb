@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/shell_out'
+require "kitchen/errors"
+require "kitchen/shell_out"
 
 module Kitchen
   # A helper object used by {Instance} to coordinate lifecycle hook calls from
@@ -75,7 +76,7 @@ module Kitchen
           conn = instance.transport.connection(state)
           conn.execute(cmd)
         else
-          raise Errors::UserError, "Unknown lifecycle hook target #{hook.inspect}"
+          raise UserError, "Unknown lifecycle hook target #{hook.inspect}"
         end
       end
     end

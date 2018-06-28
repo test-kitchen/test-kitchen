@@ -69,7 +69,7 @@ describe Kitchen::LifecycleHooks do
   it "rejects unknown hook targets" do
     config.update(pre_create: [{banana: "echo foo"}])
     lifecycle_hooks.expects(:run_command).never
-    proc { run_lifecycle_hooks }.must_raise Kitchen::Errors::User
+    proc { run_lifecycle_hooks }.must_raise Kitchen::UserError
   end
 
   it "runs mixed local and remote commands" do
