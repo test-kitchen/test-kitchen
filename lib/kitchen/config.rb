@@ -245,6 +245,7 @@ module Kitchen
     def new_instance(suite, platform, index)
       Instance.new(
         driver: new_driver(suite, platform),
+        lifecycle_hooks: new_lifecycle_hooks(suite, platform),
         logger: new_instance_logger(suite, platform, index),
         suite: suite,
         platform: platform,
@@ -275,6 +276,18 @@ module Kitchen
         progname: name,
         colorize: @colorize
       )
+    end
+
+    # Builds a newly configured LifecycleHooks object, for a given a Suite and
+    # Platform.
+    #
+    # @param suite [Suite,#name] a Suite
+    # @param platform [Platform,#name] a Platform
+    # @return [LifecycleHooks] a new LifecycleHooks object
+    # @api private
+    def new_lifecycle_hooks(suite, platform)
+      lhdata = data.lifecycle_hooks_data_for(suite.name, platform.name)
+      LifecycleHooks.new(lhdata)
     end
 
     # Builds a newly configured Provisioner object, for a given Suite and

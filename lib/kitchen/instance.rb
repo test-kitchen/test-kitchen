@@ -56,6 +56,9 @@ module Kitchen
     #   lifecycle actions
     attr_accessor :driver
 
+    # @return [LifecycleHooks] lifecycle hooks manager object
+    attr_accessor :lifecycle_hooks
+
     # @return [Provisioner::Base] provisioner object which will the setup
     #   and invocation instructions for configuration management and other
     #   automation tools
@@ -90,20 +93,22 @@ module Kitchen
     def initialize(options = {})
       validate_options(options)
 
-      @suite        = options.fetch(:suite)
-      @platform     = options.fetch(:platform)
-      @name         = self.class.name_for(@suite, @platform)
-      @driver       = options.fetch(:driver)
-      @provisioner  = options.fetch(:provisioner)
-      @transport    = options.fetch(:transport)
-      @verifier     = options.fetch(:verifier)
-      @logger       = options.fetch(:logger) { Kitchen.logger }
-      @state_file   = options.fetch(:state_file)
+      @suite           = options.fetch(:suite)
+      @platform        = options.fetch(:platform)
+      @name            = self.class.name_for(@suite, @platform)
+      @driver          = options.fetch(:driver)
+      @lifecycle_hooks = options.fetch(:lifecycle_hooks)
+      @provisioner     = options.fetch(:provisioner)
+      @transport       = options.fetch(:transport)
+      @verifier        = options.fetch(:verifier)
+      @logger          = options.fetch(:logger) { Kitchen.logger }
+      @state_file      = options.fetch(:state_file)
 
       setup_driver
       setup_provisioner
       setup_transport
       setup_verifier
+      setup_lifecycle_hooks
     end
 
     # Returns a displayable representation of the instance.
@@ -333,6 +338,14 @@ module Kitchen
       end
     end
 
+    # Perform any final configuration or preparation needed for the lifecycle hooks
+    # object carry out its duties.
+    #
+    # @api private
+    def setup_lifecycle_hooks
+      lifecycle_hooks.finalize_config!(self)
+    end
+
     # Perform any final configuration or preparation needed for the provisioner
     # object carry out its duties.
     #
@@ -365,7 +378,9 @@ module Kitchen
     def transition_to(desired)
       result = nil
       FSM.actions(last_action, desired).each do |transition|
-        result = send("#{transition}_action")
+        @lifecycle_hooks.run_with_hooks(transition, state_file) do
+          result = send("#{transition}_action")
+        end
       end
       result
     end

@@ -62,6 +62,22 @@ module Kitchen
       end
     end
 
+    # Generate a new Hash of configuration data that can be used to construct
+    # a new LifecycleHooks object.
+    #
+    # @param suite [String] a suite name
+    # @param platform [String] a platform name
+    # @return [Hash] a new configuration Hash that can be used to construct a
+    #   new LifecycleHooks
+    def lifecycle_hooks_data_for(suite, platform)
+      merged_data_for(:lifecycle, suite, platform).tap do |vdata|
+        set_kitchen_config_at!(vdata, :kitchen_root)
+        set_kitchen_config_at!(vdata, :test_base_path)
+        set_kitchen_config_at!(vdata, :log_level)
+        set_kitchen_config_at!(vdata, :debug)
+      end
+    end
+
     # Returns an Array of platform Hashes.
     #
     # @return [Array<Hash>] an Array of Hashes
