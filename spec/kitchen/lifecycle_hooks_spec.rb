@@ -25,7 +25,8 @@ describe Kitchen::LifecycleHooks do
   let(:state_file) { mock("state_file").tap { |s| s.stubs(read: {}) } }
   let(:connection) { mock("connection") }
   let(:transport) { mock("transport").tap { |t| t.stubs(:connection).with({}).returns(connection) } }
-  let(:instance) { mock("instance").tap { |i| i.stubs(transport: transport) } }
+  let(:last_action) { :create }
+  let(:instance) { mock("instance").tap { |i| i.stubs(transport: transport, last_action: last_action) } }
   let(:config) { {} }
   let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new(config).tap { |lh| lh.finalize_config!(instance) } }
 
@@ -34,13 +35,13 @@ describe Kitchen::LifecycleHooks do
   end
 
   it "runs a single local command" do
-    config.update(pre_create: ["echo foo"])
+    config.update(post_create: ["echo foo"])
     lifecycle_hooks.expects(:run_command).with("echo foo", {})
     run_lifecycle_hooks
   end
 
   it "runs multiple local commands" do
-    config.update(pre_create: ["echo foo", { local: "echo bar" }])
+    config.update(post_create: ["echo foo", { local: "echo bar" }])
     lifecycle_hooks.expects(:run_command).with("echo foo", {})
     lifecycle_hooks.expects(:run_command).with("echo bar", {})
     run_lifecycle_hooks
@@ -54,29 +55,51 @@ describe Kitchen::LifecycleHooks do
   end
 
   it "runs a local command with options" do
-    config.update(pre_create: [{ local: "echo foo", user: "bar" }])
+    config.update(post_create: [{ local: "echo foo", user: "bar" }])
     lifecycle_hooks.expects(:run_command).with("echo foo", { user: "bar" })
     run_lifecycle_hooks
   end
 
   it "runs a single remote command" do
-    config.update(pre_create: [{ remote: "echo foo" }])
+    config.update(post_create: [{ remote: "echo foo" }])
     lifecycle_hooks.expects(:run_command).never
     connection.expects(:execute).with("echo foo")
     run_lifecycle_hooks
   end
 
   it "rejects unknown hook targets" do
-    config.update(pre_create: [{ banana: "echo foo" }])
+    config.update(post_create: [{ banana: "echo foo" }])
     lifecycle_hooks.expects(:run_command).never
     proc { run_lifecycle_hooks }.must_raise Kitchen::UserError
   end
 
   it "runs mixed local and remote commands" do
-    config.update(pre_create: ["echo foo", { local: "echo bar" }, { remote: "echo baz" }])
+    config.update(post_create: ["echo foo", { local: "echo bar" }, { remote: "echo baz" }])
     lifecycle_hooks.expects(:run_command).with("echo foo", {})
     lifecycle_hooks.expects(:run_command).with("echo bar", {})
     connection.expects(:execute).with("echo baz")
     run_lifecycle_hooks
+  end
+
+  describe "with no last_action" do
+    let(:last_action) { nil }
+
+    it "runs local commands" do
+      config.update(post_create: [{local: "echo foo"}])
+      lifecycle_hooks.expects(:run_command).with("echo foo", {})
+      run_lifecycle_hooks
+    end
+
+    it "fails on remote commands" do
+      config.update(post_create: [{remote: "echo foo"}])
+      lifecycle_hooks.expects(:run_command).never
+      proc { run_lifecycle_hooks }.must_raise Kitchen::UserError
+    end
+
+    it "ignores skippable remote commands" do
+      config.update(post_create: [{remote: "echo foo", skippable: true}])
+      lifecycle_hooks.expects(:run_command).never
+      run_lifecycle_hooks
+    end
   end
 end

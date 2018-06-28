@@ -69,6 +69,15 @@ module Kitchen
           cmd = hook.delete(:local)
           run_command(cmd, hook)
         elsif hook.include?(:remote)
+          # Check if we're in a state that makes sense to even try.
+          unless instance.last_action
+            if hook[:skippable]
+              # Just not even trying.
+              next
+            else
+              raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
+            end
+          end
           # Remote command execution on the test instance.
           cmd = hook.delete(:remote)
           # At least make a token effort to read this file less often.
