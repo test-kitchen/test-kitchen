@@ -153,14 +153,7 @@ module Kitchen
 
       # Run command if config[:post_create_command] is set
       def post_create_command
-        if config[:post_create_command]
-          begin
-            run_command(config[:post_create_command])
-          rescue ShellCommandFailed => error
-            raise ActionFailed,
-                  "pre_create_command '#{config[:post_create_command]}' failed to execute #{error}"
-          end
-        end
+        raise ClientError, "#{self.class}#post_create_command must be implemented"
       end
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log
