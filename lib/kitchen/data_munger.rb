@@ -45,6 +45,7 @@ module Kitchen
       convert_legacy_busser_format!
       convert_legacy_driver_http_proxy_format!
       move_chef_data_to_provisioner!
+      convert_legacy_pre_create_command!
     end
 
     # Generate a new Hash of configuration data that can be used to construct
@@ -70,11 +71,14 @@ module Kitchen
     # @return [Hash] a new configuration Hash that can be used to construct a
     #   new LifecycleHooks
     def lifecycle_hooks_data_for(suite, platform)
-      merged_data_for(:lifecycle, suite, platform).tap do |vdata|
-        set_kitchen_config_at!(vdata, :kitchen_root)
-        set_kitchen_config_at!(vdata, :test_base_path)
-        set_kitchen_config_at!(vdata, :log_level)
-        set_kitchen_config_at!(vdata, :debug)
+      merged_data_for(:lifecycle, suite, platform).tap do |lhdata|
+        lhdata.each_key do |k|
+          combine_arrays!(lhdata, k, :common, :platform, :suite)
+        end
+        set_kitchen_config_at!(lhdata, :kitchen_root)
+        set_kitchen_config_at!(lhdata, :test_base_path)
+        set_kitchen_config_at!(lhdata, :log_level)
+        set_kitchen_config_at!(lhdata, :debug)
       end
     end
 
@@ -607,6 +611,26 @@ module Kitchen
       end
     end
 
+    def convert_legacy_pre_create_command!
+      convert_legacy_pre_create_command_at!(data)
+      data.fetch(:platforms, []).each do |platform|
+        convert_legacy_pre_create_command_at!(platform)
+      end
+      data.fetch(:suites, []).each do |suite|
+        convert_legacy_pre_create_command_at!(suite)
+      end
+    end
+
+    def convert_legacy_pre_create_command_at!(root)
+      ddata = root[:driver] || {}
+      if ddata.include?(:pre_create_command)
+        root[:lifecycle] ||= {}
+        root[:lifecycle][:pre_create] ||= []
+        root[:lifecycle][:pre_create] << {local: ddata[:pre_create_command]}
+        ddata.delete(:pre_create_command)
+      end
+    end
+
     # Performs a prioritized recursive merge of several source Hashes and
     # returns a new merged Hash. For these data sub-hash structures, there are
     # 4 sources for configuration data:
@@ -774,6 +798,12 @@ module Kitchen
       cdata = data.fetch(key, {})
       cdata = cdata.nil? ? {} : cdata.dup
       cdata = { default_key => cdata } if cdata.is_a?(String)
+      case key
+      when :lifecycle
+        cdata.each_key do |k|
+          namespace_array!(cdata, k, :common)
+        end
+      end
       cdata
     end
 
@@ -872,7 +902,14 @@ module Kitchen
       pdata = platform_data_for(platform).fetch(key, {})
       pdata = pdata.nil? ? {} : pdata.dup
       pdata = { default_key => pdata } if pdata.is_a?(String)
-      namespace_array!(pdata, :run_list, :platform)
+      case key
+      when :provisioner
+        namespace_array!(pdata, :run_list, :platform)
+      when :lifecycle
+        pdata.each_key do |k|
+          namespace_array!(pdata, k, :platform)
+        end
+      end
       pdata
     end
 
@@ -927,7 +964,14 @@ module Kitchen
       sdata = suite_data_for(suite).fetch(key, {})
       sdata = sdata.nil? ? {} : sdata.dup
       sdata = { default_key => sdata } if sdata.is_a?(String)
-      namespace_array!(sdata, :run_list, :suite)
+      case key
+      when :provisioner
+        namespace_array!(sdata, :run_list, :suite)
+      when :lifecycle
+        sdata.each_key do |k|
+          namespace_array!(sdata, k, :suite)
+        end
+      end
       sdata
     end
 
