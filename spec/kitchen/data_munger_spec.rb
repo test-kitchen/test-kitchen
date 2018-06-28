@@ -2689,5 +2689,112 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
       end
     end
+
+    describe "lifecycle_hooks stuff" do
+      it "handles a single global hook" do
+        DataMunger.new(
+          {
+            lifecycle: {
+              pre_create: "echo foo"
+            },
+            platforms: [{name: "plat"}],
+            suites: [{name: "sweet"}],
+          },
+          {}
+        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+          pre_create: ["echo foo"]
+        )
+      end
+
+      it "handles multiple global hooks" do
+        DataMunger.new(
+          {
+            lifecycle: {
+              pre_create: "echo foo",
+              post_converge: ["echo bar", {local: "echo baz"}],
+              pre_verify: [{remote: "echo other"}],
+            },
+            platforms: [{name: "plat"}],
+            suites: [{name: "sweet"}],
+          },
+          {}
+        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+          pre_create: ["echo foo"],
+          post_converge: ["echo bar", {local: "echo baz"}],
+          pre_verify: [{remote: "echo other"}]
+        )
+      end
+
+      it "handles hooks in platforms and suites" do
+        DataMunger.new(
+          {
+            lifecycle: {
+              pre_create: "echo foo",
+              post_create: "echo post"
+            },
+            platforms: [{
+              name: "plat",
+              lifecycle: {
+                pre_create: "echo bar"
+              }
+            }],
+            suites: [{
+              name: "sweet",
+              lifecycle: {
+                pre_create: "echo baz"
+              }
+            }],
+          },
+          {}
+        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+          pre_create: ["echo foo", "echo bar", "echo baz"],
+          post_create: ["echo post"]
+        )
+      end
+
+      it "munges a global legacy pre_create_command" do
+        DataMunger.new(
+          {
+            driver: {
+              pre_create_command: "echo bar"
+            },
+            lifecycle: {
+              pre_create: "echo foo"
+            },
+            platforms: [{name: "plat"}],
+            suites: [{name: "sweet"}],
+          },
+          {}
+        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+          pre_create: ["echo foo", {local: "echo bar"}]
+        )
+      end
+
+      it "munges a platform/suite legacy pre_create_commands" do
+        DataMunger.new(
+          {
+            lifecycle: {
+              pre_create: "echo foo"
+            },
+            platforms: [{
+              name: "plat",
+              driver: {
+                pre_create_command: "echo bar"
+              }
+            }],
+            suites: [{
+              name: "sweet",
+              driver: {
+                pre_create_command: "echo baz"
+              }
+            }],
+          },
+          {}
+        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+          pre_create: ["echo foo", {local: "echo bar"}, {local: "echo baz"}]
+        )
+      end
+
+    end
   end
 end
