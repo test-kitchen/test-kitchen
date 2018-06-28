@@ -478,6 +478,13 @@ describe Kitchen::Instance do
           logger_io.string
                    .must_match regex_for("Finished creating #{instance.to_str}")
         end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+
+          instance.create
+        end
       end
 
       describe "with last_action of create" do
@@ -526,6 +533,15 @@ describe Kitchen::Instance do
           logger_io.string
                    .must_match regex_for("Finished converging #{instance.to_str}")
         end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+
+          instance.converge
+        end
       end
 
       describe "with last action of create" do
@@ -542,6 +558,13 @@ describe Kitchen::Instance do
           instance.converge
 
           state_file.read[:last_action].must_equal "converge"
+        end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+
+          instance.converge
         end
       end
 
