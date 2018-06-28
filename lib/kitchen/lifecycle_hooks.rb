@@ -86,18 +86,28 @@ module Kitchen
     def run_local_hook(instance, state_file, hook)
       cmd = hook.delete(:local)
       state = state_file.read
+      # Set up some environment variables with instance info.
       environment = {
         "KITCHEN_INSTANCE_NAME" => instance.name,
         "KITCHEN_SUITE_NAME" => instance.suite.name,
         "KITCHEN_PLATFORM_NAME" => instance.platform.name,
         "KITCHEN_INSTANCE_HOSTNAME" => state[:hostname].to_s,
       }
+      # If the user specified env vars too, fix them up because symbol keys
+      # make mixlib-shellout sad.
       if hook[:environment]
         hook[:environment].each do |k, v|
           environment[k.to_s] = v.to_s
         end
       end
-      opts = {}.merge(hook).merge(environment: environment)
+      # Default the cwd to the kitchen root and resolve a relative input cwd against that.
+      cwd = if hook[:cwd]
+        File.expand_path(hook[:cwd], config[:kitchen_root])
+      else
+        config[:kitchen_root]
+      end
+      # Build the options for mixlib-shellout.
+      opts = {}.merge(hook).merge(cwd: cwd, environment: environment)
       run_command(cmd, opts)
     end
 
