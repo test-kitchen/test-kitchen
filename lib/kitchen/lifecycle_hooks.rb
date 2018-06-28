@@ -102,10 +102,10 @@ module Kitchen
       end
       # Default the cwd to the kitchen root and resolve a relative input cwd against that.
       cwd = if hook[:cwd]
-        File.expand_path(hook[:cwd], config[:kitchen_root])
-      else
-        config[:kitchen_root]
-      end
+              File.expand_path(hook[:cwd], config[:kitchen_root])
+            else
+              config[:kitchen_root]
+            end
       # Build the options for mixlib-shellout.
       opts = {}.merge(hook).merge(cwd: cwd, environment: environment)
       run_command(cmd, opts)
