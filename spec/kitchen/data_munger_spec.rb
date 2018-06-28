@@ -2697,8 +2697,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             lifecycle: {
               pre_create: "echo foo"
             },
-            platforms: [{name: "plat"}],
-            suites: [{name: "sweet"}],
+            platforms: [{ name: "plat" }],
+            suites: [{ name: "sweet" }],
           },
           {}
         ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
@@ -2711,17 +2711,17 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           {
             lifecycle: {
               pre_create: "echo foo",
-              post_converge: ["echo bar", {local: "echo baz"}],
-              pre_verify: [{remote: "echo other"}],
+              post_converge: ["echo bar", { local: "echo baz" }],
+              pre_verify: [{ remote: "echo other" }],
             },
-            platforms: [{name: "plat"}],
-            suites: [{name: "sweet"}],
+            platforms: [{ name: "plat" }],
+            suites: [{ name: "sweet" }],
           },
           {}
         ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
           pre_create: ["echo foo"],
-          post_converge: ["echo bar", {local: "echo baz"}],
-          pre_verify: [{remote: "echo other"}]
+          post_converge: ["echo bar", { local: "echo baz" }],
+          pre_verify: [{ remote: "echo other" }]
         )
       end
 
@@ -2761,12 +2761,12 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             lifecycle: {
               pre_create: "echo foo"
             },
-            platforms: [{name: "plat"}],
-            suites: [{name: "sweet"}],
+            platforms: [{ name: "plat" }],
+            suites: [{ name: "sweet" }],
           },
           {}
         ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo", {local: "echo bar"}]
+          pre_create: ["echo foo", { local: "echo bar" }]
         )
       end
 
@@ -2791,7 +2791,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           },
           {}
         ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo", {local: "echo bar"}, {local: "echo baz"}]
+          pre_create: ["echo foo", { local: "echo bar" }, { local: "echo baz" }]
         )
       end
 

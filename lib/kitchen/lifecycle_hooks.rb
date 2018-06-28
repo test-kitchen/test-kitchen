@@ -42,7 +42,7 @@ module Kitchen
     # @return [void]
     def run_with_hooks(phase, state_file, &block)
       run(instance, phase, state_file, :pre)
-      block.call
+      yield
       run(instance, phase, state_file, :post)
     end
 
@@ -63,7 +63,7 @@ module Kitchen
       hook_data.each do |hook|
         # Coerce the common case of a bare string to be a local command. This
         # is to match the behavior of the old `pre_create_command` semi-hook.
-        hook = {local: hook} if hook.is_a?(String)
+        hook = { local: hook } if hook.is_a?(String)
         if hook.include?(:local)
           # Local command execution on the workstation.
           cmd = hook.delete(:local)

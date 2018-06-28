@@ -627,7 +627,7 @@ module Kitchen
         root[:lifecycle] ||= {}
         root[:lifecycle][:pre_create] ||= []
         root[:lifecycle][:pre_create] = Array(root[:lifecycle][:pre_create])
-        root[:lifecycle][:pre_create] << {local: ddata[:pre_create_command]}
+        root[:lifecycle][:pre_create] << { local: ddata[:pre_create_command] }
         ddata.delete(:pre_create_command)
       end
     end
