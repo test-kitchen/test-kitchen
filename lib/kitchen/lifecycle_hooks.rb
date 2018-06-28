@@ -29,18 +29,29 @@ module Kitchen
     include Logging
     include ShellOut
 
-    attr_reader :options
-
     def initialize(config)
-      @config = config
+      init_config(config)
     end
 
+    # Run a lifecycle phase with the pre and post hooks.
+    #
+    # @param phase [String] Lifecycle phase which is being executed.
+    # @param state_file [StateFile] Instance state file object.
+    # @param block [Proc] Block of code implementing the lifecycle phase.
+    # @return [void]
     def run_with_hooks(phase, state_file, &block)
       run(instance, phase, state_file, :pre)
       block.call
       run(instance, phase, state_file, :post)
     end
 
+    # Execute a specific lifecycle hook.
+    #
+    # @param instance [Instance] The instance object to run against.
+    # @param phase [String] Lifecycle phase which is being executed.
+    # @param state_file [StateFile] Instance state file object.
+    # @param hook_timing [Symbol] `:pre` or `:post` to indicate which hook to run.
+    # @return [void]
     def run(instance, phase, state_file, hook_timing)
       # Yes this has to be a symbol because of how data munger works.
       hook_key = :"#{hook_timing}_#{phase}"
@@ -53,16 +64,18 @@ module Kitchen
         # is to match the behavior of the old `pre_create_command` semi-hook.
         hook = {local: hook} if hook.is_a?(String)
         if hook.include?(:local)
+          # Local command execution on the workstation.
           cmd = hook.delete(:local)
           run_command(cmd, hook)
         elsif hook.include?(:remote)
+          # Remote command execution on the test instance.
           cmd = hook.delete(:remote)
           # At least make a token effort to read this file less often.
           state ||= state_file.read
           conn = instance.transport.connection(state)
           conn.execute(cmd)
         else
-          raise Errors::UserError, "Unknown lifecycle hook target #{hook.keys.first.inspect}"
+          raise Errors::UserError, "Unknown lifecycle hook target #{hook.inspect}"
         end
       end
     end
