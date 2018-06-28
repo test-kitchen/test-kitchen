@@ -95,17 +95,18 @@ class LegacyDriver < Kitchen::Driver::SSHBase
 end
 
 describe Kitchen::Instance do
-  let(:driver)      { Kitchen::Driver::Dummy.new({}) }
-  let(:logger_io)   { StringIO.new }
-  let(:logger)      { Kitchen::Logger.new(logdev: logger_io) }
-  let(:instance)    { Kitchen::Instance.new(opts) }
-  let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
-  let(:state_file)  { DummyStateFile.new }
-  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
-  let(:verifier)    { Kitchen::Verifier::Dummy.new({}) }
+  let(:driver)          { Kitchen::Driver::Dummy.new({}) }
+  let(:logger_io)       { StringIO.new }
+  let(:logger)          { Kitchen::Logger.new(logdev: logger_io) }
+  let(:instance)        { Kitchen::Instance.new(opts) }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}) }
+  let(:provisioner)     { Kitchen::Provisioner::Dummy.new({}) }
+  let(:state_file)      { DummyStateFile.new }
+  let(:transport)       { Kitchen::Transport::Dummy.new({}) }
+  let(:verifier)        { Kitchen::Verifier::Dummy.new({}) }
 
   let(:opts) do
-    { suite: suite, platform: platform, driver: driver,
+    { suite: suite, platform: platform, driver: driver, lifecycle_hooks: lifecycle_hooks,
       provisioner: provisioner, verifier: verifier,
       logger: logger, state_file: state_file, transport: transport }
   end
