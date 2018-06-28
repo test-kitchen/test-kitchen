@@ -1,8 +1,14 @@
 # Change Log
+
+## [v1.22.0](https://github.com/test-kitchen/test-kitchen/tree/v1.22.0) (2018-06-28)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.2...v1.22.0)
+
+- Add the ssh_gateway_port config in ssh transport [#1421](https://github.com/test-kitchen/test-kitchen/pull/1421) ([sjeandeaux](https://github.com/sjeandeaux))
+- Shell Provisioner: make script executable [#1381](https://github.com/test-kitchen/test-kitchen/pull/1381) ([thewyzard44](https://github.com/thewyzard44))
+- Stop calling the Chef packages omnibus packages [#1425](https://github.com/test-kitchen/test-kitchen/pull/1425) ([tas50](https://github.com/tas50))
+
 ## [v1.21.2](https://github.com/test-kitchen/test-kitchen/tree/v1.21.2) (2018-05-07)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.1...v1.21.2)
-
-**Merged pull requests:**
 
 - Removing thor upper bound in step with berks [\#1410](https://github.com/test-kitchen/test-kitchen/pull/1410) ([cheeseplus](https://github.com/cheeseplus)
 )
@@ -11,7 +17,6 @@
 ## [v1.21.1](https://github.com/test-kitchen/test-kitchen/tree/v1.21.1) (2018-04-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.0...v1.21.1)
 
-**Merged pull requests:**
 
 - Revert: honor root\_path for location of chef installer script [\#1369]
 
