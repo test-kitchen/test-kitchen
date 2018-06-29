@@ -95,17 +95,18 @@ class LegacyDriver < Kitchen::Driver::SSHBase
 end
 
 describe Kitchen::Instance do
-  let(:driver)      { Kitchen::Driver::Dummy.new({}) }
-  let(:logger_io)   { StringIO.new }
-  let(:logger)      { Kitchen::Logger.new(logdev: logger_io) }
-  let(:instance)    { Kitchen::Instance.new(opts) }
-  let(:provisioner) { Kitchen::Provisioner::Dummy.new({}) }
-  let(:state_file)  { DummyStateFile.new }
-  let(:transport)   { Kitchen::Transport::Dummy.new({}) }
-  let(:verifier)    { Kitchen::Verifier::Dummy.new({}) }
+  let(:driver)          { Kitchen::Driver::Dummy.new({}) }
+  let(:logger_io)       { StringIO.new }
+  let(:logger)          { Kitchen::Logger.new(logdev: logger_io) }
+  let(:instance)        { Kitchen::Instance.new(opts) }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}) }
+  let(:provisioner)     { Kitchen::Provisioner::Dummy.new({}) }
+  let(:state_file)      { DummyStateFile.new }
+  let(:transport)       { Kitchen::Transport::Dummy.new({}) }
+  let(:verifier)        { Kitchen::Verifier::Dummy.new({}) }
 
   let(:opts) do
-    { suite: suite, platform: platform, driver: driver,
+    { suite: suite, platform: platform, driver: driver, lifecycle_hooks: lifecycle_hooks,
       provisioner: provisioner, verifier: verifier,
       logger: logger, state_file: state_file, transport: transport }
   end
@@ -477,6 +478,13 @@ describe Kitchen::Instance do
           logger_io.string
                    .must_match regex_for("Finished creating #{instance.to_str}")
         end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+
+          instance.create
+        end
       end
 
       describe "with last_action of create" do
@@ -525,6 +533,15 @@ describe Kitchen::Instance do
           logger_io.string
                    .must_match regex_for("Finished converging #{instance.to_str}")
         end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+
+          instance.converge
+        end
       end
 
       describe "with last action of create" do
@@ -541,6 +558,13 @@ describe Kitchen::Instance do
           instance.converge
 
           state_file.read[:last_action].must_equal "converge"
+        end
+
+        it "calls lifecycle hooks" do
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
+          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+
+          instance.converge
         end
       end
 

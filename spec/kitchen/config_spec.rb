@@ -295,6 +295,7 @@ describe Kitchen::Config do
     let(:munger) do
       stub(
         driver_data_for: { "junk" => true },
+        lifecycle_hooks_data_for: { "junk" => true },
         provisioner_data_for: { "junk" => true },
         transport_data_for: { "junk" => true },
         verifier_data_for: { "junk" => true }
@@ -309,6 +310,7 @@ describe Kitchen::Config do
       Kitchen::Verifier.stubs(:for_plugin).returns("verifier")
       Kitchen::Logger.stubs(:new).returns("logger")
       Kitchen::StateFile.stubs(:new).returns("state_file")
+      Kitchen::LifecycleHooks.stubs(:new).returns("lifecycle_hooks")
 
       Kitchen::DataMunger.stubs(:new).returns(munger)
       config.stubs(:platforms).returns(platforms)
@@ -384,6 +386,7 @@ describe Kitchen::Config do
         driver: "driver",
         logger: "logger",
         suite: suites.first,
+        lifecycle_hooks: "lifecycle_hooks",
         platform: platforms.first,
         provisioner: "provisioner",
         transport: "transport",
