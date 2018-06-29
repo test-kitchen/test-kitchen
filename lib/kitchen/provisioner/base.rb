@@ -45,6 +45,8 @@ module Kitchen
         provisioner.windows_os? ? nil : "sudo -E"
       end
 
+      default_config :pre_install_command, nil
+
       default_config :command_prefix, nil
 
       default_config :downloads, {}
@@ -68,6 +70,8 @@ module Kitchen
         sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
+          info("Initializing provisioner on #{instance.to_str}")
+          conn.execute(pre_install_command)
           conn.execute(install_command)
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
@@ -99,6 +103,16 @@ module Kitchen
       # @returns [Boolean] Return true if a problem is found.
       def doctor(state)
         false
+      end
+
+      # Generates a command string which will run on an instance prior to the
+      # install_command. By default this comes from
+      # `config[:pre_install_command]`, allowing users to customize provisioner
+      # bootstrapping steps. If no work is required, then return `nil`.
+      #
+      # @return [String, nil] a command string
+      def pre_install_command
+        config[:pre_install_command]
       end
 
       # Generates a command string which will install and configure the

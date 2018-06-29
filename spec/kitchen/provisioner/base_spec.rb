@@ -156,6 +156,7 @@ describe Kitchen::Provisioner::Base do
         ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
         "/remote" => "/local",
       }
+      config[:pre_install_command] = "pre-install"
     end
 
     after do
@@ -188,6 +189,7 @@ describe Kitchen::Provisioner::Base do
 
     it "invokes the provisioner commands over the transport" do
       order = sequence("order")
+      connection.expects(:execute).with("pre-install").in_sequence(order)
       connection.expects(:execute).with("install").in_sequence(order)
       connection.expects(:execute).with("init").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
@@ -250,7 +252,7 @@ describe Kitchen::Provisioner::Base do
     end
   end
 
-  [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
+  [:init_command, :pre_install_command, :install_command, :prepare_command, :run_command].each do |cmd|
     it "has a #{cmd} method" do
       provisioner.public_send(cmd).must_be_nil
     end
