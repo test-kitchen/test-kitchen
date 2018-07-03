@@ -197,7 +197,7 @@ module Kitchen
         end
 
         unless File.exist?(kitchen_yml) && File.exist?(dot_kitchen_yml)
-          kitchen_yml
+          return kitchen_yml
         end
 
         File.exist?(kitchen_yml) ? kitchen_yml : dot_kitchen_yml
