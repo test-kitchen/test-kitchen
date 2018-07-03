@@ -196,6 +196,10 @@ module Kitchen
           raise UserError, "Both #{kitchen_yml} and #{dot_kitchen_yml} found. Please use the un-dotted variant: #{kitchen_yml}."
         end
 
+        unless File.exist?(kitchen_yml) && File.exist?(dot_kitchen_yml)
+          kitchen_yml
+        end
+
         File.exist?(kitchen_yml) ? kitchen_yml : dot_kitchen_yml
       end
 
