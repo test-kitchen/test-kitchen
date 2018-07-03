@@ -62,7 +62,7 @@ module Kitchen
       # @return [Hash] merged configuration data
       def read
         unless File.exist?(config_file)
-          raise UserError, "Kitchen YAML file #{kitchen_yml} does not exist."
+          raise UserError, "Kitchen YAML file #{config_file} does not exist."
         end
 
         Util.symbolized_hash(combined_hash)
