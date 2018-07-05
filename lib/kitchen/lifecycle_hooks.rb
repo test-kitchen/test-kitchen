@@ -91,8 +91,11 @@ module Kitchen
         "KITCHEN_INSTANCE_NAME" => instance.name,
         "KITCHEN_SUITE_NAME" => instance.suite.name,
         "KITCHEN_PLATFORM_NAME" => instance.platform.name,
-        "KITCHEN_INSTANCE_HOSTNAME" => state[:hostname].to_s,
       }
+      # Make state also available through the environment
+      state.each_pair do |k, v|
+        environment["KITCHEN_INSTANCE_#{k.to_s.upcase}"] = v.to_s
+      end
       # If the user specified env vars too, fix them up because symbol keys
       # make mixlib-shellout sad.
       if hook[:environment]
