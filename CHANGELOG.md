@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.22.1](https://github.com/test-kitchen/test-kitchen/tree/v1.22.1) (2018-08-03)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.22.0...v1.22.1)
+
+**Merged pull requests:**
+
+- \[SHACK-295\] ChefDK 2.x uses an old version of net-ssh [\#1439](https://github.com/test-kitchen/test-kitchen/pull/1439) ([tyler-ball](https://github.com/tyler-ball))
+
+
 ## [v1.22.0](https://github.com/test-kitchen/test-kitchen/tree/v1.22.0) (2018-06-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.2...v1.22.0)
 
@@ -56,7 +64,7 @@ This also applies to `kitchen.local.yml` and we've made the change backwards com
 Allows a user to use data_bags from an array of directories
 
 ```
-data_bags_path: 
+data_bags_path:
   - 'data_bags'
   - 'test/integrations/data_bags'
   ```
