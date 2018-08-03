@@ -101,6 +101,14 @@ module Kitchen
                     desc: "Set the base path of the tests"
     end
 
+    # Sets the exclude method_option
+    # @api private
+    def self.exclude_option
+      method_option :exclude,
+        :aliases => "-x",
+        :desc => "Set the name or pattern for excluding instances [INSTANCE|REGEXP]"
+    end
+
     desc "list [INSTANCE|REGEXP|all]", "Lists one or more instances"
     method_option :bare,
                   aliases: "-b",
@@ -115,6 +123,7 @@ module Kitchen
                   type: :boolean,
                   desc: "[Deprecated] Please use `kitchen diagnose'"
     log_options
+    exclude_option
     def list(*args)
       update_config!
       perform("list", "list", args)
@@ -188,6 +197,7 @@ module Kitchen
       end
       test_base_path
       log_options
+      exclude_option
       define_method(action) do |*args|
         update_config!
         perform(action, "action", args)
@@ -239,6 +249,7 @@ module Kitchen
                   desc: "Run the converge and verify with debugging enabled."
     test_base_path
     log_options
+    exclude_option
     def test(*args)
       update_config!
       ensure_initialized
@@ -275,6 +286,7 @@ module Kitchen
                   aliases: "-c",
                   desc: "execute via ssh"
     log_options
+    exclude_option
     def exec(*args)
       update_config!
       perform("exec", "exec", args)
