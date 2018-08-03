@@ -517,11 +517,15 @@ module Kitchen
       # net-ssh to ~> 4.2, this will prevent InSpec from being used in
       # Chef v12 because of it pinning to a v3 of net-ssh.
       #
-      def verify_host_key_option
+      def self.verify_host_key_option
         current_net_ssh = Net::SSH::Version::CURRENT
         new_option_version = Net::SSH::Version[4, 2, 0]
 
         current_net_ssh >= new_option_version ? :verify_host_key : :paranoid
+      end
+
+      def verify_host_key_option
+        self.class.verify_host_key_option
       end
 
       # Creates a new SSH Connection instance and save it for potential future

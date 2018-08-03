@@ -188,8 +188,9 @@ describe Kitchen::Transport::Ssh do
       end
 
       it "sets the :verify_host_key flag to false" do
+        verify_host_key_option = Kitchen::Transport::Ssh.verify_host_key_option
         klass.expects(:new).with do |hash|
-          hash[:verify_host_key] == false
+          hash[verify_host_key_option] == false
         end
 
         make_connection

@@ -18,6 +18,7 @@
 
 require "rubygems/gem_runner"
 require "thor/group"
+require "kitchen"
 
 module Kitchen
   module Generator
