@@ -27,7 +27,6 @@ Feature: Running a console command
     When I run `kitchen console` interactively
     And I type "instances.map { |i| i.name }"
     And I type "exit"
-    Then the output should contain "kc(Kitchen::Config)> "
     Then the output should contain:
     """
     ["default-flebian", "full-flebian"]
