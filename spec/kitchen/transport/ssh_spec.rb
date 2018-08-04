@@ -695,8 +695,8 @@ describe Kitchen::Transport::Ssh::Connection do
 
   describe "establishing a connection" do
     [
-      Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
-      Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
+      Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
+      Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
       Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout,
       Timeout::Error
     ].each do |klass|
