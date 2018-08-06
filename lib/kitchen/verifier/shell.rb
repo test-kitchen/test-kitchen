@@ -51,6 +51,37 @@ module Kitchen
         debug("[#{name}] Verify completed.")
       end
 
+      def create_sandbox
+        super
+        prepare_upload
+      end
+
+      def install_command
+        cmd = "#{sudo("mkdir")} -p #{config[:root_path]}/#{config[:upload_path]}"
+        debug(cmd)
+        cmd
+      end
+
+      def prepare_upload
+        return unless config[:upload_path]
+        FileUtils.cp_r(config[:upload_path], sandbox_path, :preserve => true)
+      end
+
+      def prepare_command
+        return unless config[:remote_upload_path]
+        commands = []
+        commands << [sudo("rm -rf"), config[:remote_upload_path] + " &&"]
+        commands << [sudo("mkdir -p"), config[:remote_upload_path] + " &&"]
+        commands << [sudo("cp -r"),
+                     File.join(config[:root_path], File.basename(config[:upload_path]) + "/*"),
+                     config[:remote_upload_path]
+                    ]
+
+        commands = commands.join(" ")
+        logger.debug commands
+        commands
+      end
+
       # for legacy drivers.
       def run_command
         if config[:remote_exec]
