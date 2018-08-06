@@ -53,7 +53,7 @@ module Kitchen
     # @api private
     def define
       namespace "kitchen" do
-        kitchen_commands = %w[create converge setup verify destroy]
+        kitchen_commands = %w{create converge setup verify destroy}
         config.instances.each do |instance|
           desc "Run #{instance.name} test instance"
           task instance.name do
@@ -62,8 +62,9 @@ module Kitchen
 
           kitchen_commands.each do |cmd|
             namespace cmd do
-              # desc "Run #{instance.name} #{cmd} instance"
-              task instance.name do instance.send(cmd); end
+              task instance.name do
+                instance.send(cmd)
+              end
               desc "Run all #{cmd} instances"
               task "all" => config.instances.map(&:name)
             end

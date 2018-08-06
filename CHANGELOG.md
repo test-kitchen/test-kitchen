@@ -1,7 +1,7 @@
 # Change Log
 
-## [v1.23.1](https://github.com/test-kitchen/test-kitchen/tree/v1.23.1) (2018-08-03)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.23.1)
+## [v1.23.2](https://github.com/test-kitchen/test-kitchen/tree/v1.23.2) (2018-08-06)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.23.2)
 
 **Closed issues:**
 
@@ -10,6 +10,9 @@
 **Merged pull requests:**
 
 - Synchronize calls to chdir to be thread safe [\#1430](https://github.com/test-kitchen/test-kitchen/pull/1430) ([s-bernard](https://github.com/s-bernard))
+- Catch 'Operation already in progress' as seen on Ubuntu on WSL [\#1435](https://github.com/test-kitchen/test-kitchen/pull/1435) ([bdwyertech](https://github.com/bdwyertech))
+- Fix \#1104 add supplemental kitchen commands [\#1105](https://github.com/test-kitchen/test-kitchen/pull/1105) ([4-20ma](https://github.com/4-20ma))
+
 
 ## [v1.23.0](https://github.com/test-kitchen/test-kitchen/tree/v1.23.0) (2018-07-30)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.22.0...v1.23.0)
