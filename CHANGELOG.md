@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.23.1](https://github.com/test-kitchen/test-kitchen/tree/v1.23.1) (2018-08-03)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.23.1)
+
+**Closed issues:**
+
+- Race condition: conflicting chdir during another chdir block [\#1416](https://github.com/test-kitchen/test-kitchen/issues/1416)
+
+**Merged pull requests:**
+
+- Synchronize calls to chdir to be thread safe [\#1430](https://github.com/test-kitchen/test-kitchen/pull/1430) ([s-bernard](https://github.com/s-bernard))
+
 ## [v1.23.0](https://github.com/test-kitchen/test-kitchen/tree/v1.23.0) (2018-07-30)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.22.0...v1.23.0)
 
