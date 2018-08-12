@@ -72,14 +72,6 @@ describe Kitchen::Loader::YAML do
       proc { Kitchen::Loader::YAML.new }.must_raise Kitchen::UserError
     end
 
-    it "#read raises Kitchen::UserError when config_file doesn't exist" do
-      loader = proc {
-        yaml = Kitchen::Loader::YAML.new
-        yaml.read
-      }
-      loader.must_raise Kitchen::UserError
-    end
-
     it "sets project_config from parameter, if given" do
       stub_file("/tmp/crazyfunkytown.file", {})
       loader = Kitchen::Loader::YAML.new(
