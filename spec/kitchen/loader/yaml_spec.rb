@@ -496,6 +496,7 @@ describe Kitchen::Loader::YAML do
     end
 
     it "skips evaluating kitchen.local.yml through erb if disabled" do
+      stub_file("/tmp/.kitchen.local.yml", {})
       loader = Kitchen::Loader::YAML.new(
         project_config: "/tmp/.kitchen.yml", process_erb: false)
       FileUtils.mkdir_p "/tmp"
