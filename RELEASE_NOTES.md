@@ -1,4 +1,4 @@
-This file holds "in progress" release notes for the current release under development.
+# Test Kitchen 1.23.0 Release Notes
 
 ## Life Cycle Hooks
 
@@ -62,3 +62,106 @@ lifecycle:
   - remote: myapp --unregister-license
     skippable: true
 ```
+
+# Test Kitchen 1.21.0 Release Notes
+
+## Configuration UX improvements
+
+Having the kitchen configuration file be hidden has always been a bit odd and so we're moving to using `kitchen.yml` over `.kitchen.yml`.
+This also applies to `kitchen.local.yml` and we've made the change backwards compatible so you're not forced to move over right away. Additionally, we've added support for the environment variables `KITCHEN_YML` and KITCHEN_LOCAL_YML` again preserving compatibility if you're using the `*_YAML` forms.
+
+# Test Kitchen 1.20.0 Release Notes
+
+## Multiple paths for data_bags
+
+Allows a user to use data_bags from an array of directories
+
+```
+data_bags_path: 
+  - 'data_bags'
+  - 'test/integrations/data_bags'
+  ```
+
+## Deprecation Warnings for Configuration Keys
+
+```
+$ kitchen list default-centos-7
+$$$$$$ Deprecated configuration detected:
+require_chef_omnibus
+Run 'kitchen doctor' for details.
+```
+
+```
+$ kitchen doctor
+$$$$$$ Deprecated configuration detected:
+require_chef_omnibus
+Run 'kitchen doctor' for details.
+
+-----> The doctor is in
+       **** require_chef_omnibus deprecated
+The 'require_chef_omnibus' attribute with version values will change
+to use the new 'product_version' attribute.
+
+Note: 'product_name' must be set in order to use 'product_version'
+until 'product_name' replaces 'require_chef_omnibus' as the default.
+
+# New Usage #
+provisioner:
+  product_name: <chef or chefdk>
+  product_version: 12.0.3
+```
+
+## SSH via an HTTP Proxy
+
+This allows configuring the SSH transport to utilize an HTTP Proxy. The following configuration keys have been added to `transport`:
+
+```
+ssh_http_proxy_user
+ssh_http_proxy_password
+ssh_http_proxy_port
+ssh_http_proxy
+```
+
+# Test Kitchen 1.20.0 Release Notes
+
+## Driver Commands Removed
+
+The `kitchen driver` family of commands have been removed. It was not recommended
+to use them and it was judged to be more harm than good to leave them in. If you
+regularly create new drivers and relied on the skeleton generator, check out
+other code skeleton projects like [`chef generate`](https://blog.chef.io/2014/12/09/guest-post-creating-your-own-chef-cookbook-generator/),
+and [Cookiecutter](https://github.com/audreyr/cookiecutter).
+
+## `kitchen converge -D`
+
+When you want to get debug logging for your provisioner or verifier, you can now
+use the new `-D` (or `--debug`) command line option for `kitchen converge`,
+`kitchen verify`, and `kitchen test`. Support has been added to the Chef provisioners,
+avoiding the need to use the `log_level: debug` configuration option every time.
+
+## `exec` Driver
+
+A new driver named `exec` is included with Test Kitchen which runs all the
+provisioning and verification commands locally, rather than on a VM. This can
+be used for testing on systems where you've already created the VM yourself and
+installed Test Kitchen on it. Note that this is related but different from the
+included `proxy` driver, which also connects to an existing server, but over
+SSH/WinRM rather than running commands locally.
+
+## `shell` Provisioner `command`
+
+Previously the included `shell` provisioner allowed running a user-specified bootstrap
+script. This has been extended to allow specifying a `command` option with a
+string to run, rather than managing a script file.
+
+## Faster Busser
+
+The `busser` verifier has been improved to be faster on the second (or beyond)
+verification, or in other cases where the required gems are already present.
+
+## `kitchen doctor`
+
+A `kitchen doctor` command has been added, modeled on Homebrew's `brew doctor`.
+This currently doesn't do much, but if you are a Kitchen plugin author, consider
+adding more detailed debugging checks and troubleshooting help to your plugin
+via this system.

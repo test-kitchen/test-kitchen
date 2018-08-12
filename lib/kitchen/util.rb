@@ -155,25 +155,30 @@ module Kitchen
     # and doesn't like fake directories (C:\Documents and Settings)
     # It also does not do any sort of error checking, so things one would
     # expect to fail just return an empty list
+    #
+    # @note Dir.chdir is applied to the process, thus it is not thread-safe
+    # and must be synchronized.
     def self.list_directory(path, include_dot: false, recurse: false)
       # Things (such as tests) are relying on this to not blow up if
       # the directory does not exist
       return [] if !Dir.exist?(path)
 
-      Dir.chdir(path) do
-        glob_pattern = if recurse
-                         "**/*"
-                       else
-                         "*"
-                       end
-        flags = if include_dot
-                  [File::FNM_DOTMATCH]
-                else
-                  []
-                end
-        Dir.glob(glob_pattern, *flags)
-          .reject { |f| [".", ".."].include?(f) }
-          .map { |f| File.join(path, f) }
+      Kitchen.mutex_chdir.synchronize do
+        Dir.chdir(path) do
+          glob_pattern = if recurse
+                           "**/*"
+                         else
+                           "*"
+                         end
+          flags = if include_dot
+                    [File::FNM_DOTMATCH]
+                  else
+                    []
+                  end
+          Dir.glob(glob_pattern, *flags)
+            .reject { |f| [".", ".."].include?(f) }
+            .map { |f| File.join(path, f) }
+        end
       end
     end
 
@@ -188,11 +193,16 @@ module Kitchen
     # @param pattern [String] The pattern to match
     # @param flags [Integer] You can specify flags you would have passed to Dir.glob
     # @return Files matching the specified pattern in the given path
+    #
+    # @note Dir.chdir is applied to the process, thus it is not thread-safe
+    # and must be synchronized.
     def self.safe_glob(path, pattern, *flags)
       return [] if !Dir.exist?(path)
 
-      Dir.chdir(path) do
-        Dir.glob(pattern, *flags).map { |f| File.join(path, f) }
+      Kitchen.mutex_chdir.synchronize do
+        Dir.chdir(path) do
+          Dir.glob(pattern, *flags).map { |f| File.join(path, f) }
+        end
       end
     end
   end

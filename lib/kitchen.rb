@@ -61,6 +61,9 @@ module Kitchen
     # @return [Mutex] a common mutex for global coordination
     attr_accessor :mutex
 
+    # @return [Mutex] a mutex used for Dir.chdir coordination
+    attr_accessor :mutex_chdir
+
     # Returns the root path of the Kitchen gem source code.
     #
     # @return [Pathname] root path of gem
@@ -147,3 +150,6 @@ Kitchen.logger = Kitchen.default_logger
 
 # Setup a collection of instance crash exceptions for error reporting
 Kitchen.mutex = Mutex.new
+
+# Initialize the mutex for Dir.chdir coordination
+Kitchen.mutex_chdir = Mutex.new
