@@ -196,7 +196,7 @@ module Kitchen
           raise UserError, "Both #{kitchen_yml} and #{dot_kitchen_yml} found. Please use the un-dotted variant: #{kitchen_yml}."
         end
 
-        unless File.exist?(kitchen_yml) && File.exist?(dot_kitchen_yml)
+        if !File.exist?(kitchen_yml) && !File.exist?(dot_kitchen_yml)
           return kitchen_yml
         end
 
@@ -225,11 +225,12 @@ module Kitchen
 
         undot_config = default_local_config.sub(/^\./, "")
         dot_config = ".#{undot_config}"
+
         if File.exist?(File.join(config_dir, undot_config)) && File.exist?(File.join(config_dir, dot_config))
           raise UserError, "Both #{undot_config} and #{dot_config} found in #{config_dir}. Please use #{default_local_config} which matches your #{config_file}."
         end
 
-        File.join(config_dir, default_local_config)
+        File.exist?(File.join(config_dir, dot_config)) ? File.join(config_dir, dot_config) : File.join(config_dir, undot_config)
       end
 
       # Determines the default absolute path to the Kitchen global YAML file,
