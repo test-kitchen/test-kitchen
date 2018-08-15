@@ -103,8 +103,8 @@ describe Kitchen::Provisioner::ChefBase do
       provisioner[:log_file].must_be_nil
     end
 
-    it ":cookbook_files_glob includes recipes" do
-      provisioner[:cookbook_files_glob].must_match %r{,recipes/}
+    it ":cookbook_files_glob includes a metadata file" do
+      provisioner[:cookbook_files_glob].must_match %r{,metadata.\{json,rb\}}
     end
 
     it ":data_path uses calculate_path and is expanded" do

@@ -62,7 +62,7 @@ module Kitchen
       # backend cookbook downloader on every kitchen run.
       default_config :always_update_cookbooks, false
       default_config :cookbook_files_glob, %w(
-        README.* metadata.{json,rb}
+        README.* VERSION metadata.{json,rb} attributes.rb recipe.rb
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
       ).join(",")
