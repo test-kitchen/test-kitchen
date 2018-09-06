@@ -6,7 +6,7 @@ activate :syntax, :inline_theme => Rouge::Themes::Base16::Monokai.new
 set :markdown_engine, :kramdown
 
 config.ignored_sitemap_matchers[:source_dotfiles] = proc { |file|
-file =~ %r{/\.} && file !~ %r{/\.(well-known|htaccess|htpasswd|nojekyll)}
+  file =~ %r{/\.} && file !~ %r{/\.(well-known|htaccess|htpasswd|nojekyll)}
 }
 
 # the only true server time
@@ -15,14 +15,14 @@ file =~ %r{/\.} && file !~ %r{/\.(well-known|htaccess|htpasswd|nojekyll)}
 # Per-page layout changes:
 #
 # With no layout
-page '/*.xml', layout: false
-page '/*.json', layout: false
-page '/*.txt', layout: false
+page "/*.xml", layout: false
+page "/*.json", layout: false
+page "/*.txt", layout: false
 
 # With alternative layout
 # page "/path/to/file.html", layout: :otherlayout
-page 'docs/getting-started/*', layout: :sidebar
-page 'docs/*', layout: :docs
+page "docs/getting-started/*", layout: :sidebar
+page "docs/*", layout: :docs
 
 # Proxy pages (http://middlemanapp.com/basics/dynamic-pages/)
 # proxy "/this-page-has-no-template.html", "/template-file.html", locals: {
@@ -37,7 +37,7 @@ page 'docs/*', layout: :docs
 # Methods defined in the helpers block are available in templates
 helpers do
   def link_classes(current_url, item_link)
-    'is-active' if same_link?(current_url, item_link)
+    "is-active" if same_link?(current_url, item_link)
   end
 
   def same_link?(one, two)
@@ -45,10 +45,9 @@ helpers do
   end
 
   def strip_trailing_slash(str)
-    str.end_with?('/') ? str[0..-2] : str
+    str.end_with?("/") ? str[0..-2] : str
   end
 end
-
 
 activate :sprockets
 activate :directory_indexes
@@ -66,9 +65,9 @@ end
 # s3_sync configuration
 ###
 
-AWS_BUCKET                      = 'kitchen.ci'
-AWS_ACCESS_KEY                  = ENV['AWS_ACCESS_KEY']
-AWS_SECRET                      = ENV['AWS_SECRET']
+AWS_BUCKET                      = "kitchen.ci"
+AWS_ACCESS_KEY                  = ENV["AWS_ACCESS_KEY"]
+AWS_SECRET                      = ENV["AWS_SECRET"]
 
 activate :s3_sync do |s3_sync|
   s3_sync.bucket                     = AWS_BUCKET # The name of the S3 bucket you are targeting. This is globally unique.
