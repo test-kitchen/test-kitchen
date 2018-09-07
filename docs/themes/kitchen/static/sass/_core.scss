@@ -1,0 +1,24 @@
+
+@import "variables";
+@import "foundation";
+@include foundation-everything;
+
+@import "mixins";
+@import "typography";
+@import "buttons";
+@import "forms";
+
+body {
+	@include font-smoothing();
+  @include base-type();
+}
+
+@import "partials/alerts";
+@import "partials/grid";
+@import "partials/bg";
+@import "partials/cards";
+@import "partials/callout";
+@import "partials/padding";
+@import "partials/sidebar";
+@import "partials/tabs";
+@import "partials/blurbs";

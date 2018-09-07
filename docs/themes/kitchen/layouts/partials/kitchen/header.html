@@ -1,0 +1,26 @@
+{{ $currentPage := . }}
+{{ $currentSection := $currentPage.Section }}
+<nav data-sticky class="sticky" style="min-width:100%;" data-check-every="0" data-sticky-on="small" data-margin-top="0" data-top-anchor="utility-bar:bottom">
+  <header>
+    <div class="grid-container">
+      <div class="grid-x">
+        <div id="header-logo" class="cell large-3 small-11">
+          <a href="/"><img src="{{ "images/kitchen-logo.png" | relURL }}" alt="{{ .Site.Title }}"></a>
+        </div>
+        <div id="header-toggle" data-responsive-toggle="header-menu" data-hide-for="large" class="cell small-1">
+          <div class="valign-small">
+            <button type="button" data-toggle="header-menu" aria-label="Menu"><i aria-hidden="true" class="fas fa-bars fa-lg"></i></button>
+          </div>
+        </div>
+        <div id="header-menu" class="cell large-9 small-12">
+          <ul class="vertical medium-horizontal menu">
+            {{ range .Site.Menus.main }}
+            <li class="{{if or ($currentPage.IsMenuCurrent "main" .) (eq $currentSection .Identifier) }}active{{ end }}"><a href="{{ .URL }}">{{ .Pre }}{{ .Name }}{{ .Post }}</a></li>
+            {{ end }}
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </header>
+</nav>

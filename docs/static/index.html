@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta content="IE=edge" http-equiv="X-UA-Compatible" /><meta charset="utf-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" /><title>Welcome to Kitchen - KitchenCI</title><link href="/stylesheets/site.css" rel="stylesheet" /></head><body class="index"><nav id="main-nav"><div class="row"><div class="columns medium-12"><a href="/" class="main-nav--logo"><img alt="KitchenCI Logo" src="/images/logo.png" /></a><ul class="main-nav--links"><li><a href="/docs" class="main-nav--link">Docs</a></li><li><a href="https://github.com/test-kitchen/test-kitchen" class="main-nav--link">Github</a></li></ul><a href="https://github.com/test-kitchen/test-kitchen" class="main-nav--github"><img alt="Fork me on Github" src="/images/github-banner.svg" /></a></div></div></nav><div class="home--hero row"><div class="columns medium-12 text-center"><h1 class="home--heading">Infrastructure Code Deserves Tests Too</h1><a href="/docs/getting-started" class="button primary-cta">Get Started</a></div></div><div class="row content"><div class="columns large-4"><div class="home--text"><h2 class="body-heading">What is Kitchen?</h2><p>Kitchen provides a test harness to execute infrastructure code on one
+or more platforms in isolation.</p><p>A driver plugin architecture is used to run code on various cloud
+providers and virtualization technologies such as Vagrant, Amazon
+EC2, and Docker. <a href="/docs/drivers">Read more</a></p><p>Many testing frameworks are supported out of the box including
+<a href="https://www.inspec.io/">InSpec</a>,
+<a href="//serverspec.org/">Serverspec</a>, and
+<a href="https://github.com/sstephenson/bats">Bats</a></p><p>For Chef workflows, cookbook dependency resolution via
+<a href="https://docs.chef.io/berkshelf.html">Berkshelf</a> or
+<a href="https://docs.chef.io/config_rb_policyfile.html">Policyfiles</a>
+is supported or include a <code>cookbooks/</code> directory and
+Kitchen will know what to do.</p><p>Kitchen is used by all
+<a href="https://github.com/chef-cookbooks/">Chef-managed community
+cookbooks</a> and is the integration testing tool of choice for
+cookbooks.</p></div></div><div class="columns large-8"><div class="row home--image-row"><div class="columns medium-6 medium-text-right"><div class="home--markdown"><div class="highlight"><pre class="highlight yaml"><code><span style="color: #f4bf75">---</span>
+<span style="color: #66d9ef">driver</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">vagrant</span>
+
+<span style="color: #66d9ef">provisioner</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">chef_zero</span>
+
+<span style="color: #66d9ef">platforms</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">ubuntu-14.04</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">windows-2012r2</span>
+
+<span style="color: #66d9ef">suites</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">client</span>
+    <span style="color: #66d9ef">run_list</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #f8f8f2">-</span> <span style="color: #a6e22e">recipe[postgresql::client]</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #66d9ef">name</span><span style="color: #f8f8f2">:</span> <span style="color: #a6e22e">server</span>
+    <span style="color: #66d9ef">run_list</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #f8f8f2">-</span> <span style="color: #a6e22e">recipe[postgresql::server]</span>
+</code></pre></div></div></div><div class="columns medium-6 home--logos"><img class="home--logos--img" margin-left="0px" onerror="this.src='/images/logos-group.png'" src="/images/logos-group.svg" /></div></div><div class="row home--image-row"><div class="columns medium-6 medium-text-right"><div class="home--markdown"><div class="highlight"><pre class="highlight shell"><code><span style="color: #f8f8f2;background-color: #272822">$ </span>kitchen create
+
+<span style="color: #f8f8f2;background-color: #272822">$ </span>kitchen converge
+
+<span style="color: #f8f8f2;background-color: #272822">$ </span>kitchen setup
+
+<span style="color: #f8f8f2;background-color: #272822">$ </span>kitchen verify
+
+<span style="color: #f8f8f2;background-color: #272822">$ </span>kitchen destroy
+</code></pre></div></div></div><div class="columns medium-6"><div class="home--text--rightcol"><h2 class="body-heading">How do I run Kitchen?</h2><p>There are five basic commands to provision platforms and test
+infrastructure code.</p></div></div></div><div class="row home--image-row"><div class="columns medium-6 medium-text-right"><div class="home--markdown"><div class="highlight"><pre class="highlight shell"><code><span style="color: #f4bf75">--</span><span style="color: #f8f8f2">&gt;</span> Running rspec <span style="color: #f8f8f2;background-color: #272822">test </span>suites
+
+  ✔ git binary is found <span style="color: #ae81ff">in </span>PATH
+
+3 tests, 2 failures
+
+Finished verifying
+
+&lt;default-ubuntu-1404&gt; <span style="color: #f8f8f2">(</span>0m0.98s<span style="color: #f8f8f2">)</span><span style="color: #f8f8f2;background-color: #272822">.</span>
+
+<span style="color: #f4bf75">--</span><span style="color: #f8f8f2">&gt;</span> Destroying
+
+<span style="color: #f4bf75">--</span><span style="color: #f8f8f2">&gt;</span> Kitchen is finished.
+<span style="color: #f8f8f2">(</span>1m44.11s<span style="color: #f8f8f2">)</span>
+</code></pre></div></div></div><div class="columns medium-6"><div class="home--text--rightcol"><h2 class="body-heading">How do I get started?</h2><p>Install the <a href="https://downloads.chef.io/chefdk/">Chef
+Development Kit (ChefDK)</a> to get started.  Alternatively,
+install the gem directly with <code>gem install
+test-kitchen</code>.</p><a href="/docs/getting-started" class="button secondary-cta">Get Started</a></div></div></div></div></div><footer class="main-footer"><div class="row"><div class="columns medium-12 text-center"><a href="https://www.chef.io/"><img alt="Chef Logo" class="main-footer--logo" onerror="this.src='/images/chef-logo.png'" src="/images/chef-logo.svg" /></a><p class="main-footer--logo-text">Maintained by Chef.</p></div></div><div class="row content"><div class="columns medium-12 text-center medium-text-left"><p class="main-footer--copyright">&copy; 2018, Chef Software, Inc. All Rights Reserved.</p><ul class="main-footer--links"><li><a href="/" class="main-footer--link">Home</a></li><li><a href="/docs/getting-started" class="main-footer--link">Docs</a></li><li><a href="https://github.com/test-kitchen/test-kitchen" class="main-footer--link">Github</a></li></ul></div></div></footer><script src="/javascripts/all.js"></script><script>$(document).foundation();</script></body></html>

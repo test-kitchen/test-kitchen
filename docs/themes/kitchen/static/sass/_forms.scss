@@ -1,0 +1,14 @@
+input[type=text] {
+  padding: rem-calc(8 16);
+  color: $input-color;
+  border-radius: $border-radius-base;
+
+  &:focus {
+    border: 1px solid $lightgray;
+    box-shadow: 0 0 16px $ash;
+  }
+
+  &::placeholder {
+    color: $input-placeholder-color;
+  }
+}

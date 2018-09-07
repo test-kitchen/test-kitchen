@@ -29,3 +29,10 @@ kitchen.yml
 kitchen.local.yml
 Berksfile.lock
 *.swp
+*~
+.sass-cache
+_site/
+_cache
+.tddium*
+docs/public
+

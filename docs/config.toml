@@ -1,0 +1,36 @@
+baseURL = "/"
+languageCode = "en-us"
+title = "Kitchen Documentation"
+theme = "kitchen"
+pygmentsCodeFences = true
+
+[params]
+enable_search = true  # set to true to show search bar
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[[menu.docs]]
+identifier = "getting_started"
+name = "Getting Started"
+weight = 5
+
+[[menu.docs]]
+identifier = "drivers"
+name = "Drivers"
+weight = 10
+
+[[menu.docs]]
+identifier = "provisioners"
+name = "Provisioners"
+weight = 15
+
+[[menu.docs]]
+identifier = "verifiers"
+name = "Verifiers"
+weight = 20
+
+[[menu.docs]]
+identifier = "reference"
+name = "Reference"
+weight = 50

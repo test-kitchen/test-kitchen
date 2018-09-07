@@ -1,0 +1,71 @@
+.sidebar {
+  overflow-y: scroll;
+}
+
+#sidebar-nav {
+  > .nav {
+
+    @include breakpoint(medium) {
+      overflow: auto;
+      overflow-y: scroll;
+      height: calc(100vh - 140px);
+    };
+
+    > .accordion-menu {
+      font-size: rem-calc(15px);
+
+      > li {
+
+        > a {
+          font-weight: 700;
+
+          @include breakpoint(medium) {
+            border-radius: $border-radius-base 0 0 $border-radius-base;
+          };
+        }
+      }
+
+      .nested.is-active li.active a {
+        font-weight: normal;
+        background: none;
+        color: $blue-darker;
+      }
+
+      .nested.is-accordion-submenu {
+        margin-left: rem-calc(8);
+      }
+    }
+
+    input {
+      padding: 0.5rem 1rem;
+    }
+
+    .menu {
+      a {
+        color: $body-font-color;
+      }
+    }
+  }
+
+  .algolia-autocomplete {
+    width: 100%;
+    padding: rem-calc(0 8 0);
+
+    @include breakpoint(medium) {
+      margin-top: rem-calc(8);
+      padding: rem-calc(0 16 0 0);
+    };
+
+    .ds-dropdown-menu {
+      min-width: 300px;
+
+      @include breakpoint(medium) {
+        min-width: 500px;
+      };
+
+      .ds-suggestion {
+        margin-bottom: rem-calc(16);
+      }
+    }
+  }
+}

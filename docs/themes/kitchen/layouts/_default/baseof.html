@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+{{ partial "kitchen/head" . }}
+<body>
+  <div class="off-canvas-wrapper has-sidebar">
+    <div class="off-canvas-content" data-off-canvas-content>
+      <div class="cell small-12">
+        <nav id="utility-bar" class="utility-bar" data-toggler="active">
+          <div class="grid-container">
+            <div class="grid-x align-right">
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div id="menu" class="cell small-12" data-sticky-container>
+        {{ partial "kitchen/header" . }}
+      </div>
+      <div id="main-content" class="cell small-12" data-sticky-container>
+        <div class="grid-container">
+          <div class="grid-x">
+            <div class="cell medium-3 col-sidebar">
+              {{ partial "sidebar" . }}
+            </div>
+            <div id="main-content-col" class="cell medium-9 col-content">
+              {{ block "main" . }}
+              {{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="footer" class="cell small-12">
+        <div class="grid-x">
+          <div class="cell small-12">
+            <nav>
+              {{ partial "kitchen/footer" . }}
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="{{ "js/scripts-all.js" | relURL }}"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+  <script type="text/javascript">
+    docsearch({
+      apiKey: 'INSERTHERE',
+      indexName: 'kitchen_ci',
+      inputSelector: '#doc-search',
+      debug: false // Set debug to true if you want to inspect the dropdown
+    });
+  </script>
+</body>
+</html>
