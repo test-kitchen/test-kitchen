@@ -89,6 +89,7 @@ module Kitchen
         env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
         env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
         env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
+        env_state[:environment]["KITCHEN_USERNAME"] = instance.transport[:username]
         state.each_pair do |key, value|
           env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
         end
