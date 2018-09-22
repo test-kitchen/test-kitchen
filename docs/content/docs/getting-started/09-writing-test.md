@@ -11,22 +11,17 @@ Being able to manually verify the Chef run is great but it would be even better 
 
 Kitchen presumes you want to test things and supports a variety of different frameworks for doing so. For the purpose of our guide we're going to use a framework called InSpec which kitchen consumes via the `kitchen-inspec` plugin. For more information on available testing frameworks check out [Verifiers](/docs/verifiers)
 
-The cookbook skeleton already has conveniently created a test for you at `test/smoke/default/default_test.rb`. Open this file in your editor and edit to match the following content:
+The cookbook skeleton already has conveniently created a test for you at `test/integration/default/default_test.rb`. Open this file in your editor and edit to match the following content:
 
 ~~~
 # # encoding: utf-8
-
-# Inspec test for recipe git_cookbook::default
-
-# The Inspec reference, with examples and extensive documentation, can be
-# found at http://inspec.io/docs/reference/resources/
 
 describe package('git') do
   it { should be_installed }
 end
 ~~~
 
-Why `test/smoke/default/default_test.rb`? Let's take a look again at our `.kitchen.yml`:
+Why `test/integration/default/default_test.rb`? Let's take a look again at our `.kitchen.yml`:
 
 ~~~
 # relevant sections of config
@@ -40,7 +35,7 @@ suites:
       - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
-        - test/smoke/default
+        - test/integration/default
     attributes:
 ~~~
 

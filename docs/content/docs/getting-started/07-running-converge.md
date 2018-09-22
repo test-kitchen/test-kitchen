@@ -7,44 +7,88 @@ menu:
     weight: 70
 ---
 
-##### kitchen converge
-
 Now that we have a recipe, let's use `kitchen converge` to see if it works:
 
 ~~~
-$ kitchen converge default-ubuntu-1604
------> Starting Kitchen (v1.16.0)
+-----> Starting Kitchen (v1.23.2)
+-----> Creating <default-ubuntu-1604>...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==> default: Importing base box 'bento/ubuntu-16.04'...
+       ==> default: Matching MAC address for NAT networking...
+       ==> default: Checking if box 'bento/ubuntu-16.04' is up to date...
+       ==> default: Setting the name of the VM: default-ubuntu-1604_default_1537636613635_14010
+       ==> default: Clearing any previously set network interfaces...
+       ==> default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==> default: Forwarding ports...
+           default: 22 (guest) => 2222 (host) (adapter 1)
+       ==> default: Booting VM...
+       ==> default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2222
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default:
+           default: Vagrant insecure key detected. Vagrant will automatically replace
+           default: this with a newly generated keypair for better security.
+           default:
+           default: Inserting generated public key within guest...
+           default: Removing insecure key from the guest if it's present...
+           default: Key inserted! Disconnecting and reconnecting using new SSH key...
+       ==> default: Machine booted and ready!
+       ==> default: Checking for guest additions in VM...
+       ==> default: Setting hostname...
+       ==> default: Mounting shared folders...
+           default: /tmp/omnibus/cache => /Users/cheeseplus/.kitchen/cache
+       ==> default: Machine not provisioned because `--no-provision` is specified.
+       [SSH] Established
+       Vagrant instance <default-ubuntu-1604> created.
+       Finished creating <default-ubuntu-1604> (0m37.44s).
 -----> Converging <default-ubuntu-1604>...
        Preparing files for transfer
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 5.6.4...
+       Resolving cookbook dependencies with Berkshelf 7.0.6...
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
+-----> Installing Chef Omnibus (install only if missing)
+       Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
+       Trying wget...
+       Download complete.
        ubuntu 16.04 x86_64
-       Getting information for chef stable 13.0.118 for ubuntu...
-       downloading https://omnitruck.chef.io/stable/chef/metadata?v=13.0.118&p=ubuntu&pv=16.04&m=x86_64
-         to file /tmp/install.sh.1596/metadata.txt
+       Getting information for chef stable  for ubuntu...
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=16.04&m=x86_64
+         to file /tmp/install.sh.1548/metadata.txt
        trying wget...
-       sha1     da845676ff2e17b3049ca6e52541389318183f89
-       sha256   650e80ad44584ca48716752d411989ab155845af4af7a50c530155d9718843eb
-       url      https://packages.chef.io/files/stable/chef/13.0.118/ubuntu/16.04/chef_13.0.118-1_amd64.deb
-       version  13.0.118
+       sha1     174eb82ebe2eddc9c370487de6c124907f6d2f3a
+       sha256   70ce695d2bf9fb01279a726148c0600544f1cd431642fa98d6696ef4c1dfc3c9
+       url      https://packages.chef.io/files/stable/chef/14.5.27/ubuntu/16.04/chef_14.5.27-1_amd64.deb
+       version  14.5.27
        downloaded metadata file looks valid...
-       downloading https://packages.chef.io/files/stable/chef/13.0.118/ubuntu/16.04/chef_13.0.118-1_amd64.deb
-         to file /tmp/install.sh.1596/chef_13.0.118-1_amd64.deb
+       downloading https://packages.chef.io/files/stable/chef/14.5.27/ubuntu/16.04/chef_14.5.27-1_amd64.deb
+         to file /tmp/omnibus/cache/chef_14.5.27-1_amd64.deb
        trying wget...
        Comparing checksum with sha256sum...
-       Installing chef 13.0.118
+
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+       You are installing an omnibus package without a version pin.  If you are installing
+       on production servers via an automated process this is DANGEROUS and you will
+       be upgraded without warning on new releases, even to new major releases.
+       Letting the version float is only appropriate in desktop, test, development or
+       CI/CD environments.
+
+       WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+       Installing chef
        installing with dpkg...
        Selecting previously unselected package chef.
-(Reading database ... 37825 files and directories currently installed.)
-       Preparing to unpack .../chef_13.0.118-1_amd64.deb ...
-       Unpacking chef (13.0.118-1) ...
-       Setting up chef (13.0.118-1) ...
+(Reading database ... 38378 files and directories currently installed.)
+       Preparing to unpack .../cache/chef_14.5.27-1_amd64.deb ...
+       Unpacking chef (14.5.27-1) ...
+       Setting up chef (14.5.27-1) ...
        Thank you for installing Chef!
        Transferring files to <default-ubuntu-1604>
-       Starting Chef Client, version 13.0.118
+       Starting Chef Client, version 14.5.27
        Creating a new client identity for default-ubuntu-1604 using the validator key.
        resolving cookbooks for run list: ["git_cookbook::default"]
        Synchronizing Cookbooks:
@@ -58,8 +102,9 @@ $ kitchen converge default-ubuntu-1604
        Running handlers:
        Running handlers complete
        Chef Client finished, 0/1 resources updated in 01 seconds
-       Finished converging <default-ubuntu-1604> (0m15.55s).
------> Kitchen is finished. (0m17.04s)
+       Downloading files from <default-ubuntu-1604>
+       Finished converging <default-ubuntu-1604> (0m22.49s).
+-----> Kitchen is finished. (1m2.47s)
 ~~~
 
 If you are a Chef user then part of the output above should look familiar to you. Here's what happened at a high level:

@@ -7,8 +7,6 @@ menu:
     weight: 180
 ---
 
-##### Next Steps
-
 This concludes the getting started guide for kitchen. Hopefully you are now more comfortable with Kitchen's basic usage, fundamental concepts, and a feel for a testing workflow.
 
 From here, there are a few resources that can help you along your infrastructure testing journey:

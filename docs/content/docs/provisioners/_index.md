@@ -10,6 +10,6 @@ A Test-Kitchen *provisioner* is a what takes care of configuring the compute ins
 
 Other provisioners:
 
- - kitchen-ansible
- - kitchen-puppet
- - kitchen-dsc
+* [kitchen-ansible](https://github.com/neillturner/kitchen-ansible)
+* [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
+* [kitchen-dsc](https://github.com/test-kitchen/kitchen-dsc)

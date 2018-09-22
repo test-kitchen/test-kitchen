@@ -5,7 +5,6 @@ menu:
     parent: reference
     weight: 5
 ---
-##### Dynamic Configuration
 
 There are a few basic ways of dynamically configuring Kitchen:
 

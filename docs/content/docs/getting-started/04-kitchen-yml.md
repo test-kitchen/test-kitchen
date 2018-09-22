@@ -1,5 +1,5 @@
 ---
-title: ".kitchen.yml"
+title: "kitchen.yml"
 slug: kitchen-yml
 menu:
   docs:
@@ -7,11 +7,14 @@ menu:
     weight: 40
 ---
 
-##### .kitchen.yml
+<div class="callout">
+<h3 class="callout--title">Note</h3>
+As of test-kitchen 1.21.0, we now prefer <code>kitchen.yml</code> over <code>.kitchen.yml</code>. This preference applies to <code>kitchen.local.yml</code> as well. This is backward compatible so the dot versions continue to work.
+</div>
 
 Let's turn our attention to the `.kitchen.yml` file for a minute. While ChefDK may have created the initial file automatically, it's expected that you will read and edit this file. After all, you know what you want to test... right?
 
-For the moment let's say we only care about running our Chef cookbook on Ubuntu 16.04 with Chef version 13. In that case, we can edit the `.kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
+For the moment let's say we only care about running our Chef cookbook on Ubuntu 16.04 with the latest Chef version. In that case, we can edit the `.kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
 
 ~~~
 ---
@@ -33,26 +36,9 @@ suites:
       - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
-        - test/smoke/default
+        - test/integration/default
     attributes:
 ~~~
-
-Very briefly we can cover the common sections you're likely to find in a `.kitchen.yml` file:
-
-* `driver`: Set and configure the driver. We're explicitly setting it via `name: vagrant` even though this is the default.
-* `transport`: Configure settings for the transport layer (SSH/WinRM). No configuration is needed of this for our guide as default values suffice. However, be aware that if  `winrm-elevated 0.4.0` is used, this additional configuration is needed:
-
-~~~
----
-transport:
-  name: winrm
-  elevated: true
-~~~
-
-* `provisioner`: This tells Kitchen how to run Chef, to apply the code in our cookbook to the machine under test.  The default and simplest approach is to use `chef_zero`, but other options are available, and ultimately Kitchen doesn't care how the infrastructure is built - it could theoretically be with Puppet, Ansible, or Perl for all it cares.
-* `verifier`: This is where we configure the behaviour of the Kitchen Verifier - this component that is responsible for executing tests against the machine after Chef has converged.
-* `platforms`: This is a list of operation systems on which we want to run our code. Note that the operating system's version, architecture, cloud environment, etc. might be relevant to what Kitchen considers a **Platform**.
-* `suites`: This section defines what we want to test.  It includes the Chef run-list and any node attribute setups that we want run on each **Platform** above. For example, we might want to test the MySQL client cookbook code separately from the server cookbook code for maximum isolation.
 
 To see the results of our work, let's run the `kitchen list` subcommand:
 

@@ -48,7 +48,7 @@ suites:
       - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
-        - test/smoke/default
+        - test/integration/default
     attributes:
 ~~~
 

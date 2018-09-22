@@ -7,8 +7,6 @@ menu:
     weight: 80
 ---
 
-
-
 If you're a skeptical person then you might be asking:
 
 > "How can we be sure that Git was actually installed?"
@@ -18,7 +16,7 @@ Let's verify this right now.
 Kitchen has a **login** subcommand for just these kinds of situations:
 
 ~~~
-Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-75-generic x86_64)
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-116-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com
@@ -28,23 +26,23 @@ Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-75-generic x86_64)
 0 updates are security updates.
 
 
-Last login: Mon May 15 14:56:09 2017 from 10.0.2.2
+Last login: Sat Sep 22 17:17:36 2018 from 10.0.2.2
 vagrant@default-ubuntu-1604:~$
 ~~~
 
-As you can see by the prompt above we are now in the `default-ubuntu-1604` instance. We'll denote the prompt in an instance with `# ` for clarity. Now to check if Git is installed:
+As you can see by the prompt above we are now in the `default-ubuntu-1604` instance. We'll denote the prompt in an instance with `$ ` for clarity. Now to check if Git is installed:
 
 ~~~
-# which git
+$ which git
 /usr/bin/git
-# git --version
+$ git --version
 git version 2.7.4
 ~~~
 
 Rockin. Now we can exit out back to our workstation:
 
 ~~~
-# exit
+$ exit
 logout
 Connection to 127.0.0.1 closed.
 ~~~

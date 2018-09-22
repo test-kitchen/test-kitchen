@@ -7,8 +7,6 @@ menu:
     weight: 140
 ---
 
-##### Adding a Suite
-
 We're going to call our new suite `"server"` by editing `.kitchen.yml` in your editor of choice so that it looks similar to:
 
 ~~~
@@ -32,14 +30,14 @@ suites:
       - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
-        - test/smoke/default
+        - test/integration/default
     attributes:
   - name: server
     run_list:
       - recipe[git_cookbook::server]
     verifier:
       inspec_tests:
-        - test/smoke/server
+        - test/integration/server
     attributes:
 ~~~
 

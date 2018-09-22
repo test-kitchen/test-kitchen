@@ -7,17 +7,15 @@ menu:
     weight: 150
 ---
 
-##### Adding a Test
-
 Our first test was created for us automatically for us by our cookbook generator so here we will create the folders and files manually.
 
 First we're going to create a directory for our test file:
 
 ~~~
-mkdir -p test/smoke/server
+mkdir -p test/integration/server
 ~~~
 
-Next, create a file called `test/smoke/server/git_daemon_test.rb` with the following:
+Next, create a file called `test/integration/server/git_daemon_test.rb` with the following:
 
 ~~~
 # # encoding: utf-8
@@ -58,7 +56,7 @@ Instance            Driver   Provisioner  Verifier  Transport  Last Action  Last
 server-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        Created      Kitchen::ActionFailed
 ~~~
 
-Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` subcommands.
+Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` sub-commands.
 
 Okay, no recipe called `server` in our Git cookbook. Let's go create one.
 

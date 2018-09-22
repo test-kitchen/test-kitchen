@@ -7,8 +7,6 @@ menu:
     weight: 170
 ---
 
-##### Excluding Platforms
-
 Perhaps our enterprise has standardized on Ubuntu 16.04 for server tasks so we really only care about testing that our `server` recipe works on that platform. That said we still want to be able to test our default recipe against CentOS.
 
 Let's give `kitchen list` a look:
@@ -48,14 +46,14 @@ suites:
       - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
-        - test/smoke/default
+        - test/integration/default
     attributes:
   - name: server
     run_list:
       - recipe[git_cookbook::server]
     verifier:
       inspec_tests:
-        - test/smoke/server
+        - test/integration/server
     attributes:
     excludes:
       - centos-7
@@ -75,7 +73,7 @@ Finally let's destroy our running instances:
 
 ~~~
 $ kitchen destroy
------> Starting Kitchen (v1.16.0)
+-----> Starting Kitchen (v1.23.2)
 -----> Destroying <default-ubuntu-1604>...
        Finished destroying <default-ubuntu-1604> (0m0.00s).
 -----> Destroying <default-centos-7>...
