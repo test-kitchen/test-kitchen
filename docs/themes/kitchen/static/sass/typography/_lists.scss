@@ -1,0 +1,155 @@
+.col-content,
+.content {
+  ul, ol {
+    margin-bottom: 28px;
+
+    li {
+      @extend .p;
+      margin-bottom: 16px;
+    }
+  }
+
+  ol {
+    padding-left: rem-calc(16);
+
+    > li > ol {
+      list-style-type: lower-alpha;
+    }
+  }
+
+  ul {
+    list-style: none;
+
+    li {
+      padding-left: 21px;
+
+      &:before {
+        @include fa-icon;
+        @extend .fas;
+        content: fa-content($fa-var-circle);
+        margin-left: -22px;
+        vertical-align: middle;
+        font-size: 6px;
+        color: $blue;
+        position: relative;
+        padding-right: 14px;
+        top: -1px;
+      }
+    }
+
+    &.reset {
+      @include reset-ul();
+    }
+
+    &.bordered-items {
+      @extend ul, .reset;
+      margin-bottom: 50px;
+      margin-top: rem-calc(24);
+
+      li {
+        padding-left: rem-calc(16);
+        position: relative;
+        margin-bottom: rem-calc(24);
+
+        &:before {
+          display: block;
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 2px;
+          background-color: $blue;
+          margin: 0;
+          padding: 0;
+        }
+
+        .title {
+          @extend .p;
+          text-transform: uppercase;
+          margin-bottom: rem-calc(8);
+          font-weight: bold;
+          font-size: rem-calc(14);
+        }
+
+        .desc {
+          @extend .p;
+          margin-bottom: 0;
+          color: rgba($white, 0.65);
+          font-size: rem-calc(14);
+        }
+      }
+    }
+  }
+
+  ol.styled-nums,
+  div.styled-nums > ol {
+    @extend ul;
+    padding: 0;
+    margin-left: 0 !important;
+    margin-top: rem-calc(48);
+
+    @include breakpoint(large) {
+      margin-top: rem-calc(8);
+    };
+
+    li {
+      counter-increment: item;
+      margin-bottom: rem-calc(32);
+      padding-top: rem-calc(48);
+      padding-left: rem-calc(8);
+      position: relative;
+
+      @include breakpoint(medium) {
+        padding-left: rem-calc(40);
+        padding-top: 0;
+      }
+
+      &:before {
+        content: counter(item);
+        font-size: inherit;
+        font-family: inherit;
+        width: 32px;
+        height: 32px;
+        background: $blue;
+        border-radius: 50%;
+        color: $white;
+        text-align: center;
+        font-weight: 600;
+        line-height: 32px;
+        padding: 0;
+        display: inline-block;
+
+        @include breakpoint(small down) {
+          position: absolute;
+          top: 0;
+          left: 8px;
+          margin: 0;
+        }
+
+        @include breakpoint(medium) {
+          margin-left: -48px;
+          margin-right: 16px;
+        }
+
+      }
+    }
+
+    + .cta {
+      @include breakpoint(medium) {
+        margin-left: 48px;
+      }
+    }
+  }
+
+  dl {
+    dt {
+      margin-bottom: rem-calc(4px);
+    }
+
+    dd {
+      margin-bottom: rem-calc(16px);
+      margin-left: rem-calc(16px);
+    }
+  }
+}

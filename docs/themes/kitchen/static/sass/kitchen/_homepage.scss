@@ -1,0 +1,27 @@
+#main-content {
+  background-color: $white;
+
+  @include breakpoint(medium) {
+    background-color: $sidebargray;
+  }
+}
+
+#hero {
+  padding: rem-calc(48) 0 rem-calc(96);
+  background-color: $white;
+
+  p {
+    margin-bottom: rem-calc(32);
+  }
+
+  img {
+    margin-top: rem-calc(32);
+    max-width: 100%;
+    width: 100%;
+    border-radius: $border-radius-base;
+
+    @include breakpoint(large) {
+      margin-top: 0;
+    };
+  }
+}

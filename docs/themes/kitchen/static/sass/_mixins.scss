@@ -1,0 +1,133 @@
+@import 'util/mixins';
+
+// Font smoothing mixin
+@mixin font-smoothing() {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+
+//font calling
+@mixin muli($weight:null){
+  font-family: 'Muli', sans-serif;
+
+	@if($weight){
+		font-weight: $weight;
+	}
+}
+
+//base typography
+@mixin base-type(){
+	@include muli();
+	font-size: 16px;
+	line-height: 1.75;
+	font-weight: normal;
+	letter-spacing: 0.5px;
+}
+
+//animation
+@mixin transition($speed:0.15s) {
+	transition: all $speed ease-in-out;
+}
+
+//button
+@mixin button() {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-radius: $border-radius-base;
+	outline: none;
+	background: none;
+	text-decoration: none;
+
+	@include muli();
+	@include transition();
+
+	font-size: 16px;
+  line-height: 1.6;
+  color: $charcoal;
+  font-weight: 700;
+  padding: 11px 36px;
+  background-color: $orange;
+	display: inline-block;
+	text-align: center;
+
+	body:not(.touch-device) & {
+		&:hover {
+			text-decoration: none;
+			color: $charcoal;
+			background-color: $orange-lighter;
+		}
+	}
+
+
+	&:visited {
+		color: $charcoal;
+	}
+
+	&:active, &:focus {
+		outline: none;
+		text-decoration: none;
+	}
+}
+
+//bg cover
+@mixin bg-cover() {
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+// fluid font size for shrinking fonts
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+//gradients
+@mixin gradient($left, $right, $dir:""){
+	@if($dir != ""){
+		background: linear-gradient($dir, $left, $right);
+	}
+	@else {
+		background: linear-gradient(to right, $left, $right);
+	}
+
+}
+
+@mixin fas() {
+	font-family: "Font Awesome 5 Solid";
+}
+
+@mixin transform($v){
+  -ms-transform: ($v);
+  -moz-transform: ($v);
+  -webkit-transform: ($v);
+  transform: ($v);
+}
+
+@mixin transform-origin($x){
+	-moz-transform-origin: $x;
+	-ms-transform-origin: $x;
+	-webkit-transform-origin: $x;
+	transform-origin: $x;
+}
+
+@mixin reset-ul(){
+	margin: 0;
+	padding: 0;
+
+	li {
+		padding: 0;
+		margin: 0;
+
+		&:before {
+			display: none;
+		}
+	}
+}
+
+@mixin box-shadow(){
+	box-shadow: 0 8px 24px 0 rgba(0,0,0,0.08);
+}

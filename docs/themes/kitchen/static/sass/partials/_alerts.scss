@@ -1,0 +1,32 @@
+@mixin alert($color: $info-color) {
+  @include callout($color);
+
+  > p {
+    padding: 0px;
+    margin: 0px;
+  }
+}
+
+.alert {
+  @include alert;
+
+  &-info {
+    @include alert($info-color);
+  }
+
+  &-tip {
+    @include alert($info-color);
+  }
+
+  &-success {
+    @include alert($success-color);
+  }
+
+  &-warning {
+    @include alert($warning-color);
+  }
+
+  &-danger {
+    @include alert($alert-color);
+  }
+}

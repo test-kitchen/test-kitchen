@@ -1,0 +1,29 @@
+.prose {
+  h1, h2, h3, h4, h5, h6 {
+    .svg-inline--fa {
+      padding-left: rem-calc(10px);
+      font-size: 90%;
+    }
+  }
+
+  > p, .p {
+    @include base-type();
+    margin-bottom: 28px;
+    color: $charcoal;
+
+    &.intro {
+      font-size: 20px;
+      line-height: 1.6;
+
+      &-medium {
+        font-size: 22px;
+        line-height: 1.45;
+      }
+    }
+
+    &.desc {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+$regular: 400;
+$semibold: 600;
+$bold: 700;
+$extrabold: 800;
+
+@font-face {
+  font-family: 'Muli';
+  font-weight: $regular;
+  src: url('/fonts/Muli-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Muli';
+  font-weight: $semibold;
+  src: url('/fonts/Muli-SemiBold.ttf');
+}
+
+@font-face {
+  font-family: 'Muli';
+  font-weight: $bold;
+  src: url('/fonts/Muli-Bold.ttf');
+}
+
+@import "vendor/fontawesome/fontawesome.scss";
+@import "vendor/fontawesome/fa-solid.scss";
+@import "vendor/fontawesome/fa-brands.scss";
+
+@import "typography/code";
+@import "typography/headers";
+@import "typography/links";
+@import "typography/lists";
+@import "typography/prose";
+@import "typography/text";
+
