@@ -3,7 +3,7 @@ title: Drivers
 menu:
   docs:
     parent: drivers
-    weight: 15
+    weight: 10
 ---
 
 A Test-Kitchen *driver*  is what supports configuring the compute instance that is used for isolated testing. This is typically a local hypervisor, hypervisor abstraction layer (Vagrant), or cloud service (EC2).
@@ -16,6 +16,7 @@ ChefDK / Chef Workstation include:
 * [kitchen-dokken](https://github.com/someara/kitchen-dokken)
 * [kitchen-google](https://github.com/test-kitchen/kitchen-google)
 * [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv)
+* [kitchen-azurerm](https://github.com/test-kitchen/kitchen-azurerm)
 
 Community Drivers:
 
