@@ -498,9 +498,9 @@ module Kitchen
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
 
-        # disable host key verification. The hash key to use
-        # depends on the version of net-ssh in use.
-        opts[verify_host_key_option] = false
+        # disable host key verification. The hash key and value to use
+        # depend on the version of net-ssh in use
+        opts[verify_host_key_option] = verify_host_key_value
 
         opts
       end
@@ -522,6 +522,18 @@ module Kitchen
         new_option_version = Net::SSH::Version[4, 2, 0]
 
         current_net_ssh >= new_option_version ? :verify_host_key : :paranoid
+      end
+
+      #
+      # Returns the correct host-key-verification option value to use depending
+      # on what version of net-ssh is in use. In net-ssh <= 5, the supported
+      # parameter is false but in 5.0, it became `:never`
+      #
+      def verify_host_key_value
+        current_net_ssh = Net::SSH::Version::CURRENT
+        new_option_version = Net::SSH::Version[5, 0, 0]
+
+        current_net_ssh >= new_option_version ? :never : false
       end
 
       # Creates a new SSH Connection instance and save it for potential future
