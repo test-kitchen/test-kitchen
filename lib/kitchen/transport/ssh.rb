@@ -508,7 +508,8 @@ module Kitchen
       #
       # Returns the correct host-key-verification option key to use depending
       # on what version of net-ssh is in use. In net-ssh <= 4.1, the supported
-      # parameter is `paranoid` but in 4.2, it became `verify_host_key`
+      # parameter is `paranoid` but in 4.2, it became `verify_host_key`.
+      # After 5.0 it is now `never`.
       #
       # `verify_host_key` does not work in <= 4.1, and `paranoid` throws
       # deprecation warnings in >= 4.2.
@@ -517,9 +518,12 @@ module Kitchen
       # net-ssh to ~> 4.2, this will prevent InSpec from being used in
       # Chef v12 because of it pinning to a v3 of net-ssh.
       #
+      # If net-ssh version is > 5.0.0 `never` will be the standard de facto.
       def verify_host_key_option
         current_net_ssh = Net::SSH::Version::CURRENT
         new_option_version = Net::SSH::Version[4, 2, 0]
+
+        return :never if current_net_ssh >= Net::SSH::Version[5, 0, 0]
 
         current_net_ssh >= new_option_version ? :verify_host_key : :paranoid
       end
