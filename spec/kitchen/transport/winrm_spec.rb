@@ -906,16 +906,16 @@ describe Kitchen::Transport::Winrm::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          message = <<'MSG'.chomp!
-doit : The term 'doit' is not recognized as the name of a cmdlet, function,
-script file, or operable program. Check the spelling ofthe name, or if a path
-was included, verify that the path is correct and try again.
-At line:1 char:1
-+ doit
-+ ~~~~
-    + CategoryInfo          : ObjectNotFound: (doit:String) [], CommandNotFoun
-   dException
-    + FullyQualifiedErrorId : CommandNotFoundException
+          message = <<~'MSG'.chomp!
+            doit : The term 'doit' is not recognized as the name of a cmdlet, function,
+            script file, or operable program. Check the spelling ofthe name, or if a path
+            was included, verify that the path is correct and try again.
+            At line:1 char:1
+            + doit
+            + ~~~~
+                + CategoryInfo          : ObjectNotFound: (doit:String) [], CommandNotFoun
+               dException
+                + FullyQualifiedErrorId : CommandNotFoundException
 MSG
 
           message.lines.each do |line|

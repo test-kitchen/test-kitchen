@@ -44,8 +44,8 @@ describe Kitchen::LifecycleHooks do
       "KITCHEN_SUITE_NAME" => "default",
       "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
       "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
-    }
-  }
+    },
+  }.freeze
 
   it "runs a single local command" do
     config.update(post_create: ["echo foo"])
@@ -77,7 +77,7 @@ describe Kitchen::LifecycleHooks do
         "KITCHEN_SUITE_NAME" => "default",
         "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
         "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
-      }
+      },
     })
     run_lifecycle_hooks
   end
@@ -93,7 +93,7 @@ describe Kitchen::LifecycleHooks do
         "KITCHEN_SUITE_NAME" => "default",
         "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
         "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
-      }
+      },
     })
     run_lifecycle_hooks
   end
@@ -107,7 +107,7 @@ describe Kitchen::LifecycleHooks do
         "KITCHEN_SUITE_NAME" => "default",
         "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
         "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
-      }
+      },
     })
     run_lifecycle_hooks
   end
@@ -121,7 +121,7 @@ describe Kitchen::LifecycleHooks do
         "KITCHEN_SUITE_NAME" => "default",
         "KITCHEN_PLATFORM_NAME" => "toaster-1.0",
         "KITCHEN_INSTANCE_HOSTNAME" => "localhost",
-      }
+      },
     })
     run_lifecycle_hooks
   end
