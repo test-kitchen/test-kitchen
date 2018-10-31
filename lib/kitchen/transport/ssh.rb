@@ -314,7 +314,7 @@ module Kitchen
         # @api private
         def establish_connection_via_gateway(opts)
           retry_connection(opts) do
-            gateway_options = options.merge(:port => ssh_gateway_port)
+            gateway_options = options.merge(port: ssh_gateway_port)
             Net::SSH::Gateway.new(ssh_gateway,
                                   ssh_gateway_username, gateway_options).ssh(hostname, username, options)
           end

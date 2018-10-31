@@ -2695,7 +2695,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo"
+              pre_create: "echo foo",
             },
             platforms: [{ name: "plat" }],
             suites: [{ name: "sweet" }],
@@ -2730,19 +2730,19 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           {
             lifecycle: {
               pre_create: "echo foo",
-              post_create: "echo post"
+              post_create: "echo post",
             },
             platforms: [{
               name: "plat",
               lifecycle: {
-                pre_create: "echo bar"
-              }
+                pre_create: "echo bar",
+              },
             }],
             suites: [{
               name: "sweet",
               lifecycle: {
-                pre_create: "echo baz"
-              }
+                pre_create: "echo baz",
+              },
             }],
           },
           {}
@@ -2756,10 +2756,10 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         DataMunger.new(
           {
             driver: {
-              pre_create_command: "echo bar"
+              pre_create_command: "echo bar",
             },
             lifecycle: {
-              pre_create: "echo foo"
+              pre_create: "echo foo",
             },
             platforms: [{ name: "plat" }],
             suites: [{ name: "sweet" }],
@@ -2774,19 +2774,19 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo"
+              pre_create: "echo foo",
             },
             platforms: [{
               name: "plat",
               driver: {
-                pre_create_command: "echo bar"
-              }
+                pre_create_command: "echo bar",
+              },
             }],
             suites: [{
               name: "sweet",
               driver: {
-                pre_create_command: "echo baz"
-              }
+                pre_create_command: "echo baz",
+              },
             }],
           },
           {}

@@ -26,7 +26,7 @@ describe Kitchen::Driver::Exec do
   end
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance", :"transport=" => nil)
+    stub(name: "coolbeans", logger: logger, to_str: "instance", "transport=": nil)
   end
 
   let(:driver) do

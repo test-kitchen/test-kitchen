@@ -1077,17 +1077,17 @@ describe Kitchen::Provisioner::ChefBase do
         describe "with the default name `Policyfile.rb`" do
           before do
             File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
-              file.write(<<-POLICYFILE)
-name 'wat'
-run_list 'wat'
-cookbook 'wat'
+              file.write(<<~POLICYFILE)
+                name 'wat'
+                run_list 'wat'
+                cookbook 'wat'
 POLICYFILE
             end
             File.open("#{kitchen_root}/Policyfile.lock.json", "wb") do |file|
-              file.write(<<-POLICYFILE)
-{
-  "name": "wat"
-}
+              file.write(<<~POLICYFILE)
+                {
+                  "name": "wat"
+                }
 POLICYFILE
             end
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
@@ -1172,17 +1172,17 @@ POLICYFILE
 
             before do
               File.open(policyfile_path, "wb") do |file|
-                file.write(<<-POLICYFILE)
-name 'wat'
-run_list 'wat'
-cookbook 'wat'
+                file.write(<<~POLICYFILE)
+                  name 'wat'
+                  run_list 'wat'
+                  cookbook 'wat'
 POLICYFILE
               end
               File.open(policyfile_lock_path, "wb") do |file|
-                file.write(<<-POLICYFILE)
-{
-  "name": "wat"
-}
+                file.write(<<~POLICYFILE)
+                  {
+                    "name": "wat"
+                  }
 POLICYFILE
               end
             end
@@ -1251,17 +1251,17 @@ POLICYFILE
 
             before do
               File.open(policyfile_path, "wb") do |file|
-                file.write(<<-POLICYFILE)
-name 'wat'
-run_list 'wat'
-cookbook 'wat'
+                file.write(<<~POLICYFILE)
+                  name 'wat'
+                  run_list 'wat'
+                  cookbook 'wat'
 POLICYFILE
               end
               File.open(policyfile_lock_path, "wb") do |file|
-                file.write(<<-POLICYFILE)
-{
-  "name": "wat"
-}
+                file.write(<<~POLICYFILE)
+                  {
+                    "name": "wat"
+                  }
 POLICYFILE
               end
             end
