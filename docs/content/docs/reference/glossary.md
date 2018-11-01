@@ -3,7 +3,7 @@ title: Glossary
 menu:
   docs:
     parent: reference
-    weight: 15
+    weight: 25
 ---
 
 Berksfile 
