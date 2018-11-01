@@ -3,7 +3,7 @@ title: "FAQ"
 menu:
   docs:
     parent: reference
-    weight: 20
+    weight: 15
 ---
 
 ### FAQ

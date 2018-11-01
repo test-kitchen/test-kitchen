@@ -3,7 +3,7 @@ title: Reboots
 menu:
   docs:
     parent: reference
-    weight: 5
+    weight: 35
 ---
 
 Test-kitchen has support for enduring reboots initiated by a Chef provisioner. 
