@@ -66,3 +66,12 @@ rescue LoadError
   puts "github_changelog_generator is not available." \
        " (sudo) gem install github_changelog_generator to generate changelogs"
 end
+
+namespace :docs do
+  desc "Deploy docs"
+  task :deploy do
+    sh "cd docs && hugo"
+    sh "aws --profile chef-cd s3 sync docs/public s3://test-kitchen-legacy.cd.chef.co --delete --acl public-read"
+    sh "aws --profile chef-cd cloudfront create-invalidation --distribution-id EQD8MRW086SRT --paths '/*'"
+  end
+end
