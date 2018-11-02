@@ -1,5 +1,5 @@
 ---
-title: Dynamic Configuration
+title: Configuration
 menu:
   docs:
     parent: reference
