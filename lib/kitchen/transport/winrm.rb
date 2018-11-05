@@ -46,6 +46,8 @@ module Kitchen
       default_config :rdp_port, 3389
       default_config :connection_retries, 5
       default_config :connection_retry_sleep, 1
+      default_config :operation_timeout, 60
+      default_config :receive_timeout, 70
       default_config :max_wait_until_ready, 600
       default_config :winrm_transport, :negotiate
       default_config :scheme do |transport|
@@ -261,6 +263,8 @@ module Kitchen
           @rdp_port           = @options.delete(:rdp_port)
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
+          @operation_timeout = @options.delete(:operation_timeout)
+          @receive_timeout = @options.delete(:receive_timeout)
           @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
           @elevated           = @options.delete(:elevated)
         end
@@ -407,6 +411,8 @@ module Kitchen
           rdp_port: data[:rdp_port],
           connection_retries: data[:connection_retries],
           connection_retry_sleep: data[:connection_retry_sleep],
+          operation_timeout: data[:operation_timeout],
+          receive_timeout: data[:receive_timeout],
           max_wait_until_ready: data[:max_wait_until_ready],
           transport: data[:winrm_transport],
           elevated: data[:elevated],
