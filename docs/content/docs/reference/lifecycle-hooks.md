@@ -12,7 +12,7 @@ run either locally on your workstation (the default) or remotely on the test ins
 
 These hooks are configured under a new `lifecycle:` section in `kitchen.yml`:
 
-```yaml
+```
 lifecycle:
   pre_create: echo before
   post_create:
@@ -23,7 +23,7 @@ lifecycle:
 
 You can also configure hooks on a single platform or suite:
 
-```yaml
+```
 platforms:
 - name: ubuntu-18.04
   lifecycle:
@@ -47,7 +47,7 @@ about which instance the hook is evaluating against:
 
 You can also pass additional configuration for local commands:
 
-```yaml
+```
 lifecycle:
   pre_converge:
   - local: ./setup.sh
@@ -60,7 +60,7 @@ Remote commands are normally not allowed during `pre_create` or `post_destroy`
 hooks as there is generally no instance running at that point, but with `pre_destroy`
 hooks you may want to use the `skippable` flag so as to not fail during `kitchen test`:
 
-```yaml
+```
 lifecycle:
   pre_destroy:
   - remote: myapp --unregister-license
