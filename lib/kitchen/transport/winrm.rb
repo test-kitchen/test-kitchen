@@ -20,8 +20,8 @@
 
 require "rbconfig"
 require "uri"
-
 require "kitchen"
+require "winrm"
 
 module Kitchen
   module Transport
@@ -160,11 +160,24 @@ module Kitchen
             retry_delay: delay
           )
           execute(PING_COMMAND.dup)
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          retries ||= 6
+          raise e if (retries -= 1) < 0
+          logger.debug("[WinRM] PING_COMMAND failed. Retrying...")
+          logger.debug("#{e.class}::#{e.message}")
+          sleep 5
+          retry
         end
 
         private
 
         PING_COMMAND = "Write-Host '[WinRM] Established\n'".freeze
+
+        RESCUE_EXCEPTIONS_ON_ESTABLISH = [
+          Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
+          Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
+          OpenSSL::SSL::SSLError, WinRM::WinRMHTTPTransportError
+        ].freeze
 
         # @return [Integer] how many times to retry when failing to execute
         #   a command or transfer files
