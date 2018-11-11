@@ -258,15 +258,15 @@ module Kitchen
         # (see Base#init_options)
         def init_options(options)
           super
-          @instance_name      = @options.delete(:instance_name)
-          @kitchen_root       = @options.delete(:kitchen_root)
-          @rdp_port           = @options.delete(:rdp_port)
+          @instance_name = @options.delete(:instance_name)
+          @kitchen_root = @options.delete(:kitchen_root)
+          @rdp_port = @options.delete(:rdp_port)
           @connection_retries = @options.delete(:connection_retries)
           @connection_retry_sleep = @options.delete(:connection_retry_sleep)
           @operation_timeout = @options.delete(:operation_timeout)
           @receive_timeout = @options.delete(:receive_timeout)
-          @max_wait_until_ready   = @options.delete(:max_wait_until_ready)
-          @elevated           = @options.delete(:elevated)
+          @max_wait_until_ready = @options.delete(:max_wait_until_ready)
+          @elevated = @options.delete(:elevated)
         end
 
         # Logs formatted standard error output at the warning level.
