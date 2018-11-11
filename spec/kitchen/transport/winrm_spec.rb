@@ -746,6 +746,7 @@ describe Kitchen::Transport::Winrm::Connection do
       before do
         executor.expects(:run)
           .with("doit").yields("ok\n", nil).returns(response)
+        executor.expects(:close).once
       end
 
       it "logger displays command on debug" do
@@ -799,6 +800,8 @@ describe Kitchen::Transport::Winrm::Connection do
       before do
         options[:elevated] = true
         winrm_session.stubs(:shell).with(:elevated).returns(elevated_runner)
+        executor.expects(:close).once
+        elevated_runner.expects(:close).once
       end
 
       describe "elevated user is not login user" do
@@ -873,6 +876,7 @@ describe Kitchen::Transport::Winrm::Connection do
       before do
         executor.expects(:run)
           .with("doit").yields("nope\n", nil).returns(response)
+        executor.expects(:close).once
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -1209,6 +1213,7 @@ MSG
       before do
         executor.expects(:run)
           .with("Write-Host '[WinRM] Established\n'").returns(response)
+        executor.expects(:close).once
       end
 
       it "executes an empty command string to ensure working" do
@@ -1227,6 +1232,7 @@ MSG
       before do
         executor.expects(:run)
           .with("Write-Host '[WinRM] Established\n'").returns(response)
+        executor.expects(:close).once
       end
 
       it "executes an empty command string to ensure working" do
