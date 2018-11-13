@@ -1247,6 +1247,21 @@ MSG
         logged_output.string.must_match warn_line("Ah crap.\n")
       end
     end
+
+    describe "when connection is over HTTPS" do
+      before do
+        executor.expects(:run).times(2)
+          .with("Write-Host '[WinRM] Established\n'").raises(OpenSSL::SSL::SSLError)
+        options[:connection_retries] = 1
+        options[:connection_retry_sleep] = 1
+      end
+
+      it "fails with SSL error" do
+        proc do
+          connection.wait_until_ready
+        end.must_raise OpenSSL::SSL::SSLError
+      end
+    end
   end
 
   def debug_output(output)

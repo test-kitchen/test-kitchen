@@ -337,7 +337,7 @@ module Kitchen
           end
         end
 
-        # Connecto to a host executing passed block and properly handling retreis.
+        # Connect to a host executing passed block and properly handling retries.
         #
         # @param opts [Hash] retry options
         # @option opts [Integer] :retries the number of times to retry before

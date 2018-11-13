@@ -161,11 +161,11 @@ module Kitchen
           )
           execute(PING_COMMAND.dup)
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
-          retries ||= 6
+          retries ||= connection_retries.to_i
           raise e if (retries -= 1) < 0
           logger.debug("[WinRM] PING_COMMAND failed. Retrying...")
           logger.debug("#{e.class}::#{e.message}")
-          sleep 5
+          sleep(connection_retry_sleep.to_i)
           retry
         end
 
