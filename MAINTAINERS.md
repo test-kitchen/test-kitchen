@@ -10,7 +10,7 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Fletcher Nichol](https://github.com/fnichol)
 
 ## Lieutenants
-* [Seth Thomas](https://github.com/cheeseplus)
+* [Tyler Ball](https://github.com/tyler-ball)
 
 ## Maintainers
 
@@ -23,6 +23,7 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Noah Kantrowitz](https://github.com/coderanger)
 * [Robb Kidd](https://github.com/robbkidd)
 * [Sean Omeara](http://github.com/someara)
+* [Seth Thomas](https://github.com/cheeseplus)
 * [Steven Murawski](http://github.com/smurawski)
 * [Salim Afiune](http://github.com/afiune)
 * [Tim Smith](http://github.com/tas50)
