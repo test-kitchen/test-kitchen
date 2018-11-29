@@ -252,10 +252,14 @@ module Kitchen
             session = unelevated_session
           end
 
-          response = session.run(command) do |stdout, _|
-            logger << stdout if stdout
+          begin
+            response = session.run(command) do |stdout, _|
+              logger << stdout if stdout
+            end
+            [response.exitcode, response.stderr]
+          ensure
+            close
           end
-          [response.exitcode, response.stderr]
         end
 
         def unelevated_temp_dir
