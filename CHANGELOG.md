@@ -1,5 +1,45 @@
 # Change Log
 
+## [v1.23.3](https://github.com/test-kitchen/test-kitchen/tree/v1.23.3) (2018-11-30)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.2...v1.23.3)
+
+**Fixed bugs:**
+
+- Chef 13 Cookbook Root Aliases Not Found [\#1230](https://github.com/test-kitchen/test-kitchen/issues/1230)
+
+**Closed issues:**
+
+- WinRM transport leaves open connections [\#1495](https://github.com/test-kitchen/test-kitchen/issues/1495)
+- Add Rake Tasks for doc gen and deployment [\#1467](https://github.com/test-kitchen/test-kitchen/issues/1467)
+- Docs - migrate to Hugo [\#1458](https://github.com/test-kitchen/test-kitchen/issues/1458)
+- Docs for fixture cookbooks [\#1457](https://github.com/test-kitchen/test-kitchen/issues/1457)
+- Docs for Setting Environment for Chef provisioner [\#1455](https://github.com/test-kitchen/test-kitchen/issues/1455)
+- Docs for Reboot [\#1454](https://github.com/test-kitchen/test-kitchen/issues/1454)
+- Docs for Silencing Chef Deprecation Warnings [\#1452](https://github.com/test-kitchen/test-kitchen/issues/1452)
+- Docs for Shell Provisioner [\#1451](https://github.com/test-kitchen/test-kitchen/issues/1451)
+- Add documentation for elevated transport [\#1054](https://github.com/test-kitchen/test-kitchen/issues/1054)
+
+**Merged pull requests:**
+
+- Fixing failing travis test from PR merge [\#1499](https://github.com/test-kitchen/test-kitchen/pull/1499) ([tyler-ball](https://github.com/tyler-ball))
+- LT Tyler Ball [\#1497](https://github.com/test-kitchen/test-kitchen/pull/1497) ([robbkidd](https://github.com/robbkidd))
+- Close underlying winrm connections gracefully [\#1496](https://github.com/test-kitchen/test-kitchen/pull/1496) ([dwoz](https://github.com/dwoz))
+- Fixing code block formatting [\#1494](https://github.com/test-kitchen/test-kitchen/pull/1494) ([cheeseplus](https://github.com/cheeseplus))
+- Add more WinRM timeout config options [\#1493](https://github.com/test-kitchen/test-kitchen/pull/1493) ([dwoz](https://github.com/dwoz))
+- Adding rake task for doc deployment [\#1492](https://github.com/test-kitchen/test-kitchen/pull/1492) ([cheeseplus](https://github.com/cheeseplus))
+- Rename page and minor formatting fixes [\#1491](https://github.com/test-kitchen/test-kitchen/pull/1491) ([cheeseplus](https://github.com/cheeseplus))
+- Fixing the doc for chef provisioners [\#1490](https://github.com/test-kitchen/test-kitchen/pull/1490) ([cheeseplus](https://github.com/cheeseplus))
+- Add docs for fixtures and lifecycle hooks [\#1489](https://github.com/test-kitchen/test-kitchen/pull/1489) ([cheeseplus](https://github.com/cheeseplus))
+- Fix \#1454 - add reboot doc [\#1488](https://github.com/test-kitchen/test-kitchen/pull/1488) ([cheeseplus](https://github.com/cheeseplus))
+- Updating for chefstyle 0.11 [\#1487](https://github.com/test-kitchen/test-kitchen/pull/1487) ([cheeseplus](https://github.com/cheeseplus))
+- Add Docs for Shell Provisioner [\#1486](https://github.com/test-kitchen/test-kitchen/pull/1486) ([pwelch](https://github.com/pwelch))
+- Add retry support for WinRM [\#1480](https://github.com/test-kitchen/test-kitchen/pull/1480) ([bdwyertech](https://github.com/bdwyertech))
+- DOCS - improve documentation language [\#1479](https://github.com/test-kitchen/test-kitchen/pull/1479) ([JohnVonNeumann](https://github.com/JohnVonNeumann))
+- Acknowledge the existence of kitchen-azurerm and add an example configuration [\#1466](https://github.com/test-kitchen/test-kitchen/pull/1466) ([stuartpreston](https://github.com/stuartpreston))
+- Middleman -\> Hugo conversion [\#1459](https://github.com/test-kitchen/test-kitchen/pull/1459) ([cheeseplus](https://github.com/cheeseplus))
+- Docs merge [\#1450](https://github.com/test-kitchen/test-kitchen/pull/1450) ([cheeseplus](https://github.com/cheeseplus))
+- Support cookbook root aliases and VERSION file [\#1446](https://github.com/test-kitchen/test-kitchen/pull/1446) ([cheeseplus](https://github.com/cheeseplus))
+
 ## [v1.23.2](https://github.com/test-kitchen/test-kitchen/tree/v1.23.2) (2018-08-06)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.23.2)
 
