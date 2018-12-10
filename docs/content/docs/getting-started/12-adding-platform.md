@@ -103,7 +103,7 @@ $ kitchen verify 7
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
------> Installing Chef Omnibus (install only if missing)
+-----> Installing Chef (install only if missing)
        Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
        Trying wget...
        Download complete.

@@ -28,7 +28,7 @@ require "fileutils"
 # Bust out of our self-imposed sandbox before running chef-client so
 # gems installed via gem_package land in Chef's GEM_HOME.
 #
-# https://github.com/opscode/test-kitchen/issues/240
+# https://github.com/chef/test-kitchen/issues/240
 #
 ENV["GEM_HOME"] = ENV["GEM_PATH"] = ENV["GEM_CACHE"] = nil
 
