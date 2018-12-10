@@ -57,7 +57,7 @@ Now it's time to introduce to the **test** meta-action which helps you automate 
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
------> Installing Chef Omnibus (install only if missing)
+-----> Installing Chef (install only if missing)
        Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
        Trying wget...
        Download complete.
