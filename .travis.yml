@@ -5,11 +5,11 @@ services: docker
 language: ruby
 
 rvm:
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
+  - 2.6
   - ruby-head
-
 
 before_install:
   - gem --version
@@ -27,7 +27,7 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       # To run the proxy tests we need additional gems than what Test Kitchen normally uses
       # for testing
       gemfile: Gemfile.proxy_tests
