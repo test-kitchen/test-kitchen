@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.23.4](https://github.com/test-kitchen/test-kitchen/tree/v1.23.4) (2018-12-10)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.3...v1.23.4)
+
+**Merged pull requests:**
+
+- Add ruby 2.6 travis testing [\#1503](https://github.com/test-kitchen/test-kitchen/pull/1503) ([tas50](https://github.com/tas50))
+- Only ship the necessary files for Test Kitchen to run in the gem [\#1502](https://github.com/test-kitchen/test-kitchen/pull/1502) ([tas50](https://github.com/tas50))
+- Misc updates to the docs [\#1501](https://github.com/test-kitchen/test-kitchen/pull/1501) ([tas50](https://github.com/tas50))
+
 ## [v1.23.3](https://github.com/test-kitchen/test-kitchen/tree/v1.23.3) (2018-11-30)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.2...v1.23.3)
 
