@@ -7,18 +7,17 @@ require "English"
 Gem::Specification.new do |gem|
   gem.name          = "test-kitchen"
   gem.version       = Kitchen::VERSION
-  gem.license       = "Apache 2.0"
+  gem.license       = "Apache-2.0"
   gem.authors       = ["Fletcher Nichol"]
   gem.email         = ["fnichol@nichol.ca"]
   gem.description   = "Test Kitchen is an integration tool for developing " \
                       "and testing infrastructure code and software on " \
                       "isolated target platforms."
   gem.summary       = gem.description
-  gem.homepage      = "http://kitchen.ci"
+  gem.homepage      = "https://kitchen.ci/"
 
-  gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
+  gem.files         = %w{LICENSE} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
   gem.required_ruby_version = ">= 2.3"
