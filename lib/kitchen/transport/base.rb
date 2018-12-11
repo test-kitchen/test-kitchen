@@ -17,8 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/configurable"
 require "kitchen/errors"
 require "kitchen/lazy_hash"
+require "kitchen/logging"
 require "kitchen/login_command"
 
 module Kitchen

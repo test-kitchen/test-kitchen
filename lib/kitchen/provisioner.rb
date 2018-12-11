@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
+require "kitchen/plugin"
 
 module Kitchen
   # A provisioner is responsible for generating the commands necessary to
@@ -35,18 +35,7 @@ module Kitchen
     # @return [Provisioner::Base] a provisioner instance
     # @raise [ClientError] if a provisioner instance could not be created
     def self.for_plugin(plugin, config)
-      first_load = require("kitchen/provisioner/#{plugin}")
-
-      str_const = Thor::Util.camel_case(plugin)
-      klass = const_get(str_const)
-      object = klass.new(config)
-      object.verify_dependencies if first_load
-      object
-    rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' provisioner from the load path." \
-              " Please ensure that your provisioner is installed as a gem or" \
-              " included in your Gemfile if using Bundler."
+      Kitchen::Plugin.load(self, plugin, config)
     end
   end
 end

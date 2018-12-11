@@ -3,6 +3,7 @@
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
 # Copyright (C) 2015, Fletcher Nichol
+# Copyright (C) 2018, Chef Software
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,41 +20,11 @@
 require_relative "../spec_helper"
 
 require "kitchen/verifier"
-
-require "kitchen/configurable"
-module Kitchen
-  module Verifier
-    class Base
-      include Configurable
-      def initialize(config = {})
-        init_config(config)
-      end
-    end
-  end
-end
+require "kitchen/verifier/base"
 
 module Kitchen
   module Verifier
     class Coolbeans < Kitchen::Verifier::Base
-    end
-
-    class ItDepends < Kitchen::Verifier::Base
-      attr_reader :verify_call_count
-
-      def initialize(config = {})
-        @verify_call_count = 0
-        super
-      end
-
-      def verify_dependencies
-        @verify_call_count += 1
-      end
-    end
-
-    class UnstableDepends < Kitchen::Verifier::Base
-      def verify_dependencies
-        raise UserError, "Oh noes, you don't have software!"
-      end
     end
   end
 end
@@ -61,7 +32,15 @@ end
 describe Kitchen::Verifier do
   describe ".for_plugin" do
     before do
-      Kitchen::Verifier.stubs(:require).returns(true)
+      Kitchen::Plugin.stubs(:require).returns(true)
+    end
+
+    it "uses Kitchen::Plugin.load" do
+      faux_verifier = Object.new
+      Kitchen::Plugin.stubs(:load).returns(faux_verifier)
+      verifier = Kitchen::Verifier.for_plugin("faux", {})
+
+      verifier.must_equal faux_verifier
     end
 
     it "returns a verifier object of the correct class" do
@@ -76,23 +55,8 @@ describe Kitchen::Verifier do
       verifier[:foo].must_equal "bar"
     end
 
-    it "calls #verify_dependencies on the transport object" do
-      verifier = Kitchen::Verifier.for_plugin("it_depends", {})
-
-      verifier.verify_call_count.must_equal 1
-    end
-
-    it "calls #verify_dependencies once per verifier require" do
-      Kitchen::Verifier.stubs(:require).returns(true, false)
-      verifier1 = Kitchen::Verifier.for_plugin("it_depends", {})
-      verifier1.verify_call_count.must_equal 1
-      verifier2 = Kitchen::Verifier.for_plugin("it_depends", {})
-
-      verifier2.verify_call_count.must_equal 0
-    end
-
     it "raises ClientError if the verifier could not be required" do
-      Kitchen::Verifier.stubs(:require).raises(LoadError)
+      Kitchen::Plugin.stubs(:require).raises(LoadError)
 
       proc { Kitchen::Verifier.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
@@ -100,15 +64,10 @@ describe Kitchen::Verifier do
 
     it "raises ClientError if the verifier's class constant was not found" do
       # pretend require worked
-      Kitchen::Verifier.stubs(:require).returns(true)
+      Kitchen::Plugin.stubs(:require).returns(true)
 
       proc { Kitchen::Verifier.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
-    end
-
-    it "raises UserError if #verify_dependencies failes" do
-      proc { Kitchen::Verifier.for_plugin("unstable_depends", {}) }
-        .must_raise Kitchen::UserError
     end
   end
 end

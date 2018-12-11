@@ -16,9 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
-
-require "kitchen/errors"
+require "kitchen/plugin"
 
 module Kitchen
   # A verifier is responsible for running tests post-converge to confirm that
@@ -36,18 +34,7 @@ module Kitchen
     # @return [Verifier::Base] a verifier instance
     # @raise [ClientError] if a verifier instance could not be created
     def self.for_plugin(plugin, config)
-      first_load = require("kitchen/verifier/#{plugin}")
-
-      str_const = Thor::Util.camel_case(plugin)
-      klass = const_get(str_const)
-      object = klass.new(config)
-      object.verify_dependencies if first_load
-      object
-    rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' verifier from the load path." \
-              " Please ensure that your transport is installed as a gem or" \
-              " included in your Gemfile if using Bundler."
+      Kitchen::Plugin.load(self, plugin, config)
     end
   end
 end

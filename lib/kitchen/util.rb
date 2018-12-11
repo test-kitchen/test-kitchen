@@ -16,6 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/errors"
+require "thor/util"
+
 module Kitchen
   # Stateless utility methods used in different contexts. Essentially a mini
   # PassiveSupport library.
@@ -204,6 +207,14 @@ module Kitchen
           Dir.glob(pattern, *flags).map { |f| File.join(path, f) }
         end
       end
+    end
+
+    def self.camel_case(a_string)
+      Thor::Util.camel_case(a_string)
+    end
+
+    def self.snake_case(a_string)
+      Thor::Util.snake_case(a_string)
     end
   end
 end

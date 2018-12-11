@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
+require "kitchen/plugin"
 
 module Kitchen
   # A driver is responsible for carrying out the lifecycle activities of an
@@ -35,20 +35,7 @@ module Kitchen
     # @raise [ClientError] if a driver instance could not be created
     # @raise [UserError] if the driver's dependencies could not be met
     def self.for_plugin(plugin, config)
-      first_load = require("kitchen/driver/#{plugin}")
-
-      str_const = Thor::Util.camel_case(plugin)
-      klass = const_get(str_const)
-      object = klass.new(config)
-      object.verify_dependencies if first_load
-      object
-    rescue UserError
-      raise
-    rescue LoadError, NameError
-      raise ClientError,
-            "Could not load the '#{plugin}' driver from the load path." \
-              " Please ensure that your driver is installed as a gem or included" \
-              " in your Gemfile if using Bundler."
+      Kitchen::Plugin.load(self, plugin, config)
     end
   end
 end
