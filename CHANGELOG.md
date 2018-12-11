@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.23.5](https://github.com/test-kitchen/test-kitchen/tree/v1.23.5) (2018-12-10)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.4...v1.23.5)
+
+**Merged pull requests:**
+
+- Add back the gemspec and gemfile for appbundler [\#1504](https://github.com/test-kitchen/test-kitchen/pull/1504) ([tas50](https://github.com/tas50))
+
 ## [v1.23.4](https://github.com/test-kitchen/test-kitchen/tree/v1.23.4) (2018-12-10)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.3...v1.23.4)
 
