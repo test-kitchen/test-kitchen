@@ -16,7 +16,8 @@ Gem::Specification.new do |gem|
   gem.summary       = gem.description
   gem.homepage      = "https://kitchen.ci/"
 
-  gem.files         = %w{LICENSE} + Dir.glob("{bin,lib,templates,support}/**/*")
+  # The gemfile and gemspec are necessary for appbundler in Chef-DK / Workstation
+  gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
