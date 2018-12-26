@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://kitchen.ci/"
 
   # The gemfile and gemspec are necessary for appbundler in Chef-DK / Workstation
-  gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile} + Dir.glob("{bin,lib,templates,support}/**/*")
+  gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
@@ -34,7 +34,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "winrm-fs", "~> 1.1"
 
   gem.add_development_dependency "rb-readline"
-  gem.add_development_dependency "overcommit", "= 0.33.0"
 
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
