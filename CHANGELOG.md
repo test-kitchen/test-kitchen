@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.24.0](https://github.com/test-kitchen/test-kitchen/tree/v1.24.0) (2018-12-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.5...v1.24.0)
+
+**Merged pull requests:**
+
+- Fixing two issues with the ChefDK build [#1507](https://github.com/test-kitchen/test-kitchen/pull/1507) ([tyler-ball](https://github.com/tyler-ball))
+- Remove the Gemfile pin on train .22 [#1505](https://github.com/test-kitchen/test-kitchen/pull/1505) ([tas50](https://github.com/tas50))
+- Include list of known plugins when one cannot be loaded [#1368](https://github.com/test-kitchen/test-kitchen/pull/1368) ([robbkidd](https://github.com/robbkidd))
+
 ## [v1.23.5](https://github.com/test-kitchen/test-kitchen/tree/v1.23.5) (2018-12-10)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.4...v1.23.5)
 
