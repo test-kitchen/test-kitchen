@@ -187,9 +187,11 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets the :verify_host_key flag to false" do
+      it "sets the :verify_host_key flag to false or :never if >= 5.0.0" do
         klass.expects(:new).with do |hash|
-          hash[:verify_host_key] == false
+          old_version = Net::SSH::Version::CURRENT < Net::SSH::Version[5, 0, 0]
+
+          hash[:verify_host_key] == old_version ? false : :never
         end
 
         make_connection
