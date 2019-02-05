@@ -16,6 +16,7 @@ Let's verify this right now.
 Kitchen has a **login** subcommand for just these kinds of situations:
 
 ~~~
+$ kitchen login
 Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-116-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
