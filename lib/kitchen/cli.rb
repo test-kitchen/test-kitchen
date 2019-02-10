@@ -300,7 +300,7 @@ module Kitchen
              "init", "Adds some configuration to your cookbook so Kitchen can rock"
     long_desc <<-D, for: "init"
       Init will add Test Kitchen support to an existing project for
-      convergence integration testing. A default .kitchen.yml file (which is
+      convergence integration testing. A default kitchen.yml file (which is
       intended to be customized) is created in the project's root directory
       and one or more gems will be added to the project's Gemfile.
     D
