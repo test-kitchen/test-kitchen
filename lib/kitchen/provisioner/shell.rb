@@ -69,7 +69,7 @@ module Kitchen
             if (-Not (Test-Path "#{root}")) {
               New-Item "#{root}" -ItemType directory | Out-Null
             }
-          POWERSHELL
+                 POWERSHELL
                else
                  "#{sudo('rm')} -rf #{data} ; mkdir -p #{root}"
                end

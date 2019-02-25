@@ -251,8 +251,8 @@ module Kitchen
 
         hash = begin
           send(component)
-        rescue => e
-          failure_hash(e, file)
+               rescue => e
+                 failure_hash(e, file)
         end
 
         { filename: file, raw_data: hash }
