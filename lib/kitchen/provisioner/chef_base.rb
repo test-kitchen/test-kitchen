@@ -24,7 +24,6 @@ require "cgi"
 require "kitchen/provisioner/chef/policyfile"
 require "kitchen/provisioner/chef/berkshelf"
 require "kitchen/provisioner/chef/common_sandbox"
-require "kitchen/provisioner/chef/librarian"
 require "kitchen/util"
 require "mixlib/install"
 require "mixlib/install/script_generator"
@@ -326,13 +325,6 @@ module Kitchen
         File.join(config[:kitchen_root], "Berksfile")
       end
 
-      # @return [String] an absolute path to a Cheffile, relative to the
-      #   kitchen root
-      # @api private
-      def cheffile
-        File.join(config[:kitchen_root], "Cheffile")
-      end
-
       # Generates a Hash with default values for a solo.rb or client.rb Chef
       # configuration file.
       #
@@ -432,10 +424,6 @@ module Kitchen
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger: logger)
-        elsif File.exist?(cheffile)
-          debug("Cheffile found at #{cheffile}, loading Librarian-Chef")
-          Chef::Librarian.load!(logger: logger)
-        end
       end
 
       # @return [String] contents of the install script

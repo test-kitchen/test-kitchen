@@ -1061,7 +1061,7 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match regexify(
-            "Berksfile, Cheffile, cookbooks/, or metadata.rb not found",
+            "Berksfile, cookbooks/, or metadata.rb not found",
             :partial_line
           )
         end
@@ -1329,44 +1329,6 @@ describe Kitchen::Provisioner::ChefBase do
 
         it "uses Kitchen.mutex for resolving" do
           Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
-          Kitchen.mutex.expects(:synchronize)
-
-          provisioner.create_sandbox
-        end
-      end
-
-      describe "with a Cheffile under kitchen_root" do
-        let(:resolver) { stub(resolve: true) }
-
-        before do
-          File.open("#{kitchen_root}/Cheffile", "wb") do |file|
-            file.write("cookbook 'wat'")
-          end
-          Kitchen::Provisioner::Chef::Librarian.stubs(:new).returns(resolver)
-        end
-
-        it "raises a UserError if Librarian library can't be loaded" do
-          proc { provisioner }.must_raise Kitchen::UserError
-        end
-
-        it "logs on debug that Berkshelf is loading" do
-          Kitchen::Provisioner::Chef::Librarian.stubs(:load!)
-          provisioner
-
-          logged_output.string.must_match debug_line(
-            "Cheffile found at #{kitchen_root}/Cheffile, loading Librarian-Chef"
-          )
-        end
-
-        it "uses Librarian" do
-          Kitchen::Provisioner::Chef::Librarian.stubs(:load!)
-          resolver.expects(:resolve)
-
-          provisioner.create_sandbox
-        end
-
-        it "uses Kitchen.mutex for resolving" do
-          Kitchen::Provisioner::Chef::Librarian.stubs(:load!)
           Kitchen.mutex.expects(:synchronize)
 
           provisioner.create_sandbox

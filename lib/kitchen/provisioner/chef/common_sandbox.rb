@@ -99,13 +99,6 @@ module Kitchen
           File.join(config[:kitchen_root], "Berksfile")
         end
 
-        # @return [String] an absolute path to a Cheffile, relative to the
-        #   kitchen root
-        # @api private
-        def cheffile
-          File.join(config[:kitchen_root], "Cheffile")
-        end
-
         # @return [String] an absolute path to a cookbooks/ directory, relative
         #   to the kitchen root
         # @api private
@@ -179,7 +172,7 @@ module Kitchen
         #
         # @api private
         def make_fake_cookbook
-          info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
+          info("Berksfile, cookbooks/, or metadata.rb not found " \
             "so Chef will run with effectively no cookbooks. Is this intended?")
           name = File.basename(config[:kitchen_root])
           fake_cb = File.join(tmpbooks_dir, name)
@@ -257,9 +250,6 @@ module Kitchen
             resolve_with_policyfile
           elsif File.exist?(berksfile)
             resolve_with_berkshelf
-          elsif File.exist?(cheffile)
-            resolve_with_librarian
-            cp_site_cookbooks if File.directory?(site_cookbooks_dir)
           elsif File.directory?(cookbooks_dir)
             cp_cookbooks
           elsif File.exist?(metadata_rb)
@@ -326,15 +316,6 @@ module Kitchen
             Chef::Berkshelf.new(berksfile, tmpbooks_dir,
                                 logger: logger,
                                 always_update: config[:always_update_cookbooks]).resolve
-          end
-        end
-
-        # Performs a Librarin-Chef cookbook resolution inside a common mutex.
-        #
-        # @api private
-        def resolve_with_librarian
-          Kitchen.mutex.synchronize do
-            Chef::Librarian.new(cheffile, tmpbooks_dir, logger: logger).resolve
           end
         end
 
