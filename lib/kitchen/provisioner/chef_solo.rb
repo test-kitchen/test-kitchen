@@ -65,10 +65,10 @@ module Kitchen
         args = [
           "--config #{remote_path_join(config[:root_path], solo_rb_filename)}",
           "--log_level #{config[:log_level]}",
+          "--force-formatter",
           "--no-color",
           "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
         ]
-        args << " --force-formatter"
         args << "--logfile #{config[:log_file]}" if config[:log_file]
         args << "--profile-ruby" if config[:profile_ruby]
         args << "--legacy-mode" if config[:legacy_mode]
