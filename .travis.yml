@@ -1,14 +1,13 @@
-sudo: required
 dist: trusty
 services: docker
-
+cache: bundler
 language: ruby
 
 rvm:
   - 2.3.8
   - 2.4.5
   - 2.5.3
-  - 2.6
+  - 2.6.1
   - ruby-head
 
 before_install:
@@ -18,7 +17,7 @@ bundler_args: --with integration --without changelog debug docs
 
 script:
   - bundle exec rake
-  - export KITCHEN_YAML=.kitchen.dokken.yml
+  - export KITCHEN_YAML=kitchen.dokken.yml
   - bundle exec kitchen test
 
 branches:
@@ -43,7 +42,7 @@ matrix:
           - machine_port=22
           - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
           - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
-          - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/.kitchen.proxy.yml
+          - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/kitchen.proxy.yml
 
       script:
         - bundle exec kitchen --version
