@@ -424,6 +424,7 @@ module Kitchen
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, loading Berkshelf")
           Chef::Berkshelf.load!(logger: logger)
+        end
       end
 
       # @return [String] contents of the install script
