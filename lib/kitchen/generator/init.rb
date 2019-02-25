@@ -35,7 +35,7 @@ module Kitchen
                    desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
-        D
+                   D
 
       class_option :provisioner,
                    type: :string,
@@ -43,7 +43,7 @@ module Kitchen
                    default: "chef_solo",
                    desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
-        D
+                   D
 
       class_option :create_gemfile,
                    type: :boolean,
@@ -51,7 +51,7 @@ module Kitchen
                    desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           Whether or not to create a Gemfile if one does not exist.
           Default: false
-        D
+                   D
 
       # Invoke the command.
       def init

@@ -920,7 +920,7 @@ describe Kitchen::Transport::Winrm::Connection do
                 + CategoryInfo          : ObjectNotFound: (doit:String) [], CommandNotFoun
                dException
                 + FullyQualifiedErrorId : CommandNotFoundException
-MSG
+          MSG
 
           message.lines.each do |line|
             logged_output.string.must_match warn_line(line.chomp)
