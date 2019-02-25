@@ -48,30 +48,8 @@ module Kitchen
       # (see Base#create_sandbox)
       def create_sandbox
         super
-        prepare_chef_client_zero_rb
         prepare_validation_pem
         prepare_config_rb
-      end
-
-      # (see Base#prepare_command)
-      def prepare_command
-        return if modern?
-
-        gem_bin = remote_path_join(config[:ruby_bindir], "gem")
-                  .tap { |path| path.concat(".bat") if windows_os? }
-        vars = [
-          chef_client_zero_env,
-          shell_var("gem", sudo(gem_bin)),
-        ].join("\n").concat("\n")
-
-        prefix_command(shell_code_from_file(vars, "chef_zero_prepare_command_legacy"))
-      end
-
-      # (see Base#run_command)
-      def run_command
-        cmd = modern? ? local_mode_command : shim_command
-
-        chef_cmd(cmd)
       end
 
       private
@@ -88,9 +66,8 @@ module Kitchen
           args << "--json-attributes #{json}"
         end
         args << "--logfile #{config[:log_file]}" if config[:log_file]
-        return unless modern?
 
-        # these flags are modern/chef-client local most only and will not work
+        # these flags are chef-client local mode only and will not work
         # on older versions of chef-client
         if config[:chef_zero_host]
           args << "--chef-zero-host #{config[:chef_zero_host]}"
@@ -145,50 +122,6 @@ module Kitchen
       def local_mode_command
         "#{sudo(config[:chef_client_path])} --local-mode"
           .tap { |str| str.insert(0, "& ") if powershell_shell? }
-      end
-
-      # Determines whether or not local mode (a.k.a chef zero mode) is
-      # supported in the version of Chef as determined by inspecting the
-      # require_chef_omnibus config variable.
-      #
-      # The only way this method returns false is if require_chef_omnibus has
-      # an explicit version set to less than 11.8.0, when chef zero mode was
-      # introduced. Otherwise a modern Chef installation is assumed.
-      #
-      # @return [true,false] whether or not the desired version of Chef
-      #   supports local mode
-      # @api private
-      def modern?
-        version = config[:require_chef_omnibus]
-
-        case version
-        when nil, false, true, 11, "11", "latest"
-          true
-        else
-          if Gem::Version.correct?(version)
-            Gem::Version.new(version) >= Gem::Version.new("11.8.0") ? true : false
-          else
-            # Build versions of chef, for example
-            # 12.5.0-current.0+20150721082808.git.14.c91b337-1
-            true
-          end
-        end
-      end
-
-      # Writes a chef-client local-mode shim script to the sandbox directory
-      # only if the desired version of Chef is old enough. The version of Chef
-      # is determined using the `config[:require_chef_omnibus]` value.
-      #
-      # @api private
-      def prepare_chef_client_zero_rb
-        return if modern?
-
-        info("Preparing chef-client-zero.rb")
-        debug("Using a vendored chef-client-zero.rb")
-
-        source = File.join(File.dirname(__FILE__),
-                           %w{.. .. .. support chef-client-zero.rb})
-        FileUtils.cp(source, File.join(sandbox_path, "chef-client-zero.rb"))
       end
 
       # Writes a fake (but valid) validation.pem into the sandbox directory.

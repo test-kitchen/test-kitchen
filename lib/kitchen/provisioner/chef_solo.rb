@@ -47,24 +47,8 @@ module Kitchen
         prepare_config_rb
       end
 
-      def modern?
-        version = config[:require_chef_omnibus]
-
-        case version
-        when nil, false, true, 11, "11", "latest"
-          true
-        else
-          if Gem::Version.correct?(version)
-            Gem::Version.new(version) >= Gem::Version.new("11.0") ? true : false
-          else
-            true
-          end
-        end
-      end
-
       # (see Base#run_command)
       def run_command
-        config[:log_level] = "info" if !modern? && config[:log_level] == "auto"
         cmd = sudo(config[:chef_solo_path]).dup
                                            .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
@@ -84,7 +68,7 @@ module Kitchen
           "--no-color",
           "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
         ]
-        args << " --force-formatter" if modern?
+        args << " --force-formatter"
         args << "--logfile #{config[:log_file]}" if config[:log_file]
         args << "--profile-ruby" if config[:profile_ruby]
         args << "--legacy-mode" if config[:legacy_mode]
