@@ -52,6 +52,12 @@ module Kitchen
         prepare_config_rb
       end
 
+      def run_command
+        cmd = "#{sudo(config[:chef_client_path])} --local-mode".tap { |str| str.insert(0, "& ") if powershell_shell? }
+
+        chef_cmd(cmd)
+      end
+
       private
 
       # Adds optional flags to a chef-client command, depending on
@@ -112,16 +118,6 @@ module Kitchen
           shell_env_var("GEM_PATH", gem_path),
           shell_env_var("GEM_CACHE", gem_cache),
         ].join("\n").concat("\n")
-      end
-
-      # Returns the command that will run chef client in local mode (a.k.a.
-      # chef zero mode).
-      #
-      # @return [String] the command string
-      # @api private
-      def local_mode_command
-        "#{sudo(config[:chef_client_path])} --local-mode"
-          .tap { |str| str.insert(0, "& ") if powershell_shell? }
       end
 
       # Writes a fake (but valid) validation.pem into the sandbox directory.
