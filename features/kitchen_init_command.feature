@@ -196,7 +196,7 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-16.04
+      - name: ubuntu-18.04
       - name: centos-7
 
     suites:
@@ -220,7 +220,7 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-16.04
+      - name: ubuntu-18.04
       - name: centos-7
 
     suites:
@@ -243,7 +243,7 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-16.04
+      - name: ubuntu-18.04
       - name: centos-7
 
     suites:
