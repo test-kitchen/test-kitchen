@@ -13,6 +13,7 @@ environment:
 
   matrix:
     - ruby_version: "24-x64"
+    - ruby_version: "25-x64"
 
 clone_folder: c:\projects\test_kitchen
 clone_depth: 1
