@@ -1120,7 +1120,7 @@ describe Kitchen::Provisioner::ChefBase do
 
               logged_output.string.must_match debug_line(
                 "Policyfile found at #{kitchen_root}/Policyfile.rb, "\
-                "using Policyfile to resolve dependencies")
+                "using Policyfile to resolve cookbook dependencies")
             end
 
             it "uses uses the policyfile to resolve dependencies" do
@@ -1317,7 +1317,7 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner
 
           logged_output.string.must_match debug_line(
-            "Berksfile found at #{kitchen_root}/Berksfile, loading Berkshelf")
+            "Berksfile found at #{kitchen_root}/Berksfile, using Berkshelf to resolve cookbook dependencies")
         end
 
         it "uses Berkshelf" do
