@@ -419,10 +419,10 @@ module Kitchen
       def load_needed_dependencies!
         super
         if File.exist?(policyfile)
-          debug("Policyfile found at #{policyfile}, using Policyfile to resolve dependencies")
+          debug("Policyfile found at #{policyfile}, using Policyfile to resolve cookbook dependencies")
           Chef::Policyfile.load!(logger: logger)
         elsif File.exist?(berksfile)
-          debug("Berksfile found at #{berksfile}, loading Berkshelf")
+          debug("Berksfile found at #{berksfile}, using Berkshelf to resolve cookbook dependencies")
           Chef::Berkshelf.load!(logger: logger)
         end
       end
@@ -530,7 +530,7 @@ module Kitchen
         end
         if File.exist?(policyfile) && !supports_policyfile?
           raise UserError, "policyfile detected, but provisioner " \
-            "#{self.class.name} doesn't support policyfiles. " \
+            "#{self.class.name} doesn't support Policyfiles. " \
             "Either use a different provisioner, or delete/rename " \
             "#{policyfile}"
         end
