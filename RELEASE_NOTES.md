@@ -1,3 +1,28 @@
+# Test Kitchen 2.0 Release Notes
+
+Test Kitchen 2.0 is primarily a code cleanup release, but as it does remove functionality that a limited number of users may have depended upon, we have chosen to release this as a new major version. We believe that nearly all users will experience no change with this new version, but this release allows us to remove a good amount of legacy logic that will make Test Kitchen a bit faster and certainly easier to maintain going forward.
+
+### Breaking Changes
+
+- Support for the Chef Librarian depsolver has been removed. Users should utilize either Berkshelf or Policyfiles instead.
+- The Chef Solo provisioner no longer supports Chef 10.
+- The Chef-Zero provisioner no longer supports Chef versions prior to 11.8.
+
+### Updated SSH Support
+
+Test Kitchen has been updated to support net-ssh 5, which allows for new SSH key formats. Thanks [@Val](https://github.com/Val) for this fix.
+
+### Other Improvements
+
+- Improvements to log messages better convey what Test Kitchen is actually doing and how to resolve problems
+- The `kitchen init` command now generates a `kitchen.yml` with an Ubuntu 18.04 system
+
+# Test Kitchen 1.24.0 Release Notes
+
+## Improved error messages
+
+Test Kitchen now provides improved error messages when it cannot find a driver, provisioner, transport, or verifier. It will now output a message listing the plugins that it does know about, which may help users who have simply typed a name in a `kitchen.yml` file
+
 # Test Kitchen 1.23.0 Release Notes
 
 ## Life Cycle Hooks
@@ -68,7 +93,7 @@ lifecycle:
 ## Configuration UX improvements
 
 Having the kitchen configuration file be hidden has always been a bit odd and so we're moving to using `kitchen.yml` over `.kitchen.yml`.
-This also applies to `kitchen.local.yml` and we've made the change backwards compatible so you're not forced to move over right away. Additionally, we've added support for the environment variables `KITCHEN_YML` and KITCHEN_LOCAL_YML` again preserving compatibility if you're using the `*_YAML` forms.
+This also applies to `kitchen.local.yml` and we've made the change backwards compatible so you're not forced to move over right away. Additionally, we've added support for the environment variables `KITCHEN_YML` and `KITCHEN_LOCAL_YML` again preserving compatibility if you're using the `*_YAML` forms.
 
 # Test Kitchen 1.20.0 Release Notes
 
@@ -77,10 +102,10 @@ This also applies to `kitchen.local.yml` and we've made the change backwards com
 Allows a user to use data_bags from an array of directories
 
 ```
-data_bags_path: 
+data_bags_path:
   - 'data_bags'
   - 'test/integrations/data_bags'
-  ```
+```
 
 ## Deprecation Warnings for Configuration Keys
 
