@@ -232,7 +232,7 @@ module Kitchen
           Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
           Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
           Net::SSH::Disconnect, Net::SSH::AuthenticationFailed, Net::SSH::ConnectionTimeout,
-          Timeout::Error
+          Net::SSH::Proxy::ConnectError, Timeout::Error
         ].freeze
 
         # @return [Integer] cap on number of parallel ssh sessions we can use
