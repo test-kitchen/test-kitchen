@@ -1,15 +1,45 @@
 # Change Log
 
+## [2.0.1](https://github.com/test-kitchen/test-kitchen/tree/v2.0.1)
+
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.0.0...v2.0.1)
+
+**Merged pull requests:**
+
+- Switch to new gem install parameters to support Ruby 2.6 and Chef 15 [\#1536](https://github.com/test-kitchen/test-kitchen/pull/1536) ([WheresAlice](https://github.com/WheresAlice))
+- Honor retries when ssh proxy returns an error [\#1534](https://github.com/test-kitchen/test-kitchen/pull/1534) ([vmiszczak-teads](https://github.com/vmiszczak-teads))
+
+## [v2.0.0](https://github.com/test-kitchen/test-kitchen/tree/v2.0.0) (2019-03-20)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.24.0...v2.0.0)
+
+**Merged pull requests:**
+
+- Release Test Kitchen 2.0 [\#1532](https://github.com/test-kitchen/test-kitchen/pull/1532) ([tas50](https://github.com/tas50))
+- Allow net-scp 2.0 [\#1531](https://github.com/test-kitchen/test-kitchen/pull/1531) ([tas50](https://github.com/tas50))
+- Rename .kitchen.yml -\> kitchen.yml [\#1529](https://github.com/test-kitchen/test-kitchen/pull/1529) ([nqb](https://github.com/nqb))
+- Pin net-ssh-gateway and net-ssh to prevent the next majors [\#1528](https://github.com/test-kitchen/test-kitchen/pull/1528) ([tas50](https://github.com/tas50))
+- Test on Ruby 2.5 in Appveyor [\#1527](https://github.com/test-kitchen/test-kitchen/pull/1527) ([tas50](https://github.com/tas50))
+- Improve chef logging / error messages [\#1526](https://github.com/test-kitchen/test-kitchen/pull/1526) ([tas50](https://github.com/tas50))
+- Simplify the kitchen vagrant example config in the docs [\#1525](https://github.com/test-kitchen/test-kitchen/pull/1525) ([tas50](https://github.com/tas50))
+- Mildy modernize the kitchen driver init templates [\#1524](https://github.com/test-kitchen/test-kitchen/pull/1524) ([tas50](https://github.com/tas50))
+- Update kitchen init to use Ubuntu 18.04 [\#1523](https://github.com/test-kitchen/test-kitchen/pull/1523) ([tas50](https://github.com/tas50))
+- Remove support for Chef 10 / 11 from chef-zero / chef-solo [\#1522](https://github.com/test-kitchen/test-kitchen/pull/1522) ([tas50](https://github.com/tas50))
+- Remove support for Chef Librarian [\#1521](https://github.com/test-kitchen/test-kitchen/pull/1521) ([tas50](https://github.com/tas50))
+- Chefstyle fixes for the latest chefstyle [\#1520](https://github.com/test-kitchen/test-kitchen/pull/1520) ([tas50](https://github.com/tas50))
+- Getting started doc: fix minor typos [\#1517](https://github.com/test-kitchen/test-kitchen/pull/1517) ([nqb](https://github.com/nqb))
+- support net-ssh \>= 5.0 [\#1476](https://github.com/test-kitchen/test-kitchen/pull/1476) ([Val](https://github.com/Val))
+- using preferred config name for list output [\#1431](https://github.com/test-kitchen/test-kitchen/pull/1431) ([tarcinil](https://github.com/tarcinil))
+
 ## [v1.24.0](https://github.com/test-kitchen/test-kitchen/tree/v1.24.0) (2018-12-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.5...v1.24.0)
 
 **Merged pull requests:**
 
-- Fixing two issues with the ChefDK build [#1507](https://github.com/test-kitchen/test-kitchen/pull/1507) ([tyler-ball](https://github.com/tyler-ball))
-- Remove the Gemfile pin on train .22 [#1505](https://github.com/test-kitchen/test-kitchen/pull/1505) ([tas50](https://github.com/tas50))
-- Include list of known plugins when one cannot be loaded [#1368](https://github.com/test-kitchen/test-kitchen/pull/1368) ([robbkidd](https://github.com/robbkidd))
+- Fixing two issues with the ChefDK build [\#1507](https://github.com/test-kitchen/test-kitchen/pull/1507) ([tyler-ball](https://github.com/tyler-ball))
+- Remove the Gemfile pin on train .22 [\#1505](https://github.com/test-kitchen/test-kitchen/pull/1505) ([tas50](https://github.com/tas50))
+- include list of known plugins when one cannot be loaded [\#1368](https://github.com/test-kitchen/test-kitchen/pull/1368) ([robbkidd](https://github.com/robbkidd))
 
-## [v1.23.5](https://github.com/test-kitchen/test-kitchen/tree/v1.23.5) (2018-12-10)
+## [v1.23.5](https://github.com/test-kitchen/test-kitchen/tree/v1.23.5) (2018-12-11)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.4...v1.23.5)
 
 **Merged pull requests:**
@@ -35,14 +65,32 @@
 **Closed issues:**
 
 - WinRM transport leaves open connections [\#1495](https://github.com/test-kitchen/test-kitchen/issues/1495)
+- Kitchen Login Fails on Windows [\#1485](https://github.com/test-kitchen/test-kitchen/issues/1485)
+- Gems in metadata.rb not installing [\#1484](https://github.com/test-kitchen/test-kitchen/issues/1484)
+- Chef::Config.from\_file in local workstation configuration breaks Kitchen [\#1483](https://github.com/test-kitchen/test-kitchen/issues/1483)
+- winrm 2.3.0 potential issues [\#1481](https://github.com/test-kitchen/test-kitchen/issues/1481)
+- Suites.Verifier.Inspec\_tests [\#1478](https://github.com/test-kitchen/test-kitchen/issues/1478)
+- test-kitchen does not support net-ssh \> 5.0 [\#1474](https://github.com/test-kitchen/test-kitchen/issues/1474)
 - Add Rake Tasks for doc gen and deployment [\#1467](https://github.com/test-kitchen/test-kitchen/issues/1467)
+- TestKitchen refuses to destroy VMs that failed to finish the create step [\#1465](https://github.com/test-kitchen/test-kitchen/issues/1465)
+- Tests involving multiple docker containers  [\#1463](https://github.com/test-kitchen/test-kitchen/issues/1463)
+- Passing alternative configs to Kitchen::ThorTasks [\#1462](https://github.com/test-kitchen/test-kitchen/issues/1462)
+- kitchen login, password prompt [\#1461](https://github.com/test-kitchen/test-kitchen/issues/1461)
+- Vagrant ships with WinRM support builtin [\#1460](https://github.com/test-kitchen/test-kitchen/issues/1460)
 - Docs - migrate to Hugo [\#1458](https://github.com/test-kitchen/test-kitchen/issues/1458)
 - Docs for fixture cookbooks [\#1457](https://github.com/test-kitchen/test-kitchen/issues/1457)
 - Docs for Setting Environment for Chef provisioner [\#1455](https://github.com/test-kitchen/test-kitchen/issues/1455)
 - Docs for Reboot [\#1454](https://github.com/test-kitchen/test-kitchen/issues/1454)
 - Docs for Silencing Chef Deprecation Warnings [\#1452](https://github.com/test-kitchen/test-kitchen/issues/1452)
 - Docs for Shell Provisioner [\#1451](https://github.com/test-kitchen/test-kitchen/issues/1451)
+- Feature request: run specific tests via kitchen verify / kitchen test [\#1449](https://github.com/test-kitchen/test-kitchen/issues/1449)
+- CentOS Guest Chef Install Failures - Checksum Miss Match [\#1447](https://github.com/test-kitchen/test-kitchen/issues/1447)
+- Running specific modules of puppet and testing for it [\#1445](https://github.com/test-kitchen/test-kitchen/issues/1445)
+- Double logging when Chef is the provisioner [\#1444](https://github.com/test-kitchen/test-kitchen/issues/1444)
+- winrm-fs can't transfer files with special characters like `+` [\#1391](https://github.com/test-kitchen/test-kitchen/issues/1391)
+- Configureable updated resource limits for idempotency checks [\#1260](https://github.com/test-kitchen/test-kitchen/issues/1260)
 - Add documentation for elevated transport [\#1054](https://github.com/test-kitchen/test-kitchen/issues/1054)
+- Option to set delay between converge and verify on test [\#598](https://github.com/test-kitchen/test-kitchen/issues/598)
 
 **Merged pull requests:**
 
@@ -66,50 +114,150 @@
 - Support cookbook root aliases and VERSION file [\#1446](https://github.com/test-kitchen/test-kitchen/pull/1446) ([cheeseplus](https://github.com/cheeseplus))
 
 ## [v1.23.2](https://github.com/test-kitchen/test-kitchen/tree/v1.23.2) (2018-08-06)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.23.2)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.22.1...v1.23.2)
 
 **Closed issues:**
 
+- .kitchen.yml chef version is not honoerd for windows provisioner [\#1414](https://github.com/test-kitchen/test-kitchen/issues/1414)
+
+**Merged pull requests:**
+
+- Release 1.23.2 [\#1443](https://github.com/test-kitchen/test-kitchen/pull/1443) ([cheeseplus](https://github.com/cheeseplus))
+- Release 1.23.1 [\#1442](https://github.com/test-kitchen/test-kitchen/pull/1442) ([cheeseplus](https://github.com/cheeseplus))
+- Catch 'Operation already in progress' as seen on Ubuntu on WSL [\#1435](https://github.com/test-kitchen/test-kitchen/pull/1435) ([bdwyertech](https://github.com/bdwyertech))
+- Fix \#1104 add supplemental kitchen commands [\#1105](https://github.com/test-kitchen/test-kitchen/pull/1105) ([4-20ma](https://github.com/4-20ma))
+
+## [v1.22.1](https://github.com/test-kitchen/test-kitchen/tree/v1.22.1) (2018-08-03)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.0...v1.22.1)
+
+**Closed issues:**
+
+- Add ability to halt/start systems w/o destroy [\#1441](https://github.com/test-kitchen/test-kitchen/issues/1441)
+- Documentation for Shell Provisioner [\#1440](https://github.com/test-kitchen/test-kitchen/issues/1440)
+- syntax error kitchen-ssh-1.0.1/lib/kitchen/driver/ssh.rb line 13 [\#1438](https://github.com/test-kitchen/test-kitchen/issues/1438)
 - Race condition: conflicting chdir during another chdir block [\#1416](https://github.com/test-kitchen/test-kitchen/issues/1416)
 
 **Merged pull requests:**
 
+- \[SHACK-295\] ChefDK 2.x uses an old version of net-ssh [\#1439](https://github.com/test-kitchen/test-kitchen/pull/1439) ([tyler-ball](https://github.com/tyler-ball))
 - Synchronize calls to chdir to be thread safe [\#1430](https://github.com/test-kitchen/test-kitchen/pull/1430) ([s-bernard](https://github.com/s-bernard))
-- Catch 'Operation already in progress' as seen on Ubuntu on WSL [\#1435](https://github.com/test-kitchen/test-kitchen/pull/1435) ([bdwyertech](https://github.com/bdwyertech))
-- Fix \#1104 add supplemental kitchen commands [\#1105](https://github.com/test-kitchen/test-kitchen/pull/1105) ([4-20ma](https://github.com/4-20ma))
 
-
-## [v1.23.0](https://github.com/test-kitchen/test-kitchen/tree/v1.23.0) (2018-07-30)
+## [v1.23.0](https://github.com/test-kitchen/test-kitchen/tree/v1.23.0) (2018-07-31)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.22.0...v1.23.0)
+
+**Closed issues:**
+
+- Question: Skip the initial "destroy" phase in "kitchen test"? [\#1436](https://github.com/test-kitchen/test-kitchen/issues/1436)
+- Operation already in progress - connect\(2\) [\#1434](https://github.com/test-kitchen/test-kitchen/issues/1434)
+- Internal error when running kitchen EC2 [\#1433](https://github.com/test-kitchen/test-kitchen/issues/1433)
+- Display download progress of VirtualBox images [\#1417](https://github.com/test-kitchen/test-kitchen/issues/1417)
+- Error when converging "both URI are relative " [\#1407](https://github.com/test-kitchen/test-kitchen/issues/1407)
+- Add lifecycle hooks to various phases \(including provisioners\) [\#329](https://github.com/test-kitchen/test-kitchen/issues/329)
+- Support sync + converge [\#289](https://github.com/test-kitchen/test-kitchen/issues/289)
 
 **Merged pull requests:**
 
+- Release v1.23.0 [\#1437](https://github.com/test-kitchen/test-kitchen/pull/1437) ([cheeseplus](https://github.com/cheeseplus))
+- Release 1.22.0 [\#1429](https://github.com/test-kitchen/test-kitchen/pull/1429) ([tas50](https://github.com/tas50))
 - Lifecycle hooks [\#1428](https://github.com/test-kitchen/test-kitchen/pull/1428) ([coderanger](https://github.com/coderanger))
 - Minor technical cleanup and unify behavior for files and directories. [\#1401](https://github.com/test-kitchen/test-kitchen/pull/1401) ([coderanger](https://github.com/coderanger))
 
 ## [v1.22.0](https://github.com/test-kitchen/test-kitchen/tree/v1.22.0) (2018-06-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.2...v1.22.0)
 
-- Add the ssh_gateway_port config in ssh transport [#1421](https://github.com/test-kitchen/test-kitchen/pull/1421) ([sjeandeaux](https://github.com/sjeandeaux))
-- Shell Provisioner: make script executable [#1381](https://github.com/test-kitchen/test-kitchen/pull/1381) ([thewyzard44](https://github.com/thewyzard44))
-- Stop calling the Chef packages omnibus packages [#1425](https://github.com/test-kitchen/test-kitchen/pull/1425) ([tas50](https://github.com/tas50))
+**Fixed bugs:**
+
+- Shell provisioner fails on Windows host to Linux guest [\#931](https://github.com/test-kitchen/test-kitchen/issues/931)
+
+**Closed issues:**
+
+- kitchen vagrant won't work with a vagrant plugin [\#1422](https://github.com/test-kitchen/test-kitchen/issues/1422)
+- Runtime arguments [\#1420](https://github.com/test-kitchen/test-kitchen/issues/1420)
+- kitchen converge fails on Windows with Failed to complete \#converge action: \[invalid byte sequence in UTF-8\] on default-ubuntu-1604 [\#1415](https://github.com/test-kitchen/test-kitchen/issues/1415)
+- Shell Provisoner Fails on Windows due to execute bit [\#1413](https://github.com/test-kitchen/test-kitchen/issues/1413)
+- test-kitchen is incompatible with latest inspec [\#1409](https://github.com/test-kitchen/test-kitchen/issues/1409)
+
+**Merged pull requests:**
+
+- Minor testing updates [\#1426](https://github.com/test-kitchen/test-kitchen/pull/1426) ([tas50](https://github.com/tas50))
+- Stop calling the Chef packages omnibus packages [\#1425](https://github.com/test-kitchen/test-kitchen/pull/1425) ([tas50](https://github.com/tas50))
+- Test on the latest ruby releases [\#1424](https://github.com/test-kitchen/test-kitchen/pull/1424) ([tas50](https://github.com/tas50))
+- Add the ssh\_gateway\_port config in ssh transport [\#1421](https://github.com/test-kitchen/test-kitchen/pull/1421) ([sjeandeaux](https://github.com/sjeandeaux))
+- Shell Provisioner: make script executable [\#1381](https://github.com/test-kitchen/test-kitchen/pull/1381) ([thewyzard44](https://github.com/thewyzard44))
 
 ## [v1.21.2](https://github.com/test-kitchen/test-kitchen/tree/v1.21.2) (2018-05-07)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.1...v1.21.2)
 
-- Removing thor upper bound in step with berks [\#1410](https://github.com/test-kitchen/test-kitchen/pull/1410) ([cheeseplus](https://github.com/cheeseplus)
-)
+**Fixed bugs:**
+
+- 1.21.0 cannot install chef with new provisioner options [\#1402](https://github.com/test-kitchen/test-kitchen/issues/1402)
+
+**Closed issues:**
+
+- Net::SCP::Error [\#1408](https://github.com/test-kitchen/test-kitchen/issues/1408)
+- Chef installer permissions issue when using test-kitchen vagrant/virtualbox 16.04 [\#1406](https://github.com/test-kitchen/test-kitchen/issues/1406)
+
+**Merged pull requests:**
+
+- Release 1.21.2 [\#1412](https://github.com/test-kitchen/test-kitchen/pull/1412) ([cheeseplus](https://github.com/cheeseplus))
+- Removing thor upper bound in step with berks [\#1410](https://github.com/test-kitchen/test-kitchen/pull/1410) ([cheeseplus](https://github.com/cheeseplus))
 
 ## [v1.21.1](https://github.com/test-kitchen/test-kitchen/tree/v1.21.1) (2018-04-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.21.0...v1.21.1)
 
-- Revert: honor root\_path for location of chef installer script [\#1369]
+**Closed issues:**
+
+- All files in gem has execute bit set [\#1388](https://github.com/test-kitchen/test-kitchen/issues/1388)
+- Kitchen fails on multiple reboots of node during run.  [\#1376](https://github.com/test-kitchen/test-kitchen/issues/1376)
+- Host machine proxy environment variables overriding Chef client.rb proxy configs [\#1366](https://github.com/test-kitchen/test-kitchen/issues/1366)
+- Double logging when ChefDK is the provisioner [\#1365](https://github.com/test-kitchen/test-kitchen/issues/1365)
+- Update Appveyor to support Cucumber [\#798](https://github.com/test-kitchen/test-kitchen/issues/798)
+- Ability to specify an array of data bag locations [\#482](https://github.com/test-kitchen/test-kitchen/issues/482)
+
+**Merged pull requests:**
+
+- Release 1.21.1 hotfix [\#1404](https://github.com/test-kitchen/test-kitchen/pull/1404) ([cheeseplus](https://github.com/cheeseplus))
+- Revert "honor root\_path for location of chef installer script" [\#1403](https://github.com/test-kitchen/test-kitchen/pull/1403) ([cheeseplus](https://github.com/cheeseplus))
 
 ## [v1.21.0](https://github.com/test-kitchen/test-kitchen/tree/v1.21.0) (2018-04-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.20.0...v1.21.0)
 
+**Fixed bugs:**
+
+- when adding an audit-mode recipe to a test-suite, the kitchen instance never converges [\#794](https://github.com/test-kitchen/test-kitchen/issues/794)
+
+**Closed issues:**
+
+- Website is down [\#1394](https://github.com/test-kitchen/test-kitchen/issues/1394)
+- Attribute inclusion has an issue [\#1393](https://github.com/test-kitchen/test-kitchen/issues/1393)
+- missing command : kitchen driver create \[name\] [\#1386](https://github.com/test-kitchen/test-kitchen/issues/1386)
+- VBOX fails if generated instance name exceeds 64 characters [\#1383](https://github.com/test-kitchen/test-kitchen/issues/1383)
+- kitchen init provides a kitchen-dokken friendly kitchen configuration [\#1374](https://github.com/test-kitchen/test-kitchen/issues/1374)
+- ERROR and exit with message when both kitchen.yml and .kitchen.yml are present. [\#1372](https://github.com/test-kitchen/test-kitchen/issues/1372)
+- Support IPv6 addresses for WinRM [\#1370](https://github.com/test-kitchen/test-kitchen/issues/1370)
+- kitchen cannot find any OS image [\#1356](https://github.com/test-kitchen/test-kitchen/issues/1356)
+- Kitchen attempts SSH for Windows box [\#1355](https://github.com/test-kitchen/test-kitchen/issues/1355)
+- Query - Should passing the debug flag also set the debug of the chef-run? [\#1354](https://github.com/test-kitchen/test-kitchen/issues/1354)
+- Unable to use aliases in kitchen.yml [\#1353](https://github.com/test-kitchen/test-kitchen/issues/1353)
+- Parsing kitchen.yml in linux seems to fail [\#1352](https://github.com/test-kitchen/test-kitchen/issues/1352)
+- Test Kitchen fails to converge on Windows 2008r2 [\#1351](https://github.com/test-kitchen/test-kitchen/issues/1351)
+- .kitchen.yml suite-\>attributes are not accessible from chef templates [\#1350](https://github.com/test-kitchen/test-kitchen/issues/1350)
+- Kitchen converge fails on Windows - No such file or directory @ rb\_sysope [\#1349](https://github.com/test-kitchen/test-kitchen/issues/1349)
+- Class: Kitchen::Transport::SshFailed on kitchen converge every few runs  [\#1321](https://github.com/test-kitchen/test-kitchen/issues/1321)
+- Failed to complete \#converge action: \[key{hostname} not found\] on default-windows-2012r2 [\#1246](https://github.com/test-kitchen/test-kitchen/issues/1246)
+- test\_base\_path is weird [\#1077](https://github.com/test-kitchen/test-kitchen/issues/1077)
+- Check for .kitchen.yml before creating .kitchen [\#1026](https://github.com/test-kitchen/test-kitchen/issues/1026)
+- Multi Node / Cluster Support [\#873](https://github.com/test-kitchen/test-kitchen/issues/873)
+- Ignore/blacklist files from transfer [\#852](https://github.com/test-kitchen/test-kitchen/issues/852)
+- Windows guests ignore chef\_omnibus\_url, require override of chef\_metadata\_url [\#820](https://github.com/test-kitchen/test-kitchen/issues/820)
+- Kitchen converge fails if symlink is pointing at a non-existent file. [\#723](https://github.com/test-kitchen/test-kitchen/issues/723)
+- Support Special Characters in SSH Passwords [\#619](https://github.com/test-kitchen/test-kitchen/issues/619)
+- kitchen init always installs kitchen-vagrant [\#584](https://github.com/test-kitchen/test-kitchen/issues/584)
+- Provide ERB-variables in .kitchen.yml to get state of instances [\#525](https://github.com/test-kitchen/test-kitchen/issues/525)
+
 **Merged pull requests:**
 
+- Release 1.21.0 [\#1400](https://github.com/test-kitchen/test-kitchen/pull/1400) ([cheeseplus](https://github.com/cheeseplus))
 - Support `\*\_YML` for env vars too, for better UX [\#1398](https://github.com/test-kitchen/test-kitchen/pull/1398) ([coderanger](https://github.com/coderanger))
 - allow winrm-fs 1.2.0 [\#1396](https://github.com/test-kitchen/test-kitchen/pull/1396) ([gtmanfred](https://github.com/gtmanfred))
 - added KITCHEN\_YML [\#1392](https://github.com/test-kitchen/test-kitchen/pull/1392) ([jjasghar](https://github.com/jjasghar))
@@ -127,40 +275,95 @@
 ## [v1.20.0](https://github.com/test-kitchen/test-kitchen/tree/v1.20.0) (2018-01-19)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.2...v1.20.0)
 
+**Fixed bugs:**
+
+- WinRM commandline limits can break Windows bootstrapping [\#811](https://github.com/test-kitchen/test-kitchen/issues/811)
+
+**Closed issues:**
+
+- PR \#1328 broken the ability to specify symbols in kitchen configs [\#1345](https://github.com/test-kitchen/test-kitchen/issues/1345)
+- converge fails rmdir /tmp [\#1341](https://github.com/test-kitchen/test-kitchen/issues/1341)
+- Unable to download with winrm \(undefined local variable or method `session'\) [\#1337](https://github.com/test-kitchen/test-kitchen/issues/1337)
+- kitchen "exec" transport: announce environment variables [\#1333](https://github.com/test-kitchen/test-kitchen/issues/1333)
+- Omnibus fails to install on ubuntu-16.04 due to permissions error [\#1330](https://github.com/test-kitchen/test-kitchen/issues/1330)
+- safe\_yaml is broken with newer psych [\#1327](https://github.com/test-kitchen/test-kitchen/issues/1327)
+- No such cookbook error with kitchen 1.17.0 [\#1323](https://github.com/test-kitchen/test-kitchen/issues/1323)
+- Support reverse port forwarding when connecting via SSH transport [\#1322](https://github.com/test-kitchen/test-kitchen/issues/1322)
+- upload of sandbox directory fails with symlink in repo [\#1319](https://github.com/test-kitchen/test-kitchen/issues/1319)
+- Rakefile is missing berkshelf gem [\#1316](https://github.com/test-kitchen/test-kitchen/issues/1316)
+- Chef 13, CHefDK 2.3.4, Test-Kitchen 1.17.0 - Windows converge error with policyfile\_zero provisioner [\#1305](https://github.com/test-kitchen/test-kitchen/issues/1305)
+- Retry chef run after receiving WSMAN ERROR CODE: 995 in test-kitchen [\#1272](https://github.com/test-kitchen/test-kitchen/issues/1272)
+- kitchen has wrong exit code for chef-solo failure on windows \(winrm\) [\#1134](https://github.com/test-kitchen/test-kitchen/issues/1134)
+- `chef-long\_script.ps1` giving error when trying to spin up windows box [\#1013](https://github.com/test-kitchen/test-kitchen/issues/1013)
+- Support multiple paths for data bags [\#634](https://github.com/test-kitchen/test-kitchen/issues/634)
+
 **Merged pull requests:**
 
-- Support multiple paths for data bags [\#1313](https://github.com/test-kitchen/test-kitchen/pull/1313) ([thomasdziedzic](https://github.com/thomasdziedzic))
-- Support for configuration deprecation warnings [\#1303](https://github.com/test-kitchen/test-kitchen/pull/1303) ([wrightp](https://github.com/wrightp))
-- Support for SSH via an HTTP Proxy [\#1329](https://github.com/test-kitchen/test-kitchen/pull/1329) ([NAshwini](https://github.com/NAshwini))
-- Add download support to the base transport and provisioner [\#1306](https://github.com/test-kitchen/test-kitchen/pull/1306) ([atheiman](https://github.com/atheiman))
-- Fix download support for WinRM [\#1338](https://github.com/test-kitchen/test-kitchen/pull/1338) ([gtmanfred](https://github.com/gtmanfred))
-- Fix code to validate retry\_on\_exit\_code [\#1312](https://github.com/test-kitchen/test-kitchen/pull/1312) ([NAshwini](https://github.com/NAshwini))
+- Re-allow symbols in the config file. [\#1347](https://github.com/test-kitchen/test-kitchen/pull/1347) ([coderanger](https://github.com/coderanger))
+- Release 1.20.0 [\#1346](https://github.com/test-kitchen/test-kitchen/pull/1346) ([cheeseplus](https://github.com/cheeseplus))
+- Only allow one deprecation message to print per config [\#1340](https://github.com/test-kitchen/test-kitchen/pull/1340) ([wrightp](https://github.com/wrightp))
+- Pin minitest to fix build [\#1339](https://github.com/test-kitchen/test-kitchen/pull/1339) ([cheeseplus](https://github.com/cheeseplus))
+- fix file\_manager [\#1338](https://github.com/test-kitchen/test-kitchen/pull/1338) ([gtmanfred](https://github.com/gtmanfred))
+- \[MSYS-721\] Added KITCHEN\_SSH\_PROXY feature to connect via http proxy [\#1329](https://github.com/test-kitchen/test-kitchen/pull/1329) ([NAshwini](https://github.com/NAshwini))
 - Remove safe\_yaml [\#1328](https://github.com/test-kitchen/test-kitchen/pull/1328) ([coderanger](https://github.com/coderanger))
-- Pin minitest to 5.11 [\#1339](https://github.com/test-kitchen/test-kitchen/pull/1339) ([cheeseplus](https://github.com/cheeseplus))
+- Support multiple paths for data bags [\#1313](https://github.com/test-kitchen/test-kitchen/pull/1313) ([thomasdziedzic](https://github.com/thomasdziedzic))
+- \[MSYS-703\] Fix code to validate retry\_on\_exit\_code [\#1312](https://github.com/test-kitchen/test-kitchen/pull/1312) ([NAshwini](https://github.com/NAshwini))
+- adding download support to the base transport and provisioner [\#1306](https://github.com/test-kitchen/test-kitchen/pull/1306) ([atheiman](https://github.com/atheiman))
+- Configuration Deprecation warnings [\#1303](https://github.com/test-kitchen/test-kitchen/pull/1303) ([wrightp](https://github.com/wrightp))
 
 ## [v1.19.2](https://github.com/test-kitchen/test-kitchen/tree/v1.19.2) (2017-11-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.1...v1.19.2)
 
-**Release Notes:**
+**Closed issues:**
 
-- Updated the winrm-fs depdency from ~> 1.0.2 to ~> 1.1.0 to allow using the newer version
+- Test-kitchen converge fails with closed stream \(IOError\) [\#1320](https://github.com/test-kitchen/test-kitchen/issues/1320)
+
+**Merged pull requests:**
+
+- Release 1.19.2 [\#1325](https://github.com/test-kitchen/test-kitchen/pull/1325) ([tas50](https://github.com/tas50))
+- Bump the winrm-fs dep from ~1.0.2 -\> ~1.1.0 [\#1324](https://github.com/test-kitchen/test-kitchen/pull/1324) ([tas50](https://github.com/tas50))
 
 ## [v1.19.1](https://github.com/test-kitchen/test-kitchen/tree/v1.19.1) (2017-11-17)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.19.0...v1.19.1)
 
-**Release Notes:**
+**Fixed bugs:**
 
-Removed an extraneous bash shebang that caused the script generated to install chef-client to fail on certain platforms.
+- product\_name/product\_version re-install chef client [\#1215](https://github.com/test-kitchen/test-kitchen/issues/1215)
 
-**Merged pull requests**
+**Closed issues:**
 
+- After reboot, client.rb missing? [\#1315](https://github.com/test-kitchen/test-kitchen/issues/1315)
+- Configuration data can't unzip to kitchen\configuration folder on target instance \(Windows\)  [\#1311](https://github.com/test-kitchen/test-kitchen/issues/1311)
+- test-kitchen Windows 10 packages/un-packages cookbooks improperly on target VM [\#1302](https://github.com/test-kitchen/test-kitchen/issues/1302)
+- Kitchen create is not able to create a VM with the below error [\#1292](https://github.com/test-kitchen/test-kitchen/issues/1292)
+- Fails to continue with converge when reboot triggered \(Windows 2016\) [\#1227](https://github.com/test-kitchen/test-kitchen/issues/1227)
+- Use of enforce\_idempotency Causes 'Failed to complete \#converge action' [\#1225](https://github.com/test-kitchen/test-kitchen/issues/1225)
+- Rebooting Linux support broken by chef-client [\#1218](https://github.com/test-kitchen/test-kitchen/issues/1218)
+- Option for bootstrap\_run\_list to run before the actual run\_list [\#1195](https://github.com/test-kitchen/test-kitchen/issues/1195)
+-  \[\[WinRM::FS::Core::FileTransporter\] Upload  failed \(exitcode: 1\) - In Windows 2012RTM only [\#1106](https://github.com/test-kitchen/test-kitchen/issues/1106)
+- Provide CLI argument to set provisioner log\_level [\#995](https://github.com/test-kitchen/test-kitchen/issues/995)
+
+**Merged pull requests:**
+
+- Release 1.19.1 [\#1318](https://github.com/test-kitchen/test-kitchen/pull/1318) ([cheeseplus](https://github.com/cheeseplus))
 - Remove extraneous bash shebang. [\#1317](https://github.com/test-kitchen/test-kitchen/pull/1317) ([rhass](https://github.com/rhass))
+- Turn auto-retries on by default for Chef provisioners [\#1310](https://github.com/test-kitchen/test-kitchen/pull/1310) ([coderanger](https://github.com/coderanger))
 
-## [v1.19.0](https://github.com/test-kitchen/test-kitchen/tree/v1.19.0) (2017-11-1)
+## [v1.19.0](https://github.com/test-kitchen/test-kitchen/tree/v1.19.0) (2017-11-01)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.18.0...v1.19.0)
 
-**Merged pull requests**
+**Closed issues:**
 
+- Kitchen Feedback & tracking of boxes [\#1308](https://github.com/test-kitchen/test-kitchen/issues/1308)
+- Cookbook is not copying to instance [\#1299](https://github.com/test-kitchen/test-kitchen/issues/1299)
+- Errors when passing encrypted\_data\_bag\_secret\_key\_path [\#1297](https://github.com/test-kitchen/test-kitchen/issues/1297)
+- Question: Multiple Verifiers? [\#1288](https://github.com/test-kitchen/test-kitchen/issues/1288)
+- Kitchen converge fails to copy cookbooks over winrm in certain cases [\#1275](https://github.com/test-kitchen/test-kitchen/issues/1275)
+- Support for proxying SSH \(ProxyCommand\) [\#829](https://github.com/test-kitchen/test-kitchen/issues/829)
+
+**Merged pull requests:**
+
+- Release prep for 1.19 [\#1309](https://github.com/test-kitchen/test-kitchen/pull/1309) ([coderanger](https://github.com/coderanger))
 - Basic framework for kitchen doctor [\#1301](https://github.com/test-kitchen/test-kitchen/pull/1301) ([coderanger](https://github.com/coderanger))
 - add kitchen-sparkleformation driver to ECOSYSTEM.md [\#1300](https://github.com/test-kitchen/test-kitchen/pull/1300) ([pesimon](https://github.com/pesimon))
 - Add a --debug command line option [\#1296](https://github.com/test-kitchen/test-kitchen/pull/1296) ([coderanger](https://github.com/coderanger))
@@ -168,7 +371,7 @@ Removed an extraneous bash shebang that caused the script generated to install c
 - Misc cleanups [\#1294](https://github.com/test-kitchen/test-kitchen/pull/1294) ([coderanger](https://github.com/coderanger))
 - Upgrades to the shell provisioner [\#1293](https://github.com/test-kitchen/test-kitchen/pull/1293) ([coderanger](https://github.com/coderanger))
 - Remove the `driver create` and `driver discover` commands [\#1290](https://github.com/test-kitchen/test-kitchen/pull/1290) ([coderanger](https://github.com/coderanger))
-- Adds pre_create_command for running arbitrary commands [\#1243](https://github.com/test-kitchen/test-kitchen/pull/1243) ([sean797](https://github.com/sean797))
+- Adds pre\_create\_command for running arbitrary commands [\#1243](https://github.com/test-kitchen/test-kitchen/pull/1243) ([sean797](https://github.com/sean797))
 - Added better routine to install Busser+Plugins [\#1083](https://github.com/test-kitchen/test-kitchen/pull/1083) ([yeoldegrove](https://github.com/yeoldegrove))
 
 ## [v1.18.0](https://github.com/test-kitchen/test-kitchen/tree/v1.18.0) (2017-09-28)
@@ -176,10 +379,28 @@ Removed an extraneous bash shebang that caused the script generated to install c
 
 **Fixed bugs:**
 
+- Omnibus script hangs if it can't get perms on /tmp/stderr  [\#744](https://github.com/test-kitchen/test-kitchen/issues/744)
 - Shell verifier: Print instance name instead of object [\#1263](https://github.com/test-kitchen/test-kitchen/pull/1263) ([rbngzlv](https://github.com/rbngzlv))
+
+**Closed issues:**
+
+- Support for ENV varialbles in .kitchen.yml [\#1278](https://github.com/test-kitchen/test-kitchen/issues/1278)
+- :paranoid is deprecated, please use :verify\_host\_key. Supported values are exactly the same, only the name of the option has changed. [\#1277](https://github.com/test-kitchen/test-kitchen/issues/1277)
+- Kitchen fails to converge - disk space issue - centos 6.x \(verified against chef-provided centos 6.8, 6.9, etc\) [\#1271](https://github.com/test-kitchen/test-kitchen/issues/1271)
+- kitchen destroy targets wrong vm [\#1264](https://github.com/test-kitchen/test-kitchen/issues/1264)
+- Setting require\_chef\_omnibus to false results in an error [\#1261](https://github.com/test-kitchen/test-kitchen/issues/1261)
+- test pass with `kitchen verify` but not with `kitchen test` [\#1244](https://github.com/test-kitchen/test-kitchen/issues/1244)
+- Net::SSH::ChannelOpenFailed [\#1111](https://github.com/test-kitchen/test-kitchen/issues/1111)
+- Readme: add instructions for updating test-kitchen inside ChefDK [\#1009](https://github.com/test-kitchen/test-kitchen/issues/1009)
+- Add ability to pass arguments to shell provisioner [\#917](https://github.com/test-kitchen/test-kitchen/issues/917)
+- Profiling kitchen runs [\#863](https://github.com/test-kitchen/test-kitchen/issues/863)
+- kitchen close \(or stop\) \[INSTANCE|REGEXP|all\] [\#791](https://github.com/test-kitchen/test-kitchen/issues/791)
+- Can we get log level of kitchen from test code? [\#766](https://github.com/test-kitchen/test-kitchen/issues/766)
+- Berkshelf::OutdatedDependency swallowing detail [\#420](https://github.com/test-kitchen/test-kitchen/issues/420)
 
 **Merged pull requests:**
 
+- Release 1.18.0 [\#1287](https://github.com/test-kitchen/test-kitchen/pull/1287) ([cheeseplus](https://github.com/cheeseplus))
 - reset\_command doesn't actually need to be required [\#1286](https://github.com/test-kitchen/test-kitchen/pull/1286) ([coderanger](https://github.com/coderanger))
 - Continue to support older net-ssh while fixing 4.2 deprecation [\#1285](https://github.com/test-kitchen/test-kitchen/pull/1285) ([cheeseplus](https://github.com/cheeseplus))
 - Update winrm-fs and make winrm\* gems proper deps [\#1284](https://github.com/test-kitchen/test-kitchen/pull/1284) ([cheeseplus](https://github.com/cheeseplus))
@@ -190,7 +411,7 @@ Removed an extraneous bash shebang that caused the script generated to install c
 - Add proxy support when using product\_name [\#1276](https://github.com/test-kitchen/test-kitchen/pull/1276) ([wrightp](https://github.com/wrightp))
 - Remove Ruby 1.8.7 compat code [\#1274](https://github.com/test-kitchen/test-kitchen/pull/1274) ([tas50](https://github.com/tas50))
 - Move extra dev deps to the Gemfile [\#1273](https://github.com/test-kitchen/test-kitchen/pull/1273) ([tas50](https://github.com/tas50))
-- Add tas50 as a maintainer [\#1270](https://github.com/test-kitchen/test-kitchen/pull/1270) ([tas50](https://github.com/tas50))
+- Add myself as a maintainer [\#1270](https://github.com/test-kitchen/test-kitchen/pull/1270) ([tas50](https://github.com/tas50))
 - Swap IRC for Slack in the readme [\#1269](https://github.com/test-kitchen/test-kitchen/pull/1269) ([tas50](https://github.com/tas50))
 - Remove rack pin for Ruby 2.1 & move changelog gen to gemfile [\#1268](https://github.com/test-kitchen/test-kitchen/pull/1268) ([tas50](https://github.com/tas50))
 - Add download\_url and checksum provisioner config options [\#1267](https://github.com/test-kitchen/test-kitchen/pull/1267) ([wrightp](https://github.com/wrightp))
@@ -203,17 +424,81 @@ Removed an extraneous bash shebang that caused the script generated to install c
 
 **Fixed bugs:**
 
+- SSH Transport with Windows doesn't appear to work [\#868](https://github.com/test-kitchen/test-kitchen/issues/868)
+- Windows: cannot run kitchen test and kitchen login due to a forwading port problem. [\#708](https://github.com/test-kitchen/test-kitchen/issues/708)
+- Can't disable ohai plugins using chef-zero provisioner [\#415](https://github.com/test-kitchen/test-kitchen/issues/415)
 - Fix Dir.glob usage [\#1258](https://github.com/test-kitchen/test-kitchen/pull/1258) ([jaym](https://github.com/jaym))
+
+**Closed issues:**
+
+- get rid of provisioner, platforms, suites in custom driver from kitchen.yml [\#1257](https://github.com/test-kitchen/test-kitchen/issues/1257)
+- unable to load new/custom kitchen driver in my kitchen.yml [\#1256](https://github.com/test-kitchen/test-kitchen/issues/1256)
+- Feature request - enabled: false for suite [\#1253](https://github.com/test-kitchen/test-kitchen/issues/1253)
+- Test-kitchen without Berkshelf [\#1251](https://github.com/test-kitchen/test-kitchen/issues/1251)
+- transport [\#1248](https://github.com/test-kitchen/test-kitchen/issues/1248)
+- kitchen verify fails [\#1245](https://github.com/test-kitchen/test-kitchen/issues/1245)
+-  list [\#1241](https://github.com/test-kitchen/test-kitchen/issues/1241)
+- Kitchen create command failing for SUSE  [\#1239](https://github.com/test-kitchen/test-kitchen/issues/1239)
+- kitchen converge Failed to complete \#converge action: \[no implicit conversion of nil into String\] [\#1238](https://github.com/test-kitchen/test-kitchen/issues/1238)
+- \[windows\] No live threads left. Deadlock? [\#1224](https://github.com/test-kitchen/test-kitchen/issues/1224)
+- Switching Test-Kitchen Configuration [\#1223](https://github.com/test-kitchen/test-kitchen/issues/1223)
+- Improve 'Test Summary" Coloring; especially "0 Failures" being in Red [\#1222](https://github.com/test-kitchen/test-kitchen/issues/1222)
+- synced\_folders not mounted on Windows guests [\#1221](https://github.com/test-kitchen/test-kitchen/issues/1221)
+- Message: Could not load the 'propeller' driver from the load path.  [\#1219](https://github.com/test-kitchen/test-kitchen/issues/1219)
+- \[QUESTION\] Verifier Retry Options [\#1217](https://github.com/test-kitchen/test-kitchen/issues/1217)
+- kitchen converge ssl error on windows [\#1216](https://github.com/test-kitchen/test-kitchen/issues/1216)
+- Syncronzing Cookbooks fails to sync root files [\#1213](https://github.com/test-kitchen/test-kitchen/issues/1213)
+- Kitchen converge fails on second converge [\#1212](https://github.com/test-kitchen/test-kitchen/issues/1212)
+- Message: Failed to complete \#converge action: \[\[WinRM::FS::Core::FileTransporter\] Upload failed \(exitcode: 1\) [\#1211](https://github.com/test-kitchen/test-kitchen/issues/1211)
+- "file is of unknown type" error message should be "file not found" [\#1210](https://github.com/test-kitchen/test-kitchen/issues/1210)
+- concurrency between multiple KITCHEN\_YAML [\#1207](https://github.com/test-kitchen/test-kitchen/issues/1207)
+- serverspec `process` not working corretly [\#1206](https://github.com/test-kitchen/test-kitchen/issues/1206)
+- Not possible to converge the machine.  [\#1204](https://github.com/test-kitchen/test-kitchen/issues/1204)
+- Gems from metadata.rb are not installed when running via test kitchen. [\#1203](https://github.com/test-kitchen/test-kitchen/issues/1203)
+- New release [\#1194](https://github.com/test-kitchen/test-kitchen/issues/1194)
+- Message: SCP upload failed \(open failed \(1\)\) when additional\_copy\_path = '.' [\#1191](https://github.com/test-kitchen/test-kitchen/issues/1191)
+- Travis fails with a SCP error on the spec directory [\#1187](https://github.com/test-kitchen/test-kitchen/issues/1187)
+- kitchen login doesn't pass ssh password from kitchen.yml [\#1175](https://github.com/test-kitchen/test-kitchen/issues/1175)
+- 1.14.2 throws network path was not found on Windows [\#1171](https://github.com/test-kitchen/test-kitchen/issues/1171)
+- a link on kitchen.ci/blog is broken \(very minor\) [\#1161](https://github.com/test-kitchen/test-kitchen/issues/1161)
+- ssh port forwarding [\#1159](https://github.com/test-kitchen/test-kitchen/issues/1159)
+- TypeError: superclass mismatch for class Docker [\#1132](https://github.com/test-kitchen/test-kitchen/issues/1132)
+- WinRM Transport requires the vagrant-winrm Vagrant plugin [\#1109](https://github.com/test-kitchen/test-kitchen/issues/1109)
+- sometimes TK doesn't mount shares [\#1093](https://github.com/test-kitchen/test-kitchen/issues/1093)
+- Docs on https://docs.chef.io/ have not been kept up to date [\#1060](https://github.com/test-kitchen/test-kitchen/issues/1060)
+- Test Kitchen now uses local profile and gives no option to use berks [\#1036](https://github.com/test-kitchen/test-kitchen/issues/1036)
+- "kitchen list" breaks if suits: & - name: fields are missing [\#893](https://github.com/test-kitchen/test-kitchen/issues/893)
+- Produce a better error message when the underlying virtualization provider is missing [\#831](https://github.com/test-kitchen/test-kitchen/issues/831)
+- Output is buffered until the end of the Chef run -\> don't see what's going on [\#826](https://github.com/test-kitchen/test-kitchen/issues/826)
+- Rename `:require\_chef\_omnibus` config attribute name to `:chef\_version` [\#771](https://github.com/test-kitchen/test-kitchen/issues/771)
+- run with specific version of the chef-client [\#715](https://github.com/test-kitchen/test-kitchen/issues/715)
+- require\_chef\_omnibus re-installs chef-client when not needed [\#691](https://github.com/test-kitchen/test-kitchen/issues/691)
+- If Berksfile is present, kitchen never finds Cheffile [\#686](https://github.com/test-kitchen/test-kitchen/issues/686)
+- Reference-Style Documentation for Kitchen file [\#682](https://github.com/test-kitchen/test-kitchen/issues/682)
+- kitchen does not create needed interface. no errors [\#621](https://github.com/test-kitchen/test-kitchen/issues/621)
+- Custom root\_path permissions issues [\#576](https://github.com/test-kitchen/test-kitchen/issues/576)
+- .kitchen.yml configuration options  [\#574](https://github.com/test-kitchen/test-kitchen/issues/574)
+- Need a mechanism to share tests between suites [\#503](https://github.com/test-kitchen/test-kitchen/issues/503)
+- Doc needs updating with existing configuration options [\#409](https://github.com/test-kitchen/test-kitchen/issues/409)
+- kitchen login not working with plink [\#367](https://github.com/test-kitchen/test-kitchen/issues/367)
+- Add a way to execute arbitrary driver commands [\#350](https://github.com/test-kitchen/test-kitchen/issues/350)
+
+**Merged pull requests:**
+
+- release 1.17.0 [\#1259](https://github.com/test-kitchen/test-kitchen/pull/1259) ([robbkidd](https://github.com/robbkidd))
+- reduce warnings during test runs [\#1255](https://github.com/test-kitchen/test-kitchen/pull/1255) ([robbkidd](https://github.com/robbkidd))
+- use a more efficient sort for gem specs [\#1254](https://github.com/test-kitchen/test-kitchen/pull/1254) ([robbkidd](https://github.com/robbkidd))
+- fixes formatting for tables on ECOSYSTEM.md [\#1247](https://github.com/test-kitchen/test-kitchen/pull/1247) ([brewn](https://github.com/brewn))
+- test on precise [\#1237](https://github.com/test-kitchen/test-kitchen/pull/1237) ([lamont-granquist](https://github.com/lamont-granquist))
+- remove 2.2.x support [\#1236](https://github.com/test-kitchen/test-kitchen/pull/1236) ([lamont-granquist](https://github.com/lamont-granquist))
+- greenify appveyor tests [\#1235](https://github.com/test-kitchen/test-kitchen/pull/1235) ([lamont-granquist](https://github.com/lamont-granquist))
+- just ignore busted test [\#1234](https://github.com/test-kitchen/test-kitchen/pull/1234) ([lamont-granquist](https://github.com/lamont-granquist))
+- remove badges [\#1233](https://github.com/test-kitchen/test-kitchen/pull/1233) ([lamont-granquist](https://github.com/lamont-granquist))
+- let dev gems float [\#1232](https://github.com/test-kitchen/test-kitchen/pull/1232) ([lamont-granquist](https://github.com/lamont-granquist))
+- Test on most recent Ruby releases [\#1228](https://github.com/test-kitchen/test-kitchen/pull/1228) ([tas50](https://github.com/tas50))
 
 ## [v1.16.0](https://github.com/test-kitchen/test-kitchen/tree/v1.16.0) (2017-03-03)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.15.0...v1.16.0)
-
-**Implemented enhancements:**
-
-- Enforce suite idempotency [\#874](https://github.com/test-kitchen/test-kitchen/issues/874)
-- Export no\_proxy from kitchen config [\#1178](https://github.com/test-kitchen/test-kitchen/pull/1178) ([itmustbejj](https://github.com/itmustbejj))
-- Adding transport option "ssh\_key\_only". [\#1141](https://github.com/test-kitchen/test-kitchen/pull/1141) ([cliles](https://github.com/cliles))
-- Run chef-client twice in chef-zero provisioner [\#875](https://github.com/test-kitchen/test-kitchen/pull/875) ([kamaradclimber](https://github.com/kamaradclimber))
 
 **Fixed bugs:**
 
@@ -229,16 +514,23 @@ Removed an extraneous bash shebang that caused the script generated to install c
 - WinRm - I/O Operation Aborted [\#1142](https://github.com/test-kitchen/test-kitchen/issues/1142)
 - Guest hostname does not get set if converge times out during vagrant VM boot [\#1128](https://github.com/test-kitchen/test-kitchen/issues/1128)
 - I'm trying to run kitchen converge but getting the converge IO error [\#1075](https://github.com/test-kitchen/test-kitchen/issues/1075)
+- Enforce suite idempotency [\#874](https://github.com/test-kitchen/test-kitchen/issues/874)
 - Documentation for support for Encrypted Data Bags [\#384](https://github.com/test-kitchen/test-kitchen/issues/384)
+
+**Merged pull requests:**
+
+- Preparation for Release [\#1202](https://github.com/test-kitchen/test-kitchen/pull/1202) ([afiune](https://github.com/afiune))
+- Update to latest train \(and net-ssh 4\) for testing [\#1201](https://github.com/test-kitchen/test-kitchen/pull/1201) ([tduffield](https://github.com/tduffield))
+- fixing chefstyle 0.5.0 issues [\#1192](https://github.com/test-kitchen/test-kitchen/pull/1192) ([lamont-granquist](https://github.com/lamont-granquist))
+- Fix bad rakefile error message on missing chefstyle [\#1182](https://github.com/test-kitchen/test-kitchen/pull/1182) ([tas50](https://github.com/tas50))
+- Add missing changelog for 1.15.0 [\#1181](https://github.com/test-kitchen/test-kitchen/pull/1181) ([tas50](https://github.com/tas50))
+- Test on current ruby releases [\#1179](https://github.com/test-kitchen/test-kitchen/pull/1179) ([tas50](https://github.com/tas50))
+- Export no\_proxy from kitchen config [\#1178](https://github.com/test-kitchen/test-kitchen/pull/1178) ([itmustbejj](https://github.com/itmustbejj))
+- Adding transport option "ssh\_key\_only". [\#1141](https://github.com/test-kitchen/test-kitchen/pull/1141) ([cliles](https://github.com/cliles))
+- Run chef-client twice in chef-zero provisioner [\#875](https://github.com/test-kitchen/test-kitchen/pull/875) ([kamaradclimber](https://github.com/kamaradclimber))
 
 ## [v1.15.0](https://github.com/test-kitchen/test-kitchen/tree/v1.15.0) (2017-01-12)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.2...v1.15.0)
-
-**Implemented enhancements:**
-
-- Display the last action's success [\#1124](https://github.com/test-kitchen/test-kitchen/issues/1124)
-- Relax dependencies to bring in newer gem versions [\#1176](https://github.com/test-kitchen/test-kitchen/pull/1176) ([lamont-granquist](https://github.com/lamont-granquist))
-- Make RakeTask\#config public. [\#1069](https://github.com/test-kitchen/test-kitchen/pull/1069) ([gregsymons](https://github.com/gregsymons))
 
 **Fixed bugs:**
 
@@ -248,13 +540,23 @@ Removed an extraneous bash shebang that caused the script generated to install c
 
 - "incompatible character encodings: UTF-8 and ASCII-8BIT" when using cyrillic letters in cookbook [\#1170](https://github.com/test-kitchen/test-kitchen/issues/1170)
 - ssh\_key is not read and sent to the args for ssh transport [\#1169](https://github.com/test-kitchen/test-kitchen/issues/1169)
+- Display the last action's success [\#1124](https://github.com/test-kitchen/test-kitchen/issues/1124)
+
+**Merged pull requests:**
+
+- Relax dependencies to bring in newer gem versions [\#1176](https://github.com/test-kitchen/test-kitchen/pull/1176) ([lamont-granquist](https://github.com/lamont-granquist))
+- Remove ruby 2.1.9 from test matrix [\#1174](https://github.com/test-kitchen/test-kitchen/pull/1174) ([mwrock](https://github.com/mwrock))
+- Bump version after release [\#1168](https://github.com/test-kitchen/test-kitchen/pull/1168) ([afiune](https://github.com/afiune))
+- Make RakeTask\#config public. [\#1069](https://github.com/test-kitchen/test-kitchen/pull/1069) ([gregsymons](https://github.com/gregsymons))
 
 ## [v1.14.2](https://github.com/test-kitchen/test-kitchen/tree/v1.14.2) (2016-12-09)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.1...v1.14.2)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
+- Prep Release 1.14.2 [\#1167](https://github.com/test-kitchen/test-kitchen/pull/1167) ([afiune](https://github.com/afiune))
 - Replace finstyle in favor of chefstyle [\#1166](https://github.com/test-kitchen/test-kitchen/pull/1166) ([afiune](https://github.com/afiune))
+- Bump version after release [\#1165](https://github.com/test-kitchen/test-kitchen/pull/1165) ([afiune](https://github.com/afiune))
 
 ## [v1.14.1](https://github.com/test-kitchen/test-kitchen/tree/v1.14.1) (2016-12-08)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.14.0...v1.14.1)
@@ -264,21 +566,19 @@ Removed an extraneous bash shebang that caused the script generated to install c
 - Getting message: "Expected array default value for '--driver'; got "kitchen-vagrant" \(string\)" with every operation [\#1163](https://github.com/test-kitchen/test-kitchen/issues/1163)
 - Possible to specify a custom bootstrap template? [\#1162](https://github.com/test-kitchen/test-kitchen/issues/1162)
 - Deployment of cookbooks do differ from berks package [\#1158](https://github.com/test-kitchen/test-kitchen/issues/1158)
-- Failed to complete \#create action: \[undefined method '\[\]' for nil:NilClass\] [\#1157](https://github.com/test-kitchen/test-kitchen/issues/1157)
+- Failed to complete \#create action: \[undefined method `\[\]' for nil:NilClass\] [\#1157](https://github.com/test-kitchen/test-kitchen/issues/1157)
 - inspec works, but kitchen verify fails [\#1154](https://github.com/test-kitchen/test-kitchen/issues/1154)
 
 **Merged pull requests:**
 
-- Fix typo in berkshelf chef provisioner. [\#1160](https://github.com/test-kitchen/test-kitchen/pull/1160) ([thommay](https://github.com/thommay))
+- Prep for 1.14.1 release [\#1164](https://github.com/test-kitchen/test-kitchen/pull/1164) ([afiune](https://github.com/afiune))
+- Fix typo in berkshelf chef provisioner [\#1160](https://github.com/test-kitchen/test-kitchen/pull/1160) ([thommay](https://github.com/thommay))
 - Update MAINTAINERS.md [\#1156](https://github.com/test-kitchen/test-kitchen/pull/1156) ([afiune](https://github.com/afiune))
 - Fix to work with Thor 0.19.2 [\#1155](https://github.com/test-kitchen/test-kitchen/pull/1155) ([coderanger](https://github.com/coderanger))
+- bump version after release [\#1153](https://github.com/test-kitchen/test-kitchen/pull/1153) ([smurawski](https://github.com/smurawski))
 
 ## [v1.14.0](https://github.com/test-kitchen/test-kitchen/tree/v1.14.0) (2016-11-22)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.2...v1.14.0)
-
-**Implemented enhancements:**
-
-- Test Kitchen should use omnitruck's -d option by default [\#809](https://github.com/test-kitchen/test-kitchen/issues/809)
 
 **Closed issues:**
 
@@ -289,10 +589,15 @@ Removed an extraneous bash shebang that caused the script generated to install c
 - kitchen converge throws Berkshelf::LockfileNotFound on Windows [\#1140](https://github.com/test-kitchen/test-kitchen/issues/1140)
 - Inspect tests is an empty value when using the kitchen\_ec2 driver [\#1136](https://github.com/test-kitchen/test-kitchen/issues/1136)
 - kitchen test or verify with --parallel option fails [\#1125](https://github.com/test-kitchen/test-kitchen/issues/1125)
+- Test Kitchen should use omnitruck's -d option by default [\#809](https://github.com/test-kitchen/test-kitchen/issues/809)
+- Bats tests are being executed even missing specification [\#360](https://github.com/test-kitchen/test-kitchen/issues/360)
 
 **Merged pull requests:**
 
+- Prep for 1.14.0 Release [\#1152](https://github.com/test-kitchen/test-kitchen/pull/1152) ([smurawski](https://github.com/smurawski))
 - Added `cache` interface for Drivers so that provisioners can leverage  [\#1149](https://github.com/test-kitchen/test-kitchen/pull/1149) ([afiune](https://github.com/afiune))
+- Closed \#1146 and restores codeclimate reporting. [\#1148](https://github.com/test-kitchen/test-kitchen/pull/1148) ([smurawski](https://github.com/smurawski))
+- Remove codeclimate-test-reporter as that has been deprecated [\#1147](https://github.com/test-kitchen/test-kitchen/pull/1147) ([smurawski](https://github.com/smurawski))
 - Ensure that we only berks update with a lockfile [\#1145](https://github.com/test-kitchen/test-kitchen/pull/1145) ([thommay](https://github.com/thommay))
 - Added `last\_error` and `--json` to `kitchen list` [\#1135](https://github.com/test-kitchen/test-kitchen/pull/1135) ([BackSlasher](https://github.com/BackSlasher))
 - Allow the user to make deprecations errors [\#1117](https://github.com/test-kitchen/test-kitchen/pull/1117) ([thommay](https://github.com/thommay))
@@ -304,67 +609,116 @@ Removed an extraneous bash shebang that caused the script generated to install c
 
 - fix broken path on nano so shell out works [\#1129](https://github.com/test-kitchen/test-kitchen/pull/1129) ([mwrock](https://github.com/mwrock))
 
+**Merged pull requests:**
+
+- Release 1.13.2 [\#1130](https://github.com/test-kitchen/test-kitchen/pull/1130) ([mwrock](https://github.com/mwrock))
+
 ## [v1.13.1](https://github.com/test-kitchen/test-kitchen/tree/v1.13.1) (2016-09-22)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.13.0...v1.13.1)
 
-**Implemented enhancements:**
+**Closed issues:**
 
-- Allow mixlib-install 2.0 [\#1126](https://github.com/test-kitchen/test-kitchen/pull/1126) ([jkeis
-er](https://github.com/jkeiser))
+- failed to converge on OSX 10.11.6 [\#1122](https://github.com/test-kitchen/test-kitchen/issues/1122)
+
+**Merged pull requests:**
+
+- Bump version to 1.13.1 [\#1127](https://github.com/test-kitchen/test-kitchen/pull/1127) ([jkeiser](https://github.com/jkeiser))
+- Allow mixlib-install 2.0 [\#1126](https://github.com/test-kitchen/test-kitchen/pull/1126) ([jkeiser](https://github.com/jkeiser))
 
 ## [v1.13.0](https://github.com/test-kitchen/test-kitchen/tree/v1.13.0) (2016-09-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.12.0...v1.13.0)
-
-**Implemented enhancements:**
-
-- Add `kitchen status` command [\#87](https://github.com/test-kitchen/test-kitchen/issues/87)
-- Add support for Windows Nano installs via chef provisioners [\#1119](https://github.com/test-kitchen/test-kitchen/pull/1119) ([mwrock](https://github.com/mwrock))
-- Add package driver command [\#1074](https://github.com/test-kitchen/test-kitchen/pull/1074) ([neillturner](https://github.com/neillturner))
 
 **Fixed bugs:**
 
 - SSH Transport: Bastion proxy results in broken pipe error [\#1079](https://github.com/test-kitchen/test-kitchen/issues/1079)
 
+**Closed issues:**
+
+- converge fails Windows Server 2012R2 "This implementation is not part of Windows Platform FIPS validated cryptographic algorithms" [\#1116](https://github.com/test-kitchen/test-kitchen/issues/1116)
+- Run chef-solo in legacy mode for chef\_solo provisioner under Chef 12.11+ [\#1070](https://github.com/test-kitchen/test-kitchen/issues/1070)
+- 'username:' keyword not respected during `kitchen exec -c 'command'` [\#756](https://github.com/test-kitchen/test-kitchen/issues/756)
+- CONVERGE: Failed to complete \#converge action of .git folder [\#544](https://github.com/test-kitchen/test-kitchen/issues/544)
+- Option to use internal gem server [\#474](https://github.com/test-kitchen/test-kitchen/issues/474)
+- Add `kitchen status` command [\#87](https://github.com/test-kitchen/test-kitchen/issues/87)
+
+**Merged pull requests:**
+
+- Release 1.13.0 [\#1121](https://github.com/test-kitchen/test-kitchen/pull/1121) ([mwrock](https://github.com/mwrock))
+- Add support for Windows Nano installs via chef provisioners [\#1119](https://github.com/test-kitchen/test-kitchen/pull/1119) ([mwrock](https://github.com/mwrock))
+- Fixes \#87 because we love Mike [\#1115](https://github.com/test-kitchen/test-kitchen/pull/1115) ([cheeseplus](https://github.com/cheeseplus))
+- Fixing deps [\#1114](https://github.com/test-kitchen/test-kitchen/pull/1114) ([cheeseplus](https://github.com/cheeseplus))
+- Added Errno::EPIPE to RESCUE\_EXCEPTIONS\_ON\_ESTABLISH [\#1078](https://github.com/test-kitchen/test-kitchen/pull/1078) ([yoshiwaan](https://github.com/yoshiwaan))
+- Add package driver command [\#1074](https://github.com/test-kitchen/test-kitchen/pull/1074) ([neillturner](https://github.com/neillturner))
+
 ## [v1.12.0](https://github.com/test-kitchen/test-kitchen/tree/v1.12.0) (2016-09-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.1...v1.12.0)
 
-**Implemented enhancements:**
+**Closed issues:**
 
-- Use winrm v2 release gems [\#1061](https://github.com/test-kitchen/test-kitchen/pull/1061) ([mwrock](https://github.com/mwrock))
+- ssh\_key not used with kitchen login [\#1108](https://github.com/test-kitchen/test-kitchen/issues/1108)
+- Add supplemental kitchen commands to rake task [\#1104](https://github.com/test-kitchen/test-kitchen/issues/1104)
+- Ability to change tk- prefix to another optionally. [\#1101](https://github.com/test-kitchen/test-kitchen/issues/1101)
+- Net::SSH::ChannelOpenFailed [\#1084](https://github.com/test-kitchen/test-kitchen/issues/1084)
+
+**Merged pull requests:**
+
+- Release 1.12.0 [\#1110](https://github.com/test-kitchen/test-kitchen/pull/1110) ([mwrock](https://github.com/mwrock))
 - Add a new config option always\_update\_cookbooks [\#1107](https://github.com/test-kitchen/test-kitchen/pull/1107) ([coderanger](https://github.com/coderanger))
 - Always run `chef install` even if the lock file exists. [\#1103](https://github.com/test-kitchen/test-kitchen/pull/1103) ([coderanger](https://github.com/coderanger))
 - support passing Kitchen::Config Hash keys to Kitchen::RakeTasks.new [\#1102](https://github.com/test-kitchen/test-kitchen/pull/1102) ([theckman](https://github.com/theckman))
+- Update Ruby versions to test on [\#1100](https://github.com/test-kitchen/test-kitchen/pull/1100) ([tas50](https://github.com/tas50))
+- Use winrm v2 release gems [\#1061](https://github.com/test-kitchen/test-kitchen/pull/1061) ([mwrock](https://github.com/mwrock))
 
 ## [v1.11.1](https://github.com/test-kitchen/test-kitchen/tree/v1.11.1) (2016-08-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.11.0...v1.11.1)
 
-**Fixed bugs:**
+**Closed issues:**
 
-- Check the actual value, because `password: nil` shouldn't disable sending the key [\#1098](https://github.com/test-kitchen/test-kitchen/pull/1098) ([coderanger](https://github.com/coderanger))
+- More verbose kitchen verify output? [\#1097](https://github.com/test-kitchen/test-kitchen/issues/1097)
 
-## [v1.11.0](https://github.com/test-kitchen/test-kitchen/tree/v1.11.0) (2016-08-11)
+**Merged pull requests:**
+
+- Release 1.11.1 [\#1099](https://github.com/test-kitchen/test-kitchen/pull/1099) ([mwrock](https://github.com/mwrock))
+- Check the actual value, because `password: nil` shouldn't disable sending the key. [\#1098](https://github.com/test-kitchen/test-kitchen/pull/1098) ([coderanger](https://github.com/coderanger))
+
+## [v1.11.0](https://github.com/test-kitchen/test-kitchen/tree/v1.11.0) (2016-08-12)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.2...v1.11.0)
-
-**Implemented enhancements:**
-
-- Provide some way for Chef to know it's running under test [\#458](https://github.com/test-kitchen/test-kitchen/issues/458)
-- Dont set ssh key configuration if a password is specified [\#1095](https://github.com/test-kitchen/test-kitchen/pull/1095) ([mwrock](https://github.com/mwrock))
-- Ability to work with Instances over SSH tunnel. [\#1091](https://github.com/test-kitchen/test-kitchen/pull/1091) ([EYurchenko](https://github.com/EYurchenko))
-- Add environment variables $TEST\_KITCHEN and $CI [\#1081](https://github.com/test-kitchen/test-kitchen/pull/1081) ([coderanger](https://github.com/coderanger))
-- Adding test\_base\_path CLI arg to the diagnose command [\#1076](https://github.com/test-kitchen/test-kitchen/pull/1076) ([tyler-ball](https://github.com/tyler-ball))
-- Add legacy\_mode argument for chef\_solo provisioner [\#1073](https://github.com/test-kitchen/test-kitchen/pull/1073) ([SaltwaterC](https://github.com/SaltwaterC))
-- Added support for Chef 10 [\#1072](https://github.com/test-kitchen/test-kitchen/pull/1072) ([acondrat](https://github.com/acondrat))
 
 **Fixed bugs:**
 
 - Escape paths before running policyfile commands [\#1085](https://github.com/test-kitchen/test-kitchen/pull/1085) ([coderanger](https://github.com/coderanger))
 
-## [v1.10.2](https://github.com/test-kitchen/test-kitchen/tree/v1.10.2) (2016-06-23)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.1...v1.10.2)
+**Closed issues:**
 
-**Fixed bugs:**
+- Allow force override of chef attributes [\#1094](https://github.com/test-kitchen/test-kitchen/issues/1094)
+- inspec "not found in load path" when used as verifier [\#1090](https://github.com/test-kitchen/test-kitchen/issues/1090)
+- Is cane still useful? [\#1086](https://github.com/test-kitchen/test-kitchen/issues/1086)
+- policy\_group hardcoded to 'local'.  I would like to set this per suite. [\#1080](https://github.com/test-kitchen/test-kitchen/issues/1080)
+- Release 1.10.1 contains Windows newline characters [\#1066](https://github.com/test-kitchen/test-kitchen/issues/1066)
+- Provide some way for Chef to know it's running under test [\#458](https://github.com/test-kitchen/test-kitchen/issues/458)
 
-- Mainly just a gem repackage against a clean repo on a linux machine
+**Merged pull requests:**
+
+- Release 1.11.0 [\#1096](https://github.com/test-kitchen/test-kitchen/pull/1096) ([mwrock](https://github.com/mwrock))
+- Dont set ssh key configuration if a password is specified [\#1095](https://github.com/test-kitchen/test-kitchen/pull/1095) ([mwrock](https://github.com/mwrock))
+- Ability to work with Instances over SSH tunnel. [\#1091](https://github.com/test-kitchen/test-kitchen/pull/1091) ([EYurchenko](https://github.com/EYurchenko))
+- Add coderanger as a maintainer [\#1089](https://github.com/test-kitchen/test-kitchen/pull/1089) ([coderanger](https://github.com/coderanger))
+- Remove cane in favor of RuboCop/finstyle. [\#1088](https://github.com/test-kitchen/test-kitchen/pull/1088) ([coderanger](https://github.com/coderanger))
+- Add environment variables $TEST\_KITCHEN and $CI [\#1081](https://github.com/test-kitchen/test-kitchen/pull/1081) ([coderanger](https://github.com/coderanger))
+- Adding test\_base\_path CLI arg to the diagnose command [\#1076](https://github.com/test-kitchen/test-kitchen/pull/1076) ([tyler-ball](https://github.com/tyler-ball))
+- Add legacy\_mode argument for chef\_solo provisioner [\#1073](https://github.com/test-kitchen/test-kitchen/pull/1073) ([SaltwaterC](https://github.com/SaltwaterC))
+- Added support for Chef 10 [\#1072](https://github.com/test-kitchen/test-kitchen/pull/1072) ([acondrat](https://github.com/acondrat))
+- Use a less volatile recipe for ci tests [\#1071](https://github.com/test-kitchen/test-kitchen/pull/1071) ([mwrock](https://github.com/mwrock))
+
+## [v1.10.2](https://github.com/test-kitchen/test-kitchen/tree/v1.10.2) (2016-06-24)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.2.dev...v1.10.2)
+
+## [v1.10.2.dev](https://github.com/test-kitchen/test-kitchen/tree/v1.10.2.dev) (2016-06-24)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.1...v1.10.2.dev)
+
+**Merged pull requests:**
+
+- bumping version for a gem repackage [\#1067](https://github.com/test-kitchen/test-kitchen/pull/1067) ([mwrock](https://github.com/mwrock))
 
 ## [v1.10.1](https://github.com/test-kitchen/test-kitchen/tree/v1.10.1) (2016-06-23)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.10.0...v1.10.1)
@@ -374,72 +728,147 @@ er](https://github.com/jkeiser))
 - Reboot resource with new 'reboot and try again' feature [\#1062](https://github.com/test-kitchen/test-kitchen/issues/1062)
 - Fix WinRM Upload Failures After Reboot [\#1064](https://github.com/test-kitchen/test-kitchen/pull/1064) ([smurawski](https://github.com/smurawski))
 
-## [v1.10.0](https://github.com/test-kitchen/test-kitchen/tree/v1.10.0) (2016-06-16)
+**Closed issues:**
+
+- Pulling in environment variable \(OS environment, not chef environment\) as an attribute [\#1063](https://github.com/test-kitchen/test-kitchen/issues/1063)
+
+**Merged pull requests:**
+
+- Release 1.10.1 [\#1065](https://github.com/test-kitchen/test-kitchen/pull/1065) ([smurawski](https://github.com/smurawski))
+
+## [v1.10.0](https://github.com/test-kitchen/test-kitchen/tree/v1.10.0) (2016-06-17)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.2...v1.10.0)
 
-**Implemented enhancements:**
+**Closed issues:**
 
+- Converge fails if encrypted\_data\_bag\_secret\_path is specified [\#1052](https://github.com/test-kitchen/test-kitchen/issues/1052)
+- kitchen test -c will always return 0, even when failing [\#1051](https://github.com/test-kitchen/test-kitchen/issues/1051)
+- Base Provisioner Should Support Reboot And Continue [\#1016](https://github.com/test-kitchen/test-kitchen/issues/1016)
+- Custom Config for Busser Plugins  [\#945](https://github.com/test-kitchen/test-kitchen/issues/945)
+
+**Merged pull requests:**
+
+- Release 1.10.0 [\#1058](https://github.com/test-kitchen/test-kitchen/pull/1058) ([smurawski](https://github.com/smurawski))
+- Fix appveyor builds [\#1057](https://github.com/test-kitchen/test-kitchen/pull/1057) ([smurawski](https://github.com/smurawski))
 - Retry `Kitchen::Provisioner\#run\_command` after allowed exit codes [\#1055](https://github.com/test-kitchen/test-kitchen/pull/1055) ([smurawski](https://github.com/smurawski))
 - Add fallback support for `policyfile` for compat with the older policyfile\_zero [\#1053](https://github.com/test-kitchen/test-kitchen/pull/1053) ([coderanger](https://github.com/coderanger))
 
 ## [v1.9.2](https://github.com/test-kitchen/test-kitchen/tree/v1.9.2) (2016-06-09)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.1...v1.9.2)
 
-**Implemented enhancements:**
-
-- add max scp session handling [\#1047](https://github.com/test-kitchen/test-kitchen/pull/1047) ([lamont-granquist](https://github.com/lamont-granquist))
-
 **Fixed bugs:**
 
 - Message: SCP upload failed \(open failed \(1\)\) [\#1035](https://github.com/test-kitchen/test-kitchen/issues/1035)
 
+**Merged pull requests:**
+
+- Prep for 1.9.2 Release [\#1050](https://github.com/test-kitchen/test-kitchen/pull/1050) ([smurawski](https://github.com/smurawski))
+- add max scp session handling [\#1047](https://github.com/test-kitchen/test-kitchen/pull/1047) ([lamont-granquist](https://github.com/lamont-granquist))
+
 ## [v1.9.1](https://github.com/test-kitchen/test-kitchen/tree/v1.9.1) (2016-06-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.9.0...v1.9.1)
 
-**Implemented enhancements:**
+**Fixed bugs:**
+
+- Initializing Kitchen::RakeTasks causes error if Vagrant not installed [\#645](https://github.com/test-kitchen/test-kitchen/issues/645)
+- test-kitchen exits if converge fails while there is still task to download a box [\#496](https://github.com/test-kitchen/test-kitchen/issues/496)
+
+**Closed issues:**
+
+- No live threads left. Deadlock? \(fatal\) error [\#1041](https://github.com/test-kitchen/test-kitchen/issues/1041)
+- SCP Error 127 [\#1040](https://github.com/test-kitchen/test-kitchen/issues/1040)
+- Windows kitchen-tests should run in an Elevated session under System account [\#876](https://github.com/test-kitchen/test-kitchen/issues/876)
+- Support `:no\_proxy` in Provisioners and Verifiers [\#687](https://github.com/test-kitchen/test-kitchen/issues/687)
+
+**Merged pull requests:**
 
 - Allow rake task to use env var [\#1046](https://github.com/test-kitchen/test-kitchen/pull/1046) ([smurawski](https://github.com/smurawski))
+- adding myself as a maintainer [\#1045](https://github.com/test-kitchen/test-kitchen/pull/1045) ([lamont-granquist](https://github.com/lamont-granquist))
+- version bump and CHANGELOG.md for v1.9.1 [\#1044](https://github.com/test-kitchen/test-kitchen/pull/1044) ([smurawski](https://github.com/smurawski))
+- Fix CHANGELOG.md links [\#1042](https://github.com/test-kitchen/test-kitchen/pull/1042) ([smurawski](https://github.com/smurawski))
 - Add color options [\#1032](https://github.com/test-kitchen/test-kitchen/pull/1032) ([jorhett](https://github.com/jorhett))
 - Add support for SSH connection debugging. [\#990](https://github.com/test-kitchen/test-kitchen/pull/990) ([rhass](https://github.com/rhass))
 
-## [1.9.0](https://github.com/test-kitchen/test-kitchen/tree/v1.9.0) (2016-05-26)
+## [v1.9.0](https://github.com/test-kitchen/test-kitchen/tree/v1.9.0) (2016-05-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.8.0...v1.9.0)
-
-**Implemented enhancements:**
-
-- Buffer errors until the end of an action [\#1034](https://github.com/test-kitchen/test-kitchen/pull/1034) ([smurawski](https://github.com/smurawski))
-- Added ECOSYSTEM doc highlight all the core Test-Kitchen and community plugins. [\#1015](https://github.com/test-kitchen/test-kitchen/pull/1015) ([jjasghar](https://github.com/jjasghar))
-- Add kitchen-azurerm to list of community-provided drivers [\#1024](https://github.com/test-kitchen/test-kitchen/pull/1024) ([stuartpreston](https://github.com/stuartpreston))
-- uploads: reuse connections+disable compression [\#1023](https://github.com/test-kitchen/test-kitchen/pull/1023) ([lamont-granquist](https://github.com/lamont-granquist))
 
 **Fixed bugs:**
 
 - Use command\_prefix provided by Kitchen::Provisioner::Base in shell provisioner [\#1033](https://github.com/test-kitchen/test-kitchen/pull/1033) ([pstengel](https://github.com/pstengel))
-- Empty string for the config setting for proxies did not really work [\#1027](https://github.com/test-kitchen/test-kitchen/pull/1027) ([smurawski](https://github.com/smurawski))
-- Update `chef\_omnbius\_url` default value [\#1028](https://github.com/test-kitchen/test-kitchen/pull/1028) ([schisamo](https://github.com/schisamo))
-- Fix grammar in common\_sandbox warning message [\#1031](https://github.com/test-kitchen/test-kitchen/pull/1031) ([emachnic](https://github.com/emachnic))
 
-## [1.8.0](https://github.com/test-kitchen/test-kitchen/tree/v1.8.0) (2016-05-05)
+**Closed issues:**
+
+- Cannot set log level to "info" [\#529](https://github.com/test-kitchen/test-kitchen/issues/529)
+
+**Merged pull requests:**
+
+- Release 1.9.0 [\#1039](https://github.com/test-kitchen/test-kitchen/pull/1039) ([smurawski](https://github.com/smurawski))
+- Buffer errors until the end of an action [\#1034](https://github.com/test-kitchen/test-kitchen/pull/1034) ([smurawski](https://github.com/smurawski))
+- Fix grammar in common\_sandbox warning message [\#1031](https://github.com/test-kitchen/test-kitchen/pull/1031) ([emachnic](https://github.com/emachnic))
+- Update `chef\_omnbius\_url` default value [\#1028](https://github.com/test-kitchen/test-kitchen/pull/1028) ([schisamo](https://github.com/schisamo))
+- Empty string for the config setting for proxies did not really work [\#1027](https://github.com/test-kitchen/test-kitchen/pull/1027) ([smurawski](https://github.com/smurawski))
+- Added kitchen-docker [\#1025](https://github.com/test-kitchen/test-kitchen/pull/1025) ([jjasghar](https://github.com/jjasghar))
+- Add kitchen-azurerm to list of community-provided drivers [\#1024](https://github.com/test-kitchen/test-kitchen/pull/1024) ([stuartpreston](https://github.com/stuartpreston))
+- uploads: reuse connections+disable compression [\#1023](https://github.com/test-kitchen/test-kitchen/pull/1023) ([lamont-granquist](https://github.com/lamont-granquist))
+- ECOSYSTEM doc. [\#1015](https://github.com/test-kitchen/test-kitchen/pull/1015) ([jjasghar](https://github.com/jjasghar))
+
+## [v1.8.0](https://github.com/test-kitchen/test-kitchen/tree/v1.8.0) (2016-05-06)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.3...v1.8.0)
 
-**Implemented enhancements:**
+**Fixed bugs:**
 
+- Trouble provisioning with chefdk [\#767](https://github.com/test-kitchen/test-kitchen/issues/767)
+
+**Closed issues:**
+
+- AWS Windows AMI adjustment needs a graceful error [\#1021](https://github.com/test-kitchen/test-kitchen/issues/1021)
+- Docker provisioner converge fails: \[SSL: CERTIFICATE\_VERIFY\_FAILED\]  [\#1018](https://github.com/test-kitchen/test-kitchen/issues/1018)
+- Windows RDP Port Forward Issue [\#1017](https://github.com/test-kitchen/test-kitchen/issues/1017)
+- kitchen verify pester fails to install PsGet - "busser.bat : The system cannot find the path specified." [\#1011](https://github.com/test-kitchen/test-kitchen/issues/1011)
+- Kitchen converge fails for vagrant kensykora-windows-2012-r2-standard [\#1010](https://github.com/test-kitchen/test-kitchen/issues/1010)
+
+**Merged pull requests:**
+
+- Release 1.8.0 [\#1022](https://github.com/test-kitchen/test-kitchen/pull/1022) ([mwrock](https://github.com/mwrock))
 - Add native policyfile resolution support [\#1014](https://github.com/test-kitchen/test-kitchen/pull/1014) ([danielsdeleo](https://github.com/danielsdeleo))
 - Provide the option to run all winrm commands through a scheduled task [\#1012](https://github.com/test-kitchen/test-kitchen/pull/1012) ([mwrock](https://github.com/mwrock))
 
-## [1.7.3](https://github.com/test-kitchen/test-kitchen/tree/v1.7.3) (2016-04-13)
+## [v1.7.3](https://github.com/test-kitchen/test-kitchen/tree/v1.7.3) (2016-04-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.2...v1.7.3)
 
 **Fixed bugs:**
 
 - Test Kitchen on windows fails to upload data bags [\#1006](https://github.com/test-kitchen/test-kitchen/issues/1006)
+- Test Kitchen 1.5+ is no longer compatible with Chef before 12.5.1 [\#922](https://github.com/test-kitchen/test-kitchen/issues/922)
+- Long runs timeout [\#380](https://github.com/test-kitchen/test-kitchen/issues/380)
 - Fixes busser install for older omnibus windows installs [\#1003](https://github.com/test-kitchen/test-kitchen/pull/1003) ([mwrock](https://github.com/mwrock))
 
-## [1.7.2](https://github.com/test-kitchen/test-kitchen/tree/v1.7.2) (2016-04-07)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...v1.7.2)
+**Closed issues:**
+
+- Ability to pass commands for execution to kitchen login [\#832](https://github.com/test-kitchen/test-kitchen/issues/832)
+- forward\_agent kitchen.yml config not honored [\#807](https://github.com/test-kitchen/test-kitchen/issues/807)
+- Shell error when attempting to kitchen converge freebsd instance \(if not created first\) [\#712](https://github.com/test-kitchen/test-kitchen/issues/712)
+- Busser execution fails serverspec tests with command not found due to sbin not on PATH [\#469](https://github.com/test-kitchen/test-kitchen/issues/469)
 
 **Merged pull requests:**
 
+- Improve README.md to reflect changes to log\_level behavior [\#1008](https://github.com/test-kitchen/test-kitchen/pull/1008) ([drrk](https://github.com/drrk))
+- prep tk 1.7.3 release [\#1007](https://github.com/test-kitchen/test-kitchen/pull/1007) ([mwrock](https://github.com/mwrock))
+- Relax cucumber and aruba restrictions [\#1002](https://github.com/test-kitchen/test-kitchen/pull/1002) ([jkeiser](https://github.com/jkeiser))
+- Request to be added as maintainer [\#972](https://github.com/test-kitchen/test-kitchen/pull/972) ([drrk](https://github.com/drrk))
+
+## [v1.7.2](https://github.com/test-kitchen/test-kitchen/tree/v1.7.2) (2016-04-07)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1...v1.7.2)
+
+**Closed issues:**
+
+- After upgrading to test-kitchen 1.7.1, openstack fails [\#997](https://github.com/test-kitchen/test-kitchen/issues/997)
+- Dos line endings passed to Linux VM during installation of verify tools [\#996](https://github.com/test-kitchen/test-kitchen/issues/996)
+- Kitchen Converge Fails [\#994](https://github.com/test-kitchen/test-kitchen/issues/994)
+
+**Merged pull requests:**
+
+- Preparing 1.7.2 release [\#1001](https://github.com/test-kitchen/test-kitchen/pull/1001) ([tyler-ball](https://github.com/tyler-ball))
 - Don't require dev dependencies to build [\#1000](https://github.com/test-kitchen/test-kitchen/pull/1000) ([jkeiser](https://github.com/jkeiser))
 - update to win2k8 friendly dependencies [\#999](https://github.com/test-kitchen/test-kitchen/pull/999) ([mwrock](https://github.com/mwrock))
 - Fix Berkshelf load test [\#998](https://github.com/test-kitchen/test-kitchen/pull/998) ([chefsalim](https://github.com/chefsalim))
@@ -447,20 +876,23 @@ er](https://github.com/jkeiser))
 ## [v1.7.1](https://github.com/test-kitchen/test-kitchen/tree/v1.7.1) (2016-04-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.1.dev...v1.7.1)
 
+**Merged pull requests:**
+
+- final 1.7.1 release [\#993](https://github.com/test-kitchen/test-kitchen/pull/993) ([mwrock](https://github.com/mwrock))
+
+## [v1.7.1.dev](https://github.com/test-kitchen/test-kitchen/tree/v1.7.1.dev) (2016-04-02)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.7.0...v1.7.1.dev)
+
 **Fixed bugs:**
 
 - Adding gitattributes file for managing line ending conversions [\#991](https://github.com/test-kitchen/test-kitchen/pull/991) ([mwrock](https://github.com/mwrock))
 
+**Merged pull requests:**
+
+- prepping 1.7.1 release [\#992](https://github.com/test-kitchen/test-kitchen/pull/992) ([mwrock](https://github.com/mwrock))
+
 ## [v1.7.0](https://github.com/test-kitchen/test-kitchen/tree/v1.7.0) (2016-04-01)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.6.0...v1.7.0)
-
-**Implemented enhancements:**
-
-- Travis and Appveyor should do actual kitchen create/converge/verify against PRs [\#980](https://github.com/test-kitchen/test-kitchen/pull/980) ([mwrock](https://github.com/mwrock))
-- Use latest mixlib-install 1.0.2 [\#976](https://github.com/test-kitchen/test-kitchen/pull/976) ([mwrock](https://github.com/mwrock))
-- Nominate Seth Thomas as lieutenant of Test Kitchen [\#975](https://github.com/test-kitchen/test-kitchen/pull/975) ([tyler-ball](https://github.com/tyler-ball))
-- Create template for github issues [\#963](https://github.com/test-kitchen/test-kitchen/pull/963) ([smurawski](https://github.com/smurawski))
-- Stop log\_level being copied from base config into provisioner config [\#950](https://github.com/test-kitchen/test-kitchen/pull/950) ([drrk](https://github.com/drrk))
 
 **Fixed bugs:**
 
@@ -468,18 +900,37 @@ er](https://github.com/jkeiser))
 - Shell verifier should ensure env vars are strings [\#973](https://github.com/test-kitchen/test-kitchen/pull/973) ([jsok](https://github.com/jsok))
 - Support Empty Proxy Settings [\#936](https://github.com/test-kitchen/test-kitchen/pull/936) ([tacchino](https://github.com/tacchino))
 
+**Closed issues:**
+
+- Windows tests fail with Test Kitchen 1.6 [\#987](https://github.com/test-kitchen/test-kitchen/issues/987)
+- Windows 2012R2 Chef Client MD5 checksum mismatch [\#986](https://github.com/test-kitchen/test-kitchen/issues/986)
+- chef\_metadata\_url is ignored [\#985](https://github.com/test-kitchen/test-kitchen/issues/985)
+- No live threads left. Deadlock? \(fatal\) [\#978](https://github.com/test-kitchen/test-kitchen/issues/978)
+- Ohai::Config\[:log\_level\] deprecated [\#974](https://github.com/test-kitchen/test-kitchen/issues/974)
+- Advanced support for chef\_metadata\_url to override chef omnibus installation [\#965](https://github.com/test-kitchen/test-kitchen/issues/965)
+- Installing busser-serverspec fails with chefdk on windows [\#964](https://github.com/test-kitchen/test-kitchen/issues/964)
+- WinRM: dna.json is not updated on target machine during kitchen converge unless deleted [\#957](https://github.com/test-kitchen/test-kitchen/issues/957)
+- Instance not treated as Windows unless Vagrant box starts with 'win' [\#949](https://github.com/test-kitchen/test-kitchen/issues/949)
+- Setting Proxy Env Variable to "" [\#934](https://github.com/test-kitchen/test-kitchen/issues/934)
+- Chef client output isn't complete [\#685](https://github.com/test-kitchen/test-kitchen/issues/685)
+- vagrant-wrapper issues with `kitchen test` [\#575](https://github.com/test-kitchen/test-kitchen/issues/575)
+- Support SOCKS proxy for post 'kitchen create' connectivity test [\#460](https://github.com/test-kitchen/test-kitchen/issues/460)
+- $HOME not set correctly during verify [\#321](https://github.com/test-kitchen/test-kitchen/issues/321)
+
+**Merged pull requests:**
+
+- release 1.7.0 [\#989](https://github.com/test-kitchen/test-kitchen/pull/989) ([mwrock](https://github.com/mwrock))
+- Travis and Appveyor should do actual kitchen create/converge/verify against PRs [\#980](https://github.com/test-kitchen/test-kitchen/pull/980) ([mwrock](https://github.com/mwrock))
+- Use latest mixlib-install 1.0.2 [\#976](https://github.com/test-kitchen/test-kitchen/pull/976) ([mwrock](https://github.com/mwrock))
+- Nominate Seth Thomas as lieutenant of Test Kitchen [\#975](https://github.com/test-kitchen/test-kitchen/pull/975) ([tyler-ball](https://github.com/tyler-ball))
+- Updating example versions [\#970](https://github.com/test-kitchen/test-kitchen/pull/970) ([cheeseplus](https://github.com/cheeseplus))
+- Fix rake dep to ~\> 10, since rubocop fails on 11 [\#966](https://github.com/test-kitchen/test-kitchen/pull/966) ([jkeiser](https://github.com/jkeiser))
+- Create template for github issues [\#963](https://github.com/test-kitchen/test-kitchen/pull/963) ([smurawski](https://github.com/smurawski))
+- update changelog for 1.6 release [\#958](https://github.com/test-kitchen/test-kitchen/pull/958) ([chris-rock](https://github.com/chris-rock))
+- Stop log\_level being copied from base config into provisioner config [\#950](https://github.com/test-kitchen/test-kitchen/pull/950) ([drrk](https://github.com/drrk))
+
 ## [v1.6.0](https://github.com/test-kitchen/test-kitchen/tree/v1.6.0) (2016-02-29)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.5.0...v1.6.0)
-
-**Implemented enhancements:**
-
-- Publicly expose winrm session [\#670](https://github.com/test-kitchen/test-kitchen/issues/670)
-- Support Chef-DK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
-- allow non-busser verifier to work with legacy drivers [\#944](https://github.com/test-kitchen/test-kitchen/pull/944) ([chris-rock](https://github.com/chris-rock))
-- use winrm transport as alternative detection method [\#928](https://github.com/test-kitchen/test-kitchen/pull/928) ([chris-rock](https://github.com/chris-rock))
-- Make chef-config an optional dependency. [\#924](https://github.com/test-kitchen/test-kitchen/pull/924) ([coderanger](https://github.com/coderanger))
-- Deprecating winrm-tansport and winrm-s gems [\#902](https://github.com/test-kitchen/test-kitchen/pull/902) ([mwrock](https://github.com/mwrock))
-- Add Provisioner chef\_apply [\#623](https://github.com/test-kitchen/test-kitchen/pull/623) ([sawanoboly](https://github.com/sawanoboly))
 
 **Fixed bugs:**
 
@@ -496,11 +947,13 @@ er](https://github.com/jkeiser))
 - key not found: "src\_md5" on kitchen converge [\#954](https://github.com/test-kitchen/test-kitchen/issues/954)
 - Kitchen Converge Argument Error [\#940](https://github.com/test-kitchen/test-kitchen/issues/940)
 - Intermittent key not found: "src\_md5" failures on windows nodes [\#926](https://github.com/test-kitchen/test-kitchen/issues/926)
+- Uploading large files with WinRM [\#851](https://github.com/test-kitchen/test-kitchen/issues/851)
 - Chef Omnibus Windows Issues \(mixlib-install \#22 related\) [\#847](https://github.com/test-kitchen/test-kitchen/issues/847)
 - Invoking Rake tasks with concurrency? [\#799](https://github.com/test-kitchen/test-kitchen/issues/799)
 - msiexec was not successful [\#742](https://github.com/test-kitchen/test-kitchen/issues/742)
 - not able to force chef-client in local model even my .kitchen.yml said so. [\#739](https://github.com/test-kitchen/test-kitchen/issues/739)
 - TK attempts to download install.sh every converge [\#714](https://github.com/test-kitchen/test-kitchen/issues/714)
+- Publicly expose winrm session [\#670](https://github.com/test-kitchen/test-kitchen/issues/670)
 - kitchen not detecting vagrant plugin `kitchen-vagrant` [\#622](https://github.com/test-kitchen/test-kitchen/issues/622)
 - Not correct URL for opensuse-13.1 platform [\#599](https://github.com/test-kitchen/test-kitchen/issues/599)
 - Error 404 if if chef-solo-search is anywhere in the dep-tree [\#591](https://github.com/test-kitchen/test-kitchen/issues/591)
@@ -518,6 +971,7 @@ er](https://github.com/jkeiser))
 - Don't reset locale in Kitchen::Driver::Base run\_command\(\) [\#485](https://github.com/test-kitchen/test-kitchen/issues/485)
 - Intermittent 'kitchen test' failures [\#449](https://github.com/test-kitchen/test-kitchen/issues/449)
 - shell-provisioner: lots of trouble with a noexec /tmp, failing workaround. [\#444](https://github.com/test-kitchen/test-kitchen/issues/444)
+- Support Chef-DK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
 - Message: Failed to complete \#converge action: \[Permission denied [\#441](https://github.com/test-kitchen/test-kitchen/issues/441)
 - Idea: enable chef-zero to run on another server than the converged node. [\#437](https://github.com/test-kitchen/test-kitchen/issues/437)
 - Test Artifact Fetch Feature [\#434](https://github.com/test-kitchen/test-kitchen/issues/434)
@@ -526,24 +980,21 @@ er](https://github.com/jkeiser))
 - Unable to override `test\_base\_path` in test-kitchen v1.2.1 [\#377](https://github.com/test-kitchen/test-kitchen/issues/377)
 - Busser depends on Ruby \(ChefDK\) being available on target VM [\#347](https://github.com/test-kitchen/test-kitchen/issues/347)
 - Option to turn off ssh forwarding x11? [\#338](https://github.com/test-kitchen/test-kitchen/issues/338)
+- Remove dependency on mixlib-shellout. Ruby 1.9 has what we need. [\#148](https://github.com/test-kitchen/test-kitchen/issues/148)
 
 **Merged pull requests:**
 
 - Update release process to use github changelog generator [\#952](https://github.com/test-kitchen/test-kitchen/pull/952) ([jkeiser](https://github.com/jkeiser))
+- allow non-busser verifier to work with legacy drivers [\#944](https://github.com/test-kitchen/test-kitchen/pull/944) ([chris-rock](https://github.com/chris-rock))
 - The Net::SSH::Extensions were overwriting IO.select agressively, so we scaled this down some [\#935](https://github.com/test-kitchen/test-kitchen/pull/935) ([tyler-ball](https://github.com/tyler-ball))
+- use winrm transport as alternative detection method [\#928](https://github.com/test-kitchen/test-kitchen/pull/928) ([chris-rock](https://github.com/chris-rock))
 - bypass execution policy when running powershell script files [\#925](https://github.com/test-kitchen/test-kitchen/pull/925) ([mwrock](https://github.com/mwrock))
+- Make chef-config an optional dependency. [\#924](https://github.com/test-kitchen/test-kitchen/pull/924) ([coderanger](https://github.com/coderanger))
+- Deprecating winrm-tansport and winrm-s gems [\#902](https://github.com/test-kitchen/test-kitchen/pull/902) ([mwrock](https://github.com/mwrock))
+- Add Provisioner chef\_apply [\#623](https://github.com/test-kitchen/test-kitchen/pull/623) ([sawanoboly](https://github.com/sawanoboly))
 
 ## [v1.5.0](https://github.com/test-kitchen/test-kitchen/tree/v1.5.0) (2016-01-21)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.5.0.rc.1...v1.5.0)
-
-**Implemented enhancements:**
-
-- Cluster support with Kitchen [\#905](https://github.com/test-kitchen/test-kitchen/issues/905)
-- toggling attributes in kitchen.yml [\#884](https://github.com/test-kitchen/test-kitchen/issues/884)
-- Allow for "double-converges" on specific test suites [\#162](https://github.com/test-kitchen/test-kitchen/issues/162)
-- Added try/catch around main and set error action to stop [\#872](https://github.com/test-kitchen/test-kitchen/pull/872) ([mcallb](https://github.com/mcallb))
-- Add hooks for instance cleanup before exit. [\#825](https://github.com/test-kitchen/test-kitchen/pull/825) ([coderanger](https://github.com/coderanger))
-- add tests for empty or missing files [\#753](https://github.com/test-kitchen/test-kitchen/pull/753) ([miketheman](https://github.com/miketheman))
 
 **Fixed bugs:**
 
@@ -561,11 +1012,13 @@ er](https://github.com/jkeiser))
 - Kubernetes driver [\#920](https://github.com/test-kitchen/test-kitchen/issues/920)
 - Latest build in chef-dk failing in travis [\#918](https://github.com/test-kitchen/test-kitchen/issues/918)
 - Unable to test Chef11 due to net-ssh  [\#914](https://github.com/test-kitchen/test-kitchen/issues/914)
+- Cluster support with Kitchen [\#905](https://github.com/test-kitchen/test-kitchen/issues/905)
 - kitchen driver help message incorrect [\#903](https://github.com/test-kitchen/test-kitchen/issues/903)
 - No arg for -v option \(install.sh missing version number\) [\#900](https://github.com/test-kitchen/test-kitchen/issues/900)
 - n help converge [\#890](https://github.com/test-kitchen/test-kitchen/issues/890)
 - Chef Zero should be the default provisioner with init [\#889](https://github.com/test-kitchen/test-kitchen/issues/889)
 - Windows tests broken - mkdir -p [\#886](https://github.com/test-kitchen/test-kitchen/issues/886)
+- toggling attributes in kitchen.yml [\#884](https://github.com/test-kitchen/test-kitchen/issues/884)
 - Berkshelf not managing dependencies [\#869](https://github.com/test-kitchen/test-kitchen/issues/869)
 - Errno::ETIMEDOUT needed in winrm transport [\#855](https://github.com/test-kitchen/test-kitchen/issues/855)
 - Appears to freeze on second converge. [\#850](https://github.com/test-kitchen/test-kitchen/issues/850)
@@ -578,16 +1031,18 @@ er](https://github.com/jkeiser))
 - reconverge with test-kitchen [\#780](https://github.com/test-kitchen/test-kitchen/issues/780)
 - ssh breaks if vm restarts [\#769](https://github.com/test-kitchen/test-kitchen/issues/769)
 - Transfer files more efficiently. [\#657](https://github.com/test-kitchen/test-kitchen/issues/657)
+- windows\_feature \(and other not working with test kitchen base box  [\#655](https://github.com/test-kitchen/test-kitchen/issues/655)
 - Possibility to lock down versions of gems [\#515](https://github.com/test-kitchen/test-kitchen/issues/515)
 - Missing vagrant-wrapper gem, update test-kitchen gem dependencies? [\#488](https://github.com/test-kitchen/test-kitchen/issues/488)
 - : Message: SSH exited \(1\) for command: \[sh -c 'BUSSER\_ROOT="/tmp/busser" GEM\_HOME="/tmp/busser/gems" GEM\_PATH="/tmp/busser/gems" GEM\_CACHE="/tmp/busser/gems/cache" ; export BUSSER\_ROOT GEM\_HOME GEM\_PATH GEM\_CACHE; sudo -E /tmp/busser/bin/busser test'\] [\#411](https://github.com/test-kitchen/test-kitchen/issues/411)
 - TestKitchen isn't using VAGRANT\_HOME path [\#398](https://github.com/test-kitchen/test-kitchen/issues/398)
 - deal with travis [\#369](https://github.com/test-kitchen/test-kitchen/issues/369)
 - use a default path rubygems, ruby and busser [\#362](https://github.com/test-kitchen/test-kitchen/issues/362)
-- Bats tests are being executed even missing specification [\#360](https://github.com/test-kitchen/test-kitchen/issues/360)
 - shell provisioner: Add a KITCHEN\_DIR environment variable [\#349](https://github.com/test-kitchen/test-kitchen/issues/349)
 - Don't use generic descriptions for create, converge, setup, verify, and destroy [\#344](https://github.com/test-kitchen/test-kitchen/issues/344)
 - Exception Handler does not always print out anything to stdout [\#281](https://github.com/test-kitchen/test-kitchen/issues/281)
+- `kitchen converge` uses different PATH than `vagrant provision` [\#279](https://github.com/test-kitchen/test-kitchen/issues/279)
+- Allow for "double-converges" on specific test suites [\#162](https://github.com/test-kitchen/test-kitchen/issues/162)
 
 **Merged pull requests:**
 
@@ -602,22 +1057,17 @@ er](https://github.com/jkeiser))
 - Add support for --profile-ruby [\#901](https://github.com/test-kitchen/test-kitchen/pull/901) ([martinb3](https://github.com/martinb3))
 - fix chef install on non-windows [\#899](https://github.com/test-kitchen/test-kitchen/pull/899) ([mwrock](https://github.com/mwrock))
 - typo: on != no [\#897](https://github.com/test-kitchen/test-kitchen/pull/897) ([miketheman](https://github.com/miketheman))
+- Added try/catch around main and set error action to stop [\#872](https://github.com/test-kitchen/test-kitchen/pull/872) ([mcallb](https://github.com/mcallb))
 - Fix Windows Omnibus Install \#811 [\#864](https://github.com/test-kitchen/test-kitchen/pull/864) ([dissonanz](https://github.com/dissonanz))
 - add cli option to set the test path [\#857](https://github.com/test-kitchen/test-kitchen/pull/857) ([chris-rock](https://github.com/chris-rock))
 - WinRM connect \(with retry\) is failing on Windows [\#835](https://github.com/test-kitchen/test-kitchen/pull/835) ([Stift](https://github.com/Stift))
 - update omnibus url to chef.io [\#827](https://github.com/test-kitchen/test-kitchen/pull/827) ([andrewelizondo](https://github.com/andrewelizondo))
+- Add hooks for instance cleanup before exit. [\#825](https://github.com/test-kitchen/test-kitchen/pull/825) ([coderanger](https://github.com/coderanger))
 - Add more options for WinRM [\#776](https://github.com/test-kitchen/test-kitchen/pull/776) ([smurawski](https://github.com/smurawski))
+- add tests for empty or missing files [\#753](https://github.com/test-kitchen/test-kitchen/pull/753) ([miketheman](https://github.com/miketheman))
 
 ## [v1.5.0.rc.1](https://github.com/test-kitchen/test-kitchen/tree/v1.5.0.rc.1) (2015-12-29)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.4.2...v1.5.0.rc.1)
-
-**Implemented enhancements:**
-
-- Drop Ruby 1.9 support [\#806](https://github.com/test-kitchen/test-kitchen/issues/806)
-- fixed SuSe OS busser install [\#816](https://github.com/test-kitchen/test-kitchen/pull/816) ([Peuserik](https://github.com/Peuserik))
-- Honor proxy env vars. [\#813](https://github.com/test-kitchen/test-kitchen/pull/813) ([mcquin](https://github.com/mcquin))
-- Drop Ruby 1.9.3 from TravisCI build matrix [\#804](https://github.com/test-kitchen/test-kitchen/pull/804) ([thommay](https://github.com/thommay))
-- Use mixlib-install [\#782](https://github.com/test-kitchen/test-kitchen/pull/782) ([thommay](https://github.com/thommay))
 
 **Fixed bugs:**
 
@@ -642,6 +1092,7 @@ er](https://github.com/jkeiser))
 - Error in test kitchen exits shell [\#822](https://github.com/test-kitchen/test-kitchen/issues/822)
 - Cannot use an http/https url pointing to a vagrant metadata json file for box\_url [\#819](https://github.com/test-kitchen/test-kitchen/issues/819)
 - kitchen converge does not execute sleep command [\#812](https://github.com/test-kitchen/test-kitchen/issues/812)
+- Drop Ruby 1.9 support [\#806](https://github.com/test-kitchen/test-kitchen/issues/806)
 - Serverspec `command` does not seem to be working...  [\#773](https://github.com/test-kitchen/test-kitchen/issues/773)
 - Chef-Solo cache deleted by WinRM transport [\#680](https://github.com/test-kitchen/test-kitchen/issues/680)
 - Feature: 'vagrant reload' for kitchen [\#678](https://github.com/test-kitchen/test-kitchen/issues/678)
@@ -657,16 +1108,13 @@ er](https://github.com/jkeiser))
 - Running the chef\_base provisioner install\_command via sudo, and command\_prefix support [\#885](https://github.com/test-kitchen/test-kitchen/pull/885) ([adamleff](https://github.com/adamleff))
 - write install\_command to file and invoke on the instance to avoid command too long on windows [\#878](https://github.com/test-kitchen/test-kitchen/pull/878) ([mwrock](https://github.com/mwrock))
 - Updates the gem path to install everything in /tmp/verifier [\#833](https://github.com/test-kitchen/test-kitchen/pull/833) ([scotthain](https://github.com/scotthain))
+- fixed SuSe OS busser install [\#816](https://github.com/test-kitchen/test-kitchen/pull/816) ([Peuserik](https://github.com/Peuserik))
+- Honor proxy env vars. [\#813](https://github.com/test-kitchen/test-kitchen/pull/813) ([mcquin](https://github.com/mcquin))
+- Drop Ruby 1.9.3 from TravisCI build matrix [\#804](https://github.com/test-kitchen/test-kitchen/pull/804) ([thommay](https://github.com/thommay))
+- Use mixlib-install [\#782](https://github.com/test-kitchen/test-kitchen/pull/782) ([thommay](https://github.com/thommay))
 
 ## [v1.4.2](https://github.com/test-kitchen/test-kitchen/tree/v1.4.2) (2015-08-03)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.4.1...v1.4.2)
-
-**Implemented enhancements:**
-
-- silence some aruba warnings [\#770](https://github.com/test-kitchen/test-kitchen/pull/770) ([thommay](https://github.com/thommay))
-- Fix monkey patching of IO.read [\#768](https://github.com/test-kitchen/test-kitchen/pull/768) ([375gnu](https://github.com/375gnu))
-- Style/Lint Updates \(finstyle 1.5.0\) [\#762](https://github.com/test-kitchen/test-kitchen/pull/762) ([fnichol](https://github.com/fnichol))
-- Adding appveyor config [\#689](https://github.com/test-kitchen/test-kitchen/pull/689) ([tyler-ball](https://github.com/tyler-ball))
 
 **Fixed bugs:**
 
@@ -697,26 +1145,25 @@ er](https://github.com/jkeiser))
 **Merged pull requests:**
 
 - Support specifying exact nightly/build [\#788](https://github.com/test-kitchen/test-kitchen/pull/788) ([jaym](https://github.com/jaym))
+- silence some aruba warnings [\#770](https://github.com/test-kitchen/test-kitchen/pull/770) ([thommay](https://github.com/thommay))
+- Fix monkey patching of IO.read [\#768](https://github.com/test-kitchen/test-kitchen/pull/768) ([375gnu](https://github.com/375gnu))
+- Style/Lint Updates \(finstyle 1.5.0\) [\#762](https://github.com/test-kitchen/test-kitchen/pull/762) ([fnichol](https://github.com/fnichol))
+- Adding appveyor config [\#689](https://github.com/test-kitchen/test-kitchen/pull/689) ([tyler-ball](https://github.com/tyler-ball))
 
 ## [v1.4.1](https://github.com/test-kitchen/test-kitchen/tree/v1.4.1) (2015-06-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v0.9.1...v1.4.1)
-
-**Implemented enhancements:**
-
-- 'kitchen init' should create a chefignore file [\#732](https://github.com/test-kitchen/test-kitchen/issues/732)
-- generate a chefignore during init, fixes \#732 [\#737](https://github.com/test-kitchen/test-kitchen/pull/737) ([metadave](https://github.com/metadave))
-- Fixing issues to support windows in kitchen-ec2, fixes \#688, fixes \#733 [\#736](https://github.com/test-kitchen/test-kitchen/pull/736) ([tyler-ball](https://github.com/tyler-ball))
 
 **Fixed bugs:**
 
 - Discovering more than 50 drivers fails a Cucumber scenario [\#733](https://github.com/test-kitchen/test-kitchen/issues/733)
 - Transport defaults windows username to ./administrator [\#688](https://github.com/test-kitchen/test-kitchen/issues/688)
-- Fixing issues to support windows in kitchen-ec2, fixes \\#688, fixes \\#733 [\#736](https://github.com/test-kitchen/test-kitchen/pull/736) ([tyler-ball](https://github.com/tyler-ball))
+- Fixing issues to support windows in kitchen-ec2, fixes \#688, fixes \#733 [\#736](https://github.com/test-kitchen/test-kitchen/pull/736) ([tyler-ball](https://github.com/tyler-ball))
 - Fix failing feature in `kitchen drvier discover` due to too many gems. [\#734](https://github.com/test-kitchen/test-kitchen/pull/734) ([fnichol](https://github.com/fnichol))
 
 **Closed issues:**
 
 - SSH race condition with RHEL/CentOS instances in EC2 [\#735](https://github.com/test-kitchen/test-kitchen/issues/735)
+- 'kitchen init' should create a chefignore file [\#732](https://github.com/test-kitchen/test-kitchen/issues/732)
 - Nested upload folders [\#725](https://github.com/test-kitchen/test-kitchen/issues/725)
 - Intermittent "No such file or directory" on Windows converge [\#699](https://github.com/test-kitchen/test-kitchen/issues/699)
 - "kitchen verify" output on windows is getting butchered [\#486](https://github.com/test-kitchen/test-kitchen/issues/486)
@@ -724,6 +1171,7 @@ er](https://github.com/jkeiser))
 **Merged pull requests:**
 
 - Updating CHANGELOG and version for 1.4.1 release [\#748](https://github.com/test-kitchen/test-kitchen/pull/748) ([tyler-ball](https://github.com/tyler-ball))
+- generate a chefignore during init, fixes \#732 [\#737](https://github.com/test-kitchen/test-kitchen/pull/737) ([metadave](https://github.com/metadave))
 - Revert "Use a relative name for the connection class." [\#731](https://github.com/test-kitchen/test-kitchen/pull/731) ([metadave](https://github.com/metadave))
 - Use a relative name for the connection class. [\#726](https://github.com/test-kitchen/test-kitchen/pull/726) ([coderanger](https://github.com/coderanger))
 
@@ -738,12 +1186,6 @@ er](https://github.com/jkeiser))
 ## [v0.9.0](https://github.com/test-kitchen/test-kitchen/tree/v0.9.0) (2015-05-19)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.4.0...v0.9.0)
 
-**Implemented enhancements:**
-
-- platform centos-6.4, centos-6.5 cannot be downloaded [\#663](https://github.com/test-kitchen/test-kitchen/issues/663)
-- Update platform version defaults in `kitchen init` command. [\#711](https://github.com/test-kitchen/test-kitchen/pull/711) ([fnichol](https://github.com/fnichol))
-- don't prompt for passwords when using public keys [\#704](https://github.com/test-kitchen/test-kitchen/pull/704) ([caboteria](https://github.com/caboteria))
-
 **Fixed bugs:**
 
 - default-centos-64 is not available [\#707](https://github.com/test-kitchen/test-kitchen/issues/707)
@@ -753,20 +1195,19 @@ er](https://github.com/jkeiser))
 - Exception on kitchen create: Windows Server 2012 R2 box [\#696](https://github.com/test-kitchen/test-kitchen/issues/696)
 - Unable to run kitchen converge: Server 2012 R2 - WinRM [\#695](https://github.com/test-kitchen/test-kitchen/issues/695)
 - Windows guest doesn't update serverspec files [\#693](https://github.com/test-kitchen/test-kitchen/issues/693)
+- platform centos-6.4, centos-6.5 cannot be downloaded [\#663](https://github.com/test-kitchen/test-kitchen/issues/663)
 - Busser sync is a bit slow [\#639](https://github.com/test-kitchen/test-kitchen/issues/639)
 - client key is invalid or not found at: 'C:/chef/client.pem' [\#636](https://github.com/test-kitchen/test-kitchen/issues/636)
 - Don't print extraneous equals signs to logs "================" [\#586](https://github.com/test-kitchen/test-kitchen/issues/586)
 
 **Merged pull requests:**
 
+- Update platform version defaults in `kitchen init` command. [\#711](https://github.com/test-kitchen/test-kitchen/pull/711) ([fnichol](https://github.com/fnichol))
+- don't prompt for passwords when using public keys [\#704](https://github.com/test-kitchen/test-kitchen/pull/704) ([caboteria](https://github.com/caboteria))
 - Bump to centos-6.6, fix \#663. [\#665](https://github.com/test-kitchen/test-kitchen/pull/665) ([lloydde](https://github.com/lloydde))
 
 ## [v1.4.0](https://github.com/test-kitchen/test-kitchen/tree/v1.4.0) (2015-04-28)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.4.0.rc.1...v1.4.0)
-
-**Implemented enhancements:**
-
-- Add Multi-provisioner support [\#36](https://github.com/test-kitchen/test-kitchen/issues/36)
 
 **Fixed bugs:**
 
@@ -784,6 +1225,7 @@ er](https://github.com/jkeiser))
 - Need solution/best practice for installing gem in VM chef-client [\#495](https://github.com/test-kitchen/test-kitchen/issues/495)
 - Multi-project chaining of shared CLI subcommands [\#47](https://github.com/test-kitchen/test-kitchen/issues/47)
 - Create kitchen driver for Razor [\#45](https://github.com/test-kitchen/test-kitchen/issues/45)
+- Add Multi-provisioner support [\#36](https://github.com/test-kitchen/test-kitchen/issues/36)
 
 ## [v1.4.0.rc.1](https://github.com/test-kitchen/test-kitchen/tree/v1.4.0.rc.1) (2015-03-29)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.4.0.beta.2...v1.4.0.rc.1)
@@ -1038,7 +1480,9 @@ er](https://github.com/jkeiser))
 - The SciFi Future of Provisioner Install Commands. [\#326](https://github.com/test-kitchen/test-kitchen/issues/326)
 - Reboot during Test Kitchen run? [\#324](https://github.com/test-kitchen/test-kitchen/issues/324)
 - Node attributes do not seem to prevail between converge operations. [\#320](https://github.com/test-kitchen/test-kitchen/issues/320)
+- Metadata should be compiled \(and favored\) [\#319](https://github.com/test-kitchen/test-kitchen/issues/319)
 - Can't load data bags [\#317](https://github.com/test-kitchen/test-kitchen/issues/317)
+- Kitchen doesn't cache chef packages during vm provision [\#315](https://github.com/test-kitchen/test-kitchen/issues/315)
 - wiki bats example on Getting Started is overcomplex/bad pattern [\#314](https://github.com/test-kitchen/test-kitchen/issues/314)
 - Subdirectories in "helpers" directory [\#312](https://github.com/test-kitchen/test-kitchen/issues/312)
 - Override config file location via environment variables [\#304](https://github.com/test-kitchen/test-kitchen/issues/304)
@@ -1049,6 +1493,7 @@ er](https://github.com/jkeiser))
 - I would like to execute some tasks before chef-client run at `kitchen converge`. [\#251](https://github.com/test-kitchen/test-kitchen/issues/251)
 - Reduce internet downloading during test runs [\#196](https://github.com/test-kitchen/test-kitchen/issues/196)
 - Allow to limit the number of parallel tests [\#176](https://github.com/test-kitchen/test-kitchen/issues/176)
+- Have access to node attributes in tests [\#174](https://github.com/test-kitchen/test-kitchen/issues/174)
 - Implement `kitchen remodel` [\#150](https://github.com/test-kitchen/test-kitchen/issues/150)
 - Make it possible \(or easier\) to run test-kitchen when off line [\#56](https://github.com/test-kitchen/test-kitchen/issues/56)
 - Add project types to test-kitchen [\#46](https://github.com/test-kitchen/test-kitchen/issues/46)
@@ -1403,7 +1848,7 @@ er](https://github.com/jkeiser))
 **Merged pull requests:**
 
 - YAML Serialization [\#58](https://github.com/test-kitchen/test-kitchen/pull/58) ([fnichol](https://github.com/fnichol))
-- Suites should be able to exclude a platform \#29 [\#57](https://github.com/test-kitchen/test-kitchen/pull/57) ([sandfish8](https://github.com/sandfish8))
+- Suites should be able to exclude a platform \#29 [\#57](https://github.com/test-kitchen/test-kitchen/pull/57) ([scoop206](https://github.com/scoop206))
 - add basic instructions [\#54](https://github.com/test-kitchen/test-kitchen/pull/54) ([bryanwb](https://github.com/bryanwb))
 
 ## [v0.1.0.beta4](https://github.com/test-kitchen/test-kitchen/tree/v0.1.0.beta4) (2013-01-24)
@@ -1524,12 +1969,12 @@ er](https://github.com/jkeiser))
 - \[KITCHEN-17\] - support ignoring lint rules [\#3](https://github.com/test-kitchen/test-kitchen/pull/3) ([jtimberman](https://github.com/jtimberman))
 
 ## [v0.5.2](https://github.com/test-kitchen/test-kitchen/tree/v0.5.2) (2012-08-18)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v0.5.0...v0.5.2)
-
-## [v0.5.0](https://github.com/test-kitchen/test-kitchen/tree/v0.5.0) (2012-08-16)
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/0.5.0...v0.5.0)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/0.5.0...v0.5.2)
 
 ## [0.5.0](https://github.com/test-kitchen/test-kitchen/tree/0.5.0) (2012-08-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v0.5.0...0.5.0)
+
+## [v0.5.0](https://github.com/test-kitchen/test-kitchen/tree/v0.5.0) (2012-08-16)
 
 
 \* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
