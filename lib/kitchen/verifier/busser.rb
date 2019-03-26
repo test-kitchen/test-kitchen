@@ -182,7 +182,7 @@ module Kitchen
         # to be under /tmp/verifier
         args = gem
         args += " --version #{version}" if version
-        args += " --no-rdoc --no-ri --no-format-executable -n #{gem_bin}"
+        args += " --no-document --no-format-executable -n #{gem_bin}"
         args += " --no-user-install"
         args
       end

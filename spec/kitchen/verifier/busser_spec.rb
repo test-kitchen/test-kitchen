@@ -248,7 +248,7 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            'gem_install_args="busser --no-rdoc --no-ri --no-format-executable' \
+            'gem_install_args="busser --no-document --no-format-executable' \
             ' -n /r/bin --no-user-install"'
           )
         end
@@ -296,7 +296,7 @@ describe Kitchen::Verifier::Busser do
 
         it "sets gem install arguments" do
           cmd.must_match regexify(
-            '$gem_install_args = "busser --no-rdoc --no-ri --no-format-executable' \
+            '$gem_install_args = "busser --no-document --no-format-executable' \
             ' -n \\r\\bin --no-user-install"'
           )
         end
