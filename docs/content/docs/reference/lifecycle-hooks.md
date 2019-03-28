@@ -66,3 +66,25 @@ lifecycle:
   - remote: myapp --unregister-license
     skippable: true
 ```
+
+This is a complete example of using a post_create hook to wait for cloud-init to complete for an AWS EC2 instance:
+
+```
+lifecycle:
+  post_create:
+  - local: echo 'Awaiting cloud-init completion'
+  - remote: |
+      declare i=0;
+      declare wait=5;
+      declare timeout=300;
+      while true; do
+        [ -f /var/lib/cloud/instance/boot-finished ] && break;
+        if [ ${i} -ge ${timeout} ]; then
+          echo "Timed out after ${i}s waiting for cloud-init to complete";
+          exit 1;
+        fi;
+        echo "Waited ${i}/${timeout}s for cloud-init to complete, retrying in ${wait} seconds"
+        sleep ${wait};
+        let i+=${wait};
+      done;
+```
