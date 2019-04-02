@@ -11,9 +11,6 @@ pr:
 
 strategy:
   matrix:
-    linux-ruby-2.3:
-      imageName: 'ubuntu-16.04'
-      rubyVersion: '~ 2.3'
     linux-ruby-2.4:
       imageName: 'ubuntu-16.04'
       rubyVersion: '~ 2.4'
