@@ -1,0 +1,50 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - smurawski/azure-pipelines
+
+pr:
+  branches:
+    include:
+      - master
+
+strategy:
+  matrix:
+    linux-ruby-2.3:
+      imageName: 'ubuntu-16.04'
+      rubyVersion: '~ 2.3'
+    linux-ruby-2.4:
+      imageName: 'ubuntu-16.04'
+      rubyVersion: '~ 2.4'
+    linux-ruby-2.5:
+      imageName: 'ubuntu-16.04'
+      rubyVersion: '~ 2.5'
+    mac-ruby-2.6:
+      imageName: 'macos-10.13'
+      rubyVersion: '>= 2.6'
+    windows-ruby-2.4:
+      imageName: 'windows-2019'
+      rubyVersion: '~ 2.4'
+    windows-ruby-2.5:
+      imageName: 'windows-2019'
+      rubyVersion: '>= 2.5'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: $(rubyVersion)
+    addToPath: true
+
+- script: gem install bundler
+  displayName: 'Install Bundler'
+
+- script: bundle install --retry=3 --jobs=4
+  displayName: 'bundle install'
+
+- script: bundle exec rake
+  displayName: 'bundle exec rake'
