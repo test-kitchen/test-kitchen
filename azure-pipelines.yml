@@ -40,7 +40,7 @@ steps:
 - script: bundle install --retry=3 --jobs=4
   displayName: 'bundle install'
 
-- script: bundle exec rake
+- script: bundle exec rake 2>&1
   displayName: 'bundle exec rake'
 
 - task: PublishTestResults@2
