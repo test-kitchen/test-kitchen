@@ -97,13 +97,12 @@ describe Kitchen::Verifier::Shell do
 
       it "raises ActionFailed if set false to :command" do
         config[:command] = "false"
-        
 
         proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
       end
 
       it "logs a converge event to INFO" do
-        verifier.expects(:shellout).once      
+        verifier.expects(:shellout).once
         verifier.call(state)
 
         logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
