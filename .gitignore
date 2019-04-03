@@ -35,4 +35,5 @@ _site/
 _cache
 .tddium*
 docs/public
+report.xml
 
