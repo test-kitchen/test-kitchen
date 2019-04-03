@@ -76,6 +76,7 @@ describe Kitchen::Verifier::Shell do
       it "calls sleep if :sleep value is greater than 0" do
         config[:sleep] = 3
         verifier.expects(:sleep).with(1).returns(true).at_least(3)
+        verifier.expects(:shellout).once
 
         verifier.call(state)
       end
@@ -84,6 +85,7 @@ describe Kitchen::Verifier::Shell do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
+        verifier.expects(:shellout).once
         verifier.call(state)
         config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
         config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
@@ -95,11 +97,13 @@ describe Kitchen::Verifier::Shell do
 
       it "raises ActionFailed if set false to :command" do
         config[:command] = "false"
+        
 
         proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
       end
 
       it "logs a converge event to INFO" do
+        verifier.expects(:shellout).once      
         verifier.call(state)
 
         logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
@@ -146,6 +150,7 @@ describe Kitchen::Verifier::Shell do
 
   describe "#run_command" do
     it "execute localy and returns nil" do
+      verifier.expects(:shellout).once
       verifier.run_command
     end
 
