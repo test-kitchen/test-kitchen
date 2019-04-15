@@ -23,17 +23,18 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 2.3"
 
-  gem.add_dependency "mixlib-shellout", ">= 1.2", "< 3.0"
-  gem.add_dependency "net-scp",         ">= 1.1", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "net-ssh",         ">= 2.9", "< 6.0" # pinning until we can confirm 6+ works
-  gem.add_dependency "net-ssh-gateway", ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "ed25519",         "~> 1.2" # ed25519 ssh key support
-  gem.add_dependency "bcrypt_pbkdf",    "~> 1.0" # ed25519 ssh key support
-  gem.add_dependency "thor",            "~> 0.19"
-  gem.add_dependency "mixlib-install",  "~> 3.6"
-  gem.add_dependency "winrm",           "~> 2.0"
-  gem.add_dependency "winrm-elevated",  "~> 1.0"
-  gem.add_dependency "winrm-fs",        "~> 1.1"
+  gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 3.0"
+  gem.add_dependency "net-scp",            ">= 1.1", "< 3.0" # pinning until we can confirm 3+ works
+  gem.add_dependency "net-ssh",            ">= 2.9", "< 6.0" # pinning until we can confirm 6+ works
+  gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
+  gem.add_dependency "ed25519",            "~> 1.2" # ed25519 ssh key support
+  gem.add_dependency "bcrypt_pbkdf",       "~> 1.0" # ed25519 ssh key support
+  gem.add_dependency "thor",               "~> 0.19"
+  gem.add_dependency "mixlib-install",     "~> 3.6"
+  gem.add_dependency "winrm",              "~> 2.0"
+  gem.add_dependency "winrm-elevated",     "~> 1.0"
+  gem.add_dependency "winrm-fs",           "~> 1.1"
+  gem.add_dependency "license-acceptance", "~> 0.2"
 
   gem.add_development_dependency "rb-readline"
   gem.add_development_dependency "bundler"

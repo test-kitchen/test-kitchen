@@ -82,6 +82,9 @@ module Kitchen
           args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
         args << "--profile-ruby" if config[:profile_ruby]
+        if config[:chef_license]
+          args << "--chef-license #{config[:chef_license]}"
+        end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
 

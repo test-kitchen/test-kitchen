@@ -120,6 +120,12 @@ describe Kitchen::Provisioner::ChefApply do
       it "sets no color flag on chef-apply" do
         cmd.must_match regexify(" --no-color", :partial_line)
       end
+
+      it "accepts the chef license" do
+        config[:chef_license] = "accept-no-persist"
+
+        cmd.must_match regexify(" --chef-license accept-no-persist", :partial_line)
+      end
     end
   end
 

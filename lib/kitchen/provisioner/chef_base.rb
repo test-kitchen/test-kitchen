@@ -27,6 +27,7 @@ require "kitchen/provisioner/chef/common_sandbox"
 require "kitchen/util"
 require "mixlib/install"
 require "mixlib/install/script_generator"
+require "license_acceptance/acceptor"
 
 begin
   require "chef-config/config"
@@ -44,6 +45,7 @@ module Kitchen
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
       default_config :chef_omnibus_install_options, nil
+      default_config :chef_license, nil
       default_config :run_list, []
       default_config :attributes, {}
       default_config :config_path, nil
@@ -240,6 +242,23 @@ module Kitchen
       def doctor(state)
         deprecated_config.each do |attr, msg|
           info("**** #{attr} deprecated\n#{msg}")
+        end
+      end
+
+      # (see Base#check_license)
+      def check_license
+        name = config[:product_name]
+        version = config[:product_version]
+        acceptor = LicenseAcceptance::Acceptor.new(logger: Kitchen.logger, provided: config[:chef_license])
+        if acceptor.license_required?(name, version)
+          license_name = acceptor.name_from_mixlib(name)
+          begin
+            acceptor.check_and_persist(license_name, version.to_s)
+          rescue LicenseAcceptance::LicenseNotAcceptedError
+            error("Cannot converge without accepting the Chef License. Set it in your kitchen.yml or using the CHEF_LICENSE environment variable")
+            raise
+          end
+          config[:chef_license] ||= acceptor.acceptance_value
         end
       end
 

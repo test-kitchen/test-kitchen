@@ -2,6 +2,9 @@
 source "https://rubygems.org"
 gemspec
 
+# TODO delete after that is released
+gem "license-acceptance", git: "https://github.com/chef/license-acceptance.git", branch: "tk_license", glob: "components/ruby/*.gemspec"
+
 group :integration do
   gem "berkshelf"
   gem "kitchen-inspec"
