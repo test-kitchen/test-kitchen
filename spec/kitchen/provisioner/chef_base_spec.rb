@@ -785,6 +785,50 @@ describe Kitchen::Provisioner::ChefBase do
     end
   end
 
+  describe "#check_license" do
+    before do
+      LicenseAcceptance::Acceptor.stubs(:new).returns(acceptor)
+      config[:product_name] = "chef"
+      config[:product_version] = "15.0.0"
+    end
+
+    describe "when license is not required" do
+      let(:acceptor) do
+        stub(license_required?: false)
+      end
+      it "does not call the license-acceptance flow" do
+        provisioner.check_license
+        config[:chef_license].must_be_nil
+      end
+    end
+
+    describe "when the license is required" do
+      let(:acceptor) do
+        stub(license_required?: true, name_from_mixlib: "chef-client", check_and_persist: true, acceptance_value: "foo")
+      end
+      it "does not call the license-acceptance flow" do
+        provisioner.check_license
+        config[:chef_license].must_equal "foo"
+      end
+
+      describe "when there is an error accepting the license" do
+        let(:product) do
+          stub(name: "chef-client")
+        end
+        let(:acceptor) do
+          stub(license_required?: true, name_from_mixlib: "chef-client")
+        end
+        it "raises the error" do
+          acceptor.stubs(:check_and_persist).with do
+            raise LicenseAcceptance::LicenseNotAcceptedError.new([product])
+          end
+          assert_raises(LicenseAcceptance::LicenseNotAcceptedError) { provisioner.check_license }
+          config[:chef_license].must_be_nil
+        end
+      end
+    end
+  end
+
   describe "#create_sandbox" do
     before do
       @root = Dir.mktmpdir

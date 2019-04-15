@@ -163,6 +163,12 @@ describe Kitchen::Provisioner::Base do
       FakeFS::FileSystem.clear
     end
 
+    it "checks the license" do
+      provisioner.expects(:check_license)
+
+      cmd
+    end
+
     it "creates the sandbox" do
       provisioner.expects(:create_sandbox)
 

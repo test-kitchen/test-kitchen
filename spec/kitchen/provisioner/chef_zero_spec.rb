@@ -638,6 +638,12 @@ describe Kitchen::Provisioner::ChefZero do
 
         cmd.wont_match(/\Amy_prefix /)
       end
+
+      it "accepts the chef license" do
+        config[:chef_license] = "accept-no-persist"
+
+        cmd.must_match regexify(" --chef-license accept-no-persist", :partial_line)
+      end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 

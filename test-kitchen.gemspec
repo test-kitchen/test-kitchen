@@ -32,6 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "winrm", "~> 2.0"
   gem.add_dependency "winrm-elevated", "~> 1.0"
   gem.add_dependency "winrm-fs", "~> 1.1"
+  gem.add_dependency "license-acceptance", ">= 0.2"
 
   gem.add_development_dependency "rb-readline"
 
