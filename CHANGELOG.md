@@ -1,7 +1,13 @@
 # Change Log
 
-## [2.0.1](https://github.com/test-kitchen/test-kitchen/tree/v2.0.1)
+## [2.1.0](https://github.com/test-kitchen/test-kitchen/tree/v2.1.0) (2019-04-18)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.0.1...v2.1.0)
 
+**Merged pull requests:**
+
+- Require gems needed for ed25519 ssh key support [\#1542](https://github.com/test-kitchen/test-kitchen/pull/1542) ([tas50](https://github.com/tas50))
+
+## [2.0.1](https://github.com/test-kitchen/test-kitchen/tree/v2.0.1) (2019-03-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.0.0...v2.0.1)
 
 **Merged pull requests:**
