@@ -107,6 +107,7 @@ module Kitchen
             "--no-color",
           ]
           args << "--logfile #{config[:log_file]}" if config[:log_file]
+          args << "--chef-license #{config[:chef_license]}" if config[:chef_license]
 
           lines << wrap_shell_code(
             [cmd, *args].join(" ")

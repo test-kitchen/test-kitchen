@@ -70,6 +70,7 @@ module Kitchen
       def call(state)
         create_sandbox
         sandbox_dirs = Util.list_directory(sandbox_path)
+        check_license
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
@@ -103,6 +104,12 @@ module Kitchen
       # @returns [Boolean] Return true if a problem is found.
       def doctor(state)
         false
+      end
+
+      # Certain products that Test Kitchen uses to provision require accepting
+      # a license to use. Overwrite this method in the specific provisioner
+      # to implement this check.
+      def check_license
       end
 
       # Generates a command string which will install and configure the
