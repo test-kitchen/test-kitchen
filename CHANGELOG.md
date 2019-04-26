@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.2.0](https://github.com/test-kitchen/test-kitchen/tree/v2.1.0) (2019-04-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.1.0...v2.2.0)
+
+**Merged pull requests:**
+
+- Chef provisioners should prompt for license acceptance [\#1544](https://github.com/test-kitchen/test-kitchen/pull/1544) ([tyler-ball](https://github.com/tyler-ball))
+
 ## [2.1.0](https://github.com/test-kitchen/test-kitchen/tree/v2.1.0) (2019-04-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.0.1...v2.1.0)
 

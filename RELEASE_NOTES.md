@@ -1,3 +1,14 @@
+# Test Kitchen 2.2 Release Notes
+
+This release adds the ability to accept the license for Chef Client 15 and later within Test Kitchen. This works in the following ways:
+  - Set the CHEF_LICENSE environment variable
+  - Set the 'chef_license' attribute in the kitchen.yml under the provisioner
+  - If these are not set and the license has not been previously accepted an interactive prompt will occur asking the user to accept.
+
+# Test Kitchen 2.1 Release Notes
+
+This support adds the gem ed25519 gem for native ed25519 SSH key support.
+
 # Test Kitchen 2.0 Release Notes
 
 Test Kitchen 2.0 is primarily a code cleanup release, but as it does remove functionality that a limited number of users may have depended upon, we have chosen to release this as a new major version. We believe that nearly all users will experience no change with this new version, but this release allows us to remove a good amount of legacy logic that will make Test Kitchen a bit faster and certainly easier to maintain going forward.
