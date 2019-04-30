@@ -6,8 +6,8 @@ language: ruby
 rvm:
   - 2.3.8
   - 2.4.5
-  - 2.5.4
-  - 2.6.2
+  - 2.5.5
+  - 2.6.3
   - ruby-head
 
 before_install:
@@ -23,6 +23,7 @@ script:
 branches:
   only:
   - master
+  - 1-stable
 
 matrix:
   include:
