@@ -1,7 +1,7 @@
 # Test Kitchen
 
 [![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
-[![Build Status](https://secure.travis-ci.org/test-kitchen/test-kitchen.svg?branch=master)](https://travis-ci.org/test-kitchen/test-kitchen)
+[![Build Status](https://travis-ci.org/test-kitchen/test-kitchen.svg?branch=1-stable)](https://travis-ci.org/test-kitchen/test-kitchen)
 
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
