@@ -38,7 +38,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "license-acceptance", ">= 0.2.16", "< 2.0"
 
   gem.add_development_dependency "rb-readline"
-
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
 
