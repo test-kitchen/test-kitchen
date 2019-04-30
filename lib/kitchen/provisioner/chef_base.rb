@@ -247,10 +247,13 @@ module Kitchen
 
       # (see Base#check_license)
       def check_license
-        name = config[:product_name]
+        name = config[:product_name] || "chef"
         version = config[:product_version]
+        debug("Checking if we need to prompt for license acceptance on product: #{name} version: #{version}")
+
         acceptor = LicenseAcceptance::Acceptor.new(logger: Kitchen.logger, provided: config[:chef_license])
         if acceptor.license_required?(name, version)
+          debug("License acceptance required for #{name} version: #{version}. Prompting")
           license_name = acceptor.name_from_mixlib(name)
           begin
             acceptor.check_and_persist(license_name, version.to_s)
