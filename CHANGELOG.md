@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.2.1](https://github.com/test-kitchen/test-kitchen/tree/v2.1.0) (2019-05-01)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.0...v2.2.1)
+
+**Merged pull requests:**
+
+- If no product is passed check license of Chef [\#1545](https://github.com/test-kitchen/test-kitchen/pull/1545) ([tas50](https://github.com/tas50))
+
 ## [2.2.0](https://github.com/test-kitchen/test-kitchen/tree/v2.1.0) (2019-04-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.1.0...v2.2.0)
 
