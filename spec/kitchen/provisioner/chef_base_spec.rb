@@ -789,7 +789,7 @@ describe Kitchen::Provisioner::ChefBase do
     describe "when require_chef_omnibus is true and product_version is not set" do
       it "returns :latest" do
         config[:require_chef_omnibus] = true
-        provisioner.product_version.must_match :latest
+        provisioner.product_version.must_equal :latest
       end
     end
 
@@ -819,7 +819,6 @@ describe Kitchen::Provisioner::ChefBase do
   describe "#check_license" do
     before do
       LicenseAcceptance::Acceptor.stubs(:new).returns(acceptor)
-      config[:product_name] = "chef"
       config[:product_version] = "15.0.0"
     end
 
