@@ -251,12 +251,15 @@ module Kitchen
       # otherwise use config[:product_version] which defaults to :latest and is the actual
       # default for chef provisioners
       #
-      # @return [String] version
+      # @return [String,Symbol,NilClass] version or nil if not applicable
       def product_version
-        if !config[:require_chef_omnibus].is_a?(TrueClass)
-          config[:require_chef_omnibus]
-        else
+        case config[:require_chef_omnibus]
+        when FalseClass
+          nil
+        when TrueClass
           config[:product_version]
+        else
+          config[:require_chef_omnibus]
         end
       end
 
