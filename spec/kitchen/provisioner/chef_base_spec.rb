@@ -785,10 +785,40 @@ describe Kitchen::Provisioner::ChefBase do
     end
   end
 
+  describe "#product_version" do
+    describe "when require_chef_omnibus is true and product_version is not set" do
+      it "returns :latest" do
+        config[:require_chef_omnibus] = true
+        provisioner.product_version.must_equal :latest
+      end
+    end
+
+    describe "when require_chef_omnibus is false and product_version is nil" do
+      it "returns nil" do
+        config[:product_version] = nil
+        config[:require_chef_omnibus] = false
+        provisioner.product_version.must_be_nil
+      end
+    end
+
+    describe "when require_chef_omnibus is a string" do
+      it "returns the require_chef_omnibus string" do
+        config[:require_chef_omnibus] = "15.0.0"
+        provisioner.product_version.must_match "15.0.0"
+      end
+    end
+
+    describe "when product_version is set" do
+      it "returns the product_version string" do
+        config[:product_version] = "15.0.0"
+        provisioner.product_version.must_match "15.0.0"
+      end
+    end
+  end
+
   describe "#check_license" do
     before do
       LicenseAcceptance::Acceptor.stubs(:new).returns(acceptor)
-      config[:product_name] = "chef"
       config[:product_version] = "15.0.0"
     end
 

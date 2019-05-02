@@ -245,11 +245,28 @@ module Kitchen
         end
       end
 
+      # gives us the product version from either require_chef_omnibus or product_version
+      # If the non-default (true) value of require_chef_omnibus is present use that
+      # otherwise use config[:product_version] which defaults to :latest and is the actual
+      # default for chef provisioners
+      #
+      # @return [String,Symbol,NilClass] version or nil if not applicable
+      def product_version
+        case config[:require_chef_omnibus]
+        when FalseClass
+          nil
+        when TrueClass
+          config[:product_version]
+        else
+          config[:require_chef_omnibus]
+        end
+      end
+
       # (see Base#check_license)
       def check_license
         name = config[:product_name] || "chef"
-        version = config[:product_version]
-        debug("Checking if we need to prompt for license acceptance on product: #{name} version: #{version}")
+        version = product_version
+        debug("Checking if we need to prompt for license acceptance on product: #{name} version: #{version}.")
 
         acceptor = LicenseAcceptance::Acceptor.new(logger: Kitchen.logger, provided: config[:chef_license])
         if acceptor.license_required?(name, version)
