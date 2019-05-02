@@ -171,14 +171,14 @@ module Kitchen
                     desc: <<-DESC.gsub(/^\s+/, "").tr("\n", " ")
           Run a #{action} against all matching instances concurrently. Only N
           instances will run at the same time if a number is given.
-        DESC
+                    DESC
       method_option :parallel,
                     aliases: "-p",
                     type: :boolean,
                     desc: <<-DESC.gsub(/^\s+/, "").tr("\n", " ")
           [Future DEPRECATION, use --concurrency]
           Run a #{action} against all matching instances concurrently.
-        DESC
+                    DESC
       if action == :converge || action == :verify
         method_option :debug,
                       aliases: "-D",
@@ -216,14 +216,14 @@ module Kitchen
                   desc: <<-DESC.gsub(/^\s+/, "").tr("\n", " ")
         Run a test against all matching instances concurrently. Only N
         instances will run at the same time if a number is given.
-      DESC
+                  DESC
     method_option :parallel,
                   aliases: "-p",
                   type: :boolean,
                   desc: <<-DESC.gsub(/^\s+/, "").tr("\n", " ")
         [Future DEPRECATION, use --concurrency]
         Run a test against all matching instances concurrently.
-      DESC
+                  DESC
     method_option :destroy,
                   aliases: "-d",
                   default: "passing",

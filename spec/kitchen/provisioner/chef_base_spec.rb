@@ -1155,14 +1155,14 @@ describe Kitchen::Provisioner::ChefBase do
                 name 'wat'
                 run_list 'wat'
                 cookbook 'wat'
-POLICYFILE
+              POLICYFILE
             end
             File.open("#{kitchen_root}/Policyfile.lock.json", "wb") do |file|
               file.write(<<~POLICYFILE)
                 {
                   "name": "wat"
                 }
-POLICYFILE
+              POLICYFILE
             end
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
           end
@@ -1250,14 +1250,14 @@ POLICYFILE
                   name 'wat'
                   run_list 'wat'
                   cookbook 'wat'
-POLICYFILE
+                POLICYFILE
               end
               File.open(policyfile_lock_path, "wb") do |file|
                 file.write(<<~POLICYFILE)
                   {
                     "name": "wat"
                   }
-POLICYFILE
+                POLICYFILE
               end
             end
 
@@ -1294,7 +1294,7 @@ POLICYFILE
   name 'wat'
   run_list 'wat'
   cookbook 'wat'
-  POLICYFILE
+                POLICYFILE
               end
 
               it "runs `chef install` to generate the lock" do
@@ -1329,14 +1329,14 @@ POLICYFILE
                   name 'wat'
                   run_list 'wat'
                   cookbook 'wat'
-POLICYFILE
+                POLICYFILE
               end
               File.open(policyfile_lock_path, "wb") do |file|
                 file.write(<<~POLICYFILE)
                   {
                     "name": "wat"
                   }
-POLICYFILE
+                POLICYFILE
               end
             end
 
