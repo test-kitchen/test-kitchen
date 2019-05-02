@@ -360,7 +360,7 @@ module Kitchen
       def default_config_rb # rubocop:disable Metrics/MethodLength
         root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']\}")
 
-        {
+        config_rb = {
           node_name: instance.name,
           checksum_path: remote_path_join(root, "checksums"),
           file_cache_path: remote_path_join(root, "cache"),
@@ -383,6 +383,8 @@ module Kitchen
           ),
           treat_deprecation_warnings_as_errors: config[:deprecations_as_errors],
         }
+        config_rb[:chef_license] = config[:chef_license] unless config[:chef_license].nil?
+        config_rb
       end
 
       # Generates a rendered client.rb/solo.rb/knife.rb formatted file as a

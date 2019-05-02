@@ -1471,6 +1471,10 @@ POLICYFILE
             file.must_include %{node_name "#{instance.name}"}
           end
 
+          it "does not contain chef_license" do
+            file.wont_include %{chef_license}
+          end
+
           it "sets checksum_path" do
             file.must_include %{checksum_path "/tmp/kitchen/checksums"}
           end
@@ -1550,6 +1554,13 @@ POLICYFILE
           provisioner.create_sandbox
 
           file.must_include %{dark_secret "golang"}
+        end
+
+        it "supports accepting the chef_license" do
+          config[:chef_license] = "accept-no-persist"
+          provisioner.create_sandbox
+
+          file.must_include %{chef_license "accept-no-persist"}
         end
       end
 
