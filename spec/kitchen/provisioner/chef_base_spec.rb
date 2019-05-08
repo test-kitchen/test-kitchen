@@ -834,7 +834,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "when the license is required" do
       let(:acceptor) do
-        stub(license_required?: true, name_from_mixlib: "chef-client", check_and_persist: true, acceptance_value: "foo")
+        stub(license_required?: true, id_from_mixlib: "chef", check_and_persist: true, acceptance_value: "foo")
       end
       it "does not call the license-acceptance flow" do
         provisioner.check_license
@@ -843,14 +843,14 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "when there is an error accepting the license" do
         let(:product) do
-          stub(name: "chef-client")
+          stub(id: "chef-client", pretty_name: "Chef Infra Client")
         end
         let(:acceptor) do
-          stub(license_required?: true, name_from_mixlib: "chef-client")
+          stub(license_required?: true, id_from_mixlib: "chef")
         end
         it "raises the error" do
           acceptor.stubs(:check_and_persist).with do
-            raise LicenseAcceptance::LicenseNotAcceptedError.new([product])
+            raise LicenseAcceptance::LicenseNotAcceptedError.new(product, [product])
           end
           assert_raises(LicenseAcceptance::LicenseNotAcceptedError) { provisioner.check_license }
           config[:chef_license].must_be_nil
