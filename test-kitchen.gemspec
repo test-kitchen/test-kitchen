@@ -35,7 +35,7 @@ Gem::Specification.new do |gem|
 
   # Required to run the Chef provisioner local license check for remote systems
   # TK is not under Chef EULA
-  gem.add_dependency "license-acceptance", ">= 0.2.16", "< 2.0"
+  gem.add_dependency "license-acceptance", "~> 1.0", ">= 1.0.5"
 
   gem.add_development_dependency "rb-readline"
   gem.add_development_dependency "bundler"

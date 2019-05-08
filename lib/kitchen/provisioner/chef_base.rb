@@ -272,11 +272,11 @@ module Kitchen
         acceptor = LicenseAcceptance::Acceptor.new(logger: Kitchen.logger, provided: config[:chef_license])
         if acceptor.license_required?(name, version)
           debug("License acceptance required for #{name} version: #{version}. Prompting")
-          license_name = acceptor.name_from_mixlib(name)
+          license_id = acceptor.id_from_mixlib(name)
           begin
-            acceptor.check_and_persist(license_name, version.to_s)
-          rescue LicenseAcceptance::LicenseNotAcceptedError
-            error("Cannot converge without accepting the Chef License. Set it in your kitchen.yml or using the CHEF_LICENSE environment variable")
+            acceptor.check_and_persist(license_id, version.to_s)
+          rescue LicenseAcceptance::LicenseNotAcceptedError => e
+            error("Cannot converge without accepting the #{e.product.pretty_name} License. Set it in your kitchen.yml or using the CHEF_LICENSE environment variable")
             raise
           end
           config[:chef_license] ||= acceptor.acceptance_value
