@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.2.3](https://github.com/test-kitchen/test-kitchen/tree/v2.2.3) (2019-05-08)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.2...v2.2.3)
+
+**Merged pull requests:**
+
+- Update license-acceptance API usage to new method name [\#1550](https://github.com/test-kitchen/test-kitchen/pull/1550) ([tyler-ball](https://github.com/tyler-ball))
+
+
 ## [2.2.2](https://github.com/test-kitchen/test-kitchen/tree/v2.2.2) (2019-05-02)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.1...v2.2.2)
 
