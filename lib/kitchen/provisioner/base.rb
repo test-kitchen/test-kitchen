@@ -68,9 +68,9 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       # rubocop:disable Metrics/AbcSize
       def call(state)
+        check_license
         create_sandbox
         sandbox_dirs = Util.list_directory(sandbox_path)
-        check_license
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
