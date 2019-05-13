@@ -509,6 +509,7 @@ describe Kitchen::Instance do
       describe "with no state" do
         it "calls Driver#create and Provisioner#call with empty state hash" do
           driver.expects(:create).with({})
+          provisioner.expects(:check_license)
           provisioner.expects(:call)
                      .with { |state| state[:last_action] == "create" }
 
