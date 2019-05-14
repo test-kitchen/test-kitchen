@@ -48,7 +48,7 @@ matrix:
 
       script:
         - bundle exec kitchen --version
-        - git clone https://github.com/chef/proxy_tests.git
+        - git clone --branch license_acceptance https://github.com/chef/proxy_tests.git
         - rvmsudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
       after_script:
         - cat /tmp/out.txt
