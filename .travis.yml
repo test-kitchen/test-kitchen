@@ -18,6 +18,7 @@ bundler_args: --with integration --without changelog debug docs
 script:
   - bundle exec rake
   - export KITCHEN_YAML=kitchen.dokken.yml
+  - export CHEF_LICENSE=accept-no-persist
   - bundle exec kitchen test
 
 branches:
