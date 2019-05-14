@@ -2,6 +2,8 @@
 source "https://rubygems.org"
 gemspec
 
+gem "license-acceptance", git: "https://github.com/chef/license-acceptance.git", branch: "windows2012", glob: "components/ruby/*.gemspec"
+
 group :integration do
   gem "berkshelf"
   gem "kitchen-inspec"

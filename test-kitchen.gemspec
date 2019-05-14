@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "winrm-fs",           "~> 1.1"
   # Required to run the Chef provisioner local license check for remote systems
   # TK is not under Chef EULA
-  gem.add_dependency "license-acceptance", "~> 1.0", ">= 1.0.5"
+  gem.add_dependency "license-acceptance", "~> 1.0", ">= 1.0.6"
 
   gem.add_development_dependency "rb-readline"
   gem.add_development_dependency "bundler"
