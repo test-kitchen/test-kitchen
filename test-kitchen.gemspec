@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
-  gem.required_ruby_version = ">= 2.3"
+  gem.required_ruby_version = ">= 2.4"
 
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 3.0"
   gem.add_dependency "net-scp",            ">= 1.1", "< 3.0" # pinning until we can confirm 3+ works
