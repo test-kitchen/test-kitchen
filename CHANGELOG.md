@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.2.5](https://github.com/test-kitchen/test-kitchen/tree/v2.2.5) (2019-05-15)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.4...v2.2.5)
+
+**Merged pull requests:**
+
+- Update some of the Chef error / info messages [\#1555](https://github.com/test-kitchen/test-kitchen/pull/1555) ([tas50](https://github.com/tas50))
+- Net::SSH changed the response from their select mock [\#1554](https://github.com/test-kitchen/test-kitchen/pull/1554) ([tyler-ball](https://github.com/tyler-ball))
+- Let license errors raise without trying to cleanup sandbox [\#1552](https://github.com/test-kitchen/test-kitchen/pull/1552) ([tyler-ball](https://github.com/tyler-ball))
+
 ## [2.2.4](https://github.com/test-kitchen/test-kitchen/tree/v2.2.4) (2019-05-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.3...v2.2.4)
 
