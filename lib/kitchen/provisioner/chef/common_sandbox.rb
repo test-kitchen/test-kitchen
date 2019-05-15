@@ -179,8 +179,8 @@ module Kitchen
         #
         # @api private
         def make_fake_cookbook
-          info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
-            "so Chef will run with effectively no cookbooks. Is this intended?")
+          info("Policyfile, Cheffile, Berksfile, cookbooks/, or metadata.rb not found " \
+            "so Chef Infra Client will run, but do nothing. Is this intended?")
           name = File.basename(config[:kitchen_root])
           fake_cb = File.join(tmpbooks_dir, name)
           FileUtils.mkdir_p(fake_cb)
@@ -292,7 +292,7 @@ module Kitchen
 
         def update_dna_for_policyfile
           if !config[:run_list].nil? && !config[:run_list].empty?
-            warn("You must set your run_list in your policyfile instead of "\
+            warn("You must set your run_list in your Policyfile instead of "\
                  "kitchen config. The run_list in your config will be ignored.")
             warn("Ignored run_list: #{config[:run_list].inspect}")
           end
