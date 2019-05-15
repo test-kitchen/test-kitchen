@@ -532,16 +532,21 @@ describe Kitchen::SSH do
 
   describe "#wait" do
     let(:not_ready) do
-      stub(select_for_read?: false, idle!: true, close: true)
+      stub(close: true)
     end
 
     let(:ready) do
-      stub(select_for_read?: true, close: true)
+      stub(close: true)
     end
 
     it "logs to info for each retry" do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
-      Net::SSH::Test::Extensions::IO.with_test_extension { ssh.wait }
+      # IO.select returns nil if it his the 5 second timeout
+      # http://ruby-doc.org/core-2.6.3/IO.html#method-c-select
+      IO.stubs(:select).with([not_ready], nil, nil, 5).returns(nil)
+      IO.stubs(:select).with([not_ready], nil, nil, 5).returns(nil)
+      IO.stubs(:select).with([ready], nil, nil, 5).returns([[ready], [], []])
+      ssh.wait
 
       logged_output.string.lines.count do |l|
         l =~ info_line_with("Waiting for foo:22...")
