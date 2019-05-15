@@ -16,7 +16,7 @@ before_install:
 bundler_args: --with integration --without changelog debug docs
 
 env:
-  - global:
+  global:
     - CHEF_LICENSE=accept-no-persist
 
 script:
@@ -41,7 +41,7 @@ matrix:
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
-        - global:
+        global:
           - machine_user=travis
           - machine_pass=travis
           - machine_port=22
