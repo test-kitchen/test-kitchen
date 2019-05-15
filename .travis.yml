@@ -15,10 +15,13 @@ before_install:
 
 bundler_args: --with integration --without changelog debug docs
 
+env:
+  - global:
+    - CHEF_LICENSE=accept-no-persist
+
 script:
   - bundle exec rake
   - export KITCHEN_YAML=kitchen.dokken.yml
-  - export CHEF_LICENSE=accept-no-persist
   - bundle exec kitchen test
 
 branches:
