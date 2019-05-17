@@ -353,7 +353,7 @@ module Kitchen
         return {} if string.nil? || string.empty?
 
         result =
-          if Gem::Requirement.new('>= 3.1.0').satisfied_by?(Gem::Version.new(Psych::VERSION))
+          if Gem::Requirement.new(">= 3.1.0").satisfied_by?(Gem::Version.new(Psych::VERSION))
             # ruby >= 2.6.0
             ::YAML.safe_load(string, permitted_classes: [Symbol], permitted_symbols: [], aliases: true) || {}
           else
