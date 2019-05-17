@@ -9,6 +9,7 @@ driver:
 
 provisioner:
   name: chef_zero
+  chef_license: accept-no-persist
 
 platforms:
   - name: windows-2012R2
