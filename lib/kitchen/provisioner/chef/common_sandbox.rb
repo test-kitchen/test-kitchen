@@ -96,7 +96,8 @@ module Kitchen
         #   kitchen root
         # @api private
         def berksfile
-          File.join(config[:kitchen_root], "Berksfile")
+          basename = config[:berksfile_path] || "Berksfile"
+          File.join(config[:kitchen_root], basename)
         end
 
         # @return [String] an absolute path to a cookbooks/ directory, relative
