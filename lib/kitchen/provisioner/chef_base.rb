@@ -60,6 +60,9 @@ module Kitchen
       # Will try to autodetect by searching for `Policyfile.rb` if not set.
       # If set, will error if the file doesn't exist.
       default_config :policyfile_path, nil
+      # Will try to autodetect by searching for `Berksfile` if not set.
+      # If set, will error if the file doesn't exist.
+      default_config :berksfile_path, nil
       # If set to true (which is the default from `chef generate`), try to update
       # backend cookbook downloader on every kitchen run.
       default_config :always_update_cookbooks, false
@@ -355,14 +358,15 @@ module Kitchen
       # @api private
       def policyfile
         policyfile_basename = config[:policyfile_path] || config[:policyfile] || "Policyfile.rb"
-        File.join(config[:kitchen_root], policyfile_basename)
+        File.expand_path(policyfile_basename, config[:kitchen_root])
       end
 
       # @return [String] an absolute path to a Berksfile, relative to the
       #   kitchen root
       # @api private
       def berksfile
-        File.join(config[:kitchen_root], "Berksfile")
+        berksfile_basename = config[:berksfile_path] || config[:berksfile] || "Berksfile"
+        File.expand_path(berksfile_basename, config[:kitchen_root])
       end
 
       # @return [String] an absolute path to a Cheffile, relative to the
@@ -578,13 +582,18 @@ module Kitchen
         if (config[:policyfile_path] || config[:policyfile]) && !File.exist?(policyfile)
           raise UserError, "policyfile_path set in config "\
             "(#{config[:policyfile_path]} could not be found. " \
-            "Expected to find it at full path #{policyfile} " \
+            "Expected to find it at full path #{policyfile}."
+        end
+        if config[:berksfile_path] && !File.exist?(berksfile)
+          raise UserError, "berksfile_path set in config "\
+            "(#{config[:berksfile_path]} could not be found. " \
+            "Expected to find it at full path #{berksfile}."
         end
         if File.exist?(policyfile) && !supports_policyfile?
           raise UserError, "policyfile detected, but provisioner " \
             "#{self.class.name} doesn't support Policyfiles. " \
             "Either use a different provisioner, or delete/rename " \
-            "#{policyfile}"
+            "#{policyfile}."
         end
       end
 
