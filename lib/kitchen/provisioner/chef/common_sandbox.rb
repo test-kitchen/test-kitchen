@@ -89,7 +89,7 @@ module Kitchen
         # @api private
         def policyfile
           basename = config[:policyfile_path] || config[:policyfile] || "Policyfile.rb"
-          File.join(config[:kitchen_root], basename)
+          File.expand_path(basename, config[:kitchen_root])
         end
 
         # @return [String] an absolute path to a Berksfile, relative to the
@@ -97,7 +97,7 @@ module Kitchen
         # @api private
         def berksfile
           basename = config[:berksfile_path] || "Berksfile"
-          File.join(config[:kitchen_root], basename)
+          File.expand_path(basename, config[:kitchen_root])
         end
 
         # @return [String] an absolute path to a cookbooks/ directory, relative
