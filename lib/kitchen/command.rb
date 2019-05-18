@@ -170,6 +170,7 @@ module Kitchen
             end
           end
         end
+        Thread.abort_on_exception = true if options[:fail_fast]
         threads.map(&:join)
         report_errors
       end

@@ -186,6 +186,11 @@ module Kitchen
                       default: false,
                       desc: "Run the #{action} with debugging enabled."
       end
+      method_option :fail_fast,
+        aliases: "-f",
+        type: :boolean,
+        desc: "Fail immediately when errors occur in concurrency mode"
+
       test_base_path
       log_options
       define_method(action) do |*args|
