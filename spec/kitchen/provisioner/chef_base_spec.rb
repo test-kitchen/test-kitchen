@@ -1225,6 +1225,7 @@ describe Kitchen::Provisioner::ChefBase do
             end
           end
         end
+
         describe "with a custom policyfile_path" do
           let(:config) do
             {
@@ -1406,6 +1407,84 @@ describe Kitchen::Provisioner::ChefBase do
           Kitchen.mutex.expects(:synchronize)
 
           provisioner.create_sandbox
+        end
+
+        describe "with a custom berksfile_path" do
+          let(:config) do
+            {
+              berksfile_path: "foo-berks.rb",
+              test_base_path: "/basist",
+              kitchen_root: "/rooty",
+            }
+          end
+
+          before do
+            File.open("#{kitchen_root}/foo-berks.rb", "wb") do |file|
+              file.write("cookbook 'wat'")
+            end
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:new).returns(resolver)
+          end
+
+          it "logs on debug that Berkshelf is loading" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            provisioner
+
+            logged_output.string.must_match debug_line(
+              "Berksfile found at #{kitchen_root}/foo-berks.rb, using Berkshelf to resolve cookbook dependencies")
+          end
+
+          it "uses Berkshelf" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            resolver.expects(:resolve)
+
+            provisioner.create_sandbox
+          end
+
+          it "uses Kitchen.mutex for resolving" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            Kitchen.mutex.expects(:synchronize)
+
+            provisioner.create_sandbox
+          end
+        end
+
+        describe "with a custom berksfile_path with a relative path" do
+          let(:config) do
+            {
+              berksfile_path: "../foo-berks.rb",
+              test_base_path: "/basist",
+              kitchen_root: "/rooty",
+            }
+          end
+
+          before do
+            File.open(File.expand_path("../foo-berks.rb", kitchen_root), "wb") do |file|
+              file.write("cookbook 'wat'")
+            end
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:new).returns(resolver)
+          end
+
+          it "logs on debug that Berkshelf is loading" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            provisioner
+
+            logged_output.string.must_match debug_line(
+              "Berksfile found at #{File.expand_path("../foo-berks.rb", kitchen_root)}, using Berkshelf to resolve cookbook dependencies")
+          end
+
+          it "uses Berkshelf" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            resolver.expects(:resolve)
+
+            provisioner.create_sandbox
+          end
+
+          it "uses Kitchen.mutex for resolving" do
+            Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
+            Kitchen.mutex.expects(:synchronize)
+
+            provisioner.create_sandbox
+          end
         end
       end
 
