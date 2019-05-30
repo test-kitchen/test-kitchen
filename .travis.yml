@@ -15,6 +15,10 @@ before_install:
 
 bundler_args: --with integration --without changelog debug docs
 
+env:
+  global:
+    - CHEF_LICENSE=accept-no-persist
+
 script:
   - bundle exec rake
   - export KITCHEN_YAML=kitchen.dokken.yml
@@ -37,13 +41,12 @@ matrix:
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
-        - global:
-          - machine_user=travis
-          - machine_pass=travis
-          - machine_port=22
-          - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
-          - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
-          - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/kitchen.proxy.yml
+        - machine_user=travis
+        - machine_pass=travis
+        - machine_port=22
+        - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
+        - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
+        - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/kitchen.proxy.yml
 
       script:
         - bundle exec kitchen --version

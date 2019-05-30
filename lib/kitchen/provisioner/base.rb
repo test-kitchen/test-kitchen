@@ -70,7 +70,6 @@ module Kitchen
       def call(state)
         create_sandbox
         sandbox_dirs = Util.list_directory(sandbox_path)
-        check_license
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)

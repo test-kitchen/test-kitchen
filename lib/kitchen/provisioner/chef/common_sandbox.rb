@@ -180,8 +180,8 @@ module Kitchen
         #
         # @api private
         def make_fake_cookbook
-          info("Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
-            "so Chef  Infra Client will run with effectively no cookbooks. Is this intended?")
+          info("Policyfile, Berksfile, Cheffile, cookbooks/, or metadata.rb not found " \
+            "so Chef Infra Client will run, but do nothing. Is this intended?")
           name = File.basename(config[:kitchen_root])
           fake_cb = File.join(tmpbooks_dir, name)
           FileUtils.mkdir_p(fake_cb)
