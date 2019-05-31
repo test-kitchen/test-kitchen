@@ -1,5 +1,21 @@
 # Change Log
 
+## [v1.25.0](https://github.com/test-kitchen/test-kitchen/tree/v1.25.0) (2019-05-30)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.24.0...v1.25.0)
+
+- Test Kitchen 1.x now supports accepting the license for Chef 15. See https://docs.chef.io/chef_license_accept.html#test-kitchen for details on using this new config option.
+- Added a new `--fail-fast` command line option to fail when the first instance fails if using the `-c` concurrency option.
+- `policyfile_path` config now accepts a relative paths
+- Added a new `berksfile_path` config for specifying the path to your Berksfile
+- Fixed psych gem warnings when running Ruby 2.6+
+- Update kitchen init to use Ubuntu 18.04
+- Remove constraints on specific net-scp and net-ssh-gateway gem releases
+- Mildy modernize the kitchen driver init templates
+- Improve error messages when the kitchen.yml files don't exist
+- Improve chef logging / error messages
+- Honor retries when ssh proxy returns an error
+- Switch to new gem install parameters to support Ruby 2.6 and Chef 15
+
 ## [v1.24.0](https://github.com/test-kitchen/test-kitchen/tree/v1.24.0) (2018-12-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v1.23.5...v1.24.0)
 
