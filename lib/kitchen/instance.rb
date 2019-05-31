@@ -405,6 +405,7 @@ module Kitchen
         if legacy_ssh_base_driver?
           legacy_ssh_base_converge(state)
         else
+          provisioner.check_license
           provisioner.call(state)
         end
       end
