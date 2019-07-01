@@ -51,6 +51,7 @@ module Kitchen
 
       default_config :command_prefix, nil
 
+      default_config :uploads, {}
       default_config :downloads, {}
 
       expand_path_for :test_base_path
@@ -72,6 +73,10 @@ module Kitchen
         sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
+          config[:uploads].to_h.each do |locals, remote|
+            debug("Uploading #{Array(locals).join(', ')} to #{remote}")
+            conn.upload(locals.to_s, remote)
+          end
           conn.execute(install_command)
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
