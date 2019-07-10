@@ -234,13 +234,16 @@ describe Kitchen::Util do
     end
 
     it "globs without parameters" do
-      Kitchen::Util.safe_glob(@root, "**/*").must_equal Dir.glob(File.join(@root, "**/*"))
+      expected = []
+      Dir.glob(File.join(@root, "**/*")) { |f| expected << os_safe_temp_path(f) }
+      Kitchen::Util.safe_glob(@root, "**/*").must_equal expected
     end
 
     it "globs with parameters" do
-      Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal(
-        Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH)
-      )
+      expected = []
+      Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH) { |f| expected << os_safe_temp_path(f) }
+      Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal expected
+
     end
 
     it "globs a folder that does not exist" do
