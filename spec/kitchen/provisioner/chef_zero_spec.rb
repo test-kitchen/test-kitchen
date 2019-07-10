@@ -88,7 +88,7 @@ describe Kitchen::Provisioner::ChefZero do
     end
 
     it "sets :client_rb to an empty Hash" do
-      provisioner[:client_rb].must_equal Hash.new
+      provisioner[:client_rb].must_equal({})
     end
 
     it "sets :json_attributes to true" do
@@ -143,7 +143,7 @@ describe Kitchen::Provisioner::ChefZero do
         provisioner.create_sandbox
 
         logged_output.string
-                     .must_match debug_line_starting_with("Creating client.rb from {")
+          .must_match debug_line_starting_with("Creating client.rb from {")
       end
 
       describe "defaults" do
@@ -331,7 +331,7 @@ describe Kitchen::Provisioner::ChefZero do
         provisioner.create_sandbox
 
         logged_output.string
-                     .must_match debug_line_starting_with("Using a dummy validation.pem")
+          .must_match debug_line_starting_with("Using a dummy validation.pem")
       end
     end
 
@@ -347,14 +347,16 @@ describe Kitchen::Provisioner::ChefZero do
     def self.common_shell_specs
       it "sets config flag on chef-client" do
         cmd.must_match regexify(
-          " --config #{base}client.rb", :partial_line)
+          " --config #{base}client.rb", :partial_line
+        )
       end
 
       it "sets config flag for custom root_path" do
         config[:root_path] = custom_root
 
         cmd.must_match regexify(
-          " --config #{custom_base}client.rb", :partial_line)
+          " --config #{custom_base}client.rb", :partial_line
+        )
       end
 
       it "sets log level flag on chef-client to auto by default" do
@@ -377,14 +379,16 @@ describe Kitchen::Provisioner::ChefZero do
 
       it "sets json attributes flag on chef-client" do
         cmd.must_match regexify(
-          " --json-attributes #{base}dna.json", :partial_line)
+          " --json-attributes #{base}dna.json", :partial_line
+        )
       end
 
       it "sets json attribtes flag for custom root_path" do
         config[:root_path] = custom_root
 
         cmd.must_match regexify(
-          " --json-attributes #{custom_base}dna.json", :partial_line)
+          " --json-attributes #{custom_base}dna.json", :partial_line
+        )
       end
 
       it "does not set json attributes flag if config is falsey" do
@@ -397,7 +401,8 @@ describe Kitchen::Provisioner::ChefZero do
         config[:log_file] = "#{custom_base}out.log"
 
         cmd.must_match regexify(
-          " --logfile #{custom_base}out.log", :partial_line)
+          " --logfile #{custom_base}out.log", :partial_line
+        )
       end
 
       it "does not set logfile flag by default" do
@@ -459,7 +464,8 @@ describe Kitchen::Provisioner::ChefZero do
           config[:profile_ruby] = true
 
           cmd.must_match regexify(
-            " --profile-ruby", :partial_line)
+            " --profile-ruby", :partial_line
+          )
         end
 
         it "does not set profile-ruby flag when config element is falsey" do

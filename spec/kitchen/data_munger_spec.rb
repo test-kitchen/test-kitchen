@@ -936,7 +936,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     end
 
     describe "kitchen config" do
-      [:kitchen_root, :test_base_path].each do |key|
+      %i{kitchen_root test_base_path}.each do |key|
         describe "for #{key}" do
           describe "for #driver_data_for" do
             it "is returned when provided" do
@@ -1860,10 +1860,10 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     end
 
     describe "legacy chef paths from suite" do
-      LEGACY_CHEF_PATHS = [
-        :data_path, :data_bags_path, :environments_path,
-        :nodes_path, :roles_path, :encrypted_data_bag_secret_key_path
-      ].freeze
+      LEGACY_CHEF_PATHS = %i{
+        data_path data_bags_path environments_path
+        nodes_path roles_path encrypted_data_bag_secret_key_path
+      }.freeze
 
       LEGACY_CHEF_PATHS.each do |key|
         it "moves #{key} into provisioner" do

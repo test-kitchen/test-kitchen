@@ -23,7 +23,7 @@ require "kitchen/driver/proxy"
 describe Kitchen::Driver::Proxy do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:state)         { Hash.new }
+  let(:state)         { {} }
 
   let(:config) do
     { host: "foobnoobs.com", reset_command: "mulligan" }

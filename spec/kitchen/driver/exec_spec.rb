@@ -19,7 +19,7 @@ require "kitchen/driver/exec"
 describe Kitchen::Driver::Exec do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:state)         { Hash.new }
+  let(:state)         { {} }
 
   let(:config) do
     { reset_command: "mulligan" }

@@ -23,7 +23,7 @@ require "kitchen"
 describe Kitchen::Transport::Base do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
-  let(:config)          { Hash.new }
+  let(:config)          { {} }
 
   let(:instance) do
     stub(name: "coolbeans", logger: logger)

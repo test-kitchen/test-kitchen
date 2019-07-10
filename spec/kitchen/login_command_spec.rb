@@ -23,7 +23,7 @@ require "kitchen/login_command"
 describe Kitchen::LoginCommand do
   let(:cmd)   { "" }
   let(:argv)  { [] }
-  let(:opts)  { Hash.new }
+  let(:opts)  { {} }
 
   let(:login_command) { Kitchen::LoginCommand.new(cmd, argv, opts) }
 
@@ -44,7 +44,7 @@ describe Kitchen::LoginCommand do
   end
 
   it "#options defaults to an empty hash" do
-    Kitchen::LoginCommand.new(cmd, argv).options.must_equal Hash.new
+    Kitchen::LoginCommand.new(cmd, argv).options.must_equal({})
   end
 
   it "#options returns the options hash from the constructor" do

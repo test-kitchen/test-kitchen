@@ -53,8 +53,8 @@ end
 describe Kitchen::Driver::SSHBase do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
-  let(:state)         { Hash.new }
+  let(:config)        { {} }
+  let(:state)         { {} }
 
   let(:verifier) do
     v = mock("busser")
@@ -339,7 +339,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy install")
+          .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy install")
       else
         connection.expects(:execute).with("env http_proxy=http://proxy install")
       end
@@ -352,7 +352,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy " \
+          .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy " \
             "no_proxy=http://no NO_PROXY=http://no install")
       else
         connection.expects(:execute).with("env http_proxy=http://proxy " \
@@ -374,7 +374,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy install")
+          .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy install")
       else
         connection.expects(:execute).with("env https_proxy=https://proxy install")
       end
@@ -387,7 +387,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy " \
+          .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy " \
           "no_proxy=https://no NO_PROXY=https://no install")
       else
         connection.expects(:execute).with("env https_proxy=https://proxy " \
@@ -409,7 +409,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env ftp_proxy=ftp://proxy FTP_PROXY=ftp://proxy install")
+          .with("env ftp_proxy=ftp://proxy FTP_PROXY=ftp://proxy install")
       else
         connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
       end
@@ -422,7 +422,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-                  .with("env ftp_proxy=ftp://proxy FTP_PROXY=http://proxy " \
+          .with("env ftp_proxy=ftp://proxy FTP_PROXY=http://proxy " \
             "no_proxy=http://no NO_PROXY=http://no install")
       else
         connection.expects(:execute).with("env ftp_proxy=ftp://proxy " \
@@ -437,7 +437,8 @@ describe Kitchen::Driver::SSHBase do
       config[:ftp_proxy] = "ftp://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install")
+        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install"
+      )
 
       cmd
     end
@@ -459,7 +460,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
 
         logged_output.string
-                     .must_match(/INFO -- : Transferring files to instance$/)
+          .must_match(/INFO -- : Transferring files to instance$/)
       end
 
       it "logs to debug" do
@@ -568,7 +569,8 @@ describe Kitchen::Driver::SSHBase do
       config[:ftp_proxy] = "ftp://proxy"
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install")
+        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install"
+      )
 
       cmd
     end
@@ -651,7 +653,8 @@ describe Kitchen::Driver::SSHBase do
         config[:https_proxy] = "https://proxy"
         config[:ftp_proxy] = "ftp://proxy"
         connection.expects(:execute).with(
-          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy #{phase}")
+          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy #{phase}"
+        )
 
         cmd
       end
@@ -661,7 +664,7 @@ describe Kitchen::Driver::SSHBase do
       cmd
 
       logged_output.string
-                   .must_match(/INFO -- : Transferring files to instance$/)
+        .must_match(/INFO -- : Transferring files to instance$/)
     end
 
     it "uploads sandbox files" do
@@ -678,7 +681,7 @@ describe Kitchen::Driver::SSHBase do
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
       connection.stubs(:upload)
-                .raises(Kitchen::Transport::TransportFailed.new("dang"))
+        .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
@@ -1068,7 +1071,8 @@ describe Kitchen::Driver::SSHBase do
         config[:ftp_proxy] = "ftp://proxy"
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.expects(:exec).with(
-          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy huh")
+          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy huh"
+        )
 
         cmd
       end

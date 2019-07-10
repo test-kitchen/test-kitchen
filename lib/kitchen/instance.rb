@@ -217,7 +217,7 @@ module Kitchen
              transport.connection(state).login_command
            end
 
-      debug(%{Login command: #{lc.command} #{lc.arguments.join(' ')} } \
+      debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} } \
         "(Options: #{lc.options})")
       Kernel.exec(*lc.exec_args)
     end
@@ -252,9 +252,9 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose
       result = {}
-      [
-        :platform, :state_file, :driver, :provisioner, :transport, :verifier
-      ].each do |sym|
+      %i{
+        platform state_file driver provisioner transport verifier
+      }.each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown
       end
@@ -267,7 +267,7 @@ module Kitchen
     # @return [Hash] a diagnostic hash
     def diagnose_plugins
       result = {}
-      [:driver, :provisioner, :verifier, :transport].each do |sym|
+      %i{driver provisioner verifier transport}.each do |sym|
         obj = send(sym)
         result[sym] = if obj.respond_to?(:diagnose_plugin)
                         obj.diagnose_plugin
@@ -313,10 +313,10 @@ module Kitchen
     # @raise [ClientError] if any validations fail
     # @api private
     def validate_options(options)
-      [
-        :suite, :platform, :driver, :provisioner,
-        :transport, :verifier, :state_file
-      ].each do |k|
+      %i{
+        suite platform driver provisioner
+        transport verifier state_file
+      }.each do |k|
         next if options.key?(k)
 
         raise ClientError, "Instance#new requires option :#{k}"
@@ -521,12 +521,12 @@ module Kitchen
       state[:last_error] = e.class.name
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{name}.log for more details",
-            e.backtrace)
+        e.backtrace)
     rescue Exception => e # rubocop:disable Lint/RescueException
       log_failure(what, e)
       state[:last_error] = e.class.name
       raise ActionFailed,
-            "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+        "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
     ensure
       state_file.write(state)
     end
@@ -681,7 +681,7 @@ module Kitchen
         end
       end
 
-      TRANSITIONS = [:destroy, :create, :converge, :setup, :verify].freeze
+      TRANSITIONS = %i{destroy create converge setup verify}.freeze
 
       # Determines the index of a state in the state lifecycle vector. Woah.
       #

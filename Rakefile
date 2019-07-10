@@ -20,7 +20,7 @@ rescue LoadError
 end
 
 desc "Run all test suites"
-task test: [:unit, :features]
+task test: %i{unit features}
 
 desc "Display LOC stats"
 task :stats do
@@ -41,7 +41,7 @@ rescue LoadError
 end
 
 desc "Run all quality tasks"
-task quality: [:style, :stats]
+task quality: %i{style stats}
 
 begin
   require "yard"
@@ -50,7 +50,7 @@ rescue LoadError
   puts "yard is not available. (sudo) gem install yard to generate yard documentation."
 end
 
-task default: [:test, :quality]
+task default: %i{test quality}
 
 begin
   require "github_changelog_generator/task"

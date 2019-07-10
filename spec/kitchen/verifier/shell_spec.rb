@@ -29,7 +29,7 @@ describe Kitchen::Verifier::Shell do
   let(:logger)        { Logger.new(logged_output) }
   let(:platform)      { stub(os_type: nil, shell_type: nil, name: "coolbeans") }
   let(:suite)         { stub(name: "fries") }
-  let(:state)         { Hash.new }
+  let(:state)         { {} }
 
   let(:config) do
     { test_base_path: "/basist", kitchen_root: "/rooty" }

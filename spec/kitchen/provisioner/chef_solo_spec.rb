@@ -75,7 +75,7 @@ describe Kitchen::Provisioner::ChefSolo do
     end
 
     it "sets :solo_rb to an empty Hash" do
-      provisioner[:solo_rb].must_equal Hash.new
+      provisioner[:solo_rb].must_equal({})
     end
   end
 
@@ -118,7 +118,7 @@ describe Kitchen::Provisioner::ChefSolo do
         provisioner.create_sandbox
 
         logged_output.string
-                     .must_match debug_line_starting_with("Creating solo.rb from {")
+          .must_match debug_line_starting_with("Creating solo.rb from {")
       end
 
       describe "defaults" do
@@ -398,14 +398,16 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "sets json attributes flag on chef-solo" do
         cmd.must_match regexify(
-          " --json-attributes /tmp/kitchen/dna.json", :partial_line)
+          " --json-attributes /tmp/kitchen/dna.json", :partial_line
+        )
       end
 
       it "sets json attribtes flag for custom root_path" do
         config[:root_path] = "/booyah"
 
         cmd.must_match regexify(
-          " --json-attributes /booyah/dna.json", :partial_line)
+          " --json-attributes /booyah/dna.json", :partial_line
+        )
       end
 
       it "sets log level flag on chef-solo to auto by default" do
@@ -440,7 +442,8 @@ describe Kitchen::Provisioner::ChefSolo do
         config[:profile_ruby] = true
 
         cmd.must_match regexify(
-          " --profile-ruby", :partial_line)
+          " --profile-ruby", :partial_line
+        )
       end
 
       it "does not set profile-ruby flag when config element is falsey" do
@@ -524,26 +527,30 @@ describe Kitchen::Provisioner::ChefSolo do
 
       it "sets config flag on chef-solo" do
         cmd.must_match regexify(
-          ' --config $env:TEMP\\kitchen\\solo.rb', :partial_line)
+          ' --config $env:TEMP\\kitchen\\solo.rb', :partial_line
+        )
       end
 
       it "sets config flag for custom root_path" do
         config[:root_path] = '\\a\\b'
 
         cmd.must_match regexify(
-          ' --config \\a\\b\\solo.rb', :partial_line)
+          ' --config \\a\\b\\solo.rb', :partial_line
+        )
       end
 
       it "sets json attributes flag on chef-solo" do
         cmd.must_match regexify(
-          ' --json-attributes $env:TEMP\\kitchen\\dna.json', :partial_line)
+          ' --json-attributes $env:TEMP\\kitchen\\dna.json', :partial_line
+        )
       end
 
       it "sets json attribtes flag for custom root_path" do
         config[:root_path] = '\\booyah'
 
         cmd.must_match regexify(
-          ' --json-attributes \\booyah\\dna.json', :partial_line)
+          ' --json-attributes \\booyah\\dna.json', :partial_line
+        )
       end
 
       it "sets log level flag on chef-solo to auto by default" do

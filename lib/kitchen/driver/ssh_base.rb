@@ -82,7 +82,7 @@ module Kitchen
           conn.execute(env_cmd(provisioner.run_command))
           info("Downloading files from #{instance.to_str}")
           provisioner[:downloads].to_h.each do |remotes, local|
-            debug("Downloading #{Array(remotes).join(', ')} to #{local}")
+            debug("Downloading #{Array(remotes).join(", ")} to #{local}")
             conn.download(remotes, local)
           end
           debug("Download complete")
@@ -136,13 +136,12 @@ module Kitchen
       # Package an instance.
       #
       # (see Base#package)
-      def package(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
+      def package(state); end
 
       # (see Base#login_command)
       def login_command(state)
         instance.transport.connection(backcompat_merged_state(state))
-                .login_command
+          .login_command
       end
 
       # Executes an arbitrary command on an instance over an SSH connection.
@@ -179,8 +178,7 @@ module Kitchen
       #
       # @raise [UserError] if the driver will not be able to perform or if a
       #   documented dependency is missing from the system
-      def verify_dependencies
-      end
+      def verify_dependencies; end
 
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot
@@ -207,7 +205,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = [:create, :converge, :setup, :verify, :destroy]
+        action_methods = %i{create converge setup verify destroy}
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)
@@ -223,8 +221,7 @@ module Kitchen
       # that it can leverage it internally
       #
       # @return path [String] a path of the cache directory
-      def cache_directory
-      end
+      def cache_directory; end
 
       private
 
@@ -265,6 +262,7 @@ module Kitchen
       # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize
       def env_cmd(cmd)
         return if cmd.nil?
+
         env = "env"
         http_proxy = config[:http_proxy] || ENV["http_proxy"] ||
           ENV["HTTP_PROXY"]
@@ -343,7 +341,7 @@ module Kitchen
         pseudo_state.merge!(options)
 
         instance.transport.connection(backcompat_merged_state(pseudo_state))
-                .wait_until_ready
+          .wait_until_ready
       end
 
       # Intercepts any bare #puts calls in subclasses and issues an INFO log

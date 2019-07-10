@@ -312,6 +312,7 @@ module Kitchen
       def install_command
         return unless config[:require_chef_omnibus] || config[:product_name]
         return if config[:product_name] && config[:install_strategy] == "skip"
+
         prefix_command(sudo(install_script_contents))
       end
 
@@ -333,7 +334,7 @@ module Kitchen
           sudo_command: sudo_command,
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
-          [:install_msi_url, :http_proxy, :https_proxy].each do |key|
+          %i{install_msi_url http_proxy https_proxy}.each do |key|
             opts[key] = config[key] if config.key? key
           end
         end
@@ -427,7 +428,7 @@ module Kitchen
         elsif obj.is_a?(String)
           %{"#{obj.gsub(/\\/, '\\\\\\\\')}"}
         elsif obj.is_a?(Array)
-          %{[#{obj.map { |i| format_value(i) }.join(', ')}]}
+          %{[#{obj.map { |i| format_value(i) }.join(", ")}]}
         else
           obj.inspect
         end
@@ -453,7 +454,7 @@ module Kitchen
       # @api private
       def init_command_vars_for_powershell(dirs)
         [
-          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(', ')})},
+          %{$dirs = @(#{dirs.map { |d| %{"#{d}"} }.join(", ")})},
           shell_var("root_path", config[:root_path]),
         ].join("\n")
       end
@@ -496,7 +497,7 @@ module Kitchen
           },
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
-          [:platform, :platform_version, :architecture].each do |key|
+          %i{platform platform_version architecture}.each do |key|
             opts[key] = config[key] if config[key]
           end
 
@@ -511,12 +512,12 @@ module Kitchen
           end
 
           proxies = {}.tap do |prox|
-            [:http_proxy, :https_proxy, :ftp_proxy, :no_proxy].each do |key|
+            %i{http_proxy https_proxy ftp_proxy no_proxy}.each do |key|
               prox[key] = config[key] if config[key]
             end
 
             # install.ps1 only supports http_proxy
-            prox.delete_if { |p| [:https_proxy, :ftp_proxy, :no_proxy].include?(p) } if powershell_shell?
+            prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
 
           opts[:install_command_options].merge!(proxies)
@@ -550,7 +551,8 @@ module Kitchen
       # @api private
       def script_for_omnibus_version
         installer = Mixlib::Install::ScriptGenerator.new(
-          config[:require_chef_omnibus], powershell_shell?, install_options)
+          config[:require_chef_omnibus], powershell_shell?, install_options
+        )
         config[:chef_omnibus_root] = installer.root
         installer.install_command
       end

@@ -121,14 +121,16 @@ module Kitchen
     #   in convergence integration
     def platforms
       @platforms ||= Collection.new(
-        data.platform_data.map { |pdata| Platform.new(pdata) })
+        data.platform_data.map { |pdata| Platform.new(pdata) }
+      )
     end
 
     # @return [Collection<Suite>] all defined suites which will be used in
     #   convergence integration
     def suites
       @suites ||= Collection.new(
-        data.suite_data.map { |sdata| Suite.new(sdata) })
+        data.suite_data.map { |sdata| Suite.new(sdata) }
+      )
     end
 
     private

@@ -103,6 +103,7 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
+
           logger.debug("[WinRM] #{self} (#{command})")
 
           exit_code, stderr = execute_with_exit_code(command)
@@ -129,7 +130,7 @@ module Kitchen
             login_command_for_linux
           else
             raise ActionFailed, "Remote login not supported in #{self.class} " \
-              "from host OS '#{RbConfig::CONFIG['host_os']}'."
+              "from host OS '#{RbConfig::CONFIG["host_os"]}'."
           end
         end
 
@@ -165,6 +166,7 @@ module Kitchen
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           retries ||= connection_retries.to_i
           raise e if (retries -= 1) < 0
+
           logger.debug("[WinRM] PING_COMMAND failed. Retrying...")
           logger.debug("#{e.class}::#{e.message}")
           sleep(connection_retry_sleep.to_i)
@@ -296,7 +298,7 @@ module Kitchen
           if error_regexp.match(stderr)
             stderr
               .split(error_regexp)[1..-2]
-              .map! { |line| line.sub(/_x000D__x000A_<\/S>/, "").rstrip }
+              .map! { |line| line.sub(%r{_x000D__x000A_</S>}, "").rstrip }
               .each { |line| logger.warn(line) }
           else
             stderr
@@ -495,10 +497,10 @@ module Kitchen
         end
       rescue LoadError => e
         message = fail_to_load_gem_message(gem_name,
-                                           spec_version)
+          spec_version)
         logger.fatal(message)
         raise UserError,
-              "Could not load or activate #{gem_name}. (#{e.message})"
+          "Could not load or activate #{gem_name}. (#{e.message})"
       end
 
       def fail_to_load_gem_message(name, version = nil)

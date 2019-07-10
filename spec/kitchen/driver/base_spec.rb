@@ -41,8 +41,8 @@ end
 describe Kitchen::Driver::Base do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
-  let(:state)         { Hash.new }
+  let(:config)        { {} }
+  let(:state)         { {} }
 
   let(:busser) do
     stub(setup_cmd: "setup", sync_cmd: "sync", run_cmd: "run")
@@ -79,7 +79,7 @@ describe Kitchen::Driver::Base do
     logged_output.string.must_match(/yo\n/)
   end
 
-  [:create, :setup, :verify, :destroy].each do |action|
+  %i{create setup verify destroy}.each do |action|
     it "has a #{action} method that takes state" do
       # TODO: revert back
       # state = Hash.new

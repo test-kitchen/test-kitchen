@@ -48,10 +48,10 @@ After do |s|
   # been saved off
   env = aruba.environment
   env.to_h.keys.select { |key| key =~ /^_CUKE_/ }
-     .each do |backup_key|
-    env[backup_key.sub(/^_CUKE_/, "")] = env[backup_key]
-    env.delete(backup_key)
-  end
+    .each do |backup_key|
+      env[backup_key.sub(/^_CUKE_/, "")] = env[backup_key]
+      env.delete(backup_key)
+    end
 
   @cleanup_dirs.each { |dir| FileUtils.rm_rf(dir) }
 end

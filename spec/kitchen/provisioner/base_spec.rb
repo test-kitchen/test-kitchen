@@ -62,7 +62,7 @@ describe Kitchen::Provisioner::Base do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(os_type: nil, shell_type: nil) }
-  let(:config)          { Hash.new }
+  let(:config)          { {} }
 
   let(:transport) do
     t = mock("transport")
@@ -131,7 +131,7 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "#call" do
-    let(:state) { Hash.new }
+    let(:state) { {} }
     let(:cmd)   { provisioner.call(state) }
 
     let(:connection) do
@@ -200,9 +200,9 @@ describe Kitchen::Provisioner::Base do
       cmd
 
       logged_output.string
-                   .must_match(/INFO -- : Transferring files to instance$/)
+        .must_match(/INFO -- : Transferring files to instance$/)
       logged_output.string
-                   .must_match(/INFO -- : Downloading files from instance$/)
+        .must_match(/INFO -- : Downloading files from instance$/)
     end
 
     it "uploads sandbox files" do
@@ -237,20 +237,20 @@ describe Kitchen::Provisioner::Base do
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
       connection.stubs(:upload)
-                .raises(Kitchen::Transport::TransportFailed.new("dang"))
+        .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute)
-                .raises(Kitchen::Transport::TransportFailed.new("dang"))
+        .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
-  [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
+  %i{init_command install_command prepare_command run_command}.each do |cmd|
     it "has a #{cmd} method" do
       provisioner.public_send(cmd).must_be_nil
     end
@@ -286,7 +286,7 @@ describe Kitchen::Provisioner::Base do
       provisioner.create_sandbox
 
       logged_output.string
-                   .must_match debug_line_starting_with("Creating local sandbox in ")
+        .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
     it "#cleanup_sandbox deletes the sandbox directory" do
@@ -301,7 +301,7 @@ describe Kitchen::Provisioner::Base do
       provisioner.cleanup_sandbox
 
       logged_output.string
-                   .must_match debug_line_starting_with("Cleaning up local sandbox in ")
+        .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
     def info_line(msg)

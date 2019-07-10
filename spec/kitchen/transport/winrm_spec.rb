@@ -44,8 +44,8 @@ describe Kitchen::Transport::Winrm do
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
-  let(:state)         { Hash.new }
+  let(:config)        { {} }
+  let(:state)         { {} }
 
   let(:instance) do
     stub(name: "coolbeans", logger: logger, to_str: "instance")
@@ -500,7 +500,8 @@ describe Kitchen::Transport::Winrm do
         transport
 
         logged_output.string.must_match debug_line_with(
-          "winrm-fs requested, loading winrm-fs gem")
+          "winrm-fs requested, loading winrm-fs gem"
+        )
       end
 
       it "logs a message to debug when library is initially loaded" do
@@ -537,7 +538,8 @@ describe Kitchen::Transport::Winrm do
         end
 
         logged_output.string.must_match fatal_line_with(
-          "The `winrm-fs` gem is missing and must be installed")
+          "The `winrm-fs` gem is missing and must be installed"
+        )
       end
 
       it "raises a UserError when libraries cannot be loaded" do
@@ -561,7 +563,8 @@ describe Kitchen::Transport::Winrm do
         transport.finalize_config!(instance)
 
         logged_output.string.must_match debug_line_with(
-          "winrm requested, loading winrm gem")
+          "winrm requested, loading winrm gem"
+        )
       end
 
       it "logs a message to debug when library is initially loaded" do
@@ -599,7 +602,8 @@ describe Kitchen::Transport::Winrm do
         end
 
         logged_output.string.must_match fatal_line_with(
-          "The `winrm` gem is missing and must be installed")
+          "The `winrm` gem is missing and must be installed"
+        )
       end
 
       it "raises a UserError when libraries cannot be loaded" do
@@ -753,7 +757,8 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         logged_output.string.must_match debug_line(
-          "[WinRM] #{info} (doit)")
+          "[WinRM] #{info} (doit)"
+        )
       end
 
       it "logger captures stdout" do
@@ -1117,7 +1122,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
       it "is an rdesktop command" do
         login_command.command.must_equal "rdesktop"
-        args.must_match %r{ foo:rdpyeah$}
+        args.must_match(/ foo:rdpyeah$/)
       end
 
       it "sets the user" do

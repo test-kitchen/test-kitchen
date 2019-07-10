@@ -34,8 +34,7 @@ module Kitchen
         init_config(config)
       end
 
-      def verify_dependencies
-      end
+      def verify_dependencies; end
     end
 
     class Coolbeans < Base

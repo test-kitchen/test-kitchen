@@ -24,8 +24,8 @@ require "net/ssh/test"
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
-  let(:state)         { Hash.new }
+  let(:config)        { {} }
+  let(:state)         { {} }
 
   let(:instance) do
     stub(name: "coolbeans", logger: logger, to_str: "instance")
@@ -152,7 +152,7 @@ describe Kitchen::Transport::Ssh do
 
   describe "#connection" do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
-    let(:options_http_proxy) { Hash.new }
+    let(:options_http_proxy) { {} }
     let(:proxy_conn) do
       state[:ssh_http_proxy]        = "ssh_http_proxy_from_state"
       state[:ssh_http_proxy_port]   = "ssh_http_proxy_port_from_state"
@@ -749,7 +749,8 @@ describe Kitchen::Transport::Ssh::Connection do
 
           logged_output.string.lines.count do |l|
             l =~ info_line_with(
-              "[SSH] connection failed, retrying in 7 seconds")
+              "[SSH] connection failed, retrying in 7 seconds"
+            )
           end.must_equal 2
         end
 
@@ -960,7 +961,7 @@ describe Kitchen::Transport::Ssh::Connection do
 
     it "is an SSH command" do
       login_command.command.must_equal "ssh"
-      args.must_match %r{ me@foo$}
+      args.must_match(/ me@foo$/)
     end
 
     it "sets the UserKnownHostsFile option" do
@@ -1237,7 +1238,8 @@ describe Kitchen::Transport::Ssh::Connection do
 
         logged_output.string.lines.count do |l|
           l =~ info_line_with(
-            "Waiting for SSH service on foo:22, retrying in 3 seconds")
+            "Waiting for SSH service on foo:22, retrying in 3 seconds"
+          )
         end.must_equal((300 / 3) - 1)
         logged_output.string.lines.count do |l|
           l =~ debug_line_with("[SSH] connection failed ")

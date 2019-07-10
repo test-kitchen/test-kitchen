@@ -147,9 +147,9 @@ describe Kitchen::Provisioner::Shell do
         config[:sudo] = false
 
         provisioner.init_command
-                   .must_match regexify("rm -rf ", :partial_line)
+          .must_match regexify("rm -rf ", :partial_line)
         provisioner.init_command
-                   .wont_match regexify("sudo -E rm -rf ", :partial_line)
+          .wont_match regexify("sudo -E rm -rf ", :partial_line)
       end
 
       it "removes the data directory" do
@@ -503,7 +503,8 @@ describe Kitchen::Provisioner::Shell do
         provisioner.create_sandbox
 
         logged_output.string.must_match debug_line(
-          "Using data from #{config[:kitchen_root]}/my_data")
+          "Using data from #{config[:kitchen_root]}/my_data"
+        )
       end
     end
 
@@ -533,7 +534,8 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using script from #{config[:kitchen_root]}/my_script")
+            "Using script from #{config[:kitchen_root]}/my_script"
+          )
         end
       end
 
@@ -557,7 +559,8 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             logged_output.string.must_match info_line(
-              "No provisioner script file specified, skipping")
+              "No provisioner script file specified, skipping"
+            )
           end
 
           it "does not create a file in the sandbox directory" do
@@ -580,7 +583,8 @@ describe Kitchen::Provisioner::Shell do
             provisioner.create_sandbox
 
             logged_output.string.must_match info_line(
-              "No provisioner script file specified, skipping")
+              "No provisioner script file specified, skipping"
+            )
           end
 
           it "does not create a file in the sandbox directory" do

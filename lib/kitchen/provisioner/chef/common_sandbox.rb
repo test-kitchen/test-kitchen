@@ -81,7 +81,7 @@ module Kitchen
         # @api private
         def all_files_in_cookbooks
           Util.list_directory(tmpbooks_dir, include_dot: true, recurse: true)
-             .select { |fn| File.file?(fn) }
+            .select { |fn| File.file?(fn) }
         end
 
         # @return [String] an absolute path to a Policyfile, relative to the
@@ -141,8 +141,8 @@ module Kitchen
           debug("Using metadata.rb from #{metadata_rb}")
 
           cb_name = MetadataChopper.extract(metadata_rb).first || raise(UserError,
-                                                                        "The metadata.rb does not define the 'name' key." \
-                                                                          " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
+            "The metadata.rb does not define the 'name' key." \
+              " Please add: `name '<cookbook_name>'` to metadata.rb and retry")
 
           cb_path = File.join(tmpbooks_dir, cb_name)
 
@@ -288,8 +288,8 @@ module Kitchen
             warn("Ignored run_list: #{config[:run_list].inspect}")
           end
           policy = Chef::Policyfile.new(policyfile, sandbox_path,
-                                        logger: logger,
-                                        always_update: config[:always_update_cookbooks])
+            logger: logger,
+            always_update: config[:always_update_cookbooks])
           Kitchen.mutex.synchronize do
             policy.compile
           end
@@ -304,8 +304,8 @@ module Kitchen
         def resolve_with_policyfile
           Kitchen.mutex.synchronize do
             Chef::Policyfile.new(policyfile, sandbox_path,
-                                 logger: logger,
-                                 always_update: config[:always_update_cookbooks]).resolve
+              logger: logger,
+              always_update: config[:always_update_cookbooks]).resolve
           end
         end
 
@@ -315,8 +315,8 @@ module Kitchen
         def resolve_with_berkshelf
           Kitchen.mutex.synchronize do
             Chef::Berkshelf.new(berksfile, tmpbooks_dir,
-                                logger: logger,
-                                always_update: config[:always_update_cookbooks]).resolve
+              logger: logger,
+              always_update: config[:always_update_cookbooks]).resolve
           end
         end
 

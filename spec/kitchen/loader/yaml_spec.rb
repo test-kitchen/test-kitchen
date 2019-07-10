@@ -75,7 +75,8 @@ describe Kitchen::Loader::YAML do
     it "sets project_config from parameter, if given" do
       stub_file("/tmp/crazyfunkytown.file", {})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/crazyfunkytown.file")
+        project_config: "/tmp/crazyfunkytown.file"
+      )
 
       loader.diagnose[:project_config][:filename]
         .must_match %r{/tmp/crazyfunkytown.file$}
@@ -92,7 +93,8 @@ describe Kitchen::Loader::YAML do
     it "sets local_config based on location of project_config by default" do
       stub_file("/tmp/.kitchen.local.yml", {})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml")
+        project_config: "/tmp/.kitchen.yml"
+      )
 
       loader.diagnose[:local_config][:filename]
         .must_match %r{/tmp/.kitchen.local.yml$}
@@ -108,7 +110,8 @@ describe Kitchen::Loader::YAML do
     it "sets local_config from parameter, if given" do
       stub_file("/tmp/crazyfunkytown.file", {})
       loader = Kitchen::Loader::YAML.new(
-        local_config: "/tmp/crazyfunkytown.file")
+        local_config: "/tmp/crazyfunkytown.file"
+      )
 
       loader.diagnose[:local_config][:filename]
         .must_match %r{/tmp/crazyfunkytown.file$}
@@ -119,13 +122,15 @@ describe Kitchen::Loader::YAML do
       loader = Kitchen::Loader::YAML.new
 
       loader.diagnose[:global_config][:filename].must_equal File.expand_path(
-        File.join(ENV["HOME"], ".kitchen/config.yml"))
+        File.join(ENV["HOME"], ".kitchen/config.yml")
+      )
     end
 
     it "sets global_config from parameter, if given" do
       stub_file("/tmp/crazyfunkytown.file", {})
       loader = Kitchen::Loader::YAML.new(
-        global_config: "/tmp/crazyfunkytown.file")
+        global_config: "/tmp/crazyfunkytown.file"
+      )
 
       loader.diagnose[:global_config][:filename]
         .must_match %r{/tmp/crazyfunkytown.file$}
@@ -143,15 +148,14 @@ describe Kitchen::Loader::YAML do
 
     it "deep merges in kitchen.local.yml configuration with kitchen.yml" do
       stub_yaml!("common" => { "xx" => 1 },
-                 "a" => "b"
-                )
+                 "a" => "b")
       stub_yaml!(
-                {
-                  "common" => { "yy" => 2 },
-                  "c" => "d",
-                },
-                  ".kitchen.local.yml"
-                )
+        {
+          "common" => { "yy" => 2 },
+          "c" => "d",
+        },
+        ".kitchen.local.yml"
+      )
 
       loader.read.must_equal(
         a: "b",
@@ -162,15 +166,14 @@ describe Kitchen::Loader::YAML do
 
     it "deep merges in a global config file with all other configs" do
       stub_yaml!("common" => { "xx" => 1 },
-                 "a" => "b"
-                )
+                 "a" => "b")
       stub_yaml!(
-                {
-                  "common" => { "yy" => 2 },
-                  "c" => "d",
-                },
-                  ".kitchen.local.yml"
-                )
+        {
+          "common" => { "yy" => 2 },
+          "c" => "d",
+        },
+        ".kitchen.local.yml"
+      )
       stub_global!(
         "common" => { "zz" => 3 },
         "e" => "f"
@@ -196,9 +199,9 @@ describe Kitchen::Loader::YAML do
     it "merges kitchen.local.yml over configuration in kitchen.yml" do
       stub_yaml!("common" => { "thekey" => "nope" })
       stub_yaml!(
-                  { "common" => { "thekey" => "yep" } },
-                  ".kitchen.local.yml"
-                )
+        { "common" => { "thekey" => "yep" } },
+        ".kitchen.local.yml"
+      )
 
       loader.read.must_equal(common: { thekey: "yep" })
     end
@@ -206,9 +209,9 @@ describe Kitchen::Loader::YAML do
     it "merges kitchen.local.yml over both kitchen.yml and global config" do
       stub_yaml!("common" => { "thekey" => "nope" })
       stub_yaml!(
-                  { "common" => { "thekey" => "yep" } },
-                  ".kitchen.local.yml"
-                )
+        { "common" => { "thekey" => "yep" } },
+        ".kitchen.local.yml"
+      )
       stub_global!(
         "common" => { "thekey" => "kinda" }
       )
@@ -227,9 +230,9 @@ describe Kitchen::Loader::YAML do
         it "merges local with #{key} string value over yaml with hash value" do
           stub_yaml!(key => { "dakey" => "ya" })
           stub_yaml!(
-                      { key => "namey" },
-                      ".kitchen.local.yml"
-                    )
+            { key => "namey" },
+            ".kitchen.local.yml"
+          )
 
           loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
@@ -239,9 +242,9 @@ describe Kitchen::Loader::YAML do
         it "merges local with #{key} hash value over yaml with string value" do
           stub_yaml!(key => "namey")
           stub_yaml!(
-                      { key => { "dakey" => "ya" } },
-                      ".kitchen.local.yml"
-                    )
+            { key => { "dakey" => "ya" } },
+            ".kitchen.local.yml"
+          )
 
           loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
@@ -251,9 +254,9 @@ describe Kitchen::Loader::YAML do
         it "merges local with #{key} nil value over yaml with hash value" do
           stub_yaml!(key => { "dakey" => "ya" })
           stub_yaml!(
-                      { key => nil },
-                      ".kitchen.local.yml"
-                    )
+            { key => nil },
+            ".kitchen.local.yml"
+          )
 
           loader.read.must_equal(
             key.to_sym => { dakey: "ya" }
@@ -263,9 +266,9 @@ describe Kitchen::Loader::YAML do
         it "merges local with #{key} hash value over yaml with nil value" do
           stub_yaml!(key => "namey")
           stub_yaml!(
-                      { key => nil },
-                      ".kitchen.local.yml"
-                    )
+            { key => nil },
+            ".kitchen.local.yml"
+          )
 
           loader.read.must_equal(
             key.to_sym => { default_key.to_sym => "namey" }
@@ -319,9 +322,9 @@ describe Kitchen::Loader::YAML do
         it "merges global, local, over yaml with mixed hash, string, nil values" do
           stub_yaml!(key => nil)
           stub_yaml!(
-                      { key => "namey" },
-                      ".kitchen.local.yml"
-                    )
+            { key => "namey" },
+            ".kitchen.local.yml"
+          )
           stub_global!(
             key => { "dakey" => "ya" }
           )
@@ -395,7 +398,8 @@ describe Kitchen::Loader::YAML do
 
       err = proc { loader.read }.must_raise Kitchen::UserError
       err.message.must_match Regexp.new(
-        "Error parsing ([a-zA-Z]:)?/tmp/.kitchen.yml")
+        "Error parsing ([a-zA-Z]:)?/tmp/.kitchen.yml"
+      )
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
@@ -404,7 +408,8 @@ describe Kitchen::Loader::YAML do
 
       err = proc { loader.read }.must_raise Kitchen::UserError
       err.message.must_match Regexp.new(
-        "Error parsing ([a-zA-Z]:)?/tmp/.kitchen.yml")
+        "Error parsing ([a-zA-Z]:)?/tmp/.kitchen.yml"
+      )
     end
 
     it "handles a kitchen.yml if it is a commented out YAML document" do
@@ -459,7 +464,8 @@ describe Kitchen::Loader::YAML do
 
       err = proc { loader.read }.must_raise Kitchen::UserError
       err.message.must_match Regexp.new(
-        "Error parsing ERB content in ([a-zA-Z]:)?/tmp/.kitchen.yml")
+        "Error parsing ERB content in ([a-zA-Z]:)?/tmp/.kitchen.yml"
+      )
     end
 
     it "evaluates kitchen.local.yml through erb before loading by default" do
@@ -483,7 +489,8 @@ describe Kitchen::Loader::YAML do
 
     it "skips evaluating kitchen.yml through erb if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_erb: false)
+        project_config: "/tmp/.kitchen.yml", process_erb: false
+      )
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, "")
@@ -498,7 +505,8 @@ describe Kitchen::Loader::YAML do
     it "skips evaluating kitchen.local.yml through erb if disabled" do
       stub_file("/tmp/.kitchen.local.yml", {})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_erb: false)
+        project_config: "/tmp/.kitchen.yml", process_erb: false
+      )
       FileUtils.mkdir_p "/tmp"
       File.open("/tmp/.kitchen.local.yml", "wb") do |f|
         f.write <<-'YAML'.gsub(/^ {10}/, "")
@@ -513,7 +521,8 @@ describe Kitchen::Loader::YAML do
 
     it "skips kitchen.local.yml if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_local: false)
+        project_config: "/tmp/.kitchen.yml", process_local: false
+      )
       stub_yaml!("a" => "b")
       stub_yaml!(
         { "superawesomesauceadditions" => "enabled, yo" },
@@ -525,7 +534,8 @@ describe Kitchen::Loader::YAML do
 
     it "skips the global config if disabled" do
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_global: false)
+        project_config: "/tmp/.kitchen.yml", process_global: false
+      )
       stub_yaml!("a" => "b")
       stub_global!(
         "superawesomesauceadditions" => "enabled, yo"
@@ -551,7 +561,8 @@ describe Kitchen::Loader::YAML do
     it "contains erb processing information when false" do
       stub_yaml!({})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_erb: false)
+        project_config: "/tmp/.kitchen.yml", process_erb: false
+      )
 
       loader.diagnose[:process_erb].must_equal false
     end
@@ -565,7 +576,8 @@ describe Kitchen::Loader::YAML do
     it "contains local processing information when false" do
       stub_yaml!({})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_local: false)
+        project_config: "/tmp/.kitchen.yml", process_local: false
+      )
 
       loader.diagnose[:process_local].must_equal false
     end
@@ -579,7 +591,8 @@ describe Kitchen::Loader::YAML do
     it "contains global processing information when false" do
       stub_yaml!({})
       loader = Kitchen::Loader::YAML.new(
-        project_config: "/tmp/.kitchen.yml", process_global: false)
+        project_config: "/tmp/.kitchen.yml", process_global: false
+      )
 
       loader.diagnose[:process_global].must_equal false
     end
@@ -587,14 +600,12 @@ describe Kitchen::Loader::YAML do
     describe "for yaml files" do
       before do
         stub_yaml!("from_project" => "project",
-                   "common" => { "p" => "pretty" }
-                  )
+                   "common" => { "p" => "pretty" })
         stub_yaml!({
             "from_local" => "local",
             "common" => { "l" => "looky" },
           },
-          ".kitchen.local.yml"
-        )
+          ".kitchen.local.yml")
         stub_global!(
           "from_global" => "global",
           "common" => { "g" => "goody" }
@@ -783,6 +794,6 @@ describe Kitchen::Loader::YAML do
 
   def stub_global!(hash)
     stub_file(File.join(File.expand_path(ENV["HOME"]),
-                        ".kitchen", "config.yml"), hash)
+      ".kitchen", "config.yml"), hash)
   end
 end

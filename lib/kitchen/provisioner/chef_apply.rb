@@ -100,7 +100,7 @@ module Kitchen
         lines = []
         config[:run_list].map do |recipe|
           cmd = sudo(config[:chef_apply_path]).dup
-                                              .tap { |str| str.insert(0, "& ") if powershell_shell? }
+            .tap { |str| str.insert(0, "& ") if powershell_shell? }
           args = [
             "apply/#{recipe}.rb",
             "--log_level #{level}",

@@ -27,7 +27,7 @@ describe Kitchen::SSH do
 
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:opts)          { Hash.new }
+  let(:opts)          { {} }
   let(:ssh)           { Kitchen::SSH.new("foo", "me", opts) }
   let(:conn)          { Net::SSH::Test::Extensions::IO.with_test_extension { connection } }
 
@@ -403,7 +403,7 @@ describe Kitchen::SSH do
 
     it "is an SSH command" do
       login_command.command.must_equal "ssh"
-      args.must_match %r{ me@foo$}
+      args.must_match(/ me@foo$/)
     end
 
     it "sets the UserKnownHostsFile option" do

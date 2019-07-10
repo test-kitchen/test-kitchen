@@ -33,7 +33,7 @@ module Kitchen
     # @return [Integer] Logger::Severity constant value or nil if input is not
     #   valid
     def self.to_logger_level(symbol)
-      return nil unless [:debug, :info, :warn, :error, :fatal].include?(symbol)
+      return nil unless %i{debug info warn error fatal}.include?(symbol)
 
       Logger.const_get(symbol.to_s.upcase)
     end
@@ -141,7 +141,7 @@ module Kitchen
     # @return [String] a string representation of useful helper functions
     def self.shell_helpers
       IO.read(File.join(
-                File.dirname(__FILE__), %w{.. .. support download_helpers.sh}
+        File.dirname(__FILE__), %w{.. .. support download_helpers.sh}
       ))
     end
 
@@ -164,7 +164,7 @@ module Kitchen
     def self.list_directory(path, include_dot: false, recurse: false)
       # Things (such as tests) are relying on this to not blow up if
       # the directory does not exist
-      return [] if !Dir.exist?(path)
+      return [] unless Dir.exist?(path)
 
       Kitchen.mutex_chdir.synchronize do
         Dir.chdir(path) do
@@ -200,7 +200,7 @@ module Kitchen
     # @note Dir.chdir is applied to the process, thus it is not thread-safe
     # and must be synchronized.
     def self.safe_glob(path, pattern, *flags)
-      return [] if !Dir.exist?(path)
+      return [] unless Dir.exist?(path)
 
       Kitchen.mutex_chdir.synchronize do
         Dir.chdir(path) do

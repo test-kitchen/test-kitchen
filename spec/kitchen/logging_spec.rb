@@ -30,7 +30,7 @@ class LoggingDummy
   end
 
   class Logger
-    METHODS = [:banner, :debug, :info, :warn, :error, :fatal].freeze
+    METHODS = %i{banner debug info warn error fatal}.freeze
 
     attr_reader(*(METHODS.map { |m| "#{m}_msg".to_sym }))
 

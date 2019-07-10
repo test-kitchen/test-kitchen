@@ -29,29 +29,29 @@ module Kitchen
       include Thor::Actions
 
       class_option :driver,
-                   type: :array,
-                   aliases: "-D",
-                   default: %w{kitchen-vagrant},
-                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+        type: :array,
+        aliases: "-D",
+        default: %w{kitchen-vagrant},
+        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
-                   D
+        D
 
       class_option :provisioner,
-                   type: :string,
-                   aliases: "-P",
-                   default: "chef_solo",
-                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+        type: :string,
+        aliases: "-P",
+        default: "chef_solo",
+        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
-                   D
+        D
 
       class_option :create_gemfile,
-                   type: :boolean,
-                   default: false,
-                   desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+        type: :boolean,
+        default: false,
+        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           Whether or not to create a Gemfile if one does not exist.
           Default: false
-                   D
+        D
 
       # Invoke the command.
       def init
@@ -80,10 +80,9 @@ module Kitchen
         driver_plugin = Array(options[:driver]).first || "dummy"
 
         template("kitchen.yml.erb", "kitchen.yml",
-                 driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
-                 provisioner: options[:provisioner],
-                 run_list: Array(run_list)
-                )
+          driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
+          provisioner: options[:provisioner],
+          run_list: Array(run_list))
       end
 
       # Creates the `chefignore` file.

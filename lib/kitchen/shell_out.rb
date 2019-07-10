@@ -57,9 +57,9 @@ module Kitchen
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
       if options.fetch(:use_sudo, false)
-        cmd = "#{options.fetch(:sudo_command, 'sudo -E')} #{cmd}"
+        cmd = "#{options.fetch(:sudo_command, "sudo -E")} #{cmd}"
       end
-      subject = "[#{options.fetch(:log_subject, 'local')} command]"
+      subject = "[#{options.fetch(:log_subject, "local")} command]"
 
       debug("#{subject} BEGIN (#{cmd})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
@@ -83,7 +83,7 @@ module Kitchen
     # @api private
     def shell_opts(options)
       filtered_opts = options.reject do |key, _value|
-        [:use_sudo, :sudo_command, :log_subject, :quiet].include?(key)
+        %i{use_sudo sudo_command log_subject quiet}.include?(key)
       end
       { live_stream: logger, timeout: 60_000 }.merge(filtered_opts)
     end

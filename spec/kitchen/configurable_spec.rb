@@ -93,7 +93,7 @@ module Kitchen
 end
 
 describe Kitchen::Configurable do
-  let(:config)    { Hash.new }
+  let(:config)    { {} }
   let(:platform)  { stub }
   let(:instance) do
     stub(name: "coolbeans", to_str: "<instance>", platform: platform)
@@ -378,7 +378,7 @@ describe Kitchen::Configurable do
 
   describe "#diagnose" do
     it "returns an empty hash for no config" do
-      subject.diagnose.must_equal Hash.new
+      subject.diagnose.must_equal({})
     end
 
     it "returns a hash of config" do
@@ -390,7 +390,7 @@ describe Kitchen::Configurable do
       config[:zebra] = true
       config[:elephant] = true
 
-      subject.diagnose.keys.must_equal [:elephant, :zebra]
+      subject.diagnose.keys.must_equal %i{elephant zebra}
     end
   end
 
@@ -446,7 +446,7 @@ describe Kitchen::Configurable do
 
       it "prefers a path containing base path and suite name if it exists" do
         subject.calculate_path("winner")
-               .must_equal "/the/basest/ultimate/winner"
+          .must_equal "/the/basest/ultimate/winner"
       end
 
       it "prefers a path containing base path if it exists" do
@@ -473,7 +473,7 @@ describe Kitchen::Configurable do
         FileUtils.mkdir_p("/custom/ultimate/winner")
 
         subject.calculate_path("winner", base_path: "/custom")
-               .must_equal "/custom/ultimate/winner"
+          .must_equal "/custom/ultimate/winner"
       end
     end
 
@@ -489,14 +489,14 @@ describe Kitchen::Configurable do
 
       it "prefers a path containing base path and suite name if it exists" do
         subject.calculate_path("winner", type: :file)
-               .must_equal "/the/basest/ultimate/winner"
+          .must_equal "/the/basest/ultimate/winner"
       end
 
       it "prefers a path containing base path if it exists" do
         FileUtils.rm_rf("/the/basest/ultimate/winner")
 
         subject.calculate_path("winner", type: :file)
-               .must_equal "/the/basest/winner"
+          .must_equal "/the/basest/winner"
       end
 
       it "prefers a path in the current working directory if it exists" do
@@ -518,7 +518,7 @@ describe Kitchen::Configurable do
         FileUtils.touch(File.join("/custom/ultimate", "winner"))
 
         subject.calculate_path("winner", type: :file, base_path: "/custom")
-               .must_equal "/custom/ultimate/winner"
+          .must_equal "/custom/ultimate/winner"
       end
     end
   end
@@ -670,14 +670,14 @@ describe Kitchen::Configurable do
       platform.stubs(:shell_type).returns("powershell")
 
       subject.send(:shell_env_var, "foo", "bar")
-             .must_equal %{$env:foo = "bar"}
+        .must_equal %{$env:foo = "bar"}
     end
 
     it "for bourne type shells returns a bourne environment variable" do
       platform.stubs(:shell_type).returns("bourne")
 
       subject.send(:shell_env_var, "foo", "bar")
-             .must_equal %{foo="bar"; export foo}
+        .must_equal %{foo="bar"; export foo}
     end
   end
 

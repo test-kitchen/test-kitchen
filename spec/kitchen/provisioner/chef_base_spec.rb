@@ -87,7 +87,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":attributes defaults to an empty hash" do
-      provisioner[:attributes].must_equal Hash.new
+      provisioner[:attributes].must_equal({})
     end
 
     it ":log_level defaults to auto" do
@@ -104,7 +104,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":cookbook_files_glob includes a metadata file" do
-      provisioner[:cookbook_files_glob].must_match %r{,metadata.\{json,rb\}}
+      provisioner[:cookbook_files_glob].must_match(/,metadata.\{json,rb\}/)
     end
 
     it ":data_path uses calculate_path and is expanded" do
@@ -212,7 +212,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "passes sensible defaults" do
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -221,7 +221,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:http_proxy] = "http://proxy"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -230,7 +230,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:https_proxy] = "https://proxy"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -241,7 +241,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:https_proxy] = "https://proxy"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -250,7 +250,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:omnibus_url] = "FROM_HERE"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -258,7 +258,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] = "1.2.3"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with("1.2.3", false, install_opts).returns(installer)
+          .with("1.2.3", false, install_opts).returns(installer)
         cmd
       end
 
@@ -266,7 +266,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] = "11.10"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with("11.10", false, install_opts).returns(installer)
+          .with("11.10", false, install_opts).returns(installer)
         cmd
       end
 
@@ -274,7 +274,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] = "12"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with("12", false, install_opts).returns(installer)
+          .with("12", false, install_opts).returns(installer)
         cmd
       end
 
@@ -294,7 +294,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] = "latest"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with("latest", false, install_opts).returns(installer)
+          .with("latest", false, install_opts).returns(installer)
         cmd
       end
 
@@ -302,7 +302,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:require_chef_omnibus] = true
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -312,7 +312,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:project] = "chefdk"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -322,7 +322,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_flags] = "-d /tmp/place"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with("11", false, install_opts).returns(installer)
+          .with("11", false, install_opts).returns(installer)
         cmd
       end
 
@@ -331,7 +331,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:root] = "/tmp/test"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -340,7 +340,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts[:install_msi_url] = "http://blah/blah.msi"
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts).returns(installer)
+          .with(default_version, false, install_opts).returns(installer)
         cmd
       end
 
@@ -363,7 +363,7 @@ describe Kitchen::Provisioner::ChefBase do
           install_opts[:install_flags] = "-d /tmp/custom/place"
 
           Mixlib::Install::ScriptGenerator.expects(:new)
-                                          .with(default_version, false, install_opts).returns(installer)
+            .with(default_version, false, install_opts).returns(installer)
           cmd
         end
 
@@ -373,7 +373,7 @@ describe Kitchen::Provisioner::ChefBase do
           install_opts[:project] = "cool"
 
           Mixlib::Install::ScriptGenerator.expects(:new)
-                                          .with(default_version, false, install_opts).returns(installer)
+            .with(default_version, false, install_opts).returns(installer)
           cmd
         end
 
@@ -383,7 +383,7 @@ describe Kitchen::Provisioner::ChefBase do
           install_opts[:project] = "cool"
 
           Mixlib::Install::ScriptGenerator.expects(:new)
-                                          .with(default_version, false, install_opts).returns(installer)
+            .with(default_version, false, install_opts).returns(installer)
           cmd
         end
       end
@@ -574,7 +574,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts_clone[:sudo_command] = config[:sudo_command]
 
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts_clone).returns(installer)
+          .with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_sudo_command my_install_command"
       end
 
@@ -593,7 +593,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, false, install_opts_clone).returns(installer)
+          .with(default_version, false, install_opts_clone).returns(installer)
         cmd.must_equal "my_install_command"
       end
     end
@@ -610,7 +610,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts_clone = install_opts.clone
         install_opts_clone[:sudo_command] = ""
         Mixlib::Install::ScriptGenerator.expects(:new)
-                                        .with(default_version, true, install_opts_clone).returns(installer)
+          .with(default_version, true, install_opts_clone).returns(installer)
         cmd
       end
 
@@ -633,7 +633,7 @@ describe Kitchen::Provisioner::ChefBase do
           install_opts_clone[:install_flags] = "-version 123"
           install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
           Mixlib::Install::ScriptGenerator.expects(:new)
-                                          .with(default_version, true, install_opts_clone).returns(installer)
+            .with(default_version, true, install_opts_clone).returns(installer)
           cmd
         end
       end
@@ -771,8 +771,8 @@ describe Kitchen::Provisioner::ChefBase do
         dirs = %w{ clients cookbooks data data_bags encrypted_data_bag_secret
                    environments roles
                  }.map do |dir|
-          "\\route\\#{dir}"
-        end.join(", ")
+                   "\\route\\#{dir}"
+                 end.join(", ")
 
         cmd.include? "$dirs = @(#{dirs})"
       end
@@ -923,7 +923,7 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         logged_output.string
-                     .must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
+          .must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
       end
     end
 
@@ -967,7 +967,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using #{thing} from #{config[:kitchen_root]}/my_#{thing}")
+            "Using #{thing} from #{config[:kitchen_root]}/my_#{thing}"
+          )
         end
       end
     end
@@ -1005,7 +1006,8 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         logged_output.string.must_match debug_line(
-          "Using secret from #{config[:kitchen_root]}/my_secret")
+          "Using secret from #{config[:kitchen_root]}/my_secret"
+        )
       end
     end
 
@@ -1053,7 +1055,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match info_line(
-            "Preparing cookbooks from project directory")
+            "Preparing cookbooks from project directory"
+          )
         end
 
         it "logs a meesage on debug for cookbooks/ directory" do
@@ -1061,7 +1064,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using cookbooks from #{kitchen_root}/cookbooks")
+            "Using cookbooks from #{kitchen_root}/cookbooks"
+          )
         end
 
         it "logs a message on info for site-cookbooks/ directory" do
@@ -1070,7 +1074,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match info_line(
-            "Preparing site-cookbooks from project directory")
+            "Preparing site-cookbooks from project directory"
+          )
         end
 
         it "logs a meesage on debug for site-cookbooks/ directory" do
@@ -1079,7 +1084,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using cookbooks from #{kitchen_root}/site-cookbooks")
+            "Using cookbooks from #{kitchen_root}/site-cookbooks"
+          )
         end
       end
 
@@ -1101,14 +1107,16 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match info_line(
-            "Preparing current project directory as a cookbook")
+            "Preparing current project directory as a cookbook"
+          )
         end
 
         it "logs a meesage on debug" do
           provisioner.create_sandbox
 
           logged_output.string.must_match debug_line(
-            "Using metadata.rb from #{kitchen_root}/metadata.rb")
+            "Using metadata.rb from #{kitchen_root}/metadata.rb"
+          )
         end
 
         it "raises a UserError is name cannot be determined from metadata.rb" do
@@ -1194,7 +1202,8 @@ describe Kitchen::Provisioner::ChefBase do
 
               logged_output.string.must_match debug_line(
                 "Policyfile found at #{kitchen_root}/Policyfile.rb, "\
-                "using Policyfile to resolve cookbook dependencies")
+                "using Policyfile to resolve cookbook dependencies"
+              )
             end
 
             it "uses uses the policyfile to resolve dependencies" do
@@ -1392,7 +1401,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner
 
           logged_output.string.must_match debug_line(
-            "Berksfile found at #{kitchen_root}/Berksfile, using Berkshelf to resolve cookbook dependencies")
+            "Berksfile found at #{kitchen_root}/Berksfile, using Berkshelf to resolve cookbook dependencies"
+          )
         end
 
         it "uses Berkshelf" do
@@ -1430,7 +1440,8 @@ describe Kitchen::Provisioner::ChefBase do
             provisioner
 
             logged_output.string.must_match debug_line(
-              "Berksfile found at #{kitchen_root}/foo-berks.rb, using Berkshelf to resolve cookbook dependencies")
+              "Berksfile found at #{kitchen_root}/foo-berks.rb, using Berkshelf to resolve cookbook dependencies"
+            )
           end
 
           it "uses Berkshelf" do
@@ -1469,7 +1480,8 @@ describe Kitchen::Provisioner::ChefBase do
             provisioner
 
             logged_output.string.must_match debug_line(
-              "Berksfile found at #{File.expand_path("../foo-berks.rb", kitchen_root)}, using Berkshelf to resolve cookbook dependencies")
+              "Berksfile found at #{File.expand_path("../foo-berks.rb", kitchen_root)}, using Berkshelf to resolve cookbook dependencies"
+            )
           end
 
           it "uses Berkshelf" do
@@ -1520,7 +1532,8 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           logged_output.string.must_match info_line(
-            "Removing non-cookbook files before transfer")
+            "Removing non-cookbook files before transfer"
+          )
         end
       end
 

@@ -86,7 +86,7 @@ module Kitchen
           )
           info("Downloading files from #{instance.to_str}")
           config[:downloads].to_h.each do |remotes, local|
-            debug("Downloading #{Array(remotes).join(', ')} to #{local}")
+            debug("Downloading #{Array(remotes).join(", ")} to #{local}")
             conn.download(remotes, local)
           end
           debug("Download complete")
@@ -108,16 +108,14 @@ module Kitchen
       # Certain products that Test Kitchen uses to provision require accepting
       # a license to use. Overwrite this method in the specific provisioner
       # to implement this check.
-      def check_license
-      end
+      def check_license; end
 
       # Generates a command string which will install and configure the
       # provisioner software on an instance. If no work is required, then `nil`
       # will be returned.
       #
       # @return [String] a command string
-      def install_command
-      end
+      def install_command; end
 
       # Generates a command string which will perform any data initialization
       # or configuration required after the provisioner software is installed
@@ -125,8 +123,7 @@ module Kitchen
       # is required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def init_command
-      end
+      def init_command; end
 
       # Generates a command string which will perform any commands or
       # configuration required just before the main provisioner run command but
@@ -134,16 +131,14 @@ module Kitchen
       # required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def prepare_command
-      end
+      def prepare_command; end
 
       # Generates a command string which will invoke the main provisioner
       # command on the prepared instance. If no work is required, then `nil`
       # will be returned.
       #
       # @return [String] a command string
-      def run_command
-      end
+      def run_command; end
 
       # Creates a temporary directory on the local workstation into which
       # provisioner related files and directories can be copied or created. The

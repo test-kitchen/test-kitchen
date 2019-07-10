@@ -65,13 +65,13 @@ module Kitchen
     #   plugins of the given type
     def self.plugins_available(plugin_type)
       $LOAD_PATH.map { |load_path| Dir[File.expand_path("kitchen/#{plugin_type}/*.rb", load_path)] }
-                .reject { |plugin_paths| plugin_paths.empty? }
-                .flatten
-                .uniq
-                .select { |plugin_path| File.readlines(plugin_path).grep(/^\s*class \w* </).any? }
-                .map { |plugin_path| File.basename(plugin_path).gsub(/\.rb$/, "") }
-                .reject { |plugin_name| plugin_name == "base" }
-                .sort
+        .reject(&:empty?)
+        .flatten
+        .uniq
+        .select { |plugin_path| File.readlines(plugin_path).grep(/^\s*class \w* </).any? }
+        .map { |plugin_path| File.basename(plugin_path).gsub(/\.rb$/, "") }
+        .reject { |plugin_name| plugin_name == "base" }
+        .sort
     end
   end
 end

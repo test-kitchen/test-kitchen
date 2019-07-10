@@ -53,13 +53,13 @@ describe Kitchen::Platform do
 
   it "#shell_type returns value passed into constructor with :shell_type" do
     klass.new(name: "p", shell_type: "bourne")
-         .shell_type.must_equal "bourne"
+      .shell_type.must_equal "bourne"
     klass.new(name: "p", shell_type: "powershell")
-         .shell_type.must_equal "powershell"
+      .shell_type.must_equal "powershell"
     klass.new(name: "p", shell_type: "unicorn")
-         .shell_type.must_equal "unicorn"
+      .shell_type.must_equal "unicorn"
     klass.new(name: "p", shell_type: nil)
-         .shell_type.must_be_nil
+      .shell_type.must_be_nil
   end
 
   it "#shell_type defaults to `bourne` when not provided" do
