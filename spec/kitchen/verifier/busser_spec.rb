@@ -24,7 +24,7 @@ require "kitchen/verifier/busser"
 describe Kitchen::Verifier::Busser do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
+  let(:config)        { {} }
   let(:platform)      { stub(os_type: nil, shell_type: nil) }
   let(:suite)         { stub(name: "germany") }
 
@@ -265,7 +265,8 @@ describe Kitchen::Verifier::Busser do
 
         it "sets the busser plugins list" do
           cmd.must_match regexify(
-            %{plugins="busser-abba busser-minispec busser-mondospec"})
+            %{plugins="busser-abba busser-minispec busser-mondospec"}
+          )
         end
       end
 
@@ -307,7 +308,8 @@ describe Kitchen::Verifier::Busser do
 
         it "sets the busser plugins list" do
           cmd.must_match regexify(
-            %{$plugins = "busser-abba busser-minispec busser-mondospec"})
+            %{$plugins = "busser-abba busser-minispec busser-mondospec"}
+          )
         end
       end
     end
@@ -546,7 +548,8 @@ describe Kitchen::Verifier::Busser do
       busser.sync_cmd
 
       logged_output.string.must_match warn_line_with(
-        "Legacy call to #sync_cmd cannot be preserved")
+        "Legacy call to #sync_cmd cannot be preserved"
+      )
     end
   end
 

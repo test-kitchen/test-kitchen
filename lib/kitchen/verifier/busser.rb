@@ -71,7 +71,7 @@ module Kitchen
         return if local_suite_files.empty?
 
         cmd = sudo(config[:busser_bin]).dup
-                                       .tap { |str| str.insert(0, "& ") if powershell_shell? }
+          .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
@@ -94,7 +94,7 @@ module Kitchen
         return if local_suite_files.empty?
 
         cmd = sudo(config[:busser_bin]).dup
-                                       .tap { |str| str.insert(0, "& ") if powershell_shell? }
+          .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
           #{busser_env}
@@ -199,7 +199,7 @@ module Kitchen
 
       def install_command_vars
         ruby = remote_path_join(config[:ruby_bindir], "ruby")
-               .tap { |path| path.concat(".exe") if windows_os? }
+          .tap { |path| path.concat(".exe") if windows_os? }
         gem = remote_path_join(config[:ruby_bindir], "gem")
 
         [

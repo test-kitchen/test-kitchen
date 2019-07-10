@@ -128,7 +128,7 @@ module Kitchen
         debug("Using a dummy validation.pem")
 
         source = File.join(File.dirname(__FILE__),
-                           %w{.. .. .. support dummy-validation.pem})
+          %w{.. .. .. support dummy-validation.pem})
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
@@ -139,7 +139,7 @@ module Kitchen
       # @api private
       def shim_command
         ruby = remote_path_join(config[:ruby_bindir], "ruby")
-               .tap { |path| path.concat(".exe") if windows_os? }
+          .tap { |path| path.concat(".exe") if windows_os? }
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
         "#{chef_client_zero_env}\n#{sudo(ruby)} #{shim}"

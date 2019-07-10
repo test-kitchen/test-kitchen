@@ -54,15 +54,13 @@ module Kitchen
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def destroy(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
+      def destroy(state); end
 
       # Package an instance.
       #
       # @param state [Hash] mutable instance and driver state
       # @raise [ActionFailed] if the action could not be completed
-      def package(state) # rubocop:disable Lint/UnusedMethodArgument
-      end
+      def package(state); end
 
       # Check system and configuration for common errors.
       #
@@ -97,7 +95,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = [:create, :setup, :converge, :verify, :destroy]
+        action_methods = %i{create setup converge verify destroy}
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)
@@ -136,8 +134,7 @@ module Kitchen
       # that it can leverage it internally
       #
       # @return path [String] a path of the cache directory
-      def cache_directory
-      end
+      def cache_directory; end
 
       private
 

@@ -236,7 +236,7 @@ module Kitchen
       # Remove items from hash when not provided in the loaded config or when the rendered message is nil
       @deprecated_config = deprecated_attributes.delete_if { |attr, obj| !provided_config.key?(attr) || obj.nil? }
 
-      if !deprecated_config.empty?
+      unless deprecated_config.empty?
         warning = Util.outdent!(<<-MSG)
           Deprecated configuration detected:
           #{deprecated_config.keys.join("\n")}
@@ -341,6 +341,7 @@ module Kitchen
     # @api private
     def wrap_shell_code(code)
       return env_wrapped(code) if powershell_shell?
+
       Util.wrap_command((env_wrapped code))
     end
 
@@ -353,7 +354,7 @@ module Kitchen
     end
 
     def proxy_setting_keys
-      [:http_proxy, :https_proxy, :ftp_proxy, :no_proxy]
+      %i{http_proxy https_proxy ftp_proxy no_proxy}
     end
 
     def resolve_proxy_settings_from_config

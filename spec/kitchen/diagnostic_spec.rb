@@ -71,17 +71,17 @@ describe Kitchen::Diagnostic do
 
   it "#read returns the loader's diganose hash if a loader is present" do
     Kitchen::Diagnostic.new(loader: loader)
-                       .read["loader"].must_equal("who" => "loader")
+      .read["loader"].must_equal("who" => "loader")
   end
 
   it "#read returns an error hash for loader if error hash is passed in" do
     Kitchen::Diagnostic.new(loader: { error: "damn" })
-                       .read["loader"].must_equal("error" => "damn")
+      .read["loader"].must_equal("error" => "damn")
   end
 
   it "#read returns the unique set of plugins' diagnose hash if :plugins is set" do
     Kitchen::Diagnostic.new(instances: instances, plugins: true)
-                       .read["plugins"]
+      .read["plugins"]
       .must_equal(
         "driver" => {
           "driva" => { "a" => "b" },
@@ -102,11 +102,11 @@ describe Kitchen::Diagnostic do
 
   it "#read returns an empty plugins hash if no instances were given" do
     Kitchen::Diagnostic.new(plugins: true)
-                       .read["plugins"].must_equal Hash.new
+      .read["plugins"].must_equal({})
   end
 
   it "#read returns an empty instances hash if no instances were given" do
-    Kitchen::Diagnostic.new.read["instances"].must_equal Hash.new
+    Kitchen::Diagnostic.new.read["instances"].must_equal({})
   end
 
   it "#read returns an error hash for plugins if error hash is passed in" do
@@ -117,12 +117,12 @@ describe Kitchen::Diagnostic do
 
   it "#read returns the instances' diganose hashes if instances are present" do
     Kitchen::Diagnostic.new(instances: instances)
-                       .read["instances"]
+      .read["instances"]
       .must_equal("i1" => { "stuff" => "sup" }, "i2" => { "stuff" => "yo" })
   end
 
   it "#read returns an error hash for instances if error hash is passed in" do
     Kitchen::Diagnostic.new(instances: { error: "shoot" })
-                       .read["instances"].must_equal("error" => "shoot")
+      .read["instances"].must_equal("error" => "shoot")
   end
 end

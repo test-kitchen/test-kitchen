@@ -31,7 +31,7 @@ describe Kitchen::Util do
     %w{debug info warn error fatal}.each do |level|
       it "returns Logger::#{level.upcase} for :#{level} input" do
         Kitchen::Util.to_logger_level(level.to_sym)
-                     .must_equal Logger.const_get(level.upcase)
+          .must_equal Logger.const_get(level.upcase)
       end
     end
   end
@@ -44,7 +44,7 @@ describe Kitchen::Util do
     %w{debug info warn error fatal}.each do |level|
       it "returns :#{level} for Logger::#{level.upcase} input" do
         Kitchen::Util.from_logger_level(Logger.const_get(level.upcase))
-                     .must_equal(level.to_sym)
+          .must_equal(level.to_sym)
       end
     end
   end
@@ -239,7 +239,8 @@ describe Kitchen::Util do
 
     it "globs with parameters" do
       Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal(
-        Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH))
+        Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH)
+      )
     end
 
     it "globs a folder that does not exist" do

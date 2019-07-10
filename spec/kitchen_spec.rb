@@ -75,7 +75,7 @@ describe "Kitchen" do
   it ".default_logger returns a $stdout logger" do
     Kitchen.default_logger.warn("uhoh")
 
-    stdout.string.must_match %r{ uhoh$}
+    stdout.string.must_match(/ uhoh$/)
   end
 
   it ".default_file_logger is a Kitchen::Logger" do
@@ -85,14 +85,14 @@ describe "Kitchen" do
   it ".default_file_logger returns a logger that uses $stdout" do
     Kitchen.default_logger.warn("uhoh")
 
-    stdout.string.must_match %r{ uhoh$}
+    stdout.string.must_match(/ uhoh$/)
   end
 
   it ".default_file_logger returns a logger that uses a file" do
     Kitchen.default_file_logger.warn("uhoh")
 
     IO.read(File.join(%w{.kitchen logs kitchen.log}))
-      .must_match %r{ -- Kitchen: uhoh$}
+      .must_match(/ -- Kitchen: uhoh$/)
   end
 
   it ".default_file_logger accepts a level and log_overwrite" do

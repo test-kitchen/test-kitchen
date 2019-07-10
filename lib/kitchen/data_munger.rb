@@ -156,8 +156,8 @@ module Kitchen
     def combine_arrays!(root, key, *namespaces)
       if root.key?(key)
         root[key] = namespaces
-                    .map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
-                    .compact
+          .map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
+          .compact
       end
     end
 
@@ -507,7 +507,7 @@ module Kitchen
     def convert_legacy_driver_http_proxy_format_at!(root)
       ddata = root.fetch(:driver, {})
 
-      [:http_proxy, :https_proxy].each do |key|
+      %i{http_proxy https_proxy}.each do |key|
         next unless ddata.is_a?(Hash) && ddata.key?(key)
 
         pdata = root.fetch(:provisioner, {})
@@ -984,7 +984,7 @@ module Kitchen
     #   Hash if not found
     # @api private
     def platform_data_for(name)
-      data.fetch(:platforms, {}).find(-> { Hash.new }) do |platform|
+      data.fetch(:platforms, {}).find(-> { {} }) do |platform|
         platform.fetch(:name, nil) == name
       end
     end
@@ -1015,7 +1015,7 @@ module Kitchen
     #   Hash if not found
     # @api private
     def suite_data_for(name)
-      data.fetch(:suites, {}).find(-> { Hash.new }) do |suite|
+      data.fetch(:suites, {}).find(-> { {} }) do |suite|
         suite.fetch(:name, nil) == name
       end
     end

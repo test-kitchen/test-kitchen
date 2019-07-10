@@ -50,7 +50,7 @@ module Kitchen
       # (see Base#run_command)
       def run_command
         cmd = sudo(config[:chef_solo_path]).dup
-                                           .tap { |str| str.insert(0, "& ") if powershell_shell? }
+          .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         chef_cmd(cmd)
       end
@@ -67,7 +67,7 @@ module Kitchen
           "--log_level #{config[:log_level]}",
           "--force-formatter",
           "--no-color",
-          "--json-attributes #{remote_path_join(config[:root_path], 'dna.json')}",
+          "--json-attributes #{remote_path_join(config[:root_path], "dna.json")}",
         ]
         args << "--logfile #{config[:log_file]}" if config[:log_file]
         args << "--profile-ruby" if config[:profile_ruby]

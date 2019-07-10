@@ -54,22 +54,22 @@ describe Kitchen::LazyHash do
 
     it "invokes call on values that are lambdas" do
       Kitchen::LazyHash.new(hash_obj, context)
-                       .fetch(:shed_color).must_equal "blue"
+        .fetch(:shed_color).must_equal "blue"
     end
 
     it "invokes call on values that are Procs" do
       Kitchen::LazyHash.new(hash_obj, context)
-                       .fetch(:genre).must_equal "heavy metal"
+        .fetch(:genre).must_equal "heavy metal"
     end
 
     it "uses a default value for unset values" do
       Kitchen::LazyHash.new(hash_obj, context)
-                       .fetch(:nope, "candy").must_equal "candy"
+        .fetch(:nope, "candy").must_equal "candy"
     end
 
     it "uses a block for unset values" do
       Kitchen::LazyHash.new(hash_obj, context)
-                       .fetch(:nope) { |key| "#{key} is costly" }.must_equal "nope is costly"
+        .fetch(:nope) { |key| "#{key} is costly" }.must_equal "nope is costly"
     end
   end
 
@@ -87,7 +87,7 @@ describe Kitchen::LazyHash do
   describe "select" do
     it "calls Procs when appropriate" do
       Kitchen::LazyHash.new(hash_obj, context).select { |_, _| true }
-                       .must_equal shed_color: "blue", barn: "locked", genre: "heavy metal"
+        .must_equal shed_color: "blue", barn: "locked", genre: "heavy metal"
     end
   end
 

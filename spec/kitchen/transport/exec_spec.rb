@@ -19,8 +19,8 @@ require "kitchen/transport/exec"
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:config)        { Hash.new }
-  let(:state)         { Hash.new }
+  let(:config)        { {} }
+  let(:state)         { {} }
 
   let(:instance) do
     stub(name: "coolbeans", logger: logger, to_str: "instance")

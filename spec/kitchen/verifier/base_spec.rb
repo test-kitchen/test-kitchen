@@ -66,7 +66,7 @@ describe Kitchen::Verifier::Base do
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(os_type: nil, shell_type: nil) }
   let(:suite)           { stub(name: "germany") }
-  let(:config)          { Hash.new }
+  let(:config)          { {} }
 
   let(:transport) do
     t = mock("transport")
@@ -140,7 +140,7 @@ describe Kitchen::Verifier::Base do
   end
 
   describe "#call" do
-    let(:state) { Hash.new }
+    let(:state) { {} }
     let(:cmd)   { verifier.call(state) }
 
     let(:connection) do
@@ -203,7 +203,7 @@ describe Kitchen::Verifier::Base do
       cmd
 
       logged_output.string
-                   .must_match(/INFO -- : Transferring files to instance$/)
+        .must_match(/INFO -- : Transferring files to instance$/)
     end
 
     it "uploads sandbox files" do
@@ -220,20 +220,20 @@ describe Kitchen::Verifier::Base do
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
       connection.stubs(:upload)
-                .raises(Kitchen::Transport::TransportFailed.new("dang"))
+        .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute)
-                .raises(Kitchen::Transport::TransportFailed.new("dang"))
+        .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
-  [:init_command, :install_command, :prepare_command, :run_command].each do |cmd|
+  %i{init_command install_command prepare_command run_command}.each do |cmd|
     it "has a #{cmd} method" do
       verifier.public_send(cmd).must_be_nil
     end
@@ -269,7 +269,7 @@ describe Kitchen::Verifier::Base do
       verifier.create_sandbox
 
       logged_output.string
-                   .must_match debug_line_starting_with("Creating local sandbox in ")
+        .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
     it "#cleanup_sandbox deletes the sandbox directory" do
@@ -284,7 +284,7 @@ describe Kitchen::Verifier::Base do
       verifier.cleanup_sandbox
 
       logged_output.string
-                   .must_match debug_line_starting_with("Cleaning up local sandbox in ")
+        .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
     def info_line(msg)

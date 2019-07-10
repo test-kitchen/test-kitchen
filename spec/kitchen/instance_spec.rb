@@ -122,52 +122,52 @@ describe Kitchen::Instance do
   describe ".name_for" do
     it "combines the suite and platform names with a dash" do
       Kitchen::Instance.name_for(suite("suite"), platform("platform"))
-                       .must_equal "suite-platform"
+        .must_equal "suite-platform"
     end
 
     it "squashes periods in suite name" do
       Kitchen::Instance.name_for(suite("suite.ness"), platform("platform"))
-                       .must_equal "suiteness-platform"
+        .must_equal "suiteness-platform"
     end
 
     it "squashes periods in platform name" do
       Kitchen::Instance.name_for(suite("suite"), platform("platform.s"))
-                       .must_equal "suite-platforms"
+        .must_equal "suite-platforms"
     end
 
     it "squashes periods in suite and platform names" do
       Kitchen::Instance.name_for(suite("s.s"), platform("p.p"))
-                       .must_equal "ss-pp"
+        .must_equal "ss-pp"
     end
 
     it "transforms underscores to dashes in suite name" do
       Kitchen::Instance.name_for(suite("suite_ness"), platform("platform"))
-                       .must_equal "suite-ness-platform"
+        .must_equal "suite-ness-platform"
     end
 
     it "transforms underscores to dashes in platform name" do
       Kitchen::Instance.name_for(suite("suite"), platform("platform_s"))
-                       .must_equal "suite-platform-s"
+        .must_equal "suite-platform-s"
     end
 
     it "transforms underscores to dashes in suite and platform names" do
       Kitchen::Instance.name_for(suite("_s__s_"), platform("pp_"))
-                       .must_equal "-s--s--pp-"
+        .must_equal "-s--s--pp-"
     end
 
     it "transforms forward slashes to dashes in suite name" do
       Kitchen::Instance.name_for(suite("suite/ness"), platform("platform"))
-                       .must_equal "suite-ness-platform"
+        .must_equal "suite-ness-platform"
     end
 
     it "transforms forward slashes to dashes in platform name" do
       Kitchen::Instance.name_for(suite("suite"), platform("platform/s"))
-                       .must_equal "suite-platform-s"
+        .must_equal "suite-platform-s"
     end
 
     it "transforms forward slashes to dashes in suite and platform names" do
       Kitchen::Instance.name_for(suite("/s//s/"), platform("pp/"))
-                       .must_equal "-s--s--pp-"
+        .must_equal "-s--s--pp-"
     end
   end
 
@@ -287,9 +287,9 @@ describe Kitchen::Instance do
     conn = stub("connection")
     state_file.write(last_action: "create")
     transport.stubs(:connection).with(last_action: "create")
-             .returns(conn)
+      .returns(conn)
     conn.stubs(:login_command)
-        .returns(Kitchen::LoginCommand.new("echo", ["hello"], purple: true))
+      .returns(Kitchen::LoginCommand.new("echo", ["hello"], purple: true))
     Kernel.expects(:exec).with("echo", "hello", purple: true)
 
     instance.login
@@ -476,7 +476,7 @@ describe Kitchen::Instance do
           instance.create
 
           logger_io.string
-                   .must_match regex_for("Finished creating #{instance.to_str}")
+            .must_match regex_for("Finished creating #{instance.to_str}")
         end
 
         it "calls lifecycle hooks" do
@@ -492,7 +492,7 @@ describe Kitchen::Instance do
 
         it "calls Driver#create with state hash" do
           driver.expects(:create)
-                .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
 
           instance.create
         end
@@ -511,7 +511,7 @@ describe Kitchen::Instance do
           driver.expects(:create).with({})
           provisioner.expects(:check_license)
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
 
           instance.converge
         end
@@ -532,7 +532,7 @@ describe Kitchen::Instance do
           instance.converge
 
           logger_io.string
-                   .must_match regex_for("Finished converging #{instance.to_str}")
+            .must_match regex_for("Finished converging #{instance.to_str}")
         end
 
         it "calls lifecycle hooks" do
@@ -550,7 +550,7 @@ describe Kitchen::Instance do
 
         it "calls Provisioner#call with state hash" do
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
 
           instance.converge
         end
@@ -574,7 +574,7 @@ describe Kitchen::Instance do
 
         it "calls Provisioner#call with state hash" do
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "converge" }
+            .with { |state| state[:last_action] == "converge" }
 
           instance.converge
         end
@@ -592,10 +592,10 @@ describe Kitchen::Instance do
         it "calls create and converge with empty state hash" do
           driver.expects(:create).with({})
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
 
           instance.setup
         end
@@ -616,7 +616,7 @@ describe Kitchen::Instance do
           instance.setup
 
           logger_io.string
-                   .must_match regex_for("Finished setting up #{instance.to_str}")
+            .must_match regex_for("Finished setting up #{instance.to_str}")
         end
       end
 
@@ -625,10 +625,10 @@ describe Kitchen::Instance do
 
         it "calls Provisioner#call with state hash" do
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
 
           instance.setup
         end
@@ -645,8 +645,8 @@ describe Kitchen::Instance do
 
         it "calls nothing with state hash" do
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
 
           instance.setup
         end
@@ -663,8 +663,8 @@ describe Kitchen::Instance do
 
         it "calls nothing with state hash" do
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "setup" }
-                .never
+            .with { |state| state[:last_action] == "setup" }
+            .never
 
           instance.setup
         end
@@ -682,12 +682,12 @@ describe Kitchen::Instance do
         it "calls create, converge, and verify with empty state hash" do
           driver.expects(:create).with({})
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
           verifier.expects(:call)
-                  .with { |state| state[:last_action] == "setup" }
+            .with { |state| state[:last_action] == "setup" }
 
           instance.verify
         end
@@ -708,7 +708,7 @@ describe Kitchen::Instance do
           instance.verify
 
           logger_io.string
-                   .must_match regex_for("Finished verifying #{instance.to_str}")
+            .must_match regex_for("Finished verifying #{instance.to_str}")
         end
       end
 
@@ -717,12 +717,12 @@ describe Kitchen::Instance do
 
         it "calls converge, and verify with state hash" do
           provisioner.expects(:call)
-                     .with { |state| state[:last_action] == "create" }
+            .with { |state| state[:last_action] == "create" }
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
           verifier.expects(:call)
-                  .with { |state| state[:last_action] == "setup" }
+            .with { |state| state[:last_action] == "setup" }
 
           instance.verify
         end
@@ -739,10 +739,10 @@ describe Kitchen::Instance do
 
         it "calls Verifier#call with state hash" do
           driver.expects(:setup)
-                .with { |state| state[:last_action] == "converge" }
-                .never
+            .with { |state| state[:last_action] == "converge" }
+            .never
           verifier.expects(:call)
-                  .with { |state| state[:last_action] == "setup" }
+            .with { |state| state[:last_action] == "setup" }
 
           instance.verify
         end
@@ -759,7 +759,7 @@ describe Kitchen::Instance do
 
         it "calls Verifier#call with state hash" do
           verifier.expects(:call)
-                  .with { |state| state[:last_action] == "setup" }
+            .with { |state| state[:last_action] == "setup" }
 
           instance.verify
         end
@@ -776,7 +776,7 @@ describe Kitchen::Instance do
 
         it "calls Verifier#call with state hash" do
           verifier.expects(:call)
-                  .with { |state| state[:last_action] == "verify" }
+            .with { |state| state[:last_action] == "verify" }
 
           instance.verify
         end
@@ -807,24 +807,24 @@ describe Kitchen::Instance do
           instance.destroy
 
           logger_io.string
-                   .must_match regex_for("Destroying #{instance.to_str}")
+            .must_match regex_for("Destroying #{instance.to_str}")
         end
 
         it "logs the create finish" do
           instance.destroy
 
           logger_io.string
-                   .must_match regex_for("Finished destroying #{instance.to_str}")
+            .must_match regex_for("Finished destroying #{instance.to_str}")
         end
       end
 
-      [:create, :converge, :setup, :verify].each do |action|
+      %i{create converge setup verify}.each do |action|
         describe "with last_action of #{action}" do
           before { state_file.write(last_action: action) }
 
           it "calls Driver#create with state hash" do
             driver.expects(:destroy)
-                  .with { |state| state[:last_action] == action }
+              .with { |state| state[:last_action] == action }
 
             instance.destroy
           end
@@ -860,11 +860,11 @@ describe Kitchen::Instance do
           instance.test
 
           logger_io.string
-                   .must_match regex_for("Finished testing #{instance.to_str}")
+            .must_match regex_for("Finished testing #{instance.to_str}")
         end
       end
 
-      [:create, :converge, :setup, :verify].each do |action|
+      %i{create converge setup verify}.each do |action|
         describe "with last action of #{action}" do
           before { state_file.write(last_action: action) }
 
@@ -931,7 +931,7 @@ describe Kitchen::Instance do
       end
     end
 
-    [:create, :converge, :setup, :verify, :test].each do |action|
+    %i{create converge setup verify test}.each do |action|
       describe "#{action} on driver crash with ActionFailed" do
         before do
           driver.stubs(:create).raises(Kitchen::ActionFailed, "death")
@@ -957,7 +957,8 @@ describe Kitchen::Instance do
             instance.public_send(action)
           rescue Kitchen::Error => e
             e.message.must_match regex_for(
-              "Create failed on instance #{instance.to_str}")
+              "Create failed on instance #{instance.to_str}"
+            )
           end
         end
 
@@ -969,7 +970,8 @@ describe Kitchen::Instance do
           end
 
           logger_io.string.must_match regex_for(
-            "Create failed on instance #{instance.to_str}")
+            "Create failed on instance #{instance.to_str}"
+          )
         end
       end
 
@@ -998,7 +1000,8 @@ describe Kitchen::Instance do
             instance.public_send(action)
           rescue Kitchen::Error => e
             e.message.must_match regex_for(
-              "Failed to complete #create action: [watwat]")
+              "Failed to complete #create action: [watwat]"
+            )
           end
         end
 
@@ -1010,7 +1013,8 @@ describe Kitchen::Instance do
           end
 
           logger_io.string.must_match regex_for(
-            "Create failed on instance #{instance.to_str}")
+            "Create failed on instance #{instance.to_str}"
+          )
         end
       end
     end
@@ -1020,7 +1024,7 @@ describe Kitchen::Instance do
         verifier.stubs(:call).raises(Kitchen::ActionFailed, "death")
       end
 
-      [:create, :converge, :setup].each do |action|
+      %i{create converge setup}.each do |action|
         it "for last state #{action}" do
           state_file.write(last_action: action.to_s)
           begin
@@ -1064,7 +1068,7 @@ describe Kitchen::Instance do
           it "calls Driver#create and Driver#converge with empty state hash" do
             driver.expects(:create).with({})
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
 
             instance.converge
           end
@@ -1075,7 +1079,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#converge with state hash" do
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
 
             instance.converge
           end
@@ -1086,7 +1090,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#converge with state hash" do
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
 
             instance.converge
           end
@@ -1098,9 +1102,9 @@ describe Kitchen::Instance do
           it "calls create, converge, and setup with empty state hash" do
             driver.expects(:create).with({})
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
 
             instance.setup
           end
@@ -1111,9 +1115,9 @@ describe Kitchen::Instance do
 
           it "calls Provisioner#call and setup with state hash" do
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
 
             instance.setup
           end
@@ -1124,7 +1128,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#setup with state hash" do
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
 
             instance.setup
           end
@@ -1135,7 +1139,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#setup with state hash" do
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "setup" }
+              .with { |state| state[:last_action] == "setup" }
 
             instance.setup
           end
@@ -1147,11 +1151,11 @@ describe Kitchen::Instance do
           it "calls create, converge, setup, and verify with empty state hash" do
             driver.expects(:create).with({})
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
             driver.expects(:verify)
-                  .with { |state| state[:last_action] == "setup" }
+              .with { |state| state[:last_action] == "setup" }
 
             instance.verify
           end
@@ -1162,11 +1166,11 @@ describe Kitchen::Instance do
 
           it "calls converge, setup, and verify with state hash" do
             driver.expects(:converge)
-                  .with { |state| state[:last_action] == "create" }
+              .with { |state| state[:last_action] == "create" }
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
             driver.expects(:verify)
-                  .with { |state| state[:last_action] == "setup" }
+              .with { |state| state[:last_action] == "setup" }
 
             instance.verify
           end
@@ -1177,9 +1181,9 @@ describe Kitchen::Instance do
 
           it "calls Driver#setup, and verify with state hash" do
             driver.expects(:setup)
-                  .with { |state| state[:last_action] == "converge" }
+              .with { |state| state[:last_action] == "converge" }
             driver.expects(:verify)
-                  .with { |state| state[:last_action] == "setup" }
+              .with { |state| state[:last_action] == "setup" }
 
             instance.verify
           end
@@ -1190,7 +1194,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#verify with state hash" do
             driver.expects(:verify)
-                  .with { |state| state[:last_action] == "setup" }
+              .with { |state| state[:last_action] == "setup" }
 
             instance.verify
           end
@@ -1201,7 +1205,7 @@ describe Kitchen::Instance do
 
           it "calls Driver#verify with state hash" do
             driver.expects(:verify)
-                  .with { |state| state[:last_action] == "verify" }
+              .with { |state| state[:last_action] == "verify" }
 
             instance.verify
           end
@@ -1222,7 +1226,7 @@ describe Kitchen::Instance do
           end
         end
 
-        [:create, :converge, :setup, :verify].each do |action|
+        %i{create converge setup verify}.each do |action|
           describe "with last action of #{action}" do
             before { state_file.write(last_action: action) }
 
@@ -1269,7 +1273,7 @@ describe Kitchen::Instance do
       it "#login executes the driver's login_command" do
         state_file.write(last_action: "create")
         driver.stubs(:login_command).with(last_action: "create")
-              .returns(Kitchen::LoginCommand.new("echo", ["hello"], purple: true))
+          .returns(Kitchen::LoginCommand.new("echo", ["hello"], purple: true))
         Kernel.expects(:exec).with("echo", "hello", purple: true)
 
         instance.login
@@ -1302,7 +1306,7 @@ describe Kitchen::Instance do
       end
 
       it "starting from no state to converge returns create, converge" do
-        fsm.actions(nil, :converge).must_equal [:create, :converge]
+        fsm.actions(nil, :converge).must_equal %i{create converge}
       end
 
       it "starting from create to converge returns converge" do
@@ -1314,11 +1318,11 @@ describe Kitchen::Instance do
       end
 
       it "starting from no state to setup returns create, converge, setup" do
-        fsm.actions(nil, :setup).must_equal [:create, :converge, :setup]
+        fsm.actions(nil, :setup).must_equal %i{create converge setup}
       end
 
       it "starting from create to setup returns converge, setup" do
-        fsm.actions(:create, :setup).must_equal [:converge, :setup]
+        fsm.actions(:create, :setup).must_equal %i{converge setup}
       end
 
       it "starting from converge to setup returns setup" do
@@ -1330,15 +1334,15 @@ describe Kitchen::Instance do
       end
 
       it "starting from no state to verify returns create, converge, setup, verify" do
-        fsm.actions(nil, :verify).must_equal [:create, :converge, :setup, :verify]
+        fsm.actions(nil, :verify).must_equal %i{create converge setup verify}
       end
 
       it "starting from create to verify returns converge, setup, verify" do
-        fsm.actions(:create, :verify).must_equal [:converge, :setup, :verify]
+        fsm.actions(:create, :verify).must_equal %i{converge setup verify}
       end
 
       it "starting from converge to verify returns setup, verify" do
-        fsm.actions(:converge, :verify).must_equal [:setup, :verify]
+        fsm.actions(:converge, :verify).must_equal %i{setup verify}
       end
 
       it "starting from setup to verify returns verify" do
@@ -1349,13 +1353,13 @@ describe Kitchen::Instance do
         fsm.actions(:verify, :verify).must_equal [:verify]
       end
 
-      [:verify, :setup, :converge].each do |s|
+      %i{verify setup converge}.each do |s|
         it "starting from #{s} to create returns create" do
           fsm.actions(s, :create).must_equal [:create]
         end
       end
 
-      [:verify, :setup].each do |s|
+      %i{verify setup}.each do |s|
         it "starting from #{s} to converge returns converge" do
           fsm.actions(s, :converge).must_equal [:converge]
         end

@@ -67,7 +67,7 @@ describe Kitchen::ShellOut do
       subject.run_command("yoyo")
     end
 
-    [:timeout, :cwd, :environment].each do |attr|
+    %i{timeout cwd environment}.each do |attr|
       it "builds a Mixlib::ShellOut object with a custom #{attr}" do
         opts[attr] = "custom"
 
@@ -86,10 +86,10 @@ describe Kitchen::ShellOut do
 
     it "raises a ShellCommandFailed if the command does not cleanly exit" do
       command.stubs(:error!)
-             .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
+        .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
 
       err = proc { subject.run_command("boom") }
-            .must_raise Kitchen::ShellOut::ShellCommandFailed
+        .must_raise Kitchen::ShellOut::ShellCommandFailed
       err.message.must_equal "boom bad"
     end
 
@@ -119,7 +119,7 @@ describe Kitchen::ShellOut do
       subject.run_command("echo whoopa\ndoopa\ndo")
 
       subject.logs.first
-             .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
+        .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
     end
 
     it "logs a debug BEGIN message with custom log subject" do

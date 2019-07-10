@@ -45,6 +45,7 @@ module Kitchen
     def self.escape(name)
       return "" if name.nil?
       return "" unless ANSI[name]
+
       "\e[#{ANSI[name]}m"
     end
 

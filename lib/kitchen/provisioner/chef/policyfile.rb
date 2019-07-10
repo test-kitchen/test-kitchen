@@ -143,7 +143,7 @@ module Kitchen
                           "from https://downloads.chef.io and that your PATH " \
                           "setting includes the path to the `chef` comand.")
               raise UserError,
-                    "Could not find the chef executable in your PATH."
+                "Could not find the chef executable in your PATH."
             end
           end
         end

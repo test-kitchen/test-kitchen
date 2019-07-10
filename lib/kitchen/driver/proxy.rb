@@ -48,6 +48,7 @@ module Kitchen
       # (see Base#destroy)
       def destroy(state)
         return if state[:hostname].nil?
+
         reset_instance(state)
         state.delete(:hostname)
       end

@@ -61,6 +61,7 @@ module Kitchen
       # No hooks? We're outta here.
       hook_data = Array(config[hook_key])
       return if hook_data.empty?
+
       hook_data.each do |hook|
         # Coerce the common case of a bare string to be a local command. This
         # is to match the behavior of the old `pre_create_command` semi-hook.

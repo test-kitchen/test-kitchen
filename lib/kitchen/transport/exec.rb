@@ -40,6 +40,7 @@ module Kitchen
         # (see Base#execute)
         def execute(command)
           return if command.nil?
+
           run_command(command)
         end
 

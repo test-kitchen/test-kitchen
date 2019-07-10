@@ -108,7 +108,7 @@ module Kitchen
               " `gem install berkshelf` or add the following to your" \
               " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
             raise UserError,
-                  "Could not load or activate Berkshelf (#{e.message})"
+              "Could not load or activate Berkshelf (#{e.message})"
           end
         end
       end

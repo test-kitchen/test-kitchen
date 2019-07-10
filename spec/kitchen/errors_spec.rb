@@ -36,7 +36,7 @@ describe Kitchen::Error do
 
     it "takes a customized title" do
       Kitchen::Error.formatted_exception(exception, "Trouble").first
-                    .must_equal("-------Trouble--------")
+        .must_equal("-------Trouble--------")
     end
   end
 
@@ -290,11 +290,11 @@ describe Kitchen do
           go_boom
         rescue SystemExit
           logger_io.string
-                   .must_match(/ERROR -- Kitchen: ------Exception-------$/)
+            .must_match(/ERROR -- Kitchen: ------Exception-------$/)
           logger_io.string
-                   .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
+            .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string
-                   .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
+            .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
         end
       end
 
@@ -305,11 +305,11 @@ describe Kitchen do
           go_boom
         rescue SystemExit
           logger_io.string
-                   .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
+            .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
           logger_io.string
-                   .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
+            .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string
-                   .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
+            .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
         end
       end
     end

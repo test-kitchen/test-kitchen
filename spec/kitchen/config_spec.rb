@@ -223,9 +223,9 @@ describe Kitchen::Config do
 
     it "returns a Collection of platforms" do
       Kitchen::Platform.stubs(:new)
-                       .with(one: "a").returns(stub(name: "one"))
+        .with(one: "a").returns(stub(name: "one"))
       Kitchen::Platform.stubs(:new)
-                       .with(two: "b").returns(stub(name: "two"))
+        .with(two: "b").returns(stub(name: "two"))
 
       config.platforms.as_names.must_equal %w{one two}
     end
@@ -275,9 +275,9 @@ describe Kitchen::Config do
 
     it "returns a Collection of suites" do
       Kitchen::Suite.stubs(:new)
-                    .with(one: "a").returns(stub(name: "one"))
+        .with(one: "a").returns(stub(name: "one"))
       Kitchen::Suite.stubs(:new)
-                    .with(two: "b").returns(stub(name: "two"))
+        .with(two: "b").returns(stub(name: "two"))
 
       config.suites.as_names.must_equal %w{one two}
     end
@@ -319,40 +319,40 @@ describe Kitchen::Config do
 
     it "constructs a Driver object" do
       munger.expects(:driver_data_for).with("tiny", "unax")
-            .returns(name: "drivey", datum: "lots")
+        .returns(name: "drivey", datum: "lots")
       Kitchen::Driver.unstub(:for_plugin)
       Kitchen::Driver.expects(:for_plugin)
-                     .with("drivey", name: "drivey", datum: "lots")
+        .with("drivey", name: "drivey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Provisioner object" do
       munger.expects(:provisioner_data_for).with("tiny", "unax")
-            .returns(name: "provey", datum: "lots")
+        .returns(name: "provey", datum: "lots")
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin)
-                          .with("provey", name: "provey", datum: "lots")
+        .with("provey", name: "provey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Transport object" do
       munger.expects(:transport_data_for).with("tiny", "unax")
-            .returns(name: "transey", datum: "lots")
+        .returns(name: "transey", datum: "lots")
       Kitchen::Transport.unstub(:for_plugin)
       Kitchen::Transport.expects(:for_plugin)
-                        .with("transey", name: "transey", datum: "lots")
+        .with("transey", name: "transey", datum: "lots")
 
       config.instances
     end
 
     it "constructs a Verifier object" do
       munger.expects(:verifier_data_for).with("tiny", "unax")
-            .returns(name: "vervey", datum: "lots")
+        .returns(name: "vervey", datum: "lots")
       Kitchen::Verifier.unstub(:for_plugin)
       Kitchen::Verifier.expects(:for_plugin)
-                       .with("vervey", name: "vervey", datum: "lots")
+        .with("vervey", name: "vervey", datum: "lots")
 
       config.instances
     end
@@ -410,8 +410,9 @@ describe Kitchen::Config do
                                       stub(name: "allem", includes: [], excludes: []),
                                     ])
 
-      config.instances.as_names.must_equal [
-        "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]
+      config.instances.as_names.must_equal %w{
+        selecta-good selecta-one allem-good allem-nope allem-one
+      }
     end
   end
 
@@ -427,8 +428,9 @@ describe Kitchen::Config do
                                       stub(name: "allem", includes: [], excludes: []),
                                     ])
 
-      config.instances.as_names.must_equal [
-        "selecta-good", "selecta-one", "allem-good", "allem-nope", "allem-one"]
+      config.instances.as_names.must_equal %w{
+        selecta-good selecta-one allem-good allem-nope allem-one
+      }
     end
   end
 end

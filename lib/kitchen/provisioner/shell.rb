@@ -58,6 +58,7 @@ module Kitchen
       # (see Base#init_command)
       def init_command
         return nil if config[:command]
+
         root = config[:root_path]
         data = remote_path_join(root, "data")
 
@@ -71,7 +72,7 @@ module Kitchen
             }
                  POWERSHELL
                else
-                 "#{sudo('rm')} -rf #{data} ; mkdir -p #{root}"
+                 "#{sudo("rm")} -rf #{data} ; mkdir -p #{root}"
                end
 
         prefix_command(wrap_shell_code(code))
@@ -97,6 +98,7 @@ module Kitchen
       def run_command
         return prefix_command(wrap_shell_code(config[:command])) if config[:command]
         return unless config[:script]
+
         script = remote_path_join(
           config[:root_path],
           File.basename(config[:script])

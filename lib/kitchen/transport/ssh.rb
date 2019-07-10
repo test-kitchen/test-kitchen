@@ -134,6 +134,7 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
+
           logger.debug("[SSH] #{self} (#{command})")
           exit_code = execute_with_exit_code(command)
 
@@ -152,9 +153,9 @@ module Kitchen
           args  = %w{ -o UserKnownHostsFile=/dev/null }
           args += %w{ -o StrictHostKeyChecking=no }
           args += %w{ -o IdentitiesOnly=yes } if options[:keys]
-          args += %W{ -o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'} }
+          args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
           if options.key?(:forward_agent)
-            args += %W{ -o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'} }
+            args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} }
           end
           if ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
@@ -316,7 +317,7 @@ module Kitchen
           retry_connection(opts) do
             gateway_options = options.merge(port: ssh_gateway_port)
             Net::SSH::Gateway.new(ssh_gateway,
-                                  ssh_gateway_username, gateway_options).ssh(hostname, username, options)
+              ssh_gateway_username, gateway_options).ssh(hostname, username, options)
           end
         end
 

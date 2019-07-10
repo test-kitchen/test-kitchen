@@ -130,8 +130,7 @@ module Kitchen
       # will be returned.
       #
       # @return [String] a command string
-      def install_command
-      end
+      def install_command; end
 
       # Generates a command string which will perform any data initialization
       # or configuration required after the verifier software is installed
@@ -139,8 +138,7 @@ module Kitchen
       # is required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def init_command
-      end
+      def init_command; end
 
       # Generates a command string which will perform any commands or
       # configuration required just before the main verifier run command but
@@ -148,16 +146,14 @@ module Kitchen
       # required, then `nil` will be returned.
       #
       # @return [String] a command string
-      def prepare_command
-      end
+      def prepare_command; end
 
       # Generates a command string which will invoke the main verifier
       # command on the prepared instance. If no work is required, then `nil`
       # will be returned.
       #
       # @return [String] a command string
-      def run_command
-      end
+      def run_command; end
 
       # Returns the absolute path to the sandbox directory or raises an
       # exception if `#create_sandbox` has not yet been called.
