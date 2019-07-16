@@ -41,9 +41,9 @@ matrix:
         - sudo apt-get update
         - sudo apt-get -y install squid3 git curl
       env:
-        - machine_user=travis
-        - machine_pass=travis
-        - machine_port=22
+        - MACHINE_USER=travis
+        - MACHINE_PASS=travis
+        - MACHINE_PORT=22
         - PROXY_TESTS_DIR=proxy_tests/files/default/scripts
         - PROXY_TESTS_REPO=$PROXY_TESTS_DIR/repo
         - KITCHEN_YAML=/home/travis/build/test-kitchen/test-kitchen/kitchen.proxy.yml

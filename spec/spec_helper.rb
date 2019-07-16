@@ -99,7 +99,8 @@ end
 
 def os_safe_root_path(root_path)
   if running_tests_on_windows?
-    File.join(ENV["SystemDrive"], root_path).to_s
+    File.join(Dir.pwd[0..1], root_path).to_s
+    # File.join(ENV["SystemDrive"], root_path).to_s
   else
     root_path
   end
@@ -107,4 +108,13 @@ end
 
 def padded_octal_string(integer)
   integer.to_s(8).rjust(4, "0")
+end
+
+def os_safe_temp_path(temp_path)
+  if running_tests_on_windows? && ENV["USERNAME"].length > 8
+    short_name = ENV["USERNAME"].upcase[0..5] + "~1"
+    updated_path = temp_path.sub(ENV["USERNAME"], short_name)
+    return updated_path unless updated_path.nil?
+  end
+  temp_path
 end

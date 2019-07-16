@@ -1,0 +1,115 @@
+---
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - 1-stable
+pr:
+  autoCancel: true
+  branches:
+    include: 
+      - master
+      - 1-stable
+
+variables:
+  CHEF_LICENSE: accept-no-persist
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Validate
+        strategy:
+          matrix:
+            Windows_Ruby25:
+              version: 2.5.3
+              imageName: 'windows-2019'
+              task: windows_ci.bat
+            Windows_Ruby26:
+              version: 2.6.1
+              imageName: 'windows-2019'
+              task: windows_ci.bat
+            Linux_Ruby25:
+              version: 2.5.5
+              imageName: 'ubuntu-16.04'
+              task: linux_ci.sh
+              KITCHEN_YAML: kitchen.dokken.yml
+            Linux_Ruby26:
+              version: 2.6.2
+              imageName: 'ubuntu-16.04'
+              task: linux_ci.sh
+              KITCHEN_YAML: kitchen.dokken.yml
+            Mac_Ruby25:
+              version: 2.5.5
+              imageName: 'macOS-10.13'
+              task: mac_ci.sh
+            Mac_Ruby26:
+              version: 2.6.2
+              imageName: 'macOS-10.13'
+              task: mac_ci.sh
+            Windows_Integration:
+              version: 2.6.1
+              imageName: 'windows-2019'
+              task: windows_integration.bat
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.appveyor.yml
+            Proxy_Integration:
+              version: 2.5.5
+              imageName: 'ubuntu-16.04'
+              task: proxy_ci.sh
+              MACHINE_USER: kitchen
+              MACHINE_PASS: K1tch3nY@ml!
+              MACHINE_PORT: 22
+              KITCHEN_YAML: ../../../../../../../kitchen.proxy.yml
+              PROXY_TESTS_DIR: proxy_tests/files/default/scripts
+              PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
+        pool:
+          vmImage: $(imageName)
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: $(version)
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
+          - script: |
+              bundle install || bundle install || bundle install
+            displayName: Bundle Install Dependencies
+            condition: ne(variables['task'], 'proxy_ci.sh')
+          - script: |
+              ./support/ci/$(task)
+            displayName: Run Tests
+            env:
+              SPEC_OPTS: --format progress
+      - job: Package
+        dependsOn: Validate
+        condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'), notIn(variables['Build.Reason'], 'PullRequest'))
+        pool:
+          imageName: 'ubuntu-16.04'
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: 2.6.2
+              addToPath: true
+          - script: |
+              gem install bundler --quiet
+              bundle install || bundle install || bundle install
+              bundle exec rake build
+            displayName: Package Gem
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish Artifact: Release Build"
+            inputs:
+              PathtoPublish: ./pkg
+              ArtifactName: gem
+              ArtifactType: Container
