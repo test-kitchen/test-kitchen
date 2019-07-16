@@ -265,9 +265,24 @@ module Kitchen
         end
       end
 
+      # If the user has policyfiles we shell out to the `chef` executable, so need to ensure they have
+      # accepted the Chef Workstation license. Otherwise they just need the Chef Infra license.
+      #
+      # @return [String] license id to prompt for acceptance
+      def license_acceptance_id
+        case
+          when File.exist?(policyfile)
+            "chef-workstation"
+          when config[:product_name]
+            config[:product_name]
+          else
+            "chef"
+        end
+      end
+
       # (see Base#check_license)
       def check_license
-        name = config[:product_name] || "chef"
+        name = license_acceptance_id
         version = product_version
         debug("Checking if we need to prompt for license acceptance on product: #{name} version: #{version}.")
 
