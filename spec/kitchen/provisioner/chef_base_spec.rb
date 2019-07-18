@@ -20,6 +20,7 @@ require_relative "../../spec_helper"
 
 require "kitchen"
 require "kitchen/provisioner/chef_base"
+require "fileutils"
 
 describe Kitchen::Provisioner::ChefBase do
   let(:logged_output)   { StringIO.new }
@@ -812,6 +813,36 @@ describe Kitchen::Provisioner::ChefBase do
       it "returns the product_version string" do
         config[:product_version] = "15.0.0"
         provisioner.product_version.must_match "15.0.0"
+      end
+    end
+  end
+
+  describe "#license_acceptance_id" do
+    it "returns 'chef' by default" do
+      assert_equal("chef", provisioner.license_acceptance_id)
+    end
+
+    describe "when product_name is set" do
+      it "returns the product name" do
+        config[:product_name] = "a_product"
+        assert_equal("a_product", provisioner.license_acceptance_id)
+      end
+    end
+
+    describe "when a policyfile exists" do
+      before do
+        @root = Dir.mktmpdir
+        config[:kitchen_root] = @root
+        FileUtils.touch("#{config[:kitchen_root]}/Policyfile.rb")
+        Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+      end
+
+      after do
+        FileUtils.remove_entry(@root)
+      end
+
+      it "returns 'chef-workstation'" do
+        assert_equal("chef-workstation", provisioner.license_acceptance_id)
       end
     end
   end
