@@ -8,7 +8,7 @@ trigger:
 pr:
   autoCancel: true
   branches:
-    include: 
+    include:
       - master
       - 1-stable
 
@@ -110,7 +110,7 @@ stages:
               containerImage: ruby:2.6-stretch
         pool:
           vmImage: 'ubuntu-16.04'
-        container: $[ variables['containerImage'] ]        
+        container: $[ variables['containerImage'] ]
         steps:
           - script: |
               echo "ruby version:"
@@ -131,12 +131,29 @@ stages:
             displayName: Run Tests
             env:
               SPEC_OPTS: --format progress
+      - job: Linux_Integration_Tests
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: 2.5.5
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
           - script: |
               bundle install --with integration
               bundle exec kitchen test
             displayName: Run Integration Tests
             env:
-              KITCHEN_YAML: kitchen.dokken.yml              
+              KITCHEN_YAML: kitchen.dokken.yml
       - job: Proxy_Tests
         variables:
           MACHINE_USER: kitchen
@@ -173,7 +190,7 @@ stages:
               sudo service ssh restart
 
               sudo apt-get update
-              sudo apt-get -y install squid3 git curl 
+              sudo apt-get -y install squid3 git curl
               git clone https://github.com/smurawski/proxy_tests.git
             displayName: Install and configure dependencies
           - script: |
