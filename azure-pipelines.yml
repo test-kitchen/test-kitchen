@@ -18,55 +18,23 @@ variables:
 stages:
   - stage: Build
     jobs:
-      - job: Validate
+      - job: Windows
         strategy:
           matrix:
             Windows_Ruby25:
               version: 2.5.3
-              imageName: 'windows-2019'
-              task: windows_ci.bat
-            Windows_Ruby26:
-              version: 2.6.1
-              imageName: 'windows-2019'
-              task: windows_ci.bat
-            Linux_Ruby25:
-              version: 2.5.5
-              imageName: 'ubuntu-16.04'
-              task: linux_ci.sh
-              KITCHEN_YAML: kitchen.dokken.yml
-            Linux_Ruby26:
-              version: 2.6.2
-              imageName: 'ubuntu-16.04'
-              task: linux_ci.sh
-              KITCHEN_YAML: kitchen.dokken.yml
-            Mac_Ruby25:
-              version: 2.5.5
-              imageName: 'macOS-10.13'
-              task: mac_ci.sh
-            Mac_Ruby26:
-              version: 2.6.2
-              imageName: 'macOS-10.13'
-              task: mac_ci.sh
-            Windows_Integration:
-              version: 2.6.1
-              imageName: 'windows-2019'
-              task: windows_integration.bat
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.appveyor.yml
-            Proxy_Integration:
-              version: 2.5.5
-              imageName: 'ubuntu-16.04'
-              task: proxy_ci.sh
-              MACHINE_USER: kitchen
-              MACHINE_PASS: K1tch3nY@ml!
-              MACHINE_PORT: 22
-              KITCHEN_YAML: ../../../../../../../kitchen.proxy.yml
-              PROXY_TESTS_DIR: proxy_tests/files/default/scripts
-              PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
+            Windows_Ruby26:
+              version: 2.6.1
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.appveyor.yml
         pool:
-          vmImage: $(imageName)
+          vmImage: windows-2019
         steps:
           - task: UseRubyVersion@0
             inputs:
@@ -86,14 +54,153 @@ stages:
           - script: |
               bundle install || bundle install || bundle install
             displayName: Bundle Install Dependencies
-            condition: ne(variables['task'], 'proxy_ci.sh')
           - script: |
-              ./support/ci/$(task)
+              bundle exec rake unit && bundle exec rake quality
             displayName: Run Tests
             env:
               SPEC_OPTS: --format progress
+          - script: |
+                winrm.cmd quickconfig -q
+                net user /add %machine_user% %machine_pass%
+                net localgroup administrators %machine_user% /add
+                bundle install --with integration
+                bundle exec kitchen verify windows
+            displayName: Run Converge
+      - job: Mac
+        strategy:
+          matrix:
+            Mac_Ruby25:
+              version: 2.5.5
+            Mac_Ruby26:
+              version: 2.6.2
+        pool:
+          vmImage: 'macOS-10.13'
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: $(version)
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
+          - script: |
+              bundle install || bundle install || bundle install
+            displayName: Bundle Install Dependencies
+          - script: |
+              bundle exec rake
+            displayName: Run Tests
+            env:
+              SPEC_OPTS: --format progress
+      - job: Linux
+        strategy:
+          matrix:
+            Linux_Ruby25:
+              version: 2.5.5
+            Linux_Ruby26:
+              version: 2.6.2
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: $(version)
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
+          - script: |
+              bundle install || bundle install || bundle install
+            displayName: Bundle Install Dependencies
+          - script: |
+              bundle exec rake
+            displayName: Run Tests
+            env:
+              SPEC_OPTS: --format progress
+          - script: |
+              bundle install --with integration
+              bundle exec kitchen test
+            displayName: Run Integration Tests
+            env:
+              KITCHEN_YAML: kitchen.dokken.yml              
+      - job: Proxy_Tests
+        variables:
+          MACHINE_USER: kitchen
+          MACHINE_PASS: K1tch3nY@ml!
+          MACHINE_PORT: 22
+          KITCHEN_YAML: ../../../../../../../kitchen.proxy.yml
+          PROXY_TESTS_DIR: proxy_tests/files/default/scripts
+          PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: 2.5.5
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
+          - script: |
+              sudo -E useradd $MACHINE_USER --shell /bin/bash --create-home
+              sudo -E usermod -p `openssl passwd -1 $MACHINE_PASS` $MACHINE_USER
+              sudo -E usermod -aG sudo $MACHINE_USER
+            displayName: Add local user
+          - script: |
+              sudo mkdir -p /var/run/sshd
+              sudo service ssh restart
+
+              sudo apt-get update
+              sudo apt-get -y install squid3 git curl 
+              git clone https://github.com/smurawski/proxy_tests.git
+            displayName: Install and configure dependencies
+          - script: |
+              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.5.5/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+            displayName: Work around the problem with sudo and tool paths
+          - script: |
+              sudo -E bundle install --gemfile Gemfile.proxy_tests
+              sudo -E bundle exec bash $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
+              cat /tmp/out.txt
+
+              echo ""
+              echo "===================="
+              echo "Tests finished."
+              echo "===================="
+              echo ""
+
+              sudo cat /var/log/squid/cache.log
+              sudo cat /var/log/squid/access.log
+            displayName: Run proxy tests
+  - stage:
+    dependsOn: Build
+    jobs:
       - job: Package
-        dependsOn: Validate
         condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'), notIn(variables['Build.Reason'], 'PullRequest'))
         pool:
           imageName: 'ubuntu-16.04'
