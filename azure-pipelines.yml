@@ -102,12 +102,15 @@ stages:
       - job: Linux
         strategy:
           matrix:
+            Linux_Ruby24:
+              containerImage: ruby:2.4-stretch
             Linux_Ruby25:
-              version: 2.5.5
+              containerImage: ruby:2.5-stretch
             Linux_Ruby26:
-              version: 2.6.2
+              containerImage: ruby:2.6-stretch
         pool:
           vmImage: 'ubuntu-16.04'
+        container: $[ variables['containerImage'] ]        
         steps:
           - task: UseRubyVersion@0
             inputs:
