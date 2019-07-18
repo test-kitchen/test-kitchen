@@ -112,10 +112,6 @@ stages:
           vmImage: 'ubuntu-16.04'
         container: $[ variables['containerImage'] ]        
         steps:
-          - task: UseRubyVersion@0
-            inputs:
-              versionSpec: $(version)
-              addToPath: true
           - script: |
               echo "ruby version:"
               ruby --version
