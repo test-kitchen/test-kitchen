@@ -85,7 +85,7 @@ module Kitchen
     # @param hook [Hash] Hook configration to use.
     # @return [void]
     def run_local_hook(instance, state_file, hook)
-      cmd = hook.delete(:local)
+      cmd = hook.fetch(:local)
       state = state_file.read
       # Set up some environment variables with instance info.
       environment = {
@@ -128,7 +128,8 @@ module Kitchen
           raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
         end
       end
-      cmd = hook.delete(:remote)
+      #require 'pry';binding.pry
+      cmd = hook.fetch(:remote)
       conn = instance.transport.connection(state_file.read)
       conn.execute(cmd)
     end
