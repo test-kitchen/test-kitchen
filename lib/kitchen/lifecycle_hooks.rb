@@ -128,7 +128,7 @@ module Kitchen
           raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
         end
       end
-      #require 'pry';binding.pry
+
       cmd = hook.fetch(:remote)
       conn = instance.transport.connection(state_file.read)
       conn.execute(cmd)
