@@ -129,8 +129,13 @@ module Kitchen
         end
       end
       cmd = hook.delete(:remote)
-      conn = instance.transport.connection(state_file.read)
-      conn.execute(cmd)
+      begin
+        conn = instance.transport.connection(state_file.read)
+        conn.execute(cmd)
+      rescue Kitchen::Transport::SshFailed => e
+        return if hook[:skippable] && e.message.include?('SSH exited')
+        raise
+      end
     end
   end
 end
