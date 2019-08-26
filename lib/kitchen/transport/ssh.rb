@@ -46,6 +46,7 @@ module Kitchen
       default_config :username, "root"
       default_config :keepalive, true
       default_config :keepalive_interval, 60
+      default_config :keepalive_maxcount, 3
       # needs to be one less than the configured sshd_config MaxSessions
       default_config :max_ssh_sessions, 9
       default_config :connection_timeout, 15
@@ -468,6 +469,7 @@ module Kitchen
           compression_level: data[:compression_level],
           keepalive: data[:keepalive],
           keepalive_interval: data[:keepalive_interval],
+          keepalive_maxcount: data[:keepalive_maxcount],
           timeout: data[:connection_timeout],
           connection_retries: data[:connection_retries],
           connection_retry_sleep: data[:connection_retry_sleep],
