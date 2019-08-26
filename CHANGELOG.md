@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.3.1](https://github.com/test-kitchen/test-kitchen/tree/v2.3.1) (2019-08-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.0...v2.3.1)
+
+- Add keepalive_maxcount config to ssh connections [\#1582](https://github.com/test-kitchen/test-kitchen/pull/1582) ([dwoz](https://github.com/dwoz))
+- Add lifecycle to instance diagnose [\#1577](https://github.com/test-kitchen/test-kitchen/pull/1577) ([tarcinil](https://github.com/tarcinil))
+- Fix Unknown lifecycle hook target {} error [\#1578](https://github.com/test-kitchen/test-kitchen/pull/1578) ([tarcinil](https://github.com/tarcinil))
+
 ## [2.3.0](https://github.com/test-kitchen/test-kitchen/tree/v2.3.0) (2019-08-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.5...v2.3.0)
 
