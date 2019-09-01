@@ -253,7 +253,7 @@ module Kitchen
     def diagnose
       result = {}
       %i{
-        platform state_file driver provisioner transport verifier
+        platform state_file driver provisioner transport verifier lifecycle_hooks
       }.each do |sym|
         obj = send(sym)
         result[sym] = obj.respond_to?(:diagnose) ? obj.diagnose : :unknown

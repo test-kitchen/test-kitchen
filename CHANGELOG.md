@@ -1,5 +1,21 @@
 # Change Log
 
+## [2.3.1](https://github.com/test-kitchen/test-kitchen/tree/v2.3.1) (2019-08-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.0...v2.3.1)
+
+- Add keepalive_maxcount config to ssh connections [\#1582](https://github.com/test-kitchen/test-kitchen/pull/1582) ([dwoz](https://github.com/dwoz))
+- Add lifecycle to instance diagnose [\#1577](https://github.com/test-kitchen/test-kitchen/pull/1577) ([tarcinil](https://github.com/tarcinil))
+- Fix Unknown lifecycle hook target {} error [\#1578](https://github.com/test-kitchen/test-kitchen/pull/1578) ([tarcinil](https://github.com/tarcinil))
+
+## [2.3.0](https://github.com/test-kitchen/test-kitchen/tree/v2.3.0) (2019-08-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.5...v2.3.0)
+
+- Add berkshelf_path config option [\#1562](https://github.com/test-kitchen/test-kitchen/pull/1562) ([lamont-granquist](https://github.com/lamont-granquist))
+- Silence ruby-2.6.0/psych-3.0.0 warnings [\#1558](https://github.com/test-kitchen/test-kitchen/pull/1558) ([lamont-granquist](https://github.com/lamont-granquist))
+- Accept Chef Workstation license when users have Policyfile [\#1573](https://github.com/test-kitchen/test-kitchen/pull/1573) ([tball](https://github.com/tball))
+- Chefstyle updates [\#1572](https://github.com/test-kitchen/test-kitchen/pull/1572) ([smurawski](https://github.com/smurawski))
+- Testing has been migrated from AppVeyor to Azure Devops Pipelines with expanded platform testing [\#1571](https://github.com/test-kitchen/test-kitchen/pull/1571) ([smurawski](https://github.com/smurawski))
+
 ## [2.2.5](https://github.com/test-kitchen/test-kitchen/tree/v2.2.5) (2019-05-15)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.2.4...v2.2.5)
 

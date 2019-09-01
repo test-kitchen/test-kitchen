@@ -86,6 +86,10 @@ describe Kitchen::Transport::Ssh do
       transport[:keepalive_interval].must_equal 60
     end
 
+    it "sets :keepalive_maxcount to 3 by default" do
+      transport[:keepalive_maxcount].must_equal 3
+    end
+
     it "sets :connection_timeout to 15 by default" do
       transport[:connection_timeout].must_equal 15
     end

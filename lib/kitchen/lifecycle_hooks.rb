@@ -85,8 +85,10 @@ module Kitchen
     # @param hook [Hash] Hook configration to use.
     # @return [void]
     def run_local_hook(instance, state_file, hook)
-      cmd = hook.delete(:local)
+      cmd = hook.fetch(:local)
       state = state_file.read
+      # set up empty user variable
+      user = {}
       # Set up some environment variables with instance info.
       environment = {
         "KITCHEN_INSTANCE_NAME" => instance.name,
@@ -101,6 +103,12 @@ module Kitchen
           environment[k.to_s] = v.to_s
         end
       end
+
+      # add user to user hash for later merging
+      if hook[:user]
+        user[:user] = hook[:user]
+      end
+
       # Default the cwd to the kitchen root and resolve a relative input cwd against that.
       cwd = if hook[:cwd]
               File.expand_path(hook[:cwd], config[:kitchen_root])
@@ -108,7 +116,7 @@ module Kitchen
               config[:kitchen_root]
             end
       # Build the options for mixlib-shellout.
-      opts = {}.merge(hook).merge(cwd: cwd, environment: environment)
+      opts = {}.merge(user).merge(cwd: cwd, environment: environment)
       run_command(cmd, opts)
     end
 
@@ -128,7 +136,8 @@ module Kitchen
           raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
         end
       end
-      cmd = hook.delete(:remote)
+
+      cmd = hook.fetch(:remote)
       begin
         conn = instance.transport.connection(state_file.read)
         conn.execute(cmd)

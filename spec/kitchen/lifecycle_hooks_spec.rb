@@ -133,6 +133,14 @@ describe Kitchen::LifecycleHooks do
     run_lifecycle_hooks
   end
 
+  it "runs a multiple remote command" do
+    config.update(post_create: [{ remote: "echo foo" }, { remote: "echo bar" }])
+    lifecycle_hooks.expects(:run_command).never
+    connection.expects(:execute).with("echo foo")
+    connection.expects(:execute).with("echo bar")
+    run_lifecycle_hooks
+  end
+
   it "rejects unknown hook targets" do
     config.update(post_create: [{ banana: "echo foo" }])
     lifecycle_hooks.expects(:run_command).never
