@@ -72,7 +72,7 @@ stages:
             Mac_Ruby25:
               version: 2.5.5
             Mac_Ruby26:
-              version: 2.6.2
+              version: 2.6.3
         pool:
           vmImage: 'macOS-10.13'
         steps:
@@ -105,7 +105,7 @@ stages:
             Linux_Ruby25:
               version: 2.5.5
             Linux_Ruby26:
-              version: 2.6.2
+              version: 2.6.3
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
@@ -207,7 +207,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.6.2
+              versionSpec: 2.6.3
               addToPath: true
           - script: |
               gem install bundler --quiet
