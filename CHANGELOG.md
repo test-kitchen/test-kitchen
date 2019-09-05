@@ -1,5 +1,11 @@
 # Change Log
 
+
+## [2.3.2](https://github.com/test-kitchen/test-kitchen/tree/v2.3.2) (2019-08-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.1...v2.3.2)
+
+- allow mixlib-shellout 3.x [\#1583](https://github.com/test-kitchen/test-kitchen/pull/1583)([lamont-granquist](https://github.com/lamont-granquist))
+
 ## [2.3.1](https://github.com/test-kitchen/test-kitchen/tree/v2.3.1) (2019-08-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.0...v2.3.1)
 
