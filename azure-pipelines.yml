@@ -22,13 +22,13 @@ stages:
         strategy:
           matrix:
             Windows_Ruby25:
-              version: 2.5.3
+              version: 2.5
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.appveyor.yml
             Windows_Ruby26:
-              version: 2.6.1
+              version: 2.6
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
@@ -70,9 +70,9 @@ stages:
         strategy:
           matrix:
             Mac_Ruby25:
-              version: 2.5.5
+              version: 2.5
             Mac_Ruby26:
-              version: 2.6.3
+              version: 2.6
         pool:
           vmImage: 'macOS-10.13'
         steps:
@@ -103,9 +103,9 @@ stages:
         strategy:
           matrix:
             Linux_Ruby25:
-              version: 2.5.5
+              version: 2.5
             Linux_Ruby26:
-              version: 2.6.3
+              version: 2.6
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
