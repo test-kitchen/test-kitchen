@@ -1,5 +1,9 @@
-# Change Log
+# Test Kitchen Change Log
 
+## [2.3.3](https://github.com/test-kitchen/test-kitchen/tree/v2.3.3) (2019-09-18)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.2...v2.3.3)
+
+- Make sure Policyfile.lock.json exists before calling chef update [\#1590](https://github.com/test-kitchen/test-kitchen/pull/1590)([teknofire](https://github.com/teknofire))
 
 ## [2.3.2](https://github.com/test-kitchen/test-kitchen/tree/v2.3.2) (2019-08-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.1...v2.3.2)
