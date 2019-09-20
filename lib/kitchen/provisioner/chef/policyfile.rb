@@ -65,10 +65,6 @@ module Kitchen
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
-          if always_update
-            info("Updating policy lock using `chef update`")
-            run_command("chef update #{escape_path(policyfile)}")
-          end
           if File.exist?(lockfile)
             info("Installing cookbooks for Policyfile #{policyfile} using `chef install`")
           else
@@ -76,6 +72,11 @@ module Kitchen
                  "Policyfile #{policyfile}...")
           end
           run_command("chef install #{escape_path(policyfile)}")
+
+          if always_update
+            info("Updating policy lock using `chef update`")
+            run_command("chef update #{escape_path(policyfile)}")
+          end
         end
 
         # Return the path to the lockfile corresponding to this policyfile.

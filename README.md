@@ -7,7 +7,7 @@
 | ----------- | --------------------------------------------------------------------------------|
 | Website     | [http://kitchen.ci][website]													|
 | Source Code | [http://kitchen.ci/docs/getting-started/][guide]								|
-| Slack       | [#test-kitchen][slack] channel on Chef Community Slack, [transcript][slack_log]	|
+| Slack       | [#test-kitchen][slack] channel on Chef Community Slack	|
 | Twitter     | [@kitchenci][twitter]															|
 
 > **Test Kitchen is an integration tool for developing and testing
@@ -133,6 +133,5 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [repo]: https://github.com/test-kitchen/test-kitchen
 [semver]: http://semver.org/
 [slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
-[slack_log]: https://chefcommunity.slackarchive.io/test-kitchen
 [twitter]: https://twitter.com/kitchenci
 [website]: http://kitchen.ci
