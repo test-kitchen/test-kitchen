@@ -15,7 +15,7 @@ Let's spin this **Instance** up to see what happens. We're going to be painfully
 
 ~~~
 $ kitchen create default-ubuntu-1604
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Creating <default-ubuntu-1604>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Box 'bento/ubuntu-16.04' could not be found. Attempting to find and install...
@@ -56,7 +56,7 @@ $ kitchen create default-ubuntu-1604
        [SSH] Established
        Vagrant instance <default-ubuntu-1604> created.
        Finished creating <default-ubuntu-1604> (1m16.59s).
------> Kitchen is finished. (1m17.05s)
+-----> Test Kitchen is finished. (1m17.05s)
 ~~~
 
 Kitchen calls this the **Create Action** and several subcommands that we'll learn about later map directly to other **actions**. If you are a Vagrant user then the line containing `vagrant up --no-provision` will look familiar. This may take several minutes depending on

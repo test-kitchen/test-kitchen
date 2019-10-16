@@ -11,7 +11,7 @@ In order to execute our test, we use the command `kitchen verify`:
 
 ~~~
 $ kitchen verify default-ubuntu-1604
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Setting up <default-ubuntu-1604>...
        Finished setting up <default-ubuntu-1604> (0m0.00s).
 -----> Verifying <default-ubuntu-1604>...
@@ -26,7 +26,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
 
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-1604> (0m0.28s).
------> Kitchen is finished. (0m3.33s)
+-----> Test Kitchen is finished. (0m3.33s)
 ~~~
 
 A few things of note from the output above:
@@ -60,7 +60,7 @@ And re-run the **verify** subcommand:
 
 ~~~
 $ kitchen verify default-ubuntu-1604
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Verifying <default-ubuntu-1604>...
        Loaded tests from {:path=>".Users.cheeseplus.focus.git_cookbook.test.integration.default"}
 
@@ -96,7 +96,7 @@ Then verify our revert:
 
 ~~~
 $ kitchen verify default-ubuntu-1604
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Verifying <default-ubuntu-1604>...
        Loaded tests from {:path=>".Users.cheeseplus.focus.git_cookbook.test.integration.default"}
 
@@ -109,7 +109,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
 
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-1604> (0m0.32s).
------> Kitchen is finished. (0m3.06s)
+-----> Test Kitchen is finished. (0m3.06s)
 ~~~
 
 One of the advantages of `kitchen-inspec` is that the InSpec tests are executed from the host over the transport (SSH or WinRM) to the instance. No tests need to be uploaded to the instance itself.

@@ -34,14 +34,14 @@ module Kitchen
           raise ArgumentError, "Destroy mode must be passing, always, or never."
         end
 
-        banner "Starting Kitchen (v#{Kitchen::VERSION})"
+        banner "Starting Test Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           destroy_mode = options[:destroy].to_sym
           results = parse_subcommand(args.join("|"))
 
           run_action(:test, results, destroy_mode)
         end
-        banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+        banner "Test Kitchen is finished. #{Util.duration(elapsed.real)}"
       end
     end
   end
