@@ -30,12 +30,12 @@ module Kitchen
 
       # Invoke the command.
       def call
-        banner "Starting Kitchen (v#{Kitchen::VERSION})"
+        banner "Starting Test Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           results = parse_subcommand(args.first)
           run_action(action, results)
         end
-        banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+        banner "Test Kitchen is finished. #{Util.duration(elapsed.real)}"
       end
     end
   end

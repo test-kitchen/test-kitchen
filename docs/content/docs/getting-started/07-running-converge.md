@@ -10,7 +10,7 @@ menu:
 Now that we have a recipe, let's use `kitchen converge` to see if it works:
 
 ~~~
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Creating <default-ubuntu-1604>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'bento/ubuntu-16.04'...
@@ -104,7 +104,7 @@ Now that we have a recipe, let's use `kitchen converge` to see if it works:
        Chef Client finished, 0/1 resources updated in 01 seconds
        Downloading files from <default-ubuntu-1604>
        Finished converging <default-ubuntu-1604> (0m22.49s).
------> Kitchen is finished. (1m2.47s)
+-----> Test Kitchen is finished. (1m2.47s)
 ~~~
 
 If you are a Chef user then part of the output above should look familiar to you. Here's what happened at a high level:

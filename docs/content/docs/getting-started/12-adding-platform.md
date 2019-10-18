@@ -54,7 +54,7 @@ Let's see how CentOS runs our cookbook:
 
 ~~~
 $ kitchen verify 7
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Creating <default-centos-7>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Box 'bento/centos-7' could not be found. Attempting to find and install...
@@ -169,14 +169,14 @@ Target:  ssh://vagrant@127.0.0.1:2222
 
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-centos-7> (0m0.65s).
------> Kitchen is finished. (2m12.04s)
+-----> Test Kitchen is finished. (2m12.04s)
 ~~~
 
 Nice! We've verified that our cookbook works on Ubuntu 16.04 and CentOS 7. Since the CentOS instance is no longer needed, let's destroy it for now:
 
 ~~~
 $ kitchen destroy
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Destroying <default-ubuntu-1604>...
        Finished destroying <default-ubuntu-1604> (0m0.00s).
 -----> Destroying <default-centos-7>...
@@ -184,7 +184,7 @@ $ kitchen destroy
        ==> default: Destroying VM and associated drives...
        Vagrant instance <default-centos-7> destroyed.
        Finished destroying <default-centos-7> (0m5.89s).
------> Kitchen is finished. (0m8.62s)
+-----> Test Kitchen is finished. (0m8.62s)
 ~~~
 
 Interesting. Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
