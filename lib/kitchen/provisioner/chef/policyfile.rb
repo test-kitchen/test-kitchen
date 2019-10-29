@@ -138,7 +138,7 @@ module Kitchen
           def detect_chef_command!(logger)
             unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
               if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
-                # Windows could have differenct extentions: BAT, EXE or NONE
+                # Windows could have different extentions: BAT, EXE or NONE
                 %w{chef chef.exe chef.bat}.each do |bin|
                   File.exist?(File.join(path, bin))
                 end
