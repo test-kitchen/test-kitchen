@@ -136,8 +136,15 @@ module Kitchen
           # @raise [UserError] if the `chef` command is not in the PATH
           # @api private
           def detect_chef_command!(logger)
-            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |p|
-              File.exist?(File.join(p, "chef"))
+            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
+              if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+                # Windows could have differenct extentions: BAT, EXE or NONE
+                %w{chef chef.exe chef.bat}.each do |bin|
+                  File.exist?(File.join(path, bin))
+                end
+              else
+                File.exist?(File.join(path, "chef"))
+              end
             end
               logger.fatal("The `chef` executable cannot be found in your " \
                           "PATH. Ensure you have installed ChefDK or Chef Workstation " \
