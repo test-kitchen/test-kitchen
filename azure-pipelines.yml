@@ -86,7 +86,12 @@ stages:
             inputs:
               key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
               path: $(BUNDLE_PATH)
+              cacheHitVar: CACHE_RESTORED
             displayName: Cache gems
+          - script: |
+              chmod a+x $(BUNDLE_PATH)/bin/*
+            condition: ne(variables.CACHE_RESTORED, 'false')
+            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
@@ -124,7 +129,12 @@ stages:
             inputs:
               key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
               path: $(BUNDLE_PATH)
+              cacheHitVar: CACHE_RESTORED
             displayName: Cache gems
+          - script: |
+              chmod a+x $(BUNDLE_PATH)/bin/*
+            condition: ne(variables.CACHE_RESTORED, 'false')
+            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
