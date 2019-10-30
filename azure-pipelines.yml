@@ -13,6 +13,7 @@ pr:
       - 1-stable
 
 variables:
+  BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
   CHEF_LICENSE: accept-no-persist
 
 stages:
@@ -36,6 +37,11 @@ stages:
         pool:
           vmImage: windows-2019
         steps:
+          - task: CacheBeta@1
+            inputs:
+              key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
+              path: $(BUNDLE_PATH)
+            displayName: Cache gems
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
@@ -76,6 +82,16 @@ stages:
         pool:
           vmImage: 'macOS-10.13'
         steps:
+          - task: CacheBeta@1
+            inputs:
+              key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
+              path: $(BUNDLE_PATH)
+              cacheHitVar: CACHE_RESTORED
+            displayName: Cache gems
+          - script: |
+              chmod a+x $(BUNDLE_PATH)/bin/*
+            condition: ne(variables.CACHE_RESTORED, 'false')
+            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
@@ -109,6 +125,16 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - task: CacheBeta@1
+            inputs:
+              key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
+              path: $(BUNDLE_PATH)
+              cacheHitVar: CACHE_RESTORED
+            displayName: Cache gems
+          - script: |
+              chmod a+x $(BUNDLE_PATH)/bin/*
+            condition: ne(variables.CACHE_RESTORED, 'false')
+            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
