@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [2.3.4](https://github.com/test-kitchen/test-kitchen/tree/v2.3.4) (2019-10-31)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.3...v2.3.4)
+
+- Updated several log events from "Kitchen" to "Test Kitchen" to be consistent [#1598](https://github.com/test-kitchen/test-kitchen/pull/1598)([tas50](https://github.com/tas50))
+- Fixed a typo in a policyfile error message [#1599](https://github.com/test-kitchen/test-kitchen/pull/1599)([gep13](https://github.com/gep13))
+- Updated the policyfile provisioner to search for multiple varients of the chef CLI [\#1601](https://github.com/test-kitchen/test-kitchen/pull/1601)([afiune](https://github.com/afiune))
+
 ## [2.3.3](https://github.com/test-kitchen/test-kitchen/tree/v2.3.3) (2019-09-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.2...v2.3.3)
 

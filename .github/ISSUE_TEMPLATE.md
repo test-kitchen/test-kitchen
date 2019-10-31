@@ -4,7 +4,7 @@ Briefly describe the issue
 
 ## Kitchen Version
 
-Tell us which version of test-kitchen you are using (`kitchen --version`).  
+Tell us which version of test-kitchen you are using (`kitchen --version`).
 
 ```ruby
 # Copy-paste your results here
@@ -12,7 +12,7 @@ Tell us which version of test-kitchen you are using (`kitchen --version`).
 
 ## ChefDK Version
 
-If you are running test-kitchen via ChefDK, `chef --version` will provide additional relevent version details.
+If you are running test-kitchen via ChefDK or Chef Workstation, `chef --version` will provide additional relevent version details.
 
 ```ruby
 # Copy-paste your results here
@@ -20,7 +20,7 @@ If you are running test-kitchen via ChefDK, `chef --version` will provide additi
 
 ## Ruby Version
 
-If you are not using test-kitchen via ChefDK, please provide the output of ruby --version.
+If you are not using test-kitchen via ChefDK or Chef Workstation, please provide the output of ruby --version.
 
 ```ruby
 # Copy-paste your results here
