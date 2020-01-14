@@ -43,7 +43,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake"
 
   gem.add_development_dependency "aruba",     "~> 0.11"
-  gem.add_development_dependency "fakefs",    "~> 0.4"
+  gem.add_development_dependency "fakefs",    "~> 1.0"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.12"
   gem.add_development_dependency "mocha",     "~> 1.1"
   gem.add_development_dependency "cucumber",  ">= 2.1", "< 4.0" # we just need to validate 4.0 when it comes out
