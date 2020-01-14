@@ -45,7 +45,7 @@
 # chef-apply apply/recipe1.rb
 # chef-apply apply/recipe2.rb
 
-require "kitchen/provisioner/chef_base"
+require_relative "chef_base"
 
 module Kitchen
   module Provisioner

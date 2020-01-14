@@ -17,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
-require "kitchen/util"
+require_relative "errors"
+require_relative "util"
 
 module Kitchen
   module Plugin

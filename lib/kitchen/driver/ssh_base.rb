@@ -18,7 +18,7 @@
 
 require "thor/util"
 
-require "kitchen/lazy_hash"
+require_relative "../lazy_hash"
 require "benchmark"
 
 module Kitchen

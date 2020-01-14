@@ -18,7 +18,7 @@
 
 require "thor"
 
-require "kitchen"
+require_relative "../kitchen"
 
 module Kitchen
   # Kitchen Thor task generator.

@@ -18,8 +18,8 @@
 
 require "shellwords"
 
-require "kitchen/provisioner/base"
-require "kitchen/version"
+require_relative "base"
+require_relative "../version"
 
 module Kitchen
   module Provisioner
