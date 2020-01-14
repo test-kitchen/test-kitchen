@@ -12,3 +12,4 @@ Other verifiers:
 
 * shell (built-in)
 * [busser-bats](https://github.com/test-kitchen/busser-bats/)
+* [kitchen-pester](https://github.com/test-kitchen/kitchen-pester/)
