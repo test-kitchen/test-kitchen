@@ -224,10 +224,10 @@ describe Kitchen::Verifier::Base do
 
       logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
       logged_output.string.must_match(
-        %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
+        %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures/coolbeans$}
       )
       logged_output.string.must_match(
-        %r{DEBUG -- : Downloading /remote to /local$}
+        %r{DEBUG -- : Downloading /remote to /local/coolbeans$}
       )
       logged_output.string.must_match(/DEBUG -- : Download complete$/)
     end
@@ -235,10 +235,10 @@ describe Kitchen::Verifier::Base do
     it "downloads files" do
       connection.expects(:download).with(
         ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
-        "./test/fixtures"
+        "./test/fixtures/coolbeans"
       )
 
-      connection.expects(:download).with("/remote", "/local")
+      connection.expects(:download).with("/remote", "/local/coolbeans")
 
       cmd
     end
