@@ -3,12 +3,12 @@ trigger:
   batch: true
   branches:
     include:
-    - master
-    - 1-stable
+      - master
+      - 1-stable
 pr:
   autoCancel: true
   branches:
-    include: 
+    include:
       - master
       - 1-stable
 
@@ -37,7 +37,7 @@ stages:
         pool:
           vmImage: windows-2019
         steps:
-          - task: CacheBeta@1
+          - task: Cache@2
             inputs:
               key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
               path: $(BUNDLE_PATH)
@@ -66,11 +66,11 @@ stages:
             env:
               SPEC_OPTS: --format progress
           - script: |
-                winrm.cmd quickconfig -q
-                net user /add %machine_user% %machine_pass%
-                net localgroup administrators %machine_user% /add
-                bundle install --with integration
-                bundle exec kitchen verify windows
+              winrm.cmd quickconfig -q
+              net user /add %machine_user% %machine_pass%
+              net localgroup administrators %machine_user% /add
+              bundle install --with integration
+              bundle exec kitchen verify windows
             displayName: Run Converge
       - job: Mac
         strategy:
@@ -80,18 +80,14 @@ stages:
             Mac_Ruby26:
               version: 2.6
         pool:
-          vmImage: 'macOS-10.13'
+          vmImage: "macOS-10.13"
         steps:
-          - task: CacheBeta@1
+          - task: Cache@2
             inputs:
               key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
               path: $(BUNDLE_PATH)
               cacheHitVar: CACHE_RESTORED
             displayName: Cache gems
-          - script: |
-              chmod a+x $(BUNDLE_PATH)/bin/*
-            condition: ne(variables.CACHE_RESTORED, 'false')
-            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
@@ -123,18 +119,14 @@ stages:
             Linux_Ruby26:
               version: 2.6
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: "ubuntu-16.04"
         steps:
-          - task: CacheBeta@1
+          - task: Cache@2
             inputs:
               key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
               path: $(BUNDLE_PATH)
               cacheHitVar: CACHE_RESTORED
             displayName: Cache gems
-          - script: |
-              chmod a+x $(BUNDLE_PATH)/bin/*
-            condition: ne(variables.CACHE_RESTORED, 'false')
-            displayName: Restore Executable Bit For Cached Binstubs
           - task: UseRubyVersion@0
             inputs:
               versionSpec: $(version)
@@ -163,7 +155,7 @@ stages:
               bundle exec kitchen test
             displayName: Run Integration Tests
             env:
-              KITCHEN_YAML: kitchen.dokken.yml              
+              KITCHEN_YAML: kitchen.dokken.yml
       - job: Proxy_Tests
         variables:
           MACHINE_USER: kitchen
@@ -173,7 +165,7 @@ stages:
           PROXY_TESTS_DIR: proxy_tests/files/default/scripts
           PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: "ubuntu-16.04"
         steps:
           - task: UseRubyVersion@0
             inputs:
@@ -229,7 +221,7 @@ stages:
       - job: Package
         condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'), notIn(variables['Build.Reason'], 'PullRequest'))
         pool:
-          imageName: 'ubuntu-16.04'
+          imageName: "ubuntu-16.04"
         steps:
           - task: UseRubyVersion@0
             inputs:
