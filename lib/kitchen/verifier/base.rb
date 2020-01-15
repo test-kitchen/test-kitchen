@@ -78,7 +78,7 @@ module Kitchen
 
           info("Downloading files from #{instance.to_str}")
           config[:downloads].to_h.each do |remotes, local|
-            safe_instance_name = instance.name.gsub(/[^0-9A-Z-]/i, '_')
+            safe_instance_name = instance.name.gsub(/[^0-9A-Z-]/i, "_")
             local_path = File.join(local, safe_instance_name)
 
             debug("Downloading #{Array(remotes).join(", ")} to #{local_path}")
