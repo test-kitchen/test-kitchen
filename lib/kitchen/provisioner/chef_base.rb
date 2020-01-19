@@ -553,7 +553,7 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "/tmp/chef-installer.sh"
+        install_file = "/var/tmp/chef-installer.sh"
         script = ["cat > #{install_file} <<\"EOL\""]
         script << command
         script << "EOL"
