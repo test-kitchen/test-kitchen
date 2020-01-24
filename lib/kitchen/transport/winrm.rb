@@ -20,7 +20,7 @@
 
 require "rbconfig"
 require "uri"
-require "kitchen"
+require_relative "../../kitchen"
 require "winrm"
 
 module Kitchen

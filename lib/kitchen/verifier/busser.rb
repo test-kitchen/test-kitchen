@@ -19,7 +19,7 @@
 require "base64"
 require "digest"
 
-require "kitchen/verifier/base"
+require_relative "base"
 
 module Kitchen
   module Verifier

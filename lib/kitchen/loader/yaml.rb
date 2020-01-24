@@ -17,7 +17,7 @@
 # limitations under the License.
 
 require "erb"
-require "vendor/hash_recursive_merge"
+require_relative "../../vendor/hash_recursive_merge"
 require "yaml"
 
 module Kitchen

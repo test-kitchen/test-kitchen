@@ -18,7 +18,7 @@
 
 require "thor/util"
 
-require "kitchen/lazy_hash"
+require_relative "lazy_hash"
 
 module Kitchen
   # A mixin for providing configuration-related behavior such as default

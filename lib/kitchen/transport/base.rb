@@ -17,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/lazy_hash"
-require "kitchen/logging"
-require "kitchen/login_command"
+require_relative "../configurable"
+require_relative "../errors"
+require_relative "../lazy_hash"
+require_relative "../logging"
+require_relative "../login_command"
 
 module Kitchen
   module Transport
