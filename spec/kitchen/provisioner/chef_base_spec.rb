@@ -54,11 +54,19 @@ describe Kitchen::Provisioner::ChefBase do
 
   describe "configuration" do
     describe "for unix operating systems" do
-      before { platform.stubs(:os_type).returns("unix") }
+      before {
+        platform.stubs(:os_type).returns("unix")
+        platform.stubs(:shell_type).returns("bourne")
+      }
 
       it ":chef_omnibus_url has a default" do
         provisioner[:chef_omnibus_url]
           .must_equal "https://omnitruck.chef.io/install.sh"
+      end
+
+      it ":chef_omnibus_root has a default" do
+        provisioner[:chef_omnibus_root]
+            .must_equal "/opt/chef"
       end
 
       it ":chef_metadata_url defaults to nil" do
@@ -67,11 +75,19 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     describe "for windows operating systems" do
-      before { platform.stubs(:os_type).returns("windows") }
+      before {
+        platform.stubs(:os_type).returns("windows")
+        platform.stubs(:shell_type).returns("powershell")
+      }
 
       it ":chef_omnibus_url has a default" do
         provisioner[:chef_omnibus_url]
           .must_equal "https://omnitruck.chef.io/install.sh"
+      end
+
+      it ":chef_omnibus_root has a default" do
+        provisioner[:chef_omnibus_root]
+            .must_equal "/opt/chef"
       end
     end
 
@@ -192,6 +208,7 @@ describe Kitchen::Provisioner::ChefBase do
 
     let(:install_opts) do
       { omnibus_url: "https://omnitruck.chef.io/install.sh",
+        root: '/opt/chef',
         project: nil, install_flags: nil,
         sudo_command: "sudo -E", http_proxy: nil, https_proxy: nil
       }
