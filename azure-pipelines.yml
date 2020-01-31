@@ -79,7 +79,11 @@ stages:
             displayName: Check that rake exists directly
             env:
               SPEC_OPTS: --format progress
-
+          - script: |
+              type D:\a\1\.bundle\ruby\2.5.0\bin\rake.bat
+            displayName: Cat the rake.bat
+            env:
+              SPEC_OPTS: --format progress
 
           - script: |
               D:\a\1\.bundle\ruby\2.5.0\bin\rake.bat --help
