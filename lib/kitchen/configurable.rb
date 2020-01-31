@@ -350,7 +350,7 @@ module Kitchen
       code_parts << shell_env_var("TEST_KITCHEN", 1)
       code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
       ENV.select{|key, value| key.start_with?('KITCHEN_') }.each do |key, value|
-        env_var_name = key.sub!('KITCHEN_', '')
+        env_var_name = "#{key}".sub!('KITCHEN_', '')
         code_parts << shell_env_var(env_var_name, value)
       end
 
