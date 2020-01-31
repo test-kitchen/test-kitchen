@@ -75,6 +75,12 @@ stages:
               SPEC_OPTS: --format progress
 
           - script: |
+              rake --help
+            displayName: Check that rake exists directly
+            env:
+              SPEC_OPTS: --format progress
+
+          - script: |
               bundle exec rake --help
             displayName: Check that rake exists in bundle
             env:
