@@ -86,6 +86,17 @@ stages:
               SPEC_OPTS: --format progress
 
           - script: |
+              dir C:\hostedtoolcache\windows\Ruby\2.5.5\x64\bin\
+            displayName: Check ruby exists
+            env:
+              SPEC_OPTS: --format progress
+          - script: |
+              C:\hostedtoolcache\windows\Ruby\2.5.5\x64\bin\ruby.exe "d:/a/1/.bundle/ruby/2.5.0/bin/rake"
+            displayName: run the rake.bat by hand
+            env:
+              SPEC_OPTS: --format progress
+
+          - script: |
               D:\a\1\.bundle\ruby\2.5.0\bin\rake.bat --help
             displayName: force specify rake path
             env:
