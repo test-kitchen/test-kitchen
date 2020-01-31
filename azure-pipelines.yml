@@ -80,6 +80,13 @@ stages:
             env:
               SPEC_OPTS: --format progress
 
+
+          - script: |
+              D:\a\1\.bundle\ruby\2.5.0\bin\rake.bat --help
+            displayName: force specify rake path
+            env:
+              SPEC_OPTS: --format progress
+
           - script: |
               bundle exec rake --help
             displayName: Check that rake exists in bundle
