@@ -61,8 +61,19 @@ stages:
               bundle install || bundle install || bundle install
             displayName: Bundle Install Dependencies
           - script: |
-              bundle exec rake unit && bundle exec rake quality
-            displayName: Run Tests
+              bundle exec rake --help
+            displayName: Check that rake exists in bundle
+            env:
+              SPEC_OPTS: --format progress
+
+          - script: |
+              bundle exec rake unit
+            displayName: Run Unit Tests
+            env:
+              SPEC_OPTS: --format progress
+          - script: |
+              bundle exec rake quality
+            displayName: Run quality Tests
             env:
               SPEC_OPTS: --format progress
           - script: |
