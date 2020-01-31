@@ -60,6 +60,20 @@ stages:
           - script: |
               bundle install || bundle install || bundle install
             displayName: Bundle Install Dependencies
+
+
+          - script: |
+              where rake
+            displayName: Where be my rake
+            env:
+              SPEC_OPTS: --format progress
+
+          - script: |
+              bundle exec where rake
+            displayName: Where is rake in bundle
+            env:
+              SPEC_OPTS: --format progress
+
           - script: |
               bundle exec rake --help
             displayName: Check that rake exists in bundle
