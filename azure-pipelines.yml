@@ -86,14 +86,8 @@ stages:
               SPEC_OPTS: --format progress
 
           - script: |
-              dir C:\hostedtoolcache\windows\Ruby\2.5.5\x64\bin\
+              dir /s /b C:\hostedtoolcache\windows\Ruby
             displayName: Check ruby exists
-            env:
-              SPEC_OPTS: --format progress
-
-          - script: |
-              dir /s /b C:\hostedtoolcache\windows\Ruby\
-            displayName: Check for Ruby
             env:
               SPEC_OPTS: --format progress
 
