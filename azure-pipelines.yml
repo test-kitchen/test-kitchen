@@ -23,7 +23,7 @@ stages:
         strategy:
           matrix:
             Windows_Ruby25:
-              version: 2.5
+              version: 2.5.7
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
@@ -169,7 +169,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.5.5
+              versionSpec: 2.5.7
               addToPath: true
           - script: |
               echo "ruby version:"
@@ -192,7 +192,7 @@ stages:
               sudo service ssh restart
 
               sudo apt-get update
-              sudo apt-get -y install squid3 git curl 
+              sudo apt-get -y install squid3 git curl
               git clone https://github.com/smurawski/proxy_tests.git
             displayName: Install and configure dependencies
           - script: |
