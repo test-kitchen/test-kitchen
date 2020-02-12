@@ -225,7 +225,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.6.3
+              versionSpec: 2.6.5
               addToPath: true
           - script: |
               gem install bundler --quiet
