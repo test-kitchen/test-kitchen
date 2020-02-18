@@ -510,6 +510,8 @@ module Kitchen
           channel: config[:channel].to_sym,
           install_command_options: {
             install_strategy: config[:install_strategy],
+            tmp_dir: config[:root_path],
+            "TMPDIR" => config[:root_path],
           },
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
@@ -535,7 +537,6 @@ module Kitchen
             # install.ps1 only supports http_proxy
             prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
-
           opts[:install_command_options].merge!(proxies)
         end)
         config[:chef_omnibus_root] = installer.root
@@ -554,13 +555,12 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "/tmp/chef-installer.sh"
-        script = ["cat > #{install_file} <<\"EOL\""]
-        script << command
-        script << "EOL"
+        install_file = "#{config[:root_path]}/chef-installer.sh"
+        script = ["mkdir -p #{config[:root_path]}"]
+        script << "echo #{command} | tee #{install_file}"
         script << "chmod +x #{install_file}"
-        script << sudo(install_file)
-        script.join("\n")
+        script << install_file
+        script.map{ |cmd| sudo(cmd) }.join(";\n")
       end
 
       # @return [String] contents of version based install script
