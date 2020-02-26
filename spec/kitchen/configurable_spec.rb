@@ -930,8 +930,8 @@ describe Kitchen::Configurable do
         CODE
       end
 
-      it "exports FOO when KITCHEN_FOO is set" do
-        ENV["KITCHEN_FOO"] = "BAR"
+      it "exports FOO when TKENV_FOO is set" do
+        ENV["TKENV_FOO"] = "BAR"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
@@ -1094,8 +1094,8 @@ describe Kitchen::Configurable do
         CODE
       end
 
-      it "exports FOO when KITCHEN_FOO is set" do
-        ENV["KITCHEN_FOO"] = "BAR"
+      it "exports FOO when TKENV_FOO is set" do
+        ENV["TKENV_FOO"] = "BAR"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:TEST_KITCHEN = "1"
