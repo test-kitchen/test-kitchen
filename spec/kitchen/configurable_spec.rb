@@ -929,6 +929,18 @@ describe Kitchen::Configurable do
           '
         CODE
       end
+
+      it "exports FOO when TKENV_FOO is set" do
+        ENV["TKENV_FOO"] = "BAR"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          FOO="BAR"; export FOO
+          mkdir foo
+          '
+        CODE
+      end
     end
 
     describe "for powershell shells" do
@@ -1081,6 +1093,17 @@ describe Kitchen::Configurable do
           mkdir foo
         CODE
       end
+
+      it "exports FOO when TKENV_FOO is set" do
+        ENV["TKENV_FOO"] = "BAR"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:FOO = "BAR"
+          mkdir foo
+        CODE
+      end
+
     end
   end
 
