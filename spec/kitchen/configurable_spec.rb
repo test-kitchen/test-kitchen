@@ -919,6 +919,7 @@ describe Kitchen::Configurable do
       end
 
       it "exports CI when CI is set" do
+        ENV["CHEF_LICENSE"] = nil
         ENV["CI"] = "1"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
@@ -931,12 +932,25 @@ describe Kitchen::Configurable do
       end
 
       it "exports FOO when TKENV_FOO is set" do
+        ENV["CHEF_LICENSE"] = nil
         ENV["TKENV_FOO"] = "BAR"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           sh -c '
           TEST_KITCHEN="1"; export TEST_KITCHEN
           FOO="BAR"; export FOO
+          mkdir foo
+          '
+        CODE
+      end
+
+      it "exports CHEF_LICENSE when CHEF_LICENSE is set" do
+        ENV["CHEF_LICENSE"] = "FOO"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          CHEF_LICENSE="FOO"; export CHEF_LICENSE
           mkdir foo
           '
         CODE
@@ -1085,6 +1099,7 @@ describe Kitchen::Configurable do
       end
 
       it "exports CI when CI is set" do
+        ENV["CHEF_LICENSE"] = nil
         ENV["CI"] = "1"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
@@ -1095,11 +1110,22 @@ describe Kitchen::Configurable do
       end
 
       it "exports FOO when TKENV_FOO is set" do
+        ENV["CHEF_LICENSE"] = nil
         ENV["TKENV_FOO"] = "BAR"
 
         cmd.must_equal(outdent!(<<-CODE.chomp))
           $env:TEST_KITCHEN = "1"
           $env:FOO = "BAR"
+          mkdir foo
+        CODE
+      end
+
+      it "exports CHEF_LICENSE when CHEF_LICENSE is set" do
+        ENV["CHEF_LICENSE"] = "FOO"
+
+        cmd.must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:CHEF_LICENSE = "FOO"
           mkdir foo
         CODE
       end
