@@ -1,5 +1,14 @@
 # Test Kitchen Change Log
 
+## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.4...v2.4.0)
+
+- The `CHEF_LICENSE` env var is now automatically exported from the workstation to the instance running in Test Kitchen [#1629](https://github.com/test-kitchen/test-kitchen/pull/1629)([Xorima](https://github.com/Xorima))
+- All local Workstation env vars are now passed to the instance running in Test Kitchen with the `TKENV_` prefix. [#1623](https://github.com/test-kitchen/test-kitchen/pull/1623)([Xorima](https://github.com/Xorima))
+- Add kitchen*.yml to the chefignore in kitchen init [#1627](https://github.com/test-kitchen/test-kitchen/pull/1627)([tas50](https://github.com/tas50))
+- Use require_relative instead of require [#1613](https://github.com/test-kitchen/test-kitchen/pull/1613)([tas50](https://github.com/tas50))
+- Add download capability to verifier base with a new `downloads` config option in verify [#1605](https://github.com/test-kitchen/test-kitchen/pull/1605) ([smurawski](https://github.com/smurawski))
+
 ## [2.3.4](https://github.com/test-kitchen/test-kitchen/tree/v2.3.4) (2019-10-31)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.3...v2.3.4)
 
