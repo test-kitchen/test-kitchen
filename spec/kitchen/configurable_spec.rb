@@ -955,8 +955,6 @@ describe Kitchen::Configurable do
           '
         CODE
       end
-
-
     end
 
     describe "for powershell shells" do
