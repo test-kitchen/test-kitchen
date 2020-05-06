@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [2.5.0](https://github.com/test-kitchen/test-kitchen/tree/v2.5.0) (2020-05-06)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.4.0...v2.5.0)
+
+- Allow copying Ohai plugins from the /ohai cookbook directory into the instance [#1634](https://github.com/test-kitchen/test-kitchen/pull/1634)([SAPDanJoe](https://github.com/SAPDanJoe))
+- Fix failures using the PowerShell provisioner [#1639](https://github.com/test-kitchen/test-kitchen/pull/1639)([alanghartJC](https://github.com/alanghartJC))
+- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}-etm@openssh.com MAC algorithms and to allow spaces / comment lines in the known_hosts file.
+
 ## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.4...v2.4.0)
 
