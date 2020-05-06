@@ -32,5 +32,6 @@ provisioner:
 Community provisioners:
 
 * [kitchen-ansible](https://github.com/neillturner/kitchen-ansible)
-* [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
 * [kitchen-dsc](https://github.com/test-kitchen/kitchen-dsc)
+* [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
+* [kitchen-salt](https://github.com/saltstack/kitchen-salt)
