@@ -103,8 +103,13 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
-
           logger.debug("[WinRM] #{self} (#{command})")
+
+          # Winrm has a ~4k file limit (base64 encoded hits 8k, windows cli limit)
+          # Putting the command on disk gets around that issue
+          if command.length > MAX_COMMAND_SIZE
+            command = run_from_file_command(command)
+          end
 
           exit_code, stderr = execute_with_exit_code(command)
 
@@ -176,6 +181,11 @@ module Kitchen
         private
 
         PING_COMMAND = "Write-Host '[WinRM] Established\n'".freeze
+
+        # Maximum string to send to the transport to execute. WinRM has an 8000 character
+        # command line limit. The original command string is coverted to a base 64 encoded
+        # UTF-16 string which will double the string size.
+        MAX_COMMAND_SIZE = 3000
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
@@ -396,6 +406,31 @@ module Kitchen
           "<#{options.inspect}>"
         end
       end
+
+        # takes a long (greater than 3000 characters) command and saves it to a
+        # file and uploads it to the test instance.
+        #
+        # @param command [String] a long command to be saved and uploaded
+        # @return [String] a command that executes the uploaded script
+        # @api private
+        def run_from_file_command(command)
+          temp_dir = Dir.mktmpdir("kitchen-long-script")
+          begin
+            script_name = "#{instance_name}-long_script.ps1"
+            script_path = File.join(temp_dir, script_name)
+
+            File.open(script_path, "wb") do |file|
+              file.write(command)
+            end
+
+            target_path = File.join("$env:TEMP", "kitchen")
+            upload(script_path, target_path)
+
+            %{& "#{File.join(target_path, script_name)}"}
+          ensure
+            FileUtils.rmtree(temp_dir)
+          end
+        end
 
       private
 
