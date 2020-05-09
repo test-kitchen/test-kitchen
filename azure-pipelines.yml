@@ -23,7 +23,7 @@ stages:
         strategy:
           matrix:
             Windows_Ruby25:
-              version: 2.5.7
+              version: 2.5.8
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
@@ -169,7 +169,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.5.7
+              versionSpec: 2.5.8
               addToPath: true
           - script: |
               echo "ruby version:"
@@ -225,7 +225,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.6.5
+              versionSpec: 2.6.6
               addToPath: true
           - script: |
               gem install bundler --quiet
