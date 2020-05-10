@@ -19,9 +19,9 @@
 require "shellwords"
 require "rbconfig"
 
-require "kitchen/errors"
-require "kitchen/logging"
-require "kitchen/shell_out"
+require_relative "../../errors"
+require_relative "../../logging"
+require_relative "../../shell_out"
 
 module Kitchen
   module Provisioner

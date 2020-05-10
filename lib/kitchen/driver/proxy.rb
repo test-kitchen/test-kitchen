@@ -18,8 +18,8 @@
 # limitations under the License.
 #
 
-require "kitchen/driver/ssh_base"
-require "kitchen/version"
+require_relative "ssh_base"
+require_relative "../version"
 
 module Kitchen
   module Driver

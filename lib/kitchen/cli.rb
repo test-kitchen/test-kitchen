@@ -18,8 +18,8 @@
 
 require "thor"
 
-require "kitchen"
-require "kitchen/generator/init"
+require_relative "../kitchen"
+require_relative "generator/init"
 
 module Kitchen
   # The command line runner for Kitchen.
