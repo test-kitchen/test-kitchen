@@ -20,6 +20,8 @@ tmp
 .rvmrc
 .rbenv-version
 .ruby-version
+.envrc
+.direnv/
 .project
 .DS_Store
 .kitchen/
