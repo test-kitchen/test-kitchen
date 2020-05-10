@@ -23,7 +23,7 @@ stages:
         strategy:
           matrix:
             Windows_Ruby25:
-              version: 2.5.7
+              version: 2.5
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
@@ -35,7 +35,7 @@ stages:
               machine_port: 5985
               KITCHEN_YAML: kitchen.appveyor.yml
         pool:
-          vmImage: windows-2019
+          vmImage: windows-latest
         steps:
           - task: Cache@2
             inputs:
@@ -80,7 +80,7 @@ stages:
             Mac_Ruby26:
               version: 2.6
         pool:
-          vmImage: "macOS-10.13"
+          vmImage: "macOS-latest"
         steps:
           - task: Cache@2
             inputs:
@@ -119,7 +119,7 @@ stages:
             Linux_Ruby26:
               version: 2.6
         pool:
-          vmImage: "ubuntu-16.04"
+          vmImage: "ubuntu-latest"
         steps:
           - task: Cache@2
             inputs:
@@ -165,11 +165,11 @@ stages:
           PROXY_TESTS_DIR: proxy_tests/files/default/scripts
           PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
         pool:
-          vmImage: "ubuntu-16.04"
+          vmImage: "ubuntu-latest"
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.5.7
+              versionSpec: 2.5
               addToPath: true
           - script: |
               echo "ruby version:"
@@ -225,7 +225,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.6.5
+              versionSpec: 2.6
               addToPath: true
           - script: |
               gem install bundler --quiet
