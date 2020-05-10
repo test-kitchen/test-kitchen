@@ -73,7 +73,7 @@ Finally let's destroy our running instances:
 
 ~~~
 $ kitchen destroy
------> Starting Kitchen (v1.23.2)
+-----> Starting Test Kitchen (v1.23.2)
 -----> Destroying <default-ubuntu-1604>...
        Finished destroying <default-ubuntu-1604> (0m0.00s).
 -----> Destroying <default-centos-7>...
@@ -83,7 +83,7 @@ $ kitchen destroy
        ==> default: Destroying VM and associated drives...
        Vagrant instance <server-ubuntu-1604> destroyed.
        Finished destroying <server-ubuntu-1604> (0m12.55s).
------> Kitchen is finished. (0m17.39s)
+-----> Test Kitchen is finished. (0m17.39s)
 ~~~
 
 Now that we've completed our git daemon feature and made sure we're testing it on only the

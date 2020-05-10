@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
-require "kitchen/shell_out"
+require_relative "errors"
+require_relative "shell_out"
 
 module Kitchen
   # A helper object used by {Instance} to coordinate lifecycle hook calls from

@@ -24,8 +24,8 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.3"
 
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 4.0"
-  gem.add_dependency "net-scp",            ">= 1.1", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "net-ssh",            ">= 2.9", "< 6.0" # pinning until we can confirm 6+ works
+  gem.add_dependency "net-scp",            ">= 1.1", "< 4.0" # pinning until we can confirm 4+ works
+  gem.add_dependency "net-ssh",            ">= 2.9", "< 7.0" # pinning until we can confirm 7+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
   gem.add_dependency "ed25519",            "~> 1.2" # ed25519 ssh key support
   gem.add_dependency "bcrypt_pbkdf",       "~> 1.0" # ed25519 ssh key support
@@ -42,8 +42,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
 
-  gem.add_development_dependency "aruba",     "~> 0.11"
-  gem.add_development_dependency "fakefs",    "~> 0.4"
+  gem.add_development_dependency "aruba",     "~> 0.11", "< 1.0"
+  gem.add_development_dependency "fakefs",    "~> 1.0"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.12"
   gem.add_development_dependency "mocha",     "~> 1.1"
   gem.add_development_dependency "cucumber",  ">= 2.1", "< 4.0" # we just need to validate 4.0 when it comes out

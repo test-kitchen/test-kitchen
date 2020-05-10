@@ -18,8 +18,8 @@
 
 require "shellwords"
 
-require "kitchen/provisioner/base"
-require "kitchen/version"
+require_relative "base"
+require_relative "../version"
 
 module Kitchen
   module Provisioner
@@ -106,13 +106,17 @@ module Kitchen
 
         if config[:arguments] && !config[:arguments].empty?
           if config[:arguments].is_a?(Array)
-            script = Shellwords.join([script] + config[:arguments])
+            if powershell_shell?
+              script = ([script] + config[:arguments]).join(" ")
+            else
+              script = Shellwords.join([script] + config[:arguments])
+            end
           else
             script.concat(" ").concat(config[:arguments].to_s)
           end
         end
 
-        code = powershell_shell? ? %{& "#{script}"} : sudo(script)
+        code = powershell_shell? ? %{& #{script}} : sudo(script)
 
         prefix_command(wrap_shell_code(code))
       end

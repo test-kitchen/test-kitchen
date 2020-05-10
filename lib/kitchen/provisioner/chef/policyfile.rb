@@ -19,9 +19,9 @@
 require "shellwords"
 require "rbconfig"
 
-require "kitchen/errors"
-require "kitchen/logging"
-require "kitchen/shell_out"
+require_relative "../../errors"
+require_relative "../../logging"
+require_relative "../../shell_out"
 
 module Kitchen
   module Provisioner
@@ -136,13 +136,20 @@ module Kitchen
           # @raise [UserError] if the `chef` command is not in the PATH
           # @api private
           def detect_chef_command!(logger)
-            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |p|
-              File.exist?(File.join(p, "chef"))
+            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
+              if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+                # Windows could have different extentions: BAT, EXE or NONE
+                %w{chef chef.exe chef.bat}.each do |bin|
+                  File.exist?(File.join(path, bin))
+                end
+              else
+                File.exist?(File.join(path, "chef"))
+              end
             end
               logger.fatal("The `chef` executable cannot be found in your " \
                           "PATH. Ensure you have installed ChefDK or Chef Workstation " \
                           "from https://downloads.chef.io and that your PATH " \
-                          "setting includes the path to the `chef` comand.")
+                          "setting includes the path to the `chef` command.")
               raise UserError,
                 "Could not find the chef executable in your PATH."
             end

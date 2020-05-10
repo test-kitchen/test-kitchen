@@ -1,5 +1,28 @@
 # Test Kitchen Change Log
 
+## [2.5.0](https://github.com/test-kitchen/test-kitchen/tree/v2.5.0) (2020-05-06)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.4.0...v2.5.0)
+
+- Allow copying Ohai plugins from the /ohai cookbook directory into the instance [#1634](https://github.com/test-kitchen/test-kitchen/pull/1634)([SAPDanJoe](https://github.com/SAPDanJoe))
+- Fix failures using the PowerShell provisioner [#1639](https://github.com/test-kitchen/test-kitchen/pull/1639)([alanghartJC](https://github.com/alanghartJC))
+- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}-etm@openssh.com MAC algorithms and to allow spaces / comment lines in the known_hosts file.
+
+## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.4...v2.4.0)
+
+- The `CHEF_LICENSE` env var is now automatically exported from the workstation to the instance running in Test Kitchen [#1629](https://github.com/test-kitchen/test-kitchen/pull/1629)([Xorima](https://github.com/Xorima))
+- All local Workstation env vars are now passed to the instance running in Test Kitchen with the `TKENV_` prefix. [#1623](https://github.com/test-kitchen/test-kitchen/pull/1623)([Xorima](https://github.com/Xorima))
+- Add kitchen*.yml to the chefignore in kitchen init [#1627](https://github.com/test-kitchen/test-kitchen/pull/1627)([tas50](https://github.com/tas50))
+- Use require_relative instead of require [#1613](https://github.com/test-kitchen/test-kitchen/pull/1613)([tas50](https://github.com/tas50))
+- Add download capability to verifier base with a new `downloads` config option in verify [#1605](https://github.com/test-kitchen/test-kitchen/pull/1605) ([smurawski](https://github.com/smurawski))
+
+## [2.3.4](https://github.com/test-kitchen/test-kitchen/tree/v2.3.4) (2019-10-31)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.3...v2.3.4)
+
+- Updated several log events from "Kitchen" to "Test Kitchen" to be consistent [#1598](https://github.com/test-kitchen/test-kitchen/pull/1598)([tas50](https://github.com/tas50))
+- Fixed a typo in a policyfile error message [#1599](https://github.com/test-kitchen/test-kitchen/pull/1599)([gep13](https://github.com/gep13))
+- Updated the policyfile provisioner to search for multiple varients of the chef CLI [\#1601](https://github.com/test-kitchen/test-kitchen/pull/1601)([afiune](https://github.com/afiune))
+
 ## [2.3.3](https://github.com/test-kitchen/test-kitchen/tree/v2.3.3) (2019-09-18)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.2...v2.3.3)
 

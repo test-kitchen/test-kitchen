@@ -14,9 +14,9 @@
 
 require "fileutils"
 
-require "kitchen/shell_out"
-require "kitchen/transport/base"
-require "kitchen/version"
+require_relative "../shell_out"
+require_relative "base"
+require_relative "../version"
 
 module Kitchen
   module Transport
