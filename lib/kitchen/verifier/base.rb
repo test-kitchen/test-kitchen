@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
-require "kitchen/configurable"
-require "kitchen/logging"
+require_relative "../errors"
+require_relative "../configurable"
+require_relative "../logging"
 
 module Kitchen
   module Verifier
@@ -75,6 +75,13 @@ module Kitchen
           debug("Transfer complete")
           conn.execute(prepare_command)
           conn.execute(run_command)
+
+          info("Downloading files from #{instance.to_str}")
+          config[:downloads].to_h.each do |remotes, local|
+            debug("Downloading #{Array(remotes).join(", ")} to #{local}")
+            conn.download(remotes, local)
+          end
+          debug("Download complete")
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message

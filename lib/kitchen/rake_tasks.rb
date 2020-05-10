@@ -18,7 +18,7 @@
 
 require "rake/tasklib"
 
-require "kitchen"
+require_relative "../kitchen"
 
 module Kitchen
   # Kitchen Rake task generator.

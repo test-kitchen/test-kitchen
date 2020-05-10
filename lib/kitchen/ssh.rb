@@ -21,8 +21,8 @@ require "net/ssh"
 require "net/scp"
 require "socket"
 
-require "kitchen/errors"
-require "kitchen/login_command"
+require_relative "errors"
+require_relative "login_command"
 
 module Kitchen
   # Wrapped exception for any internally raised SSH-related errors.
