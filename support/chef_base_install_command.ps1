@@ -44,7 +44,7 @@ Function Download-Chef($md_url, $dst) {
 }
 
 Function Install-Chef($msi) {
-  Log "Installing Chef package $msi"
+  Log "Installing Chef Infra Client package $msi"
   $p = Start-Process -FilePath "msiexec.exe" -ArgumentList "/qn /i $msi" -Passthru -Wait
 
   if ($p.ExitCode -ne 0) { throw "msiexec was not successful. Received exit code $($p.ExitCode)" }
@@ -73,11 +73,11 @@ Try {
   $msi = Unresolve-Path $msi
 
   if (Check-UpdateChef $chef_omnibus_root $version) {
-    Write-Host "-----> Installing Chef package ($pretty_version)`n"
+    Write-Host "-----> Installing Chef Infra Client package ($pretty_version)`n"
     Download-Chef "$chef_metadata_url" $msi
     Install-Chef $msi
   } else {
-    Write-Host "-----> Chef package installation detected ($pretty_version)`n"
+    Write-Host "-----> Chef Infra Client package installation detected ($pretty_version)`n"
 }
 Catch {
   Write-Error ($_ | ft -Property * | out-string) -ErrorAction Continue
