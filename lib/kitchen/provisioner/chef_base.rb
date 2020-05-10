@@ -76,6 +76,7 @@ module Kitchen
         README.* VERSION metadata.{json,rb} attributes.rb recipe.rb
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
+        ohai/**/*
       ).join(",")
       # to ease upgrades, allow the user to turn deprecation warnings into errors
       default_config :deprecations_as_errors, false
