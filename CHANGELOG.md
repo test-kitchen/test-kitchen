@@ -1,5 +1,11 @@
 # Test Kitchen Change Log
 
+## [2.5.1](https://github.com/test-kitchen/test-kitchen/tree/v2.5.1) (2020-05-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.0...v2.5.1)
+
+- Pin the Aruba dev dep to prevent test failures [#1646](https://github.com/test-kitchen/test-kitchen/pull/1646)([Xorima](https://github.com/Xorima))
+- Update install scripts messaging from Chef -> Chef Infra Client [#1644](https://github.com/test-kitchen/test-kitchen/pull/1644)([tas50](https://github.com/tas50))
+
 ## [2.5.0](https://github.com/test-kitchen/test-kitchen/tree/v2.5.0) (2020-05-06)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.4.0...v2.5.0)
 
