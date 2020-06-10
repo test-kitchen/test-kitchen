@@ -51,9 +51,9 @@ could not find recipe server for cookbook git_cookbook
 One quick check of `kitchen list` tells us that our instance was created but not successfully converged:
 
 ~~~
-$ kitchen list server-ubuntu-1604
+$ kitchen list server-ubuntu-2004
 Instance            Driver   Provisioner  Verifier  Transport  Last Action  Last Error
-server-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        Created      Kitchen::ActionFailed
+server-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Created      Kitchen::ActionFailed
 ~~~
 
 Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` sub-commands.
