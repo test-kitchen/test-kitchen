@@ -154,7 +154,7 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               install_strategy: skip
           MSG
         when provisioner[:require_chef_omnibus].to_s.match(/\d/)
@@ -167,7 +167,7 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               product_version: #{provisioner[:require_chef_omnibus]}
           MSG
         when provisioner[:require_chef_omnibus] == "latest"
@@ -180,7 +180,7 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               install_strategy: always
           MSG
         end
@@ -200,11 +200,11 @@ module Kitchen
 
         # Deprecated Example #
         provisioner:
-          chef_omnibus_install_options: -P chefdk -c current
+          chef_omnibus_install_options: -P chef-workstation -c current
 
         # New Usage #
         provisioner:
-          product_name: chefdk
+          product_name: chef-workstation
           channel: current
       MSG
 
@@ -217,7 +217,7 @@ module Kitchen
 
         # New Usage #
         provisioner:
-          product_name: <chef or chefdk>
+          product_name: <chef or chef-workstation>
           download_url: http://direct-download-url
       MSG
 
@@ -226,9 +226,9 @@ module Kitchen
         fully managed by using attribute settings.
       MSG
 
-      # Reads the local Chef::Config object (if present).  We do this because
-      # we want to start bring Chef config and ChefDK tool config closer
-      # together.  For example, we want to configure proxy settings in 1
+      # Reads the local Chef::Config object (if present). We do this because
+      # we want to start bring Chef config and Chef Workstation config closer
+      # together. For example, we want to configure proxy settings in 1
       # location instead of 3 configuration files.
       #
       # @param config [Hash] initial provided configuration
