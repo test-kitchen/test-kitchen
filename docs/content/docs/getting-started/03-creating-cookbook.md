@@ -31,7 +31,7 @@ If you'd prefer to dive right in, the default recipe can be found at:
 recipes/default.rb
 ~~~
 
-> **Congratulations. You've authored a Chef Infra cookbook.**
+**Congratulations. You've authored a Chef Infra cookbook.**
 
 Make sure you've changed into the new cookbook directory via `cd git_cookbook`. Next we'll talk about what just happened and how Test Kitchen configuration works.
 
