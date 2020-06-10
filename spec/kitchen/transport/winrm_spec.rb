@@ -972,7 +972,7 @@ describe Kitchen::Transport::Winrm::Connection do
       describe "raising #{klass}" do
         before do
           k = if klass == ::WinRM::WinRMHTTPTransportError
-            # this exception takes 2 args in its constructor, which is not stock
+                # this exception takes 2 args in its constructor, which is not stock
                 klass.new("dang", 200)
               else
                 klass
