@@ -10,10 +10,9 @@ menu:
 
 These are frequently asked questions or tips that don't have a better home just yet.
 
-
 ##### How do I add another driver other than Vagrant?
 
-If you're using ChefDK, check for it`chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md),
+If you're using Chef Workstation, check for it `chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md),
 if it does:
 
 ~~~
@@ -33,9 +32,9 @@ to change these at the very least.
 
 Certain drivers, like `kitchen-dokken` [recommend](https://github.com/someara/kitchen-dokken#usage) setting `KITCHEN_LOCAL_YAML` environment variable to ensure these configs are used when there are multiple in a directory.
 
-##### How do I update just test-kitchen if I'm using ChefDK?
+##### How do I update just test-kitchen if I'm using Chef Workstation?
 
-Due to the nature of how the ChefDK is built, it is not possible to update a gem that is part of the package. To get the latest versions of component software, builds from the [current](https://downloads.chef.io/chefdk/current) channel can be consumed.
+Due to the nature of how the Chef Workstation is built, it is not possible to update a gem that is part of the package. To get the latest versions of component software, builds from the [current](https://downloads.chef.io/chefdk/current) channel can be consumed.
 
 ##### How do I change the user to access the instance?
 
@@ -55,4 +54,3 @@ So there are a few things that already exist that sort of cover this in the kitc
 - [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
 
 For the system level proxies and the polipo/squid locally you don't need to do much but you'll still need to edit the conf files for yum/apt as appropriate. If vagrant-cachier it will be used by `kitchen-vagrant` as default. This behaviour is documented [here](https://github.com/test-kitchen/kitchen-vagrant#-cachier).
-
