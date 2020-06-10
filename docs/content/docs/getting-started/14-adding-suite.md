@@ -29,13 +29,11 @@ suites:
     verifier:
       inspec_tests:
         - test/integration/default
-    attributes:
   - name: server
     named_run_list: server
     verifier:
       inspec_tests:
         - test/integration/server
-    attributes:
 ~~~
 
 Now run `kitchen list` to see our new suite in action:
