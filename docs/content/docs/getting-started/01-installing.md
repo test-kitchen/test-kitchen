@@ -7,7 +7,7 @@ menu:
     weight: 10
 ---
 
-As this is a quick start guide, it doesn't assume any great familiarity with Chef or Ruby and takes you through the process of writing a Chef cookbook with automated testing as standard. In order to follow this guide, we'll need a few tools first.
+As this is a quick start guide, it doesn't assume any great familiarity with Chef Infra or Ruby and takes you through the process of writing a Chef Infra cookbook with automated testing as standard. In order to follow this guide, we'll need a few tools first.
 
 ##### Pre-requisites
 
@@ -21,18 +21,18 @@ In order to virtualize a 64 bit operating system, one must also be running a 64 
 Unfortunately Hyper-V doesn't like other hypervisors running at the same time and it must be disabled as a Windows Feature for VirtualBox to function properly.
 </div>
 
-##### ChefDK
+##### Chef Workstation
 
-First, install the [ChefDK](https://downloads.chef.io/chefdk). This package includes Chef, Kitchen, Berkshelf, and a variety of useful tools for the Chef ecosystem.
+First, install the [Chef Workstation](https://downloads.chef.io/chef-workstation). This package includes Chef Infra Client, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
 
 ~~~
 $ chef --version
-Chef Development Kit Version: 3.2.30
-chef-client version: 14.4.56
-delivery version: master (6862f27aba89109a9630f0b6c6798efec56b4efe)
-berks version: 7.0.6
-kitchen version: 1.23.2
-inspec version: 2.2.70
+Chef Workstation version: 20.6.62
+Chef Infra Client version: 16.1.16
+Chef InSpec version: 4.19.0
+Chef CLI version: 3.0.4
+Test Kitchen version: 2.5.1
+Cookstyle version: 6.7.3
 ~~~
 
 ##### VirtualBox
@@ -41,7 +41,7 @@ VirtualBox is a hypervisor that lets you run virtual machines on your local work
 
 ~~~
 $ VBoxManage --version
-5.2.18r124319
+6.1.10r138449
 ~~~
 
 ##### Vagrant
@@ -50,12 +50,12 @@ Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute p
 
 ~~~
 $ vagrant --version
-Vagrant 2.1.5
+Vagrant 2.2.9
 ~~~
 
-We've just installed ChefDK, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for test-kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
+We've just installed Chef Workstation, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for Test Kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
 
-Kitchen is modular so that one may use a variety of different drivers (Vagrant, EC2, Docker), provisioners (Chef, Ansible, Puppet, Salt, DSC), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef, and InSpec.
+Kitchen is modular so that one may use a variety of different drivers (Vagrant, EC2, Docker), provisioners (Chef Infra, Ansible, Puppet, Salt, DSC), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef Infra, and InSpec.
 
 
 <div class="sidebar--footer">

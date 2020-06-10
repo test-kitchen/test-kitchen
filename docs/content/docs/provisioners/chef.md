@@ -27,7 +27,7 @@ provisioner:
     - deploy_resource # deprecation key name
     - chef-23 # deprecation numeric ID
     - recipes/install.rb:22 # specific line in a file
-  product_name: chef # which package to install chef || chefdk
+  product_name: chef # which package to install chef || chef-workstation
   product_version: latest # 'latest', partial, or full version number
   channel: stable # stable, current or unstable
   install_strategy: once # once (install only if needed), always, skip (don't install)
