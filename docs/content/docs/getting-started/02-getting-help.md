@@ -30,7 +30,7 @@ Commands:
   kitchen version                                 # Print Kitchen's version information
 ~~~
 
-For more detailed help on a given subcommand, add it to end of the `help` subcommand. Let's take a look at the useful `kitchen diagnose` subcommand. This particular command is helpful when trying to visualize the layers of kitchen configuration and troubleshoot.
+For more detailed help on a given subcommand, add it to end of the `help` subcommand. Let's take a look at the useful `kitchen diagnose` subcommand. This particular command is helpful when trying to visualize the layers of Test Kitchen configuration and troubleshoot.
 
 ~~~
 $ kitchen help diagnose
@@ -44,7 +44,7 @@ Options:
                                                # Default: true
       [--all], [--no-all]                      # Include all diagnostics
   -l, [--log-level=LOG_LEVEL]                  # Set the log level (debug, info, warn, error, fatal)
-      [--log-overwrite], [--no-log-overwrite]  # Set to false to prevent log overwriting each time Kitchen runs
+      [--log-overwrite], [--no-log-overwrite]  # Set to false to prevent log overwriting each time Test Kitchen runs
       [--color], [--no-color]                  # Toggle color output for STDOUT logger
   -t, [--test-base-path=TEST_BASE_PATH]        # Set the base path of the tests
 
