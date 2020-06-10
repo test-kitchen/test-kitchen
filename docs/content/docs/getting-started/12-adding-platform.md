@@ -7,7 +7,7 @@ menu:
     weight: 120
 ---
 
-Now that we have Ubuntu working, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `.kitchen.yml` in your editor and the `centos-7` line to your platforms list so that it resembles:
+Now that we have Ubuntu working, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and the `centos-8` line to your platforms list so that it resembles:
 
 ~~~
 ---
@@ -21,13 +21,11 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-16.04
-  - name: centos-7
+  - name: ubuntu-20.04
+  - name: centos-8
 
 suites:
   - name: default
-    run_list:
-      - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
         - test/integration/default
@@ -39,8 +37,8 @@ Now let's check the status of our instances:
 ~~~
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 We're going to use two shortcuts in the next command:
@@ -48,38 +46,30 @@ We're going to use two shortcuts in the next command:
 * Each instance has a simple state machine that tracks where it is in its lifecycle. Given its current state and the desired state, the instance is smart enough to run all actions in between current and desired.
 * Any `kitchen` subcommand that takes an instance name as an argument can take a Ruby regular expression that will be used to glob a list of instances together. This means that `kitchen test ubuntu` would run the **test** action on all instances that had `ubuntu` in their name. Note that the **list** subcommand also takes the regex-globbing argument so feel free to experiment there.
 
-In our next example we'll select the `default-centos-7` instance with simply `7` and will take it from uncreated to verified in one command.
+In our next example we'll select the `default-centos-8` instance with simply `8` and will take it from uncreated to verified in one command.
 
 Let's see how CentOS runs our cookbook:
 
 ~~~
-$ kitchen verify 7
------> Starting Test Kitchen (v1.23.2)
------> Creating <default-centos-7>...
+$ kitchen verify 8
+-----> Starting Test Kitchen (v2.5.1)
+-----> Creating <default-centos-8>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Box 'bento/centos-7' could not be found. Attempting to find and install...
-           default: Box Provider: virtualbox
-           default: Box Version: >= 0
-       ==> default: Loading metadata for box 'bento/centos-7'
-           default: URL: https://vagrantcloud.com/bento/centos-7
-       ==> default: Adding box 'bento/centos-7' (v201808.24.0) for provider: virtualbox
-           default: Downloading: https://vagrantcloud.com/bento/boxes/centos-7/versions/201808.24.0/providers/virtualbox.box
-==> default: Successfully added box 'bento/centos-7' (v201808.24.0) for 'virtualbox'!
-       ==> default: Importing base box 'bento/centos-7'...
+       ==> default: Importing base box 'bento/centos-8'...
 ==> default: Matching MAC address for NAT networking...
-       ==> default: Checking if box 'bento/centos-7' is up to date...
-       ==> default: Setting the name of the VM: default-centos-7_default_1537639719415_97528
+       ==> default: Checking if box 'bento/centos-8' version '202005.21.0' is up to date...
+       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-centos-8-6e8b4f65-b069-4529-9b0a-ad936dc45032
        ==> default: Clearing any previously set network interfaces...
        ==> default: Preparing network interfaces based on configuration...
            default: Adapter 1: nat
        ==> default: Forwarding ports...
            default: 22 (guest) => 2222 (host) (adapter 1)
+       ==> default: Running 'pre-boot' VM customizations...
        ==> default: Booting VM...
        ==> default: Waiting for machine to boot. This may take a few minutes...
            default: SSH address: 127.0.0.1:2222
            default: SSH username: vagrant
            default: SSH auth method: private key
-           default: Warning: Connection reset. Retrying...
            default:
            default: Vagrant insecure key detected. Vagrant will automatically replace
            default: this with a newly generated keypair for better security.
@@ -91,38 +81,48 @@ $ kitchen verify 7
        ==> default: Checking for guest additions in VM...
        ==> default: Setting hostname...
        ==> default: Mounting shared folders...
-           default: /tmp/omnibus/cache => /Users/cheeseplus/.kitchen/cache
+           default: /tmp/omnibus/cache => /Users/tsmith/.kitchen/cache
        ==> default: Machine not provisioned because `--no-provision` is specified.
        [SSH] Established
-       Vagrant instance <default-centos-7> created.
-       Finished creating <default-centos-7> (1m33.52s).
------> Converging <default-centos-7>...
+       Vagrant instance <default-centos-8> created.
+       Finished creating <default-centos-8> (0m58.00s).
+-----> Converging <default-centos-8>...
        Preparing files for transfer
+       Installing cookbooks for Policyfile /Users/tsmith/git_cookbook/Policyfile.rb using `chef install`
+       Installing cookbooks from lock
+       Installing git_cookbook 0.1.0
        Preparing dna.json
-       Resolving cookbook dependencies with Berkshelf 7.0.6...
+       Exporting cookbook dependencies from Policyfile /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww...
+       Exported policy 'git_cookbook' to /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww
+
+       To converge this system with the exported policy, run:
+         cd /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww
+         chef-client -z
        Removing non-cookbook files before transfer
        Preparing validation.pem
        Preparing client.rb
------> Installing Chef (install only if missing)
+-----> Installing Chef install only if missing package
        Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
        Trying wget...
        Download complete.
-       el 7 x86_64
+       el 8 x86_64
        Getting information for chef stable  for el...
-       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=7&m=x86_64
-         to file /tmp/install.sh.3219/metadata.txt
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=8&m=x86_64
+         to file /tmp/install.sh.3312/metadata.txt
        trying wget...
-       sha1     47d9cc239e87a6f4eb3b7d15de6bb68aa66f993f
-       sha256   43e9a1ebe8aec723bf4e8503530348d2121fc6ee5a3b035ac4daf87f1712f5b4
-       url      https://packages.chef.io/files/stable/chef/14.5.27/el/7/chef-14.5.27-1.el7.x86_64.rpm
-       version  14.5.27
+       sha1	599b3294c243e362ca77fb89a723c42fc29dae68
+       sha256	ccf3b233b2e971a9fde360b6c9a3536ad31369c6c0c256b1f7619650c03695ab
+       url	https://packages.chef.io/files/stable/chef/16.1.16/el/8/chef-16.1.16-1.el7.x86_64.rpm
+       version	16.1.16
        downloaded metadata file looks valid...
-       /tmp/omnibus/cache/chef-14.5.27-1.el7.x86_64.rpm exists
+       downloading https://packages.chef.io/files/stable/chef/16.1.16/el/8/chef-16.1.16-1.el7.x86_64.rpm
+         to file /tmp/omnibus/cache/chef-16.1.16-1.el7.x86_64.rpm
+       trying wget...
        Comparing checksum with sha256sum...
 
        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-       You are installing an omnibus package without a version pin.  If you are installing
+       You are installing a package without a version pin.  If you are installing
        on production servers via an automated process this is DANGEROUS and you will
        be upgraded without warning on new releases, even to new major releases.
        Letting the version float is only appropriate in desktop, test, development or
@@ -132,72 +132,77 @@ $ kitchen verify 7
 
        Installing chef
        installing with rpm...
-       warning: /tmp/omnibus/cache/chef-14.5.27-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       warning: /tmp/omnibus/cache/chef-16.1.16-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       Verifying...                          ################################# [100%]
        Preparing...                          ################################# [100%]
        Updating / installing...
-          1:chef-14.5.27-1.el7               ################################# [100%]
-       Thank you for installing Chef!
-       Transferring files to <default-centos-7>
-       Starting Chef Client, version 14.5.27
-       Creating a new client identity for default-centos-7 using the validator key.
-       resolving cookbooks for run list: ["git_cookbook::default"]
+          1:chef-16.1.16-1.el7               ################################# [100%]
+       Thank you for installing Chef Infra Client! For help getting started visit https://learn.chef.io
+       Transferring files to <default-centos-8>
+       +---------------------------------------------+
+       ✔ 2 product licenses accepted.
+       +---------------------------------------------+
+       Starting Chef Infra Client, version 16.1.16
+       Creating a new client identity for default-centos-8 using the validator key.
+       Using policy 'git_cookbook' at revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8'
+       resolving cookbooks for run list: ["git_cookbook::default@0.1.0 (4def6b4)"]
        Synchronizing Cookbooks:
          - git_cookbook (0.1.0)
        Installing Cookbook Gems:
        Compiling Cookbooks...
        Converging 1 resources
        Recipe: git_cookbook::default
-         * yum_package[git] action install
-           - install version 0:1.8.3.1-14.el7_5.x86_64 of package git
+         * dnf_package[git] action install
+           - install version 0:2.18.2-2.el8_1.x86_64 of package git
 
        Running handlers:
        Running handlers complete
-       Chef Client finished, 1/1 resources updated in 14 seconds
-       Downloading files from <default-centos-7>
-       Finished converging <default-centos-7> (0m35.28s).
------> Setting up <default-centos-7>...
-       Finished setting up <default-centos-7> (0m0.00s).
------> Verifying <default-centos-7>...
-       Loaded tests from {:path=>".Users.cheeseplus.focus.git_cookbook.test.integration.default"}
+       Chef Infra Client finished, 1/1 resources updated in 35 seconds
+       Downloading files from <default-centos-8>
+       Finished converging <default-centos-8> (0m53.28s).
+-----> Setting up <default-centos-8>...
+       Finished setting up <default-centos-8> (0m0.00s).
+-----> Verifying <default-centos-8>...
+       Loaded tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"}
 
-Profile: tests from {:path=>"/Users/cheeseplus/focus/git_cookbook/test/integration/default"} (tests from {:path=>".Users.cheeseplus.focus.git_cookbook.test.integration.default"})
+Profile: tests from {:path=>"/Users/tsmith/git_cookbook/test/integration/default"} (tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"})
 Version: (not specified)
 Target:  ssh://vagrant@127.0.0.1:2222
 
   System Package git
-     ✔  should be installed
+     ✔  is expected to be installed
 
 Test Summary: 1 successful, 0 failures, 0 skipped
-       Finished verifying <default-centos-7> (0m0.65s).
------> Test Kitchen is finished. (2m12.04s)
+       Finished verifying <default-centos-8> (0m0.80s).
+-----> Test Kitchen is finished. (1m54.59s)
 ~~~
 
-Nice! We've verified that our cookbook works on Ubuntu 16.04 and CentOS 7. Since the CentOS instance is no longer needed, let's destroy it for now:
+Nice! We've verified that our cookbook works on Ubuntu 20.04 and CentOS 8. Since the CentOS instance is no longer needed, let's destroy it for now:
 
 ~~~
 $ kitchen destroy
------> Starting Test Kitchen (v1.23.2)
------> Destroying <default-ubuntu-1604>...
-       Finished destroying <default-ubuntu-1604> (0m0.00s).
------> Destroying <default-centos-7>...
+-----> Starting Test Kitchen (v2.5.1)
+-----> Destroying <default-ubuntu-2004>...
+       Finished destroying <default-ubuntu-2004> (0m0.00s).
+-----> Destroying <default-centos-8>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-centos-7> destroyed.
-       Finished destroying <default-centos-7> (0m5.89s).
------> Test Kitchen is finished. (0m8.62s)
+       Vagrant instance <default-centos-8> destroyed.
+       Finished destroying <default-centos-8> (0m7.11s).
+-----> Test Kitchen is finished. (0m8.76s)
 ~~~
 
-Interesting. Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
+Interesting. Test Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
 
-> **Any `kitchen` subcommand without an instance argument will apply to all instances.**
+**Any `kitchen` subcommand without an instance argument will apply to all instances.**
 
 Let's make sure everything has been destroyed:
 
 ~~~
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-1604  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-7     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 ~~~
 
 <div class="sidebar--footer">
