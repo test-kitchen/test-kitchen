@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [2.5.2](https://github.com/test-kitchen/test-kitchen/tree/v2.5.2) (2020-06-11)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.1...v2.5.2)
+
+- Update thor requirement from ~> 0.19 to >= 0.19, < 2.0 [#1608](https://github.com/test-kitchen/test-kitchen/pull/1608)([dependabot-preview](https://github.com/dependabot-preview))
+
 ## [2.5.1](https://github.com/test-kitchen/test-kitchen/tree/v2.5.1) (2020-05-16)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.0...v2.5.1)
 
