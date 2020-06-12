@@ -6,7 +6,7 @@ menu:
     weight: 35
 ---
 
-Test Kitchen has support for enduring reboots initiated by a Chef provisioner.
+Test Kitchen has support for enduring reboots initiated by a Chef Infra provisioner.
 
 ```
 provisioner:
