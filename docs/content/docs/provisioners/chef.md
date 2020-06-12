@@ -1,5 +1,5 @@
 ---
-title: Chef
+title: Chef Infra
 slug: chef
 menu:
   docs:
@@ -7,7 +7,7 @@ menu:
     weight: 5
 ---
 
-Test-kitchen includes two provisioners for Chef, `chef_solo` and `chef_zero`, which support nearly identical options.
+Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_zero`, which support nearly identical options.
 
 ```
 ---
@@ -19,8 +19,8 @@ provisioner:
   encrypted_data_bag_secret_key_path: test/secret_key # Path to secret file
   nodes_path: test/nodes # Path to directory containing nodes
   roles_path: test/roles # Path to directory containing roles
-  profile_ruby: false # true enables chef's Ruby profiling
-  deprecations_as_errors: false # true configures chef to exception on deprecation warnings
+  profile_ruby: false # true enables Chef Infra's Ruby profiling
+  deprecations_as_errors: false # true configures Chef Infra to raise exceptions on deprecation warnings
   client_rb: # use solo_rb when chef_solo is used
     environment: kitchen # requires a corresponding file in environments_path
     silence_deprecation_warnings: # true for all or an array of deprecations to silence
@@ -35,7 +35,7 @@ provisioner:
   checksum: <SHA256> # used in conjunction with download_url to validate
 
 platforms:
-  - name: ubuntu-16.04
+  - name: ubuntu-20.04
     attributes:
       cookbook_a:
         attr_b: "value"
