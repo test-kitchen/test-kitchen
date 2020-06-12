@@ -1,6 +1,6 @@
 Documentation for Test Kitchen.
 
-The Getting Started guide is written in [Markdown][markdown] and rendored using [Hugo][hugo].
+The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendored using [Hugo](https://gohugo.io).
 
 To install Hugo run:
 
