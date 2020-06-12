@@ -35,7 +35,7 @@ platforms:
   # Drivers may support defaults that automatically
   # map certain names to an image for the given driver
   - name: ubuntu-16.04
-  - name: centos-7
+  - name: centos-8
 
 # Enumerate suites
 # At least 1 suite is **required**

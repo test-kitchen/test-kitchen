@@ -25,7 +25,7 @@ You can also configure hooks on a single platform or suite:
 
 ```
 platforms:
-- name: ubuntu-18.04
+- name: ubuntu-20.04
   lifecycle:
     pre_converge:
     - remote: apt update

@@ -31,7 +31,7 @@
 #
 # platforms:
 #   - name: ubuntu-16.04
-#   - name: centos-7
+#   - name: centos-8
 #
 # suites:
 #   - name: default
