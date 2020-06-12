@@ -56,7 +56,7 @@ server-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Created      Kitc
 
 Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` sub-commands.
 
-Test Kitchen fails because we've setup our `server` suite to run a Policyfile named run list of `server`, but no named run list exists in our Policyfile and we haven't created the `server` recipe in our Git cookbook. Let's go fix our Policyfile and create our recipe.
+Test Kitchen fails because we've set up our `server` suite to run a Policyfile named run list of `server`, but no named run list exists in our Policyfile and we haven't created the `server` recipe in our Git cookbook. Let's go fix our Policyfile and create our recipe.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/adding-recipe">Next - Adding a Recipe</a>
