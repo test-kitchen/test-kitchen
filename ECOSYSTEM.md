@@ -1,8 +1,8 @@
 # Community and Ecosystem plugins
 
-Here is collection of possible extensions to the base test-kitchen application:
+Here is collection of plugins for extending Test Kitchen functionality:
 
-The following are in the test-kitchen organization
+The following are in the test-kitchen GitHub organization
 
 [kitchen-ec2][ec2] | [kitchen-digitalocean][do] | [kitchen-openstack][open] | [kitchen-rackspace][rs] | [kitchen-google][google] | [kitchen-vagrant][vagrant]
 ---- | ---- | ---- | ---- | ---- | ----
@@ -14,7 +14,7 @@ The following are in the test-kitchen organization
 [![Status](https://travis-ci.org/test-kitchen/kitchen-dsc.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dsc)| [![Status](https://travis-ci.org/test-kitchen/kitchen-pester.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-pester) | [![Status](https://travis-ci.org/test-kitchen/kitchen-joyent.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-joyent) | [![Status](https://travis-ci.org/test-kitchen/kitchen-opennebula.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-opennebula) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-hyperv.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-hyperv) | [![Status](https://travis-ci.org/test-kitchen/kitchen-cloudstack.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-cloudstack)
 [![Gem Version](https://badge.fury.io/rb/kitchen-dsc.svg)](http://badge.fury.io/rb/kitchen-dsc) | [![Gem Version](https://badge.fury.io/rb/kitchen-pester.svg)](http://badge.fury.io/rb/kitchen-pester) | [![Gem Version](https://badge.fury.io/rb/kitchen-joyent.svg)](http://badge.fury.io/rb/kitchen-joyent) | [![Gem Version](https://badge.fury.io/rb/kitchen-opennebula.svg)](http://badge.fury.io/rb/kitchen-opennebula) | [![Gem Version](https://badge.fury.io/rb/kitchen-hyperv.svg)](http://badge.fury.io/rb/kitchen-hyperv) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudstack.svg)](http://badge.fury.io/rb/kitchen-cloudstack)
 
-The following are written by the [chef][chef] company.
+The following are written by the [Chef Software][chef].
 
 [kitchen-appbundle-updater][appbundle-updater] | [kitchen-inspec][inspec]
 ---- | ---- |
@@ -30,7 +30,7 @@ The following are community driven plugins.
 
 [kitchen-sync][sync] | [kitchen-ansible][ansible] | [kitchen-puppet][puppet] | [kitchen-salt][salt] | [kitchen-dokken][dokken] | [kitchen-lxc][lxc]
 ---- | ---- | ---- | ---- | ---- | ----
-[![Status](https://travis-ci.org/coderanger/kitchen-sync.svg?branch=master)](https://travis-ci.org/coderanger/kitchen-sync)| [![Status](https://travis-ci.org/neillturner/kitchen-ansible.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-ansible) | [![Status](https://travis-ci.org/neillturner/kitchen-puppet.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-puppet) | [![Status](https://travis-ci.org/kitchen-salt/kitchen-salt.svg?branch=master)](https://travis-ci.org/kitchen-salt/kitchen-salt) |  [![Status](https://travis-ci.org/someara/kitchen-dokken.svg?branch=master)](https://travis-ci.org/someara/kitchen-dokken) | [![Status](https://travis-ci.org/chrisroberts/kitchen-lxc.svg?branch=master)](https://travis-ci.org/chrisroberts/kitchen-lxc)
+[![Status](https://travis-ci.org/coderanger/kitchen-sync.svg?branch=master)](https://travis-ci.org/coderanger/kitchen-sync)| [![Status](https://travis-ci.org/neillturner/kitchen-ansible.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-ansible) | [![Status](https://travis-ci.org/neillturner/kitchen-puppet.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-puppet) | [![Status](https://travis-ci.org/kitchen-salt/kitchen-salt.svg?branch=master)](https://travis-ci.org/kitchen-salt/kitchen-salt) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-dokken.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dokken) | [![Status](https://travis-ci.org/chrisroberts/kitchen-lxc.svg?branch=master)](https://travis-ci.org/chrisroberts/kitchen-lxc)
 [![Gem Version](https://badge.fury.io/rb/kitchen-sync.svg)](http://badge.fury.io/rb/kitchen-sync) | [![Gem Version](https://badge.fury.io/rb/kitchen-ansible.svg)](http://badge.fury.io/rb/kitchen-ansible) | [![Gem Version](https://badge.fury.io/rb/kitchen-puppet.svg)](http://badge.fury.io/rb/kitchen-puppet) | [![Gem Version](https://badge.fury.io/rb/kitchen-salt.svg)](http://badge.fury.io/rb/kitchen-salt) | [![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-lxc.svg)](http://badge.fury.io/rb/kitchen-lxc)
 
 [kitchen-nodes][nodes] | [kitchen-zcloudjp][zcloudjp] | [kitchen-bluebox][bluebox] | [kitchen-softlayer][softlayer] | [kitchen-linode][linode] | [kitchen-docker][docker]
@@ -43,10 +43,10 @@ The following are community driven plugins.
 [![Status](https://travis-ci.org/esmil/kitchen-qemu.svg?branch=master)](https://travis-ci.org/esmil/kitchen-qemu)| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |  [![Status](https://travis-ci.org/chmod666org/kitchen-powervc.svg?branch=master)](https://travis-ci.org/chmod666org/kitchen-powervc) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
 [![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
 
-[kitchen-azurerm][azurerm] | [kitchen-sparkleformation][sparkleformation] 
----- | ---- 
-[![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) 
-[![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) |  [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) 
+[kitchen-azurerm][azurerm] | [kitchen-sparkleformation][sparkleformation]
+---- | ----
+[![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation)
+[![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) |  [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
 
 [chefpartners]: https://github.com/chef-partners/
@@ -72,7 +72,7 @@ The following are community driven plugins.
 [ansible]: https://github.com/neillturner/kitchen-ansible
 [puppet]: https://github.com/neillturner/kitchen-puppet
 [salt]: https://github.com/kitchen-salt/kitchen-salt
-[dokken]: https://github.com/someara/kitchen-dokken
+[dokken]: https://github.com/test-kitchen/kitchen-dokken
 [lxc]: https://github.com/chrisroberts/kitchen-lxc
 [nodes]: https://github.com/mwrock/kitchen-nodes
 [zcloudjp]: https://github.com/higanworks/kitchen-zcloudjp
