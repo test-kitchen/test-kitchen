@@ -8,7 +8,7 @@ menu:
 
 There are a few basic ways of dynamically configuring Kitchen:
 
-* A local configuration will be looked for in `kitchen.local.yml` which could be used for development purposes.  This is a file that is not typically checked into version control.
+* A local configuration will be looked for in `kitchen.local.yml` which could be used for development purposes. This is a file that is not typically checked into version control.
 * A global configuration file will also be looked for in `$HOME/.kitchen/config.yml` to set preferred defaults for all your projects.
 * Each YAML file can contain ERB fragments, which you could use for selecting drivers, etc. based on which platform you're currently running, or based off environment variables.
 * Finally, Kitchen also has several environment variables where you can set a path to a `kitchen.yml` or `$HOME/.kitchen/config.yml` file. This can be useful if you wish to use Kitchen with a continuous integration (CI) system.
@@ -43,7 +43,7 @@ driver:
 Keep in mind, this assumes you have an OpenStack deployment setup and ready to use. This is only an example so to illustrate using environment variables via ERB snippets in the configuration file.
 
 Another handy use of the ERB fragments is to dynamically override the log_level of
-the provisioner.  Since Kitchen 1.7.0 the log level for the provisioner is now independent of the Kitchen log level.  Using the following snippet, allows the environment to override the provisioner log level without modifying the config file.:
+the provisioner. Since Kitchen 1.7.0 the log level for the provisioner is now independent of the Kitchen log level. Using the following snippet, allows the environment to override the provisioner log level without modifying the config file.:
 
 ~~~
 ---
