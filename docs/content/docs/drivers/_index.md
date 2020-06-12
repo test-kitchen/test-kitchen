@@ -12,7 +12,7 @@ Chef Workstation includes:
 
 * [kitchen-azurerm](https://github.com/test-kitchen/kitchen-azurerm)
 * [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean)
-* [kitchen-dokken](https://github.com/test-kitchen/kitchen-dokken)
+* [kitchen-dokken](https://github.com/test-kitchen/kitchen-dokken) (Chef Infra specific Docker driver)
 * [kitchen-ec2](https://github.com/test-kitchen/kitchen-ec2)
 * [kitchen-google](https://github.com/test-kitchen/kitchen-google)
 * [kitchen-hyperv](https://github.com/test-kitchen/kitchen-hyperv)
