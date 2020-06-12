@@ -8,7 +8,9 @@ pygmentsCodeFences = true
 enable_search = true  # set to true to show search bar
 
 [outputs]
-home = [ "HTML", "RSS", "JSON"]
+home = [ "HTML", "RSS" ]
+
+[[menu.content]]
 
 [[menu.docs]]
 identifier = "getting_started"
