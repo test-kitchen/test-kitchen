@@ -2,7 +2,7 @@
 
 This release process applies to all Test Kitchen projects, but each project may have additional requirements.
 
-1. Perform a Github diff between master and the last released version. Determine whether included PRs justify a patch, minor or major version release.
+1. Perform a GitHub diff between master and the last released version. Determine whether included PRs justify a patch, minor or major version release.
 2. Check out the master branch of the project being prepared for release.
 3. Branch into a release-branch of the form `150_release_prep`.
 4. Modify the `version.rb` file to specify the version for releasing.
