@@ -14,7 +14,7 @@ As of test-kitchen 1.21.0, we now prefer <code>kitchen.yml</code> over <code>.ki
 
 Let's turn our attention to the `kitchen.yml` file for a minute. While Chef Workstaton may have created the initial file automatically, it's expected that you will read and edit this file. After all, you know what you want to test... right?
 
-For the moment let's say we only care about running our Chef cookbook on Ubuntu 16.04 with the latest Chef version. In that case, we can edit the `kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
+For the moment let's say we only care about running our Chef cookbook on Ubuntu 20.04 with the latest Chef Infra Client release. In that case, we can edit the `kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
 
 ~~~
 ---
@@ -28,12 +28,10 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-16.04
+  - name: ubuntu-20.04
 
 suites:
   - name: default
-    run_list:
-      - recipe[git_cookbook::default]
     verifier:
       inspec_tests:
         - test/integration/default

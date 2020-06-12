@@ -1,27 +1,16 @@
-Documentation for KitchenCI.
+Documentation for Test Kitchen.
 
-## Overview
+The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendored using [Hugo](https://gohugo.io).
 
-To preview the documentation in your browser run the following:
+To install Hugo run:
 
-~~~ shell
-bundle install
-bundle exec middleman server
-~~~
-
-While the Getting Started guide is written in primarily [Markdown][markdown] a few pages use [Slim](http://slim-lang.com/), an HTML templating engine for Ruby.
-
-Then go view the docs at [http://localhost:4567](http://localhost:4567). Edits to the documentation source files should cause the `middleman` server to reload so you can see your changes update live.
+```
+brew install hugo
+```
 
 ## Hosting
 
-All documentation will be hosted on the official Kitchen website (http://kitchen.ci), which is a static site built with [Middleman][middleman].
-
-The important parts to familiarize yourself with for contributing to the KitchenCI documentation are the markdown renderer and syntax highlighting engines used to power http://kitchen.ci.
-
-Markdown rendering is handled by [kramdown][kramdown]. It would be worth your while to briefly review the kramdown documentation as there are some subtle differences (as well as a number of helpful extensions) that deviate from the Markdown standard.
-
-Syntax Highlighting is handled by [middleman-syntax][syntax], which uses [Rouge][rouge], which is a ruby-based syntax highlighting engine that is compatible with [Pygments][pygments] templates and supports things like "fenced code blocks" and language-specific syntax highlighting from Markdown.
+All documentation will be hosted on the official Kitchen website (http://kitchen.ci), which is a static site stored in an S3 bucket and fronted by CloudFront.
 
 ## Style Guide
 

@@ -32,7 +32,7 @@ Tell us which operating system distribution and version Test Kitchen is running 
 
 ## Replication Case
 
-Tell us what steps to take to replicate your problem.  See [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve)
+Tell us what steps to take to replicate your problem. See [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve)
 for information on how to create a good replication case.
 
 ## Kitchen Output
@@ -41,7 +41,7 @@ The relevant output of the Test Kitchen run or a link to a gist of the entire ru
 
 The debug output (kitchen -l debug) may be useful, but please link to a gist, or truncate it.
 
-Please do not paste the full run out put here.  If the full output would be useful, link to it in a gist.
+Please do not paste the full run out put here. If the full output would be useful, link to it in a gist.
 
 ```ruby
 # Copy-paste your results here
@@ -49,7 +49,7 @@ Please do not paste the full run out put here.  If the full output would be usef
 
 ## Kitchen Diagnose
 
-Please include the output of `kitchen diagnose --all` or `kitchen diagnose --loader` (if the first failed).  This can be helpful in troubleshooting, so please include it in a gist.
+Please include the output of `kitchen diagnose --all` or `kitchen diagnose --loader` (if the first failed). This can be helpful in troubleshooting, so please include it in a gist.
 
 ## NOTE
 
