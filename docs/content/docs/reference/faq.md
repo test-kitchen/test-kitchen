@@ -30,7 +30,7 @@ is working as expected. There is a strong chance that the flavors, or
 image names are different per driver, so when migrating between drivers be prepared
 to change these at the very least.
 
-Certain drivers, like `kitchen-dokken` [recommend](https://github.com/someara/kitchen-dokken#usage) setting `KITCHEN_LOCAL_YAML` environment variable to ensure these configs are used when there are multiple in a directory.
+Certain drivers, like `kitchen-dokken` [recommend](https://github.com/test-kitchen/kitchen-dokken#usage) setting `KITCHEN_LOCAL_YAML` environment variable to ensure these configs are used when there are multiple in a directory.
 
 ##### How do I update just test-kitchen if I'm using Chef Workstation?
 
