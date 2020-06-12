@@ -6,8 +6,9 @@ menu:
     weight: 15
 ---
 
-Full example reference can be found [here](https://github.com/test-kitchen/kitchen-vagrant/blob/master/example/kitchen.vagrant.yml)
+kitchen-vagrant is a Test Kitchen driver for HashiCorp Vagrant. A full example reference can be found [here](https://github.com/test-kitchen/kitchen-vagrant/blob/master/example/kitchen.vagrant.yml)
 
+Example **kitchen.yml**:
 
 ```
 ---
@@ -21,8 +22,8 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-18.04
-  - name: centos-7
+  - name: ubuntu-20.04
+  - name: centos-8
   - name: openbsd-5.6
     driver:
       box: openbsd-5.6
