@@ -17,7 +17,7 @@ if it does:
 
 ~~~
 ~$ gem install kitchen-openstack # for instance
-~$ vi cookbooks/demo/.kitchen.yml # wherever your .kitchen.yml is for your cookbook
+~$ vi cookbooks/demo/kitchen.yml # wherever your kitchen.yml is for your cookbook
 ~~~
 
 Examples:
@@ -25,7 +25,7 @@ Examples:
 - [kitchen-openstack](https://github.com/test-kitchen/kitchen-openstack#minimum-configuration)
 - [kitchen-digitalocean](https://github.com/test-kitchen/kitchen-digitalocean#installation-and-setup)
 
-Edit the `.kitchen.yml` as appropriate and run `kitchen list` to verify that everything
+Edit the `kitchen.yml` as appropriate and run `kitchen list` to verify that everything
 is working as expected. There is a strong chance that the flavors, or
 image names are different per driver, so when migrating between drivers be prepared
 to change these at the very least.
@@ -38,7 +38,7 @@ Due to the nature of how the Chef Workstation is built, it is not possible to up
 
 ##### How do I change the user to access the instance?
 
-Add/edit the `transport` section in `.kitchen.yml`, for instance:
+Add/edit the `transport` section in `kitchen.yml`, for instance:
 
 ~~~
 transport:
