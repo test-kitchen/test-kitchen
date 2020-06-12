@@ -2,7 +2,7 @@ Documentation for Test Kitchen.
 
 The Getting Started guide is written in [Markdown][markdown] and rendored using [Hugo][hugo].
 
-To install hugo run:
+To install Hugo run:
 
 ```
 brew install hugo
