@@ -1,5 +1,5 @@
 ---
-title: Vagrant
+title: Hashicorp Vagrant
 menu:
   docs:
     parent: drivers
