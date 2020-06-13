@@ -1,16 +1,22 @@
 Documentation for Test Kitchen.
 
-The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendored using [Hugo](https://gohugo.io).
-
-To install Hugo run:
-
-```
-brew install hugo
-```
+The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendered using [Hugo](https://gohugo.io).
 
 ## Hosting
 
-All documentation will be hosted on the official Kitchen website (http://kitchen.ci), which is a static site stored in an S3 bucket and fronted by CloudFront.
+All documentation will be hosted on the official Kitchen website <http://kitchen.ci>, which is a static site stored in an S3 bucket and fronted by CloudFront.
+
+## Running Locally
+
+### Install Hugo
+
+- On macOS run: `brew install hugo`
+- On Windows run: `choco install hugo`
+- On Ubuntu run: `apt install -y build-essential; snap install hugo --channel=extended`
+
+### Run Hugo
+
+Run `hugo serve` and browse the the URL presented
 
 ## Style Guide
 
@@ -18,7 +24,7 @@ There are four elements that may be used for "styling" the docs content: in-line
 
 ### In-line Code Highlighting
 
-To highlight `some code` inline with other content, just "quote" the text using backtick characters (`). See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#code-spans) for more details.
+To highlight `some code` inline with other content, just "quote" the text using backtick characters (`).
 
 ### Fenced Code Blocks
 
