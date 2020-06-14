@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Salim Afiune (<salim@afiunemaya.com.mx>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "plugin"
+require_relative 'plugin'
 
 module Kitchen
   # A transport is responsible for the communication with an instance,
@@ -26,7 +27,7 @@ module Kitchen
   # @author Salim Afiune <salim@afiunemaya.com.mx>
   module Transport
     # Default transport to use
-    DEFAULT_PLUGIN = "ssh".freeze
+    DEFAULT_PLUGIN = 'ssh'
 
     # Returns an instance of a transport given a plugin type string.
     #

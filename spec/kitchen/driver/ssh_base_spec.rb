@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen"
-require "kitchen/transport/ssh"
-require "kitchen/verifier/busser"
+require 'kitchen'
+require 'kitchen/transport/ssh'
+require 'kitchen/verifier/busser'
 
 module Kitchen
   module Driver
@@ -57,45 +58,45 @@ describe Kitchen::Driver::SSHBase do
   let(:state)         { {} }
 
   let(:verifier) do
-    v = mock("busser")
+    v = mock('busser')
     v.responds_like_instance_of(Kitchen::Verifier::Busser)
-    v.stubs(:install_command).returns("install")
-    v.stubs(:init_command).returns("init")
-    v.stubs(:prepare_command).returns("prepare")
-    v.stubs(:run_command).returns("run")
+    v.stubs(:install_command).returns('install')
+    v.stubs(:init_command).returns('init')
+    v.stubs(:prepare_command).returns('prepare')
+    v.stubs(:run_command).returns('run')
     v.stubs(:create_sandbox).returns(true)
     v.stubs(:cleanup_sandbox).returns(true)
-    v.stubs(:sandbox_path).returns("/tmp/sandbox")
-    v.stubs(:[]).with(:root_path).returns("/tmp/verifier")
+    v.stubs(:sandbox_path).returns('/tmp/sandbox')
+    v.stubs(:[]).with(:root_path).returns('/tmp/verifier')
     v
   end
 
   let(:provisioner) do
     stub(
-      install_command: "install",
-      init_command: "init",
-      prepare_command: "prepare",
-      run_command: "run",
+      install_command: 'install',
+      init_command: 'init',
+      prepare_command: 'prepare',
+      run_command: 'run',
       create_sandbox: true,
       cleanup_sandbox: true,
-      sandbox_path: "/tmp/sandbox"
+      sandbox_path: '/tmp/sandbox'
     )
   end
 
   let(:transport) do
-    t = mock("transport")
+    t = mock('transport')
     t.responds_like_instance_of(Kitchen::Transport::Base)
     t
   end
 
   let(:instance) do
     stub(
-      name: "coolbeans",
+      name: 'coolbeans',
       logger: logger,
       verifier: verifier,
       provisioner: provisioner,
       transport: transport,
-      to_str: "instance"
+      to_str: 'instance'
     )
   end
 
@@ -103,68 +104,68 @@ describe Kitchen::Driver::SSHBase do
     Kitchen::Driver::SSHBase.new(config).finalize_config!(instance)
   end
 
-  it "plugin_version is not set" do
+  it 'plugin_version is not set' do
     driver.diagnose_plugin[:version].must_be_nil
   end
 
-  describe "configuration" do
-    it ":sudo defaults to true" do
+  describe 'configuration' do
+    it ':sudo defaults to true' do
       driver[:sudo].must_equal true
     end
 
-    it ":port defaults to 22" do
+    it ':port defaults to 22' do
       driver[:port].must_equal 22
     end
   end
 
-  it "#create raises a ClientError" do
+  it '#create raises a ClientError' do
     proc { driver.create(state) }.must_raise Kitchen::ClientError
   end
 
-  it "#destroy raises a ClientError" do
+  it '#destroy raises a ClientError' do
     proc { driver.destroy(state) }.must_raise Kitchen::ClientError
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.constructs_an_ssh_connection
-    describe "constructs an SSH connection" do
-      it "with hostname set from state" do
+    describe 'constructs an SSH connection' do
+      it 'with hostname set from state' do
         transport.expects(:connection).with do |state|
-          state[:hostname].must_equal "fizzy"
+          state[:hostname].must_equal 'fizzy'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with username set from state" do
+      it 'with username set from state' do
         transport.expects(:connection).with do |state|
-          state[:username].must_equal "bork"
+          state[:username].must_equal 'bork'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :ssh_key option set from config" do
-        config[:ssh_key] = "wicked"
+      it 'with :ssh_key option set from config' do
+        config[:ssh_key] = 'wicked'
 
         transport.expects(:connection).with do |state|
-          state[:ssh_key].must_equal "wicked"
+          state[:ssh_key].must_equal 'wicked'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :ssh_key option set from state" do
-        state[:ssh_key] = "wicked"
+      it 'with :ssh_key option set from state' do
+        state[:ssh_key] = 'wicked'
 
         transport.expects(:connection).with do |state|
-          state[:ssh_key].must_equal "wicked"
+          state[:ssh_key].must_equal 'wicked'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :password option set to falsey by default" do
+      it 'with :password option set to falsey by default' do
         transport.expects(:connection).with do |state|
           state[:password].nil?
         end.returns(stub(login_command: stub))
@@ -172,27 +173,27 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :password option set if given in config" do
-        config[:password] = "psst"
+      it 'with :password option set if given in config' do
+        config[:password] = 'psst'
 
         transport.expects(:connection).with do |state|
-          state[:password].must_equal "psst"
+          state[:password].must_equal 'psst'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :password option set if given in state" do
-        state[:password] = "psst"
+      it 'with :password option set if given in state' do
+        state[:password] = 'psst'
 
         transport.expects(:connection).with do |state|
-          state[:password].must_equal "psst"
+          state[:password].must_equal 'psst'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :forward_agent option set to falsey by default" do
+      it 'with :forward_agent option set to falsey by default' do
         transport.expects(:connection).with do |state|
           state[:forward_agent].nil?
         end.returns(stub(login_command: stub))
@@ -200,27 +201,27 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :forward_agent option set if given in config" do
-        config[:forward_agent] = "yeah?"
+      it 'with :forward_agent option set if given in config' do
+        config[:forward_agent] = 'yeah?'
 
         transport.expects(:connection).with do |state|
-          state[:forward_agent].must_equal "yeah?"
+          state[:forward_agent].must_equal 'yeah?'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :forward_agent option set if given in state" do
-        state[:forward_agent] = "yeah?"
+      it 'with :forward_agent option set if given in state' do
+        state[:forward_agent] = 'yeah?'
 
         transport.expects(:connection).with do |state|
-          state[:forward_agent].must_equal "yeah?"
+          state[:forward_agent].must_equal 'yeah?'
         end.returns(stub(login_command: stub))
 
         cmd
       end
 
-      it "with :port option set to 22 by default" do
+      it 'with :port option set to 22 by default' do
         transport.expects(:connection).with do |state|
           state[:port].must_equal 22
         end.returns(stub(login_command: stub))
@@ -228,7 +229,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :port option set if customized in config" do
+      it 'with :port option set if customized in config' do
         config[:port] = 1234
 
         transport.expects(:connection).with do |state|
@@ -238,7 +239,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :port option set if customized in state" do
+      it 'with :port option set if customized in state' do
         state[:port] = 9999
 
         transport.expects(:connection).with do |state|
@@ -251,42 +252,42 @@ describe Kitchen::Driver::SSHBase do
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  describe "#login_command" do
+  describe '#login_command' do
     let(:cmd) { driver.login_command(state) }
 
     before do
-      state[:hostname] = "fizzy"
-      state[:username] = "bork"
+      state[:hostname] = 'fizzy'
+      state[:username] = 'bork'
     end
 
-    it "returns a LoginCommand" do
-      transport.stubs(:connection).returns(stub(login_command: "command"))
+    it 'returns a LoginCommand' do
+      transport.stubs(:connection).returns(stub(login_command: 'command'))
 
-      cmd.must_equal "command"
+      cmd.must_equal 'command'
     end
 
     constructs_an_ssh_connection
   end
 
-  describe "#converge" do
+  describe '#converge' do
     let(:cmd)         { driver.converge(state) }
     let(:connection)  { stub(execute: true, upload: true, download: true) }
 
     before do
-      state[:hostname] = "fizzy"
-      state[:username] = "bork"
-      provisioner.stubs(:[]).with(:root_path).returns("/rooty")
+      state[:hostname] = 'fizzy'
+      state[:username] = 'bork'
+      provisioner.stubs(:[]).with(:root_path).returns('/rooty')
       provisioner.stubs(:[]).with(:downloads).returns(
-        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
-        "/remote" => "/local"
+        ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'] => './test/fixtures',
+        '/remote' => '/local'
       )
       FakeFS.activate!
-      FileUtils.mkdir_p("/tmp")
+      FileUtils.mkdir_p('/tmp')
       @original_env = ENV.to_hash
-      ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
-                  "https_proxy" => nil, "HTTPS_PROXY" => nil,
-                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
-                  "no_proxy"    => nil, "NO_PROXY"    => nil)
+      ENV.replace('http_proxy' => nil, 'HTTP_PROXY' => nil,
+                  'https_proxy' => nil, 'HTTPS_PROXY' => nil,
+                  'ftp_proxy' => nil, 'FTP_PROXY' => nil,
+                  'no_proxy' => nil, 'NO_PROXY' => nil)
     end
 
     after do
@@ -298,201 +299,201 @@ describe Kitchen::Driver::SSHBase do
 
     constructs_an_ssh_connection
 
-    it "creates the sandbox" do
+    it 'creates the sandbox' do
       transport.stubs(:connection).yields(connection)
       provisioner.expects(:create_sandbox)
 
       cmd
     end
 
-    it "ensures that the sandbox is cleaned up" do
+    it 'ensures that the sandbox is cleaned up' do
       transport.stubs(:connection).raises
       provisioner.expects(:cleanup_sandbox)
 
       begin
         cmd
-      rescue # rubocop:disable Lint/HandleExceptions
+      rescue StandardError
       end
     end
 
-    it "invokes the provisioner commands over ssh" do
+    it 'invokes the provisioner commands over ssh' do
       transport.stubs(:connection).yields(connection)
-      order = sequence("order")
-      connection.expects(:execute).with("install").in_sequence(order)
-      connection.expects(:execute).with("init").in_sequence(order)
-      connection.expects(:execute).with("prepare").in_sequence(order)
-      connection.expects(:execute).with("run").in_sequence(order)
+      order = sequence('order')
+      connection.expects(:execute).with('install').in_sequence(order)
+      connection.expects(:execute).with('init').in_sequence(order)
+      connection.expects(:execute).with('prepare').in_sequence(order)
+      connection.expects(:execute).with('run').in_sequence(order)
 
       cmd
     end
 
-    it "invokes the #install_command with :http_proxy set in config" do
-      config[:http_proxy] = "http://proxy"
+    it 'invokes the #install_command with :http_proxy set in config' do
+      config[:http_proxy] = 'http://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env http_proxy=http://proxy install")
+      connection.expects(:execute).with('env http_proxy=http://proxy install')
 
       cmd
     end
 
     it 'invokes the #install_command with ENV["http_proxy"] set' do
-      ENV["http_proxy"] = "http://proxy"
+      ENV['http_proxy'] = 'http://proxy'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy install")
+                  .with('env http_proxy=http://proxy HTTP_PROXY=http://proxy install')
       else
-        connection.expects(:execute).with("env http_proxy=http://proxy install")
+        connection.expects(:execute).with('env http_proxy=http://proxy install')
       end
       cmd
     end
 
     it 'invokes the #install_command with ENV["http_proxy"] and ENV["no_proxy"] set' do
-      ENV["http_proxy"] = "http://proxy"
-      ENV["no_proxy"]   = "http://no"
+      ENV['http_proxy'] = 'http://proxy'
+      ENV['no_proxy']   = 'http://no'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env http_proxy=http://proxy HTTP_PROXY=http://proxy " \
-            "no_proxy=http://no NO_PROXY=http://no install")
+                  .with('env http_proxy=http://proxy HTTP_PROXY=http://proxy ' \
+            'no_proxy=http://no NO_PROXY=http://no install')
       else
-        connection.expects(:execute).with("env http_proxy=http://proxy " \
-          "no_proxy=http://no install")
+        connection.expects(:execute).with('env http_proxy=http://proxy ' \
+          'no_proxy=http://no install')
       end
       cmd
     end
 
-    it "invokes the #install_command with :https_proxy set in config" do
-      config[:https_proxy] = "https://proxy"
+    it 'invokes the #install_command with :https_proxy set in config' do
+      config[:https_proxy] = 'https://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env https_proxy=https://proxy install")
+      connection.expects(:execute).with('env https_proxy=https://proxy install')
 
       cmd
     end
 
     it 'invokes the #install_command with ENV["https_proxy"] set' do
-      ENV["https_proxy"] = "https://proxy"
+      ENV['https_proxy'] = 'https://proxy'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy install")
+                  .with('env https_proxy=https://proxy HTTPS_PROXY=https://proxy install')
       else
-        connection.expects(:execute).with("env https_proxy=https://proxy install")
+        connection.expects(:execute).with('env https_proxy=https://proxy install')
       end
       cmd
     end
 
     it 'invokes the #install_command with ENV["https_proxy"] and ENV["no_proxy"] set' do
-      ENV["https_proxy"] = "https://proxy"
-      ENV["no_proxy"]    = "https://no"
+      ENV['https_proxy'] = 'https://proxy'
+      ENV['no_proxy']    = 'https://no'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env https_proxy=https://proxy HTTPS_PROXY=https://proxy " \
-          "no_proxy=https://no NO_PROXY=https://no install")
+                  .with('env https_proxy=https://proxy HTTPS_PROXY=https://proxy ' \
+          'no_proxy=https://no NO_PROXY=https://no install')
       else
-        connection.expects(:execute).with("env https_proxy=https://proxy " \
-          "no_proxy=https://no install")
+        connection.expects(:execute).with('env https_proxy=https://proxy ' \
+          'no_proxy=https://no install')
       end
       cmd
     end
 
-    it "invokes the #install_command with :ftp_proxy set in config" do
-      config[:ftp_proxy] = "ftp://proxy"
+    it 'invokes the #install_command with :ftp_proxy set in config' do
+      config[:ftp_proxy] = 'ftp://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+      connection.expects(:execute).with('env ftp_proxy=ftp://proxy install')
 
       cmd
     end
 
     it 'invokes the #install_command with ENV["ftp_proxy"] set' do
-      ENV["ftp_proxy"] = "ftp://proxy"
+      ENV['ftp_proxy'] = 'ftp://proxy'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env ftp_proxy=ftp://proxy FTP_PROXY=ftp://proxy install")
+                  .with('env ftp_proxy=ftp://proxy FTP_PROXY=ftp://proxy install')
       else
-        connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+        connection.expects(:execute).with('env ftp_proxy=ftp://proxy install')
       end
       cmd
     end
 
     it 'invokes the #install_command with ENV["ftp_proxy"] and ENV["no_proxy"] set' do
-      ENV["ftp_proxy"]  = "ftp://proxy"
-      ENV["no_proxy"]   = "http://no"
+      ENV['ftp_proxy']  = 'ftp://proxy'
+      ENV['no_proxy']   = 'http://no'
       transport.stubs(:connection).yields(connection)
       if running_tests_on_windows?
         connection.expects(:execute)
-          .with("env ftp_proxy=ftp://proxy FTP_PROXY=http://proxy " \
-            "no_proxy=http://no NO_PROXY=http://no install")
+                  .with('env ftp_proxy=ftp://proxy FTP_PROXY=http://proxy ' \
+            'no_proxy=http://no NO_PROXY=http://no install')
       else
-        connection.expects(:execute).with("env ftp_proxy=ftp://proxy " \
-          "no_proxy=http://no install")
+        connection.expects(:execute).with('env ftp_proxy=ftp://proxy ' \
+          'no_proxy=http://no install')
       end
       cmd
     end
 
-    it "invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
-      config[:http_proxy] = "http://proxy"
-      config[:https_proxy] = "https://proxy"
-      config[:ftp_proxy] = "ftp://proxy"
+    it 'invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set' do
+      config[:http_proxy] = 'http://proxy'
+      config[:https_proxy] = 'https://proxy'
+      config[:ftp_proxy] = 'ftp://proxy'
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install"
+        'env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install'
       )
 
       cmd
     end
 
-    describe "transferring files" do
+    describe 'transferring files' do
       before do
         transport.stubs(:connection).yields(connection)
         connection.stubs(:upload)
-        FileUtils.mkdir_p "/tmp/sandbox/stuff"
+        FileUtils.mkdir_p '/tmp/sandbox/stuff'
       end
 
-      it "uploads files" do
-        connection.expects(:upload).with(["/tmp/sandbox/stuff"], "/rooty")
+      it 'uploads files' do
+        connection.expects(:upload).with(['/tmp/sandbox/stuff'], '/rooty')
 
         cmd
       end
 
-      it "logs to info" do
+      it 'logs to info' do
         cmd
 
         logged_output.string
-          .must_match(/INFO -- : Transferring files to instance$/)
+                     .must_match(/INFO -- : Transferring files to instance$/)
       end
 
-      it "logs to debug" do
+      it 'logs to debug' do
         cmd
 
         logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
       end
 
-      it "raises an ActionFailed on transfer when SshFailed is raised" do
-        connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new("dang"))
+      it 'raises an ActionFailed on transfer when SshFailed is raised' do
+        connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new('dang'))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
-    describe "downloading files" do
+    describe 'downloading files' do
       before do
         transport.stubs(:connection).yields(connection)
         connection.stubs(:download)
       end
 
-      it "downloads files" do
+      it 'downloads files' do
         connection.expects(:download).with(
-          ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
-          "./test/fixtures"
+          ['/tmp/kitchen/nodes', '/tmp/kitchen/data_bags'],
+          './test/fixtures'
         )
-        connection.expects(:download).with("/remote", "/local")
+        connection.expects(:download).with('/remote', '/local')
 
         cmd
       end
 
-      it "logs to info" do
+      it 'logs to info' do
         cmd
 
         logged_output.string.must_match(
@@ -500,7 +501,7 @@ describe Kitchen::Driver::SSHBase do
         )
       end
 
-      it "logs to debug" do
+      it 'logs to debug' do
         cmd
 
         logged_output.string.must_match(
@@ -513,114 +514,114 @@ describe Kitchen::Driver::SSHBase do
       end
     end
 
-    it "raises an ActionFailed on execute when SshFailed is raised" do
+    it 'raises an ActionFailed on execute when SshFailed is raised' do
       transport.stubs(:connection).yields(connection)
-      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
+      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new('dang'))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
-  describe "#setup" do
+  describe '#setup' do
     let(:cmd)         { driver.setup(state) }
     let(:connection)  { mock }
 
     before do
-      state[:hostname] = "fizzy"
-      state[:username] = "bork"
+      state[:hostname] = 'fizzy'
+      state[:username] = 'bork'
     end
 
     constructs_an_ssh_connection
 
-    it "invokes the Verifier#install_command over ssh" do
+    it 'invokes the Verifier#install_command over ssh' do
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("install")
+      connection.expects(:execute).with('install')
 
       cmd
     end
 
-    it "invokes the Verifier#install_command with :http_proxy set in config" do
-      config[:http_proxy] = "http://proxy"
+    it 'invokes the Verifier#install_command with :http_proxy set in config' do
+      config[:http_proxy] = 'http://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env http_proxy=http://proxy install")
+      connection.expects(:execute).with('env http_proxy=http://proxy install')
 
       cmd
     end
 
-    it "invokes the Verifier#install_command with :https_proxy set in config" do
-      config[:https_proxy] = "https://proxy"
+    it 'invokes the Verifier#install_command with :https_proxy set in config' do
+      config[:https_proxy] = 'https://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env https_proxy=https://proxy install")
+      connection.expects(:execute).with('env https_proxy=https://proxy install')
 
       cmd
     end
 
-    it "invokes the Verifier#install_command with :ftp_proxy set in config" do
-      config[:ftp_proxy] = "ftp://proxy"
+    it 'invokes the Verifier#install_command with :ftp_proxy set in config' do
+      config[:ftp_proxy] = 'ftp://proxy'
       transport.stubs(:connection).yields(connection)
-      connection.expects(:execute).with("env ftp_proxy=ftp://proxy install")
+      connection.expects(:execute).with('env ftp_proxy=ftp://proxy install')
 
       cmd
     end
 
-    it "invokes the Verifier#install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
-      config[:http_proxy] = "http://proxy"
-      config[:https_proxy] = "https://proxy"
-      config[:ftp_proxy] = "ftp://proxy"
+    it 'invokes the Verifier#install_command with :http_proxy & :https_proxy & :ftp_proxy set' do
+      config[:http_proxy] = 'http://proxy'
+      config[:https_proxy] = 'https://proxy'
+      config[:ftp_proxy] = 'ftp://proxy'
       transport.stubs(:connection).yields(connection)
       connection.expects(:execute).with(
-        "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install"
+        'env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy install'
       )
 
       cmd
     end
 
-    it "raises an ActionFailed when SshFailed is raised" do
+    it 'raises an ActionFailed when SshFailed is raised' do
       transport.stubs(:connection).yields(connection)
-      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
+      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new('dang'))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
-  describe "#verify" do
+  describe '#verify' do
     let(:cmd)         { driver.verify(state) }
     let(:connection)  { stub(execute: true, upload: true) }
 
     before do
-      state[:hostname] = "fizzy"
-      state[:username] = "bork"
+      state[:hostname] = 'fizzy'
+      state[:username] = 'bork'
       transport.stubs(:connection).yields(connection)
     end
 
     constructs_an_ssh_connection
 
-    it "creates the sandbox" do
+    it 'creates the sandbox' do
       verifier.expects(:create_sandbox)
 
       cmd
     end
 
-    it "ensures that the sandbox is cleanup up" do
+    it 'ensures that the sandbox is cleanup up' do
       transport.stubs(:connection).raises
       verifier.expects(:cleanup_sandbox)
 
       begin
         cmd
-      rescue # rubocop:disable Lint/HandleExceptions
+      rescue StandardError
       end
     end
 
-    it "invokes the verifier commands over the transport" do
-      order = sequence("order")
-      connection.expects(:execute).with("init").in_sequence(order)
-      connection.expects(:execute).with("prepare").in_sequence(order)
-      connection.expects(:execute).with("run").in_sequence(order)
+    it 'invokes the verifier commands over the transport' do
+      order = sequence('order')
+      connection.expects(:execute).with('init').in_sequence(order)
+      connection.expects(:execute).with('prepare').in_sequence(order)
+      connection.expects(:execute).with('run').in_sequence(order)
 
       cmd
     end
 
-    %w{init prepare run}.each do |phase|
+    %w[init prepare run].each do |phase|
       it "invokes Verifier##{phase}_command over ssh" do
         connection.expects(:execute).with(phase)
 
@@ -628,30 +629,30 @@ describe Kitchen::Driver::SSHBase do
       end
 
       it "invokes Verifier##{phase}_command with :http_proxy set in config" do
-        config[:http_proxy] = "http://proxy"
+        config[:http_proxy] = 'http://proxy'
         connection.expects(:execute).with("env http_proxy=http://proxy #{phase}")
 
         cmd
       end
 
       it "invokes Verifier##{phase}_command with :https_proxy set in config" do
-        config[:https_proxy] = "https://proxy"
+        config[:https_proxy] = 'https://proxy'
         connection.expects(:execute).with("env https_proxy=https://proxy #{phase}")
 
         cmd
       end
 
       it "invokes Verifier##{phase}_command with :ftp_proxy set in config" do
-        config[:ftp_proxy] = "ftp://proxy"
+        config[:ftp_proxy] = 'ftp://proxy'
         connection.expects(:execute).with("env ftp_proxy=ftp://proxy #{phase}")
 
         cmd
       end
 
       it "invokes Verifier##{phase}_command with :http_proxy & :https_proxy & :ftp_proxy set" do
-        config[:http_proxy] = "http://proxy"
-        config[:https_proxy] = "https://proxy"
-        config[:ftp_proxy] = "ftp://proxy"
+        config[:http_proxy] = 'http://proxy'
+        config[:https_proxy] = 'https://proxy'
+        config[:ftp_proxy] = 'ftp://proxy'
         connection.expects(:execute).with(
           "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy #{phase}"
         )
@@ -660,107 +661,107 @@ describe Kitchen::Driver::SSHBase do
       end
     end
 
-    it "logs to info" do
+    it 'logs to info' do
       cmd
 
       logged_output.string
-        .must_match(/INFO -- : Transferring files to instance$/)
+                   .must_match(/INFO -- : Transferring files to instance$/)
     end
 
-    it "uploads sandbox files" do
-      connection.expects(:upload).with([], "/tmp/verifier")
+    it 'uploads sandbox files' do
+      connection.expects(:upload).with([], '/tmp/verifier')
 
       cmd
     end
 
-    it "logs to debug" do
+    it 'logs to debug' do
       cmd
 
       logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
     end
 
-    it "raises an ActionFailed on transfer when TransportFailed is raised" do
+    it 'raises an ActionFailed on transfer when TransportFailed is raised' do
       connection.stubs(:upload)
-        .raises(Kitchen::Transport::TransportFailed.new("dang"))
+                .raises(Kitchen::Transport::TransportFailed.new('dang'))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
 
-    it "raises an ActionFailed when SSHFailed is raised" do
-      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
+    it 'raises an ActionFailed when SSHFailed is raised' do
+      connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new('dang'))
 
       proc { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
-  describe "#ssh" do
-    let(:cmd)         { driver.ssh(["host", "user", { one: "two" }], "go") }
+  describe '#ssh' do
+    let(:cmd)         { driver.ssh(['host', 'user', { one: 'two' }], 'go') }
     let(:connection)  { mock }
 
-    it "creates an SSH connection" do
+    it 'creates an SSH connection' do
       connection.stubs(:execute)
       transport.expects(:connection).with(
-        hostname: "host",
-        username: "user",
+        hostname: 'host',
+        username: 'user',
         port: 22,
-        one: "two"
+        one: 'two'
       ).yields(connection)
 
       cmd
     end
 
-    it "invokes the command over ssh" do
+    it 'invokes the command over ssh' do
       transport.expects(:connection).yields(connection)
-      connection.expects(:execute).with("go")
+      connection.expects(:execute).with('go')
 
       cmd
     end
   end
 
-  describe "#remote_command" do
-    let(:cmd)         { driver.remote_command(state, "shipit") }
+  describe '#remote_command' do
+    let(:cmd)         { driver.remote_command(state, 'shipit') }
     let(:connection)  { mock }
 
     before do
-      state[:hostname] = "fizzy"
-      state[:username] = "bork"
+      state[:hostname] = 'fizzy'
+      state[:username] = 'bork'
     end
 
-    it "creates an SSH connection" do
+    it 'creates an SSH connection' do
       transport.expects(:connection).with(
-        hostname: "fizzy",
-        username: "bork",
+        hostname: 'fizzy',
+        username: 'bork',
         port: 22
       )
 
       cmd
     end
 
-    it "invokes the command over ssh" do
+    it 'invokes the command over ssh' do
       transport.expects(:connection).yields(connection)
-      connection.expects(:execute).with("shipit")
+      connection.expects(:execute).with('shipit')
 
       cmd
     end
   end
 
-  describe "#wait_for_sshd" do
+  describe '#wait_for_sshd' do
     let(:cmd) do
-      driver.send(:wait_for_sshd, "host", "user", one: "two")
+      driver.send(:wait_for_sshd, 'host', 'user', one: 'two')
     end
 
-    it "creates an SSH connection with merged options" do
+    it 'creates an SSH connection with merged options' do
       transport.expects(:connection).with(
-        hostname: "host",
-        username: "user",
+        hostname: 'host',
+        username: 'user',
         port: 22,
-        one: "two"
+        one: 'two'
       ).returns(stub(wait_until_ready: true))
 
       cmd
     end
 
-    it "calls wait on the SSH connection" do
+    it 'calls wait on the SSH connection' do
       connection = mock
       transport.expects(:connection).returns(connection)
       connection.expects(:wait_until_ready)
@@ -769,20 +770,20 @@ describe Kitchen::Driver::SSHBase do
     end
   end
 
-  describe "to maintain backwards compatibility" do
+  describe 'to maintain backwards compatibility' do
     let(:driver) do
       Kitchen::Driver::BackCompat.new(config).finalize_config!(instance)
     end
 
-    it "#instance returns its instance" do
+    it '#instance returns its instance' do
       driver.instance.must_equal instance
     end
 
-    it "#name returns the name of the driver" do
-      driver.name.must_equal "BackCompat"
+    it '#name returns the name of the driver' do
+      driver.name.must_equal 'BackCompat'
     end
 
-    describe "#logger" do
+    describe '#logger' do
       before  { @klog = Kitchen.logger }
       after   { Kitchen.logger = @klog }
 
@@ -792,27 +793,27 @@ describe Kitchen::Driver::SSHBase do
 
       it "returns the default logger if instance's logger is not set" do
         driver = Kitchen::Driver::BackCompat.new(config)
-        Kitchen.logger = "yep"
+        Kitchen.logger = 'yep'
 
         driver.send(:logger).must_equal Kitchen.logger
       end
     end
 
-    it "#puts calls logger.info" do
-      driver.send(:puts, "yo")
+    it '#puts calls logger.info' do
+      driver.send(:puts, 'yo')
 
       logged_output.string.must_match(/I, /)
       logged_output.string.must_match(/yo\n/)
     end
 
-    it "#print calls logger.info" do
-      driver.send(:print, "yo")
+    it '#print calls logger.info' do
+      driver.send(:print, 'yo')
 
       logged_output.string.must_match(/I, /)
       logged_output.string.must_match(/yo\n/)
     end
 
-    it "has a default verify dependencies method" do
+    it 'has a default verify dependencies method' do
       driver.verify_dependencies.must_be_nil
     end
 
@@ -820,16 +821,16 @@ describe Kitchen::Driver::SSHBase do
       driver.send(:busser).must_equal verifier
     end
 
-    describe ".no_parallel_for" do
-      it "registers no serial actions when none are declared" do
+    describe '.no_parallel_for' do
+      it 'registers no serial actions when none are declared' do
         Kitchen::Driver::SpeedyCompat.serial_actions.must_be_nil
       end
 
-      it "registers a single serial action method" do
+      it 'registers a single serial action method' do
         Kitchen::Driver::DodgyCompat.serial_actions.must_equal [:converge]
       end
 
-      it "registers multiple serial action methods" do
+      it 'registers multiple serial action methods' do
         actions = Kitchen::Driver::SlowCompat.serial_actions
 
         actions.must_include :create
@@ -837,7 +838,7 @@ describe Kitchen::Driver::SSHBase do
         actions.must_include :destroy
       end
 
-      it "raises a ClientError if value is not an action method" do
+      it 'raises a ClientError if value is not an action method' do
         proc do
           Class.new(Kitchen::Driver::BackCompat) do
             no_parallel_for :telling_stories
@@ -848,31 +849,31 @@ describe Kitchen::Driver::SSHBase do
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.constructs_an_ssh_object
-      it "with hostname set from state" do
+      it 'with hostname set from state' do
         Kitchen::SSH.expects(:new).with do |hostname, _username, _opts|
-          hostname.must_equal "fizzy"
+          hostname.must_equal 'fizzy'
         end.returns(connection)
 
         cmd
       end
 
-      it "with username set from state" do
+      it 'with username set from state' do
         Kitchen::SSH.expects(:new).with do |_hostname, username, _opts|
-          username.must_equal "bork"
+          username.must_equal 'bork'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :user_known_hosts_file option set to /dev/null" do
+      it 'with :user_known_hosts_file option set to /dev/null' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:user_known_hosts_file].must_equal "/dev/null"
+          opts[:user_known_hosts_file].must_equal '/dev/null'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :verify_host_key option set to false" do
+      it 'with :verify_host_key option set to false' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:verify_host_key].must_equal false
         end.returns(connection)
@@ -880,7 +881,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :keys_only option set to falsey by default" do
+      it 'with :keys_only option set to falsey by default' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:keys_only].nil?
         end.returns(connection)
@@ -888,8 +889,8 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :keys_only option set to true if :ssh_key is set in config" do
-        config[:ssh_key] = "wicked"
+      it 'with :keys_only option set to true if :ssh_key is set in config' do
+        config[:ssh_key] = 'wicked'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:keys_only].must_equal true
@@ -898,8 +899,8 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :keys_only option set to true if :ssh_key is set in state" do
-        state[:ssh_key] = "wicked"
+      it 'with :keys_only option set to true if :ssh_key is set in state' do
+        state[:ssh_key] = 'wicked'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:keys_only].must_equal true
@@ -908,7 +909,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :keys option set to falsey by default" do
+      it 'with :keys option set to falsey by default' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:keys].nil?
         end.returns(connection)
@@ -916,27 +917,27 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :keys option set to an array if :ssh_key is set in config" do
-        config[:ssh_key] = "wicked"
+      it 'with :keys option set to an array if :ssh_key is set in config' do
+        config[:ssh_key] = 'wicked'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys].must_equal ["wicked"]
+          opts[:keys].must_equal ['wicked']
         end.returns(connection)
 
         cmd
       end
 
-      it "with :keys option set to an array if :ssh_key is set in state" do
-        state[:ssh_key] = "wicked"
+      it 'with :keys option set to an array if :ssh_key is set in state' do
+        state[:ssh_key] = 'wicked'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys].must_equal ["wicked"]
+          opts[:keys].must_equal ['wicked']
         end.returns(connection)
 
         cmd
       end
 
-      it "with :password option set to falsey by default" do
+      it 'with :password option set to falsey by default' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:password].nil?
         end.returns(connection)
@@ -944,27 +945,27 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :password option set if given in config" do
-        config[:password] = "psst"
+      it 'with :password option set if given in config' do
+        config[:password] = 'psst'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:password].must_equal "psst"
+          opts[:password].must_equal 'psst'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :password option set if given in state" do
-        state[:password] = "psst"
+      it 'with :password option set if given in state' do
+        state[:password] = 'psst'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:password].must_equal "psst"
+          opts[:password].must_equal 'psst'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :forward_agent option set to falsey by default" do
+      it 'with :forward_agent option set to falsey by default' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:forward_agent].nil?
         end.returns(connection)
@@ -972,27 +973,27 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :forward_agent option set if given in config" do
-        config[:forward_agent] = "yeah?"
+      it 'with :forward_agent option set if given in config' do
+        config[:forward_agent] = 'yeah?'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:forward_agent].must_equal "yeah?"
+          opts[:forward_agent].must_equal 'yeah?'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :forward_agent option set if given in state" do
-        state[:forward_agent] = "yeah?"
+      it 'with :forward_agent option set if given in state' do
+        state[:forward_agent] = 'yeah?'
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:forward_agent].must_equal "yeah?"
+          opts[:forward_agent].must_equal 'yeah?'
         end.returns(connection)
 
         cmd
       end
 
-      it "with :port option set to 22 by default" do
+      it 'with :port option set to 22 by default' do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
           opts[:port].must_equal 22
         end.returns(connection)
@@ -1000,7 +1001,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :port option set if customized in config" do
+      it 'with :port option set if customized in config' do
         config[:port] = 1234
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
@@ -1010,7 +1011,7 @@ describe Kitchen::Driver::SSHBase do
         cmd
       end
 
-      it "with :port option set if customized in state" do
+      it 'with :port option set if customized in state' do
         state[:port] = 9999
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
@@ -1030,48 +1031,48 @@ describe Kitchen::Driver::SSHBase do
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-    describe "#run_remote" do
-      let(:cmd)         { driver.use_run_remote(state, "huh") }
+    describe '#run_remote' do
+      let(:cmd)         { driver.use_run_remote(state, 'huh') }
       let(:connection)  { stub(exec: true) }
 
       before do
-        state[:hostname] = "fizzy"
-        state[:username] = "bork"
+        state[:hostname] = 'fizzy'
+        state[:username] = 'bork'
       end
 
       constructs_an_ssh_object
 
-      it "invokes the #install_command with :http_proxy set in config" do
-        config[:http_proxy] = "http://proxy"
+      it 'invokes the #install_command with :http_proxy set in config' do
+        config[:http_proxy] = 'http://proxy'
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.expects(:exec).with("env http_proxy=http://proxy huh")
+        connection.expects(:exec).with('env http_proxy=http://proxy huh')
 
         cmd
       end
 
-      it "invokes the #install_command with :https_proxy set in config" do
-        config[:https_proxy] = "https://proxy"
+      it 'invokes the #install_command with :https_proxy set in config' do
+        config[:https_proxy] = 'https://proxy'
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.expects(:exec).with("env https_proxy=https://proxy huh")
+        connection.expects(:exec).with('env https_proxy=https://proxy huh')
 
         cmd
       end
 
-      it "invokes the #install_command with :ftp_proxy set in config" do
-        config[:ftp_proxy] = "ftp://proxy"
+      it 'invokes the #install_command with :ftp_proxy set in config' do
+        config[:ftp_proxy] = 'ftp://proxy'
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.expects(:exec).with("env ftp_proxy=ftp://proxy huh")
+        connection.expects(:exec).with('env ftp_proxy=ftp://proxy huh')
 
         cmd
       end
 
-      it "invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set" do
-        config[:http_proxy] = "http://proxy"
-        config[:https_proxy] = "https://proxy"
-        config[:ftp_proxy] = "ftp://proxy"
+      it 'invokes the #install_command with :http_proxy & :https_proxy & :ftp_proxy set' do
+        config[:http_proxy] = 'http://proxy'
+        config[:https_proxy] = 'https://proxy'
+        config[:ftp_proxy] = 'ftp://proxy'
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.expects(:exec).with(
-          "env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy huh"
+          'env http_proxy=http://proxy https_proxy=https://proxy ftp_proxy=ftp://proxy huh'
         )
 
         cmd
@@ -1083,29 +1084,29 @@ describe Kitchen::Driver::SSHBase do
         driver.use_run_remote(state, nil)
       end
 
-      it "raises an ActionFailed on transfer when SSHFailed is raised" do
+      it 'raises an ActionFailed on transfer when SSHFailed is raised' do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:exec).raises(Kitchen::SSHFailed.new("dang"))
+        connection.stubs(:exec).raises(Kitchen::SSHFailed.new('dang'))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
 
-      it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
+      it 'raises an ActionFailed on exec when Net::SSH:Exception is raised' do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:exec).raises(Net::SSH::Exception.new("dang"))
+        connection.stubs(:exec).raises(Net::SSH::Exception.new('dang'))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
-    describe "#transfer_path" do
-      let(:cmd)         { driver.use_transfer_path(state, ["nope"], "nadda") }
+    describe '#transfer_path' do
+      let(:cmd)         { driver.use_transfer_path(state, ['nope'], 'nadda') }
       let(:channel)     { stub(wait: true) }
       let(:connection)  { stub(upload_path!: true, upload_path: channel) }
 
       before do
-        state[:hostname] = "fizzy"
-        state[:username] = "bork"
+        state[:hostname] = 'fizzy'
+        state[:username] = 'bork'
       end
 
       constructs_an_ssh_object
@@ -1113,25 +1114,25 @@ describe Kitchen::Driver::SSHBase do
       it "doesn't invoke an scp command if locals is nil" do
         Kitchen::SSH.stubs(:new).returns(mock)
 
-        driver.use_transfer_path(state, nil, "nope")
+        driver.use_transfer_path(state, nil, 'nope')
       end
 
       it "doesn't invoke an scp command if locals is an empty array" do
         Kitchen::SSH.stubs(:new).returns(mock)
 
-        driver.use_transfer_path(state, [], "nope")
+        driver.use_transfer_path(state, [], 'nope')
       end
 
-      it "raises an ActionFailed on transfer when SSHFailed is raised" do
+      it 'raises an ActionFailed on transfer when SSHFailed is raised' do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:upload_path).raises(Kitchen::SSHFailed.new("dang"))
+        connection.stubs(:upload_path).raises(Kitchen::SSHFailed.new('dang'))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end
 
-      it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
+      it 'raises an ActionFailed on exec when Net::SSH:Exception is raised' do
         Kitchen::SSH.stubs(:new).returns(connection)
-        connection.stubs(:upload_path).raises(Net::SSH::Exception.new("dang"))
+        connection.stubs(:upload_path).raises(Net::SSH::Exception.new('dang'))
 
         proc { cmd }.must_raise Kitchen::ActionFailed
       end

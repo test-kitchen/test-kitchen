@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../configurable"
-require_relative "../errors"
-require_relative "../lazy_hash"
-require_relative "../logging"
-require_relative "../shell_out"
+require_relative '../configurable'
+require_relative '../errors'
+require_relative '../lazy_hash'
+require_relative '../logging'
+require_relative '../shell_out'
 
 module Kitchen
   module Driver
@@ -66,7 +67,7 @@ module Kitchen
       #
       # @param state [Hash] mutable instance and driver state
       # @returns [Boolean] Return true if a problem is found.
-      def doctor(state)
+      def doctor(_state)
         false
       end
 
@@ -95,7 +96,7 @@ module Kitchen
       # @param methods [Array<Symbol>] one or more actions as symbols
       # @raise [ClientError] if any method is not a valid action method name
       def self.no_parallel_for(*methods)
-        action_methods = %i{create setup converge verify destroy}
+        action_methods = %i[create setup converge verify destroy]
 
         Array(methods).each do |meth|
           next if action_methods.include?(meth)
@@ -143,9 +144,9 @@ module Kitchen
         if config[:pre_create_command]
           begin
             run_command(config[:pre_create_command])
-          rescue ShellCommandFailed => error
+          rescue ShellCommandFailed => e
             raise ActionFailed,
-              "pre_create_command '#{config[:pre_create_command]}' failed to execute #{error}"
+                  "pre_create_command '#{config[:pre_create_command]}' failed to execute #{e}"
           end
         end
       end

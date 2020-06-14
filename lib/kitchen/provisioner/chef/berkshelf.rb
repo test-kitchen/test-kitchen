@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../errors"
-require_relative "../../logging"
+require_relative '../../errors'
+require_relative '../../logging'
 
 module Kitchen
   module Provisioner
@@ -94,7 +95,7 @@ module Kitchen
           # @raise [UserError] if the library couldn't be loaded
           # @api private
           def load_berkshelf!(logger)
-            first_load = require "berkshelf"
+            first_load = require 'berkshelf'
 
             version = ::Berkshelf::VERSION
             if first_load
@@ -104,11 +105,11 @@ module Kitchen
             end
           rescue LoadError => e
             logger.fatal("The `berkshelf' gem is missing and must be installed" \
-              " or cannot be properly activated. Run" \
-              " `gem install berkshelf` or add the following to your" \
+              ' or cannot be properly activated. Run' \
+              ' `gem install berkshelf` or add the following to your' \
               " Gemfile if you are using Bundler: `gem 'berkshelf'`.")
             raise UserError,
-              "Could not load or activate Berkshelf (#{e.message})"
+                  "Could not load or activate Berkshelf (#{e.message})"
           end
         end
       end

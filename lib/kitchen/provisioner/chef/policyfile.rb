@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,12 +17,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "shellwords"
-require "rbconfig"
+require 'shellwords'
+require 'rbconfig'
 
-require_relative "../../errors"
-require_relative "../../logging"
-require_relative "../../shell_out"
+require_relative '../../errors'
+require_relative '../../logging'
+require_relative '../../shell_out'
 
 module Kitchen
   module Provisioner
@@ -74,7 +75,7 @@ module Kitchen
           run_command("chef install #{escape_path(policyfile)}")
 
           if always_update
-            info("Updating policy lock using `chef update`")
+            info('Updating policy lock using `chef update`')
             run_command("chef update #{escape_path(policyfile)}")
           end
         end
@@ -83,7 +84,7 @@ module Kitchen
         #
         # @return [String]
         def lockfile
-          policyfile.gsub(/\.rb\Z/, ".lock.json")
+          policyfile.gsub(/\.rb\Z/, '.lock.json')
         end
 
         private
@@ -111,14 +112,14 @@ module Kitchen
         # @return [String]
         # @api private
         def escape_path(path)
-          if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+          if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
             # I know what you're thinking: "just use Shellwords.escape". That
             # method produces incorrect results on Windows with certain input
             # which would be a metacharacter in Sh but is not for one or more of
             # Windows command line parsing libraries. This covers the 99% case of
             # spaces in the path without breaking other stuff.
             if path =~ /[ \t\n\v"]/
-              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| '\\' + m[0] }}\""
+              "\"#{path.gsub(/[ \t\n\v"\\]/) { |m| '\\' + m[0] }}\""
             else
               path
             end
@@ -136,26 +137,25 @@ module Kitchen
           # @raise [UserError] if the `chef` command is not in the PATH
           # @api private
           def detect_chef_command!(logger)
-            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
-              if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+            unless ENV['PATH'].split(File::PATH_SEPARATOR).any? do |path|
+              if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
                 # Windows could have different extentions: BAT, EXE or NONE
-                %w{chef chef.exe chef.bat}.each do |bin|
+                %w[chef chef.exe chef.bat].each do |bin|
                   File.exist?(File.join(path, bin))
                 end
               else
-                File.exist?(File.join(path, "chef"))
+                File.exist?(File.join(path, 'chef'))
               end
             end
-              logger.fatal("The `chef` executable cannot be found in your " \
-                          "PATH. Ensure you have installed ChefDK or Chef Workstation " \
-                          "from https://downloads.chef.io and that your PATH " \
-                          "setting includes the path to the `chef` command.")
+              logger.fatal('The `chef` executable cannot be found in your ' \
+                          'PATH. Ensure you have installed ChefDK or Chef Workstation ' \
+                          'from https://downloads.chef.io and that your PATH ' \
+                          'setting includes the path to the `chef` command.')
               raise UserError,
-                "Could not find the chef executable in your PATH."
+                    'Could not find the chef executable in your PATH.'
             end
           end
         end
-
       end
     end
   end

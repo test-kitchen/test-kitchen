@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,15 +17,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../kitchen"
+require_relative '../../kitchen'
 
-require "fileutils"
-require "net/ssh"
-require "net/ssh/gateway"
-require "net/ssh/proxy/http"
-require "net/scp"
-require "timeout"
-require "benchmark"
+require 'fileutils'
+require 'net/ssh'
+require 'net/ssh/gateway'
+require 'net/ssh/proxy/http'
+require 'net/scp'
+require 'timeout'
+require 'benchmark'
 
 module Kitchen
   module Transport
@@ -43,7 +44,7 @@ module Kitchen
       plugin_version Kitchen::VERSION
 
       default_config :port, 22
-      default_config :username, "root"
+      default_config :username, 'root'
       default_config :keepalive, true
       default_config :keepalive_interval, 60
       default_config :keepalive_maxcount, 3
@@ -80,9 +81,9 @@ module Kitchen
         # zlib was never a valid value and breaks in net-ssh >= 2.10
         # TODO: remove these backwards compatiable casts in 2.0
         case config[:compression]
-        when "zlib"
-          config[:compression] = "zlib@openssh.com"
-        when "none"
+        when 'zlib'
+          config[:compression] = 'zlib@openssh.com'
+        when 'none'
           config[:compression] = false
         end
 
@@ -145,33 +146,33 @@ module Kitchen
               exit_code
             )
           end
-        rescue Net::SSH::Exception => ex
-          raise SshFailed, "SSH command failed (#{ex.message})"
+        rescue Net::SSH::Exception => e
+          raise SshFailed, "SSH command failed (#{e.message})"
         end
 
         # (see Base::Connection#login_command)
         def login_command
-          args  = %w{ -o UserKnownHostsFile=/dev/null }
-          args += %w{ -o StrictHostKeyChecking=no }
-          args += %w{ -o IdentitiesOnly=yes } if options[:keys]
-          args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
+          args  = %w[-o UserKnownHostsFile=/dev/null]
+          args += %w[-o StrictHostKeyChecking=no]
+          args += %w[-o IdentitiesOnly=yes] if options[:keys]
+          args += %W[-o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'}]
           if options.key?(:forward_agent)
-            args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} }
+            args += %W[-o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'}]
           end
           if ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
-            args += %W{ -o ProxyCommand=#{gateway_command} -p #{ssh_gateway_port} }
+            args += %W[-o ProxyCommand=#{gateway_command} -p #{ssh_gateway_port}]
           end
-          Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key} } }
-          args += %W{ -p #{port} }
-          args += %W{ #{username}@#{hostname} }
+          Array(options[:keys]).each { |ssh_key| args += %W[-i #{ssh_key}] }
+          args += %W[-p #{port}]
+          args += %W[#{username}@#{hostname}]
 
-          LoginCommand.new("ssh", args)
+          LoginCommand.new('ssh', args)
         end
 
         # (see Base::Connection#upload)
         def upload(locals, remote)
-          logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
+          logger.debug('TIMING: scp async upload (Kitchen::Transport::Ssh)')
           elapsed = Benchmark.measure do
             waits = []
             Array(locals).map do |local|
@@ -186,8 +187,8 @@ module Kitchen
           end
           delta = Util.duration(elapsed.real)
           logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
-        rescue Net::SSH::Exception => ex
-          raise SshFailed, "SCP upload failed (#{ex.message})"
+        rescue Net::SSH::Exception => e
+          raise SshFailed, "SCP upload failed (#{e.message})"
         end
 
         # (see Base::Connection#download)
@@ -210,8 +211,8 @@ module Kitchen
               end
             end
           end
-        rescue Net::SSH::Exception => ex
-          raise SshFailed, "SCP download failed (#{ex.message})"
+        rescue Net::SSH::Exception => e
+          raise SshFailed, "SCP download failed (#{e.message})"
         end
 
         # (see Base::Connection#wait_until_ready)
@@ -228,7 +229,7 @@ module Kitchen
 
         private
 
-        PING_COMMAND = "echo '[SSH] Established'".freeze
+        PING_COMMAND = "echo '[SSH] Established'"
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
@@ -318,7 +319,7 @@ module Kitchen
           retry_connection(opts) do
             gateway_options = options.merge(port: ssh_gateway_port)
             Net::SSH::Gateway.new(ssh_gateway,
-              ssh_gateway_username, gateway_options).ssh(hostname, username, options)
+                                  ssh_gateway_username, gateway_options).ssh(hostname, username, options)
           end
         end
 
@@ -369,7 +370,7 @@ module Kitchen
             retry
           else
             logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
-            raise SshFailed, "SSH session could not be established"
+            raise SshFailed, 'SSH session could not be established'
           end
         end
 
@@ -392,7 +393,7 @@ module Kitchen
                 logger << data
               end
 
-              channel.on_request("exit-status") do |_ch, data|
+              channel.on_request('exit-status') do |_ch, data|
                 exit_code = data.read_long
               end
             end
@@ -427,17 +428,17 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def session(retry_options = {})
-          if ssh_gateway
-            @session ||= establish_connection_via_gateway({
-              retries: connection_retries.to_i,
-              delay: connection_retry_sleep.to_i,
-            }.merge(retry_options))
-          else
-            @session ||= establish_connection({
-              retries: connection_retries.to_i,
-              delay: connection_retry_sleep.to_i,
-            }.merge(retry_options))
-          end
+          @session ||= if ssh_gateway
+                         establish_connection_via_gateway({
+                           retries: connection_retries.to_i,
+                           delay: connection_retry_sleep.to_i
+                         }.merge(retry_options))
+                       else
+                         establish_connection({
+                           retries: connection_retries.to_i,
+                           delay: connection_retry_sleep.to_i
+                         }.merge(retry_options))
+                       end
         end
 
         # String representation of object, reporting its connection details and
@@ -461,7 +462,7 @@ module Kitchen
       def connection_options(data)
         opts = {
           logger: logger,
-          user_known_hosts_file: "/dev/null",
+          user_known_hosts_file: '/dev/null',
           hostname: data[:hostname],
           port: data[:port],
           username: data[:username],
@@ -477,13 +478,13 @@ module Kitchen
           max_wait_until_ready: data[:max_wait_until_ready],
           ssh_gateway: data[:ssh_gateway],
           ssh_gateway_username: data[:ssh_gateway_username],
-          ssh_gateway_port: data[:ssh_gateway_port],
+          ssh_gateway_port: data[:ssh_gateway_port]
         }
 
         if data[:ssh_key] && !data[:password]
           opts[:keys_only] = true
           opts[:keys] = Array(data[:ssh_key])
-          opts[:auth_methods] = ["publickey"]
+          opts[:auth_methods] = ['publickey']
         end
 
         if data[:ssh_http_proxy]
@@ -493,9 +494,7 @@ module Kitchen
           opts[:proxy] = Net::SSH::Proxy::HTTP.new(data[:ssh_http_proxy], data[:ssh_http_proxy_port], options_http_proxy)
         end
 
-        if data[:ssh_key_only]
-          opts[:auth_methods] = ["publickey"]
-        end
+        opts[:auth_methods] = ['publickey'] if data[:ssh_key_only]
 
         opts[:password] = data[:password]           if data.key?(:password)
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "rubygems/gem_runner"
-require "thor/group"
+require 'rubygems/gem_runner'
+require 'thor/group'
 
 module Kitchen
   module Generator
@@ -29,33 +30,33 @@ module Kitchen
       include Thor::Actions
 
       class_option :driver,
-        type: :array,
-        aliases: "-D",
-        default: %w{kitchen-vagrant},
-        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+                   type: :array,
+                   aliases: '-D',
+                   default: %w[kitchen-vagrant],
+                   desc: <<-D.gsub(/^\s+/, '').tr("\n", ' ')
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
-        D
+                   D
 
       class_option :provisioner,
-        type: :string,
-        aliases: "-P",
-        default: "chef_solo",
-        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+                   type: :string,
+                   aliases: '-P',
+                   default: 'chef_solo',
+                   desc: <<-D.gsub(/^\s+/, '').tr("\n", ' ')
           The default Kitchen Provisioner to use
-        D
+                   D
 
       class_option :create_gemfile,
-        type: :boolean,
-        default: false,
-        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+                   type: :boolean,
+                   default: false,
+                   desc: <<-D.gsub(/^\s+/, '').tr("\n", ' ')
           Whether or not to create a Gemfile if one does not exist.
           Default: false
-        D
+                   D
 
       # Invoke the command.
       def init
-        self.class.source_root(Kitchen.source_root.join("templates", "init"))
+        self.class.source_root(Kitchen.source_root.join('templates', 'init'))
 
         create_kitchen_yaml
         create_chefignore
@@ -73,58 +74,56 @@ module Kitchen
       #
       # @api private
       def create_kitchen_yaml
-        cookbook_name = if File.exist?(File.expand_path("metadata.rb"))
-                          MetadataChopper.extract("metadata.rb").first
-                        end
+        cookbook_name = (MetadataChopper.extract('metadata.rb').first if File.exist?(File.expand_path('metadata.rb')))
         run_list = cookbook_name ? "recipe[#{cookbook_name}::default]" : nil
-        driver_plugin = Array(options[:driver]).first || "dummy"
+        driver_plugin = Array(options[:driver]).first || 'dummy'
 
-        template("kitchen.yml.erb", "kitchen.yml",
-          driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
-          provisioner: options[:provisioner],
-          run_list: Array(run_list))
+        template('kitchen.yml.erb', 'kitchen.yml',
+                 driver_plugin: driver_plugin.sub(/^kitchen-/, ''),
+                 provisioner: options[:provisioner],
+                 run_list: Array(run_list))
       end
 
       # Creates the `chefignore` file.
       #
       # @api private
       def create_chefignore
-        template("chefignore.erb", "chefignore")
+        template('chefignore.erb', 'chefignore')
       end
 
       # @return [true,false] whether or not a Gemfile needs to be initialized
       # @api private
       def init_gemfile?
-        File.exist?(File.join(destination_root, "Gemfile")) ||
+        File.exist?(File.join(destination_root, 'Gemfile')) ||
           options[:create_gemfile]
       end
 
       # @return [true,false] whether or not a Rakefile needs to be initialized
       # @api private
       def init_rakefile?
-        File.exist?(File.join(destination_root, "Rakefile")) &&
-          not_in_file?("Rakefile", %r{require 'kitchen/rake_tasks'})
+        File.exist?(File.join(destination_root, 'Rakefile')) &&
+          not_in_file?('Rakefile', %r{require 'kitchen/rake_tasks'})
       end
 
       # @return [true,false] whether or not a Thorfile needs to be initialized
       # @api private
       def init_thorfile?
-        File.exist?(File.join(destination_root, "Thorfile")) &&
-          not_in_file?("Thorfile", %r{require 'kitchen/thor_tasks'})
+        File.exist?(File.join(destination_root, 'Thorfile')) &&
+          not_in_file?('Thorfile', %r{require 'kitchen/thor_tasks'})
       end
 
       # @return [true,false] whether or not a test directory needs to be
       #   initialized
       # @api private
       def init_test_dir?
-        Util.list_directory("test/integration/").select { |d| File.directory?(d) }.empty?
+        Util.list_directory('test/integration/').select { |d| File.directory?(d) }.empty?
       end
 
       # @return [true,false] whether or not a `.gitignore` file needs to be
       #   initialized
       # @api private
       def init_git?
-        File.directory?(File.join(destination_root, ".git"))
+        File.directory?(File.join(destination_root, '.git'))
       end
 
       # Prepares a Rakefile.
@@ -133,7 +132,7 @@ module Kitchen
       def prepare_rakefile
         return unless init_rakefile?
 
-        rakedoc = <<-RAKE.gsub(/^ {10}/, "")
+        rakedoc = <<-RAKE.gsub(/^ {10}/, '')
 
           begin
             require_relative '../rake_tasks'
@@ -142,7 +141,7 @@ module Kitchen
             puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         RAKE
-        append_to_file(File.join(destination_root, "Rakefile"), rakedoc)
+        append_to_file(File.join(destination_root, 'Rakefile'), rakedoc)
       end
 
       # Prepares a Thorfile.
@@ -151,7 +150,7 @@ module Kitchen
       def prepare_thorfile
         return unless init_thorfile?
 
-        thordoc = <<-THOR.gsub(/^ {10}/, "")
+        thordoc = <<-THOR.gsub(/^ {10}/, '')
 
           begin
             require_relative '../thor_tasks'
@@ -160,14 +159,14 @@ module Kitchen
             puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
           end
         THOR
-        append_to_file(File.join(destination_root, "Thorfile"), thordoc)
+        append_to_file(File.join(destination_root, 'Thorfile'), thordoc)
       end
 
       # Create the default test directory
       #
       # @api private
       def create_test_dir
-        empty_directory "test/integration/default" if init_test_dir?
+        empty_directory 'test/integration/default' if init_test_dir?
       end
 
       # Prepares the .gitignore file
@@ -176,18 +175,18 @@ module Kitchen
       def prepare_gitignore
         return unless init_git?
 
-        append_to_gitignore(".kitchen/")
-        append_to_gitignore(".kitchen.local.yml")
+        append_to_gitignore('.kitchen/')
+        append_to_gitignore('.kitchen.local.yml')
       end
 
       # Appends a line to the .gitignore file.
       #
       # @api private
       def append_to_gitignore(line)
-        create_file(".gitignore") unless File.exist?(File.join(destination_root, ".gitignore"))
+        create_file('.gitignore') unless File.exist?(File.join(destination_root, '.gitignore'))
 
-        if IO.readlines(File.join(destination_root, ".gitignore")).grep(/^#{line}/).empty?
-          append_to_file(".gitignore", "#{line}\n")
+        if IO.readlines(File.join(destination_root, '.gitignore')).grep(/^#{line}/).empty?
+          append_to_file('.gitignore', "#{line}\n")
         end
       end
 
@@ -205,8 +204,8 @@ module Kitchen
       #
       # @api private
       def create_gemfile_if_missing
-        unless File.exist?(File.join(destination_root, "Gemfile"))
-          create_file("Gemfile", %{source "https://rubygems.org"\n\n})
+        unless File.exist?(File.join(destination_root, 'Gemfile'))
+          create_file('Gemfile', %(source "https://rubygems.org"\n\n))
         end
       end
 
@@ -214,8 +213,8 @@ module Kitchen
       #
       # @api private
       def add_gem_to_gemfile
-        if not_in_file?("Gemfile", /gem ('|")test-kitchen('|")/)
-          append_to_file("Gemfile", %{gem "test-kitchen"\n})
+        if not_in_file?('Gemfile', /gem ('|")test-kitchen('|")/)
+          append_to_file('Gemfile', %(gem "test-kitchen"\n))
           @display_bundle_msg = true
         end
       end
@@ -224,9 +223,7 @@ module Kitchen
       #
       # @api private
       def display_bundle_message
-        if @display_bundle_msg
-          say "You must run `bundle install' to fetch any new gems.", :red
-        end
+        say "You must run `bundle install' to fetch any new gems.", :red if @display_bundle_msg
       end
 
       # Determines whether or not a pattern is found in a file.
@@ -244,7 +241,7 @@ module Kitchen
       #
       # @api private
       def unbundlerize
-        keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w{RUBYOPT}
+        keys = ENV.keys.select { |key| key =~ /^BUNDLER?_/ } + %w[RUBYOPT]
 
         keys.each { |key| ENV["__#{key}"] = ENV[key]; ENV.delete(key) }
         yield

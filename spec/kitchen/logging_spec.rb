@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/logging"
+require 'kitchen/logging'
 
 class LoggingDummy
   include Kitchen::Logging
@@ -30,7 +31,7 @@ class LoggingDummy
   end
 
   class Logger
-    METHODS = %i{banner debug info warn error fatal}.freeze
+    METHODS = %i[banner debug info warn error fatal].freeze
 
     attr_reader(*(METHODS.map { |m| "#{m}_msg".to_sym }))
 
@@ -48,9 +49,9 @@ describe Kitchen::Logging do
 
   LoggingDummy::Logger::METHODS.each do |meth|
     it "##{meth} calls method on logger" do
-      subject.public_send(meth, "ping")
+      subject.public_send(meth, 'ping')
 
-      logger.public_send("#{meth}_msg").must_equal "ping"
+      logger.public_send("#{meth}_msg").must_equal 'ping'
     end
   end
 end

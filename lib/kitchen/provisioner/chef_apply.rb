@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: SAWANOBORI Yukihiko <sawanoboriyu@higanworks.com>)
 #
@@ -45,7 +46,7 @@
 # chef-apply apply/recipe1.rb
 # chef-apply apply/recipe2.rb
 
-require_relative "chef_base"
+require_relative 'chef_base'
 
 module Kitchen
   module Provisioner
@@ -59,20 +60,20 @@ module Kitchen
 
       default_config :chef_apply_path do |provisioner|
         provisioner
-          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-apply})
-          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
+          .remote_path_join(%W[#{provisioner[:chef_omnibus_root]} bin chef-apply])
+          .tap { |path| path.concat('.bat') if provisioner.windows_os? }
       end
 
       default_config :apply_path do |provisioner|
-        provisioner.calculate_path("apply")
+        provisioner.calculate_path('apply')
       end
       expand_path_for :apply_path
 
       # (see ChefBase#create_sandbox)
       def create_sandbox
         @sandbox_path = Dir.mktmpdir("#{instance.name}-sandbox-")
-        File.chmod(0755, sandbox_path)
-        info("Preparing files for transfer")
+        File.chmod(0o755, sandbox_path)
+        info('Preparing files for transfer')
         debug("Creating local sandbox in #{sandbox_path}")
 
         prepare_json
@@ -81,9 +82,9 @@ module Kitchen
 
       # (see ChefBase#init_command)
       def init_command
-        dirs = %w{
+        dirs = %w[
           apply
-        }.sort.map { |dir| remote_path_join(config[:root_path], dir) }
+        ].sort.map { |dir| remote_path_join(config[:root_path], dir) }
 
         vars = if powershell_shell?
                  init_command_vars_for_powershell(dirs)
@@ -91,7 +92,7 @@ module Kitchen
                  init_command_vars_for_bourne(dirs)
                end
 
-        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
+        prefix_command(shell_code_from_file(vars, 'chef_base_init_command'))
       end
 
       # (see ChefSolo#run_command)
@@ -100,17 +101,17 @@ module Kitchen
         lines = []
         config[:run_list].map do |recipe|
           cmd = sudo(config[:chef_apply_path]).dup
-            .tap { |str| str.insert(0, "& ") if powershell_shell? }
+                                              .tap { |str| str.insert(0, '& ') if powershell_shell? }
           args = [
             "apply/#{recipe}.rb",
             "--log_level #{level}",
-            "--no-color",
+            '--no-color'
           ]
           args << "--logfile #{config[:log_file]}" if config[:log_file]
           args << "--chef-license #{config[:chef_license]}" if config[:chef_license]
 
           lines << wrap_shell_code(
-            [cmd, *args].join(" ")
+            [cmd, *args].join(' ')
             .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
           )
         end

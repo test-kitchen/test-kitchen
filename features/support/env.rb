@@ -1,11 +1,11 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
 
 # Set up the environment for testing
-require "aruba/cucumber"
-require "aruba/in_process"
-require "aruba/spawn_process"
-require "kitchen"
-require "kitchen/cli"
+require 'aruba/cucumber'
+require 'aruba/in_process'
+require 'aruba/spawn_process'
+require 'kitchen'
+require 'kitchen/cli'
 
 class ArubaHelper
   def initialize(argv, stdin = STDIN, stdout = STDOUT, stderr = STDERR, kernel = Kernel)
@@ -34,7 +34,7 @@ Before do
   aruba.config.main_class = ArubaHelper
 end
 
-Before("@spawn") do
+Before('@spawn') do
   aruba.config.command_launcher = :spawn
 end
 
@@ -48,10 +48,10 @@ After do |s|
   # been saved off
   env = aruba.environment
   env.to_h.keys.select { |key| key =~ /^_CUKE_/ }
-    .each do |backup_key|
-      env[backup_key.sub(/^_CUKE_/, "")] = env[backup_key]
-      env.delete(backup_key)
-    end
+     .each do |backup_key|
+    env[backup_key.sub(/^_CUKE_/, '')] = env[backup_key]
+    env.delete(backup_key)
+  end
 
   @cleanup_dirs.each { |dir| FileUtils.rm_rf(dir) }
 end
@@ -66,7 +66,7 @@ def restore_envvar(key)
 end
 
 def unbundlerize
-  keys = %w{BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT}
+  keys = %w[BUNDLER_EDITOR BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT]
 
   keys.each { |key| backup_envvar(key); aruba.environment.delete(key) }
   yield

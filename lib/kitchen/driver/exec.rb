@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +14,10 @@
 # limitations under the License.
 #
 
-require_relative "base"
-require_relative "../shell_out"
-require_relative "../transport/exec"
-require_relative "../version"
+require_relative 'base'
+require_relative '../shell_out'
+require_relative '../transport/exec'
+require_relative '../version'
 
 module Kitchen
   module Driver
@@ -60,7 +61,7 @@ module Kitchen
       #
       # @param state [Hash] the state hash
       # @api private
-      def reset_instance(state)
+      def reset_instance(_state)
         if (cmd = config[:reset_command])
           info("Resetting instance state with command: #{cmd}")
           run_command(cmd)

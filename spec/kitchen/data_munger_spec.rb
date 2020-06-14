@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,68 +17,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/data_munger"
+require 'kitchen/data_munger'
 
 module Kitchen # rubocop:disable Metrics/ModuleLength
   describe DataMunger do
-    describe "#platform_data" do
-      it "returns an array of platform data" do
+    describe '#platform_data' do
+      it 'returns an array of platform data' do
         DataMunger.new(
           platforms: [
             {
-              name: "one",
-              stuff: "junk",
+              name: 'one',
+              stuff: 'junk'
             },
             {
-              name: "two",
-              misc: "things",
-            },
+              name: 'two',
+              misc: 'things'
+            }
           ]
         ).platform_data.must_equal([
                                      {
-                                       name: "one",
-                                       stuff: "junk",
+                                       name: 'one',
+                                       stuff: 'junk'
                                      },
                                      {
-                                       name: "two",
-                                       misc: "things",
-                                     },
+                                       name: 'two',
+                                       misc: 'things'
+                                     }
                                    ])
       end
 
-      it "returns an empty array if platforms is not defined" do
+      it 'returns an empty array if platforms is not defined' do
         DataMunger.new({}).platform_data.must_equal([])
       end
     end
 
-    describe "#suite_data" do
-      it "returns an array of suite data" do
+    describe '#suite_data' do
+      it 'returns an array of suite data' do
         DataMunger.new(
           suites: [
             {
-              name: "one",
-              stuff: "junk",
+              name: 'one',
+              stuff: 'junk'
             },
             {
-              name: "two",
-              misc: "things",
-            },
+              name: 'two',
+              misc: 'things'
+            }
           ]
         ).suite_data.must_equal([
                                   {
-                                    name: "one",
-                                    stuff: "junk",
+                                    name: 'one',
+                                    stuff: 'junk'
                                   },
                                   {
-                                    name: "two",
-                                    misc: "things",
-                                  },
+                                    name: 'two',
+                                    misc: 'things'
+                                  }
                                 ])
       end
 
-      it "returns an empty array if suites is not defined" do
+      it 'returns an empty array if suites is not defined' do
         DataMunger.new({}).suite_data.must_equal([])
       end
     end
@@ -86,36 +87,36 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       driver: :name,
       provisioner: :name,
       transport: :name,
-      verifier: :name,
+      verifier: :name
     }.freeze
 
     DATA_KEYS.each_pair do |key, default_key|
       describe "##{key}" do
-        describe "from single source" do
+        describe 'from single source' do
           it "returns empty hash if no common #{key} hash is provided" do
             DataMunger.new(
               {},
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal({})
+            ).public_send("#{key}_data_for", 'suite', 'platform').must_equal({})
           end
 
           it "drops common #{key} if hash is nil" do
             DataMunger.new(
               {
-                key => nil,
+                key => nil
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal({})
           end
 
           it "returns kitchen config #{key} name" do
             DataMunger.new(
               {},
               defaults: {
-                key => "thenoseknows",
+                key => 'thenoseknows'
               }
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
-              default_key => "thenoseknows"
+            ).public_send("#{key}_data_for", 'suite', 'platform').must_equal(
+              default_key => 'thenoseknows'
             )
           end
 
@@ -123,21 +124,21 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             DataMunger.new(
               {},
               defaults: {
-                key => ->(suite, platform) { "#{suite}++#{platform}" },
+                key => ->(suite, platform) { "#{suite}++#{platform}" }
               }
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
-              default_key => "suite++platform"
+            ).public_send("#{key}_data_for", 'suite', 'platform').must_equal(
+              default_key => 'suite++platform'
             )
           end
 
           it "returns common #{key} name" do
             DataMunger.new(
               {
-                key => "starship",
+                key => 'starship'
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
-              default_key => "starship"
+            ).public_send("#{key}_data_for", 'suite', 'platform').must_equal(
+              default_key => 'starship'
             )
           end
 
@@ -145,13 +146,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             DataMunger.new(
               {
                 key => {
-                  default_key => "starship",
-                  :speed => 42,
-                },
+                  default_key => 'starship',
+                  :speed => 42
+                }
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
-              default_key => "starship",
+            ).public_send("#{key}_data_for", 'suite', 'platform').must_equal(
+              default_key => 'starship',
               :speed => 42
             )
           end
@@ -160,11 +161,11 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             DataMunger.new(
               {
                 platforms: [
-                  { name: "plat" },
-                ],
+                  { name: 'plat' }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal({})
           end
 
           it "drops platform #{key} if hash is nil" do
@@ -172,13 +173,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 platforms: [
                   {
-                    :name => "plat",
-                    key => nil,
-                  },
-                ],
+                    :name => 'plat',
+                    key => nil
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal({})
           end
 
           it "returns platform #{key} name" do
@@ -186,14 +187,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 platforms: [
                   {
-                    :name => "plat",
-                    key => "flip",
-                  },
-                ],
+                    :name => 'plat',
+                    key => 'flip'
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal(
-              default_key => "flip"
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal(
+              default_key => 'flip'
             )
           end
 
@@ -202,18 +203,18 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 platforms: [
                   {
-                    :name => "plat",
+                    :name => 'plat',
                     key => {
-                      default_key => "flip",
-                      :flop => "yep",
-                    },
-                  },
-                ],
+                      default_key => 'flip',
+                      :flop => 'yep'
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal(
-              default_key => "flip",
-              :flop => "yep"
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal(
+              default_key => 'flip',
+              :flop => 'yep'
             )
           end
 
@@ -221,11 +222,11 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             DataMunger.new(
               {
                 suites: [
-                  { name: "sweet" },
-                ],
+                  { name: 'sweet' }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal({})
+            ).public_send("#{key}_data_for", 'sweet', 'platform').must_equal({})
           end
 
           it "drops suite #{key} hash is nil" do
@@ -233,13 +234,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 suites: [
                   {
-                    :name => "suite",
-                    key => nil,
-                  },
-                ],
+                    :name => 'suite',
+                    key => nil
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", 'suite', 'plat').must_equal({})
           end
 
           it "returns suite #{key} name" do
@@ -247,14 +248,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 suites: [
                   {
-                    :name => "sweet",
-                    key => "waz",
-                  },
-                ],
+                    :name => 'sweet',
+                    key => 'waz'
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
-              default_key => "waz"
+            ).public_send("#{key}_data_for", 'sweet', 'platform').must_equal(
+              default_key => 'waz'
             )
           end
 
@@ -263,164 +264,164 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               {
                 suites: [
                   {
-                    :name => "sweet",
+                    :name => 'sweet',
                     key => {
-                      default_key => "waz",
-                      :up => "nope",
-                    },
-                  },
-                ],
+                      default_key => 'waz',
+                      :up => 'nope'
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
-              default_key => "waz",
-              :up => "nope"
+            ).public_send("#{key}_data_for", 'sweet', 'platform').must_equal(
+              default_key => 'waz',
+              :up => 'nope'
             )
           end
         end
 
-        describe "from multiple sources merging" do
-          it "suite into platform into common" do
+        describe 'from multiple sources merging' do
+          it 'suite into platform into common' do
             DataMunger.new(
               {
                 key => {
-                  default_key => "commony",
-                  :color => "purple",
-                  :fruit => %w{apple pear},
-                  :deep => { common: "junk" },
+                  default_key => 'commony',
+                  :color => 'purple',
+                  :fruit => %w[apple pear],
+                  :deep => { common: 'junk' }
                 },
                 :platforms => [
                   {
-                    :name => "plat",
+                    :name => 'plat',
                     key => {
-                      default_key => "platformy",
-                      :fruit => ["banana"],
-                      :deep => { platform: "stuff" },
-                    },
-                  },
+                      default_key => 'platformy',
+                      :fruit => ['banana'],
+                      :deep => { platform: 'stuff' }
+                    }
+                  }
                 ],
                 :suites => [
                   {
-                    :name => "sweet",
+                    :name => 'sweet',
                     key => {
-                      default_key => "suitey",
-                      :vehicle => "car",
-                      :deep => { suite: "things" },
-                    },
-                  },
-                ],
+                      default_key => 'suitey',
+                      :vehicle => 'car',
+                      :deep => { suite: 'things' }
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
-              default_key => "suitey",
-              :color => "purple",
-              :fruit => ["banana"],
-              :vehicle => "car",
+            ).public_send("#{key}_data_for", 'sweet', 'plat').must_equal(
+              default_key => 'suitey',
+              :color => 'purple',
+              :fruit => ['banana'],
+              :vehicle => 'car',
               :deep => {
-                common: "junk",
-                platform: "stuff",
-                suite: "things",
+                common: 'junk',
+                platform: 'stuff',
+                suite: 'things'
               }
             )
           end
 
-          it "platform into common" do
+          it 'platform into common' do
             DataMunger.new(
               {
                 key => {
-                  default_key => "commony",
-                  :color => "purple",
-                  :fruit => %w{apple pear},
-                  :deep => { common: "junk" },
+                  default_key => 'commony',
+                  :color => 'purple',
+                  :fruit => %w[apple pear],
+                  :deep => { common: 'junk' }
                 },
                 :platforms => [
                   {
-                    :name => "plat",
+                    :name => 'plat',
                     key => {
-                      default_key => "platformy",
-                      :fruit => ["banana"],
-                      :deep => { platform: "stuff" },
-                    },
-                  },
-                ],
+                      default_key => 'platformy',
+                      :fruit => ['banana'],
+                      :deep => { platform: 'stuff' }
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
-              default_key => "platformy",
-              :color => "purple",
-              :fruit => ["banana"],
+            ).public_send("#{key}_data_for", 'sweet', 'plat').must_equal(
+              default_key => 'platformy',
+              :color => 'purple',
+              :fruit => ['banana'],
               :deep => {
-                common: "junk",
-                platform: "stuff",
+                common: 'junk',
+                platform: 'stuff'
               }
             )
           end
 
-          it "suite into common" do
+          it 'suite into common' do
             DataMunger.new(
               {
                 key => {
-                  default_key => "commony",
-                  :color => "purple",
-                  :fruit => %w{apple pear},
-                  :deep => { common: "junk" },
+                  default_key => 'commony',
+                  :color => 'purple',
+                  :fruit => %w[apple pear],
+                  :deep => { common: 'junk' }
                 },
                 :suites => [
                   {
-                    :name => "sweet",
+                    :name => 'sweet',
                     key => {
-                      default_key => "suitey",
-                      :vehicle => "car",
-                      :deep => { suite: "things" },
-                    },
-                  },
-                ],
+                      default_key => 'suitey',
+                      :vehicle => 'car',
+                      :deep => { suite: 'things' }
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
-              default_key => "suitey",
-              :color => "purple",
-              :fruit => %w{apple pear},
-              :vehicle => "car",
+            ).public_send("#{key}_data_for", 'sweet', 'plat').must_equal(
+              default_key => 'suitey',
+              :color => 'purple',
+              :fruit => %w[apple pear],
+              :vehicle => 'car',
               :deep => {
-                common: "junk",
-                suite: "things",
+                common: 'junk',
+                suite: 'things'
               }
             )
           end
 
-          it "suite into platform" do
+          it 'suite into platform' do
             DataMunger.new(
               {
                 platforms: [
                   {
-                    :name => "plat",
+                    :name => 'plat',
                     key => {
-                      default_key => "platformy",
-                      :fruit => ["banana"],
-                      :deep => { platform: "stuff" },
-                    },
-                  },
+                      default_key => 'platformy',
+                      :fruit => ['banana'],
+                      :deep => { platform: 'stuff' }
+                    }
+                  }
                 ],
                 suites: [
                   {
-                    :name => "sweet",
+                    :name => 'sweet',
                     key => {
-                      default_key => "suitey",
-                      :vehicle => "car",
-                      :deep => { suite: "things" },
-                    },
-                  },
-                ],
+                      default_key => 'suitey',
+                      :vehicle => 'car',
+                      :deep => { suite: 'things' }
+                    }
+                  }
+                ]
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
-              default_key => "suitey",
-              :fruit => ["banana"],
-              :vehicle => "car",
+            ).public_send("#{key}_data_for", 'sweet', 'plat').must_equal(
+              default_key => 'suitey',
+              :fruit => ['banana'],
+              :vehicle => 'car',
               :deep => {
-                platform: "stuff",
-                suite: "things",
+                platform: 'stuff',
+                suite: 'things'
               }
             )
           end
@@ -428,840 +429,840 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    describe "primary Chef data" do
-      describe "in a suite" do
-        it "moves attributes into provisioner" do
+    describe 'primary Chef data' do
+      describe 'in a suite' do
+        it 'moves attributes into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               suites: [
                 {
-                  name: "sweet",
-                  attributes: { one: "two" },
-                },
-              ],
+                  name: 'sweet',
+                  attributes: { one: 'two' }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            attributes: { one: 'two' }
           )
         end
 
-        it "moves run_list into provisioner" do
+        it 'moves run_list into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               suites: [
                 {
-                  name: "sweet",
-                  run_list: %w{one two},
-                },
-              ],
+                  name: 'sweet',
+                  run_list: %w[one two]
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "moves named_run_list into provisioner" do
+        it 'moves named_run_list into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               suites: [
                 {
-                  name: "sweet",
-                  named_run_list: "other_run_list",
-                },
-              ],
+                  name: 'sweet',
+                  named_run_list: 'other_run_list'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            named_run_list: 'other_run_list'
           )
         end
-        it "maintains run_list in provisioner" do
+        it 'maintains run_list in provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   provisioner: {
-                    run_list: %w{one two},
-                  },
-                },
-              ],
+                    run_list: %w[one two]
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "merge provisioner into attributes if provisioner exists" do
+        it 'merge provisioner into attributes if provisioner exists' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  attributes: { one: "two" },
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'sweet',
+                  attributes: { one: 'two' },
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            attributes: { one: 'two' }
           )
         end
 
-        it "merge provisioner into run_list if provisioner exists" do
+        it 'merge provisioner into run_list if provisioner exists' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  run_list: %w{one two},
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'sweet',
+                  run_list: %w[one two],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "merge provisioner into named_run_list if provisioner exists" do
+        it 'merge provisioner into named_run_list if provisioner exists' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  named_run_list: "other_run_list",
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'sweet',
+                  named_run_list: 'other_run_list',
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            named_run_list: 'other_run_list'
           )
         end
-        it "drops nil run_list" do
+        it 'drops nil run_list' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   run_list: nil,
-                  provisioner: "chefy",
-                },
-              ],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy'
           )
         end
 
-        it "drops nil attributes" do
+        it 'drops nil attributes' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   attributes: nil,
-                  provisioner: "chefy",
-                },
-              ],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy'
           )
         end
       end
 
-      describe "in a platform" do
-        it "moves attributes into provisioner" do
+      describe 'in a platform' do
+        it 'moves attributes into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
-                  attributes: { one: "two" },
-                },
-              ],
+                  name: 'plat',
+                  attributes: { one: 'two' }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            attributes: { one: 'two' }
           )
         end
 
-        it "moves run_list into provisioner" do
+        it 'moves run_list into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
-                  run_list: %w{one two},
-                },
-              ],
+                  name: 'plat',
+                  run_list: %w[one two]
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "moves named_run_list into provisioner" do
+        it 'moves named_run_list into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
-                  named_run_list: "other_run_list",
-                },
-              ],
+                  name: 'plat',
+                  named_run_list: 'other_run_list'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            named_run_list: 'other_run_list'
           )
         end
-        it "maintains run_list in provisioner" do
+        it 'maintains run_list in provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   provisioner: {
-                    run_list: %w{one two},
-                  },
-                },
-              ],
+                    run_list: %w[one two]
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "merge provisioner into attributes if provisioner exists" do
+        it 'merge provisioner into attributes if provisioner exists' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  attributes: { one: "two" },
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'plat',
+                  attributes: { one: 'two' },
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            attributes: { one: 'two' }
           )
         end
 
-        it "merge provisioner into run_list if provisioner exists" do
+        it 'merge provisioner into run_list if provisioner exists' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  run_list: %w{one two},
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'plat',
+                  run_list: %w[one two],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two]
           )
         end
 
-        it "merge provisioner into named_run_list if provisioner exists" do
+        it 'merge provisioner into named_run_list if provisioner exists' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  named_run_list: "other_run_list",
-                  provisioner: "chefy",
-                },
-              ],
+                  name: 'plat',
+                  named_run_list: 'other_run_list',
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            named_run_list: 'other_run_list'
           )
         end
-        it "drops nil run_list" do
+        it 'drops nil run_list' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   run_list: nil,
-                  provisioner: "chefy",
-                },
-              ],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy'
           )
         end
 
-        it "drops nil attributes" do
+        it 'drops nil attributes' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   attributes: nil,
-                  provisioner: "chefy",
-                },
-              ],
+                  provisioner: 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy'
           )
         end
       end
 
-      describe "in a suite and platform" do
-        it "merges suite attributes into platform attributes" do
+      describe 'in a suite and platform' do
+        it 'merges suite attributes into platform attributes' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   attributes: {
-                    color: "blue",
-                    deep: { platform: "much" },
-                  },
-                },
+                    color: 'blue',
+                    deep: { platform: 'much' }
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   attributes: {
-                    color: "pink",
-                    deep: { suite: "wow" },
-                  },
-                },
-              ],
+                    color: 'pink',
+                    deep: { suite: 'wow' }
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
             attributes: {
-              color: "pink",
+              color: 'pink',
               deep: {
-                suite: "wow",
-                platform: "much",
-              },
+                suite: 'wow',
+                platform: 'much'
+              }
             }
           )
         end
 
-        it "concats suite run_list to platform run_list" do
+        it 'concats suite run_list to platform run_list' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
-                  run_list: %w{one two},
-                },
+                  name: 'plat',
+                  run_list: %w[one two]
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
-                  run_list: %w{three four},
-                },
-              ],
+                  name: 'sweet',
+                  run_list: %w[three four]
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two three four]
           )
         end
 
-        it "concats suite run_list in provisioner to platform run_list" do
+        it 'concats suite run_list in provisioner to platform run_list' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
-                  run_list: %w{one two},
-                },
+                  name: 'plat',
+                  run_list: %w[one two]
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   provisioner: {
-                    run_list: %w{three four},
-                  },
-                },
-              ],
+                    run_list: %w[three four]
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two three four]
           )
         end
 
-        it "concats suite run_list to platform run_list in provisioner" do
+        it 'concats suite run_list to platform run_list in provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   provisioner: {
-                    run_list: %w{one two},
-                  },
-                },
+                    run_list: %w[one two]
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
-                  run_list: %w{three four},
-                },
-              ],
+                  name: 'sweet',
+                  run_list: %w[three four]
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
+            run_list: %w[one two three four]
           )
         end
 
-        it "concats to nil run_lists into an empty Array" do
+        it 'concats to nil run_lists into an empty Array' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   provisioner: {
-                    run_list: nil,
-                  },
-                },
+                    run_list: nil
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
-                  run_list: nil,
-                },
-              ],
+                  name: 'sweet',
+                  run_list: nil
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            name: 'chefy',
             run_list: []
           )
         end
 
-        it "does not corrupt run_list data for multiple suite/platform pairs" do
+        it 'does not corrupt run_list data for multiple suite/platform pairs' do
           munger = DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               platforms: [
                 {
-                  name: "p1",
+                  name: 'p1'
                 },
                 {
-                  name: "p2",
-                  run_list: %w{one two},
-                },
+                  name: 'p2',
+                  run_list: %w[one two]
+                }
               ],
               suites: [
                 {
-                  name: "s1",
-                  run_list: %w{alpha beta},
+                  name: 's1',
+                  run_list: %w[alpha beta]
                 },
                 {
-                  name: "s2",
+                  name: 's2',
                   provisioner: {
-                    run_list: %w{three four},
-                  },
-                },
-              ],
+                    run_list: %w[three four]
+                  }
+                }
+              ]
             },
             {}
           )
 
           # call munger for other data to cause any necessary internal
           # data mutation
-          munger.provisioner_data_for("s1", "p1")
-          munger.provisioner_data_for("s1", "p2")
-          munger.provisioner_data_for("s2", "p1")
+          munger.provisioner_data_for('s1', 'p1')
+          munger.provisioner_data_for('s1', 'p2')
+          munger.provisioner_data_for('s2', 'p1')
 
-          munger.provisioner_data_for("s2", "p2").must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+          munger.provisioner_data_for('s2', 'p2').must_equal(
+            name: 'chefy',
+            run_list: %w[one two three four]
           )
         end
       end
     end
 
-    describe "kitchen config" do
-      %i{kitchen_root test_base_path}.each do |key|
+    describe 'kitchen config' do
+      %i[kitchen_root test_base_path].each do |key|
         describe "for #{key}" do
-          describe "for #driver_data_for" do
-            it "is returned when provided" do
+          describe 'for #driver_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'datvalue'
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'ilose'
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in driver data" do
+            it 'rejects any value in driver data' do
               DataMunger.new(
                 {
                   driver: {
-                    :name => "chefy",
-                    key => "imevil",
+                    :name => 'chefy',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
-                name: "chefy"
+              ).driver_data_for('sweet', 'plat').must_equal(
+                name: 'chefy'
               )
             end
           end
 
-          describe "for #provisioner_data_for" do
-            it "is returned when provided" do
+          describe 'for #provisioner_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  provisioner: "chefy",
+                  provisioner: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'datvalue'
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  provisioner: "chefy",
+                  provisioner: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  provisioner: "chefy",
+                  provisioner: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'ilose'
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in provisioner data" do
+            it 'rejects any value in provisioner data' do
               DataMunger.new(
                 {
                   provisioner: {
-                    :name => "chefy",
-                    key => "imevil",
+                    :name => 'chefy',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                name: "chefy"
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                name: 'chefy'
               )
             end
           end
 
-          describe "for #verifier_data_for" do
-            it "is returned when provided" do
+          describe 'for #verifier_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'datvalue'
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'ilose'
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in verifier data" do
+            it 'rejects any value in verifier data' do
               DataMunger.new(
                 {
                   verifier: {
-                    :version => "chefy",
-                    key => "imevil",
+                    :version => 'chefy',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
-                version: "chefy"
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                version: 'chefy'
               )
             end
           end
 
-          describe "for #transport_data_for" do
-            it "is returned when provided" do
+          describe 'for #transport_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                key => 'datvalue'
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                key => 'ilose'
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in transport data" do
+            it 'rejects any value in transport data' do
               DataMunger.new(
                 {
                   transport: {
-                    :name => "pipes",
-                    key => "imevil",
+                    :name => 'pipes',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
-                name: "pipes"
+              ).transport_data_for('sweet', 'plat').must_equal(
+                name: 'pipes'
               )
             end
           end
@@ -1270,291 +1271,291 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
       [:log_level].each do |key|
         describe "for #{key}" do
-          describe "for #driver_data_for" do
-            it "is returned when provided" do
+          describe 'for #driver_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'datvalue'
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  driver: "chefy",
+                  driver: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).driver_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'ilose'
+              ).driver_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in driver data" do
+            it 'rejects any value in driver data' do
               DataMunger.new(
                 {
                   driver: {
-                    :name => "chefy",
-                    key => "imevil",
+                    :name => 'chefy',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
-                name: "chefy"
+              ).driver_data_for('sweet', 'plat').must_equal(
+                name: 'chefy'
               )
             end
           end
 
-          describe "for #provisioner_data_for" do
-            it "uses value in provisioner data" do
+          describe 'for #provisioner_data_for' do
+            it 'uses value in provisioner data' do
               DataMunger.new(
                 {
                   provisioner: {
-                    :name => "chefy",
-                    key => "datvalue",
+                    :name => 'chefy',
+                    key => 'datvalue'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in user data" do
+            it 'rejects any value in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "imevil",
+                    key => 'imevil'
                   },
-                  provisioner: "chefy",
+                  provisioner: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
-                name: "chefy"
+              ).provisioner_data_for('sweet', 'plat').must_equal(
+                name: 'chefy'
               )
             end
           end
 
-          describe "for #verifier_data_for" do
-            it "is returned when provided" do
+          describe 'for #verifier_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'datvalue'
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  verifier: "chefy",
+                  verifier: 'chefy',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).verifier_data_for("sweet", "plat").must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                key => 'ilose'
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                :name => 'chefy',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in verifier data" do
+            it 'rejects any value in verifier data' do
               DataMunger.new(
                 {
                   verifier: {
-                    :version => "chefy",
-                    key => "imevil",
+                    :version => 'chefy',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
-                version: "chefy"
+              ).verifier_data_for('sweet', 'plat').must_equal(
+                version: 'chefy'
               )
             end
           end
 
-          describe "for #transport_data_for" do
-            it "is returned when provided" do
+          describe 'for #transport_data_for' do
+            it 'is returned when provided' do
               DataMunger.new(
                 {
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "datvalue"
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                key => 'datvalue'
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "is returned when provided in user data" do
+            it 'is returned when provided in user data' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "user data value beats provided value" do
+            it 'user data value beats provided value' do
               DataMunger.new(
                 {
                   kitchen: {
-                    key => "datvalue",
+                    key => 'datvalue'
                   },
-                  transport: "pipes",
+                  transport: 'pipes',
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
-                key => "ilose"
-              ).transport_data_for("sweet", "plat").must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                key => 'ilose'
+              ).transport_data_for('sweet', 'plat').must_equal(
+                :name => 'pipes',
+                key => 'datvalue'
               )
             end
 
-            it "rejects any value in transport data" do
+            it 'rejects any value in transport data' do
               DataMunger.new(
                 {
                   transport: {
-                    :name => "pipes",
-                    key => "imevil",
+                    :name => 'pipes',
+                    key => 'imevil'
                   },
                   platforms: [
-                    { name: "plat" },
+                    { name: 'plat' }
                   ],
                   suites: [
-                    { name: "sweet" },
-                  ],
+                    { name: 'sweet' }
+                  ]
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
-                name: "pipes"
+              ).transport_data_for('sweet', 'plat').must_equal(
+                name: 'pipes'
               )
             end
           end
@@ -1562,1239 +1563,1238 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    describe "legacy driver_config and driver_plugin" do
-      describe "from a single source" do
-        it "returns common driver name" do
+    describe 'legacy driver_config and driver_plugin' do
+      describe 'from a single source' do
+        it 'returns common driver name' do
           DataMunger.new(
             {
-              driver_plugin: "starship",
+              driver_plugin: 'starship'
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "starship"
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'starship'
           )
         end
 
-        it "merges driver into driver_plugin if driver exists" do
+        it 'merges driver into driver_plugin if driver exists' do
           DataMunger.new(
             {
-              driver_plugin: "starship",
-              driver: "zappa",
+              driver_plugin: 'starship',
+              driver: 'zappa'
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "zappa"
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'zappa'
           )
         end
 
-        it "returns common driver config" do
+        it 'returns common driver config' do
           DataMunger.new(
             {
-              driver_plugin: "starship",
+              driver_plugin: 'starship',
               driver_config: {
-                speed: 42,
-              },
+                speed: 42
+              }
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "starship",
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'starship',
             speed: 42
           )
         end
 
-        it "merges driver into driver_config if driver with name exists" do
+        it 'merges driver into driver_config if driver with name exists' do
           DataMunger.new(
             {
               driver_config: {
-                eh: "yep",
+                eh: 'yep'
               },
-              driver: "zappa",
+              driver: 'zappa'
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "zappa",
-            eh: "yep"
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'zappa',
+            eh: 'yep'
           )
         end
 
-        it "merges driver into driver_config if driver exists" do
+        it 'merges driver into driver_config if driver exists' do
           DataMunger.new(
             {
-              driver_plugin: "imold",
+              driver_plugin: 'imold',
               driver_config: {
-                eh: "yep",
-                color: "pink",
+                eh: 'yep',
+                color: 'pink'
               },
               driver: {
-                name: "zappa",
-                color: "black",
-              },
+                name: 'zappa',
+                color: 'black'
+              }
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "zappa",
-            eh: "yep",
-            color: "black"
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'zappa',
+            eh: 'yep',
+            color: 'black'
           )
         end
 
-        it "returns platform driver name" do
+        it 'returns platform driver name' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  driver_plugin: "flip",
-                },
-              ],
+                  name: 'plat',
+                  driver_plugin: 'flip'
+                }
+              ]
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
-            name: "flip"
+          ).driver_data_for('suite', 'plat').must_equal(
+            name: 'flip'
           )
         end
 
-        it "returns platform config containing driver hash" do
+        it 'returns platform config containing driver hash' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  driver_plugin: "flip",
+                  name: 'plat',
+                  driver_plugin: 'flip',
                   driver_config: {
-                    flop: "yep",
-                  },
-                },
-              ],
+                    flop: 'yep'
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
-            name: "flip",
-            flop: "yep"
+          ).driver_data_for('suite', 'plat').must_equal(
+            name: 'flip',
+            flop: 'yep'
           )
         end
 
-        it "returns suite driver name" do
+        it 'returns suite driver name' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  driver_plugin: "waz",
-                },
-              ],
+                  name: 'sweet',
+                  driver_plugin: 'waz'
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
-            name: "waz"
+          ).driver_data_for('sweet', 'platform').must_equal(
+            name: 'waz'
           )
         end
 
-        it "returns suite config containing driver hash" do
+        it 'returns suite config containing driver hash' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  driver_plugin: "waz",
+                  name: 'sweet',
+                  driver_plugin: 'waz',
                   driver_config: {
-                    up: "nope",
-                  },
-                },
-              ],
+                    up: 'nope'
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
-            name: "waz",
-            up: "nope"
+          ).driver_data_for('sweet', 'platform').must_equal(
+            name: 'waz',
+            up: 'nope'
           )
         end
       end
 
-      describe "from multiple sources" do
-        it "suite into platform into common" do
+      describe 'from multiple sources' do
+        it 'suite into platform into common' do
           DataMunger.new(
             {
-              driver_plugin: "commony",
+              driver_plugin: 'commony',
               driver_config: {
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               platforms: [
                 {
-                  name: "plat",
-                  driver_plugin: "platformy",
+                  name: 'plat',
+                  driver_plugin: 'platformy',
                   driver_config: {
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
-                  driver_plugin: "suitey",
+                  name: 'sweet',
+                  driver_plugin: 'suitey',
                   driver_config: {
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
-            name: "suitey",
-            color: "purple",
-            fruit: ["banana"],
-            vehicle: "car",
+          ).driver_data_for('sweet', 'plat').must_equal(
+            name: 'suitey',
+            color: 'purple',
+            fruit: ['banana'],
+            vehicle: 'car',
             deep: {
-              common: "junk",
-              platform: "stuff",
-              suite: "things",
+              common: 'junk',
+              platform: 'stuff',
+              suite: 'things'
             }
           )
         end
 
-        it "platform into common" do
+        it 'platform into common' do
           DataMunger.new(
             {
-              driver_plugin: "commony",
+              driver_plugin: 'commony',
               driver_config: {
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               platforms: [
                 {
-                  name: "plat",
-                  driver_plugin: "platformy",
+                  name: 'plat',
+                  driver_plugin: 'platformy',
                   driver_config: {
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
-              ],
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
-            name: "platformy",
-            color: "purple",
-            fruit: ["banana"],
+          ).driver_data_for('sweet', 'plat').must_equal(
+            name: 'platformy',
+            color: 'purple',
+            fruit: ['banana'],
             deep: {
-              common: "junk",
-              platform: "stuff",
+              common: 'junk',
+              platform: 'stuff'
             }
           )
         end
 
-        it "suite into common" do
+        it 'suite into common' do
           DataMunger.new(
             {
-              driver_plugin: "commony",
+              driver_plugin: 'commony',
               driver_config: {
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               suites: [
                 {
-                  name: "sweet",
-                  driver_plugin: "suitey",
+                  name: 'sweet',
+                  driver_plugin: 'suitey',
                   driver_config: {
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
-            name: "suitey",
-            color: "purple",
-            fruit: %w{apple pear},
-            vehicle: "car",
+          ).driver_data_for('sweet', 'plat').must_equal(
+            name: 'suitey',
+            color: 'purple',
+            fruit: %w[apple pear],
+            vehicle: 'car',
             deep: {
-              common: "junk",
-              suite: "things",
+              common: 'junk',
+              suite: 'things'
             }
           )
         end
 
-        it "suite into platform" do
+        it 'suite into platform' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  driver_plugin: "platformy",
+                  name: 'plat',
+                  driver_plugin: 'platformy',
                   driver_config: {
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
-                  driver_plugin: "suitey",
+                  name: 'sweet',
+                  driver_plugin: 'suitey',
                   driver_config: {
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
-            name: "suitey",
-            fruit: ["banana"],
-            vehicle: "car",
+          ).driver_data_for('sweet', 'plat').must_equal(
+            name: 'suitey',
+            fruit: ['banana'],
+            vehicle: 'car',
             deep: {
-              platform: "stuff",
-              suite: "things",
+              platform: 'stuff',
+              suite: 'things'
             }
           )
         end
       end
     end
 
-    describe "legacy chef paths from suite" do
-      LEGACY_CHEF_PATHS = %i{
+    describe 'legacy chef paths from suite' do
+      LEGACY_CHEF_PATHS = %i[
         data_path data_bags_path environments_path
         nodes_path roles_path encrypted_data_bag_secret_key_path
-      }.freeze
+      ].freeze
 
       LEGACY_CHEF_PATHS.each do |key|
         it "moves #{key} into provisioner" do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               suites: [
                 {
-                  :name => "sweet",
-                  key => "mypath",
-                },
-              ],
+                  :name => 'sweet',
+                  key => 'mypath'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            :name => "chefy",
-            key => "mypath"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            :name => 'chefy',
+            key => 'mypath'
           )
         end
 
-        it "merges provisioner into data_path if provisioner exists" do
+        it 'merges provisioner into data_path if provisioner exists' do
           DataMunger.new(
             {
               suites: [
                 {
-                  :name => "sweet",
-                  key => "mypath",
-                  :provisioner => "chefy",
-                },
-              ],
+                  :name => 'sweet',
+                  key => 'mypath',
+                  :provisioner => 'chefy'
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            :name => "chefy",
-            key => "mypath"
+          ).provisioner_data_for('sweet', 'plat').must_equal(
+            :name => 'chefy',
+            key => 'mypath'
           )
         end
       end
     end
 
-    describe "legacy require_chef_omnibus from driver" do
-      describe "from a single source" do
-        it "common driver value moves into provisioner" do
+    describe 'legacy require_chef_omnibus from driver' do
+      describe 'from a single source' do
+        it 'common driver value moves into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               driver: {
-                name: "starship",
-                require_chef_omnibus: "it's probably fine",
-              },
+                name: 'starship',
+                require_chef_omnibus: "it's probably fine"
+              }
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'platform').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
 
-        it "common driver value loses to existing provisioner value" do
+        it 'common driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               provisioner: {
-                name: "chefy",
-                require_chef_omnibus: "it's probably fine",
+                name: 'chefy',
+                require_chef_omnibus: "it's probably fine"
               },
               driver: {
-                name: "starship",
-                require_chef_omnibus: "dragons",
-              },
+                name: 'starship',
+                require_chef_omnibus: 'dragons'
+              }
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'platform').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
 
-        it "suite driver value moves into provisioner" do
+        it 'suite driver value moves into provisioner' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  provisioner: "chefy",
+                  name: 'sweet',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
-                    require_chef_omnibus: "it's probably fine",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    require_chef_omnibus: "it's probably fine"
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'platform').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
 
-        it "suite driver value loses to existing provisioner value" do
+        it 'suite driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   provisioner: {
-                    name: "chefy",
-                    require_chef_omnibus: "it's probably fine",
+                    name: 'chefy',
+                    require_chef_omnibus: "it's probably fine"
                   },
                   driver: {
-                    name: "starship",
-                    require_chef_omnibus: "dragons",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    require_chef_omnibus: 'dragons'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'platform').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
 
-        it "platform driver value moves into provisioner" do
+        it 'platform driver value moves into provisioner' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  provisioner: "chefy",
+                  name: 'plat',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
-                    require_chef_omnibus: "it's probably fine",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    require_chef_omnibus: "it's probably fine"
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'plat').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
 
-        it "platform driver value loses to existing provisioner value" do
+        it 'platform driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   provisioner: {
-                    name: "chefy",
-                    require_chef_omnibus: "it's probably fine",
+                    name: 'chefy',
+                    require_chef_omnibus: "it's probably fine"
                   },
                   driver: {
-                    name: "starship",
-                    require_chef_omnibus: "dragons",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    require_chef_omnibus: 'dragons'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'plat').must_equal(
+            name: 'chefy',
             require_chef_omnibus: "it's probably fine"
           )
         end
       end
     end
 
-    describe "legacy http_proxy & https_proxy from driver" do
-      describe "from a single source" do
-        it "common driver value remains in driver" do
+    describe 'legacy http_proxy & https_proxy from driver' do
+      describe 'from a single source' do
+        it 'common driver value remains in driver' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               driver: {
-                name: "starship",
-                http_proxy: "http://proxy",
-                https_proxy: "https://proxy",
-              },
+                name: 'starship',
+                http_proxy: 'http://proxy',
+                https_proxy: 'https://proxy'
+              }
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
-            name: "starship",
-            http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+          ).driver_data_for('suite', 'platform').must_equal(
+            name: 'starship',
+            http_proxy: 'http://proxy',
+            https_proxy: 'https://proxy'
           )
         end
 
-        it "common driver value copies into provisioner" do
+        it 'common driver value copies into provisioner' do
           DataMunger.new(
             {
-              provisioner: "chefy",
+              provisioner: 'chefy',
               driver: {
-                name: "starship",
-                http_proxy: "http://proxy",
-                https_proxy: "https://proxy",
-              },
+                name: 'starship',
+                http_proxy: 'http://proxy',
+                https_proxy: 'https://proxy'
+              }
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
-            name: "chefy",
-            http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+          ).provisioner_data_for('suite', 'platform').must_equal(
+            name: 'chefy',
+            http_proxy: 'http://proxy',
+            https_proxy: 'https://proxy'
           )
         end
 
-        it "common driver value copies into verifier" do
+        it 'common driver value copies into verifier' do
           DataMunger.new(
             {
-              verifier: "bussy",
+              verifier: 'bussy',
               driver: {
-                name: "starship",
-                http_proxy: "http://proxy",
-                https_proxy: "https://proxy",
-              },
+                name: 'starship',
+                http_proxy: 'http://proxy',
+                https_proxy: 'https://proxy'
+              }
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "bussy",
-            http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'bussy',
+            http_proxy: 'http://proxy',
+            https_proxy: 'https://proxy'
           )
         end
 
-        it "common driver value loses to existing provisioner value" do
+        it 'common driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               provisioner: {
-                name: "chefy",
+                name: 'chefy',
                 http_proxy: "it's probably fine",
-                https_proxy: "la quinta",
+                https_proxy: 'la quinta'
               },
               driver: {
-                name: "starship",
-                http_proxy: "dragons",
-                https_proxy: "cats",
-              },
+                name: 'starship',
+                http_proxy: 'dragons',
+                https_proxy: 'cats'
+              }
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'platform').must_equal(
+            name: 'chefy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "common driver value loses to existing verifier value" do
+        it 'common driver value loses to existing verifier value' do
           DataMunger.new(
             {
               verifier: {
-                name: "bussy",
+                name: 'bussy',
                 http_proxy: "it's probably fine",
-                https_proxy: "la quinta",
+                https_proxy: 'la quinta'
               },
               driver: {
-                name: "starship",
-                http_proxy: "dragons",
-                https_proxy: "cats",
-              },
+                name: 'starship',
+                http_proxy: 'dragons',
+                https_proxy: 'cats'
+              }
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "bussy",
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'bussy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "suite driver value remains in driver" do
+        it 'suite driver value remains in driver' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  provisioner: "chefy",
+                  name: 'sweet',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
-            name: "starship",
+          ).driver_data_for('sweet', 'platform').must_equal(
+            name: 'starship',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "suite driver value copies into provisioner" do
+        it 'suite driver value copies into provisioner' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  provisioner: "chefy",
+                  name: 'sweet',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'platform').must_equal(
+            name: 'chefy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "suite driver value copies into verifier" do
+        it 'suite driver value copies into verifier' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  verifier: "bussy",
+                  name: 'sweet',
+                  verifier: 'bussy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
-            name: "bussy",
+          ).verifier_data_for('sweet', 'platform').must_equal(
+            name: 'bussy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "suite driver value loses to existing provisioner value" do
+        it 'suite driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   provisioner: {
-                    name: "chefy",
+                    name: 'chefy',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
+                    https_proxy: 'la quinta'
                   },
                   driver: {
-                    name: "starship",
-                    http_proxy: "dragons",
-                    https_proxy: "cats",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    http_proxy: 'dragons',
+                    https_proxy: 'cats'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('sweet', 'platform').must_equal(
+            name: 'chefy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "suite driver value loses to existing verifier value" do
+        it 'suite driver value loses to existing verifier value' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   verifier: {
-                    name: "bussy",
+                    name: 'bussy',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
+                    https_proxy: 'la quinta'
                   },
                   driver: {
-                    name: "starship",
-                    http_proxy: "dragons",
-                    https_proxy: "cats",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    http_proxy: 'dragons',
+                    https_proxy: 'cats'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
-            name: "bussy",
+          ).verifier_data_for('sweet', 'platform').must_equal(
+            name: 'bussy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "platform driver value remains in driver" do
+        it 'platform driver value remains in driver' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  provisioner: "chefy",
+                  name: 'plat',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
-            name: "starship",
+          ).driver_data_for('suite', 'plat').must_equal(
+            name: 'starship',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "platform driver value copies into provisioner" do
+        it 'platform driver value copies into provisioner' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  provisioner: "chefy",
+                  name: 'plat',
+                  provisioner: 'chefy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'plat').must_equal(
+            name: 'chefy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "platform driver value copies into verifier" do
+        it 'platform driver value copies into verifier' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  verifier: "bussy",
+                  name: 'plat',
+                  verifier: 'bussy',
                   driver: {
-                    name: "starship",
+                    name: 'starship',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
-                  },
-                },
-              ],
+                    https_proxy: 'la quinta'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
-            name: "bussy",
+          ).verifier_data_for('suite', 'plat').must_equal(
+            name: 'bussy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "platform driver value loses to existing provisioner value" do
+        it 'platform driver value loses to existing provisioner value' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   provisioner: {
-                    name: "chefy",
+                    name: 'chefy',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
+                    https_proxy: 'la quinta'
                   },
                   driver: {
-                    name: "starship",
-                    http_proxy: "dragons",
-                    https_proxy: "cats",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    http_proxy: 'dragons',
+                    https_proxy: 'cats'
+                  }
+                }
+              ]
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
-            name: "chefy",
+          ).provisioner_data_for('suite', 'plat').must_equal(
+            name: 'chefy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
 
-        it "platform driver value loses to existing verifier value" do
+        it 'platform driver value loses to existing verifier value' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   verifier: {
-                    name: "bussy",
+                    name: 'bussy',
                     http_proxy: "it's probably fine",
-                    https_proxy: "la quinta",
+                    https_proxy: 'la quinta'
                   },
                   driver: {
-                    name: "starship",
-                    http_proxy: "dragons",
-                    https_proxy: "cats",
-                  },
-                },
-              ],
+                    name: 'starship',
+                    http_proxy: 'dragons',
+                    https_proxy: 'cats'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
-            name: "bussy",
+          ).verifier_data_for('suite', 'plat').must_equal(
+            name: 'bussy',
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: 'la quinta'
           )
         end
       end
     end
 
-    describe "legacy busser blocks to verifier" do
-      describe "from a single source" do
-        it "merges old common busser name to version into verifier" do
+    describe 'legacy busser blocks to verifier' do
+      describe 'from a single source' do
+        it 'merges old common busser name to version into verifier' do
           DataMunger.new(
             {
-              busser: "starship",
+              busser: 'starship'
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "busser",
-            version: "starship"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'busser',
+            version: 'starship'
           )
         end
 
-        it "merges old common busser name to version with exising verifier" do
+        it 'merges old common busser name to version with exising verifier' do
           DataMunger.new(
             {
-              busser: "starship",
+              busser: 'starship',
               verifier: {
-                a: "b",
-              },
+                a: 'b'
+              }
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "busser",
-            version: "starship",
-            a: "b"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'busser',
+            version: 'starship',
+            a: 'b'
           )
         end
 
-        it "merges old common busser name to version into verifier with name" do
+        it 'merges old common busser name to version into verifier with name' do
           DataMunger.new(
             {
-              busser: "starship",
-              verifier: "stellar",
+              busser: 'starship',
+              verifier: 'stellar'
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "stellar",
-            version: "starship"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'stellar',
+            version: 'starship'
           )
         end
 
-        it "merges old busser data into verifier with name" do
+        it 'merges old busser data into verifier with name' do
           DataMunger.new(
             {
               busser: {
-                a: "b",
+                a: 'b'
               },
-              verifier: "stellar",
+              verifier: 'stellar'
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "stellar",
-            a: "b"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'stellar',
+            a: 'b'
           )
         end
 
-        it "merges old busser data into verifier data" do
+        it 'merges old busser data into verifier data' do
           DataMunger.new(
             {
               busser: {
-                a: "b",
-                both: "legacy",
+                a: 'b',
+                both: 'legacy'
               },
               verifier: {
-                name: "stellar",
-                c: "d",
-                both: "modern",
-              },
+                name: 'stellar',
+                c: 'd',
+                both: 'modern'
+              }
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
-            name: "stellar",
-            a: "b",
-            c: "d",
-            both: "modern"
+          ).verifier_data_for('suite', 'platform').must_equal(
+            name: 'stellar',
+            a: 'b',
+            c: 'd',
+            both: 'modern'
           )
         end
 
-        it "returns platform verifier name" do
+        it 'returns platform verifier name' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  busser: "flip",
-                },
-              ],
+                  name: 'plat',
+                  busser: 'flip'
+                }
+              ]
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
-            name: "busser",
-            version: "flip"
+          ).verifier_data_for('suite', 'plat').must_equal(
+            name: 'busser',
+            version: 'flip'
           )
         end
 
-        it "return platform config containing verifier hash" do
+        it 'return platform config containing verifier hash' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
-                  busser: "flip",
+                  name: 'plat',
+                  busser: 'flip',
                   verifier: {
-                    flop: "yep",
-                  },
-                },
-              ],
+                    flop: 'yep'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
-            name: "busser",
-            version: "flip",
-            flop: "yep"
+          ).verifier_data_for('suite', 'plat').must_equal(
+            name: 'busser',
+            version: 'flip',
+            flop: 'yep'
           )
         end
 
-        it "returns suite driver name" do
+        it 'returns suite driver name' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  busser: "waz",
-                },
-              ],
+                  name: 'sweet',
+                  busser: 'waz'
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
-            name: "busser",
-            version: "waz"
+          ).verifier_data_for('sweet', 'platform').must_equal(
+            name: 'busser',
+            version: 'waz'
           )
         end
 
-        it "returns suite config containing verifier hash" do
+        it 'returns suite config containing verifier hash' do
           DataMunger.new(
             {
               suites: [
                 {
-                  name: "sweet",
-                  busser: "waz",
+                  name: 'sweet',
+                  busser: 'waz',
                   verifier: {
-                    up: "nope",
-                  },
-                },
-              ],
+                    up: 'nope'
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
-            name: "busser",
-            version: "waz",
-            up: "nope"
+          ).verifier_data_for('sweet', 'platform').must_equal(
+            name: 'busser',
+            version: 'waz',
+            up: 'nope'
           )
         end
       end
 
-      describe "from multiple sources" do
-        it "suite into platform into common" do
+      describe 'from multiple sources' do
+        it 'suite into platform into common' do
           DataMunger.new(
             {
               busser: {
-                version: "commony",
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                version: 'commony',
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   busser: {
-                    version: "platformy",
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
+                    version: 'platformy',
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   busser: {
-                    version: "suitey",
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    version: 'suitey',
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
-            name: "busser",
-            version: "suitey",
-            color: "purple",
-            fruit: ["banana"],
-            vehicle: "car",
+          ).verifier_data_for('sweet', 'plat').must_equal(
+            name: 'busser',
+            version: 'suitey',
+            color: 'purple',
+            fruit: ['banana'],
+            vehicle: 'car',
             deep: {
-              common: "junk",
-              platform: "stuff",
-              suite: "things",
+              common: 'junk',
+              platform: 'stuff',
+              suite: 'things'
             }
           )
         end
 
-        it "platform into common" do
+        it 'platform into common' do
           DataMunger.new(
             {
               busser: {
-                version: "commony",
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                version: 'commony',
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   busser: {
-                    version: "platformy",
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
-              ],
+                    version: 'platformy',
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
-            name: "busser",
-            version: "platformy",
-            color: "purple",
-            fruit: ["banana"],
+          ).verifier_data_for('sweet', 'plat').must_equal(
+            name: 'busser',
+            version: 'platformy',
+            color: 'purple',
+            fruit: ['banana'],
             deep: {
-              common: "junk",
-              platform: "stuff",
+              common: 'junk',
+              platform: 'stuff'
             }
           )
         end
 
-        it "suite into common" do
+        it 'suite into common' do
           DataMunger.new(
             {
               busser: {
-                version: "commony",
-                color: "purple",
-                fruit: %w{apple pear},
-                deep: { common: "junk" },
+                version: 'commony',
+                color: 'purple',
+                fruit: %w[apple pear],
+                deep: { common: 'junk' }
               },
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   busser: {
-                    version: "suitey",
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    version: 'suitey',
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
-            name: "busser",
-            version: "suitey",
-            color: "purple",
-            fruit: %w{apple pear},
-            vehicle: "car",
+          ).verifier_data_for('sweet', 'plat').must_equal(
+            name: 'busser',
+            version: 'suitey',
+            color: 'purple',
+            fruit: %w[apple pear],
+            vehicle: 'car',
             deep: {
-              common: "junk",
-              suite: "things",
+              common: 'junk',
+              suite: 'things'
             }
           )
         end
 
-        it "suite into platform" do
+        it 'suite into platform' do
           DataMunger.new(
             {
               platforms: [
                 {
-                  name: "plat",
+                  name: 'plat',
                   busser: {
-                    version: "platformy",
-                    fruit: ["banana"],
-                    deep: { platform: "stuff" },
-                  },
-                },
+                    version: 'platformy',
+                    fruit: ['banana'],
+                    deep: { platform: 'stuff' }
+                  }
+                }
               ],
               suites: [
                 {
-                  name: "sweet",
+                  name: 'sweet',
                   busser: {
-                    version: "suitey",
-                    vehicle: "car",
-                    deep: { suite: "things" },
-                  },
-                },
-              ],
+                    version: 'suitey',
+                    vehicle: 'car',
+                    deep: { suite: 'things' }
+                  }
+                }
+              ]
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
-            name: "busser",
-            version: "suitey",
-            fruit: ["banana"],
-            vehicle: "car",
+          ).verifier_data_for('sweet', 'plat').must_equal(
+            name: 'busser',
+            version: 'suitey',
+            fruit: ['banana'],
+            vehicle: 'car',
             deep: {
-              platform: "stuff",
-              suite: "things",
+              platform: 'stuff',
+              suite: 'things'
             }
           )
         end
       end
     end
 
-    describe "lifecycle_hooks stuff" do
-      it "handles a single global hook" do
+    describe 'lifecycle_hooks stuff' do
+      it 'handles a single global hook' do
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo",
+              pre_create: 'echo foo'
             },
-            platforms: [{ name: "plat" }],
-            suites: [{ name: "sweet" }],
+            platforms: [{ name: 'plat' }],
+            suites: [{ name: 'sweet' }]
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo"]
+        ).lifecycle_hooks_data_for('sweet', 'plat').must_equal(
+          pre_create: ['echo foo']
         )
       end
 
-      it "handles multiple global hooks" do
+      it 'handles multiple global hooks' do
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo",
-              post_converge: ["echo bar", { local: "echo baz" }],
-              pre_verify: [{ remote: "echo other" }],
+              pre_create: 'echo foo',
+              post_converge: ['echo bar', { local: 'echo baz' }],
+              pre_verify: [{ remote: 'echo other' }]
             },
-            platforms: [{ name: "plat" }],
-            suites: [{ name: "sweet" }],
+            platforms: [{ name: 'plat' }],
+            suites: [{ name: 'sweet' }]
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo"],
-          post_converge: ["echo bar", { local: "echo baz" }],
-          pre_verify: [{ remote: "echo other" }]
+        ).lifecycle_hooks_data_for('sweet', 'plat').must_equal(
+          pre_create: ['echo foo'],
+          post_converge: ['echo bar', { local: 'echo baz' }],
+          pre_verify: [{ remote: 'echo other' }]
         )
       end
 
-      it "handles hooks in platforms and suites" do
+      it 'handles hooks in platforms and suites' do
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo",
-              post_create: "echo post",
+              pre_create: 'echo foo',
+              post_create: 'echo post'
             },
             platforms: [{
-              name: "plat",
+              name: 'plat',
               lifecycle: {
-                pre_create: "echo bar",
-              },
+                pre_create: 'echo bar'
+              }
             }],
             suites: [{
-              name: "sweet",
+              name: 'sweet',
               lifecycle: {
-                pre_create: "echo baz",
-              },
-            }],
+                pre_create: 'echo baz'
+              }
+            }]
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo", "echo bar", "echo baz"],
-          post_create: ["echo post"]
+        ).lifecycle_hooks_data_for('sweet', 'plat').must_equal(
+          pre_create: ['echo foo', 'echo bar', 'echo baz'],
+          post_create: ['echo post']
         )
       end
 
-      it "munges a global legacy pre_create_command" do
+      it 'munges a global legacy pre_create_command' do
         DataMunger.new(
           {
             driver: {
-              pre_create_command: "echo bar",
+              pre_create_command: 'echo bar'
             },
             lifecycle: {
-              pre_create: "echo foo",
+              pre_create: 'echo foo'
             },
-            platforms: [{ name: "plat" }],
-            suites: [{ name: "sweet" }],
+            platforms: [{ name: 'plat' }],
+            suites: [{ name: 'sweet' }]
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo", { local: "echo bar" }]
+        ).lifecycle_hooks_data_for('sweet', 'plat').must_equal(
+          pre_create: ['echo foo', { local: 'echo bar' }]
         )
       end
 
-      it "munges a platform/suite legacy pre_create_commands" do
+      it 'munges a platform/suite legacy pre_create_commands' do
         DataMunger.new(
           {
             lifecycle: {
-              pre_create: "echo foo",
+              pre_create: 'echo foo'
             },
             platforms: [{
-              name: "plat",
+              name: 'plat',
               driver: {
-                pre_create_command: "echo bar",
-              },
+                pre_create_command: 'echo bar'
+              }
             }],
             suites: [{
-              name: "sweet",
+              name: 'sweet',
               driver: {
-                pre_create_command: "echo baz",
-              },
-            }],
+                pre_create_command: 'echo baz'
+              }
+            }]
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
-          pre_create: ["echo foo", { local: "echo bar" }, { local: "echo baz" }]
+        ).lifecycle_hooks_data_for('sweet', 'plat').must_equal(
+          pre_create: ['echo foo', { local: 'echo bar' }, { local: 'echo baz' }]
         )
       end
-
     end
   end
 end

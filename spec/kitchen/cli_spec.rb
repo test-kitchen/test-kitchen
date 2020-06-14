@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Tyler Ball (<tball@chef.io>)
 #
@@ -16,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/cli"
-require "kitchen"
+require 'kitchen/cli'
+require 'kitchen'
 
 module Kitchen
   describe CLI do
@@ -36,15 +37,15 @@ module Kitchen
       end
     end
 
-    describe "#initialize" do
-      it "does not set logging config when environment variables are missing" do
+    describe '#initialize' do
+      it 'does not set logging config when environment variables are missing' do
         assert_equal Kitchen::DEFAULT_LOG_LEVEL, cli.config.log_level
         assert_equal Kitchen::DEFAULT_LOG_OVERWRITE, cli.config.log_overwrite
       end
 
-      it "does set logging config when environment variables are present" do
-        ENV["KITCHEN_LOG"] = "warn"
-        ENV["KITCHEN_LOG_OVERWRITE"] = "false"
+      it 'does set logging config when environment variables are present' do
+        ENV['KITCHEN_LOG'] = 'warn'
+        ENV['KITCHEN_LOG_OVERWRITE'] = 'false'
 
         assert_equal :warn, cli.config.log_level
         assert_equal false, cli.config.log_overwrite

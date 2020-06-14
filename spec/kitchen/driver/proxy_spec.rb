@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen/driver/proxy"
+require 'kitchen/driver/proxy'
 
 describe Kitchen::Driver::Proxy do
   let(:logged_output) { StringIO.new }
@@ -26,62 +27,62 @@ describe Kitchen::Driver::Proxy do
   let(:state)         { {} }
 
   let(:config) do
-    { host: "foobnoobs.com", reset_command: "mulligan" }
+    { host: 'foobnoobs.com', reset_command: 'mulligan' }
   end
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance")
+    stub(name: 'coolbeans', logger: logger, to_str: 'instance')
   end
 
   let(:driver) do
     Kitchen::Driver::Proxy.new(config).finalize_config!(instance)
   end
 
-  it "plugin_version is set to Kitchen::VERSION" do
+  it 'plugin_version is set to Kitchen::VERSION' do
     driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end
 
-  describe "non-parallel action" do
-    it "create must be serially executed" do
+  describe 'non-parallel action' do
+    it 'create must be serially executed' do
       Kitchen::Driver::Proxy.serial_actions.must_include :create
     end
 
-    it "destroy must be serially executed" do
+    it 'destroy must be serially executed' do
       Kitchen::Driver::Proxy.serial_actions.must_include :destroy
     end
   end
 
-  describe "required_config" do
-    it "requires host" do
+  describe 'required_config' do
+    it 'requires host' do
       config.delete(:host)
       err = assert_raises(Kitchen::UserError) { driver }
-      err.message.must_include "config[:host] cannot be blank"
+      err.message.must_include 'config[:host] cannot be blank'
     end
 
-    it "does not require reset_command" do
+    it 'does not require reset_command' do
       config.delete(:reset_command)
       driver # Just make sure it doesn't raise
     end
   end
 
-  describe "#create" do
-    it "sets :hostname in state config" do
+  describe '#create' do
+    it 'sets :hostname in state config' do
       driver.stubs(:ssh)
       driver.create(state)
 
-      state[:hostname].must_equal "foobnoobs.com"
+      state[:hostname].must_equal 'foobnoobs.com'
     end
 
-    it "calls the reset command over ssh" do
+    it 'calls the reset command over ssh' do
       driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "foobnoobs.com"
-        cmd.must_equal "mulligan"
+        ssh_args[0].must_equal 'foobnoobs.com'
+        cmd.must_equal 'mulligan'
       end
 
       driver.create(state)
     end
 
-    it "skips ssh call if :reset_command is falsey" do
+    it 'skips ssh call if :reset_command is falsey' do
       config[:reset_command] = false
       driver.expects(:ssh).never
 
@@ -89,35 +90,35 @@ describe Kitchen::Driver::Proxy do
     end
   end
 
-  describe "#destroy" do
+  describe '#destroy' do
     before do
-      state[:hostname] = "beep"
+      state[:hostname] = 'beep'
     end
 
-    it "deletes :hostname in state config" do
+    it 'deletes :hostname in state config' do
       driver.stubs(:ssh)
       driver.destroy(state)
 
       state[:hostname].must_be_nil
     end
 
-    it "calls the reset command over ssh" do
+    it 'calls the reset command over ssh' do
       driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "beep"
-        cmd.must_equal "mulligan"
+        ssh_args[0].must_equal 'beep'
+        cmd.must_equal 'mulligan'
       end
 
       driver.destroy(state)
     end
 
-    it "skips ssh call if :hostname is not in state config" do
+    it 'skips ssh call if :hostname is not in state config' do
       state.delete(:hostname)
       driver.expects(:ssh).never
 
       driver.destroy(state)
     end
 
-    it "skips ssh call if :reset_command is falsey" do
+    it 'skips ssh call if :reset_command is falsey' do
       config[:reset_command] = false
       driver.expects(:ssh).never
 

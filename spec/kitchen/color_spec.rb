@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,36 +17,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/color"
+require 'kitchen/color'
 
 describe Kitchen::Color do
-  describe ".escape" do
-    it "returns an empty string if name is nil" do
-      Kitchen::Color.escape(nil).must_equal ""
+  describe '.escape' do
+    it 'returns an empty string if name is nil' do
+      Kitchen::Color.escape(nil).must_equal ''
     end
 
-    it "returns an empty string if name is not in the ANSI hash" do
-      Kitchen::Color.escape(:puce).must_equal ""
+    it 'returns an empty string if name is not in the ANSI hash' do
+      Kitchen::Color.escape(:puce).must_equal ''
     end
 
-    it "returns an ansi escape sequence string for cyan" do
+    it 'returns an ansi escape sequence string for cyan' do
       Kitchen::Color.escape(:cyan).must_equal "\e[36m"
     end
 
-    it "returns an ansi escape sequence string for reset" do
+    it 'returns an ansi escape sequence string for reset' do
       Kitchen::Color.escape(:reset).must_equal "\e[0m"
     end
   end
 
-  describe ".colorize" do
-    it "returns an ansi escaped string colored yellow" do
-      Kitchen::Color.colorize("hello", :yellow).must_equal "\e[33mhello\e[0m"
+  describe '.colorize' do
+    it 'returns an ansi escaped string colored yellow' do
+      Kitchen::Color.colorize('hello', :yellow).must_equal "\e[33mhello\e[0m"
     end
 
-    it "returns an unescaped string if color is not in the ANSI hash" do
-      Kitchen::Color.colorize("double", :rainbow).must_equal "double"
+    it 'returns an unescaped string if color is not in the ANSI hash' do
+      Kitchen::Color.colorize('double', :rainbow).must_equal 'double'
     end
   end
 end

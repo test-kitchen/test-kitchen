@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,52 +17,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/login_command"
+require 'kitchen/login_command'
 
 describe Kitchen::LoginCommand do
-  let(:cmd)   { "" }
+  let(:cmd)   { '' }
   let(:argv)  { [] }
   let(:opts)  { {} }
 
   let(:login_command) { Kitchen::LoginCommand.new(cmd, argv, opts) }
 
-  it "#command returns the command" do
-    cmd << "one"
+  it '#command returns the command' do
+    cmd << 'one'
 
-    login_command.command.must_equal "one"
+    login_command.command.must_equal 'one'
   end
 
-  it "#arguments defaults to an empty array" do
-    Kitchen::LoginCommand.new("echo", nil).arguments.must_equal []
+  it '#arguments defaults to an empty array' do
+    Kitchen::LoginCommand.new('echo', nil).arguments.must_equal []
   end
 
-  it "#arguments returns the command arguments" do
-    argv.concat(["-o", "two"])
+  it '#arguments returns the command arguments' do
+    argv.concat(['-o', 'two'])
 
-    login_command.arguments.must_equal ["-o", "two"]
+    login_command.arguments.must_equal ['-o', 'two']
   end
 
-  it "#options defaults to an empty hash" do
+  it '#options defaults to an empty hash' do
     Kitchen::LoginCommand.new(cmd, argv).options.must_equal({})
   end
 
-  it "#options returns the options hash from the constructor" do
-    opts[:cake] = "yummy"
+  it '#options returns the options hash from the constructor' do
+    opts[:cake] = 'yummy'
 
-    login_command.options.must_equal(cake: "yummy")
+    login_command.options.must_equal(cake: 'yummy')
   end
 
-  it "#exec_args returns an array of arguments for Kernel.exec" do
-    cmd << "alpha"
-    login_command.exec_args.must_equal ["alpha", {}]
+  it '#exec_args returns an array of arguments for Kernel.exec' do
+    cmd << 'alpha'
+    login_command.exec_args.must_equal ['alpha', {}]
 
-    argv.concat(["-o", "beta"])
-    login_command.exec_args.must_equal ["alpha", "-o", "beta", {}]
+    argv.concat(['-o', 'beta'])
+    login_command.exec_args.must_equal ['alpha', '-o', 'beta', {}]
 
-    opts[:charlie] = "delta"
+    opts[:charlie] = 'delta'
     login_command.exec_args.must_equal [
-      "alpha", "-o", "beta", { charlie: "delta" }]
+      'alpha', '-o', 'beta', { charlie: 'delta' }
+    ]
   end
 end

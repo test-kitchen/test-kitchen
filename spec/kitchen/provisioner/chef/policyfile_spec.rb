@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Noah Kantrowitz
 #
@@ -16,12 +17,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../../spec_helper"
-require "kitchen/provisioner/chef/policyfile"
+require_relative '../../../spec_helper'
+require 'kitchen/provisioner/chef/policyfile'
 
 describe Kitchen::Provisioner::Chef::Policyfile do
-  let(:policyfile) { "" }
-  let(:path) { "" }
+  let(:policyfile) { '' }
+  let(:path) { '' }
   let(:null_logger) do
     stub(fatal: nil, error: nil, warn: nil, info: nil,
          debug: nil, banner: nil)
@@ -29,12 +30,12 @@ describe Kitchen::Provisioner::Chef::Policyfile do
   let(:described_object) do
     Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, logger: null_logger)
   end
-  let(:os) { "" }
+  let(:os) { '' }
   before do
     @original_rbconfig = RbConfig::CONFIG
     verbose = $VERBOSE
     $VERBOSE = nil
-    RbConfig.const_set(:CONFIG, "host_os" => os)
+    RbConfig.const_set(:CONFIG, 'host_os' => os)
     $VERBOSE = verbose
   end
   after do
@@ -45,24 +46,24 @@ describe Kitchen::Provisioner::Chef::Policyfile do
   end
 
   # rubocop:disable Layout/LineLength
-  describe "#resolve" do
+  describe '#resolve' do
     subject { described_object.resolve }
 
-    describe "on Unix" do
-      let(:os) { "linux-gnu" }
+    describe 'on Unix' do
+      let(:os) { 'linux-gnu' }
 
-      describe "with simple paths" do
-        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
-        let(:path) { "/tmp/kitchen/cookbooks" }
+      describe 'with simple paths' do
+        let(:policyfile) { '/home/user/cookbook/Policyfile.rb' }
+        let(:path) { '/tmp/kitchen/cookbooks' }
         it do
-          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          described_object.expects(:run_command).with('chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force')
           subject
         end
       end
 
-      describe "with Jenkins-y paths" do
-        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
-        let(:path) { "/tmp/kitchen/cookbooks" }
+      describe 'with Jenkins-y paths' do
+        let(:policyfile) { '/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb' }
+        let(:path) { '/tmp/kitchen/cookbooks' }
         it do
           described_object.expects(:run_command).with('chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force')
           subject
@@ -70,10 +71,10 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Windows" do
-      let(:os) { "mswin" }
+    describe 'on Windows' do
+      let(:os) { 'mswin' }
 
-      describe "with simple paths" do
+      describe 'with simple paths' do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
         it do
@@ -82,7 +83,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         end
       end
 
-      describe "with Jenkins-y paths" do
+      describe 'with Jenkins-y paths' do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
         it do
@@ -93,22 +94,22 @@ describe Kitchen::Provisioner::Chef::Policyfile do
     end
   end
 
-  describe "#compile" do
+  describe '#compile' do
     subject { described_object.compile }
 
-    describe "on Unix" do
-      let(:os) { "linux-gnu" }
+    describe 'on Unix' do
+      let(:os) { 'linux-gnu' }
 
-      describe "with simple paths" do
-        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+      describe 'with simple paths' do
+        let(:policyfile) { '/home/user/cookbook/Policyfile.rb' }
         it do
-          described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb")
+          described_object.expects(:run_command).with('chef install /home/user/cookbook/Policyfile.rb')
           subject
         end
       end
 
-      describe "with Jenkins-y paths" do
-        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+      describe 'with Jenkins-y paths' do
+        let(:policyfile) { '/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb' }
         it do
           described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb')
           subject
@@ -116,10 +117,10 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Windows" do
-      let(:os) { "mswin" }
+    describe 'on Windows' do
+      let(:os) { 'mswin' }
 
-      describe "with simple paths" do
+      describe 'with simple paths' do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
         it do
           described_object.expects(:run_command).with('chef install C:\\cookbook\\Policyfile.rb')
@@ -127,7 +128,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         end
       end
 
-      describe "with Jenkins-y paths" do
+      describe 'with Jenkins-y paths' do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         it do
           described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb"')

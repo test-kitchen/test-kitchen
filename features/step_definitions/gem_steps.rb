@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
 
-require "tmpdir"
-require "pathname"
+require 'tmpdir'
+require 'pathname'
 
 Then(/^a gem named "(.*?)" is installed with version "(.*?)"$/) do |name, version|
   unbundlerize do

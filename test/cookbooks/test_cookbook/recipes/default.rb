@@ -1,1 +1,3 @@
-directory "/tk_test_directory"
+# frozen_string_literal: true
+
+directory '/tk_test_directory'

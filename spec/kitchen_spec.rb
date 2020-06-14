@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "spec_helper"
+require_relative 'spec_helper'
 
-require "kitchen"
+require 'kitchen'
 
-describe "Kitchen" do
+describe 'Kitchen' do
   let(:stdout) { StringIO.new }
 
   before do
@@ -37,76 +38,76 @@ describe "Kitchen" do
     FakeFS::FileSystem.clear
   end
 
-  describe "defaults" do
-    it "sets DEFAULT_LOG_LEVEL to :info" do
+  describe 'defaults' do
+    it 'sets DEFAULT_LOG_LEVEL to :info' do
       Kitchen::DEFAULT_LOG_LEVEL.must_equal :info
     end
 
-    it "sets DEFAULT_TEST_DIR to test/integration, which is frozen" do
-      Kitchen::DEFAULT_TEST_DIR.must_equal "test/integration"
+    it 'sets DEFAULT_TEST_DIR to test/integration, which is frozen' do
+      Kitchen::DEFAULT_TEST_DIR.must_equal 'test/integration'
       Kitchen::DEFAULT_TEST_DIR.frozen?.must_equal true
     end
 
-    it "sets DEFAULT_LOG_DIR to .kitchen/logs, which is frozen" do
-      Kitchen::DEFAULT_LOG_DIR.must_equal ".kitchen/logs"
+    it 'sets DEFAULT_LOG_DIR to .kitchen/logs, which is frozen' do
+      Kitchen::DEFAULT_LOG_DIR.must_equal '.kitchen/logs'
       Kitchen::DEFAULT_LOG_DIR.frozen?.must_equal true
     end
   end
 
-  it ".tty? returns true if $stdout.tty? is true" do
+  it '.tty? returns true if $stdout.tty? is true' do
     Kitchen.tty?.must_equal true
   end
 
-  it ".tty? returns flse is $stdout.tty? is false" do
+  it '.tty? returns flse is $stdout.tty? is false' do
     stdout.stubs(:tty?).returns(false)
 
     Kitchen.tty?.must_equal false
   end
 
-  it ".source_root returns the root path of the gem" do
+  it '.source_root returns the root path of the gem' do
     Kitchen.source_root
-      .must_equal Pathname.new(File.expand_path("../..", __FILE__))
+           .must_equal Pathname.new(File.expand_path('..', __dir__))
   end
 
-  it ".default_logger is a Kitchen::Logger" do
+  it '.default_logger is a Kitchen::Logger' do
     Kitchen.default_logger.must_be_instance_of Kitchen::Logger
   end
 
-  it ".default_logger returns a $stdout logger" do
-    Kitchen.default_logger.warn("uhoh")
+  it '.default_logger returns a $stdout logger' do
+    Kitchen.default_logger.warn('uhoh')
 
     stdout.string.must_match(/ uhoh$/)
   end
 
-  it ".default_file_logger is a Kitchen::Logger" do
+  it '.default_file_logger is a Kitchen::Logger' do
     Kitchen.default_file_logger.must_be_instance_of Kitchen::Logger
   end
 
-  it ".default_file_logger returns a logger that uses $stdout" do
-    Kitchen.default_logger.warn("uhoh")
+  it '.default_file_logger returns a logger that uses $stdout' do
+    Kitchen.default_logger.warn('uhoh')
 
     stdout.string.must_match(/ uhoh$/)
   end
 
-  it ".default_file_logger returns a logger that uses a file" do
-    Kitchen.default_file_logger.warn("uhoh")
+  it '.default_file_logger returns a logger that uses a file' do
+    Kitchen.default_file_logger.warn('uhoh')
 
-    IO.read(File.join(%w{.kitchen logs kitchen.log}))
+    IO.read(File.join(%w[.kitchen logs kitchen.log]))
       .must_match(/ -- Kitchen: uhoh$/)
   end
 
-  it ".default_file_logger accepts a level and log_overwrite" do
+  it '.default_file_logger accepts a level and log_overwrite' do
     l = Kitchen.default_file_logger(:error, false)
 
     l.level.must_equal 3
     l.log_overwrite.must_equal false
   end
 
-  it "sets Kitchen.logger to a Kitchen::Logger" do
+  it 'sets Kitchen.logger to a Kitchen::Logger' do
     Kitchen.default_logger.must_be_instance_of Kitchen::Logger
   end
 
-  it "sets Kitchen.mutex to a Mutex" do
+  it 'sets Kitchen.mutex to a Mutex' do
     Kitchen.mutex.must_be_instance_of Mutex
   end
 end

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,20 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
-require "base64"
-require "stringio"
-require "securerandom"
+require_relative '../spec_helper'
+require 'base64'
+require 'stringio'
+require 'securerandom'
 
-require "kitchen/base64_stream"
+require 'kitchen/base64_stream'
 
 describe Kitchen::Base64Stream do
-  SHORT_BODIES = %w{you test wakkawakkawakka}.freeze
+  SHORT_BODIES = %w[you test wakkawakkawakka].freeze
 
-  describe ".strict_encode" do
+  describe '.strict_encode' do
     SHORT_BODIES.each do |body|
       it "encodes short payload ('#{body}') from input IO to output IO" do
-        output = StringIO.new("", "wb")
+        output = StringIO.new('', 'wb')
         StringIO.open(body) do |input|
           Kitchen::Base64Stream.strict_encode(input, output)
         end
@@ -38,9 +39,9 @@ describe Kitchen::Base64Stream do
       end
     end
 
-    it "encodes a large payload from input IO to output IO" do
+    it 'encodes a large payload from input IO to output IO' do
       body = SecureRandom.random_bytes(1_048_576 * 8)
-      output = StringIO.new("", "wb")
+      output = StringIO.new('', 'wb')
       StringIO.open(body) do |input|
         Kitchen::Base64Stream.strict_encode(input, output)
       end
@@ -49,10 +50,10 @@ describe Kitchen::Base64Stream do
     end
   end
 
-  describe ".strict_decode" do
+  describe '.strict_decode' do
     SHORT_BODIES.map { |b| Base64.strict_encode64(b) }.each do |body|
       it "decodes short payload ('#{body}') from input IO to output IO" do
-        output = StringIO.new("", "wb")
+        output = StringIO.new('', 'wb')
         StringIO.open(body) do |input|
           Kitchen::Base64Stream.strict_decode(input, output)
         end
@@ -61,9 +62,9 @@ describe Kitchen::Base64Stream do
       end
     end
 
-    it "decodes a large payload from input IO to output IO" do
+    it 'decodes a large payload from input IO to output IO' do
       body = Base64.strict_encode64(SecureRandom.hex(1_048_576 * 8))
-      output = StringIO.new("", "wb")
+      output = StringIO.new('', 'wb')
       StringIO.open(body) do |input|
         Kitchen::Base64Stream.strict_decode(input, output)
       end

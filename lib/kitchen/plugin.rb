@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -17,8 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "errors"
-require_relative "util"
+require_relative 'errors'
+require_relative 'util'
 
 module Kitchen
   module Plugin
@@ -32,7 +33,7 @@ module Kitchen
     # @raise [ClientError] if a plugin instance could not be created
     # @raise [UserError] if the plugin's dependencies could not be met
     def self.load(type, plugin, config)
-      type_name = Kitchen::Util.snake_case(type.name.split("::").last)
+      type_name = Kitchen::Util.snake_case(type.name.split('::').last)
       first_load = require("kitchen/#{type_name}/#{plugin}")
 
       str_const = Kitchen::Util.camel_case(plugin)
@@ -49,9 +50,9 @@ module Kitchen
       error_message = if available_plugins.include?(plugin)
                         e.message
                       else
-                        " Did you mean: #{available_plugins.join(", ")} ?" \
+                        " Did you mean: #{available_plugins.join(', ')} ?" \
                         " Please ensure that your #{type_name} is installed as a gem or included" \
-                        " in your Gemfile if using Bundler."
+                        ' in your Gemfile if using Bundler.'
                       end
       raise ClientError, "Could not load the '#{plugin}' #{type_name} from the load path." + error_message
     end
@@ -65,13 +66,13 @@ module Kitchen
     #   plugins of the given type
     def self.plugins_available(plugin_type)
       $LOAD_PATH.map { |load_path| Dir[File.expand_path("kitchen/#{plugin_type}/*.rb", load_path)] }
-        .reject(&:empty?)
-        .flatten
-        .uniq
-        .select { |plugin_path| File.readlines(plugin_path).grep(/^\s*class \w* </).any? }
-        .map { |plugin_path| File.basename(plugin_path).gsub(/\.rb$/, "") }
-        .reject { |plugin_name| plugin_name == "base" }
-        .sort
+                .reject(&:empty?)
+                .flatten
+                .uniq
+                .select { |plugin_path| File.readlines(plugin_path).grep(/^\s*class \w* </).any? }
+                .map { |plugin_path| File.basename(plugin_path).gsub(/\.rb$/, '') }
+                .reject { |plugin_name| plugin_name == 'base' }
+                .sort
     end
   end
 end

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
 # There is some double Base64 encoding going on when a PowerShell script is
 # given to a CMD to invoke. We're in a battle with Windows' CMD max length and
@@ -26,10 +27,10 @@ require_relative "../spec_helper"
 # fragements and calling them on the remote side (not to mention more expensive
 # in terms of PowerShell invocations).
 
-describe "PowerShell script max size" do
+describe 'PowerShell script max size' do
   MAX_POWERSHELL_SIZE = 3010
 
-  Dir.glob(File.join(File.dirname(__FILE__), "../../support/*.ps1*")).each do |script|
+  Dir.glob(File.join(File.dirname(__FILE__), '../../support/*.ps1*')).each do |script|
     base = File.basename(script)
 
     it "support/#{base} size must be less than #{MAX_POWERSHELL_SIZE} bytes" do

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor/util"
+require 'thor/util'
 
-require_relative "lazy_hash"
+require_relative 'lazy_hash'
 
 module Kitchen
   # A mixin for providing configuration-related behavior such as default
@@ -66,7 +67,7 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
     #   unset, for backwards compatability)
     def bourne_shell?
-      ["bourne", nil].include?(instance.platform.shell_type)
+      ['bourne', nil].include?(instance.platform.shell_type)
     end
 
     # Find an appropriate path to a file or directory, based on graceful
@@ -99,7 +100,7 @@ module Kitchen
       [
         File.join(base, instance.suite.name, path),
         File.join(base, path),
-        File.join(Dir.pwd, path),
+        File.join(Dir.pwd, path)
       ].find do |candidate|
         type == :directory ? File.directory?(candidate) : File.file?(candidate)
       end
@@ -137,12 +138,12 @@ module Kitchen
     #
     # @return [String] name of this plugin
     def name
-      self.class.name.split("::").last
+      self.class.name.split('::').last
     end
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
-      ["powershell"].include?(instance.platform.shell_type)
+      ['powershell'].include?(instance.platform.shell_type)
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -150,13 +151,13 @@ module Kitchen
     # @return [String] joined path for instance's os_type
     def remote_path_join(*parts)
       path = File.join(*parts)
-      windows_os? ? path.tr("/", '\\') : path.tr('\\', "/")
+      windows_os? ? path.tr('/', '\\') : path.tr('\\', '/')
     end
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
     #   unset, for backwards compatibility)
     def unix_os?
-      ["unix", nil].include?(instance.platform.os_type)
+      ['unix', nil].include?(instance.platform.os_type)
     end
 
     # Performs whatever tests that may be required to ensure that this plugin
@@ -172,7 +173,7 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
-      ["windows"].include?(instance.platform.os_type)
+      ['windows'].include?(instance.platform.os_type)
     end
 
     private
@@ -286,9 +287,9 @@ module Kitchen
     # @api private
     def reload_ps1_path
       [
-        "$env:PATH = try {",
+        '$env:PATH = try {',
         "[System.Environment]::GetEnvironmentVariable('PATH','Machine')",
-        "} catch { $env:PATH }\n\n",
+        "} catch { $env:PATH }\n\n"
       ].join("\n")
     end
 
@@ -315,9 +316,9 @@ module Kitchen
     # @api private
     def shell_var(name, value)
       if powershell_shell?
-        %{$#{name} = "#{value}"}
+        %($#{name} = "#{value}")
       else
-        %{#{name}="#{value}"}
+        %(#{name}="#{value}")
       end
     end
 
@@ -347,11 +348,11 @@ module Kitchen
 
     def env_wrapped(code)
       code_parts = resolve_proxy_settings_from_config
-      code_parts << shell_env_var("TEST_KITCHEN", 1)
-      code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
-      code_parts << shell_env_var("CHEF_LICENSE", ENV["CHEF_LICENSE"]) if ENV["CHEF_LICENSE"]
-      ENV.select { |key, value| key.start_with?("TKENV_") }.each do |key, value|
-        env_var_name = "#{key}".sub!("TKENV_", "")
+      code_parts << shell_env_var('TEST_KITCHEN', 1)
+      code_parts << shell_env_var('CI', ENV['CI']) if ENV['CI']
+      code_parts << shell_env_var('CHEF_LICENSE', ENV['CHEF_LICENSE']) if ENV['CHEF_LICENSE']
+      ENV.select { |key, _value| key.start_with?('TKENV_') }.each do |key, value|
+        env_var_name = key.to_s.sub!('TKENV_', '')
         code_parts << shell_env_var(env_var_name, value)
       end
 
@@ -360,7 +361,7 @@ module Kitchen
     end
 
     def proxy_setting_keys
-      %i{http_proxy https_proxy ftp_proxy no_proxy}
+      %i[http_proxy https_proxy ftp_proxy no_proxy]
     end
 
     def resolve_proxy_settings_from_config
@@ -422,7 +423,7 @@ module Kitchen
       #   end
       #
       # @param version [String] a version string
-      def plugin_version(version) # rubocop:disable Style/TrivialAccessors
+      def plugin_version(version)
         @plugin_version = version
       end
 
@@ -434,7 +435,7 @@ module Kitchen
         {
           class: name,
           version: @plugin_version ||= nil,
-          api_version: @api_version ||= nil,
+          api_version: @api_version ||= nil
         }
       end
 

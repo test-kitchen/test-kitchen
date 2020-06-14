@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "English"
+require 'English'
 
 module Kitchen
   # All Kitchen errors and exceptions.
@@ -41,19 +42,19 @@ module Kitchen
     #
     # @param exception [::StandardError] an exception
     # @return [Array<String>] a formatted message
-    def self.formatted_trace(exception, title = "Exception")
+    def self.formatted_trace(exception, title = 'Exception')
       arr = formatted_exception(exception, title).dup
       arr += formatted_backtrace(exception)
 
       if exception.respond_to?(:original) && exception.original
         arr += if exception.original.is_a? Array
                  exception.original.map do |composite_exception|
-                   formatted_trace(composite_exception, "Composite Exception").flatten
+                   formatted_trace(composite_exception, 'Composite Exception').flatten
                  end
                else
                  [
-                   formatted_exception(exception.original, "Nested Exception"),
-                   formatted_backtrace(exception),
+                   formatted_exception(exception.original, 'Nested Exception'),
+                   formatted_backtrace(exception)
                  ].flatten
                end
       end
@@ -65,9 +66,9 @@ module Kitchen
         []
       else
         [
-          "Backtrace".center(22, "-"),
+          'Backtrace'.center(22, '-'),
           exception.backtrace,
-          "End Backtrace".center(22, "-"),
+          'End Backtrace'.center(22, '-')
         ]
       end
     end
@@ -87,12 +88,12 @@ module Kitchen
     # @param title [String] a custom title for the message
     #   (default: `"Exception"`)
     # @return [Array<String>] a formatted message
-    def self.formatted_exception(exception, title = "Exception")
+    def self.formatted_exception(exception, title = 'Exception')
       [
-        title.center(22, "-"),
+        title.center(22, '-'),
         "Class: #{exception.class}",
         "Message: #{exception.message}",
-        "".center(22, "-"),
+        ''.center(22, '-')
       ]
     end
   end
@@ -193,7 +194,7 @@ module Kitchen
       if Kitchen.logger.debug?
         Kitchen.logger.debug(line)
       else
-        Kitchen.logger.logdev && Kitchen.logger.logdev.public_send(level, line)
+        Kitchen.logger.logdev&.public_send(level, line)
       end
     end
   end
@@ -205,7 +206,7 @@ module Kitchen
   def self.stderr_log(lines)
     Array(lines).map { |line| ">>>>>> #{line}" }.each do |line|
       line = Color.colorize(line, :red) if Kitchen.tty?
-      $stderr.puts(line)
+      warn(line)
     end
   end
 
@@ -237,7 +238,7 @@ module Kitchen
   # @api private
   def self.handle_error(e)
     stderr_log(Error.formatted_exception(e))
-    stderr_log("Please see .kitchen/logs/kitchen.log for more details")
+    stderr_log('Please see .kitchen/logs/kitchen.log for more details')
     stderr_log("Also try running `kitchen diagnose --all` for configuration\n")
     file_log(:error, Error.formatted_trace(e))
   end

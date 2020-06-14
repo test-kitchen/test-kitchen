@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,28 +17,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-gem "minitest"
+gem 'minitest'
 
 begin
-  require "simplecov"
-  SimpleCov.profiles.define "gem" do
-    command_name "Specs"
+  require 'simplecov'
+  SimpleCov.profiles.define 'gem' do
+    command_name 'Specs'
 
-    add_filter ".gem/"
-    add_filter "/spec/"
-    add_filter "/lib/vendor/"
+    add_filter '.gem/'
+    add_filter '/spec/'
+    add_filter '/lib/vendor/'
 
-    add_group "Libraries", "/lib/"
+    add_group 'Libraries', '/lib/'
   end
-  SimpleCov.start "gem"
+  SimpleCov.start 'gem'
 rescue LoadError
-  puts "add simplecov to Gemfile.local or GEMFILE_MOD to generate code coverage"
+  puts 'add simplecov to Gemfile.local or GEMFILE_MOD to generate code coverage'
 end
 
-require "fakefs/safe"
-require "minitest/autorun"
-require "mocha/setup"
-require "tempfile"
+require 'fakefs/safe'
+require 'minitest/autorun'
+require 'mocha/setup'
+require 'tempfile'
 
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
 class IO
@@ -51,10 +52,10 @@ class IO
     elsif offset.is_a? Hash
       opt = offset
     end
-    if opt && opt.key?(:mode)
+    if opt&.key?(:mode)
       File.open(args[0], opt) { |f| f.read(length) }
     else
-      File.open(args[0], "rb", opt) { |f| f.read(length) }
+      File.open(args[0], 'rb', opt) { |f| f.read(length) }
     end
   end
 end
@@ -77,7 +78,7 @@ Dir.singleton_class.prepend(Module.new do
   end
 end)
 
-def with_sorted_dir_entries(&block)
+def with_sorted_dir_entries
   old_sort_dir_entries = $_sort_dir_entries
   $_sort_dir_entries = true
   yield
@@ -87,14 +88,14 @@ end
 
 def with_fake_fs
   FakeFS.activate!
-  FileUtils.mkdir_p("/tmp")
+  FileUtils.mkdir_p('/tmp')
   yield
   FakeFS.deactivate!
   FakeFS::FileSystem.clear
 end
 
 def running_tests_on_windows?
-  ENV["OS"] == "Windows_NT"
+  ENV['OS'] == 'Windows_NT'
 end
 
 def os_safe_root_path(root_path)
@@ -107,13 +108,13 @@ def os_safe_root_path(root_path)
 end
 
 def padded_octal_string(integer)
-  integer.to_s(8).rjust(4, "0")
+  integer.to_s(8).rjust(4, '0')
 end
 
 def os_safe_temp_path(temp_path)
-  if running_tests_on_windows? && ENV["USERNAME"].length > 8
-    short_name = ENV["USERNAME"].upcase[0..5] + "~1"
-    updated_path = temp_path.sub(ENV["USERNAME"], short_name)
+  if running_tests_on_windows? && ENV['USERNAME'].length > 8
+    short_name = ENV['USERNAME'].upcase[0..5] + '~1'
+    updated_path = temp_path.sub(ENV['USERNAME'], short_name)
     return updated_path unless updated_path.nil?
   end
   temp_path

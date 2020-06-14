@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -17,10 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/driver"
-require "kitchen/driver/base"
+require 'kitchen/driver'
+require 'kitchen/driver/base'
 
 module Kitchen
   module Driver
@@ -30,53 +31,53 @@ module Kitchen
 end
 
 describe Kitchen::Driver do
-  describe ".for_plugin" do
+  describe '.for_plugin' do
     before do
       Kitchen::Plugin.stubs(:require).returns(true)
     end
 
-    it "uses Kitchen::Plugin.load" do
+    it 'uses Kitchen::Plugin.load' do
       faux_driver = Object.new
       Kitchen::Plugin.stubs(:load).returns(faux_driver)
-      driver = Kitchen::Driver.for_plugin("faux", {})
+      driver = Kitchen::Driver.for_plugin('faux', {})
 
       driver.must_equal faux_driver
     end
 
-    it "returns a driver object of the correct class" do
-      driver = Kitchen::Driver.for_plugin("coolbeans", {})
+    it 'returns a driver object of the correct class' do
+      driver = Kitchen::Driver.for_plugin('coolbeans', {})
 
       driver.must_be_kind_of Kitchen::Driver::Coolbeans
     end
 
-    it "returns a driver initialized with its config" do
-      driver = Kitchen::Driver.for_plugin("coolbeans", jelly: "beans")
+    it 'returns a driver initialized with its config' do
+      driver = Kitchen::Driver.for_plugin('coolbeans', jelly: 'beans')
 
-      driver[:jelly].must_equal "beans"
+      driver[:jelly].must_equal 'beans'
     end
 
-    it "raises ClientError if the driver could not be required" do
+    it 'raises ClientError if the driver could not be required' do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("coolbeans", {}) }
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin('coolbeans', {}) }
       error.message.must_include "Could not load the 'coolbeans' driver from the load path."
-      error.message.must_include "Did you mean"
+      error.message.must_include 'Did you mean'
     end
 
-    it "raises ClientError if driver is found on load path but require still fails" do
-      Kitchen::Plugin.stubs(:require).raises(LoadError, "Some other problem.")
+    it 'raises ClientError if driver is found on load path but require still fails' do
+      Kitchen::Plugin.stubs(:require).raises(LoadError, 'Some other problem.')
 
-      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("dummy", {}) }
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin('dummy', {}) }
       error.message.must_include "Could not load the 'dummy' driver from the load path."
-      error.message.must_include "Some other problem."
-      error.message.wont_include "Did you mean"
+      error.message.must_include 'Some other problem.'
+      error.message.wont_include 'Did you mean'
     end
 
     it "raises ClientError if the driver's class constant could not be found" do
       Kitchen::Plugin.stubs(:require).returns(true) # pretend require worked
 
-      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("nope", {}) }
-      error.message.must_include "uninitialized constant Kitchen::Driver::Nope"
+      error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin('nope', {}) }
+      error.message.must_include 'uninitialized constant Kitchen::Driver::Nope'
     end
   end
 end

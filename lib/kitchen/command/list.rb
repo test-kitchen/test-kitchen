@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../command"
-require "json"
+require_relative '../command'
+require 'json'
 
 module Kitchen
   module Command
@@ -29,7 +30,7 @@ module Kitchen
       def call
         result = parse_subcommand(args.first)
         if options[:debug]
-          die "The --debug flag on the list subcommand is deprecated, " \
+          die 'The --debug flag on the list subcommand is deprecated, ' \
             "please use `kitchen diagnose'."
         elsif options[:bare]
           puts Array(result).map(&:name).join("\n")
@@ -49,7 +50,7 @@ module Kitchen
       # @return [String]
       # @api private
       def color_pad(string)
-        string + colorize("", :white)
+        string + colorize('', :white)
       end
 
       # Generate the display rows for an instance.
@@ -65,7 +66,7 @@ module Kitchen
           color_pad(instance.verifier.name),
           color_pad(instance.transport.name),
           format_last_action(instance.last_action),
-          format_last_error(instance.last_error),
+          format_last_error(instance.last_error)
         ]
       end
 
@@ -76,12 +77,12 @@ module Kitchen
       # @api private
       def format_last_action(last_action)
         case last_action
-        when "create" then colorize("Created", :cyan)
-        when "converge" then colorize("Converged", :magenta)
-        when "setup" then colorize("Set Up", :blue)
-        when "verify" then colorize("Verified", :yellow)
-        when nil then colorize("<Not Created>", :red)
-        else colorize("<Unknown>", :white)
+        when 'create' then colorize('Created', :cyan)
+        when 'converge' then colorize('Converged', :magenta)
+        when 'setup' then colorize('Set Up', :blue)
+        when 'verify' then colorize('Verified', :yellow)
+        when nil then colorize('<Not Created>', :red)
+        else colorize('<Unknown>', :white)
         end
       end
 
@@ -92,7 +93,7 @@ module Kitchen
       # @api private
       def format_last_error(last_error)
         case last_error
-        when nil then colorize("<None>", :white)
+        when nil then colorize('<None>', :white)
         else colorize(last_error, :red)
         end
       end
@@ -104,11 +105,11 @@ module Kitchen
       def list_table(result)
         table = [
           [
-            colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Verifier", :green),
-            colorize("Transport", :green), colorize("Last Action", :green),
-            colorize("Last Error", :green)
-          ],
+            colorize('Instance', :green), colorize('Driver', :green),
+            colorize('Provisioner', :green), colorize('Verifier', :green),
+            colorize('Transport', :green), colorize('Last Action', :green),
+            colorize('Last Error', :green)
+          ]
         ]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
@@ -126,7 +127,7 @@ module Kitchen
           verifier: result.verifier.name,
           transport: result.transport.name,
           last_action: result.last_action,
-          last_error: result.last_error,
+          last_error: result.last_error
         }
       end
 

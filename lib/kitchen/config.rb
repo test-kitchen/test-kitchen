@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -214,14 +215,14 @@ module Kitchen
           provisioner: Provisioner::DEFAULT_PLUGIN,
           verifier: Verifier::DEFAULT_PLUGIN,
           transport: lambda do |_suite, platform|
-            platform =~ /^win/i ? "winrm" : Transport::DEFAULT_PLUGIN
-          end,
+            platform =~ /^win/i ? 'winrm' : Transport::DEFAULT_PLUGIN
+          end
         },
         kitchen_root: kitchen_root,
         test_base_path: test_base_path,
         log_level: log_level,
         log_overwrite: log_overwrite,
-        debug: debug,
+        debug: debug
       }
     end
 

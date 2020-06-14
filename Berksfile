@@ -1,3 +1,5 @@
-source "https://supermarket.chef.io"
+# frozen_string_literal: true
 
-cookbook "test_cookbook", path: "./test/cookbooks/test_cookbook"
+source 'https://supermarket.chef.io'
+
+cookbook 'test_cookbook', path: './test/cookbooks/test_cookbook'

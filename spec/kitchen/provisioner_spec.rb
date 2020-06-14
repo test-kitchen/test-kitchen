@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/provisioner"
-require "kitchen/provisioner/base"
+require 'kitchen/provisioner'
+require 'kitchen/provisioner/base'
 
 module Kitchen
   module Provisioner
@@ -29,35 +30,35 @@ module Kitchen
 end
 
 describe Kitchen::Provisioner do
-  describe ".for_plugin" do
+  describe '.for_plugin' do
     before do
       Kitchen::Plugin.stubs(:require).returns(true)
     end
 
-    it "uses Kitchen::Plugin.load" do
+    it 'uses Kitchen::Plugin.load' do
       faux_provisioner = Object.new
       Kitchen::Plugin.stubs(:load).returns(faux_provisioner)
-      provisioner = Kitchen::Provisioner.for_plugin("faux", {})
+      provisioner = Kitchen::Provisioner.for_plugin('faux', {})
 
       provisioner.must_equal faux_provisioner
     end
 
-    it "returns a provisioner object of the correct class" do
-      provisioner = Kitchen::Provisioner.for_plugin("coolbeans", {})
+    it 'returns a provisioner object of the correct class' do
+      provisioner = Kitchen::Provisioner.for_plugin('coolbeans', {})
 
       provisioner.must_be_kind_of Kitchen::Provisioner::Coolbeans
     end
 
-    it "returns a provisioner initialized with its config" do
-      provisioner = Kitchen::Provisioner.for_plugin("coolbeans", foo: "bar")
+    it 'returns a provisioner initialized with its config' do
+      provisioner = Kitchen::Provisioner.for_plugin('coolbeans', foo: 'bar')
 
-      provisioner[:foo].must_equal "bar"
+      provisioner[:foo].must_equal 'bar'
     end
 
-    it "raises ClientError if the provisioner could not be required" do
+    it 'raises ClientError if the provisioner could not be required' do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Provisioner.for_plugin("coolbeans", {}) }
+      proc { Kitchen::Provisioner.for_plugin('coolbeans', {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -65,7 +66,7 @@ describe Kitchen::Provisioner do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Provisioner.for_plugin("nope", {}) }
+      proc { Kitchen::Provisioner.for_plugin('nope', {}) }
         .must_raise Kitchen::ClientError
     end
   end

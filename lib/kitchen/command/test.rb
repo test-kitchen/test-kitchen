@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../command"
+require_relative '../command'
 
-require "benchmark"
+require 'benchmark'
 
 module Kitchen
   module Command
@@ -30,14 +31,14 @@ module Kitchen
 
       # Invoke the command.
       def call
-        unless %w{passing always never}.include?(options[:destroy])
-          raise ArgumentError, "Destroy mode must be passing, always, or never."
+        unless %w[passing always never].include?(options[:destroy])
+          raise ArgumentError, 'Destroy mode must be passing, always, or never.'
         end
 
         banner "Starting Test Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           destroy_mode = options[:destroy].to_sym
-          results = parse_subcommand(args.join("|"))
+          results = parse_subcommand(args.join('|'))
 
           run_action(:test, results, destroy_mode)
         end

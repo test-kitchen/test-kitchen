@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/errors"
-require "kitchen/shell_out"
-require "kitchen/util"
+require 'kitchen/errors'
+require 'kitchen/shell_out'
+require 'kitchen/util'
 
 module Kitchen
   class Shelly
@@ -34,7 +35,7 @@ module Kitchen
     end
 
     def logger
-      "alogger"
+      'alogger'
     end
   end
 end
@@ -44,103 +45,103 @@ describe Kitchen::ShellOut do
     stub(
       run_command: true,
       error!: true,
-      stdout: "",
+      stdout: '',
       execution_time: 123
     )
   end
 
   let(:subject) { Kitchen::Shelly.new }
 
-  describe "#run_command" do
+  describe '#run_command' do
     let(:opts) do
-      { live_stream: "alogger", timeout: 60_000 }
+      { live_stream: 'alogger', timeout: 60_000 }
     end
 
     before do
       Mixlib::ShellOut.stubs(:new).returns(command)
     end
 
-    it "builds a Mixlib::ShellOut object with default options" do
+    it 'builds a Mixlib::ShellOut object with default options' do
       Mixlib::ShellOut.unstub(:new)
-      Mixlib::ShellOut.expects(:new).with("yoyo", opts).returns(command)
+      Mixlib::ShellOut.expects(:new).with('yoyo', opts).returns(command)
 
-      subject.run_command("yoyo")
+      subject.run_command('yoyo')
     end
 
-    %i{timeout cwd environment}.each do |attr|
+    %i[timeout cwd environment].each do |attr|
       it "builds a Mixlib::ShellOut object with a custom #{attr}" do
-        opts[attr] = "custom"
+        opts[attr] = 'custom'
 
         Mixlib::ShellOut.unstub(:new)
-        Mixlib::ShellOut.expects(:new).with("yoyo", opts).returns(command)
+        Mixlib::ShellOut.expects(:new).with('yoyo', opts).returns(command)
 
-        subject.run_command("yoyo", attr => "custom")
+        subject.run_command('yoyo', attr => 'custom')
       end
     end
 
     it "returns the command's standard out" do
-      command.stubs(:stdout).returns("sweetness")
+      command.stubs(:stdout).returns('sweetness')
 
-      subject.run_command("icecream").must_equal "sweetness"
+      subject.run_command('icecream').must_equal 'sweetness'
     end
 
-    it "raises a ShellCommandFailed if the command does not cleanly exit" do
+    it 'raises a ShellCommandFailed if the command does not cleanly exit' do
       command.stubs(:error!)
-        .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
+             .raises(Mixlib::ShellOut::ShellCommandFailed, 'boom bad')
 
-      err = proc { subject.run_command("boom") }
-        .must_raise Kitchen::ShellOut::ShellCommandFailed
-      err.message.must_equal "boom bad"
+      err = proc { subject.run_command('boom') }
+            .must_raise Kitchen::ShellOut::ShellCommandFailed
+      err.message.must_equal 'boom bad'
     end
 
-    it "raises a Kitchen::Errror tagged exception for unknown exceptions" do
-      command.stubs(:error!).raises(IOError, "boom bad")
+    it 'raises a Kitchen::Errror tagged exception for unknown exceptions' do
+      command.stubs(:error!).raises(IOError, 'boom bad')
 
-      err = proc { subject.run_command("boom") }.must_raise IOError
+      err = proc { subject.run_command('boom') }.must_raise IOError
       err.must_be_kind_of Kitchen::Error
-      err.message.must_equal "boom bad"
+      err.message.must_equal 'boom bad'
     end
 
-    it "prepends with sudo if :use_sudo is truthy" do
+    it 'prepends with sudo if :use_sudo is truthy' do
       Mixlib::ShellOut.unstub(:new)
-      Mixlib::ShellOut.expects(:new).with("sudo -E yo", opts).returns(command)
+      Mixlib::ShellOut.expects(:new).with('sudo -E yo', opts).returns(command)
 
-      subject.run_command("yo", use_sudo: true)
+      subject.run_command('yo', use_sudo: true)
     end
 
-    it "prepends with custom :sudo_command if :use_sudo is truthy" do
+    it 'prepends with custom :sudo_command if :use_sudo is truthy' do
       Mixlib::ShellOut.unstub(:new)
-      Mixlib::ShellOut.expects(:new).with("wat yo", opts).returns(command)
+      Mixlib::ShellOut.expects(:new).with('wat yo', opts).returns(command)
 
-      subject.run_command("yo", use_sudo: true, sudo_command: "wat")
+      subject.run_command('yo', use_sudo: true, sudo_command: 'wat')
     end
 
-    it "logs a debug BEGIN message" do
+    it 'logs a debug BEGIN message' do
       subject.run_command("echo whoopa\ndoopa\ndo")
 
       subject.logs.first
-        .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
+             .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
     end
 
-    it "logs a debug BEGIN message with custom log subject" do
-      subject.run_command("tenac", log_subject: "thed")
+    it 'logs a debug BEGIN message with custom log subject' do
+      subject.run_command('tenac', log_subject: 'thed')
 
-      subject.logs.first.must_equal "[thed command] BEGIN (tenac)"
+      subject.logs.first.must_equal '[thed command] BEGIN (tenac)'
     end
 
-    it "truncates the debug BEGIN command if it spans multiple lines" do
+    it 'truncates the debug BEGIN command if it spans multiple lines' do
     end
 
-    it "logs a debug END message" do
-      subject.run_command("echo whoopa doopa")
+    it 'logs a debug END message' do
+      subject.run_command('echo whoopa doopa')
 
-      subject.logs.last.must_equal "[local command] END (2m3.00s)"
+      subject.logs.last.must_equal '[local command] END (2m3.00s)'
     end
 
-    it "logs a debug END message with custom log subject" do
-      subject.run_command("tenac", log_subject: "thed")
+    it 'logs a debug END message with custom log subject' do
+      subject.run_command('tenac', log_subject: 'thed')
 
-      subject.logs.last.must_equal "[thed command] END (2m3.00s)"
+      subject.logs.last.must_equal '[thed command] END (2m3.00s)'
     end
   end
 end

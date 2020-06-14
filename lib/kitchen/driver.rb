@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "plugin"
+require_relative 'plugin'
 
 module Kitchen
   # A driver is responsible for carrying out the lifecycle activities of an
@@ -25,7 +26,7 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Driver
     # Default driver plugin to use
-    DEFAULT_PLUGIN = "dummy".freeze
+    DEFAULT_PLUGIN = 'dummy'
 
     # Returns an instance of a driver given a plugin type string.
     #

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Seth Chisamore <schisamo@opscode.com>
 #
@@ -18,8 +19,8 @@
 # limitations under the License.
 #
 
-require_relative "ssh_base"
-require_relative "../version"
+require_relative 'ssh_base'
+require_relative '../version'
 
 module Kitchen
   module Driver

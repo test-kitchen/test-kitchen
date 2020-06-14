@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "errors"
-require "thor/util"
+require_relative 'errors'
+require 'thor/util'
 
 module Kitchen
   # Stateless utility methods used in different contexts. Essentially a mini
@@ -33,7 +34,7 @@ module Kitchen
     # @return [Integer] Logger::Severity constant value or nil if input is not
     #   valid
     def self.to_logger_level(symbol)
-      return nil unless %i{debug info warn error fatal}.include?(symbol)
+      return nil unless %i[debug info warn error fatal].include?(symbol)
 
       Logger.const_get(symbol.to_s.upcase)
     end
@@ -64,9 +65,9 @@ module Kitchen
     # @return [Object] a converted hash with all keys as symbols
     def self.symbolized_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k, v)| h[k.to_sym] = symbolized_hash(v); h }
+        obj.each_with_object({}) { |(k, v), h| h[k.to_sym] = symbolized_hash(v); }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, e| a << symbolized_hash(e); a }
+        obj.each_with_object([]) { |e, a| a << symbolized_hash(e); }
       else
         obj
       end
@@ -81,9 +82,9 @@ module Kitchen
     # @return [Object] a converted hash with all keys as strings
     def self.stringified_hash(obj)
       if obj.is_a?(Hash)
-        obj.inject({}) { |h, (k, v)| h[k.to_s] = stringified_hash(v); h }
+        obj.each_with_object({}) { |(k, v), h| h[k.to_s] = stringified_hash(v); }
       elsif obj.is_a?(Array)
-        obj.inject([]) { |a, e| a << stringified_hash(e); a }
+        obj.each_with_object([]) { |e, a| a << stringified_hash(e); }
       else
         obj
       end
@@ -97,7 +98,7 @@ module Kitchen
       total = 0 if total.nil?
       minutes = (total / 60).to_i
       seconds = (total - (minutes * 60))
-      format("(%dm%.2fs)", minutes, seconds)
+      format('(%dm%.2fs)', minutes, seconds)
     end
 
     # Generates a command (or series of commands) wrapped so that it can be
@@ -109,9 +110,9 @@ module Kitchen
     # @param [String] the command
     # @return [String] a wrapped command string
     def self.wrap_command(cmd)
-      cmd = "false" if cmd.nil?
-      cmd = "true" if cmd.to_s.empty?
-      cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
+      cmd = 'false' if cmd.nil?
+      cmd = 'true' if cmd.to_s.empty?
+      cmd = cmd.sub(/\n\Z/, '') if cmd =~ /\n\Z/
 
       "sh -c '\n#{cmd}\n'"
     end
@@ -131,7 +132,7 @@ module Kitchen
     # @param string [String] the string that will be modified
     # @return [String] the modified string
     def self.outdent!(string)
-      string.gsub!(/^ {#{string.index(/[^ ]/)}}/, "")
+      string.gsub!(/^ {#{string.index(/[^ ]/)}}/, '')
     end
 
     # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper
@@ -141,8 +142,8 @@ module Kitchen
     # @return [String] a string representation of useful helper functions
     def self.shell_helpers
       IO.read(File.join(
-        File.dirname(__FILE__), %w{.. .. support download_helpers.sh}
-      ))
+                File.dirname(__FILE__), %w[.. .. support download_helpers.sh]
+              ))
     end
 
     # Lists the contents of the given directory. path will be prepended
@@ -169,9 +170,9 @@ module Kitchen
       Kitchen.mutex_chdir.synchronize do
         Dir.chdir(path) do
           glob_pattern = if recurse
-                           "**/*"
+                           '**/*'
                          else
-                           "*"
+                           '*'
                          end
           flags = if include_dot
                     [File::FNM_DOTMATCH]
@@ -179,8 +180,8 @@ module Kitchen
                     []
                   end
           Dir.glob(glob_pattern, *flags)
-            .reject { |f| [".", ".."].include?(f) }
-            .map { |f| File.join(path, f) }
+             .reject { |f| ['.', '..'].include?(f) }
+             .map { |f| File.join(path, f) }
         end
       end
     end

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "mixlib/shellout"
+require 'mixlib/shellout'
 
 module Kitchen
   # Mixin that wraps a command shell out invocation, providing a #run_command
@@ -56,10 +57,8 @@ module Kitchen
     # @raise [ShellCommandFailed] if the command fails
     # @raise [Error] for all other unexpected exceptions
     def run_command(cmd, options = {})
-      if options.fetch(:use_sudo, false)
-        cmd = "#{options.fetch(:sudo_command, "sudo -E")} #{cmd}"
-      end
-      subject = "[#{options.fetch(:log_subject, "local")} command]"
+      cmd = "#{options.fetch(:sudo_command, 'sudo -E')} #{cmd}" if options.fetch(:use_sudo, false)
+      subject = "[#{options.fetch(:log_subject, 'local')} command]"
 
       debug("#{subject} BEGIN (#{cmd})")
       sh = Mixlib::ShellOut.new(cmd, shell_opts(options))
@@ -67,10 +66,10 @@ module Kitchen
       debug("#{subject} END #{Util.duration(sh.execution_time)}")
       sh.error!
       sh.stdout
-    rescue Mixlib::ShellOut::ShellCommandFailed => ex
-      raise ShellCommandFailed, ex.message
-    rescue Exception => error # rubocop:disable Lint/RescueException
-      error.extend(Kitchen::Error)
+    rescue Mixlib::ShellOut::ShellCommandFailed => e
+      raise ShellCommandFailed, e.message
+    rescue Exception => e # rubocop:disable Lint/RescueException
+      e.extend(Kitchen::Error)
       raise
     end
 
@@ -83,7 +82,7 @@ module Kitchen
     # @api private
     def shell_opts(options)
       filtered_opts = options.reject do |key, _value|
-        %i{use_sudo sudo_command log_subject quiet}.include?(key)
+        %i[use_sudo sudo_command log_subject quiet].include?(key)
       end
       { live_stream: logger, timeout: 60_000 }.merge(filtered_opts)
     end

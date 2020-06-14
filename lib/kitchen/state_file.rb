@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "yaml"
+require 'yaml'
 
 module Kitchen
   # Exception class for any exceptions raised when reading and parsing a state
@@ -33,7 +34,7 @@ module Kitchen
     # @param name [String] name of the instance representing this state
     def initialize(kitchen_root, name)
       @file_name = File.expand_path(
-        File.join(kitchen_root, ".kitchen", "#{name}.yml")
+        File.join(kitchen_root, '.kitchen', "#{name}.yml")
       )
     end
 
@@ -59,7 +60,7 @@ module Kitchen
       serialized_string = serialize_hash(Util.stringified_hash(state))
 
       FileUtils.mkdir_p(dir) unless File.directory?(dir)
-      File.open(file_name, "wb") { |f| f.write(serialized_string) }
+      File.open(file_name, 'wb') { |f| f.write(serialized_string) }
     end
 
     # Destroys a state file on disk if it exists.
@@ -97,8 +98,8 @@ module Kitchen
     # @api private
     def deserialize_string(string)
       YAML.safe_load(string)
-    rescue SyntaxError, Psych::SyntaxError, Psych::DisallowedClass => ex
-      raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
+    rescue SyntaxError, Psych::SyntaxError, Psych::DisallowedClass => e
+      raise StateFileLoadError, "Error parsing #{file_name} (#{e.message})"
     end
 
     # Serializes a Hash into a YAML string.

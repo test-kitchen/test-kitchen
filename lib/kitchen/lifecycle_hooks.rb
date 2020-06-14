@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Noah Kantrowitz <noah@coderanger.net>
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "errors"
-require_relative "shell_out"
+require_relative 'errors'
+require_relative 'shell_out'
 
 module Kitchen
   # A helper object used by {Instance} to coordinate lifecycle hook calls from
@@ -40,7 +41,7 @@ module Kitchen
     # @param state_file [StateFile] Instance state file object.
     # @param block [Proc] Block of code implementing the lifecycle phase.
     # @return [void]
-    def run_with_hooks(phase, state_file, &block)
+    def run_with_hooks(phase, state_file)
       run(instance, phase, state_file, :pre)
       yield
       run(instance, phase, state_file, :post)
@@ -91,23 +92,19 @@ module Kitchen
       user = {}
       # Set up some environment variables with instance info.
       environment = {
-        "KITCHEN_INSTANCE_NAME" => instance.name,
-        "KITCHEN_SUITE_NAME" => instance.suite.name,
-        "KITCHEN_PLATFORM_NAME" => instance.platform.name,
-        "KITCHEN_INSTANCE_HOSTNAME" => state[:hostname].to_s,
+        'KITCHEN_INSTANCE_NAME' => instance.name,
+        'KITCHEN_SUITE_NAME' => instance.suite.name,
+        'KITCHEN_PLATFORM_NAME' => instance.platform.name,
+        'KITCHEN_INSTANCE_HOSTNAME' => state[:hostname].to_s
       }
       # If the user specified env vars too, fix them up because symbol keys
       # make mixlib-shellout sad.
-      if hook[:environment]
-        hook[:environment].each do |k, v|
-          environment[k.to_s] = v.to_s
-        end
+      hook[:environment]&.each do |k, v|
+        environment[k.to_s] = v.to_s
       end
 
       # add user to user hash for later merging
-      if hook[:user]
-        user[:user] = hook[:user]
-      end
+      user[:user] = hook[:user] if hook[:user]
 
       # Default the cwd to the kitchen root and resolve a relative input cwd against that.
       cwd = if hook[:cwd]
@@ -133,7 +130,7 @@ module Kitchen
           # Just not even trying.
           return
         else
-          raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
+          raise UserError, 'Cannot use remote lifecycle hooks during phases when the instance is not available'
         end
       end
 

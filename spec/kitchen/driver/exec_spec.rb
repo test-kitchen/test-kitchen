@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +14,9 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen/driver/exec"
+require 'kitchen/driver/exec'
 
 describe Kitchen::Driver::Exec do
   let(:logged_output) { StringIO.new }
@@ -22,34 +24,34 @@ describe Kitchen::Driver::Exec do
   let(:state)         { {} }
 
   let(:config) do
-    { reset_command: "mulligan" }
+    { reset_command: 'mulligan' }
   end
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance", "transport=": nil)
+    stub(name: 'coolbeans', logger: logger, to_str: 'instance', "transport=": nil)
   end
 
   let(:driver) do
     Kitchen::Driver::Exec.new(config).finalize_config!(instance)
   end
 
-  it "plugin_version is set to Kitchen::VERSION" do
+  it 'plugin_version is set to Kitchen::VERSION' do
     driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end
 
-  it "sets the transport to exec" do
+  it 'sets the transport to exec' do
     instance.expects(:"transport=").with { |v| v.is_a?(Kitchen::Transport::Exec) }
     driver
   end
 
-  describe "#create" do
-    it "runs the reset command" do
-      driver.expects(:run_command).with("mulligan")
+  describe '#create' do
+    it 'runs the reset command' do
+      driver.expects(:run_command).with('mulligan')
 
       driver.create(state)
     end
 
-    it "skips the reset command if :reset_command is falsey" do
+    it 'skips the reset command if :reset_command is falsey' do
       config[:reset_command] = false
       driver.expects(:run_command).never
 
@@ -57,19 +59,18 @@ describe Kitchen::Driver::Exec do
     end
   end
 
-  describe "#destroy" do
-    it "calls the reset command" do
-      driver.expects(:run_command).with("mulligan")
+  describe '#destroy' do
+    it 'calls the reset command' do
+      driver.expects(:run_command).with('mulligan')
 
       driver.destroy(state)
     end
 
-    it "skips reset command if :reset_command is falsey" do
+    it 'skips reset command if :reset_command is falsey' do
       config[:reset_command] = false
       driver.expects(:run_command).never
 
       driver.destroy(state)
     end
   end
-
 end

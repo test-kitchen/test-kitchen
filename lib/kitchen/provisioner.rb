@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "plugin"
+require_relative 'plugin'
 
 module Kitchen
   # A provisioner is responsible for generating the commands necessary to
@@ -26,7 +27,7 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Provisioner
     # Default provisioner to use
-    DEFAULT_PLUGIN = "chef_solo".freeze
+    DEFAULT_PLUGIN = 'chef_solo'
 
     # Returns an instance of a provisioner given a plugin type string.
     #

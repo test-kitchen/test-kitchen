@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
+require 'fileutils'
 
-require_relative "../shell_out"
-require_relative "base"
-require_relative "../version"
+require_relative '../shell_out'
+require_relative 'base'
+require_relative '../version'
 
 module Kitchen
   module Transport
@@ -53,7 +54,6 @@ module Kitchen
             FileUtils.cp_r(local, remote)
           end
         end
-
       end
     end
   end

@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../command"
+require_relative '../command'
 
 module Kitchen
   module Command
@@ -26,11 +27,11 @@ module Kitchen
     class Console < Kitchen::Command::Base
       # Invoke the command.
       def call
-        require "pry"
-        Pry.start(@config, prompt: [prompt(">"), prompt("*")])
+        require 'pry'
+        Pry.start(@config, prompt: [prompt('>'), prompt('*')])
       rescue LoadError
-        warn %{Make sure you have the pry gem installed. You can install it with:}
-        warn %{`gem install pry` or including 'gem "pry"' in your Gemfile.}
+        warn %(Make sure you have the pry gem installed. You can install it with:)
+        warn %(`gem install pry` or including 'gem "pry"' in your Gemfile.)
         exit 1
       end
 
@@ -46,7 +47,7 @@ module Kitchen
           [
             "[#{pry.input_array.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
-            "#{":#{nest_level}" unless nest_level == 0}#{char} ",
+            "#{":#{nest_level}" unless nest_level == 0}#{char} "
           ].join
         end
       end

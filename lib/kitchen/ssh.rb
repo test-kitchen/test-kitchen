@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,13 +17,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "logger"
-require "net/ssh"
-require "net/scp"
-require "socket"
+require 'logger'
+require 'net/ssh'
+require 'net/scp'
+require 'socket'
 
-require_relative "errors"
-require_relative "login_command"
+require_relative 'errors'
+require_relative 'login_command'
 
 module Kitchen
   # Wrapped exception for any internally raised SSH-related errors.
@@ -78,9 +79,7 @@ module Kitchen
       logger.debug("[SSH] #{self} (#{cmd})")
       exit_code = exec_with_exit(cmd)
 
-      if exit_code != 0
-        raise SSHFailed, "SSH exited (#{exit_code}) for command: [#{cmd}]"
-      end
+      raise SSHFailed, "SSH exited (#{exit_code}) for command: [#{cmd}]" if exit_code != 0
     end
 
     # Uploads a local file to remote host.
@@ -103,9 +102,7 @@ module Kitchen
     def upload(local, remote, options = {}, &progress)
       if progress.nil?
         progress = lambda do |_ch, name, sent, total|
-          if sent == total
-            logger.debug("Async Uploaded #{name} (#{total} bytes)")
-          end
+          logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
         end
       end
 
@@ -151,18 +148,18 @@ module Kitchen
     #
     # @return [LoginCommand] the login command
     def login_command
-      args  = %w{ -o UserKnownHostsFile=/dev/null }
-      args += %w{ -o StrictHostKeyChecking=no }
-      args += %w{ -o IdentitiesOnly=yes } if options[:keys]
-      args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
+      args  = %w[-o UserKnownHostsFile=/dev/null]
+      args += %w[-o StrictHostKeyChecking=no]
+      args += %w[-o IdentitiesOnly=yes] if options[:keys]
+      args += %W[-o LogLevel=#{logger.debug? ? 'VERBOSE' : 'ERROR'}]
       if options.key?(:forward_agent)
-        args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} }
+        args += %W[-o ForwardAgent=#{options[:forward_agent] ? 'yes' : 'no'}]
       end
-      Array(options[:keys]).each { |ssh_key| args += %W{ -i #{ssh_key} } }
-      args += %W{ -p #{port} }
-      args += %W{ #{username}@#{hostname} }
+      Array(options[:keys]).each { |ssh_key| args += %W[-i #{ssh_key}] }
+      args += %W[-p #{port}]
+      args += %W[#{username}@#{hostname}]
 
-      LoginCommand.new("ssh", args)
+      LoginCommand.new('ssh', args)
     end
 
     private
@@ -258,7 +255,7 @@ module Kitchen
             logger << data
           end
 
-          channel.on_request("exit-status") do |_ch, data|
+          channel.on_request('exit-status') do |_ch, data|
             exit_code = data.read_long
           end
         end
@@ -281,7 +278,7 @@ module Kitchen
     rescue Errno::EPERM, Errno::ETIMEDOUT
       false
     ensure
-      socket && socket.close
+      socket&.close
     end
   end
 end

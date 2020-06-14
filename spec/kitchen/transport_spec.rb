@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 #
@@ -16,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/transport"
-require "kitchen/transport/base"
+require 'kitchen/transport'
+require 'kitchen/transport/base'
 
 module Kitchen
   module Transport
@@ -29,35 +30,35 @@ module Kitchen
 end
 
 describe Kitchen::Transport do
-  describe ".for_plugin" do
+  describe '.for_plugin' do
     before do
       Kitchen::Plugin.stubs(:require).returns(true)
     end
 
-    it "uses Kitchen::Plugin.load" do
+    it 'uses Kitchen::Plugin.load' do
       faux_transport = Object.new
       Kitchen::Plugin.stubs(:load).returns(faux_transport)
-      transport = Kitchen::Transport.for_plugin("faux", {})
+      transport = Kitchen::Transport.for_plugin('faux', {})
 
       transport.must_equal faux_transport
     end
 
-    it "returns a transport object of the correct class" do
-      transport = Kitchen::Transport.for_plugin("coolbeans", {})
+    it 'returns a transport object of the correct class' do
+      transport = Kitchen::Transport.for_plugin('coolbeans', {})
 
       transport.must_be_kind_of Kitchen::Transport::Coolbeans
     end
 
-    it "returns a transport initialized with its config" do
-      transport = Kitchen::Transport.for_plugin("coolbeans", foo: "bar")
+    it 'returns a transport initialized with its config' do
+      transport = Kitchen::Transport.for_plugin('coolbeans', foo: 'bar')
 
-      transport[:foo].must_equal "bar"
+      transport[:foo].must_equal 'bar'
     end
 
-    it "raises ClientError if the transport could not be required" do
+    it 'raises ClientError if the transport could not be required' do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Transport.for_plugin("coolbeans", {}) }
+      proc { Kitchen::Transport.for_plugin('coolbeans', {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -65,7 +66,7 @@ describe Kitchen::Transport do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Transport.for_plugin("nope", {}) }
+      proc { Kitchen::Transport.for_plugin('nope', {}) }
         .must_raise Kitchen::ClientError
     end
   end

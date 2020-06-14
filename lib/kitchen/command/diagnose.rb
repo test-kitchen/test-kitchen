@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../command"
-require_relative "../diagnostic"
+require_relative '../command'
+require_relative '../diagnostic'
 
-require "yaml"
+require 'yaml'
 
 module Kitchen
   module Command
@@ -71,13 +72,13 @@ module Kitchen
       # @api private
       def record_failure
         yield
-      rescue => e
+      rescue StandardError => e
         {
           error: {
             exception: e.inspect,
             message: e.message,
-            backtrace: e.backtrace,
-          },
+            backtrace: e.backtrace
+          }
         }
       end
     end

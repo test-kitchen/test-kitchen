@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -17,10 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/verifier"
-require "kitchen/verifier/base"
+require 'kitchen/verifier'
+require 'kitchen/verifier/base'
 
 module Kitchen
   module Verifier
@@ -30,35 +31,35 @@ module Kitchen
 end
 
 describe Kitchen::Verifier do
-  describe ".for_plugin" do
+  describe '.for_plugin' do
     before do
       Kitchen::Plugin.stubs(:require).returns(true)
     end
 
-    it "uses Kitchen::Plugin.load" do
+    it 'uses Kitchen::Plugin.load' do
       faux_verifier = Object.new
       Kitchen::Plugin.stubs(:load).returns(faux_verifier)
-      verifier = Kitchen::Verifier.for_plugin("faux", {})
+      verifier = Kitchen::Verifier.for_plugin('faux', {})
 
       verifier.must_equal faux_verifier
     end
 
-    it "returns a verifier object of the correct class" do
-      verifier = Kitchen::Verifier.for_plugin("coolbeans", {})
+    it 'returns a verifier object of the correct class' do
+      verifier = Kitchen::Verifier.for_plugin('coolbeans', {})
 
       verifier.must_be_kind_of Kitchen::Verifier::Coolbeans
     end
 
-    it "returns a verifier initialized with its config" do
-      verifier = Kitchen::Verifier.for_plugin("coolbeans", foo: "bar")
+    it 'returns a verifier initialized with its config' do
+      verifier = Kitchen::Verifier.for_plugin('coolbeans', foo: 'bar')
 
-      verifier[:foo].must_equal "bar"
+      verifier[:foo].must_equal 'bar'
     end
 
-    it "raises ClientError if the verifier could not be required" do
+    it 'raises ClientError if the verifier could not be required' do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Verifier.for_plugin("coolbeans", {}) }
+      proc { Kitchen::Verifier.for_plugin('coolbeans', {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -66,7 +67,7 @@ describe Kitchen::Verifier do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Verifier.for_plugin("nope", {}) }
+      proc { Kitchen::Verifier.for_plugin('nope', {}) }
         .must_raise Kitchen::ClientError
     end
   end

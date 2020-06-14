@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "erb"
-require_relative "../../vendor/hash_recursive_merge"
-require "yaml"
+require 'erb'
+require_relative '../../vendor/hash_recursive_merge'
+require 'yaml'
 
 module Kitchen
   module Loader
@@ -61,9 +62,7 @@ module Kitchen
       #
       # @return [Hash] merged configuration data
       def read
-        unless File.exist?(config_file)
-          raise UserError, "Kitchen YAML file #{config_file} does not exist."
-        end
+        raise UserError, "Kitchen YAML file #{config_file} does not exist." unless File.exist?(config_file)
 
         Util.symbolized_hash(combined_hash)
       end
@@ -168,11 +167,11 @@ module Kitchen
         tpl = ERB.new(string)
         tpl.filename = file
         tpl.result
-      rescue => e
+      rescue StandardError => e
         raise UserError, "Error parsing ERB content in #{file} " \
           "(#{e.class}: #{e.message}).\n" \
           "Please run `kitchen diagnose --no-instances --loader' to help " \
-          "debug your issue."
+          'debug your issue.'
       end
 
       # Reads a file and returns its contents as a string.
@@ -182,7 +181,7 @@ module Kitchen
       #   does not exist
       # @api private
       def read_file(file)
-        File.exist?(file.to_s) ? IO.read(file) : ""
+        File.exist?(file.to_s) ? IO.read(file) : ''
       end
 
       # Determines the default absolute path to the Kitchen config YAML file,
@@ -196,21 +195,19 @@ module Kitchen
           raise UserError, "Both #{kitchen_yml} and #{dot_kitchen_yml} found. Please use the un-dotted variant: #{kitchen_yml}."
         end
 
-        if !File.exist?(kitchen_yml) && !File.exist?(dot_kitchen_yml)
-          return kitchen_yml
-        end
+        return kitchen_yml if !File.exist?(kitchen_yml) && !File.exist?(dot_kitchen_yml)
 
         File.exist?(kitchen_yml) ? kitchen_yml : dot_kitchen_yml
       end
 
       # The absolute path to an un-hidden Kitchen config YAML file.
       def kitchen_yml
-        File.join(Dir.pwd, "kitchen.yml")
+        File.join(Dir.pwd, 'kitchen.yml')
       end
 
       # The absolute path to an hidden Kitchen config YAML file.
       def dot_kitchen_yml
-        File.join(Dir.pwd, ".kitchen.yml")
+        File.join(Dir.pwd, '.kitchen.yml')
       end
 
       # Determines the default absolute path to the Kitchen local YAML file,
@@ -223,7 +220,7 @@ module Kitchen
       def default_local_config_file
         config_dir, default_local_config = File.split(config_file.sub(/(#{File.extname(config_file)})$/, '.local\1'))
 
-        undot_config = default_local_config.sub(/^\./, "")
+        undot_config = default_local_config.sub(/^\./, '')
         dot_config = ".#{undot_config}"
 
         if File.exist?(File.join(config_dir, undot_config)) && File.exist?(File.join(config_dir, dot_config))
@@ -239,7 +236,7 @@ module Kitchen
       # @return [String] an absolute path to a Kitchen global YAML file
       # @api private
       def default_global_config_file
-        File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
+        File.join(File.expand_path(ENV['HOME']), '.kitchen', 'config.yml')
       end
 
       # Generate a diganose Hash for a particular YAML file Hash. If an error
@@ -256,7 +253,7 @@ module Kitchen
 
         hash = begin
           send(component)
-               rescue => e
+               rescue StandardError => e
                  failure_hash(e, file)
         end
 
@@ -274,8 +271,8 @@ module Kitchen
           error: {
             exception: e.inspect,
             message: e.message,
-            backtrace: e.backtrace,
-          },
+            backtrace: e.backtrace
+          }
         }
         result[:error][:raw_file] = IO.read(file) unless file.nil?
         result
@@ -289,7 +286,7 @@ module Kitchen
       # @api private
       def normalize(obj)
         if obj.is_a?(Hash)
-          obj.inject({}) { |h, (k, v)| normalize_hash(h, k, v); h }
+          obj.each_with_object({}) { |(k, v), h| normalize_hash(h, k, v); }
         else
           obj
         end
@@ -327,11 +324,11 @@ module Kitchen
       # @api private
       def normalize_hash(hash, key, value)
         case key
-        when "driver", "provisioner", "busser"
+        when 'driver', 'provisioner', 'busser'
           hash[key] = if value.nil?
                         {}
                       elsif value.is_a?(String)
-                        default_key = key == "busser" ? "version" : "name"
+                        default_key = key == 'busser' ? 'version' : 'name'
                         { default_key => value }
                       else
                         normalize(value)
@@ -353,7 +350,7 @@ module Kitchen
         return {} if string.nil? || string.empty?
 
         result =
-          if Gem::Requirement.new(">= 3.1.0").satisfied_by?(Gem::Version.new(Psych::VERSION))
+          if Gem::Requirement.new('>= 3.1.0').satisfied_by?(Gem::Version.new(Psych::VERSION))
             # ruby >= 2.6.0
             ::YAML.safe_load(string, permitted_classes: [Symbol], permitted_symbols: [], aliases: true) || {}
           else
@@ -364,13 +361,13 @@ module Kitchen
           raise UserError, "Error parsing #{file_name} as YAML " \
             "(Result of parse was not a Hash, but was a #{result.class}).\n" \
             "Please run `kitchen diagnose --no-instances --loader' to help " \
-            "debug your issue."
+            'debug your issue.'
         end
         result
       rescue SyntaxError, Psych::SyntaxError, Psych::DisallowedClass
         raise UserError, "Error parsing #{file_name} as YAML.\n" \
           "Please run `kitchen diagnose --no-instances --loader' to help " \
-          "debug your issue."
+          'debug your issue.'
       end
     end
   end

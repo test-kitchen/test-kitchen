@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,28 +17,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "logger"
-require "stringio"
+require 'logger'
+require 'stringio'
 
-require "kitchen/provisioner/dummy"
+require 'kitchen/provisioner/dummy'
 
 describe Kitchen::Provisioner::Dummy do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:platform)      { stub(os_type: nil, shell_type: nil) }
-  let(:suite)         { stub(name: "fries") }
+  let(:suite)         { stub(name: 'fries') }
   let(:state)         { {} }
 
   let(:config) do
-    { test_base_path: "/basist", kitchen_root: "/rooty" }
+    { test_base_path: '/basist', kitchen_root: '/rooty' }
   end
 
   let(:instance) do
     stub(
-      name: "coolbeans",
-      to_str: "instance",
+      name: 'coolbeans',
+      to_str: 'instance',
       logger: logger,
       suite: suite,
       platform: platform
@@ -48,46 +49,46 @@ describe Kitchen::Provisioner::Dummy do
     Kitchen::Provisioner::Dummy.new(config).finalize_config!(instance)
   end
 
-  it "provisioner api_version is 2" do
+  it 'provisioner api_version is 2' do
     provisioner.diagnose_plugin[:api_version].must_equal 2
   end
 
-  it "plugin_version is set to Kitchen::VERSION" do
+  it 'plugin_version is set to Kitchen::VERSION' do
     provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end
 
-  describe "configuration" do
-    it "sets :sleep to 0 by default" do
+  describe 'configuration' do
+    it 'sets :sleep to 0 by default' do
       provisioner[:sleep].must_equal 0
     end
 
-    it "sets :random_failure to false by default" do
+    it 'sets :random_failure to false by default' do
       provisioner[:random_failure].must_equal false
     end
   end
 
-  describe "#call" do
-    it "calls sleep if :sleep value is greater than 0" do
+  describe '#call' do
+    it 'calls sleep if :sleep value is greater than 0' do
       config[:sleep] = 12.5
       provisioner.expects(:sleep).with(12.5).returns(true)
 
       provisioner.call(state)
     end
 
-    it "raises ActionFailed if :fail is set" do
+    it 'raises ActionFailed if :fail is set' do
       config[:fail] = true
 
       proc { provisioner.call(state) }.must_raise Kitchen::ActionFailed
     end
 
-    it "randomly raises ActionFailed if :random_failure is set" do
+    it 'randomly raises ActionFailed if :random_failure is set' do
       config[:random_failure] = true
       provisioner.stubs(:randomly_fail?).returns(true)
 
       proc { provisioner.call(state) }.must_raise Kitchen::ActionFailed
     end
 
-    it "logs a converge event to INFO" do
+    it 'logs a converge event to INFO' do
       provisioner.call(state)
 
       logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)

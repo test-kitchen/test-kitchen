@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
-require "logger"
-require "stringio"
+require_relative '../../spec_helper'
+require 'logger'
+require 'stringio'
 
-require "kitchen"
+require 'kitchen'
 
 module Kitchen
   module Driver
@@ -45,15 +46,15 @@ describe Kitchen::Driver::Base do
   let(:state)         { {} }
 
   let(:busser) do
-    stub(setup_cmd: "setup", sync_cmd: "sync", run_cmd: "run")
+    stub(setup_cmd: 'setup', sync_cmd: 'sync', run_cmd: 'run')
   end
 
   let(:instance) do
     stub(
-      name: "coolbeans",
+      name: 'coolbeans',
       logger: logger,
       busser: busser,
-      to_str: "instance"
+      to_str: 'instance'
     )
   end
 
@@ -61,25 +62,25 @@ describe Kitchen::Driver::Base do
     Kitchen::Driver::Base.new(config).finalize_config!(instance)
   end
 
-  it "#instance returns its instance" do
+  it '#instance returns its instance' do
     driver.instance.must_equal instance
   end
 
-  it "#puts calls logger.info" do
-    driver.send(:puts, "yo")
+  it '#puts calls logger.info' do
+    driver.send(:puts, 'yo')
 
     logged_output.string.must_match(/I, /)
     logged_output.string.must_match(/yo\n/)
   end
 
-  it "#print calls logger.info" do
-    driver.send(:print, "yo")
+  it '#print calls logger.info' do
+    driver.send(:print, 'yo')
 
     logged_output.string.must_match(/I, /)
     logged_output.string.must_match(/yo\n/)
   end
 
-  %i{create setup verify destroy}.each do |action|
+  %i[create setup verify destroy].each do |action|
     it "has a #{action} method that takes state" do
       # TODO: revert back
       # state = Hash.new
@@ -88,34 +89,34 @@ describe Kitchen::Driver::Base do
     end
   end
 
-  describe ".pre_create_command" do
-    it "run command" do
+  describe '.pre_create_command' do
+    it 'run command' do
       Kitchen::Driver::Base.any_instance.stubs(:run_command).returns(true)
 
-      config[:pre_create_command] = "echo works 2&>1 > /dev/null"
-      driver.expects(:run_command).with("echo works 2&>1 > /dev/null")
+      config[:pre_create_command] = 'echo works 2&>1 > /dev/null'
+      driver.expects(:run_command).with('echo works 2&>1 > /dev/null')
       driver.send(:pre_create_command)
     end
 
-    it "error if cannot run" do
+    it 'error if cannot run' do
       class ShellCommandFailed < Kitchen::ShellOut::ShellCommandFailed; end
       Kitchen::Driver::Base.any_instance.stubs(:run_command).raises(ShellCommandFailed, "Expected process to exit with [0], but received '1'")
 
-      config[:pre_create_command] = "touch /this/dir/does/not/exist 2&>1 > /dev/null"
+      config[:pre_create_command] = 'touch /this/dir/does/not/exist 2&>1 > /dev/null'
       proc { driver.send(:pre_create_command) }.must_raise Kitchen::ActionFailed
     end
   end
 
-  describe ".no_parallel_for" do
-    it "registers no serial actions when none are declared" do
+  describe '.no_parallel_for' do
+    it 'registers no serial actions when none are declared' do
       Kitchen::Driver::Speedy.serial_actions.must_be_nil
     end
 
-    it "registers a single serial action method" do
+    it 'registers a single serial action method' do
       Kitchen::Driver::Dodgy.serial_actions.must_equal [:setup]
     end
 
-    it "registers multiple serial action methods" do
+    it 'registers multiple serial action methods' do
       actions = Kitchen::Driver::Slow.serial_actions
 
       actions.must_include :create
@@ -123,7 +124,7 @@ describe Kitchen::Driver::Base do
       actions.must_include :destroy
     end
 
-    it "raises a ClientError if value is not an action method" do
+    it 'raises a ClientError if value is not an action method' do
       proc do
         Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
       end.must_raise Kitchen::ClientError

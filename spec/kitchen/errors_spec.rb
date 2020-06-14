@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,109 +17,109 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen"
-require "kitchen/errors"
+require 'kitchen'
+require 'kitchen/errors'
 
 describe Kitchen::Error do
-  let(:exception) { Kitchen::StandardError.new("shoot") }
+  let(:exception) { Kitchen::StandardError.new('shoot') }
 
-  describe ".formatted_exception" do
-    it "returns an array of a formatted message" do
+  describe '.formatted_exception' do
+    it 'returns an array of a formatted message' do
       Kitchen::Error.formatted_exception(exception).must_equal([
-                                                                 "------Exception-------",
-                                                                 "Class: Kitchen::StandardError",
-                                                                 "Message: shoot",
-                                                                 "----------------------",
+                                                                 '------Exception-------',
+                                                                 'Class: Kitchen::StandardError',
+                                                                 'Message: shoot',
+                                                                 '----------------------'
                                                                ])
     end
 
-    it "takes a customized title" do
-      Kitchen::Error.formatted_exception(exception, "Trouble").first
-        .must_equal("-------Trouble--------")
+    it 'takes a customized title' do
+      Kitchen::Error.formatted_exception(exception, 'Trouble').first
+                    .must_equal('-------Trouble--------')
     end
   end
 
-  describe ".formatted_exception" do
-    it "returns an array of a formatted message with a nil backtrace" do
+  describe '.formatted_exception' do
+    it 'returns an array of a formatted message with a nil backtrace' do
       Kitchen::Error.formatted_trace(exception).must_equal([
-                                                             "------Exception-------",
-                                                             "Class: Kitchen::StandardError",
-                                                             "Message: shoot",
-                                                             "----------------------",
+                                                             '------Exception-------',
+                                                             'Class: Kitchen::StandardError',
+                                                             'Message: shoot',
+                                                             '----------------------'
                                                            ])
     end
 
     it "returns an array containing the exception's backtrace" do
       begin
-        raise Kitchen::StandardError, "shoot"
-      rescue => e
+        raise Kitchen::StandardError, 'shoot'
+      rescue StandardError => e
         Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
       end
     end
 
-    it "returns an array containing a nested exception, if given" do
+    it 'returns an array containing a nested exception, if given' do
       begin
-        raise IOError, "no disk, yo"
-      rescue
-        e = Kitchen::StandardError.new("shoot")
+        raise IOError, 'no disk, yo'
+      rescue StandardError
+        e = Kitchen::StandardError.new('shoot')
 
         Kitchen::Error.formatted_trace(e).must_equal([
-                                                       "------Exception-------",
-                                                       "Class: Kitchen::StandardError",
-                                                       "Message: shoot",
-                                                       "----------------------",
-                                                       "---Nested Exception---",
-                                                       "Class: IOError",
-                                                       "Message: no disk, yo",
-                                                       "----------------------",
+                                                       '------Exception-------',
+                                                       'Class: Kitchen::StandardError',
+                                                       'Message: shoot',
+                                                       '----------------------',
+                                                       '---Nested Exception---',
+                                                       'Class: IOError',
+                                                       'Message: no disk, yo',
+                                                       '----------------------'
                                                      ])
       end
     end
 
-    it "returns an array when an error has more than one error in original" do
+    it 'returns an array when an error has more than one error in original' do
       error_array = []
-      error_array << Kitchen::StandardError.new("one")
-      error_array << Kitchen::StandardError.new("two")
-      composite_error = Kitchen::StandardError.new("array", error_array)
+      error_array << Kitchen::StandardError.new('one')
+      error_array << Kitchen::StandardError.new('two')
+      composite_error = Kitchen::StandardError.new('array', error_array)
 
       Kitchen::Error.formatted_trace(composite_error).must_equal([
-                                                                   "------Exception-------",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: array",
-                                                                   "----------------------",
-                                                                   "-Composite Exception--",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: one", "----------------------",
-                                                                   "-Composite Exception--",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: two",
-                                                                   "----------------------"
+                                                                   '------Exception-------',
+                                                                   'Class: Kitchen::StandardError',
+                                                                   'Message: array',
+                                                                   '----------------------',
+                                                                   '-Composite Exception--',
+                                                                   'Class: Kitchen::StandardError',
+                                                                   'Message: one', '----------------------',
+                                                                   '-Composite Exception--',
+                                                                   'Class: Kitchen::StandardError',
+                                                                   'Message: two',
+                                                                   '----------------------'
                                                                  ])
     end
   end
 end
 
 describe Kitchen::StandardError do
-  it "is a kind of Kitchen::Error" do
-    Kitchen::StandardError.new("oops").must_be_kind_of Kitchen::Error
+  it 'is a kind of Kitchen::Error' do
+    Kitchen::StandardError.new('oops').must_be_kind_of Kitchen::Error
   end
 
-  it "by default, sets original exception to the last raised exception" do
+  it 'by default, sets original exception to the last raised exception' do
     begin
-      raise IOError, "crap"
-    rescue
-      original = Kitchen::StandardError.new("oops").original
+      raise IOError, 'crap'
+    rescue StandardError
+      original = Kitchen::StandardError.new('oops').original
       original.must_be_kind_of IOError
-      original.message.must_equal "crap"
+      original.message.must_equal 'crap'
     end
   end
 
-  it "can embed an exception when constructing" do
-    original = Kitchen::StandardError.new("durn", IOError.new("ack")).original
+  it 'can embed an exception when constructing' do
+    original = Kitchen::StandardError.new('durn', IOError.new('ack')).original
     original.must_be_kind_of IOError
-    original.message.must_equal "ack"
+    original.message.must_equal 'ack'
   end
 end
 
@@ -126,8 +127,8 @@ end
   Kitchen::UserError, Kitchen::ClientError, Kitchen::TransientFailure
 ].each do |klass|
   describe klass do
-    it "is a kind of Kitchen::StandardError" do
-      klass.new("oops").must_be_kind_of Kitchen::StandardError
+    it 'is a kind of Kitchen::StandardError' do
+      klass.new('oops').must_be_kind_of Kitchen::StandardError
     end
   end
 end
@@ -136,14 +137,14 @@ end
   Kitchen::ActionFailed, Kitchen::InstanceFailure
 ].each do |klass|
   describe klass do
-    it "is a kind of Kitchen::TransientFailure" do
-      klass.new("oops").must_be_kind_of Kitchen::TransientFailure
+    it 'is a kind of Kitchen::TransientFailure' do
+      klass.new('oops').must_be_kind_of Kitchen::TransientFailure
     end
   end
 end
 
 describe Kitchen do
-  describe ".with_friendly_errors" do
+  describe '.with_friendly_errors' do
     let(:logger_io) { StringIO.new }
     let(:logger)    { Kitchen::Logger.new(logdev: logger_io) }
 
@@ -160,18 +161,18 @@ describe Kitchen do
       Kitchen.logger = @orig_logger
     end
 
-    describe "for instance failures" do
+    describe 'for instance failures' do
       def go_boom
         Kitchen.with_friendly_errors do
           begin
-            raise IOError, "no stuff"
-          rescue
-            raise Kitchen::InstanceFailure, "cannot do that"
+            raise IOError, 'no stuff'
+          rescue StandardError
+            raise Kitchen::InstanceFailure, 'cannot do that'
           end
         end
       end
 
-      it "exits with 10" do
+      it 'exits with 10' do
         begin
           go_boom
         rescue SystemExit => e
@@ -179,13 +180,13 @@ describe Kitchen do
         end
       end
 
-      it "prints a message on STDERR" do
+      it 'prints a message on STDERR' do
         output = [
-          ">>>>>> cannot do that",
-          ">>>>>> ------Exception-------",
-          ">>>>>> Class: IOError",
-          ">>>>>> Message: no stuff",
-          ">>>>>> ----------------------",
+          '>>>>>> cannot do that',
+          '>>>>>> ------Exception-------',
+          '>>>>>> Class: IOError',
+          '>>>>>> Message: no stuff',
+          '>>>>>> ----------------------'
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
 
         begin
@@ -195,14 +196,14 @@ describe Kitchen do
         end
       end
 
-      it "prints a message on STDERR without color" do
+      it 'prints a message on STDERR without color' do
         Kitchen.stubs(:tty?).returns(false)
         output = [
-          ">>>>>> cannot do that",
-          ">>>>>> ------Exception-------",
-          ">>>>>> Class: IOError",
-          ">>>>>> Message: no stuff",
-          ">>>>>> ----------------------",
+          '>>>>>> cannot do that',
+          '>>>>>> ------Exception-------',
+          '>>>>>> Class: IOError',
+          '>>>>>> Message: no stuff',
+          '>>>>>> ----------------------'
         ].join("\n").concat("\n")
 
         begin
@@ -220,7 +221,7 @@ describe Kitchen do
         end
       end
 
-      it "logs the exception message on debug, if set" do
+      it 'logs the exception message on debug, if set' do
         logger.level = ::Logger::DEBUG
 
         begin
@@ -231,18 +232,18 @@ describe Kitchen do
       end
     end
 
-    describe "for unexpected failures" do
+    describe 'for unexpected failures' do
       def go_boom
         Kitchen.with_friendly_errors do
           begin
-            raise IOError, "wtf?"
-          rescue
-            raise Kitchen::StandardError, "ah crap"
+            raise IOError, 'wtf?'
+          rescue StandardError
+            raise Kitchen::StandardError, 'ah crap'
           end
         end
       end
 
-      it "exits with 20" do
+      it 'exits with 20' do
         begin
           go_boom
         rescue SystemExit => e
@@ -250,14 +251,14 @@ describe Kitchen do
         end
       end
 
-      it "prints a message on STDERR" do
+      it 'prints a message on STDERR' do
         output = [
-          ">>>>>> ------Exception-------",
-          ">>>>>> Class: Kitchen::StandardError",
-          ">>>>>> Message: ah crap",
-          ">>>>>> ----------------------",
-          ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
-          ">>>>>> Also try running `kitchen diagnose --all` for configuration\n",
+          '>>>>>> ------Exception-------',
+          '>>>>>> Class: Kitchen::StandardError',
+          '>>>>>> Message: ah crap',
+          '>>>>>> ----------------------',
+          '>>>>>> Please see .kitchen/logs/kitchen.log for more details',
+          ">>>>>> Also try running `kitchen diagnose --all` for configuration\n"
         ].map { |l| Kitchen::Color.colorize(l, :red) }.join("\n").concat("\n")
 
         begin
@@ -267,15 +268,15 @@ describe Kitchen do
         end
       end
 
-      it "prints a message on STDERR without color" do
+      it 'prints a message on STDERR without color' do
         Kitchen.stubs(:tty?).returns(false)
         output = [
-          ">>>>>> ------Exception-------",
-          ">>>>>> Class: Kitchen::StandardError",
-          ">>>>>> Message: ah crap",
-          ">>>>>> ----------------------",
-          ">>>>>> Please see .kitchen/logs/kitchen.log for more details",
-          ">>>>>> Also try running `kitchen diagnose --all` for configuration",
+          '>>>>>> ------Exception-------',
+          '>>>>>> Class: Kitchen::StandardError',
+          '>>>>>> Message: ah crap',
+          '>>>>>> ----------------------',
+          '>>>>>> Please see .kitchen/logs/kitchen.log for more details',
+          '>>>>>> Also try running `kitchen diagnose --all` for configuration'
         ].join("\n").concat("\n")
 
         begin
@@ -290,26 +291,26 @@ describe Kitchen do
           go_boom
         rescue SystemExit
           logger_io.string
-            .must_match(/ERROR -- Kitchen: ------Exception-------$/)
+                   .must_match(/ERROR -- Kitchen: ------Exception-------$/)
           logger_io.string
-            .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
+                   .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string
-            .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
+                   .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
         end
       end
 
-      it "logs the exception message on debug, if set" do
+      it 'logs the exception message on debug, if set' do
         logger.level = ::Logger::DEBUG
 
         begin
           go_boom
         rescue SystemExit
           logger_io.string
-            .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
+                   .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
           logger_io.string
-            .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
+                   .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
           logger_io.string
-            .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
+                   .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
         end
       end
     end

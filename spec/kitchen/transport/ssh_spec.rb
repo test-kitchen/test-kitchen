@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen/transport/ssh"
-require "net/ssh/test"
+require 'kitchen/transport/ssh'
+require 'net/ssh/test'
 
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
@@ -28,138 +29,138 @@ describe Kitchen::Transport::Ssh do
   let(:state)         { {} }
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance")
+    stub(name: 'coolbeans', logger: logger, to_str: 'instance')
   end
 
   let(:transport) do
     Net::SSH::Test::Extensions::IO.with_test_extension { Kitchen::Transport::Ssh.new(config).finalize_config!(instance) }
   end
 
-  it "provisioner api_version is 1" do
+  it 'provisioner api_version is 1' do
     transport.diagnose_plugin[:api_version].must_equal 1
   end
 
-  it "plugin_version is set to Kitchen::VERSION" do
+  it 'plugin_version is set to Kitchen::VERSION' do
     transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end
 
-  describe "default_config" do
-    it "sets :port to 22 by default" do
+  describe 'default_config' do
+    it 'sets :port to 22 by default' do
       transport[:port].must_equal 22
     end
 
-    it "sets :username to root by default" do
-      transport[:username].must_equal "root"
+    it 'sets :username to root by default' do
+      transport[:username].must_equal 'root'
     end
 
-    it "sets :compression to true by default" do
+    it 'sets :compression to true by default' do
       transport[:compression].must_equal false
     end
 
-    it "sets :compression to false if set to none" do
-      config[:compression] = "none"
+    it 'sets :compression to false if set to none' do
+      config[:compression] = 'none'
 
       transport[:compression].must_equal false
     end
 
-    it "sets :compression to zlib@openssh.com if set to zlib" do
-      config[:compression] = "zlib"
+    it 'sets :compression to zlib@openssh.com if set to zlib' do
+      config[:compression] = 'zlib'
 
-      transport[:compression].must_equal "zlib@openssh.com"
+      transport[:compression].must_equal 'zlib@openssh.com'
     end
 
-    it "sets :compression_level to 6 by default" do
+    it 'sets :compression_level to 6 by default' do
       transport[:compression_level].must_equal 0
     end
 
-    it "sets :compression_level to 6 if :compression is set to true" do
+    it 'sets :compression_level to 6 if :compression is set to true' do
       config[:compression] = true
 
       transport[:compression_level].must_equal 6
     end
 
-    it "sets :keepalive to true by default" do
+    it 'sets :keepalive to true by default' do
       transport[:keepalive].must_equal true
     end
 
-    it "sets :keepalive_interval to 60 by default" do
+    it 'sets :keepalive_interval to 60 by default' do
       transport[:keepalive_interval].must_equal 60
     end
 
-    it "sets :keepalive_maxcount to 3 by default" do
+    it 'sets :keepalive_maxcount to 3 by default' do
       transport[:keepalive_maxcount].must_equal 3
     end
 
-    it "sets :connection_timeout to 15 by default" do
+    it 'sets :connection_timeout to 15 by default' do
       transport[:connection_timeout].must_equal 15
     end
 
-    it "sets :connection_retries to 5 by default" do
+    it 'sets :connection_retries to 5 by default' do
       transport[:connection_retries].must_equal 5
     end
 
-    it "sets :connection_retry_sleep to 1 by default" do
+    it 'sets :connection_retry_sleep to 1 by default' do
       transport[:connection_retry_sleep].must_equal 1
     end
 
-    it "sets :max_wait_until_ready to 600 by default" do
+    it 'sets :max_wait_until_ready to 600 by default' do
       transport[:max_wait_until_ready].must_equal 600
     end
 
-    it "sets :ssh_key to nil by default" do
+    it 'sets :ssh_key to nil by default' do
       transport[:ssh_key].must_be_nil
     end
 
-    it "sets :ssh_key_only to nil by default" do
+    it 'sets :ssh_key_only to nil by default' do
       transport[:ssh_key_only].must_be_nil
     end
 
-    it "expands :ssh_path path if set" do
-      config[:kitchen_root] = "/rooty"
-      config[:ssh_key] = "my_key"
+    it 'expands :ssh_path path if set' do
+      config[:kitchen_root] = '/rooty'
+      config[:ssh_key] = 'my_key'
 
-      transport[:ssh_key].must_equal os_safe_root_path("/rooty/my_key")
+      transport[:ssh_key].must_equal os_safe_root_path('/rooty/my_key')
     end
 
-    it "sets :max_ssh_sessions to 9 by default" do
+    it 'sets :max_ssh_sessions to 9 by default' do
       transport[:max_ssh_sessions].must_equal 9
     end
 
-    it "sets :ssh_http_proxy to nil by default" do
+    it 'sets :ssh_http_proxy to nil by default' do
       transport[:ssh_http_proxy].must_be_nil
     end
 
-    it "sets :ssh_http_proxy_port to nil by default" do
+    it 'sets :ssh_http_proxy_port to nil by default' do
       transport[:ssh_http_proxy_port].must_be_nil
     end
 
-    it "sets :ssh_http_proxy_user to nil by default" do
+    it 'sets :ssh_http_proxy_user to nil by default' do
       transport[:ssh_http_proxy_user].must_be_nil
     end
 
-    it "sets :ssh_http_proxy_password to nil by default" do
+    it 'sets :ssh_http_proxy_password to nil by default' do
       transport[:ssh_http_proxy_password].must_be_nil
     end
 
-    it "sets :ssh_gateway to nil by default" do
+    it 'sets :ssh_gateway to nil by default' do
       transport[:ssh_gateway].must_be_nil
     end
 
-    it "sets :ssh_gateway_username to nil by default" do
+    it 'sets :ssh_gateway_username to nil by default' do
       transport[:ssh_gateway_username].must_be_nil
     end
 
-    it "sets :ssh_gateway_port to 22 by default" do
+    it 'sets :ssh_gateway_port to 22 by default' do
       transport[:ssh_gateway_port].must_equal 22
     end
   end
 
-  describe "#connection" do
+  describe '#connection' do
     let(:klass) { Kitchen::Transport::Ssh::Connection }
     let(:options_http_proxy) { {} }
     let(:proxy_conn) do
-      state[:ssh_http_proxy]        = "ssh_http_proxy_from_state"
-      state[:ssh_http_proxy_port]   = "ssh_http_proxy_port_from_state"
+      state[:ssh_http_proxy]        = 'ssh_http_proxy_from_state'
+      state[:ssh_http_proxy_port]   = 'ssh_http_proxy_port_from_state'
       options_http_proxy[:user]     = state[:ssh_http_proxy_user]
       options_http_proxy[:password] = state[:ssh_http_proxy_password]
       Net::SSH::Proxy::HTTP.new(state[:ssh_http_proxy], state[:ssh_http_proxy_port], options_http_proxy)
@@ -171,7 +172,7 @@ describe Kitchen::Transport::Ssh do
         Net::SSH::Proxy::HTTP.stubs(:new).returns(proxy_conn)
       end
 
-      it "returns a Kitchen::Transport::Ssh::Connection object" do
+      it 'returns a Kitchen::Transport::Ssh::Connection object' do
         transport.connection(state).must_be_kind_of klass
       end
 
@@ -183,15 +184,15 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets the :user_known_hosts_file to /dev/null" do
+      it 'sets the :user_known_hosts_file to /dev/null' do
         klass.expects(:new).with do |hash|
-          hash[:user_known_hosts_file] == "/dev/null"
+          hash[:user_known_hosts_file] == '/dev/null'
         end
 
         make_connection
       end
 
-      it "sets the :verify_host_key flag to false or :never if >= 5.0.0" do
+      it 'sets the :verify_host_key flag to false or :never if >= 5.0.0' do
         klass.expects(:new).with do |hash|
           old_version = Net::SSH::Version::CURRENT < Net::SSH::Version[5, 0, 0]
 
@@ -201,71 +202,71 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :hostname from config" do
-        config[:hostname] = "host_from_config"
+      it 'sets :hostname from config' do
+        config[:hostname] = 'host_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:hostname] == "host_from_config"
+          hash[:hostname] == 'host_from_config'
         end
 
         make_connection
       end
 
-      it "sets :hostname from state over config data" do
-        state[:hostname] = "host_from_state"
-        config[:hostname] = "host_from_config"
+      it 'sets :hostname from state over config data' do
+        state[:hostname] = 'host_from_state'
+        config[:hostname] = 'host_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:hostname] == "host_from_state"
+          hash[:hostname] == 'host_from_state'
         end
 
         make_connection
       end
 
-      it "sets :port from config" do
-        config[:port] = "port_from_config"
+      it 'sets :port from config' do
+        config[:port] = 'port_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:port] == "port_from_config"
+          hash[:port] == 'port_from_config'
         end
 
         make_connection
       end
 
-      it "sets :port from state over config data" do
-        state[:port] = "port_from_state"
-        config[:port] = "port_from_config"
+      it 'sets :port from state over config data' do
+        state[:port] = 'port_from_state'
+        config[:port] = 'port_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:port] == "port_from_state"
+          hash[:port] == 'port_from_state'
         end
 
         make_connection
       end
 
-      it "sets :username from config" do
-        config[:username] = "user_from_config"
+      it 'sets :username from config' do
+        config[:username] = 'user_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:username] == "user_from_config"
+          hash[:username] == 'user_from_config'
         end
 
         make_connection
       end
 
-      it "sets :username from state over config data" do
-        state[:username] = "user_from_state"
-        config[:username] = "user_from_config"
+      it 'sets :username from state over config data' do
+        state[:username] = 'user_from_state'
+        config[:username] = 'user_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:username] == "user_from_state"
+          hash[:username] == 'user_from_state'
         end
 
         make_connection
       end
 
-      it "sets :compression from config" do
-        config[:compression] = "none"
+      it 'sets :compression from config' do
+        config[:compression] = 'none'
 
         klass.expects(:new).with do |hash|
           hash[:compression] == false
@@ -274,18 +275,18 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :compression from state over config data" do
-        state[:compression] = "none"
-        config[:compression] = "zlib"
+      it 'sets :compression from state over config data' do
+        state[:compression] = 'none'
+        config[:compression] = 'zlib'
 
         klass.expects(:new).with do |hash|
-          hash[:compression] == "none"
+          hash[:compression] == 'none'
         end
 
         make_connection
       end
 
-      it "sets :compression_level from config" do
+      it 'sets :compression_level from config' do
         config[:compression_level] = 9999
 
         klass.expects(:new).with do |hash|
@@ -295,7 +296,7 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :compression_level from state over config data" do
+      it 'sets :compression_level from state over config data' do
         state[:compression_level] = 9999
         config[:compression_level] = 1111
 
@@ -306,134 +307,134 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :timeout from :connection_timeout in config" do
-        config[:connection_timeout] = "timeout_from_config"
+      it 'sets :timeout from :connection_timeout in config' do
+        config[:connection_timeout] = 'timeout_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:timeout] == "timeout_from_config"
+          hash[:timeout] == 'timeout_from_config'
         end
 
         make_connection
       end
 
-      it "sets :timeout from :connection_timeout in state over config data" do
-        state[:connection_timeout] = "timeout_from_state"
-        config[:connection_timeout] = "timeout_from_config"
+      it 'sets :timeout from :connection_timeout in state over config data' do
+        state[:connection_timeout] = 'timeout_from_state'
+        config[:connection_timeout] = 'timeout_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:timeout] == "timeout_from_state"
+          hash[:timeout] == 'timeout_from_state'
         end
 
         make_connection
       end
 
-      it "sets :keepalive from config" do
-        config[:keepalive] = "keepalive_from_config"
+      it 'sets :keepalive from config' do
+        config[:keepalive] = 'keepalive_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keepalive] == "keepalive_from_config"
+          hash[:keepalive] == 'keepalive_from_config'
         end
 
         make_connection
       end
 
-      it "sets :keepalive from state over config data" do
-        state[:keepalive] = "keepalive_from_state"
-        config[:keepalive] = "keepalive_from_config"
+      it 'sets :keepalive from state over config data' do
+        state[:keepalive] = 'keepalive_from_state'
+        config[:keepalive] = 'keepalive_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keepalive] == "keepalive_from_state"
+          hash[:keepalive] == 'keepalive_from_state'
         end
 
         make_connection
       end
 
-      it "sets :keepalive_interval from config" do
-        config[:keepalive_interval] = "interval_from_config"
+      it 'sets :keepalive_interval from config' do
+        config[:keepalive_interval] = 'interval_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keepalive_interval] == "interval_from_config"
+          hash[:keepalive_interval] == 'interval_from_config'
         end
 
         make_connection
       end
 
-      it "sets :keepalive_interval from state over config data" do
-        state[:keepalive_interval] = "interval_from_state"
-        config[:keepalive_interval] = "interval_from_config"
+      it 'sets :keepalive_interval from state over config data' do
+        state[:keepalive_interval] = 'interval_from_state'
+        config[:keepalive_interval] = 'interval_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keepalive_interval] == "interval_from_state"
+          hash[:keepalive_interval] == 'interval_from_state'
         end
 
         make_connection
       end
 
-      it "sets :connection_retries from config" do
-        config[:connection_retries] = "retries_from_config"
+      it 'sets :connection_retries from config' do
+        config[:connection_retries] = 'retries_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:connection_retries] == "retries_from_config"
+          hash[:connection_retries] == 'retries_from_config'
         end
 
         make_connection
       end
 
-      it "sets :connection_retries from state over config data" do
-        state[:connection_retries] = "retries_from_state"
-        config[:connection_retries] = "retries_from_config"
+      it 'sets :connection_retries from state over config data' do
+        state[:connection_retries] = 'retries_from_state'
+        config[:connection_retries] = 'retries_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:connection_retries] == "retries_from_state"
+          hash[:connection_retries] == 'retries_from_state'
         end
 
         make_connection
       end
 
-      it "sets :connection_retry_sleep from config" do
-        config[:connection_retry_sleep] = "sleep_from_config"
+      it 'sets :connection_retry_sleep from config' do
+        config[:connection_retry_sleep] = 'sleep_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:connection_retry_sleep] == "sleep_from_config"
+          hash[:connection_retry_sleep] == 'sleep_from_config'
         end
 
         make_connection
       end
 
-      it "sets :connection_retry_sleep from state over config data" do
-        state[:connection_retry_sleep] = "sleep_from_state"
-        config[:connection_retry_sleep] = "sleep_from_config"
+      it 'sets :connection_retry_sleep from state over config data' do
+        state[:connection_retry_sleep] = 'sleep_from_state'
+        config[:connection_retry_sleep] = 'sleep_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:connection_retry_sleep] == "sleep_from_state"
+          hash[:connection_retry_sleep] == 'sleep_from_state'
         end
 
         make_connection
       end
 
-      it "sets :max_wait_until_ready from config" do
-        config[:max_wait_until_ready] = "max_from_config"
+      it 'sets :max_wait_until_ready from config' do
+        config[:max_wait_until_ready] = 'max_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:max_wait_until_ready] == "max_from_config"
+          hash[:max_wait_until_ready] == 'max_from_config'
         end
 
         make_connection
       end
 
-      it "sets :max_wait_until_ready from state over config data" do
-        state[:max_wait_until_ready] = "max_from_state"
-        config[:max_wait_until_ready] = "max_from_config"
+      it 'sets :max_wait_until_ready from state over config data' do
+        state[:max_wait_until_ready] = 'max_from_state'
+        config[:max_wait_until_ready] = 'max_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:max_wait_until_ready] == "max_from_state"
+          hash[:max_wait_until_ready] == 'max_from_state'
         end
 
         make_connection
       end
 
-      it "sets :keys_only to true if :ssh_key is set in config" do
-        config[:ssh_key] = "ssh_key_from_config"
+      it 'sets :keys_only to true if :ssh_key is set in config' do
+        config[:ssh_key] = 'ssh_key_from_config'
 
         klass.expects(:new).with do |hash|
           hash[:keys_only] == true
@@ -442,18 +443,18 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :auth_methods to only publickey if :ssh_key is set in config" do
-        config[:ssh_key] = "ssh_key_from_config"
+      it 'sets :auth_methods to only publickey if :ssh_key is set in config' do
+        config[:ssh_key] = 'ssh_key_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:auth_methods] == ["publickey"]
+          hash[:auth_methods] == ['publickey']
         end
 
         make_connection
       end
 
-      it "sets :keys_only to true if :ssh_key is set in state" do
-        state[:ssh_key] = "ssh_key_from_config"
+      it 'sets :keys_only to true if :ssh_key is set in state' do
+        state[:ssh_key] = 'ssh_key_from_config'
         config[:ssh_key] = false
 
         klass.expects(:new).with do |hash|
@@ -463,7 +464,7 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :proxy to proxy if :ssh_http_proxy is set in state" do
+      it 'sets :proxy to proxy if :ssh_http_proxy is set in state' do
         config[:ssh_http_proxy] = true
 
         klass.expects(:new).with do |hash|
@@ -473,31 +474,31 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :keys to an array if :ssh_key is set in config" do
-        config[:kitchen_root] = "/r"
-        config[:ssh_key] = "ssh_key_from_config"
+      it 'sets :keys to an array if :ssh_key is set in config' do
+        config[:kitchen_root] = '/r'
+        config[:ssh_key] = 'ssh_key_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keys] == [os_safe_root_path("/r/ssh_key_from_config")]
+          hash[:keys] == [os_safe_root_path('/r/ssh_key_from_config')]
         end
 
         make_connection
       end
 
-      it "sets :keys to an array if :ssh_key is set in state" do
-        state[:ssh_key] = "ssh_key_from_state"
-        config[:ssh_key] = "ssh_key_from_config"
+      it 'sets :keys to an array if :ssh_key is set in state' do
+        state[:ssh_key] = 'ssh_key_from_state'
+        config[:ssh_key] = 'ssh_key_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:keys] == ["ssh_key_from_state"]
+          hash[:keys] == ['ssh_key_from_state']
         end
 
         make_connection
       end
 
-      it "does not set :keys_only if :ssh_key is set in config but password is set" do
-        config[:ssh_key] = "ssh_key_from_config"
-        config[:password] = "password"
+      it 'does not set :keys_only if :ssh_key is set in config but password is set' do
+        config[:ssh_key] = 'ssh_key_from_config'
+        config[:password] = 'password'
 
         klass.expects(:new).with do |hash|
           hash[:keys_only].nil?
@@ -506,9 +507,9 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "does not set :auth_methods if :ssh_key is set in config but password is set" do
-        config[:ssh_key] = "ssh_key_from_config"
-        config[:password] = "password"
+      it 'does not set :auth_methods if :ssh_key is set in config but password is set' do
+        config[:ssh_key] = 'ssh_key_from_config'
+        config[:password] = 'password'
 
         klass.expects(:new).with do |hash|
           hash[:auth_methods].nil?
@@ -517,10 +518,10 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "does not set :keys_only if :ssh_key is set in state but password is set" do
-        state[:ssh_key] = "ssh_key_from_config"
+      it 'does not set :keys_only if :ssh_key is set in state but password is set' do
+        state[:ssh_key] = 'ssh_key_from_config'
         config[:ssh_key] = false
-        config[:password] = "password"
+        config[:password] = 'password'
 
         klass.expects(:new).with do |hash|
           hash[:keys_only].nil?
@@ -529,10 +530,10 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "does not set :keys to an array if :ssh_key is set in config but password is set" do
-        config[:kitchen_root] = "/r"
-        config[:ssh_key] = "ssh_key_from_config"
-        config[:password] = "password"
+      it 'does not set :keys to an array if :ssh_key is set in config but password is set' do
+        config[:kitchen_root] = '/r'
+        config[:ssh_key] = 'ssh_key_from_config'
+        config[:password] = 'password'
 
         klass.expects(:new).with do |hash|
           hash[:keys].nil?
@@ -541,10 +542,10 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "does not set :keys to an array if :ssh_key is set in state but password is set" do
-        state[:ssh_key] = "ssh_key_from_state"
-        config[:ssh_key] = "ssh_key_from_config"
-        config[:password] = "password"
+      it 'does not set :keys to an array if :ssh_key is set in state but password is set' do
+        state[:ssh_key] = 'ssh_key_from_state'
+        config[:ssh_key] = 'ssh_key_from_config'
+        config[:password] = 'password'
 
         klass.expects(:new).with do |hash|
           hash[:keys].nil?
@@ -553,100 +554,100 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
-      it "sets :auth_methods to only publickey if :ssh_key_only is set in config" do
+      it 'sets :auth_methods to only publickey if :ssh_key_only is set in config' do
         config[:ssh_key_only] = true
 
         klass.expects(:new).with do |hash|
-          hash[:auth_methods] == ["publickey"]
+          hash[:auth_methods] == ['publickey']
         end
 
         make_connection
       end
 
-      it "passes in :password if set in config" do
-        config[:password] = "password_from_config"
+      it 'passes in :password if set in config' do
+        config[:password] = 'password_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:password] == "password_from_config"
+          hash[:password] == 'password_from_config'
         end
 
         make_connection
       end
 
-      it "passes in :password from state over config data" do
-        state[:password] = "password_from_state"
-        config[:password] = "password_from_config"
+      it 'passes in :password from state over config data' do
+        state[:password] = 'password_from_state'
+        config[:password] = 'password_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:password] == "password_from_state"
+          hash[:password] == 'password_from_state'
         end
 
         make_connection
       end
 
-      it "passes in :forward_agent if set in config" do
-        config[:forward_agent] = "forward_agent_from_config"
+      it 'passes in :forward_agent if set in config' do
+        config[:forward_agent] = 'forward_agent_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:forward_agent] == "forward_agent_from_config"
+          hash[:forward_agent] == 'forward_agent_from_config'
         end
 
         make_connection
       end
 
-      it "passes in :forward_agent from state over config data" do
-        state[:forward_agent] = "forward_agent_from_state"
-        config[:forward_agent] = "forward_agent_from_config"
+      it 'passes in :forward_agent from state over config data' do
+        state[:forward_agent] = 'forward_agent_from_state'
+        config[:forward_agent] = 'forward_agent_from_config'
 
         klass.expects(:new).with do |hash|
-          hash[:forward_agent] == "forward_agent_from_state"
+          hash[:forward_agent] == 'forward_agent_from_state'
         end
 
         make_connection
       end
 
-      it "returns the same connection when called again with same state" do
+      it 'returns the same connection when called again with same state' do
         first_connection  = make_connection(state)
         second_connection = make_connection(state)
 
         first_connection.object_id.must_equal second_connection.object_id
       end
 
-      it "logs a debug message when the connection is reused" do
+      it 'logs a debug message when the connection is reused' do
         make_connection(state)
         make_connection(state)
 
         logged_output.string.lines.count do |l|
-          l =~ debug_line_with("[SSH] reusing existing connection ")
+          l =~ debug_line_with('[SSH] reusing existing connection ')
         end.must_equal 1
       end
 
-      it "returns a new connection when called again if state differs" do
+      it 'returns a new connection when called again if state differs' do
         first_connection  = make_connection(state)
         second_connection = make_connection(state.merge(port: 9000))
 
         first_connection.object_id.wont_equal second_connection.object_id
       end
 
-      it "closes first connection when a second is created" do
+      it 'closes first connection when a second is created' do
         first_connection = make_connection(state)
         first_connection.expects(:close)
 
         make_connection(state.merge(port: 9000))
       end
 
-      it "logs a debug message a second connection is created" do
+      it 'logs a debug message a second connection is created' do
         make_connection(state)
         make_connection(state.merge(port: 9000))
 
         logged_output.string.lines.count do |l|
-          l =~ debug_line_with("[SSH] shutting previous connection ")
+          l =~ debug_line_with('[SSH] shutting previous connection ')
         end.must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-    describe "called without a block" do
+    describe 'called without a block' do
       def make_connection(s = state)
         transport.connection(s)
       end
@@ -654,7 +655,7 @@ describe Kitchen::Transport::Ssh do
       common_connection_specs
     end
 
-    describe "called with a block" do
+    describe 'called with a block' do
       def make_connection(s = state)
         transport.connection(s) do |conn|
           conn
@@ -683,10 +684,10 @@ describe Kitchen::Transport::Ssh::Connection do
   let(:options) do
     {
       logger: logger,
-      username: "me",
-      hostname: "foo",
+      username: 'me',
+      hostname: 'foo',
       port: 22,
-      max_ssh_sessions: 9,
+      max_ssh_sessions: 9
     }
   end
 
@@ -699,7 +700,7 @@ describe Kitchen::Transport::Ssh::Connection do
     Net::SSH.stubs(:start).returns(conn)
   end
 
-  describe "establishing a connection" do
+  describe 'establishing a connection' do
     [
       Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH, Errno::EPIPE,
@@ -714,71 +715,71 @@ describe Kitchen::Transport::Ssh::Connection do
           connection.stubs(:sleep)
         end
 
-        it "raises an SshFailed exception" do
+        it 'raises an SshFailed exception' do
           e = proc do
-            connection.execute("nope")
+            connection.execute('nope')
           end.must_raise Kitchen::Transport::SshFailed
-          e.message.must_match regexify("SSH session could not be established")
+          e.message.must_match regexify('SSH session could not be established')
         end
 
-        it "attempts to connect :connection_retries times" do
+        it 'attempts to connect :connection_retries times' do
           begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            connection.execute('nope')
+          rescue StandardError
             # the raise is not what is being tested here, rather its side-effect
           end
 
           logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
+            l =~ debug_line('[SSH] opening connection to me@foo<{:port=>22}>')
           end.must_equal 3
         end
 
-        it "sleeps for :connection_retry_sleep seconds between retries" do
+        it 'sleeps for :connection_retry_sleep seconds between retries' do
           connection.unstub(:sleep)
           connection.expects(:sleep).with(7).twice
 
           begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            connection.execute('nope')
+          rescue StandardError
             # the raise is not what is being tested here, rather its side-effect
           end
         end
 
-        it "logs the first 2 retry failures on info" do
+        it 'logs the first 2 retry failures on info' do
           begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            connection.execute('nope')
+          rescue StandardError
             # the raise is not what is being tested here, rather its side-effect
           end
 
           logged_output.string.lines.count do |l|
             l =~ info_line_with(
-              "[SSH] connection failed, retrying in 7 seconds"
+              '[SSH] connection failed, retrying in 7 seconds'
             )
           end.must_equal 2
         end
 
-        it "logs the last retry failures on warn" do
+        it 'logs the last retry failures on warn' do
           begin
-            connection.execute("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            connection.execute('nope')
+          rescue StandardError
             # the raise is not what is being tested here, rather its side-effect
           end
 
           logged_output.string.lines.count do |l|
-            l =~ warn_line_with("[SSH] connection failed, terminating ")
+            l =~ warn_line_with('[SSH] connection failed, terminating ')
           end.must_equal 1
         end
       end
     end
   end
 
-  describe "#close" do
+  describe '#close' do
     before do
       story do |script|
         channel = script.opens_channel
         channel.sends_request_pty
-        channel.sends_exec("doit")
+        channel.sends_exec('doit')
         channel.gets_data("ok\n")
         channel.gets_exit_status(0)
         channel.gets_close
@@ -786,24 +787,24 @@ describe Kitchen::Transport::Ssh::Connection do
       end
     end
 
-    it "logger displays closing connection on debug" do
+    it 'logger displays closing connection on debug' do
       conn.expects(:close)
 
       assert_scripted do
-        connection.execute("doit")
+        connection.execute('doit')
         connection.close
       end
 
       logged_output.string.must_match debug_line(
-        "[SSH] closing connection to me@foo<{:port=>22}>"
+        '[SSH] closing connection to me@foo<{:port=>22}>'
       )
     end
 
-    it "only closes the connection once for multiple calls" do
+    it 'only closes the connection once for multiple calls' do
       conn.expects(:close).once
 
       assert_scripted do
-        connection.execute("doit")
+        connection.execute('doit')
         connection.close
         connection.close
         connection.close
@@ -811,13 +812,13 @@ describe Kitchen::Transport::Ssh::Connection do
     end
   end
 
-  describe "#execute" do
-    describe "for a successful command" do
+  describe '#execute' do
+    describe 'for a successful command' do
       before do
         story do |script|
           channel = script.opens_channel
           channel.sends_request_pty
-          channel.sends_exec("doit")
+          channel.sends_exec('doit')
           channel.gets_data("ok\n")
           channel.gets_extended_data("some stderr stuffs\n")
           channel.gets_exit_status(0)
@@ -826,41 +827,41 @@ describe Kitchen::Transport::Ssh::Connection do
         end
       end
 
-      it "logger displays command on debug" do
-        assert_scripted { connection.execute("doit") }
+      it 'logger displays command on debug' do
+        assert_scripted { connection.execute('doit') }
 
         logged_output.string.must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
+          '[SSH] me@foo<{:port=>22}> (doit)'
         )
       end
 
-      it "logger displays establishing connection on debug" do
-        assert_scripted { connection.execute("doit") }
+      it 'logger displays establishing connection on debug' do
+        assert_scripted { connection.execute('doit') }
 
         logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
+          '[SSH] opening connection to me@foo<{:port=>22}>'
         )
       end
 
-      it "logger captures stdout" do
-        assert_scripted { connection.execute("doit") }
+      it 'logger captures stdout' do
+        assert_scripted { connection.execute('doit') }
 
         logged_output.string.must_match(/^ok$/)
       end
 
-      it "logger captures stderr" do
-        assert_scripted { connection.execute("doit") }
+      it 'logger captures stderr' do
+        assert_scripted { connection.execute('doit') }
 
         logged_output.string.must_match(/^some stderr stuffs$/)
       end
     end
 
-    describe "for a failed command" do
+    describe 'for a failed command' do
       before do
         story do |script|
           channel = script.opens_channel
           channel.sends_request_pty
-          channel.sends_exec("doit")
+          channel.sends_exec('doit')
           channel.gets_data("nope\n")
           channel.gets_extended_data("youdead\n")
           channel.gets_exit_status(42)
@@ -869,194 +870,194 @@ describe Kitchen::Transport::Ssh::Connection do
         end
       end
 
-      it "logger displays command on debug" do
+      it 'logger displays command on debug' do
         begin
-          assert_scripted { connection.execute("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { connection.execute('doit') }
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
 
         logged_output.string.must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
+          '[SSH] me@foo<{:port=>22}> (doit)'
         )
       end
 
-      it "logger displays establishing connection on debug" do
+      it 'logger displays establishing connection on debug' do
         begin
-          assert_scripted { connection.execute("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { connection.execute('doit') }
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
 
         logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
+          '[SSH] opening connection to me@foo<{:port=>22}>'
         )
       end
 
-      it "logger captures stdout" do
+      it 'logger captures stdout' do
         begin
-          assert_scripted { connection.execute("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { connection.execute('doit') }
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
 
         logged_output.string.must_match(/^nope$/)
       end
 
-      it "logger captures stderr" do
+      it 'logger captures stderr' do
         begin
-          assert_scripted { connection.execute("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { connection.execute('doit') }
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
 
         logged_output.string.must_match(/^youdead$/)
       end
 
-      it "raises an SshFailed exception" do
+      it 'raises an SshFailed exception' do
         err = proc do
-          assert_scripted { connection.execute("doit") }
+          assert_scripted { connection.execute('doit') }
         end.must_raise Kitchen::Transport::SshFailed
-        err.message.must_equal "SSH exited (42) for command: [doit]"
+        err.message.must_equal 'SSH exited (42) for command: [doit]'
       end
 
-      it "returns the exit code with an SshFailed exception" do
+      it 'returns the exit code with an SshFailed exception' do
         begin
-          assert_scripted { connection.execute("doit") }
+          assert_scripted { connection.execute('doit') }
         rescue Kitchen::Transport::SshFailed => e
           e.exit_code.must_equal 42
         end
       end
     end
 
-    describe "for an interrupted command" do
-      let(:conn) { mock("session") }
+    describe 'for an interrupted command' do
+      let(:conn) { mock('session') }
 
       before do
         Net::SSH.stubs(:start).returns(conn)
       end
 
-      it "raises SshFailed when an SSH exception is raised" do
+      it 'raises SshFailed when an SSH exception is raised' do
         conn.stubs(:open_channel).raises(Net::SSH::Exception)
 
         e = proc do
-          connection.execute("nope")
+          connection.execute('nope')
         end.must_raise Kitchen::Transport::SshFailed
-        e.message.must_match regexify("SSH command failed")
+        e.message.must_match regexify('SSH command failed')
       end
     end
 
-    describe "for a nil command" do
-      it "does not log on debug" do
+    describe 'for a nil command' do
+      it 'does not log on debug' do
         connection.execute(nil)
 
-        logged_output.string.must_equal ""
+        logged_output.string.must_equal ''
       end
     end
   end
 
-  describe "#login_command" do
+  describe '#login_command' do
     let(:login_command) { connection.login_command }
-    let(:args)          { login_command.arguments.join(" ") }
+    let(:args)          { login_command.arguments.join(' ') }
 
-    it "returns a LoginCommand" do
+    it 'returns a LoginCommand' do
       login_command.must_be_instance_of Kitchen::LoginCommand
     end
 
-    it "is an SSH command" do
-      login_command.command.must_equal "ssh"
+    it 'is an SSH command' do
+      login_command.command.must_equal 'ssh'
       args.must_match(/ me@foo$/)
     end
 
-    it "sets the UserKnownHostsFile option" do
-      args.must_match regexify("-o UserKnownHostsFile=/dev/null ")
+    it 'sets the UserKnownHostsFile option' do
+      args.must_match regexify('-o UserKnownHostsFile=/dev/null ')
     end
 
-    it "sets the StrictHostKeyChecking option" do
-      args.must_match regexify(" -o StrictHostKeyChecking=no ")
+    it 'sets the StrictHostKeyChecking option' do
+      args.must_match regexify(' -o StrictHostKeyChecking=no ')
     end
 
     it "won't set IdentitiesOnly option by default" do
-      args.wont_match regexify(" -o IdentitiesOnly=")
+      args.wont_match regexify(' -o IdentitiesOnly=')
     end
 
-    it "sets the IdentiesOnly option if :keys option is given" do
-      options[:keys] = ["yep"]
+    it 'sets the IdentiesOnly option if :keys option is given' do
+      options[:keys] = ['yep']
 
-      args.must_match regexify(" -o IdentitiesOnly=yes ")
+      args.must_match regexify(' -o IdentitiesOnly=yes ')
     end
 
-    it "sets the LogLevel option to VERBOSE if logger is set to debug" do
+    it 'sets the LogLevel option to VERBOSE if logger is set to debug' do
       logger.level = ::Logger::DEBUG
       options[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=VERBOSE ")
+      args.must_match regexify(' -o LogLevel=VERBOSE ')
     end
 
-    it "sets the LogLevel option to ERROR if logger is not set to debug" do
+    it 'sets the LogLevel option to ERROR if logger is not set to debug' do
       logger.level = ::Logger::INFO
       options[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=ERROR ")
+      args.must_match regexify(' -o LogLevel=ERROR ')
     end
 
     it "won't set the ForwardAgent option by default" do
-      args.wont_match regexify(" -o ForwardAgent=")
+      args.wont_match regexify(' -o ForwardAgent=')
     end
 
-    it "sets the ForwardAgent option to yes if truthy" do
-      options[:forward_agent] = "yep"
+    it 'sets the ForwardAgent option to yes if truthy' do
+      options[:forward_agent] = 'yep'
 
-      args.must_match regexify(" -o ForwardAgent=yes")
+      args.must_match regexify(' -o ForwardAgent=yes')
     end
 
-    it "sets the ForwardAgent option to no if falsey" do
+    it 'sets the ForwardAgent option to no if falsey' do
       options[:forward_agent] = false
 
-      args.must_match regexify(" -o ForwardAgent=no")
+      args.must_match regexify(' -o ForwardAgent=no')
     end
 
     it "won't add any SSH keys by default" do
-      args.wont_match regexify(" -i ")
+      args.wont_match regexify(' -i ')
     end
 
-    it "sets SSH keys options if given" do
-      options[:keys] = %w{one two}
+    it 'sets SSH keys options if given' do
+      options[:keys] = %w[one two]
 
-      args.must_match regexify(" -i one ")
-      args.must_match regexify(" -i two ")
+      args.must_match regexify(' -i one ')
+      args.must_match regexify(' -i two ')
     end
 
-    it "sets the port option to 22 by default" do
-      args.must_match regexify(" -p 22 ")
+    it 'sets the port option to 22 by default' do
+      args.must_match regexify(' -p 22 ')
     end
 
-    it "sets the port option" do
+    it 'sets the port option' do
       options[:port] = 1234
 
-      args.must_match regexify(" -p 1234 ")
+      args.must_match regexify(' -p 1234 ')
     end
   end
 
-  describe "#upload" do
-    describe "for a file" do
-      let(:content) { "a" * 1234 }
+  describe '#upload' do
+    describe 'for a file' do
+      let(:content) { 'a' * 1234 }
 
       let(:src) do
-        file = Tempfile.new("file")
-        file.write("a" * 1234)
+        file = Tempfile.new('file')
+        file.write('a' * 1234)
         file.close
-        FileUtils.chmod(0755, file.path)
+        FileUtils.chmod(0o755, file.path)
         file
       end
 
       before do
-        expect_scp_session("-t /tmp/remote") do |channel|
-          file_mode = running_tests_on_windows? ? 0644 : 0755
+        expect_scp_session('-t /tmp/remote') do |channel|
+          file_mode = running_tests_on_windows? ? 0o644 : 0o755
           channel.gets_data("\0")
           channel.sends_data("C#{padded_octal_string(file_mode)} 1234 #{File.basename(src.path)}\n")
           channel.gets_data("\0")
-          channel.sends_data("a" * 1234)
+          channel.sends_data('a' * 1234)
           channel.sends_data("\0")
           channel.gets_data("\0")
         end
@@ -1066,33 +1067,33 @@ describe Kitchen::Transport::Ssh::Connection do
         src.unlink
       end
 
-      it "uploads a file to remote over scp" do
+      it 'uploads a file to remote over scp' do
         assert_scripted do
-          connection.upload(src.path, "/tmp/remote")
+          connection.upload(src.path, '/tmp/remote')
         end
       end
     end
 
-    describe "for a path" do
+    describe 'for a path' do
       before do
-        @dir = Dir.mktmpdir("local")
+        @dir = Dir.mktmpdir('local')
 
         # Since File.chmod is a NOOP on Windows
-        @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
-        @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
-        @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
+        @tmp_dir_mode = running_tests_on_windows? ? 0o755 : 0o700
+        @alpha_file_mode = running_tests_on_windows? ? 0o644 : 0o644
+        @beta_file_mode = running_tests_on_windows? ? 0o444 : 0o555
 
-        FileUtils.chmod(0700, @dir)
-        File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
-        FileUtils.chmod(0644, "#{@dir}/alpha")
+        FileUtils.chmod(0o700, @dir)
+        File.open("#{@dir}/alpha", 'wb') { |f| f.write("alpha-contents\n") }
+        FileUtils.chmod(0o644, "#{@dir}/alpha")
         FileUtils.mkdir_p("#{@dir}/subdir")
-        FileUtils.chmod(0755, "#{@dir}/subdir")
-        File.open("#{@dir}/subdir/beta", "wb") { |f| f.write("beta-contents\n") }
-        FileUtils.chmod(0555, "#{@dir}/subdir/beta")
-        File.open("#{@dir}/zulu", "wb") { |f| f.write("zulu-contents\n") }
-        FileUtils.chmod(0444, "#{@dir}/zulu")
+        FileUtils.chmod(0o755, "#{@dir}/subdir")
+        File.open("#{@dir}/subdir/beta", 'wb') { |f| f.write("beta-contents\n") }
+        FileUtils.chmod(0o555, "#{@dir}/subdir/beta")
+        File.open("#{@dir}/zulu", 'wb') { |f| f.write("zulu-contents\n") }
+        FileUtils.chmod(0o444, "#{@dir}/zulu")
 
-        expect_scp_session("-t -r /tmp/remote") do |channel|
+        expect_scp_session('-t -r /tmp/remote') do |channel|
           channel.gets_data("\0")
           channel.sends_data("D#{padded_octal_string(@tmp_dir_mode)} 0 #{File.basename(@dir)}\n")
           channel.gets_data("\0")
@@ -1124,83 +1125,83 @@ describe Kitchen::Transport::Ssh::Connection do
         FileUtils.remove_entry_secure(@dir)
       end
 
-      it "uploads a file to remote over scp" do
+      it 'uploads a file to remote over scp' do
         with_sorted_dir_entries do
-          assert_scripted { connection.upload(@dir, "/tmp/remote") }
+          assert_scripted { connection.upload(@dir, '/tmp/remote') }
         end
       end
     end
 
-    describe "for a failed upload" do
-      let(:conn) { mock("session") }
+    describe 'for a failed upload' do
+      let(:conn) { mock('session') }
 
       before do
         Net::SSH.stubs(:start).returns(conn)
       end
 
-      it "raises SshFailed when an SSH exception is raised" do
+      it 'raises SshFailed when an SSH exception is raised' do
         conn.stubs(:scp).raises(Net::SSH::Exception)
 
         e = proc do
-          connection.upload("nope", "fail")
+          connection.upload('nope', 'fail')
         end.must_raise Kitchen::Transport::SshFailed
-        e.message.must_match regexify("SCP upload failed")
+        e.message.must_match regexify('SCP upload failed')
       end
     end
   end
 
-  describe "#download" do
-    let(:conn) { mock("session") }
-    let(:scp) { mock("scp") }
+  describe '#download' do
+    let(:conn) { mock('session') }
+    let(:scp) { mock('scp') }
 
     before do
       Net::SSH.stubs(:start).returns(conn)
       conn.stubs(:scp).returns(scp)
-      @local_parent = Dir.mktmpdir("dir")
-      @local = File.join(@local_parent, "local")
+      @local_parent = Dir.mktmpdir('dir')
+      @local = File.join(@local_parent, 'local')
     end
 
     after do
       FileUtils.remove_entry_secure(@local_parent)
     end
 
-    describe "for a file" do
-      it "downloads a file from a remote over scp" do
+    describe 'for a file' do
+      it 'downloads a file from a remote over scp' do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with("/remote", @local)
+        scp.expects(:download!).with('/remote', @local)
 
-        connection.download("/remote", @local)
+        connection.download('/remote', @local)
       end
     end
 
-    describe "for a list of files" do
-      it "downloads the files from a remote over scp" do
+    describe 'for a list of files' do
+      it 'downloads the files from a remote over scp' do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with("/remote-1", @local)
-        scp.expects(:download!).with("/remote-2", @local)
+        scp.expects(:download!).with('/remote-1', @local)
+        scp.expects(:download!).with('/remote-2', @local)
 
-        connection.download(["/remote-1", "/remote-2"], @local)
+        connection.download(['/remote-1', '/remote-2'], @local)
       end
     end
 
-    describe "for a directory" do
-      it "downloads the directory from a remote over scp" do
+    describe 'for a directory' do
+      it 'downloads the directory from a remote over scp' do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with("/remote-dir", @local).raises(Net::SCP::Error)
-        scp.expects(:download!).with("/remote-dir", @local, recursive: true)
+        scp.expects(:download!).with('/remote-dir', @local).raises(Net::SCP::Error)
+        scp.expects(:download!).with('/remote-dir', @local, recursive: true)
 
-        connection.download("/remote-dir", @local)
+        connection.download('/remote-dir', @local)
       end
     end
 
-    describe "for a file that does not exist" do
-      it "logs a warning" do
+    describe 'for a file that does not exist' do
+      it 'logs a warning' do
         FileUtils.expects(:mkdir_p).with(@local_parent)
-        scp.expects(:download!).with("/remote", @local).raises(Net::SCP::Error)
-        scp.expects(:download!).with("/remote", @local, recursive: true)
-          .raises(Net::SCP::Error)
+        scp.expects(:download!).with('/remote', @local).raises(Net::SCP::Error)
+        scp.expects(:download!).with('/remote', @local, recursive: true)
+           .raises(Net::SCP::Error)
 
-        connection.download("/remote", @local)
+        connection.download('/remote', @local)
 
         logged_output.string.lines.count do |l|
           l =~ warn_line_with(
@@ -1210,62 +1211,62 @@ describe Kitchen::Transport::Ssh::Connection do
       end
     end
 
-    describe "for a failed download" do
-      it "raises SshFailed when an SSH exception is raised" do
+    describe 'for a failed download' do
+      it 'raises SshFailed when an SSH exception is raised' do
         conn.stubs(:scp).raises(Net::SSH::Exception)
 
         e = proc do
-          connection.download("nope", "fail")
+          connection.download('nope', 'fail')
         end.must_raise Kitchen::Transport::SshFailed
-        e.message.must_match regexify("SCP download failed")
+        e.message.must_match regexify('SCP download failed')
       end
     end
   end
 
-  describe "#wait_until_ready" do
+  describe '#wait_until_ready' do
     before do
       options[:max_wait_until_ready] = 300
       connection.stubs(:sleep)
     end
 
-    describe "when failing to connect" do
+    describe 'when failing to connect' do
       before do
         Net::SSH.stubs(:start).raises(Errno::ECONNREFUSED)
       end
 
-      it "attempts to connect :max_wait_until_ready / 3 times if failing" do
+      it 'attempts to connect :max_wait_until_ready / 3 times if failing' do
         begin
           connection.wait_until_ready
-        rescue # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
 
         logged_output.string.lines.count do |l|
           l =~ info_line_with(
-            "Waiting for SSH service on foo:22, retrying in 3 seconds"
+            'Waiting for SSH service on foo:22, retrying in 3 seconds'
           )
         end.must_equal((300 / 3) - 1)
         logged_output.string.lines.count do |l|
-          l =~ debug_line_with("[SSH] connection failed ")
+          l =~ debug_line_with('[SSH] connection failed ')
         end.must_equal((300 / 3) - 1)
         logged_output.string.lines.count do |l|
-          l =~ warn_line_with("[SSH] connection failed, terminating ")
+          l =~ warn_line_with('[SSH] connection failed, terminating ')
         end.must_equal 1
       end
 
-      it "sleeps for 3 seconds between retries" do
+      it 'sleeps for 3 seconds between retries' do
         connection.unstub(:sleep)
         connection.expects(:sleep).with(3).times((300 / 3) - 1)
 
         begin
           connection.wait_until_ready
-        rescue # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
           # the raise is not what is being tested here, rather its side-effect
         end
       end
     end
 
-    describe "when connection is successful" do
+    describe 'when connection is successful' do
       before do
         story do |script|
           channel = script.opens_channel
@@ -1278,11 +1279,11 @@ describe Kitchen::Transport::Ssh::Connection do
         end
       end
 
-      it "executes an ping command string to ensure working" do
+      it 'executes an ping command string to ensure working' do
         assert_scripted { connection.wait_until_ready }
       end
 
-      it "logger captures stdout" do
+      it 'logger captures stdout' do
         assert_scripted { connection.wait_until_ready }
 
         logged_output.string.must_match(/^\[SSH\] Established$/)

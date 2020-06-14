@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen"
+require 'kitchen'
 
 describe Kitchen::Transport::Base do
   let(:logged_output)   { StringIO.new }
@@ -26,18 +27,18 @@ describe Kitchen::Transport::Base do
   let(:config)          { {} }
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger)
+    stub(name: 'coolbeans', logger: logger)
   end
 
   let(:transport) do
     Kitchen::Transport::Base.new(config).finalize_config!(instance)
   end
 
-  it "has an #connection method which raises a ClientError" do
+  it 'has an #connection method which raises a ClientError' do
     proc { transport.connection({}) }.must_raise Kitchen::ClientError
   end
 
-  describe "#logger" do
+  describe '#logger' do
     before  { @klog = Kitchen.logger }
     after   { Kitchen.logger = @klog }
 
@@ -47,24 +48,24 @@ describe Kitchen::Transport::Base do
 
     it "returns the default logger if instance's logger is not set" do
       transport = Kitchen::Transport::Base.new(config)
-      Kitchen.logger = "yep"
+      Kitchen.logger = 'yep'
 
       transport.send(:logger).must_equal Kitchen.logger
     end
   end
 
   describe Kitchen::Transport::TransportFailed do
-    let(:failure_with_no_exit_code) { Kitchen::Transport::TransportFailed.new("Boom") }
-    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
+    let(:failure_with_no_exit_code) { Kitchen::Transport::TransportFailed.new('Boom') }
+    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new('Boom', 123) }
 
-    describe "when no exit code is provided" do
-      it "#exit_code is nil" do
+    describe 'when no exit code is provided' do
+      it '#exit_code is nil' do
         failure_with_no_exit_code.exit_code.must_be_nil
       end
     end
 
-    describe "when an exit code is provided" do
-      it "#exit_code returns the supplied exit code" do
+    describe 'when an exit code is provided' do
+      it '#exit_code returns the supplied exit code' do
         failure_with_exit_code.exit_code.must_equal 123
       end
     end
@@ -80,61 +81,60 @@ describe Kitchen::Transport::Base::Connection do
     Kitchen::Transport::Base::Connection.new(options)
   end
 
-  it "has a #close method that does nothing" do
+  it 'has a #close method that does nothing' do
     connection.close.must_be_nil
   end
 
-  it "has an #execute method which raises a ClientError" do
-    proc { connection.execute("boo") }.must_raise Kitchen::ClientError
+  it 'has an #execute method which raises a ClientError' do
+    proc { connection.execute('boo') }.must_raise Kitchen::ClientError
   end
 
-  it "has a #login_command method which raises an ActionFailed" do
+  it 'has a #login_command method which raises an ActionFailed' do
     proc { connection.login_command }.must_raise Kitchen::ActionFailed
   end
 
-  it "has an #upload method which raises a ClientError" do
-    proc { connection.upload(["file"], "/path/to") }
+  it 'has an #upload method which raises a ClientError' do
+    proc { connection.upload(['file'], '/path/to') }
       .must_raise Kitchen::ClientError
   end
 
-  it "has an #download method which raises a ClientError" do
-    proc { connection.download(["remote"], "local") }
+  it 'has an #download method which raises a ClientError' do
+    proc { connection.download(['remote'], 'local') }
       .must_raise Kitchen::ClientError
   end
 
-  it "has a #wait_until_ready method that does nothing" do
+  it 'has a #wait_until_ready method that does nothing' do
     connection.wait_until_ready.must_be_nil
   end
 
-  describe "#execute_with_retry" do
-    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
+  describe '#execute_with_retry' do
+    let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new('Boom', 123) }
 
-    it "raises ClientError with no retries" do
-      proc { connection.execute_with_retry("hi", [], nil, nil) }
+    it 'raises ClientError with no retries' do
+      proc { connection.execute_with_retry('hi', [], nil, nil) }
         .must_raise Kitchen::ClientError
     end
 
-    it "retries three times" do
-      connection.expects(:execute).with("Hi").returns("Hello")
-      connection.expects(:debug).with("Attempting to execute command - try 3 of 3.")
-      connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
-      connection.expects(:debug).with("Attempting to execute command - try 2 of 3.")
-      connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
-      connection.expects(:debug).with("Attempting to execute command - try 1 of 3.")
+    it 'retries three times' do
+      connection.expects(:execute).with('Hi').returns('Hello')
+      connection.expects(:debug).with('Attempting to execute command - try 3 of 3.')
+      connection.expects(:execute).with('Hi').raises(failure_with_exit_code)
+      connection.expects(:debug).with('Attempting to execute command - try 2 of 3.')
+      connection.expects(:execute).with('Hi').raises(failure_with_exit_code)
+      connection.expects(:debug).with('Attempting to execute command - try 1 of 3.')
 
-      connection.execute_with_retry("Hi", [123], 3, 1).must_equal "Hello"
+      connection.execute_with_retry('Hi', [123], 3, 1).must_equal 'Hello'
     end
   end
 
-  describe "#retry?" do
-    it "raises an exception when multiple retryable exit codes are passed as a String" do
-      proc { connection.retry?(2, 2, "35 1", 35) }
+  describe '#retry?' do
+    it 'raises an exception when multiple retryable exit codes are passed as a String' do
+      proc { connection.retry?(2, 2, '35 1', 35) }
         .must_raise("undefined method `flatten' for \"35 1\":String")
     end
 
-    it "returns true when the retryable exit codes are formatted in a nested array" do
+    it 'returns true when the retryable exit codes are formatted in a nested array' do
       connection.retry?(1, 2, [[35, 1]], 35).must_equal true
     end
   end
-
 end

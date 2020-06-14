@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,39 +17,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "thread"
+require 'pathname'
+require_relative 'kitchen/errors'
+require_relative 'kitchen/logger'
+require_relative 'kitchen/logging'
+require_relative 'kitchen/shell_out'
+require_relative 'kitchen/configurable'
+require_relative 'kitchen/util'
 
-require_relative "kitchen/errors"
-require_relative "kitchen/logger"
-require_relative "kitchen/logging"
-require_relative "kitchen/shell_out"
-require_relative "kitchen/configurable"
-require_relative "kitchen/util"
-
-require_relative "kitchen/provisioner"
-require_relative "kitchen/provisioner/base"
-require_relative "kitchen/color"
-require_relative "kitchen/collection"
-require_relative "kitchen/config"
-require_relative "kitchen/data_munger"
-require_relative "kitchen/driver"
-require_relative "kitchen/driver/base"
-require_relative "kitchen/driver/ssh_base"
-require_relative "kitchen/driver/proxy"
-require_relative "kitchen/instance"
-require_relative "kitchen/lifecycle_hooks"
-require_relative "kitchen/transport"
-require_relative "kitchen/transport/base"
-require_relative "kitchen/loader/yaml"
-require_relative "kitchen/metadata_chopper"
-require_relative "kitchen/platform"
-require_relative "kitchen/state_file"
-require_relative "kitchen/ssh"
-require_relative "kitchen/suite"
-require_relative "kitchen/verifier"
-require_relative "kitchen/verifier/base"
-require_relative "kitchen/version"
+require_relative 'kitchen/provisioner'
+require_relative 'kitchen/provisioner/base'
+require_relative 'kitchen/color'
+require_relative 'kitchen/collection'
+require_relative 'kitchen/config'
+require_relative 'kitchen/data_munger'
+require_relative 'kitchen/driver'
+require_relative 'kitchen/driver/base'
+require_relative 'kitchen/driver/ssh_base'
+require_relative 'kitchen/driver/proxy'
+require_relative 'kitchen/instance'
+require_relative 'kitchen/lifecycle_hooks'
+require_relative 'kitchen/transport'
+require_relative 'kitchen/transport/base'
+require_relative 'kitchen/loader/yaml'
+require_relative 'kitchen/metadata_chopper'
+require_relative 'kitchen/platform'
+require_relative 'kitchen/state_file'
+require_relative 'kitchen/ssh'
+require_relative 'kitchen/suite'
+require_relative 'kitchen/verifier'
+require_relative 'kitchen/verifier/base'
+require_relative 'kitchen/version'
 
 # Test Kitchen base module.
 #
@@ -68,7 +67,7 @@ module Kitchen
     #
     # @return [Pathname] root path of gem
     def source_root
-      @source_root ||= Pathname.new(File.expand_path("../../", __FILE__))
+      @source_root ||= Pathname.new(File.expand_path('..', __dir__))
     end
 
     # Returns a default logger which emits on standard output.
@@ -87,7 +86,7 @@ module Kitchen
     def default_file_logger(level = nil, log_overwrite = nil)
       level ||= env_log
       log_overwrite = log_overwrite.nil? ? env_log_overwrite : log_overwrite
-      log_location = File.expand_path(File.join(DEFAULT_LOG_DIR, "kitchen.log"))
+      log_location = File.expand_path(File.join(DEFAULT_LOG_DIR, 'kitchen.log'))
       log_location = log_location.to_s
 
       Logger.new(
@@ -112,7 +111,7 @@ module Kitchen
     # @return [Symbol,nil] a log level or nil if not set
     # @api private
     def env_log
-      ENV["KITCHEN_LOG"] && ENV["KITCHEN_LOG"].downcase.to_sym
+      ENV['KITCHEN_LOG']&.downcase&.to_sym
     end
 
     # Determine the log overwriting logic from an environment variable,
@@ -121,10 +120,10 @@ module Kitchen
     # @return [Boolean,nil]
     # @api private
     def env_log_overwrite
-      case ENV["KITCHEN_LOG_OVERWRITE"] && ENV["KITCHEN_LOG_OVERWRITE"].downcase
-      when nil, ""
+      case ENV['KITCHEN_LOG_OVERWRITE']&.downcase
+      when nil, ''
         nil
-      when "false", "f", "no"
+      when 'false', 'f', 'no'
         false
       else
         true
@@ -139,10 +138,10 @@ module Kitchen
   DEFAULT_LOG_OVERWRITE = true
 
   # Default base directory for integration tests, fixtures, etc.
-  DEFAULT_TEST_DIR = "test/integration".freeze
+  DEFAULT_TEST_DIR = 'test/integration'
 
   # Default base directory for instance and common log files
-  DEFAULT_LOG_DIR = ".kitchen/logs".freeze
+  DEFAULT_LOG_DIR = '.kitchen/logs'
 end
 
 # Initialize the base logger

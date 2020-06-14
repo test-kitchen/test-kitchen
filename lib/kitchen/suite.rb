@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -40,7 +41,7 @@ module Kitchen
     #   platforms
     def initialize(options = {})
       @name = options.fetch(:name) do
-        raise ClientError, "Suite#new requires option :name"
+        raise ClientError, 'Suite#new requires option :name'
       end
       @excludes = options.fetch(:excludes, [])
       @includes = options.fetch(:includes, [])

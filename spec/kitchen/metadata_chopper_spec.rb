@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,14 +17,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/metadata_chopper"
+require 'kitchen/metadata_chopper'
 
 describe Kitchen::MetadataChopper do
   before do
     FakeFS.activate!
-    FileUtils.mkdir_p("/tmp")
+    FileUtils.mkdir_p('/tmp')
   end
 
   after do
@@ -33,39 +34,39 @@ describe Kitchen::MetadataChopper do
 
   let(:described_class) { Kitchen::MetadataChopper }
 
-  describe ".new" do
-    it "contains a :name attribute" do
-      stub_metadata!("banzai")
+  describe '.new' do
+    it 'contains a :name attribute' do
+      stub_metadata!('banzai')
 
-      described_class.new("/tmp/metadata.rb")[:name].must_equal "banzai"
+      described_class.new('/tmp/metadata.rb')[:name].must_equal 'banzai'
     end
 
-    it "contains a :version attribute" do
-      stub_metadata!("foobar", "1.2.3")
+    it 'contains a :version attribute' do
+      stub_metadata!('foobar', '1.2.3')
 
-      described_class.new("/tmp/metadata.rb")[:version].must_equal "1.2.3"
+      described_class.new('/tmp/metadata.rb')[:version].must_equal '1.2.3'
     end
   end
 
-  describe ".extract" do
-    it "returns a tuple" do
-      stub_metadata!("foo", "1.2.3")
+  describe '.extract' do
+    it 'returns a tuple' do
+      stub_metadata!('foo', '1.2.3')
 
-      described_class.extract("/tmp/metadata.rb").must_equal ["foo", "1.2.3"]
+      described_class.extract('/tmp/metadata.rb').must_equal ['foo', '1.2.3']
     end
 
     it "returns nils for a name or version that isn't present" do
-      File.open("/tmp/metadata.rb", "wb") do |f|
-        f.write %{maintainer       "Michael Bluth"\n}
+      File.open('/tmp/metadata.rb', 'wb') do |f|
+        f.write %(maintainer       "Michael Bluth"\n)
       end
 
-      described_class.extract("/tmp/metadata.rb").must_equal [nil, nil]
+      described_class.extract('/tmp/metadata.rb').must_equal [nil, nil]
     end
   end
 
-  def stub_metadata!(name = "foobar", version = "5.2.1")
-    File.open("/tmp/metadata.rb", "wb") do |f|
-      f.write <<-METADATA_RB.gsub(/^ {8}/, "")
+  def stub_metadata!(name = 'foobar', version = '5.2.1')
+    File.open('/tmp/metadata.rb', 'wb') do |f|
+      f.write <<-METADATA_RB.gsub(/^ {8}/, '')
         name             "#{name}"
         maintainer       "Michael Bluth"
         maintainer_email "michael@bluth.com"

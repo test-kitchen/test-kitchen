@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +14,9 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper"
+require_relative '../../spec_helper'
 
-require "kitchen/transport/exec"
+require 'kitchen/transport/exec'
 
 describe Kitchen::Transport::Ssh do
   let(:logged_output) { StringIO.new }
@@ -23,23 +25,23 @@ describe Kitchen::Transport::Ssh do
   let(:state)         { {} }
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance")
+    stub(name: 'coolbeans', logger: logger, to_str: 'instance')
   end
 
   let(:transport) do
     Kitchen::Transport::Exec.new(config).finalize_config!(instance)
   end
 
-  it "provisioner api_version is 1" do
+  it 'provisioner api_version is 1' do
     transport.diagnose_plugin[:api_version].must_equal 1
   end
 
-  it "plugin_version is set to Kitchen::VERSION" do
+  it 'plugin_version is set to Kitchen::VERSION' do
     transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
   end
 
-  describe "#connection" do
-    it "returns a Kitchen::Transport::Exec::Connection object" do
+  describe '#connection' do
+    it 'returns a Kitchen::Transport::Exec::Connection object' do
       transport.connection(state).must_be_kind_of Kitchen::Transport::Exec::Connection
     end
   end
@@ -57,23 +59,23 @@ describe Kitchen::Transport::Exec::Connection do
     Kitchen::Transport::Exec::Connection.new(options)
   end
 
-  describe "#execute" do
-    it "runs the command" do
-      connection.expects(:run_command).with("do the thing")
-      connection.execute("do the thing")
+  describe '#execute' do
+    it 'runs the command' do
+      connection.expects(:run_command).with('do the thing')
+      connection.execute('do the thing')
     end
 
-    it "ignores nil" do
+    it 'ignores nil' do
       connection.expects(:run_command).never
       connection.execute(nil)
     end
   end
 
-  describe "#upload" do
-    it "copies files" do
-      FileUtils.expects(:mkdir_p).with("/tmp/kitchen")
-      FileUtils.expects(:cp_r).with("/tmp/sandbox/cookbooks", "/tmp/kitchen")
-      connection.upload(%w{/tmp/sandbox/cookbooks}, "/tmp/kitchen")
+  describe '#upload' do
+    it 'copies files' do
+      FileUtils.expects(:mkdir_p).with('/tmp/kitchen')
+      FileUtils.expects(:cp_r).with('/tmp/sandbox/cookbooks', '/tmp/kitchen')
+      connection.upload(%w[/tmp/sandbox/cookbooks], '/tmp/kitchen')
     end
   end
 end

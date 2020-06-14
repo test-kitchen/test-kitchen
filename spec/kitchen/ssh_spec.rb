@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,11 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../spec_helper"
+require_relative '../spec_helper'
 
-require "kitchen/ssh"
-require "tmpdir"
-require "net/ssh/test"
+require 'kitchen/ssh'
+require 'tmpdir'
+require 'net/ssh/test'
 
 describe Kitchen::SSH do
   include Net::SSH::Test
@@ -28,7 +29,7 @@ describe Kitchen::SSH do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
   let(:opts)          { {} }
-  let(:ssh)           { Kitchen::SSH.new("foo", "me", opts) }
+  let(:ssh)           { Kitchen::SSH.new('foo', 'me', opts) }
   let(:conn)          { Net::SSH::Test::Extensions::IO.with_test_extension { connection } }
 
   before do
@@ -37,7 +38,7 @@ describe Kitchen::SSH do
     Net::SSH.stubs(:start).returns(conn)
   end
 
-  describe "establishing a connection" do
+  describe 'establishing a connection' do
     [
       Errno::EACCES, Errno::EADDRINUSE, Errno::ECONNREFUSED,
       Errno::ECONNRESET, Errno::ENETUNREACH, Errno::EHOSTUNREACH,
@@ -51,62 +52,62 @@ describe Kitchen::SSH do
         end
 
         it "reraises the #{klass} exception" do
-          proc { ssh.exec("nope") }.must_raise klass
+          proc { ssh.exec('nope') }.must_raise klass
         end
 
         it "attempts to connect ':ssh_retries' times" do
           begin
-            ssh.exec("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            ssh.exec('nope')
+          rescue StandardError
           end
 
           logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
+            l =~ debug_line('[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>')
           end.must_equal opts[:ssh_retries]
         end
 
-        it "sleeps for 1 second between retries" do
+        it 'sleeps for 1 second between retries' do
           ssh.unstub(:sleep)
           ssh.expects(:sleep).with(1).twice
 
           begin
-            ssh.exec("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            ssh.exec('nope')
+          rescue StandardError
           end
         end
 
-        it "logs the first 2 retry failures on info" do
+        it 'logs the first 2 retry failures on info' do
           begin
-            ssh.exec("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            ssh.exec('nope')
+          rescue StandardError
           end
 
           logged_output.string.lines.count do |l|
-            l =~ info_line_with("[SSH] connection failed, retrying ")
+            l =~ info_line_with('[SSH] connection failed, retrying ')
           end.must_equal 2
         end
 
-        it "logs the last retry failures on warn" do
+        it 'logs the last retry failures on warn' do
           begin
-            ssh.exec("nope")
-          rescue # rubocop:disable Lint/HandleExceptions
+            ssh.exec('nope')
+          rescue StandardError
           end
 
           logged_output.string.lines.count do |l|
-            l =~ warn_line_with("[SSH] connection failed, terminating ")
+            l =~ warn_line_with('[SSH] connection failed, terminating ')
           end.must_equal 1
         end
       end
     end
   end
 
-  describe "#exec" do
-    describe "for a successful command" do
+  describe '#exec' do
+    describe 'for a successful command' do
       before do
         story do |script|
           channel = script.opens_channel
           channel.sends_request_pty
-          channel.sends_exec("doit")
+          channel.sends_exec('doit')
           channel.gets_data("ok\n")
           channel.gets_extended_data("some stderr stuffs\n")
           channel.gets_exit_status(0)
@@ -115,41 +116,41 @@ describe Kitchen::SSH do
         end
       end
 
-      it "logger displays command on debug" do
-        assert_scripted { ssh.exec("doit") }
+      it 'logger displays command on debug' do
+        assert_scripted { ssh.exec('doit') }
 
         logged_output.string.must_match debug_line(
-          "[SSH] me@foo:22<{}> (doit)"
+          '[SSH] me@foo:22<{}> (doit)'
         )
       end
 
-      it "logger displays establishing connection on debug" do
-        assert_scripted { ssh.exec("doit") }
+      it 'logger displays establishing connection on debug' do
+        assert_scripted { ssh.exec('doit') }
 
         logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo:22<{}>"
+          '[SSH] opening connection to me@foo:22<{}>'
         )
       end
 
-      it "logger captures stdout" do
-        assert_scripted { ssh.exec("doit") }
+      it 'logger captures stdout' do
+        assert_scripted { ssh.exec('doit') }
 
         logged_output.string.must_match(/^ok$/)
       end
 
-      it "logger captures stderr" do
-        assert_scripted { ssh.exec("doit") }
+      it 'logger captures stderr' do
+        assert_scripted { ssh.exec('doit') }
 
         logged_output.string.must_match(/^some stderr stuffs$/)
       end
     end
 
-    describe "for a failed command" do
+    describe 'for a failed command' do
       before do
         story do |script|
           channel = script.opens_channel
           channel.sends_request_pty
-          channel.sends_exec("doit")
+          channel.sends_exec('doit')
           channel.gets_data("nope\n")
           channel.gets_extended_data("youdead\n")
           channel.gets_exit_status(42)
@@ -158,71 +159,71 @@ describe Kitchen::SSH do
         end
       end
 
-      it "logger displays command on debug" do
+      it 'logger displays command on debug' do
         begin
-          assert_scripted { ssh.exec("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { ssh.exec('doit') }
+        rescue StandardError
         end
 
         logged_output.string.must_match debug_line(
-          "[SSH] me@foo:22<{}> (doit)"
+          '[SSH] me@foo:22<{}> (doit)'
         )
       end
 
-      it "logger displays establishing connection on debug" do
+      it 'logger displays establishing connection on debug' do
         begin
-          assert_scripted { ssh.exec("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { ssh.exec('doit') }
+        rescue StandardError
         end
 
         logged_output.string.must_match debug_line(
-          "[SSH] opening connection to me@foo:22<{}>"
+          '[SSH] opening connection to me@foo:22<{}>'
         )
       end
 
-      it "logger captures stdout" do
+      it 'logger captures stdout' do
         begin
-          assert_scripted { ssh.exec("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { ssh.exec('doit') }
+        rescue StandardError
         end
 
         logged_output.string.must_match(/^nope$/)
       end
 
-      it "logger captures stderr" do
+      it 'logger captures stderr' do
         begin
-          assert_scripted { ssh.exec("doit") }
-        rescue # rubocop:disable Lint/HandleExceptions
+          assert_scripted { ssh.exec('doit') }
+        rescue StandardError
         end
 
         logged_output.string.must_match(/^youdead$/)
       end
 
-      it "raises an SSHFailed exception" do
-        err = proc { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
-        err.message.must_equal "SSH exited (42) for command: [doit]"
+      it 'raises an SSHFailed exception' do
+        err = proc { assert_scripted { ssh.exec('doit') } }.must_raise Kitchen::SSHFailed
+        err.message.must_equal 'SSH exited (42) for command: [doit]'
       end
     end
   end
 
-  describe "#upload!" do
-    let(:content) { "a" * 1234 }
+  describe '#upload!' do
+    let(:content) { 'a' * 1234 }
 
     let(:src) do
-      file = Tempfile.new("file")
-      file.write("a" * 1234)
+      file = Tempfile.new('file')
+      file.write('a' * 1234)
       file.close
-      FileUtils.chmod(0755, file.path)
+      FileUtils.chmod(0o755, file.path)
       file
     end
 
     before do
-      expect_scp_session("-t /tmp/remote") do |channel|
-        file_mode = running_tests_on_windows? ? 0644 : 0755
+      expect_scp_session('-t /tmp/remote') do |channel|
+        file_mode = running_tests_on_windows? ? 0o644 : 0o755
         channel.gets_data("\0")
         channel.sends_data("C#{padded_octal_string(file_mode)} 1234 #{File.basename(src.path)}\n")
         channel.gets_data("\0")
-        channel.sends_data("a" * 1234)
+        channel.sends_data('a' * 1234)
         channel.sends_data("\0")
         channel.gets_data("\0")
       end
@@ -232,19 +233,19 @@ describe Kitchen::SSH do
       src.unlink
     end
 
-    it "uploads a file to remote over scp" do
+    it 'uploads a file to remote over scp' do
       assert_scripted do
-        ssh.upload!(src.path, "/tmp/remote")
+        ssh.upload!(src.path, '/tmp/remote')
       end
     end
 
-    it "logs upload progress to debug" do
+    it 'logs upload progress to debug' do
       assert_scripted do
-        ssh.upload!(src.path, "/tmp/remote")
+        ssh.upload!(src.path, '/tmp/remote')
       end
 
       logged_output.string.must_match debug_line(
-        "[SSH] opening connection to me@foo:22<{}>"
+        '[SSH] opening connection to me@foo:22<{}>'
       )
       logged_output.string.must_match debug_line(
         "Uploaded #{src.path} (1234 bytes)"
@@ -252,26 +253,26 @@ describe Kitchen::SSH do
     end
   end
 
-  describe "#upload_path!" do
+  describe '#upload_path!' do
     before do
-      @dir = Dir.mktmpdir("local")
+      @dir = Dir.mktmpdir('local')
 
       # Since File.chmod is a NOOP on Windows
-      @tmp_dir_mode = running_tests_on_windows? ? 0755 : 0700
-      @alpha_file_mode = running_tests_on_windows? ? 0644 : 0644
-      @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
+      @tmp_dir_mode = running_tests_on_windows? ? 0o755 : 0o700
+      @alpha_file_mode = running_tests_on_windows? ? 0o644 : 0o644
+      @beta_file_mode = running_tests_on_windows? ? 0o444 : 0o555
 
-      FileUtils.chmod(0700, @dir)
-      File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
-      FileUtils.chmod(0644, "#{@dir}/alpha")
+      FileUtils.chmod(0o700, @dir)
+      File.open("#{@dir}/alpha", 'wb') { |f| f.write("alpha-contents\n") }
+      FileUtils.chmod(0o644, "#{@dir}/alpha")
       FileUtils.mkdir_p("#{@dir}/subdir")
-      FileUtils.chmod(0755, "#{@dir}/subdir")
-      File.open("#{@dir}/subdir/beta", "wb") { |f| f.write("beta-contents\n") }
-      FileUtils.chmod(0555, "#{@dir}/subdir/beta")
-      File.open("#{@dir}/zulu", "wb") { |f| f.write("zulu-contents\n") }
-      FileUtils.chmod(0444, "#{@dir}/zulu")
+      FileUtils.chmod(0o755, "#{@dir}/subdir")
+      File.open("#{@dir}/subdir/beta", 'wb') { |f| f.write("beta-contents\n") }
+      FileUtils.chmod(0o555, "#{@dir}/subdir/beta")
+      File.open("#{@dir}/zulu", 'wb') { |f| f.write("zulu-contents\n") }
+      FileUtils.chmod(0o444, "#{@dir}/zulu")
 
-      expect_scp_session("-t -r /tmp/remote") do |channel|
+      expect_scp_session('-t -r /tmp/remote') do |channel|
         channel.gets_data("\0")
         channel.sends_data("D#{padded_octal_string(@tmp_dir_mode)} 0 #{File.basename(@dir)}\n")
         channel.gets_data("\0")
@@ -303,21 +304,21 @@ describe Kitchen::SSH do
       FileUtils.remove_entry_secure(@dir)
     end
 
-    it "uploads a file to remote over scp" do
+    it 'uploads a file to remote over scp' do
       with_sorted_dir_entries do
-        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+        assert_scripted { ssh.upload_path!(@dir, '/tmp/remote') }
       end
     end
 
-    it "logs upload progress to debug" do
+    it 'logs upload progress to debug' do
       remote_base = "#{Dir.tmpdir}/#{File.basename(@dir)}"
 
       with_sorted_dir_entries do
-        assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
+        assert_scripted { ssh.upload_path!(@dir, '/tmp/remote') }
       end
 
       logged_output.string.must_match debug_line(
-        "[SSH] opening connection to me@foo:22<{}>"
+        '[SSH] opening connection to me@foo:22<{}>'
       )
       logged_output.string.must_match debug_line(
         "Uploaded #{remote_base}/alpha (15 bytes)"
@@ -331,12 +332,12 @@ describe Kitchen::SSH do
     end
   end
 
-  describe "#shutdown" do
+  describe '#shutdown' do
     before do
       story do |script|
         channel = script.opens_channel
         channel.sends_request_pty
-        channel.sends_exec("doit")
+        channel.sends_exec('doit')
         channel.gets_data("ok\n")
         channel.gets_exit_status(0)
         channel.gets_close
@@ -344,24 +345,24 @@ describe Kitchen::SSH do
       end
     end
 
-    it "logger displays closing connection on debug" do
+    it 'logger displays closing connection on debug' do
       conn.expects(:shutdown!)
 
       assert_scripted do
-        ssh.exec("doit")
+        ssh.exec('doit')
         ssh.shutdown
       end
 
       logged_output.string.must_match debug_line(
-        "[SSH] closing connection to me@foo:22<{}>"
+        '[SSH] closing connection to me@foo:22<{}>'
       )
     end
 
-    it "only closes the connection once for multiple calls" do
+    it 'only closes the connection once for multiple calls' do
       conn.expects(:shutdown!).once
 
       assert_scripted do
-        ssh.exec("doit")
+        ssh.exec('doit')
         ssh.shutdown
         ssh.shutdown
         ssh.shutdown
@@ -369,12 +370,12 @@ describe Kitchen::SSH do
     end
   end
 
-  describe "block form" do
+  describe 'block form' do
     before do
       story do |script|
         channel = script.opens_channel
         channel.sends_request_pty
-        channel.sends_exec("doit")
+        channel.sends_exec('doit')
         channel.gets_data("ok\n")
         channel.gets_exit_status(0)
         channel.gets_close
@@ -382,106 +383,106 @@ describe Kitchen::SSH do
       end
     end
 
-    it "shuts down the connection when block closes" do
+    it 'shuts down the connection when block closes' do
       conn.expects(:shutdown!)
 
       Net::SSH::Test::Extensions::IO.with_test_extension do
-        Kitchen::SSH.new("foo", "me", opts) do |ssh|
-          ssh.exec("doit")
+        Kitchen::SSH.new('foo', 'me', opts) do |ssh|
+          ssh.exec('doit')
         end
       end
     end
   end
 
-  describe "#login_command" do
+  describe '#login_command' do
     let(:login_command) { ssh.login_command }
-    let(:args)          { login_command.arguments.join(" ") }
+    let(:args)          { login_command.arguments.join(' ') }
 
-    it "returns a LoginCommand" do
+    it 'returns a LoginCommand' do
       login_command.must_be_instance_of Kitchen::LoginCommand
     end
 
-    it "is an SSH command" do
-      login_command.command.must_equal "ssh"
+    it 'is an SSH command' do
+      login_command.command.must_equal 'ssh'
       args.must_match(/ me@foo$/)
     end
 
-    it "sets the UserKnownHostsFile option" do
-      args.must_match regexify("-o UserKnownHostsFile=/dev/null ")
+    it 'sets the UserKnownHostsFile option' do
+      args.must_match regexify('-o UserKnownHostsFile=/dev/null ')
     end
 
-    it "sets the StrictHostKeyChecking option" do
-      args.must_match regexify(" -o StrictHostKeyChecking=no ")
+    it 'sets the StrictHostKeyChecking option' do
+      args.must_match regexify(' -o StrictHostKeyChecking=no ')
     end
 
     it "won't set IdentitiesOnly option by default" do
-      args.wont_match regexify(" -o IdentitiesOnly=")
+      args.wont_match regexify(' -o IdentitiesOnly=')
     end
 
-    it "sets the IdentiesOnly option if :keys option is given" do
-      opts[:keys] = ["yep"]
+    it 'sets the IdentiesOnly option if :keys option is given' do
+      opts[:keys] = ['yep']
 
-      args.must_match regexify(" -o IdentitiesOnly=yes ")
+      args.must_match regexify(' -o IdentitiesOnly=yes ')
     end
 
-    it "sets the LogLevel option to VERBOSE if logger is set to debug" do
+    it 'sets the LogLevel option to VERBOSE if logger is set to debug' do
       logger.level = ::Logger::DEBUG
       opts[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=VERBOSE ")
+      args.must_match regexify(' -o LogLevel=VERBOSE ')
     end
 
-    it "sets the LogLevel option to ERROR if logger is not set to debug" do
+    it 'sets the LogLevel option to ERROR if logger is not set to debug' do
       logger.level = ::Logger::INFO
       opts[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=ERROR ")
+      args.must_match regexify(' -o LogLevel=ERROR ')
     end
 
     it "won't set the ForwardAgent option by default" do
-      args.wont_match regexify(" -o ForwardAgent=")
+      args.wont_match regexify(' -o ForwardAgent=')
     end
 
-    it "sets the ForwardAgent option to yes if truthy" do
-      opts[:forward_agent] = "yep"
+    it 'sets the ForwardAgent option to yes if truthy' do
+      opts[:forward_agent] = 'yep'
 
-      args.must_match regexify(" -o ForwardAgent=yes")
+      args.must_match regexify(' -o ForwardAgent=yes')
     end
 
-    it "sets the ForwardAgent option to no if falsey" do
+    it 'sets the ForwardAgent option to no if falsey' do
       opts[:forward_agent] = false
 
-      args.must_match regexify(" -o ForwardAgent=no")
+      args.must_match regexify(' -o ForwardAgent=no')
     end
 
     it "won't add any SSH keys by default" do
-      args.wont_match regexify(" -i ")
+      args.wont_match regexify(' -i ')
     end
 
-    it "sets SSH keys options if given" do
-      opts[:keys] = %w{one two}
+    it 'sets SSH keys options if given' do
+      opts[:keys] = %w[one two]
 
-      args.must_match regexify(" -i one ")
-      args.must_match regexify(" -i two ")
+      args.must_match regexify(' -i one ')
+      args.must_match regexify(' -i two ')
     end
 
-    it "sets the port option to 22 by default" do
-      args.must_match regexify(" -p 22 ")
+    it 'sets the port option to 22 by default' do
+      args.must_match regexify(' -p 22 ')
     end
 
-    it "sets the port option" do
+    it 'sets the port option' do
       opts[:port] = 1234
 
-      args.must_match regexify(" -p 1234 ")
+      args.must_match regexify(' -p 1234 ')
     end
   end
 
-  describe "#test_ssh" do
+  describe '#test_ssh' do
     let(:tcp_socket) { stub(select_for_read?: true, close: true) }
 
     before { ssh.stubs(:sleep) }
 
-    it "returns a truthy value" do
+    it 'returns a truthy value' do
       TCPSocket.stubs(:new).returns(tcp_socket)
 
       Net::SSH::Test::Extensions::IO.with_test_extension do
@@ -491,7 +492,7 @@ describe Kitchen::SSH do
       end
     end
 
-    it "closes socket when finished" do
+    it 'closes socket when finished' do
       TCPSocket.stubs(:new).returns(tcp_socket)
       tcp_socket.expects(:close)
 
@@ -505,11 +506,11 @@ describe Kitchen::SSH do
       describe "when #{klass} is raised" do
         before { TCPSocket.stubs(:new).raises(klass) }
 
-        it "returns false" do
+        it 'returns false' do
           ssh.send(:test_ssh).must_equal false
         end
 
-        it "sleeps for 2 seconds" do
+        it 'sleeps for 2 seconds' do
           ssh.expects(:sleep).with(2)
 
           ssh.send(:test_ssh)
@@ -530,7 +531,7 @@ describe Kitchen::SSH do
     end
   end
 
-  describe "#wait" do
+  describe '#wait' do
     let(:not_ready) do
       stub(close: true)
     end
@@ -539,7 +540,7 @@ describe Kitchen::SSH do
       stub(close: true)
     end
 
-    it "logs to info for each retry" do
+    it 'logs to info for each retry' do
       TCPSocket.stubs(:new).returns(not_ready, not_ready, ready)
       # IO.select returns nil if it his the 5 second timeout
       # http://ruby-doc.org/core-2.6.3/IO.html#method-c-select
@@ -549,7 +550,7 @@ describe Kitchen::SSH do
       ssh.wait
 
       logged_output.string.lines.count do |l|
-        l =~ info_line_with("Waiting for foo:22...")
+        l =~ info_line_with('Waiting for foo:22...')
       end.must_equal 2
     end
   end

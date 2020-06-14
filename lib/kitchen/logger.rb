@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# frozen_string_literal: true
+
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
-require "logger"
+require 'fileutils'
+require 'logger'
 
 module Kitchen
   # Logging implementation for Kitchen. By default the console/stdout output
@@ -68,7 +69,7 @@ module Kitchen
 
       # These setters cannot be called until @loggers are populated because
       # they are delegated
-      self.progname = options[:progname] || "Kitchen"
+      self.progname = options[:progname] || 'Kitchen'
       self.level = options[:level] || default_log_level
     end
 
@@ -292,15 +293,15 @@ module Kitchen
     # @api private
     def stdout_logger(stdout, color, colorize)
       logger = StdoutLogger.new(stdout)
-      if colorize
-        logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize(msg.to_s, color).concat("\n")
-        end
-      else
-        logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          msg.concat("\n")
-        end
-      end
+      logger.formatter = if colorize
+                           proc do |_severity, _datetime, _progname, msg|
+                             Color.colorize(msg.to_s, color).concat("\n")
+                           end
+                         else
+                           proc do |_severity, _datetime, _progname, msg|
+                             msg.concat("\n")
+                           end
+                         end
       logger
     end
 
@@ -324,7 +325,7 @@ module Kitchen
     # @api private
     def resolve_logdev(filepath_or_logdev, log_overwrite)
       if filepath_or_logdev.is_a? String
-        mode = log_overwrite ? "wb" : "ab"
+        mode = log_overwrite ? 'wb' : 'ab'
         FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
         file = File.open(File.expand_path(filepath_or_logdev), mode)
         file.sync = true
@@ -343,11 +344,11 @@ module Kitchen
       #
       # @param msg [String] a message
       def <<(msg)
-        @buffer ||= ""
+        @buffer ||= ''
         @buffer += msg
         while (i = @buffer.index("\n"))
           format_line(@buffer[0, i].chomp)
-          @buffer[0, i + 1] = ""
+          @buffer[0, i + 1] = ''
         end
       end
 
@@ -366,9 +367,9 @@ module Kitchen
       # @api private
       def format_line(line)
         case line
-        when /^-----> / then banner(line.gsub(/^[ >-]{6} /, ""))
-        when /^>>>>>> / then error(line.gsub(/^[ >-]{6} /, ""))
-        when /^       / then info(line.gsub(/^[ >-]{6} /, ""))
+        when /^-----> / then banner(line.gsub(/^[ >-]{6} /, ''))
+        when /^>>>>>> / then error(line.gsub(/^[ >-]{6} /, ''))
+        when /^       / then info(line.gsub(/^[ >-]{6} /, ''))
         else info(line)
         end
       end
