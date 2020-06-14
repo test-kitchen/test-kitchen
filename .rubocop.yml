@@ -1,3 +1,4 @@
+---
 Naming/FileName:
   Exclude:
     - 'support/**/*'

@@ -24,5 +24,5 @@ suites:
   - name: default
     run_list:
       - recipe[test::tk_<%= ENV['TK_SUITE_NAME'] %>_test]
-  # TODO a machine which doesn't setup squid and doesn't copy across
-  # proxy settings
+      # TODO a machine which doesn't setup squid and doesn't copy across
+      # proxy settings
