@@ -4,3 +4,31 @@ Naming/FileName:
     - 'support/**/*'
 Layout/EndOfLine:
   EnforcedStyle: lf
+Metrics/BlockLength:
+  Exclude: ['spec/**/*']
+Style/HashEachMethods:
+  Enabled: false
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: true
+Style/SlicingWithRange:
+  Enabled: false
+Style/RedundantRegexpEscape:
+  Enabled: true
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+Style/ExponentialNotation:
+  Enabled: False
+Lint/StructNewOverride:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: false
+Lint/MixedRegexpCaptureTypes:
+  Enabled: false
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
