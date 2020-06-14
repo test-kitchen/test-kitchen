@@ -10,6 +10,7 @@ receive a veto from the Lieutenant or the Project Lead.
 * [Fletcher Nichol](https://github.com/fnichol)
 
 ## Lieutenants
+
 * [Tyler Ball](https://github.com/tyler-ball)
 
 ## Maintainers
