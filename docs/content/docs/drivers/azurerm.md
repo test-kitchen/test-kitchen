@@ -1,5 +1,5 @@
 ---
-title: AzureRM
+title: Microsoft Azure
 menu:
   docs:
     parent: drivers

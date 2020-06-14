@@ -30,8 +30,8 @@
 #   name: chef_apply
 #
 # platforms:
-#   - name: ubuntu-16.04
-#   - name: centos-7
+#   - name: ubuntu-20.04
+#   - name: centos-8
 #
 # suites:
 #   - name: default
