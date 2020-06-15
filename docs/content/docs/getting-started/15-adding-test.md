@@ -18,7 +18,7 @@ mkdir -p test/integration/server
 Next, create a file called `test/integration/server/git_daemon_test.rb` with the following:
 
 ~~~
-# Inspec test for recipe git_cookbook::server
+# InSpec test for recipe git_cookbook::server
 
 describe port(9418) do
   it { should be_listening }
