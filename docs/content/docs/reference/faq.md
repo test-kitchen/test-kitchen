@@ -53,4 +53,4 @@ So there are a few things that already exist that sort of cover this in the kitc
 - Example of using [polipo](https://gist.github.com/fnichol/7551540) locally
 - [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
 
-For the system level proxies and the polipo/squid locally you don't need to do much but you'll still need to edit the conf files for yum/apt as appropriate. If vagrant-cachier it will be used by `kitchen-vagrant` as default. This behaviour is documented [here](https://github.com/test-kitchen/kitchen-vagrant#-cachier).
+For the system level proxies and the polipo/squid locally you don't need to do much but you'll still need to edit the conf files for yum/apt as appropriate. If vagrant-cachier it will be used by `kitchen-vagrant` as default. This behavior is documented [here](https://github.com/test-kitchen/kitchen-vagrant#-cachier).

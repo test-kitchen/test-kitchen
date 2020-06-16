@@ -26,5 +26,5 @@ provisioner:
   script:    'test/scripts/setup.sh' # Optional - default: bootstrap.sh/bootstrap.ps1
   arguments: ['--debug']             # Optional - Add extra arguments to the converge script.
   root_path: '/home/vagrant/'        # Optional - default: kitchen_root ('/tmp')
-  command:   'hostname'              # Optioanl - Run a single command instead of managing and running a script.
+  command:   'hostname'              # Optional - Run a single command instead of managing and running a script.
 ~~~
