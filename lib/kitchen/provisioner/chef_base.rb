@@ -558,7 +558,10 @@ module Kitchen
         install_file = "#{config[:root_path]}/chef-installer.sh"
         script = []
         script << "mkdir -p #{config[:root_path]}"
-
+        script << "if [ $? -ne 0 ]; then"
+        script << "  echo Kitchen config setting root_path: '#{config[:root_path]}' not creatable by regular user "
+        script << "  exit 1"
+        script << "fi"
         script << "cat > #{install_file} <<\"EOL\""
         script << command
         script << "EOL"
