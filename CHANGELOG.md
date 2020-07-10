@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [2.5.3](https://github.com/test-kitchen/test-kitchen/tree/v2.5.3) (2020-07-10)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.2...v2.5.3)
+
+- Respect root_path when product_name is specified [#1662](https://github.com/test-kitchen/test-kitchen/pull/1662)([clintoncwolfe](https://github.com/clintoncwolfe))
+
 ## [2.5.2](https://github.com/test-kitchen/test-kitchen/tree/v2.5.2) (2020-06-11)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.1...v2.5.2)
 
