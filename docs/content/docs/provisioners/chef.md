@@ -29,6 +29,7 @@ provisioner:
     - recipes/install.rb:22 # specific line in a file
   product_name: chef # which package to install chef || chef-workstation
   product_version: latest # 'latest', partial, or full version number
+  root_path: /tmp # Directory to create and execute the chef installer from
   channel: stable # stable, current or unstable
   install_strategy: once # once (install only if needed), always, skip (don't install)
   download_url: https://url.to/specific-package.ext
