@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Salim Afiune (<salim@afiunemaya.com.mx>)
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)

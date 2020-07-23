@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Chris Lundquist (<chris.lundquist@github.com>)
 #
