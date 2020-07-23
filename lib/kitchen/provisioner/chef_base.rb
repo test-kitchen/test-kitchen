@@ -556,12 +556,8 @@ module Kitchen
 
       def install_from_file(command)
         install_file = "#{config[:root_path]}/chef-installer.sh"
-        script = []
-        script << "mkdir -p #{config[:root_path]}"
-
-        script << "cat > #{install_file} <<\"EOL\""
-        script << command
-        script << "EOL"
+        script = ["mkdir -p #{config[:root_path]}"]
+        script << "echo #{command} | tee #{install_file}"
         script << "chmod +x #{install_file}"
         script << sudo(install_file)
         script.join("\n")
