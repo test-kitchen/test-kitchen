@@ -329,7 +329,7 @@ module Kitchen
         return unless config[:require_chef_omnibus] || config[:product_name]
         return if config[:product_name] && config[:install_strategy] == "skip"
 
-        prefix_command(install_script_contents)
+        prefix_command(sudo(install_script_contents))
       end
 
       private
@@ -559,8 +559,8 @@ module Kitchen
         script = ["mkdir -p #{config[:root_path]}"]
         script << "echo #{command} | tee #{install_file}"
         script << "chmod +x #{install_file}"
-        script << sudo(install_file)
-        script.join("\n")
+        script << install_file
+        script.map{ |cmd| sudo(cmd) }.join(";\n")
       end
 
       # @return [String] contents of version based install script
@@ -570,7 +570,7 @@ module Kitchen
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
         config[:chef_omnibus_root] = installer.root
-        sudo(installer.install_command)
+        installer.install_command
       end
 
       # Hook used in subclasses to indicate support for policyfiles.
