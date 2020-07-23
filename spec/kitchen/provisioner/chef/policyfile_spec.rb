@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Noah Kantrowitz
 #
 # Copyright (C) 2016, Noah Kantrowitz

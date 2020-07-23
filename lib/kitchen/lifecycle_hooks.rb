@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Noah Kantrowitz <noah@coderanger.net>
 #
 # Copyright (C) 2018, Noah Kantrowitz

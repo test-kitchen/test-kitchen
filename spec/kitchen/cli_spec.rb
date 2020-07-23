@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Tyler Ball (<tball@chef.io>)
 #
 # Copyright (C) 2015, Fletcher Nichol

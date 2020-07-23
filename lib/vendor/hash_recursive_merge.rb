@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # = Hash Recursive Merge
 #
 # Merges a Ruby Hash recursively, Also known as deep merge.

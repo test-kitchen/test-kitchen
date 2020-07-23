@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 #
 # Copyright (C) 2014, Matt Wrock

@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
 # Copyright (C) 2012, 2013, Fletcher Nichol

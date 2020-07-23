@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: Salim Afiune (<salim@afiunemaya.com.mx>)
 #
 # Copyright (C) 2014, Salim Afiune

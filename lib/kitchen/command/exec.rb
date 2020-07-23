@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-#
 # Author:: SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
 #
 # Copyright (C) 2014, HiganWorks LLC
