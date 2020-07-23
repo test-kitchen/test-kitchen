@@ -328,7 +328,7 @@ module Kitchen
         return unless config[:require_chef_omnibus] || config[:product_name]
         return if config[:product_name] && config[:install_strategy] == "skip"
 
-        prefix_command(install_script_contents)
+        prefix_command(sudo(install_script_contents))
       end
 
       private
@@ -509,8 +509,6 @@ module Kitchen
           channel: config[:channel].to_sym,
           install_command_options: {
             install_strategy: config[:install_strategy],
-            tmp_dir: config[:root_path],
-            "TMPDIR" => config[:root_path],
           },
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
@@ -536,6 +534,7 @@ module Kitchen
             # install.ps1 only supports http_proxy
             prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
+
           opts[:install_command_options].merge!(proxies)
         end)
         config[:chef_omnibus_root] = installer.root
@@ -554,14 +553,8 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "#{config[:root_path]}/chef-installer.sh"
-        script = []
-        script << "mkdir -p #{config[:root_path]}"
-        script << "if [ $? -ne 0 ]; then"
-        script << "  echo Kitchen config setting root_path: '#{config[:root_path]}' not creatable by regular user "
-        script << "  exit 1"
-        script << "fi"
-        script << "cat > #{install_file} <<\"EOL\""
+        install_file = "/tmp/chef-installer.sh"
+        script = ["cat > #{install_file} <<\"EOL\""]
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
@@ -576,7 +569,7 @@ module Kitchen
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
         config[:chef_omnibus_root] = installer.root
-        sudo(installer.install_command)
+        installer.install_command
       end
 
       # Hook used in subclasses to indicate support for policyfiles.
