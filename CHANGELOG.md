@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [2.5.4](https://github.com/test-kitchen/test-kitchen/tree/v2.5.4) (2020-07-29)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.3...v2.5.4)
+
+- Revert root_path changes that caused failures installing Chef Infra Client on Windows
+
 ## [2.5.3](https://github.com/test-kitchen/test-kitchen/tree/v2.5.3) (2020-07-10)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.2...v2.5.3)
 
