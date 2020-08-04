@@ -27,13 +27,13 @@ stages:
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
-              KITCHEN_YAML: kitchen.appveyor.yml
+              KITCHEN_YAML: kitchen.windows.yml
             Windows_Ruby26:
               version: 2.6
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
-              KITCHEN_YAML: kitchen.appveyor.yml
+              KITCHEN_YAML: kitchen.windows.yml
             WindowsProduct_Ruby26:
               version: 2.6
               machine_user: test_user
