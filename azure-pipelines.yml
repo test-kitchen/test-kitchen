@@ -34,6 +34,12 @@ stages:
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.appveyor.yml
+            WindowsProduct_Ruby26:
+              version: 2.6
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows-product.yml
         pool:
           vmImage: windows-latest
         steps:
