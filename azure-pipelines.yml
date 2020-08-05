@@ -34,8 +34,14 @@ stages:
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.windows.yml
-            WindowsProduct_Ruby26:
-              version: 2.6
+            Windows_Ruby27:
+              version: 2.7
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows.yml
+            WindowsProduct_Ruby27:
+              version: 2.7
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
@@ -85,6 +91,8 @@ stages:
               version: 2.5
             Mac_Ruby26:
               version: 2.6
+            Mac_Ruby27:
+              version: 2.7
         pool:
           vmImage: "macOS-latest"
         steps:
@@ -124,6 +132,8 @@ stages:
               version: 2.5
             Linux_Ruby26:
               version: 2.6
+            Linux_Ruby27:
+              version: 2.7
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -167,7 +177,7 @@ stages:
           MACHINE_USER: kitchen
           MACHINE_PASS: K1tch3nY@ml!
           MACHINE_PORT: 22
-          version: 2.6
+          version: 2.7
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -205,8 +215,7 @@ stages:
               sudo service ssh restart
             displayName: Start SSHD
           - script: |
-              ls -d /opt/hostedtoolcache/Ruby/
-              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.5.5/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.7.1/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
               sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
               sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
               sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
@@ -235,7 +244,7 @@ stages:
         steps:
           - task: UseRubyVersion@0
             inputs:
-              versionSpec: 2.5
+              versionSpec: 2.7
               addToPath: true
           - script: |
               echo "ruby version:"
@@ -262,7 +271,7 @@ stages:
               git clone https://github.com/smurawski/proxy_tests.git
             displayName: Install and configure dependencies
           - script: |
-              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.5.5/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.7.1/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
               sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
               sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
               sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
