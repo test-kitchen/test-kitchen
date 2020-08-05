@@ -162,6 +162,66 @@ stages:
             displayName: Run Integration Tests
             env:
               KITCHEN_YAML: kitchen.dokken.yml
+      - job: LinuxProduct
+        variables:
+          MACHINE_USER: kitchen
+          MACHINE_PASS: K1tch3nY@ml!
+          MACHINE_PORT: 22
+          version: 2.6
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: Cache@2
+            inputs:
+              key: gems | $(Agent.OS) | "$(version)" | test-kitchen.gemspec | Gemfile | Gemfile.proxy_tests
+              path: $(BUNDLE_PATH)
+              cacheHitVar: CACHE_RESTORED
+            displayName: Cache gems
+          - task: UseRubyVersion@0
+            inputs:
+              versionSpec: $(version)
+              addToPath: true
+          - script: |
+              echo "ruby version:"
+              ruby --version
+              echo "gem version:"
+              gem --version
+            displayName: Show Ruby Version
+          - script: |
+              gem install bundler --quiet
+              echo "bundler version:"
+              bundler --version
+            displayName: Install Bundler
+          - script: |
+              bundle install || bundle install || bundle install
+            displayName: Bundle Install Dependencies
+          - script: |
+              sudo -E useradd $MACHINE_USER --shell /bin/bash --create-home
+              sudo -E usermod -p `openssl passwd -1 $MACHINE_PASS` $MACHINE_USER
+              sudo -E usermod -aG sudo $MACHINE_USER
+            displayName: Add local user
+          - script: |
+              sudo mkdir -p /var/run/sshd
+              sudo service ssh restart
+            displayName: Start SSHD
+          - script: |
+              ls -d /opt/hostedtoolcache/Ruby/
+              sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.5.5/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+            displayName: Update path and sudo privs for local user
+          - script: |
+              bundle exec rake
+            displayName: Run Tests
+            env:
+              SPEC_OPTS: --format progress
+          - script: |
+              bundle install --with integration
+              bundle exec kitchen test
+            displayName: Run Integration Tests
+            env:
+              KITCHEN_YAML: kitchen.linux-product.yml
       - job: Proxy_Tests
         variables:
           MACHINE_USER: kitchen
