@@ -1,0 +1,25 @@
+---
+driver:
+  name: proxy
+  host: localhost
+  reset_command: "echo hello"
+  port: <%= ENV["MACHINE_PORT"] %>
+  username: <%= ENV["MACHINE_USER"] %>
+  password: <%= ENV["MACHINE_PASS"] %>
+
+provisioner:
+  name: chef_zero
+  # Using product_name exercises a different code path in the chef client installer
+  product_name: chef
+  chef_license: accept-no-persist
+
+platforms:
+  - name: linux
+
+verifier:
+  name: busser
+
+suites:
+  - name: default
+    run_list:
+      - recipe[test_cookbook::default]
