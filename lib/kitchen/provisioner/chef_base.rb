@@ -509,13 +509,17 @@ module Kitchen
           channel: config[:channel].to_sym,
           install_command_options: {
             install_strategy: config[:install_strategy],
-            tmp_dir: config[:root_path],
-            "TMPDIR" => config[:root_path],
           },
         }.tap do |opts|
           opts[:shell_type] = :ps1 if powershell_shell?
           %i{platform platform_version architecture}.each do |key|
             opts[key] = config[key] if config[key]
+          end
+
+          unless windows_os?
+            # omnitruck installer does not currently support a tmp dir option on windows
+            opts[:install_command_options][:tmp_dir] = config[:root_path]
+            opts[:install_command_options]["TMPDIR"] = config[:root_path]
           end
 
           if config[:download_url]
