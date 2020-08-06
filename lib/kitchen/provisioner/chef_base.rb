@@ -328,7 +328,7 @@ module Kitchen
         return unless config[:require_chef_omnibus] || config[:product_name]
         return if config[:product_name] && config[:install_strategy] == "skip"
 
-        prefix_command(sudo(install_script_contents))
+        prefix_command(install_script_contents)
       end
 
       private
@@ -516,6 +516,12 @@ module Kitchen
             opts[key] = config[key] if config[key]
           end
 
+          unless windows_os?
+            # omnitruck installer does not currently support a tmp dir option on windows
+            opts[:install_command_options][:tmp_dir] = config[:root_path]
+            opts[:install_command_options]["TMPDIR"] = config[:root_path]
+          end
+
           if config[:download_url]
             opts[:install_command_options][:download_url_override] = config[:download_url]
             opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
@@ -534,7 +540,6 @@ module Kitchen
             # install.ps1 only supports http_proxy
             prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
-
           opts[:install_command_options].merge!(proxies)
         end)
         config[:chef_omnibus_root] = installer.root
@@ -553,8 +558,14 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "/tmp/chef-installer.sh"
-        script = ["cat > #{install_file} <<\"EOL\""]
+        install_file = "#{config[:root_path]}/chef-installer.sh"
+        script = []
+        script << "mkdir -p #{config[:root_path]}"
+        script << "if [ $? -ne 0 ]; then"
+        script << "  echo Kitchen config setting root_path: '#{config[:root_path]}' not creatable by regular user "
+        script << "  exit 1"
+        script << "fi"
+        script << "cat > #{install_file} <<\"EOL\""
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
@@ -569,7 +580,7 @@ module Kitchen
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
         config[:chef_omnibus_root] = installer.root
-        installer.install_command
+        sudo(installer.install_command)
       end
 
       # Hook used in subclasses to indicate support for policyfiles.
