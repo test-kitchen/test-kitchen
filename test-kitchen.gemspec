@@ -15,12 +15,12 @@ Gem::Specification.new do |gem|
   gem.summary       = gem.description
   gem.homepage      = "https://kitchen.ci/"
 
-  # The gemfile and gemspec are necessary for appbundler in Chef-DK / Workstation
+  # The gemfile and gemspec are necessary for appbundler in ChefDK / Workstation
   gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
-  gem.required_ruby_version = ">= 2.3"
+  gem.required_ruby_version = ">= 2.4"
 
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 4.0"
   gem.add_dependency "net-scp",            ">= 1.1", "< 4.0" # pinning until we can confirm 4+ works
@@ -35,7 +35,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "winrm-fs",           "~> 1.1"
   # Required to run the Chef provisioner local license check for remote systems
   # TK is not under Chef EULA
-  gem.add_dependency "license-acceptance", "~> 1.0", ">= 1.0.11"
+  gem.add_dependency "license-acceptance", ">= 1.0.11", "< 3.0" # pinning until we can confirm 3+ works
 
   gem.add_development_dependency "rb-readline"
   gem.add_development_dependency "bundler"
