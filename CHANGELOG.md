@@ -1,5 +1,11 @@
 # Test Kitchen Change Log
 
+## [2.6.0](https://github.com/test-kitchen/test-kitchen/tree/v2.6.0) (2020-08-13)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.4...v2.6.0)
+
+- Remove support for EOL Ruby 2.3
+- Relax dependency on license-acceptance to allow for 2.x
+
 ## [2.5.4](https://github.com/test-kitchen/test-kitchen/tree/v2.5.4) (2020-07-29)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.3...v2.5.4)
 
