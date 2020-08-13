@@ -1092,7 +1092,7 @@
 - Don't reset locale in Kitchen::Driver::Base run\_command\(\) [\#485](https://github.com/test-kitchen/test-kitchen/issues/485)
 - Intermittent 'kitchen test' failures [\#449](https://github.com/test-kitchen/test-kitchen/issues/449)
 - shell-provisioner: lots of trouble with a noexec /tmp, failing workaround. [\#444](https://github.com/test-kitchen/test-kitchen/issues/444)
-- Support Chef-DK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
+- Support ChefDK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
 - Message: Failed to complete \#converge action: \[Permission denied [\#441](https://github.com/test-kitchen/test-kitchen/issues/441)
 - Idea: enable chef-zero to run on another server than the converged node. [\#437](https://github.com/test-kitchen/test-kitchen/issues/437)
 - Test Artifact Fetch Feature [\#434](https://github.com/test-kitchen/test-kitchen/issues/434)
