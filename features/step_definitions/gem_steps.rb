@@ -1,5 +1,5 @@
-require "tmpdir"
-require "pathname"
+require "tmpdir" unless defined?(Dir.mktmpdir)
+require "pathname" unless defined?(Pathname)
 
 Then(/^a gem named "(.*?)" is installed with version "(.*?)"$/) do |name, version|
   unbundlerize do

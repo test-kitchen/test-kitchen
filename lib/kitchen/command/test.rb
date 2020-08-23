@@ -17,7 +17,7 @@
 
 require_relative "../command"
 
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Command

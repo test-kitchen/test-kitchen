@@ -4,7 +4,7 @@
 Signal.trap("INT") { exit 1 }
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), %w{.. lib})
-require "rubygems"
+require "rubygems" unless defined?(Gem)
 require "kitchen/cli"
 require "kitchen/errors"
 

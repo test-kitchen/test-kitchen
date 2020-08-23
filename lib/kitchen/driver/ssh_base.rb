@@ -18,7 +18,7 @@
 require "thor/util"
 
 require_relative "../lazy_hash"
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Driver

@@ -15,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "benchmark"
-require "fileutils"
+require "benchmark" unless defined?(Benchmark)
+require "fileutils" unless defined?(FileUtils)
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a

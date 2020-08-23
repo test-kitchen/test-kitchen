@@ -15,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
-require "pathname"
-require "json"
-require "cgi"
+require "fileutils" unless defined?(FileUtils)
+require "pathname" unless defined?(Pathname)
+require "json" unless defined?(JSON)
+require "cgi" unless defined?(CGI)
 
 require_relative "chef/policyfile"
 require_relative "chef/berkshelf"

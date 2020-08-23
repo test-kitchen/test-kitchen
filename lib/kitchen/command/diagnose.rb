@@ -18,7 +18,7 @@
 require_relative "../command"
 require_relative "../diagnostic"
 
-require "yaml"
+require "yaml" unless defined?(YAML)
 
 module Kitchen
   module Command

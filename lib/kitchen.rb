@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
+require "pathname" unless defined?(Pathname)
 require "thread"
 
 require_relative "kitchen/errors"

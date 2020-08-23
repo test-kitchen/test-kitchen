@@ -15,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "shellwords"
-require "rbconfig"
+require "shellwords" unless defined?(Shellwords)
+require "rbconfig" unless defined?(RbConfig)
 
 require_relative "../../errors"
 require_relative "../../logging"
