@@ -21,6 +21,7 @@ require_relative "../errors"
 require_relative "../lazy_hash"
 require_relative "../logging"
 require_relative "../login_command"
+require_relative "../plugin_base"
 
 module Kitchen
   module Transport
@@ -40,7 +41,7 @@ module Kitchen
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
 

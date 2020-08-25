@@ -18,13 +18,14 @@
 require_relative "../configurable"
 require_relative "../errors"
 require_relative "../logging"
+require_relative "../plugin_base"
 
 module Kitchen
   module Provisioner
     # Base class for a provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
 

@@ -54,6 +54,10 @@ module Kitchen
         "/tmp/sandbox"
       end
     end
+
+    class Dodgy < Kitchen::Provisioner::Base
+      no_parallel_for :converge
+    end
   end
 end
 
@@ -387,6 +391,22 @@ describe Kitchen::Provisioner::Base do
       it "returns an unaltered command" do
         provisioner.send(:prefix_command, "my_command").must_equal("my_command")
       end
+    end
+  end
+
+  describe ".no_parallel_for" do
+    it "registers no serial actions when none are declared" do
+      Kitchen::Provisioner::TestingDummy.serial_actions.must_be_nil
+    end
+
+    it "registers a single serial action method" do
+      Kitchen::Provisioner::Dodgy.serial_actions.must_equal [:converge]
+    end
+
+    it "raises a ClientError if value is not an action method" do
+      proc do
+        Class.new(Kitchen::Provisioner::Base) { no_parallel_for :telling_stories }
+      end.must_raise Kitchen::ClientError
     end
   end
 end

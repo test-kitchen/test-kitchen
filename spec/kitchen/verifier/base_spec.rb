@@ -57,6 +57,10 @@ module Kitchen
         "/tmp/sandbox"
       end
     end
+
+    class Dodgy < Kitchen::Verifier::Base
+      no_parallel_for :verify
+    end
   end
 end
 
@@ -365,6 +369,22 @@ describe Kitchen::Verifier::Base do
       it "returns an unaltered command" do
         verifier.send(:prefix_command, "my_command").must_equal("my_command")
       end
+    end
+  end
+
+  describe ".no_parallel_for" do
+    it "registers no serial actions when none are declared" do
+      Kitchen::Verifier::TestingDummy.serial_actions.must_be_nil
+    end
+
+    it "registers a single serial action method" do
+      Kitchen::Verifier::Dodgy.serial_actions.must_equal [:verify]
+    end
+
+    it "raises a ClientError if value is not an action method" do
+      proc do
+        Class.new(Kitchen::Verifier::Base) { no_parallel_for :telling_stories }
+      end.must_raise Kitchen::ClientError
     end
   end
 end
