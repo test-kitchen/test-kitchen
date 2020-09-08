@@ -1,5 +1,11 @@
 # Test Kitchen Change Log
 
+## [2.7.0](https://github.com/test-kitchen/test-kitchen/tree/v2.7.0) (2020-09-08)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.6.0...v2.7.0)
+
+- Allow all plugins to toggle concurrency
+- Optimize our requires
+
 ## [2.6.0](https://github.com/test-kitchen/test-kitchen/tree/v2.6.0) (2020-08-13)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.4...v2.6.0)
 
