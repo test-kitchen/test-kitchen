@@ -28,7 +28,7 @@ module Kitchen
     include Logging
 
     class << self
-      # @return [Hash] a hash of mutxes, arranged by Driver class names
+      # @return [Hash] a hash of mutexes, arranged by Plugin class names
       # @api private
       attr_accessor :mutexes
 
@@ -322,19 +322,27 @@ module Kitchen
       end
     end
 
+    # If a plugin has declared via .no_parallel_for that it is not
+    # thread-safe for certain actions, create a mutex to track it.
+    #
+    # @param plugin_class[Class] Kitchen::Plugin::Base
+    # @api private
+    def setup_plugin_mutexes(plugin_class)
+      if plugin_class.serial_actions
+        Kitchen.mutex.synchronize do
+          self.class.mutexes ||= {}
+          self.class.mutexes[plugin_class] = Mutex.new
+        end
+      end
+    end
+
     # Perform any final configuration or preparation needed for the driver
     # object carry out its duties.
     #
     # @api private
     def setup_driver
       @driver.finalize_config!(self)
-
-      if driver.class.serial_actions
-        Kitchen.mutex.synchronize do
-          self.class.mutexes ||= {}
-          self.class.mutexes[driver.class] = Mutex.new
-        end
-      end
+      setup_plugin_mutexes(driver.class)
     end
 
     # Perform any final configuration or preparation needed for the lifecycle hooks
@@ -351,6 +359,7 @@ module Kitchen
     # @api private
     def setup_provisioner
       @provisioner.finalize_config!(self)
+      setup_plugin_mutexes(provisioner.class)
     end
 
     # Perform any final configuration or preparation needed for the transport
@@ -359,6 +368,7 @@ module Kitchen
     # @api private
     def setup_transport
       transport.finalize_config!(self)
+      setup_plugin_mutexes(transport.class)
     end
 
     # Perform any final configuration or preparation needed for the verifier
@@ -367,6 +377,7 @@ module Kitchen
     # @api private
     def setup_verifier
       verifier.finalize_config!(self)
+      setup_plugin_mutexes(verifier.class)
     end
 
     # Perform all actions in order from last state to desired state.
@@ -541,15 +552,31 @@ module Kitchen
     # @param block [Proc] a block to be called
     # @api private
     def synchronize_or_call(what, state)
-      if Array(driver.class.serial_actions).include?(what)
-        debug("#{to_str} is synchronizing on #{driver.class}##{what}")
-        self.class.mutexes[driver.class].synchronize do
-          debug("#{to_str} is messaging #{driver.class}##{what}")
+      plugin_class = plugin_class_for_action(what)
+      if Array(plugin_class.serial_actions).include?(what)
+        debug("#{to_str} is synchronizing on #{plugin_class}##{what}")
+        self.class.mutexes[plugin_class].synchronize do
+          debug("#{to_str} is messaging #{plugin_class}##{what}")
           yield(state)
         end
       else
         yield(state)
       end
+    end
+
+    # Maps the given action to the plugin class associated with the action
+    #
+    # @param what[Symbol] action
+    # @return [Class] Kitchen::Plugin::Base
+    # @api private
+    def plugin_class_for_action(what)
+      {
+        create: driver,
+        setup: transport,
+        converge: provisioner,
+        verify: verifier,
+        destroy: driver,
+      }[what].class
     end
 
     # Writes a high level message for logging and/or output.
