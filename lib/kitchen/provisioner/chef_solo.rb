@@ -27,6 +27,10 @@ module Kitchen
 
       plugin_version Kitchen::VERSION
 
+      # ChefSolo is dependent on Berkshelf, which is not thread-safe.
+      # See discussion on https://github.com/test-kitchen/test-kitchen/issues/1307
+      no_parallel_for :converge
+
       default_config :solo_rb, {}
 
       default_config :chef_solo_path do |provisioner|
