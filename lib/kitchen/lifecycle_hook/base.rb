@@ -56,7 +56,7 @@ module Kitchen
 
       # @return [Kitchen::StateFile]
       def state_file
-        instance.state_file
+        lifecycle_hooks.state_file
       end
 
       # @return [Array<String>] names of excluded platforms

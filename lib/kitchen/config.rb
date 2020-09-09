@@ -244,16 +244,18 @@ module Kitchen
     # @return [Instance] a new Instance object
     # @api private
     def new_instance(suite, platform, index)
+      sf = new_state_file(suite, platform)
+
       Instance.new(
         driver: new_driver(suite, platform),
-        lifecycle_hooks: new_lifecycle_hooks(suite, platform),
+        lifecycle_hooks: new_lifecycle_hooks(suite, platform, sf),
         logger: new_instance_logger(suite, platform, index),
         suite: suite,
         platform: platform,
         provisioner: new_provisioner(suite, platform),
         transport: new_transport(suite, platform),
         verifier: new_verifier(suite, platform),
-        state_file: new_state_file(suite, platform)
+        state_file: sf
       )
     end
 
@@ -284,11 +286,12 @@ module Kitchen
     #
     # @param suite [Suite,#name] a Suite
     # @param platform [Platform,#name] a Platform
+    # @param state_file [Kitchen::StateFile] a SateFile
     # @return [LifecycleHooks] a new LifecycleHooks object
     # @api private
-    def new_lifecycle_hooks(suite, platform)
+    def new_lifecycle_hooks(suite, platform, state_file)
       lhdata = data.lifecycle_hooks_data_for(suite.name, platform.name)
-      LifecycleHooks.new(lhdata)
+      LifecycleHooks.new(lhdata, state_file)
     end
 
     # Builds a newly configured Provisioner object, for a given Suite and

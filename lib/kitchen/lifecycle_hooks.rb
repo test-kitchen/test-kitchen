@@ -31,8 +31,9 @@ module Kitchen
     include Configurable
     include Logging
 
-    def initialize(config)
+    def initialize(config, state_file)
       init_config(config)
+      @state_file = state_file
     end
 
     # Run a lifecycle phase with the pre and post hooks.
@@ -46,6 +47,9 @@ module Kitchen
       yield
       run(phase, :post)
     end
+
+    # @return [Kitchen::StateFile]
+    attr_reader :state_file
 
     private
 

@@ -119,7 +119,7 @@ describe Kitchen::Instance do
   let(:logger_io)       { StringIO.new }
   let(:logger)          { Kitchen::Logger.new(logdev: logger_io) }
   let(:instance)        { Kitchen::Instance.new(opts) }
-  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}) }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}, state_file) }
   let(:provisioner)     { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)      { DummyStateFile.new }
   let(:transport)       { Kitchen::Transport::Dummy.new({}) }

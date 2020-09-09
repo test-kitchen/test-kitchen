@@ -36,7 +36,7 @@ describe Kitchen::LifecycleHooks do
     end
   end
   let(:config) { { kitchen_root: kitchen_root } }
-  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new(config).tap { |lh| lh.finalize_config!(instance) } }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new(config, state_file).tap { |lh| lh.finalize_config!(instance) } }
   let(:standard_local_options) do
     {
       cwd: kitchen_root,
