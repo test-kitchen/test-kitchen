@@ -20,6 +20,8 @@ require_relative "../../spec_helper"
 require "kitchen"
 require "kitchen/provisioner/chef_base"
 require "fileutils"
+require "mixlib/install"
+require "mixlib/install/script_generator"
 
 describe Kitchen::Provisioner::ChefBase do
   let(:logged_output)   { StringIO.new }
