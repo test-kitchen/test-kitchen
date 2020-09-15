@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [2.7.1](https://github.com/test-kitchen/test-kitchen/tree/v2.7.1) (2020-09-15)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.7.0...v2.7.1)
+
+- Mark chef_solo provisioner unsafe for concurrency
+
 ## [2.7.0](https://github.com/test-kitchen/test-kitchen/tree/v2.7.0) (2020-09-08)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.6.0...v2.7.0)
 
