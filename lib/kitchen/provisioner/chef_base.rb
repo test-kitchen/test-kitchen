@@ -24,9 +24,9 @@ require_relative "chef/policyfile"
 require_relative "chef/berkshelf"
 require_relative "chef/common_sandbox"
 require_relative "../util"
-require "mixlib/install"
-require "mixlib/install/script_generator"
-require "license_acceptance/acceptor"
+module LicenseAcceptance
+  autoload :Acceptor, "license_acceptance/acceptor"
+end
 
 begin
   require "chef-config/config"
@@ -503,6 +503,7 @@ module Kitchen
       # @return [String] contents of product based install script
       # @api private
       def script_for_product
+        require "mixlib/install"
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
@@ -576,6 +577,7 @@ module Kitchen
       # @return [String] contents of version based install script
       # @api private
       def script_for_omnibus_version
+        require "mixlib/install/script_generator"
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, install_options
         )

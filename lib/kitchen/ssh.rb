@@ -16,8 +16,9 @@
 # limitations under the License.
 
 require "logger"
-require "net/ssh" unless defined?(Net::SSH)
-require "net/scp"
+module Net
+  autoload :SSH, "net/ssh"
+end
 require "socket" unless defined?(Socket)
 
 require_relative "errors"
@@ -90,6 +91,7 @@ module Kitchen
     #   `Net::SCP.upload`
     # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload!(local, remote, options = {}, &progress)
+      require "net/scp" unless defined?(Net::SCP)
       if progress.nil?
         progress = lambda do |_ch, name, sent, total|
           logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
@@ -100,6 +102,7 @@ module Kitchen
     end
 
     def upload(local, remote, options = {}, &progress)
+      require "net/scp" unless defined?(Net::SCP)
       if progress.nil?
         progress = lambda do |_ch, name, sent, total|
           if sent == total

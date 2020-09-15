@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "yaml" unless defined?(YAML)
+autoload :YAML, "yaml"
 
 module Kitchen
   # Exception class for any exceptions raised when reading and parsing a state
