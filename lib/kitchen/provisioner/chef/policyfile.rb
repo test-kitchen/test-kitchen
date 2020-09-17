@@ -110,13 +110,13 @@ module Kitchen
         # @return [String]
         # @api private
         def escape_path(path)
-          if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+          if /mswin|mingw/.match?(RbConfig::CONFIG["host_os"])
             # I know what you're thinking: "just use Shellwords.escape". That
             # method produces incorrect results on Windows with certain input
             # which would be a metacharacter in Sh but is not for one or more of
             # Windows command line parsing libraries. This covers the 99% case of
             # spaces in the path without breaking other stuff.
-            if path =~ /[ \t\n\v"]/
+            if /[ \t\n\v"]/.match?(path)
               "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| '\\' + m[0] }}\""
             else
               path
@@ -136,7 +136,7 @@ module Kitchen
           # @api private
           def detect_chef_command!(logger)
             unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
-              if RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
+              if /mswin|mingw/.match?(RbConfig::CONFIG["host_os"])
                 # Windows could have different extentions: BAT, EXE or NONE
                 %w{chef chef.exe chef.bat}.each do |bin|
                   File.exist?(File.join(path, bin))

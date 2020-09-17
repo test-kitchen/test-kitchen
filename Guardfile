@@ -6,7 +6,7 @@ end
 
 def cucumber_opts
   cucumber_cli = "--no-profile --color --format progress --strict"
-  cucumber_cli += " --tags ~@spawn" if RUBY_PLATFORM =~ /mswin|mingw|windows/
+  cucumber_cli += " --tags ~@spawn" if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
   { all_on_start: false, cli: cucumber_cli }
 end

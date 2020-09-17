@@ -156,7 +156,7 @@ module Kitchen
               product_name: <chef or chef-workstation>
               install_strategy: skip
           MSG
-        when provisioner[:require_chef_omnibus].to_s.match(/\d/)
+        when provisioner[:require_chef_omnibus].to_s.match?(/\d/)
           Util.outdent!(<<-MSG)
             The 'require_chef_omnibus' attribute with version values will change
             to use the new 'product_version' attribute.

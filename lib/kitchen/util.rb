@@ -110,7 +110,7 @@ module Kitchen
     def self.wrap_command(cmd)
       cmd = "false" if cmd.nil?
       cmd = "true" if cmd.to_s.empty?
-      cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
+      cmd = cmd.sub(/\n\Z/, "") if /\n\Z/.match?(cmd)
 
       "sh -c '\n#{cmd}\n'"
     end

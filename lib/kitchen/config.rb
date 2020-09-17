@@ -213,7 +213,7 @@ module Kitchen
           provisioner: Provisioner::DEFAULT_PLUGIN,
           verifier: Verifier::DEFAULT_PLUGIN,
           transport: lambda do |_suite, platform|
-            platform =~ /^win/i ? "winrm" : Transport::DEFAULT_PLUGIN
+            /^win/i.match?(platform) ? "winrm" : Transport::DEFAULT_PLUGIN
           end,
         },
         kitchen_root: kitchen_root,

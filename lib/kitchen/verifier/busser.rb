@@ -168,7 +168,7 @@ module Kitchen
       # @api private
       def gem_install_args
         gem, version = config[:version].split("@")
-        if gem =~ /^\d+\.\d+\.\d+/
+        if /^\d+\.\d+\.\d+/.match?(gem)
           version = gem
           gem = "busser"
         end
