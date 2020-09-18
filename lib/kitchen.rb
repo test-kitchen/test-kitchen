@@ -16,8 +16,6 @@
 # limitations under the License.
 
 require "pathname" unless defined?(Pathname)
-require "thread"
-
 require_relative "kitchen/errors"
 require_relative "kitchen/logger"
 require_relative "kitchen/logging"
@@ -67,7 +65,7 @@ module Kitchen
     #
     # @return [Pathname] root path of gem
     def source_root
-      @source_root ||= Pathname.new(File.expand_path("../../", __FILE__))
+      @source_root ||= Pathname.new(File.expand_path("..", __dir__))
     end
 
     # Returns a default logger which emits on standard output.

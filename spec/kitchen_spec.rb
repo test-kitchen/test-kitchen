@@ -64,7 +64,7 @@ describe "Kitchen" do
 
   it ".source_root returns the root path of the gem" do
     Kitchen.source_root
-      .must_equal Pathname.new(File.expand_path("../..", __FILE__))
+      .must_equal Pathname.new(File.expand_path("..", __dir__))
   end
 
   it ".default_logger is a Kitchen::Logger" do
