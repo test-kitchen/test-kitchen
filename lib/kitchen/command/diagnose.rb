@@ -18,7 +18,7 @@
 require_relative "../command"
 require_relative "../diagnostic"
 
-require "yaml" unless defined?(YAML)
+autoload :YAML, "yaml"
 
 module Kitchen
   module Command
@@ -32,9 +32,9 @@ module Kitchen
 
         loader = record_failure { load_loader }
 
-        puts Kitchen::Diagnostic.new(
+        puts YAML.dump(Kitchen::Diagnostic.new(
           loader: loader, instances: instances, plugins: plugins?
-        ).read.to_yaml
+        ).read)
       end
 
       private
