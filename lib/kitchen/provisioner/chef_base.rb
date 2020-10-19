@@ -481,7 +481,6 @@ module Kitchen
         super
         if File.exist?(policyfile)
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve cookbook dependencies")
-          Chef::Policyfile.load!(logger: logger)
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, using Berkshelf to resolve cookbook dependencies")
           Chef::Berkshelf.load!(logger: logger)
