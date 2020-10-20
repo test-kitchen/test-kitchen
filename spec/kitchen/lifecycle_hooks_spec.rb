@@ -22,7 +22,8 @@ require "kitchen/lifecycle_hooks"
 
 describe Kitchen::LifecycleHooks do
   let(:suite) { mock("suite").tap { |i| i.stubs(name: "default") } }
-  let(:platform) { mock("platform").tap { |i| i.stubs(name: "toaster-1.0") } }
+  let(:platform_name) { "toaster-1.0" }
+  let(:platform) { mock("platform").tap { |i| i.stubs(name: platform_name) } }
   let(:state_file) { mock("state_file").tap { |s| s.stubs(read: { hostname: "localhost" }) } }
   let(:connection) { mock("connection") }
   let(:transport) { mock("transport").tap { |t| t.stubs(:connection).with({ hostname: "localhost" }).returns(connection) } }
@@ -51,6 +52,21 @@ describe Kitchen::LifecycleHooks do
 
   def run_lifecycle_hooks
     lifecycle_hooks.run_with_hooks(:create, state_file) {}
+  end
+
+  def expect_local_hook_generated_and_not_run(phase, hook, non_standard_local_opts: {})
+    local_hook = Kitchen::LifecycleHook::Local.new(lifecycle_hooks, phase, hook)
+    lifecycle_hooks.expects(:generate_hook).with(:create, hook).returns(local_hook)
+    local_hook.expects(:run_command).never
+    local_hook
+  end
+
+  def expect_remote_hook_generated_and_not_run(phase, hook)
+    remote_hook = Kitchen::LifecycleHook::Remote.new(lifecycle_hooks, phase, hook)
+    lifecycle_hooks.expects(:generate_hook).with(:create, hook).returns(remote_hook)
+    remote_hook.expects(:run_command).never
+    connection.expects(:execute).never
+    remote_hook
   end
 
   def expect_local_hook_generated_and_run(phase, hook, non_standard_local_opts: {})
@@ -157,6 +173,39 @@ describe Kitchen::LifecycleHooks do
     expect_local_hook_generated_and_run(:create, { local: local_command })
     expect_local_hook_generated_and_run(:create, local_hook)
     expect_remote_hook_generated_and_run(:create, remote_hook)
+    run_lifecycle_hooks
+  end
+
+  it "runs hooks that have been included by platform" do
+    local_hook = { local: "echo bar", includes: platform_name }
+    remote_hook = { remote: "echo baz", includes: platform_name }
+    config.update(post_create: [local_hook, remote_hook])
+
+    expect_local_hook_generated_and_run(:create, local_hook)
+    expect_remote_hook_generated_and_run(:create, remote_hook)
+
+    run_lifecycle_hooks
+  end
+
+  it "does not run hooks that have been excluded by platform" do
+    local_hook = { local: "echo bar", excludes: platform_name }
+    remote_hook = { remote: "echo baz", excludes: platform_name }
+    config.update(post_create: [local_hook, remote_hook])
+
+    expect_local_hook_generated_and_not_run(:create, local_hook)
+    expect_remote_hook_generated_and_not_run(:create, remote_hook)
+
+    run_lifecycle_hooks
+  end
+
+  it "does not run hooks that have NOT been included by platform" do
+    local_hook = { local: "echo bar", includes: "other" }
+    remote_hook = { remote: "echo baz", includes: "other" }
+    config.update(post_create: [local_hook, remote_hook])
+
+    expect_local_hook_generated_and_not_run(:create, local_hook)
+    expect_remote_hook_generated_and_not_run(:create, remote_hook)
+
     run_lifecycle_hooks
   end
 
