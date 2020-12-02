@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [2.8.0](https://github.com/test-kitchen/test-kitchen/tree/v2.8.0) (2020-12-02)
+
+- Better support Test Kitchen execution on Windows by running commands through a script file. This avoids failures when the command length becomes too long for Windows to handle.
+
 ## [2.7.2](https://github.com/test-kitchen/test-kitchen/tree/v2.7.2) (2020-09-29)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.7.1...v2.7.2)
 
