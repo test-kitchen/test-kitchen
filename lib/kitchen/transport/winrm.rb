@@ -315,6 +315,7 @@ module Kitchen
           unless xfreerdp
             raise WinrmFailed, "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
           end
+
           args  = %W{/u:#{options[:user]}}
           args += %W{/p:#{options[:password]}} if options.key?(:password)
           args += %W{/v:#{URI.parse(options[:endpoint]).host}:#{rdp_port}}

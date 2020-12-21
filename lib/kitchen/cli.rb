@@ -16,7 +16,7 @@
 # limitations under the License.
 
 # CI tests fail without an explicit unconditional require of Thor
-require "thor" # rubocop:disable ChefRuby/UnlessDefinedRequire
+require "thor" # rubocop:disable Chef/Ruby/UnlessDefinedRequire
 
 require_relative "../kitchen"
 require_relative "generator/init"
