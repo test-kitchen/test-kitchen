@@ -22,6 +22,7 @@ require "kitchen"
 module Kitchen
   module Transport
     class TestingDummy < Kitchen::Transport::Base; end
+
     class Dodgy < Kitchen::Transport::Base
       no_parallel_for :setup
     end

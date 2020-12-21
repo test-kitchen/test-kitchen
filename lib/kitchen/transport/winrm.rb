@@ -308,16 +308,20 @@ module Kitchen
 
         # Builds a `LoginCommand` for use by Linux-based platforms.
         #
-        # TODO: determine whether or not `desktop` exists
-        #
         # @return [LoginCommand] a login command
         # @api private
         def login_command_for_linux
-          args  = %W{-u #{options[:user]}}
-          args += %W{-p #{options[:password]}} if options.key?(:password)
-          args += %W{#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
+          xfreerdp = Util.command_exists? "xfreerdp"
+          unless xfreerdp
+            raise WinrmFailed, "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
+          end
 
-          LoginCommand.new("rdesktop", args)
+          args  = %W{/u:#{options[:user]}}
+          args += %W{/p:#{options[:password]}} if options.key?(:password)
+          args += %W{/v:#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
+          args += %W{/cert-tofu} # always accept certificate
+
+          LoginCommand.new(xfreerdp, args)
         end
 
         # Builds a `LoginCommand` for use by Mac-based platforms.

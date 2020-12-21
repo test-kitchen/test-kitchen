@@ -1113,29 +1113,42 @@ describe Kitchen::Transport::Winrm::Connection do
     describe "for Linux-based workstations" do
       before do
         RbConfig::CONFIG.stubs(:[]).with("host_os").returns("linux-gnu")
+        Kitchen::Util.stubs(:command_exists?).returns("/usr/bin/xfreerdp")
       end
 
       it "returns a LoginCommand" do
         login_command.must_be_instance_of Kitchen::LoginCommand
       end
 
-      it "is an rdesktop command" do
-        login_command.command.must_equal "rdesktop"
-        args.must_match(/ foo:rdpyeah$/)
+      it "is an xfreerdp command" do
+        login_command.command.must_equal "/usr/bin/xfreerdp"
+        args.must_match(%r{ /cert-tofu$})
       end
 
       it "sets the user" do
-        args.must_match regexify("-u me ")
+        args.must_match regexify("/u:me ")
       end
 
       it "sets the pass if given" do
-        args.must_match regexify(" -p haha ")
+        args.must_match regexify(" /p:haha ")
       end
 
       it "won't set the pass if not given" do
         options.delete(:password)
 
-        args.wont_match regexify(" -p haha ")
+        args.wont_match regexify(" /p:haha ")
+      end
+
+      describe "xfreerdp binary not found in path" do
+        before do
+          RbConfig::CONFIG.stubs(:[]).with("host_os").returns("linux-gnu")
+          Kitchen::Util.stubs(:command_exists?).returns(false)
+        end
+
+        it "raises an WinrmFailed error" do
+          err = proc { login_command }.must_raise Kitchen::Transport::WinrmFailed
+          err.message.must_equal "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
+        end
       end
     end
 
