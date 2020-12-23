@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [2.9.0](https://github.com/test-kitchen/test-kitchen/tree/v2.9.0) (2020-12-23)
+
+- Policyfile error messages no longer mention EOL ChefDK
+- When using winrm to login to a Windows guest from a Linux host we now use `xfreerdp` to avoid CredSSP error messages. If you're currently using `rdesktop` you'll need to install `xfreerdp`. This solution works out of the box without configuration, making it easier to test Windows guests on Linux hosts. Thanks [@ramereth](https://github.com/ramereth)
+
 ## [2.8.0](https://github.com/test-kitchen/test-kitchen/tree/v2.8.0) (2020-12-02)
 
 - Better support Test Kitchen execution on Windows by running commands through a script file. This avoids failures when the command length becomes too long for Windows to handle.
