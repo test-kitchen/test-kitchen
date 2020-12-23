@@ -146,7 +146,7 @@ module Kitchen
               end
             end
               logger.fatal("The `chef` executable cannot be found in your " \
-                          "PATH. Ensure you have installed ChefDK or Chef Workstation " \
+                          "PATH. Ensure you have installed Chef Workstation " \
                           "from https://downloads.chef.io and that your PATH " \
                           "setting includes the path to the `chef` command.")
               raise UserError,
