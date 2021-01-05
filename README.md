@@ -127,7 +127,7 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
 [ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
 [fnichol]: https://github.com/fnichol
-[guide]: http://kitchen.ci/docs/getting-started/
+[guide]: https://kitchen.ci/docs/getting-started/introduction/
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
