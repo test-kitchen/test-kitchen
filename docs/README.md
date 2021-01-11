@@ -4,7 +4,7 @@ The Getting Started guide is written in [Markdown](https://daringfireball.net/pr
 
 ## Hosting
 
-All documentation will be hosted on the official Kitchen website <http://kitchen.ci>, which is a static site stored in an S3 bucket and fronted by CloudFront.
+All documentation will be hosted on the official Kitchen website <https://kitchen.ci/>, which is a static site stored in an S3 bucket and fronted by CloudFront.
 
 ## Running Locally
 
@@ -63,7 +63,7 @@ The Kitchen Documentation is released under the [MIT license][mit-license].
 
 
 [markdown]: http://daringfireball.net/projects/markdown/syntax
-[kitchenci]: http://kitchen.ci
+[kitchenci]: https://kitchen.ci/
 [middleman]: http://middlemanapp.com
 [pages]: http://pages.github.com/
 [kramdown]: http://kramdown.gettalong.org/
