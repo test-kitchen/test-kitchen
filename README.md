@@ -5,8 +5,8 @@
 
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
-| Website     | [http://kitchen.ci][website]													|
-| Source Code | [http://kitchen.ci/docs/getting-started/][guide]								|
+| Website     | [https://kitchen.ci/][website]													|
+| Source Code | [https://kitchen.ci//docs/getting-started/][guide]								|
 | Slack       | [#test-kitchen][slack] channel on Chef Community Slack	|
 | Twitter     | [@kitchenci][twitter]															|
 
@@ -134,4 +134,4 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [semver]: http://semver.org/
 [slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
 [twitter]: https://twitter.com/kitchenci
-[website]: http://kitchen.ci
+[website]: https://kitchen.ci/

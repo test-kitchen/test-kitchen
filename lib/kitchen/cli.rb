@@ -162,7 +162,7 @@ module Kitchen
       long_desc <<-DESC
         The instance states are in order: destroy, create, converge, setup, verify, destroy.
         Change one or more instances from the current state to the #{action} state. Actions for all
-        intermediate states will be executed. See http://kitchen.ci for further explanation.
+        intermediate states will be executed. See https://kitchen.ci/ for further explanation.
       DESC
       method_option :concurrency,
         aliases: "-c",
