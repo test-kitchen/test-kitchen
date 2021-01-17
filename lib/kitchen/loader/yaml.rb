@@ -17,6 +17,7 @@
 
 require "erb" unless defined?(Erb)
 require_relative "../../vendor/hash_recursive_merge"
+require "psych" unless defined?(Psych)
 require "yaml" unless defined?(YAML)
 
 module Kitchen
