@@ -1,5 +1,11 @@
 # Test Kitchen Change Log
 
+## [2.10.0](https://github.com/test-kitchen/test-kitchen/tree/v2.10.0) (2021-01-17)
+
+- Add support for uploading files to the systems within the provisioners similar to the `download` feature - [@tecracer-theinen](https://github.com/tecracer-theinen)
+- Allow using includes/excludes filters in the lifecycle hooks - [@jasonwbarnett](https://github.com/jasonwbarnett)
+- Resolved `uninitialized constant Kitchen::Loader::YAML::Psych` error - [@dwmarshall](https://github.com/dwmarshall)
+
 ## [2.9.0](https://github.com/test-kitchen/test-kitchen/tree/v2.9.0) (2020-12-23)
 
 - Policyfile error messages no longer mention EOL ChefDK
