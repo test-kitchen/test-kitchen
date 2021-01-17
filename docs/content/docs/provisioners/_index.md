@@ -22,6 +22,8 @@ provisioner:
   retry_on_exit_code: []
   max_retries: 1
   wait_for_retry: 30
+  uploads: # a Hash of local => remote file mappings to upload at the start of invocation
+    "contrib/some_file.cfg": "/etc"
   downloads: # a Hash of remote => local file mappings to download post-converge
   # if the local value is an existing dir, the file will be copied into it
   # if the local value does not exist, a file with that value as name will be created
