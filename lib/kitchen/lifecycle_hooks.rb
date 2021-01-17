@@ -15,8 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative "configurable"
 require_relative "errors"
-require_relative "shell_out"
+require_relative "lifecycle_hook/local"
+require_relative "lifecycle_hook/remote"
+require_relative "logging"
 
 module Kitchen
   # A helper object used by {Instance} to coordinate lifecycle hook calls from
@@ -27,10 +30,10 @@ module Kitchen
   class LifecycleHooks
     include Configurable
     include Logging
-    include ShellOut
 
-    def initialize(config)
+    def initialize(config, state_file)
       init_config(config)
+      @state_file = state_file
     end
 
     # Run a lifecycle phase with the pre and post hooks.
@@ -40,21 +43,22 @@ module Kitchen
     # @param block [Proc] Block of code implementing the lifecycle phase.
     # @return [void]
     def run_with_hooks(phase, state_file, &block)
-      run(instance, phase, state_file, :pre)
+      run(phase, :pre)
       yield
-      run(instance, phase, state_file, :post)
+      run(phase, :post)
     end
+
+    # @return [Kitchen::StateFile]
+    attr_reader :state_file
 
     private
 
     # Execute a specific lifecycle hook.
     #
-    # @param instance [Instance] The instance object to run against.
     # @param phase [String] Lifecycle phase which is being executed.
-    # @param state_file [StateFile] Instance state file object.
     # @param hook_timing [Symbol] `:pre` or `:post` to indicate which hook to run.
     # @return [void]
-    def run(instance, phase, state_file, hook_timing)
+    def run(phase, hook_timing)
       # Yes this has to be a symbol because of how data munger works.
       hook_key = :"#{hook_timing}_#{phase}"
       # No hooks? We're outta here.
@@ -65,80 +69,24 @@ module Kitchen
         # Coerce the common case of a bare string to be a local command. This
         # is to match the behavior of the old `pre_create_command` semi-hook.
         hook = { local: hook } if hook.is_a?(String)
-        if hook.include?(:local)
-          # Local command execution on the workstation.
-          run_local_hook(instance, state_file, hook)
-        elsif hook.include?(:remote)
-          # Remote command execution on the test instance.
-          run_remote_hook(instance, state_file, hook)
-        else
-          raise UserError, "Unknown lifecycle hook target #{hook.inspect}"
-        end
+        hook = generate_hook(phase, hook)
+        hook.run if hook.should_run?
       end
     end
 
-    # Execute a specific local command hook.
-    #
-    # @param instance [Instance] The instance object to run against.
-    # @param state_file [StateFile] Instance state file object.
-    # @param hook [Hash] Hook configration to use.
-    # @return [void]
-    def run_local_hook(instance, state_file, hook)
-      cmd = hook.fetch(:local)
-      state = state_file.read
-      # set up empty user variable
-      user = {}
-      # Set up some environment variables with instance info.
-      environment = {
-        "KITCHEN_INSTANCE_NAME" => instance.name,
-        "KITCHEN_SUITE_NAME" => instance.suite.name,
-        "KITCHEN_PLATFORM_NAME" => instance.platform.name,
-        "KITCHEN_INSTANCE_HOSTNAME" => state[:hostname].to_s,
-      }
-      # If the user specified env vars too, fix them up because symbol keys
-      # make mixlib-shellout sad.
-      if hook[:environment]
-        hook[:environment].each do |k, v|
-          environment[k.to_s] = v.to_s
-        end
+    # @param phase [String]
+    # @param hook [Hash]
+    # @return [Kitchen::LifecycleHook::Local, Kitchen::LifecycleHook::Remote]
+    def generate_hook(phase, hook)
+      if hook.include?(:local)
+        # Local command execution on the workstation.
+        Kitchen::LifecycleHook::Local.new(self, phase, hook)
+      elsif hook.include?(:remote)
+        # Remote command execution on the test instance.
+        Kitchen::LifecycleHook::Remote.new(self, phase, hook)
+      else
+        raise UserError, "Unknown lifecycle hook target #{hook.inspect}"
       end
-
-      # add user to user hash for later merging
-      if hook[:user]
-        user[:user] = hook[:user]
-      end
-
-      # Default the cwd to the kitchen root and resolve a relative input cwd against that.
-      cwd = if hook[:cwd]
-              File.expand_path(hook[:cwd], config[:kitchen_root])
-            else
-              config[:kitchen_root]
-            end
-      # Build the options for mixlib-shellout.
-      opts = {}.merge(user).merge(cwd: cwd, environment: environment)
-      run_command(cmd, opts)
-    end
-
-    # Execute a specific remote command hook.
-    #
-    # @param instance [Instance] The instance object to run against.
-    # @param state_file [StateFile] Instance state file object.
-    # @param hook [Hash] Hook configration to use.
-    # @return [void]
-    def run_remote_hook(instance, state_file, hook)
-      # Check if we're in a state that makes sense to even try.
-      unless instance.last_action
-        if hook[:skippable]
-          # Just not even trying.
-          return
-        else
-          raise UserError, "Cannot use remote lifecycle hooks during phases when the instance is not available"
-        end
-      end
-
-      cmd = hook.fetch(:remote)
-      conn = instance.transport.connection(state_file.read)
-      conn.execute(cmd)
     end
   end
 end

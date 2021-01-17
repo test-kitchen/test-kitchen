@@ -119,7 +119,7 @@ describe Kitchen::Instance do
   let(:logger_io)       { StringIO.new }
   let(:logger)          { Kitchen::Logger.new(logdev: logger_io) }
   let(:instance)        { Kitchen::Instance.new(opts) }
-  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}) }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}, state_file) }
   let(:provisioner)     { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)      { DummyStateFile.new }
   let(:transport)       { Kitchen::Transport::Dummy.new({}) }
@@ -500,8 +500,8 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:create, :pre)
+          lifecycle_hooks.expects(:run).with(:create, :post)
 
           instance.create
         end
@@ -556,10 +556,10 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:create, :pre)
+          lifecycle_hooks.expects(:run).with(:create, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :pre)
+          lifecycle_hooks.expects(:run).with(:converge, :post)
 
           instance.converge
         end
@@ -582,8 +582,8 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :pre)
+          lifecycle_hooks.expects(:run).with(:converge, :post)
 
           instance.converge
         end
