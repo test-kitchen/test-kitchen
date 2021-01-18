@@ -16,7 +16,7 @@ The following are in the test-kitchen GitHub organization
 
 The following are written by the [Chef Software][chef].
 
-[kitchen-vcenter][appbundle-updater] | [kitchen-inspec][inspec]
+[kitchen-vcenter][vsphere] | [kitchen-inspec][inspec]
 ---- | ---- |
 [![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | [![Status](https://travis-ci.org/inspec/kitchen-inspec.svg?branch=master)](https://travis-ci.org/inspec/kitchen-inspec) |
 [![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](https://rubygems.org/gems/kitchen-vcenter) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
@@ -85,7 +85,7 @@ The following are community driven plugins.
 [sparkleformation]: https://github.com/devkid/kitchen-sparkleformation
 [wpar]:  https://github.com/adejoux/kitchen-wpar
 [powervc]:  https://github.com/chmod666org/kitchen-powervc
-[appbundle-updater]: https://github.com/chef/kitchen-appbundle-updater
+[vsphereater]: https://github.com/chef/kitchen-vsphere
 [inspec]: https://github.com/chef/kitchen-inspec
 [chef]: https://chef.io
 [azurerm]: http://github.com/pendrica/kitchen-azurerm
