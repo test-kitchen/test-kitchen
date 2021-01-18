@@ -1,4 +1,6 @@
 source "https://rubygems.org"
+
+# Specify your gem"s dependencies in test-kitchen.gemspec
 gemspec
 
 group :integration do
@@ -16,8 +18,4 @@ end
 
 group :chefstyle do
   gem "chefstyle"
-end
-
-group :docs do
-  gem "yard"
 end

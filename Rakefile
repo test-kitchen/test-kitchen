@@ -41,12 +41,6 @@ end
 desc "Run all quality tasks"
 task quality: %i{style stats}
 
-begin
-  require "yard" unless defined?(YARD)
-  YARD::Rake::YardocTask.new
-rescue LoadError
-  puts "yard is not available. (sudo) gem install yard to generate yard documentation."
-end
 
 task default: %i{test quality}
 
