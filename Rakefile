@@ -41,7 +41,6 @@ end
 desc "Run all quality tasks"
 task quality: %i{style stats}
 
-
 task default: %i{test quality}
 
 namespace :docs do

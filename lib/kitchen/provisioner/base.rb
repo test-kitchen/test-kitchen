@@ -74,7 +74,7 @@ module Kitchen
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
-            debug("Uploading #{Array(locals).join(', ')} to #{remote}")
+            debug("Uploading #{Array(locals).join(", ")} to #{remote}")
             conn.upload(locals.to_s, remote)
           end
           conn.execute(install_command)
