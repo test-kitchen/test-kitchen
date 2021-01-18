@@ -50,30 +50,26 @@ describe Kitchen::Error do
     end
 
     it "returns an array containing the exception's backtrace" do
-      begin
-        raise Kitchen::StandardError, "shoot"
-      rescue => e
-        Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
-      end
+      raise Kitchen::StandardError, "shoot"
+    rescue => e
+      Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
     end
 
     it "returns an array containing a nested exception, if given" do
-      begin
-        raise IOError, "no disk, yo"
-      rescue
-        e = Kitchen::StandardError.new("shoot")
+      raise IOError, "no disk, yo"
+    rescue
+      e = Kitchen::StandardError.new("shoot")
 
-        Kitchen::Error.formatted_trace(e).must_equal([
-                                                       "------Exception-------",
-                                                       "Class: Kitchen::StandardError",
-                                                       "Message: shoot",
-                                                       "----------------------",
-                                                       "---Nested Exception---",
-                                                       "Class: IOError",
-                                                       "Message: no disk, yo",
-                                                       "----------------------",
-                                                     ])
-      end
+      Kitchen::Error.formatted_trace(e).must_equal([
+                                                     "------Exception-------",
+                                                     "Class: Kitchen::StandardError",
+                                                     "Message: shoot",
+                                                     "----------------------",
+                                                     "---Nested Exception---",
+                                                     "Class: IOError",
+                                                     "Message: no disk, yo",
+                                                     "----------------------",
+                                                   ])
     end
 
     it "returns an array when an error has more than one error in original" do
@@ -105,13 +101,12 @@ describe Kitchen::StandardError do
   end
 
   it "by default, sets original exception to the last raised exception" do
-    begin
-      raise IOError, "crap"
-    rescue
-      original = Kitchen::StandardError.new("oops").original
-      original.must_be_kind_of IOError
-      original.message.must_equal "crap"
-    end
+    raise IOError, "crap"
+  rescue
+    original = Kitchen::StandardError.new("oops").original
+    original.must_be_kind_of IOError
+    original.message.must_equal "crap"
+
   end
 
   it "can embed an exception when constructing" do
@@ -162,20 +157,16 @@ describe Kitchen do
     describe "for instance failures" do
       def go_boom
         Kitchen.with_friendly_errors do
-          begin
-            raise IOError, "no stuff"
-          rescue
-            raise Kitchen::InstanceFailure, "cannot do that"
-          end
+          raise IOError, "no stuff"
+        rescue
+          raise Kitchen::InstanceFailure, "cannot do that"
         end
       end
 
       it "exits with 10" do
-        begin
-          go_boom
-        rescue SystemExit => e
-          e.status.must_equal 10
-        end
+        go_boom
+      rescue SystemExit => e
+        e.status.must_equal 10
       end
 
       it "prints a message on STDERR" do
@@ -212,11 +203,11 @@ describe Kitchen do
       end
 
       it "logs the exception message on the common logger's error severity" do
-        begin
-          go_boom
-        rescue SystemExit
-          logger_io.string.must_match(/ERROR -- Kitchen: cannot do that$/)
-        end
+
+        go_boom
+      rescue SystemExit
+        logger_io.string.must_match(/ERROR -- Kitchen: cannot do that$/)
+
       end
 
       it "logs the exception message on debug, if set" do
@@ -233,20 +224,16 @@ describe Kitchen do
     describe "for unexpected failures" do
       def go_boom
         Kitchen.with_friendly_errors do
-          begin
-            raise IOError, "wtf?"
-          rescue
-            raise Kitchen::StandardError, "ah crap"
-          end
+          raise IOError, "wtf?"
+        rescue
+          raise Kitchen::StandardError, "ah crap"
         end
       end
 
       it "exits with 20" do
-        begin
-          go_boom
-        rescue SystemExit => e
-          e.status.must_equal 20
-        end
+        go_boom
+      rescue SystemExit => e
+        e.status.must_equal 20
       end
 
       it "prints a message on STDERR" do
@@ -285,16 +272,14 @@ describe Kitchen do
       end
 
       it "logs the exception message on the common logger's error severity" do
-        begin
-          go_boom
-        rescue SystemExit
-          logger_io.string
-            .must_match(/ERROR -- Kitchen: ------Exception-------$/)
-          logger_io.string
-            .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
-          logger_io.string
-            .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
-        end
+        go_boom
+      rescue SystemExit
+        logger_io.string
+          .must_match(/ERROR -- Kitchen: ------Exception-------$/)
+        logger_io.string
+          .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
+        logger_io.string
+          .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
       end
 
       it "logs the exception message on debug, if set" do

@@ -973,13 +973,11 @@ describe Kitchen::Instance do
         end
 
         it "populates the InstanceFailure message" do
-          begin
-            instance.public_send(action)
-          rescue Kitchen::Error => e
-            e.message.must_match regex_for(
-              "Create failed on instance #{instance.to_str}"
-            )
-          end
+          instance.public_send(action)
+        rescue Kitchen::Error => e
+          e.message.must_match regex_for(
+            "Create failed on instance #{instance.to_str}"
+          )
         end
 
         it "logs the failure" do
@@ -1016,13 +1014,11 @@ describe Kitchen::Instance do
         end
 
         it "populates the ActionFailed message" do
-          begin
-            instance.public_send(action)
-          rescue Kitchen::Error => e
-            e.message.must_match regex_for(
-              "Failed to complete #create action: [watwat]"
-            )
-          end
+          instance.public_send(action)
+        rescue Kitchen::Error => e
+          e.message.must_match regex_for(
+            "Failed to complete #create action: [watwat]"
+          )
         end
 
         it "logs the failure" do
