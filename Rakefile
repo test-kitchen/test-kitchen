@@ -50,21 +50,6 @@ end
 
 task default: %i{test quality}
 
-begin
-  require "github_changelog_generator/task"
-  require "kitchen/version"
-
-  GitHubChangelogGenerator::RakeTask.new :changelog do |config|
-    config.future_release = "v#{Kitchen::VERSION}"
-    config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
-    config.bug_labels = "bug,Bug".split(",")
-    config.exclude_labels = %w{Duplicate Question Discussion No_Changelog}
-  end
-rescue LoadError
-  puts "github_changelog_generator is not available." \
-       " (sudo) gem install github_changelog_generator to generate changelogs"
-end
-
 namespace :docs do
   desc "Deploy docs"
   task :deploy do

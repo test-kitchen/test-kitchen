@@ -8,10 +8,6 @@ group :integration do
   gem "kitchen-vagrant"
 end
 
-group :changelog do
-  gem "github_changelog_generator", "1.15.2"
-end
-
 group :debug do
   gem "pry"
   gem "pry-byebug"
