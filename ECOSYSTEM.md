@@ -1,6 +1,6 @@
 # Community and Ecosystem plugins
 
-Here is collection of plugins for extending Test Kitchen functionality:
+Here is a collection of plugins for extending Test Kitchen functionality:
 
 The following are in the test-kitchen GitHub organization
 
@@ -16,10 +16,10 @@ The following are in the test-kitchen GitHub organization
 
 The following are written by the [Chef Software][chef].
 
-[kitchen-appbundle-updater][appbundle-updater] | [kitchen-inspec][inspec]
+[kitchen-vcenter][appbundle-updater] | [kitchen-inspec][inspec]
 ---- | ---- |
-[![Status](https://travis-ci.org/chef/kitchen-appbundle-updater.svg?branch=master)](https://travis-ci.org/chef/kitchen-appbundle-updater)| [![Status](https://travis-ci.org/chef/kitchen-inspec.svg?branch=master)](https://travis-ci.org/chef/kitchen-inspec) |
-[![Gem Version](https://badge.fury.io/rb/kitchen-appbundle-updater.svg)](http://badge.fury.io/rb/kitchen-appbundle-updater) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
+[![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | [![Status](https://travis-ci.org/inspec/kitchen-inspec.svg?branch=master)](https://travis-ci.org/inspec/kitchen-inspec) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](https://rubygems.org/gems/kitchen-vcenter) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
 
 [kitchen-vra][vra] | [kitchen-vro][vro] | [kitchen-vcair][vcair] | [kitchen-oraclecloud][oracle] | [kitchen-ssh-cisco][sadpanda] | [kitchen-vcenter][vcenter]
 ---- | ---- | ---- | ---- | ---- | ---- |
