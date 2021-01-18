@@ -261,10 +261,8 @@ describe Kitchen::Provisioner::Base do
 
   describe "sandbox" do
     after do
-      begin
-        provisioner.cleanup_sandbox
-      rescue # rubocop:disable Lint/HandleExceptions
-      end
+      provisioner.cleanup_sandbox
+    rescue # rubocop:disable Lint/HandleExceptions
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do

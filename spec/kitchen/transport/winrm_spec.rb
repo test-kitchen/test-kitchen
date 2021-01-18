@@ -944,11 +944,9 @@ describe Kitchen::Transport::Winrm::Connection do
         end
 
         it "raises WinrmFailed exception with the exit code of the failure" do
-          begin
-            connection.execute("doit")
-          rescue Kitchen::Transport::WinrmFailed => e
-            e.exit_code.must_equal 1
-          end
+          connection.execute("doit")
+        rescue Kitchen::Transport::WinrmFailed => e
+          e.exit_code.must_equal 1
         end
       end
     end

@@ -920,11 +920,9 @@ describe Kitchen::Transport::Ssh::Connection do
       end
 
       it "returns the exit code with an SshFailed exception" do
-        begin
-          assert_scripted { connection.execute("doit") }
-        rescue Kitchen::Transport::SshFailed => e
-          e.exit_code.must_equal 42
-        end
+        assert_scripted { connection.execute("doit") }
+      rescue Kitchen::Transport::SshFailed => e
+        e.exit_code.must_equal 42
       end
     end
 

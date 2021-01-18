@@ -195,18 +195,16 @@ module Kitchen
           FileUtils.mkdir_p(File.dirname(local))
 
           Array(remotes).each do |file|
+            logger.debug("Attempting to download '#{file}' as file")
+            session.scp.download!(file, local)
+          rescue Net::SCP::Error
             begin
-              logger.debug("Attempting to download '#{file}' as file")
-              session.scp.download!(file, local)
+              logger.debug("Attempting to download '#{file}' as directory")
+              session.scp.download!(file, local, recursive: true)
             rescue Net::SCP::Error
-              begin
-                logger.debug("Attempting to download '#{file}' as directory")
-                session.scp.download!(file, local, recursive: true)
-              rescue Net::SCP::Error
-                logger.warn(
-                  "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
-                )
-              end
+              logger.warn(
+                "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
+              )
             end
           end
         rescue Net::SSH::Exception => ex

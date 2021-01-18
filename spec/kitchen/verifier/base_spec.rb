@@ -269,10 +269,8 @@ describe Kitchen::Verifier::Base do
 
   describe "sandbox" do
     after do
-      begin
-        verifier.cleanup_sandbox
-      rescue # rubocop:disable Lint/HandleExceptions
-      end
+      verifier.cleanup_sandbox
+    rescue # rubocop:disable Lint/HandleExceptions
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
