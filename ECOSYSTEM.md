@@ -14,22 +14,17 @@ The following are in the test-kitchen GitHub organization
 [![Status](https://travis-ci.org/test-kitchen/kitchen-dsc.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dsc)| [![Status](https://travis-ci.org/test-kitchen/kitchen-pester.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-pester) | [![Status](https://travis-ci.org/test-kitchen/kitchen-joyent.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-joyent) | [![Status](https://travis-ci.org/test-kitchen/kitchen-opennebula.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-opennebula) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-hyperv.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-hyperv) | [![Status](https://travis-ci.org/test-kitchen/kitchen-cloudstack.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-cloudstack)
 [![Gem Version](https://badge.fury.io/rb/kitchen-dsc.svg)](http://badge.fury.io/rb/kitchen-dsc) | [![Gem Version](https://badge.fury.io/rb/kitchen-pester.svg)](http://badge.fury.io/rb/kitchen-pester) | [![Gem Version](https://badge.fury.io/rb/kitchen-joyent.svg)](http://badge.fury.io/rb/kitchen-joyent) | [![Gem Version](https://badge.fury.io/rb/kitchen-opennebula.svg)](http://badge.fury.io/rb/kitchen-opennebula) | [![Gem Version](https://badge.fury.io/rb/kitchen-hyperv.svg)](http://badge.fury.io/rb/kitchen-hyperv) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudstack.svg)](http://badge.fury.io/rb/kitchen-cloudstack)
 
- [kitchen-dokken][dokken]  | [kitchen-azurerm][azurerm]
- ---- | ---- |
-[![Status](https://travis-ci.org/test-kitchen/kitchen-dokken.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dokken)| [![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm)
-[![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm)
+ [kitchen-dokken][dokken] | [kitchen-azurerm][azurerm] | [kitchen-vra][vra] | [kitchen-vro][vro] | [kitchen-vcair][vcair]
+ ---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/test-kitchen/kitchen-dokken.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dokken)| [![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/chef-partners/kitchen-vra.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vra)| [![Status](https://travis-ci.org/chef-partners/kitchen-vro.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vro) | [![Status](https://travis-ci.org/chef-partners/kitchen-vcair.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vcair)
+[![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) | [![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
 The following are written by the [Chef Software][chef].
 
 [kitchen-vcenter][vcenter] | [kitchen-inspec][inspec]
----- | ---- |
+---- | ----
 [![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | [![Status](https://travis-ci.org/inspec/kitchen-inspec.svg?branch=master)](https://travis-ci.org/inspec/kitchen-inspec) |
 [![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](https://rubygems.org/gems/kitchen-vcenter) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
-
-[kitchen-vra][vra] | [kitchen-vro][vro] | [kitchen-vcair][vcair] | [kitchen-sparkleformation][sparkleformation]
----- | ---- | ---- | ---- | ---- | ---- |
-[![Status](https://travis-ci.org/chef-partners/kitchen-vra.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vra)| [![Status](https://travis-ci.org/chef-partners/kitchen-vro.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vro) | [![Status](https://travis-ci.org/chef-partners/kitchen-vcair.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vcair) | [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation)
-[![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
 The following are community-maintained plugins
 
@@ -47,6 +42,11 @@ The following are community-maintained plugins
 ---- | ---- | ---- | ---- | ---- | ----
 [![Status](https://travis-ci.org/esmil/kitchen-qemu.svg?branch=master)](https://travis-ci.org/esmil/kitchen-qemu)| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |  [![Status](https://travis-ci.org/chmod666org/kitchen-powervc.svg?branch=master)](https://travis-ci.org/chmod666org/kitchen-powervc) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
 [![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
+
+[kitchen-sparkleformation][sparkleformation] |
+---- |
+[![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) |
 
 [chefpartners]: https://github.com/chef-partners/
 [ec2]: https://github.com/test-kitchen/kitchen-ec2
