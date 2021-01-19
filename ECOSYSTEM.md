@@ -34,7 +34,7 @@ The following are community-maintained plugins
 [![Gem Version](https://badge.fury.io/rb/kitchen-sync.svg)](http://badge.fury.io/rb/kitchen-sync) | [![Gem Version](https://badge.fury.io/rb/kitchen-ansible.svg)](http://badge.fury.io/rb/kitchen-ansible) | [![Gem Version](https://badge.fury.io/rb/kitchen-puppet.svg)](http://badge.fury.io/rb/kitchen-puppet) | [![Gem Version](https://badge.fury.io/rb/kitchen-salt.svg)](http://badge.fury.io/rb/kitchen-salt) | [![Gem Version](https://badge.fury.io/rb/kitchen-lxc.svg)](http://badge.fury.io/rb/kitchen-lxc)
 
 [kitchen-nodes][nodes] | [kitchen-zcloudjp][zcloudjp] | [kitchen-softlayer][softlayer] | [kitchen-linode][linode] | [kitchen-docker][docker]
----- | ---- | ---- | ---- | ---- | ----
+---- | ---- | ---- | ---- | ----
 [![Status](https://travis-ci.org/mwrock/kitchen-nodes.svg?branch=master)](https://travis-ci.org/mwwrock/kitchen-nodes) | [![Status](https://travis-ci.org/higanworks/kitchen-zcloudjp.svg?branch=master)](https://travis-ci.org/higanworks/kitchen-zcloudjp) |  [![Status](https://travis-ci.org/neillturner/kitchen-softlayer.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-softlayer) | [![Status](https://travis-ci.org/ssplatt/kitchen-linode.svg?branch=master)](https://travis-ci.org/ssplatt/kitchen-linode) | [![Status](https://travis-ci.org/ssplatt/kitchen-docker.svg?branch=master)](https://travis-ci.org/portertech/kitchen-docker)
 [![Gem Version](https://badge.fury.io/rb/kitchen-nodes.svg)](http://badge.fury.io/rb/kitchen-nodes) | [![Gem Version](https://badge.fury.io/rb/kitchen-zcloudjp.svg)](http://badge.fury.io/rb/kitchen-zcloudjp) | [![Gem Version](https://badge.fury.io/rb/kitchen-softlayer.svg)](http://badge.fury.io/rb/kitchen-softlayer) | [![Gem Version](https://badge.fury.io/rb/kitchen-linode.svg)](http://badge.fury.io/rb/kitchen-linode)  | [![Gem Version](https://badge.fury.io/rb/kitchen-docker.svg)](http://badge.fury.io/rb/kitchen-docker)
 
@@ -44,7 +44,7 @@ The following are community-maintained plugins
 [![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc)
 
 [kitchen-sparkleformation][sparkleformation] | [kitchen-terraform][terraform]
----- | ---
+---- | ----
 [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
 [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
 
