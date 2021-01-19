@@ -10,8 +10,7 @@
 | Slack       | [#test-kitchen][slack] channel on Chef Community Slack	|
 | Twitter     | [@kitchenci][twitter]															|
 
-> **Test Kitchen is an integration tool for developing and testing
-> infrastructure code and software on isolated target platforms.**
+**Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.**
 
 ## Getting Started Guide
 
