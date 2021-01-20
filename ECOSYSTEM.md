@@ -19,6 +19,11 @@ The following are in the test-kitchen GitHub organization
 [![Status](https://travis-ci.org/test-kitchen/kitchen-dokken.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dokken)| [![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/test-kitchen/kitchen-vra.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vra)| [![Status](https://travis-ci.org/test-kitchen/kitchen-vro.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vro) | [![Status](https://travis-ci.org/test-kitchen/kitchen-vcair.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vcair)
 [![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) | [![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
+[kitchen-habtiat][habitat] |
+---- | 
+[![CI](https://github.com/test-kitchen/kitchen-habitat/workflows/CI/badge.svg?branch=master)](https://github.com/test-kitchen/kitchen-habitat/actions?query=workflow%3ACI+branch%3Amaster) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-habitat.svg)](http://badge.fury.io/rb/kitchen-habitat) |
+
 The following are written by the [Chef Software][chef].
 
 [kitchen-vcenter][vcenter] | [kitchen-inspec][inspec]
@@ -57,9 +62,9 @@ The following are community-maintained plugins
 [vagrant]: https://github.com/test-kitchen/kitchen-vagrant
 [dsc]: https://github.com/test-kitchen/kitchen-dsc
 [pester]: https://github.com/test-kitchen/kitchen-pester
-[joyent]: https://github.com/test-kitchen/kitchen-joyent
 [opennebula]: https://github.com/test-kitchen/kitchen-opennebula
 [hyperv]: https://github.com/test-kitchen/kitchen-hyperv
+[habitat]: https://github.com/test-kitchen/kitchen-habitat
 [cloudstack]: https://github.com/test-kitchen/kitchen-cloudstack
 [vra]: https://github.com/chef-partners/kitchen-vra
 [vro]: https://github.com/chef-partners/kitchen-vro
