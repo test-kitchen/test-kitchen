@@ -15,7 +15,6 @@ provisioner:
   wait_for_retry: 90 # tweak based on machine shutdown speed
   retry_on_exit_code: [35, 213] # retry for array of exit codes
   client_rb:
-    exit_status: :enabled # default in 13+, only required for 12.x
     client_fork: false # don't fork so we get true exit code, not needed for Windows
 ```
 
