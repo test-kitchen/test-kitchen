@@ -10,7 +10,7 @@ kitchen-azurerm is a Test Kitchen *driver* for Microsoft Azure. A full example r
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: azurerm
@@ -20,13 +20,9 @@ driver:
 
 provisioner:
   name: chef_zero
-  retry_on_exit_code:
-    - 20
-    - 35
-  max_retries: 10
-  wait_for_retry: 180
-  client_rb:
-    exit_status: :enabled
+
+verifier:
+  name: inspec
 
 platforms:
   - name: windows2016
