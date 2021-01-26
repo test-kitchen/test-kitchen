@@ -34,13 +34,21 @@ describe Kitchen::Verifier::Shell do
     { test_base_path: "/basist", kitchen_root: "/rooty" }
   end
 
+  let(:transport) do
+    t = mock("transport")
+    t.responds_like_instance_of(Kitchen::Transport::Ssh)
+    t.stubs(:[])
+    t
+  end
+
   let(:instance) do
     stub(
       name: [platform.name, suite.name].join("-"),
       to_str: "instance",
       logger: logger,
       suite: suite,
-      platform: platform
+      platform: platform,
+      transport: transport
     )
   end
 
@@ -90,6 +98,13 @@ describe Kitchen::Verifier::Shell do
         config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
         config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
         config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
+        config[:shellout_opts][:environment]["KITCHEN_USERNAME"].must_be_nil
+      end
+
+      it "transport username is set to environment" do
+        transport.stubs(:[]).with(:username).returns("demigod")
+        verifier.call(state)
+        config[:shellout_opts][:environment]["KITCHEN_USERNAME"].must_equal "demigod"
       end
 
       it "raises ActionFailed if set false to :command" do
@@ -109,6 +124,7 @@ describe Kitchen::Verifier::Shell do
       let(:transport) do
         t = mock("transport")
         t.responds_like_instance_of(Kitchen::Transport::Ssh)
+        t.stubs(:[])
         t
       end
 
