@@ -21,6 +21,7 @@ require "rbconfig" unless defined?(RbConfig)
 require_relative "../../errors"
 require_relative "../../logging"
 require_relative "../../shell_out"
+require_relative "../../which"
 
 module Kitchen
   module Provisioner
@@ -31,6 +32,7 @@ module Kitchen
       class Policyfile
         include Logging
         include ShellOut
+        include Which
 
         # Creates a new cookbook resolver.
         #
@@ -40,9 +42,9 @@ module Kitchen
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
         def initialize(policyfile, path, logger: Kitchen.logger, always_update: false)
-          @policyfile = policyfile
-          @path       = path
-          @logger     = logger
+          @policyfile    = policyfile
+          @path          = path
+          @logger        = logger
           @always_update = always_update
         end
 
@@ -51,30 +53,29 @@ module Kitchen
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
         def self.load!(logger: Kitchen.logger)
-          detect_chef_command!(logger)
+          # intentionally left blank
         end
 
         # Performs the cookbook resolution and vendors the resulting cookbooks
         # in the desired path.
         def resolve
-          info("Exporting cookbook dependencies from Policyfile #{path}...")
-          run_command("chef export #{escape_path(policyfile)} #{escape_path(path)} --force")
+          info("Exporting cookbook dependencies from Policyfile #{path} using `#{cli_path} export`...")
+          run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force")
         end
 
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
           if File.exist?(lockfile)
-            info("Installing cookbooks for Policyfile #{policyfile} using `chef install`")
+            info("Installing cookbooks for Policyfile #{policyfile} using `#{cli_path} install`")
           else
-            info("Policy lock file doesn't exist, running `chef install` for "\
-                 "Policyfile #{policyfile}...")
+            info("Policy lock file doesn't exist, running `#{cli_path} install` for Policyfile #{policyfile}...")
           end
-          run_command("chef install #{escape_path(policyfile)}")
+          run_command("#{cli_path} install #{escape_path(policyfile)}")
 
           if always_update
-            info("Updating policy lock using `chef update`")
-            run_command("chef update #{escape_path(policyfile)}")
+            info("Updating policy lock using `#{cli_path} update`")
+            run_command("#{cli_path} update #{escape_path(policyfile)}")
           end
         end
 
@@ -126,33 +127,24 @@ module Kitchen
           end
         end
 
-        class << self
-          private
+        # Find the `chef` or `chef-cli` commands in the path or raise `chef` is present in
+        # ChefDK / Workstation releases, but is no longer shipped in any gems now that we
+        # use a Go based wrapper for the `chef` command in Workstation. The Ruby CLI has been
+        # renamed `chef-cli` under the hood and is shipped in the `chef-cli` gem.
+        #
+        # @api private
+        # @returns [String]
+        def cli_path
+          @cli_path ||= which("chef-cli") || which("chef") || no_cli_found_error
+        end
 
-          # Ensure the `chef` command is in the path.
-          #
-          # @param logger [Kitchen::Logger] the logger to use
-          # @raise [UserError] if the `chef` command is not in the PATH
-          # @api private
-          def detect_chef_command!(logger)
-            unless ENV["PATH"].split(File::PATH_SEPARATOR).any? do |path|
-              if /mswin|mingw/.match?(RbConfig::CONFIG["host_os"])
-                # Windows could have different extentions: BAT, EXE or NONE
-                %w{chef chef.exe chef.bat}.each do |bin|
-                  File.exist?(File.join(path, bin))
-                end
-              else
-                File.exist?(File.join(path, "chef"))
-              end
-            end
-              logger.fatal("The `chef` executable cannot be found in your " \
-                          "PATH. Ensure you have installed Chef Workstation " \
-                          "from https://downloads.chef.io and that your PATH " \
-                          "setting includes the path to the `chef` command.")
-              raise UserError,
-                "Could not find the chef executable in your PATH."
-            end
-          end
+        # @api private
+        def no_cli_found_error
+          @logger.fatal("The `chef` or `chef-cli` executables cannot be found in your " \
+                        "PATH. Ensure you have installed Chef Workstation " \
+                        "from https://downloads.chef.io and that your PATH " \
+                        "setting includes the path to the `chef` or `chef-cli` commands.")
+          raise UserError, "Could not find the chef or chef-cli executables in your PATH."
         end
 
       end

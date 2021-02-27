@@ -1207,15 +1207,6 @@ describe Kitchen::Provisioner::ChefBase do
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
           end
 
-          describe "when the chef executable is not in the PATH" do
-            it "raises a UserError" do
-              Kitchen::Provisioner::Chef::Policyfile.stubs(:detect_chef_command!).with do
-                raise Kitchen::UserError, "Load failed"
-              end
-              proc { provisioner }.must_raise Kitchen::UserError
-            end
-          end
-
           describe "when using a provisoner that doesn't support policyfiles" do
             # This is be the default, provisioners must opt-in.
             it "raises a UserError" do
