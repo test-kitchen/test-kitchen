@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [2.11.0](https://github.com/test-kitchen/test-kitchen/tree/v2.11.0) (2021-03-01)
+
+- The `policyfile` provisioner can now use the `chef-cli` for policyfile depsolving allowing for the testing of Chef Infra cookbooks with Policyfiles when using a gem installed Test Kitchen. - [#1725](https://github.com/test-kitchen/test-kitchen/pull/1725)([lamont-granquist](https://github.com/lamont-granquist))
+
 ## [2.10.0](https://github.com/test-kitchen/test-kitchen/tree/v2.10.0) (2021-01-17)
 
 - Add support for uploading files to the systems within the provisioners similar to the `download` feature - [@tecracer-theinen](https://github.com/tecracer-theinen)
