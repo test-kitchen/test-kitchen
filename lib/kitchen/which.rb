@@ -16,7 +16,7 @@
 # limitations under the License.
 
 require "chef-utils/dsl/which" unless defined?(ChefUtils::DSL::Which)
-require_relative "chef_utils_wiring" unless defined?(Ohai::Mixin::ChefUtilsWiring)
+require_relative "chef_utils_wiring" unless defined?(Kitchen::ChefUtilsWiring)
 
 module Kitchen
   module Which
