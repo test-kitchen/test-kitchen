@@ -89,7 +89,7 @@ lifecycle:
       done;
 ```
 
-You can include or exclude platforms from specific lifecycle hooks with the `include` or `exclude`
+You can include or exclude platforms from specific lifecycle hooks with the `includes` or `excludes`
 keys, e.g.
 
 ```yaml
@@ -98,11 +98,11 @@ lifecycle:
   - local: echo 'Awaiting cloud-init completion'
   - remote: |
       echo "This is my *nix"
-    exclude:
+    excludes:
       - windows-2012r2
       - windows-2016
   - remote: |
       Write-Host "This is my windows"
-    exclude:
+    excludes:
       - redhat-7
 ```
