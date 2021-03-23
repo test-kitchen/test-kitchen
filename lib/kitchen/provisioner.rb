@@ -36,5 +36,13 @@ module Kitchen
     def self.for_plugin(plugin, config)
       Kitchen::Plugin.load(self, plugin, config)
     end
+
+    def self.change_provider_chef_zero(plugin, config)
+      if plugin == "chef_zero"
+        plugin = "chef_infra"
+        config[:name] = "chef_infra"
+      end
+      [plugin, config]
+    end
   end
 end
