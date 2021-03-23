@@ -39,9 +39,9 @@ module Kitchen
     end
 
     def self.change_provider_chef_zero(plugin, config)
-      if plugin == 'chef_zero'
-        plugin = 'chef_infra'
-        config[:name] = 'chef_infra'
+      if plugin == "chef_zero"
+        plugin = "chef_infra"
+        config[:name] = "chef_infra"
       end
       [plugin, config]
     end
