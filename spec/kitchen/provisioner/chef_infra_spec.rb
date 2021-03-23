@@ -18,9 +18,9 @@
 require_relative "../../spec_helper"
 
 require "kitchen"
-require "kitchen/provisioner/chef_zero"
+require "kitchen/provisioner/chef_infra"
 
-describe Kitchen::Provisioner::ChefZero do
+describe Kitchen::Provisioner::ChefInfra do
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
   let(:platform)        { stub(os_type: nil) }
@@ -40,7 +40,7 @@ describe Kitchen::Provisioner::ChefZero do
   end
 
   let(:provisioner) do
-    Kitchen::Provisioner::ChefZero.new(config).finalize_config!(instance)
+    Kitchen::Provisioner::ChefInfra.new(config).finalize_config!(instance)
   end
 
   it "provisioner api_version is 2" do
