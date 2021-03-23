@@ -22,7 +22,7 @@ module Kitchen
     # Chef Zero provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class ChefZero < ChefBase
+    class ChefInfra < ChefBase
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
