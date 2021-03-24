@@ -293,11 +293,11 @@ module Kitchen
       logger = StdoutLogger.new(stdout)
       if colorize
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize(msg.to_s, color).concat("\n")
+          Color.colorize(msg.dup.to_s, color).concat("\n")
         end
       else
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          msg.concat("\n")
+          msg.dup.concat("\n")
         end
       end
       logger
