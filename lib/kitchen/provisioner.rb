@@ -34,16 +34,8 @@ module Kitchen
     # @return [Provisioner::Base] a provisioner instance
     # @raise [ClientError] if a provisioner instance could not be created
     def self.for_plugin(plugin, config)
-      plugin, config = change_provider_chef_zero(plugin, config)
+      plugin, config[:name] = "chef_infra", "chef_infra" if plugin == "chef_zero"
       Kitchen::Plugin.load(self, plugin, config)
-    end
-
-    def self.change_provider_chef_zero(plugin, config)
-      if plugin == "chef_zero"
-        plugin = "chef_infra"
-        config[:name] = "chef_infra"
-      end
-      [plugin, config]
     end
   end
 end
