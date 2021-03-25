@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [2.11.2](https://github.com/test-kitchen/test-kitchen/tree/v2.11.1) (2021-03-24)
+
+- Fixed frozen string errors that could occur in the logger - [#1731](https://github.com/test-kitchen/test-kitchen/pull/1731)([tas50](https://github.com/tas50))
+
 ## [2.11.1](https://github.com/test-kitchen/test-kitchen/tree/v2.11.1) (2021-03-02)
 
 - Fix an incorrect require in the new `Kitchen::Which` module - [#1726](https://github.com/test-kitchen/test-kitchen/pull/1726)([lamont-granquist](https://github.com/lamont-granquist))
