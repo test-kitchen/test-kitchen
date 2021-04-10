@@ -181,7 +181,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          $stderr.string.must_equal output
+          _($stderr.string).must_equal output
         end
       end
 
@@ -198,7 +198,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          $stderr.string.must_equal output
+          _($stderr.string).must_equal output
         end
       end
 
@@ -249,7 +249,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          $stderr.string.must_equal output
+          _($stderr.string).must_equal output
         end
       end
 
@@ -267,7 +267,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          $stderr.string.must_equal output
+          _($stderr.string).must_equal output
         end
       end
 
