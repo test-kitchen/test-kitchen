@@ -11,7 +11,7 @@ group :integration do
 end
 
 group :debug do
-  gem "pry"
+  gem "pry", "~>0.12"
   gem "pry-byebug"
   gem "pry-stack_explorer"
 end
