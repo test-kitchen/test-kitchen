@@ -365,11 +365,9 @@ module Kitchen
         # @return [Winrm::Shells::Elevated] the elevated shell
         # @api private
         def elevated_session(retry_options = {})
-          @elevated_session ||= begin
-            connection(retry_options).shell(:elevated).tap do |shell|
-              shell.username = options[:elevated_username]
-              shell.password = options[:elevated_password]
-            end
+          @elevated_session ||= connection(retry_options).shell(:elevated).tap do |shell|
+            shell.username = options[:elevated_username]
+            shell.password = options[:elevated_password]
           end
         end
 

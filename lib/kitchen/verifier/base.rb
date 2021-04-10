@@ -169,11 +169,9 @@ module Kitchen
       # @raise [ClientError] if the sandbox directory has no yet been created
       #   by calling `#create_sandbox`
       def sandbox_path
-        @sandbox_path ||= begin
-           raise ClientError, "Sandbox directory has not yet " \
+        @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
            "been created. Please run #{self.class}#create_sandox before " \
            "trying to access the path."
-         end
       end
 
       # Sets the API version for this verifier. If the verifier does not set
