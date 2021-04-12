@@ -13,7 +13,7 @@ From here, there are a few resources that can help you along your infrastructure
 
 * Jump in the `#test-kitchen` channel on [Chef Community Slack](http://community-slack.chef.io/)
 * Submit an [issue](https://github.com/test-kitchen/test-kitchen/issues)
-* Write a blog post describing getting started with Test Kitchen, or an interesting problem kitchen has allowed you to solve
+* Write a blog post describing getting started with Test Kitchen, or an interesting problem Test Kitchen has allowed you to solve
 
 Everyone can contribute to making Test Kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/test-kitchen/tree/master/docs) and open a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)!
 
