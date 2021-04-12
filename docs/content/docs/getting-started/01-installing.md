@@ -27,12 +27,13 @@ First, install the [Chef Workstation](https://downloads.chef.io/chef-workstation
 
 ~~~
 $ chef --version
-Chef Workstation version: 20.6.62
-Chef Infra Client version: 16.1.16
-Chef InSpec version: 4.19.0
-Chef CLI version: 3.0.4
-Test Kitchen version: 2.5.1
-Cookstyle version: 6.7.3
+Chef Workstation version: 21.4.365
+Chef Infra Client version: 16.12.3
+Chef InSpec version: 4.29.3
+Chef CLI version: 4.0.0
+Chef Habitat version: 1.6.288
+Test Kitchen version: 2.11.2
+Cookstyle version: 7.10.0
 ~~~
 
 ##### VirtualBox
@@ -41,7 +42,7 @@ VirtualBox is a hypervisor that lets you run virtual machines on your local work
 
 ~~~
 $ VBoxManage --version
-6.1.10r138449
+6.1.18r142142
 ~~~
 
 ##### Vagrant
@@ -50,7 +51,7 @@ Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute p
 
 ~~~
 $ vagrant --version
-Vagrant 2.2.9
+Vagrant 2.2.14
 ~~~
 
 We've just installed Chef Workstation, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for Test Kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
