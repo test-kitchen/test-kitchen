@@ -93,6 +93,18 @@ driver:
   name: digitalocean
 
 platforms:
+  - name: my_system
+    image: ubuntu-20
+```
+
+If the `image` configuration option is not specified Test Kitchen will attempt to use the platform name value for the image instead:
+
+```yaml
+---
+driver:
+  name: digitalocean
+
+platforms:
   - name: ubuntu-20
 ```
 
