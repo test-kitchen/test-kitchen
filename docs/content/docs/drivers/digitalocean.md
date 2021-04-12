@@ -64,7 +64,11 @@ platforms:
 
 ### Driver Configuration Options
 
-#### Platform Images
+#### digitalocean_access_token
+
+The `digitalocean_access_token` configuration option is used to communicate with the DigitalOcean API to provision the droplets for testing. You can also set this with the `DIGITALOCEAN_ACCESS_TOKEN` environmental variable before running Test Kitchen to avoid storing secres in your `kitchen.yml` config.
+
+#### image
 
 DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
 
