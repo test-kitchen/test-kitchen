@@ -1,12 +1,12 @@
 ---
-title: Kitchen Dokken
+title: Dokken (Docker)
 menu:
   docs:
     parent: drivers
     weight: 15
 ---
 
-kitchen-dokken is a Test Kitchen driver for that uses specially created Docker containers and a docker container of Chef Infra for rapid testing that can be run on a local workstation or in CI pipelines.
+kitchen-dokken is a Test Kitchen driver for that uses specially created Docker containers and a Chef Infra Docker Container. This Chef Infra specific approach utilizing containers results in rapid testing that can be run on a local workstation or in CI pipelines.
 
 For a complete list of available container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.
 
