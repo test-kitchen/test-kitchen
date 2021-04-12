@@ -111,30 +111,13 @@ ubuntu-20
 
 #### Regions
 
-```yaml
-nyc1    New York 1
-sfo1    San Francisco 1
-ams2    Amsterdam 2
-sgp1    Singapore 1
-lon1    London 1
-nyc3    New York 3
-ams3    Amsterdam 3
-fra1    Frankfurt 1
-tor1    Toronto 1
-sfo2    San Francisco 2
-blr1    Bangalore 1
-```
-
-By default your droplets will be built in `nyc1` but you can change the default by updating the
-environment variable.  This should allow teams with developers across different regions to test within
-their own geographic region without hard coding configs.
+By default your droplets will be built in the `nyc1` region, but you can change the default by updating the environment variable or setting the region configuration option. Using the env var is useful to allow teams with developers across different regions to test within their own geographic region without hard coding configs.
 
 ```bash
 export DIGITALOCEAN_REGION="tor1"
 ```
 
-This allows futher customization by allowing overrides at the `driver` level and the `platform`
-level.
+This allows futher customization by allowing overrides at the `driver` level and the `platform` level.
 
 ```yaml
 # DIGITALOCEAN_REGION="tor1" # set as an env var
@@ -170,6 +153,20 @@ regions.
 |cookbook2-ubuntu-16|tor1|
 |cookbook2-ubuntu-18|sfo1|
 ```
+
+##### Available Region Values
+
+- `nyc1`: New York 1
+- `sfo1`: San Francisco 1
+- `ams2`: Amsterdam 2
+- `sgp1`: Singapore 1
+- `lon1`: London 1
+- `nyc3`: New York 3
+- `ams3`: Amsterdam 3
+- `fra1`: Frankfurt 1
+- `tor1`: Toronto 1
+- `sfo2`: San Francisco 2
+- `blr1`: Bangalore 1
 
 #### Tags
 
