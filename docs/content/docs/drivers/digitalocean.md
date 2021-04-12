@@ -43,9 +43,11 @@ suites:
 
 ### Setting Driver Configuration
 
-The kitchen-digitalocean driver includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or in each platform. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options.
+The DigitalOcean driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
 
 **Example Global Driver Option**
+
+This configuration set the driver to `digitalocean` and then sets the `some_config` configuration to true.
 
 ```yaml
 driver:
@@ -55,7 +57,13 @@ driver:
 
 **Example Platform Driver Option**
 
+This configuration set the driver to `digitalocean` globally and then sets the `some_config` configuration to true for just `ubuntu-20`.
+
+
 ```yaml
+driver:
+  name: digitaloean
+
 platforms:
   - name: ubuntu-20
     driver:
