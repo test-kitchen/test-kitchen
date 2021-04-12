@@ -10,7 +10,7 @@ kitchen-digitalocean is a Test Kitchen *driver* for DigitalOcean.
 
 ### Example **kitchen.yml**
 
-```
+```yaml
 ---
 driver:
   name: digitaloean
@@ -47,7 +47,7 @@ The kitchen-digitalocean driver includes many configuration options that can be 
 
 **Example Global Driver Option**
 
-```
+```yaml
 driver:
   name: digitaloean
   some_config: true
@@ -55,7 +55,7 @@ driver:
 
 **Example Platform Driver Option**
 
-```
+```yaml
 platforms:
   - name: ubuntu-20
     driver:
@@ -88,10 +88,6 @@ The `image` configuration option allows you to control the operating system of t
 For example to build a system using Ubuntu 20.04:
 
 ```yaml
----
-driver:
-  name: digitalocean
-
 platforms:
   - name: my_system
     image: ubuntu-20
@@ -100,10 +96,6 @@ platforms:
 If the `image` configuration option is not specified Test Kitchen will attempt to use the platform name value for the image instead:
 
 ```yaml
----
-driver:
-  name: digitalocean
-
 platforms:
   - name: ubuntu-20
 ```
@@ -151,17 +143,20 @@ The above configuration when full tested would create the following images in th
 
 ##### Available Region Values
 
-- `nyc1`: New York 1
-- `sfo1`: San Francisco 1
 - `ams2`: Amsterdam 2
-- `sgp1`: Singapore 1
-- `lon1`: London 1
-- `nyc3`: New York 3
 - `ams3`: Amsterdam 3
-- `fra1`: Frankfurt 1
-- `tor1`: Toronto 1
-- `sfo2`: San Francisco 2
 - `blr1`: Bangalore 1
+- `fra1`: Frankfurt 1
+- `lon1`: London 1
+- `nyc1`: New York 1
+- `nyc3`: New York 3
+- `sfo1`: San Francisco 1
+- `sfo2`: San Francisco 2
+- `sfo3`: San Francisco 2
+- `sgp1`: Singapore 1
+- `tor1`: Toronto 1
+
+For the most up to date list of regions supported by DigitalOcean see Regions at [slugs.do-api.dev](https://slugs.do-api.dev/)
 
 #### tags
 
