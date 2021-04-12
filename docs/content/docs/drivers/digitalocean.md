@@ -85,28 +85,37 @@ driver:
   - ipv6: true
 ```
 
-#### Image abbrevations we use
+#### Platform Images
 
-This is a list of abbreviate image names we provide
+DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
+
+- centos-6
+- centos-7
+- centos-8
+- coreos-stable
+- coreos-beta
+- coreos-alpha
+- debian-9
+- debian-10
+- fedora-30
+- fedora-31
+- fedora-32
+- freebsd-11
+- freebsd-12
+- ubuntu-16
+- ubuntu-17
+- ubuntu-18
+- ubuntu-20
+
+For example to build a system using Ubuntu 20.04:
 
 ```yaml
-centos-6
-centos-7
-centos-8
-coreos-stable
-oreos-beta
-coreos-alpha
-debian-9
-debian-10
-fedora-30
-fedora-31
-fedora-32
-freebsd-11
-freebsd-12
-ubuntu-16
-ubuntu-17
-ubuntu-18
-ubuntu-20
+---
+driver:
+  name: digitalocean
+
+platforms:
+  - name: ubuntu-20
 ```
 
 #### Regions
@@ -127,6 +136,7 @@ This allows futher customization by allowing overrides at the `driver` level and
 driver:
   name: digitalocean
   region: sgp1
+
 platforms:
   - name: ubuntu-16
   - name: ubuntu-18
@@ -136,6 +146,7 @@ platforms:
 ---
 driver:
   name: digitalocean
+
 platforms:
   - name: ubuntu-16
   - name: ubuntu-18
