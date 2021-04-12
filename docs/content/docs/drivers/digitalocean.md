@@ -15,6 +15,12 @@ Example **kitchen.yml**:
 driver:
   name: digitaloean
 
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
 platforms:
   - name: ubuntu-20
   - name: ubuntu-18

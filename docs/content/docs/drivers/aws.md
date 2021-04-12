@@ -24,6 +24,12 @@ driver:
   associate_public_ip: true
   interface: dns
 
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
 transport:
   ssh_key: /path/to/id_rsa-aws
   connection_timeout: 10

@@ -27,6 +27,9 @@ driver:
 provisioner:
   name: chef_zero
 
+verifier:
+  name: inspec
+
 transport:
   username: chefuser
 
