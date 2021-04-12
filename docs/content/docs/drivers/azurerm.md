@@ -35,6 +35,6 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[mycookbook::default]
+      - recipe[my_cookbook::default]
     attributes:
 ```
