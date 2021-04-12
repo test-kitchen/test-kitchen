@@ -8,7 +8,7 @@ menu:
 
 kitchen-digitalocean is a Test Kitchen *driver* for DigitalOcean.
 
-Example **kitchen.yml**:
+### Example **kitchen.yml**
 
 ```
 ---
@@ -39,4 +39,25 @@ suites:
     run_list:
       - recipe[my_cookbook::default]
     attributes:
+```
+
+### Driver Configuration Options
+
+The kitchen-digitalocean driver includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or in each platform. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options.
+
+**Example Global Driver Option**
+
+```
+driver:
+  name: digitaloean
+  some_config: true
+```
+
+**Example Platform Driver Option**
+
+```
+platforms:
+  - name: ubuntu-20
+    driver:
+      some_config: true
 ```
