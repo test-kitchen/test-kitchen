@@ -163,7 +163,7 @@ The above configuration when full tested would create the following images in th
 - `sfo2`: San Francisco 2
 - `blr1`: Bangalore 1
 
-#### Tags
+#### tags
 
 To add tags to the droplet, provide the tags attribute.
 
@@ -174,10 +174,9 @@ driver:
     - this-is-a-tag
 ```
 
-#### Private Networking
+#### private_networking
 
-Private networking is enabled by default, but will only work in certain regions. You can disable private networking by changing private_networking to
-false. Example below.
+Private networking is enabled by default, but will only work in certain regions. You can disable private networking by changing private_networking to false. Example below.
 
 ```yaml
 ---
@@ -185,7 +184,7 @@ driver:
   - private_networking: false
 ```
 
-#### IPv6
+#### ipv6
 
 IPv6 is disabled by default, you can enable this if needed. IPv6 is only available in limited regions.
 
@@ -195,10 +194,9 @@ driver:
   - ipv6: true
 ```
 
-#### Monitoring
+#### monitoring
 
-DigitalOcean provides a monitoring agent that you can optionally install to your
-droplet.  To enable this feature, set the monitoring attribute to true.
+DigitalOcean provides a monitoring agent that you can optionally install to your droplet.  To enable this feature, set the monitoring attribute to true.
 
 ```yaml
 ---
@@ -208,8 +206,7 @@ driver:
 
 #### Firewall
 
-To create the droplet with firewalls, provide a pre-existing firewall ID as a
-string or list of strings.
+To create the droplet with firewalls, provide a pre-existing firewall ID as a string or list of strings.
 
 ```yaml
 driver:
@@ -225,18 +222,15 @@ driver:
   firewalls: 624c1408-f101-4b59-af64-99c7f7560f7a
 ```
 
-Note that your `firewalls` must be the numeric ids of your firewall. To get the
-numeric ID, use something like to following command to get them from the digital
-ocean API:
+Note that your `firewalls` must be the numeric ids of your firewall. To get the numeric ID, use something like to following command to get them from the DigitalOcean API:
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/firewalls -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
 ```
 
-#### VPCS
+#### vpcs
 
-To create the droplet with a VPC (Virtual Private Cloud), provide a pre-existing VPC ID as a
-string.
+To create the droplet with a VPC (Virtual Private Cloud), provide a pre-existing VPC ID as a string.
 
 ```yaml
 driver:
@@ -244,9 +238,7 @@ driver:
     - 3a92ae2d-f1b7-4589-81b8-8ef144374453
 ```
 
-Note that your `vpc_uuid` must be the numeric ids of your vpc. To get the
-numeric ID, use something like the following command to get them from the digital
-ocean API:
+Note that your `vpc_uuid` must be the numeric ids of your vpc. To get the numeric ID, use something like the following command to get them from the DigitalOcean API:
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/vpcs -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
