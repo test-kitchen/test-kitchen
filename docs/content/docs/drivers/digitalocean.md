@@ -70,7 +70,7 @@ The `digitalocean_access_token` configuration option is used to communicate with
 
 #### image
 
-DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
+The `image` configuration option allows you to control the operating system of the Droplet. DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
 
 - centos-7
 - centos-8
@@ -108,9 +108,13 @@ platforms:
   - name: ubuntu-20
 ```
 
-#### Regions
+#### size
 
-By default your droplets will be built in the `nyc1` region, but you can change the default by updating the environment variable or setting the region configuration option. Using the env var is useful to allow teams with developers across different regions to test within their own geographic region without hard coding configs.
+The `size` configuration option allows you to specify the Droplet size. By default all instances are created as `s-1vcpu-1gb` which is a single CPU with 1GB RAM and 25GB of disk. For a current list of Droplet sizes and their API name see [slugs.do-api.dev](https://slugs.do-api.dev/).
+
+#### region
+
+The `size` configuration option allows you to control the region where the Droplet is configured. By default your droplets will be built in the `nyc1` region. This configuration option can be set with the configuration option or by setting the `DIGITALOCEAN_REGION` env var. The env var is useful to allow teams with developers across different regions to test within their own geographic region without hard coding configs.
 
 ```bash
 export DIGITALOCEAN_REGION="tor1"
