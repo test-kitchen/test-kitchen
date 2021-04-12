@@ -8,6 +8,8 @@ menu:
 
 kitchen-dokken is a Test Kitchen driver for that uses specially created Docker containers and a docker container of Chef Infra for rapid testing that can be run on a local workstation or in CI pipelines.
 
+For a complete list of available container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.
+
 Example **kitchen.yml**:
 
 ```
