@@ -68,21 +68,16 @@ platforms:
 
 DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
 
-- centos-6
 - centos-7
 - centos-8
-- coreos-stable
-- coreos-beta
-- coreos-alpha
 - debian-9
 - debian-10
-- fedora-30
-- fedora-31
 - fedora-32
+- fedora-33
 - freebsd-11
 - freebsd-12
+- rancheros
 - ubuntu-16
-- ubuntu-17
 - ubuntu-18
 - ubuntu-20
 
@@ -132,17 +127,7 @@ platforms:
     region: sfo1
 ```
 
-The above configuration when full tested would create the following images in their respective
-regions.
-
-```
-|Image|Region|
-|---|---|
-|cookbook1-ubuntu-16|sgp1|
-|cookbook1-ubuntu-18|sfo1|
-|cookbook2-ubuntu-16|tor1|
-|cookbook2-ubuntu-18|sfo1|
-```
+The above configuration when full tested would create the following images in their respective regions.
 
 ##### Available Region Values
 
