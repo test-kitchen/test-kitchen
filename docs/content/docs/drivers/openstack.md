@@ -26,6 +26,12 @@ driver:
   write_timeout: 180
   connect_timeout: 180
 
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
 transport:
   ssh_key: /path/to/id_rsa #Path to private key that matches the above openstack key_name
   connection_timeout: 10
