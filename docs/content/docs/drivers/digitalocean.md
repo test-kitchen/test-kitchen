@@ -6,14 +6,14 @@ menu:
     weight: 15
 ---
 
-kitchen-digitalocean is a Test Kitchen *driver* for DigitalOcean.
+kitchen-digitalocean is a Test Kitchen *driver* for DigitalOcean that runs against the DigitalOcean V2 API.
 
 ### Example **kitchen.yml**
 
 ```yaml
 ---
 driver:
-  name: digitaloean
+  name: digitalocean
 
 provisioner:
   name: chef_zero
