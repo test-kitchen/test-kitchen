@@ -12,7 +12,7 @@ Use the `kitchen help` for a quick reminder of what the `kitchen` command provid
 ~~~
 $ kitchen help
 Commands:
-  kitchen console                                 # Kitchen Console!
+  kitchen console                                 # Test Kitchen Console!
   kitchen converge [INSTANCE|REGEXP|all]          # Change instance state to converge. Use a provisioner to configure one or more instances
   kitchen create [INSTANCE|REGEXP|all]            # Change instance state to create. Start one or more instances
   kitchen destroy [INSTANCE|REGEXP|all]           # Change instance state to destroy. Delete all information for one or more instances
@@ -27,7 +27,7 @@ Commands:
   kitchen setup [INSTANCE|REGEXP|all]             # Change instance state to setup. Prepare to run automated tests. Install busser and related gems on one or more instances
   kitchen test [INSTANCE|REGEXP|all]              # Test (destroy, create, converge, setup, verify and destroy) one or more instances
   kitchen verify [INSTANCE|REGEXP|all]            # Change instance state to verify. Run automated tests on one or more instances
-  kitchen version                                 # Print Kitchen's version information
+  kitchen version                                 # Print Test Kitchen's version information
 ~~~
 
 For more detailed help on a given subcommand, add it to end of the `help` subcommand. Let's take a look at the useful `kitchen diagnose` subcommand. This particular command is helpful when trying to visualize the layers of Test Kitchen configuration and troubleshoot.
