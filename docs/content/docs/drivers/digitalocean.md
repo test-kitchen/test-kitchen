@@ -64,27 +64,6 @@ platforms:
 
 ### Driver Configuration Options
 
-#### Private Networking
-
-Private networking is enabled by default, but will only work in certain regions. You can disable private networking by changing private_networking to
-false. Example below.
-
-```yaml
----
-driver:
-  - private_networking: false
-```
-
-#### IPv6
-
-IPv6 is disabled by default, you can enable this if needed. IPv6 is only available in limited regions.
-
-```yaml
----
-driver:
-  - ipv6: true
-```
-
 #### Platform Images
 
 DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
@@ -188,6 +167,27 @@ driver:
   tags:
     - test-kitchen
     - this-is-a-tag
+```
+
+#### Private Networking
+
+Private networking is enabled by default, but will only work in certain regions. You can disable private networking by changing private_networking to
+false. Example below.
+
+```yaml
+---
+driver:
+  - private_networking: false
+```
+
+#### IPv6
+
+IPv6 is disabled by default, you can enable this if needed. IPv6 is only available in limited regions.
+
+```yaml
+---
+driver:
+  - ipv6: true
 ```
 
 #### Monitoring
