@@ -285,7 +285,7 @@ module Kitchen
       perform("exec", "exec", args)
     end
 
-    desc "version", "Print Kitchen's version information"
+    desc "version", "Print Test Kitchen's version information"
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
     end
@@ -296,7 +296,7 @@ module Kitchen
       perform("sink", "sink")
     end
 
-    desc "console", "Kitchen Console!"
+    desc "console", "Test Kitchen Console!"
     def console
       perform("console", "console")
     end
