@@ -23,12 +23,6 @@ driver:
 
 provisioner:
   name: chef_zero
-  sudo_command: sudo
-  deprecations_as_errors: true
-  retry_on_exit_code:
-    - 35 # 35 is the exit code signaling that the node is rebooting
-  max_retries: 2
-  wait_for_retry: 90
 
 verifier:
   name: inspec
