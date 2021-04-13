@@ -47,7 +47,7 @@ The DigitalOcean driver for Test Kitchen includes many configuration options tha
 
 #### Example Global Driver Option
 
-This configuration set the driver to `digitalocean` and then sets the `some_config` configuration to true.
+This configuration sets the driver to `digitalocean` and then sets the `some_config` configuration to true.
 
 ```yaml
 driver:
@@ -57,7 +57,7 @@ driver:
 
 #### Example Platform Driver Option
 
-This configuration set the driver to `digitalocean` globally and then sets the `some_config` configuration to true for just `ubuntu-20`.
+This configuration sets the driver to `digitalocean` globally and then sets the `some_config` configuration to true for just `ubuntu-20`.
 
 ```yaml
 driver:
@@ -87,7 +87,7 @@ curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bear
 
 #### image
 
-The `image` configuration option allows you to control the operating system of the Droplet. DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
+The `image` configuration option allows you to control the operating system of the Droplet. DigitalOcean features many different images for creating Droplets that can be used by specifying the following image names:
 
 - centos-7
 - centos-8
@@ -129,7 +129,7 @@ The `size` configuration option allows you to control the region where the Dropl
 export DIGITALOCEAN_REGION="tor1"
 ```
 
-This allows futher customization by allowing overrides at the `driver` level and the `platform` level.
+This allows further customization by allowing overrides at the `driver` level and the `platform` level.
 
 ```yaml
 # DIGITALOCEAN_REGION="tor1" # set as an env var
@@ -156,7 +156,7 @@ platforms:
     region: sfo1
 ```
 
-The above configuration when full tested would create the following images in their respective regions.
+The above configuration when fully tested would create the following images in their respective regions.
 
 ##### Available Region Values
 
@@ -173,7 +173,7 @@ The above configuration when full tested would create the following images in th
 - `sgp1`: Singapore 1
 - `tor1`: Toronto 1
 
-For the most up to date list of regions supported by DigitalOcean see Regions at [slugs.do-api.dev](https://slugs.do-api.dev/)
+For the most up-to-date list of regions supported by DigitalOcean see Regions at [slugs.do-api.dev](https://slugs.do-api.dev/)
 
 #### tags
 
@@ -206,7 +206,7 @@ driver:
 
 #### monitoring
 
-DigitalOcean provides a monitoring agent that you can optionally install to your droplet.  To enable this feature, set the monitoring attribute to true.
+DigitalOcean provides a monitoring agent that you can optionally install on your droplet.  To enable this feature, set the monitoring attribute to true.
 
 ```yaml
 driver:
@@ -231,7 +231,7 @@ driver:
   firewalls: 624c1408-f101-4b59-af64-99c7f7560f7a
 ```
 
-Note that your `firewalls` must be the numeric ids of your firewall. To get the numeric ID, use something like to following command to get them from the DigitalOcean API:
+Note that your `firewalls` must be the numeric ids of your firewall. To get the numeric ID, use something like to the following command to get them from the DigitalOcean API:
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/firewalls -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
