@@ -76,6 +76,20 @@ platforms:
 
 The `digitalocean_access_token` configuration option is used to communicate with the DigitalOcean API to provision the droplets for testing. You can also set this with the `DIGITALOCEAN_ACCESS_TOKEN` environmental variable before running Test Kitchen to avoid storing secres in your `kitchen.yml` config.
 
+
+export DIGITALOCEAN_SSH_KEY_IDS="1234, 5678"
+```
+
+Note that your `SSH_KEY_ID` must be the numeric id of your ssh key, not the symbolic name. To get the numeric ID
+of your keys, use something like the following command to get them from the digital ocean API:
+
+```bash
+curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
+```
+
+Please refer to the [Getting Started Guide](http://kitchen.ci/) for any further documentation.
+
+
 #### image
 
 The `image` configuration option allows you to control the operating system of the Droplet. DigitalOcean features a number of images for creating Droplets that can be used by specifying the following image names:
@@ -132,8 +146,8 @@ driver:
   region: sgp1
 
 platforms:
-  - name: ubuntu-16
   - name: ubuntu-18
+  - name: ubuntu-20
     region: sfo1
 
 # cookbook2/.kitchen.yml
@@ -142,8 +156,8 @@ driver:
   name: digitalocean
 
 platforms:
-  - name: ubuntu-16
   - name: ubuntu-18
+  - name: ubuntu-20
     region: sfo1
 ```
 
@@ -182,7 +196,6 @@ driver:
 Private networking is enabled by default, but will only work in certain regions. You can disable private networking by changing private_networking to false. Example below.
 
 ```yaml
----
 driver:
   - private_networking: false
 ```
@@ -192,7 +205,6 @@ driver:
 IPv6 is disabled by default, you can enable this if needed. IPv6 is only available in limited regions.
 
 ```yaml
----
 driver:
   - ipv6: true
 ```
@@ -202,7 +214,6 @@ driver:
 DigitalOcean provides a monitoring agent that you can optionally install to your droplet.  To enable this feature, set the monitoring attribute to true.
 
 ```yaml
----
 driver:
   - monitoring: true
 ```
