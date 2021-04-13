@@ -2,7 +2,7 @@
 title: About Transports
 menu:
   docs:
-    parent: Transports
+    parent: transports
     weight: 1
 ---
 

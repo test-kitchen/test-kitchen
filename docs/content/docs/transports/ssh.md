@@ -2,7 +2,7 @@
 title: SSH
 menu:
   docs:
-    parent: Transports
+    parent: transports
     weight: 15
 ---
 
