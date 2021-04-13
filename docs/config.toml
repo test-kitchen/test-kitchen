@@ -65,14 +65,19 @@ name = "Drivers"
 weight = 10
 
 [[menu.docs]]
+identifier = "transports"
+name = "Transport"
+weight = 15
+
+[[menu.docs]]
 identifier = "provisioners"
 name = "Provisioners"
-weight = 15
+weight = 20
 
 [[menu.docs]]
 identifier = "verifiers"
 name = "Verifiers"
-weight = 20
+weight = 25
 
 [[menu.docs]]
 identifier = "reference"
