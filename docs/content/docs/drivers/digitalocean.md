@@ -45,7 +45,7 @@ suites:
 
 The DigitalOcean driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
 
-**Example Global Driver Option**
+#### Example Global Driver Option
 
 This configuration set the driver to `digitalocean` and then sets the `some_config` configuration to true.
 
@@ -55,10 +55,9 @@ driver:
   some_config: true
 ```
 
-**Example Platform Driver Option**
+#### Example Platform Driver Option
 
 This configuration set the driver to `digitalocean` globally and then sets the `some_config` configuration to true for just `ubuntu-20`.
-
 
 ```yaml
 driver:
@@ -74,21 +73,17 @@ platforms:
 
 #### digitalocean_access_token
 
-The `digitalocean_access_token` configuration option is used to communicate with the DigitalOcean API to provision the droplets for testing. You can also set this with the `DIGITALOCEAN_ACCESS_TOKEN` environmental variable before running Test Kitchen to avoid storing secres in your `kitchen.yml` config.
+The `digitalocean_access_token` configuration option is used to communicate with the DigitalOcean API to provision the droplets for testing. You can also set this with the `DIGITALOCEAN_ACCESS_TOKEN` environmental variable before running Test Kitchen to avoid storing secrets in your `kitchen.yml` config.
 
+#### ssh_key_ids
 
-export DIGITALOCEAN_SSH_KEY_IDS="1234, 5678"
-```
+The `ssh_key_ids` configuration option is used to control the ssh key pair to assign to the Droplets when they are created. You can also set this with the `DIGITALOCEAN_SSH_KEY_IDS` environmental variable before running Test Kitchen to avoid storing secres in your `kitchen.yml` config.
 
-Note that your `SSH_KEY_ID` must be the numeric id of your ssh key, not the symbolic name. To get the numeric ID
-of your keys, use something like the following command to get them from the digital ocean API:
+Note that your `SSH_KEY_ID` must be the numeric id of your ssh key, not the symbolic name. To get the numeric ID of your keys, use something like the following command to get them from the digital ocean API:
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
 ```
-
-Please refer to the [Getting Started Guide](http://kitchen.ci/) for any further documentation.
-
 
 #### image
 
