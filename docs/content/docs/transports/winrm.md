@@ -1,8 +1,8 @@
 ---
-title: SSH Transport - Test Kitchen
+title: WinRM
 menu:
   docs:
-    parent: tranports
+    parent: Transports
     weight: 15
 ---
 

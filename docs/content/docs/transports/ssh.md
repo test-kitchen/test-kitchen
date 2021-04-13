@@ -1,8 +1,8 @@
 ---
-title: SSH Transport - Test Kitchen
+title: SSH
 menu:
   docs:
-    parent: tranports
+    parent: Transports
     weight: 15
 ---
 

@@ -1,8 +1,8 @@
 ---
-title: About Tranports
+title: About Transports
 menu:
   docs:
-    parent: transports
+    parent: Transports
     weight: 1
 ---
 
