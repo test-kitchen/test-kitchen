@@ -66,7 +66,7 @@ weight = 10
 
 [[menu.docs]]
 identifier = "transports"
-name = "Transport"
+name = "Transports"
 weight = 15
 
 [[menu.docs]]
