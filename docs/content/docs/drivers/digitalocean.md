@@ -213,7 +213,7 @@ driver:
   - monitoring: true
 ```
 
-#### Firewall
+#### firewalls
 
 To create the droplet with firewalls, provide a pre-existing firewall ID as a string or list of strings.
 
