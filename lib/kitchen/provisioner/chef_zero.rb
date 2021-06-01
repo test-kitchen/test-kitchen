@@ -70,6 +70,7 @@ module Kitchen
           json = remote_path_join(config[:root_path], "dna.json")
           args << "--json-attributes #{json}"
         end
+
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
         # these flags are chef-client local mode only and will not work
@@ -77,10 +78,20 @@ module Kitchen
         if config[:chef_zero_host]
           args << "--chef-zero-host #{config[:chef_zero_host]}"
         end
+
         if config[:chef_zero_port]
           args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
+
         args << "--profile-ruby" if config[:profile_ruby]
+
+        if config[:slow_resource_report]
+          if config[:slow_resource_report].is_a?(Integer)
+            args << "--slow-report #{config[:slow_resource_report]}"
+          else
+            args << "--slow-report"
+          end
+        end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
 

@@ -472,6 +472,22 @@ describe Kitchen::Provisioner::ChefZero do
 
           cmd.wont_match regexify(" --profile-ruby", :partial_line)
         end
+
+        it "sets slow_resource_report flag when config element is set" do
+          config[:slow_resource_report] = true
+
+          cmd.must_match regexify(
+            " --slow-report", :partial_line
+          )
+        end
+
+        it "sets slow_resource_report flag when config element is set with an integer value" do
+          config[:slow_resource_report] = 1
+
+          cmd.must_match regexify(
+            " --slow-report 1", :partial_line
+          )
+        end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
