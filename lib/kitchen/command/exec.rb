@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/command"
+require_relative "../command"
 
 module Kitchen
   module Command

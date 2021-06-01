@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -51,10 +50,14 @@ class IO
     elsif offset.is_a? Hash
       opt = offset
     end
-    if opt && opt.key?(:mode)
-      File.open(args[0], opt) { |f| f.read(length) }
+    if opt
+      if opt.key?(:mode)
+        File.open(args[0], **opt) { |f| f.read(length) }
+      else
+        File.open(args[0], "rb", **opt) { |f| f.read(length) }
+      end
     else
-      File.open(args[0], "rb", opt) { |f| f.read(length) }
+      File.open(args[0], "rb") { |f| f.read(length) }
     end
   end
 end

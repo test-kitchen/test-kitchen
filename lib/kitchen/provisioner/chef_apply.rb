@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: SAWANOBORI Yukihiko <sawanoboriyu@higanworks.com>)
 #
@@ -30,8 +29,8 @@
 #   name: chef_apply
 #
 # platforms:
-#   - name: ubuntu-16.04
-#   - name: centos-7
+#   - name: ubuntu-20.04
+#   - name: centos-8
 #
 # suites:
 #   - name: default
@@ -45,7 +44,7 @@
 # chef-apply apply/recipe1.rb
 # chef-apply apply/recipe2.rb
 
-require "kitchen/provisioner/chef_base"
+require_relative "chef_base"
 
 module Kitchen
   module Provisioner

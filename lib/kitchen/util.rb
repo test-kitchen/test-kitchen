@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
+require_relative "errors"
 require "thor/util"
 
 module Kitchen
@@ -111,7 +110,7 @@ module Kitchen
     def self.wrap_command(cmd)
       cmd = "false" if cmd.nil?
       cmd = "true" if cmd.to_s.empty?
-      cmd = cmd.sub(/\n\Z/, "") if cmd =~ /\n\Z/
+      cmd = cmd.sub(/\n\Z/, "") if /\n\Z/.match?(cmd)
 
       "sh -c '\n#{cmd}\n'"
     end
@@ -215,6 +214,16 @@ module Kitchen
 
     def self.snake_case(a_string)
       Thor::Util.snake_case(a_string)
+    end
+
+    # Check if a cmd exists on the PATH
+    def self.command_exists?(cmd)
+      paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+      paths.each do |path|
+        filename = File.join(path, cmd)
+        return filename if File.executable?(filename)
+      end
+      false
     end
   end
 end

@@ -1,53 +1,57 @@
 # Community and Ecosystem plugins
 
-Here is collection of possible extensions to the base test-kitchen application:
+Here is a collection of plugins for extending Test Kitchen functionality:
 
-The following are in the test-kitchen organization
+The following are in the test-kitchen GitHub organization
 
 [kitchen-ec2][ec2] | [kitchen-digitalocean][do] | [kitchen-openstack][open] | [kitchen-rackspace][rs] | [kitchen-google][google] | [kitchen-vagrant][vagrant]
 ---- | ---- | ---- | ---- | ---- | ----
 [![Status](https://travis-ci.org/test-kitchen/kitchen-ec2.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-ec2)| [![Status](https://travis-ci.org/test-kitchen/kitchen-digitalocean.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-digitalocean) | [![Status](https://travis-ci.org/test-kitchen/kitchen-openstack.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-openstack) | [![Status](https://travis-ci.org/test-kitchen/kitchen-rackspace.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-rackspace) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-google.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-google) | [![Status](https://travis-ci.org/test-kitchen/kitchen-vagrant.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vagrant)
 [![Gem Version](https://badge.fury.io/rb/kitchen-ec2.svg)](http://badge.fury.io/rb/kitchen-ec2) | [![Gem Version](https://badge.fury.io/rb/kitchen-digitalocean.svg)](http://badge.fury.io/rb/kitchen-digitalocean) | [![Gem Version](https://badge.fury.io/rb/kitchen-openstack.svg)](http://badge.fury.io/rb/kitchen-openstack) | [![Gem Version](https://badge.fury.io/rb/kitchen-rackspace.svg)](http://badge.fury.io/rb/kitchen-rackspace) | [![Gem Version](https://badge.fury.io/rb/kitchen-google.svg)](http://badge.fury.io/rb/kitchen-google) | [![Gem Version](https://badge.fury.io/rb/kitchen-vagrant.svg)](http://badge.fury.io/rb/kitchen-vagrant)
 
-[kitchen-dsc][dsc] | [kitchen-pester][pester] | [kitchen-joyent][joyent] | [kitchen-opennebula][opennebula] | [kitchen-hyperv][hyperv] | [kitchen-cloudstack][cloudstack] |
----- | ---- | ---- | ---- | ---- | ---- |
-[![Status](https://travis-ci.org/test-kitchen/kitchen-dsc.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dsc)| [![Status](https://travis-ci.org/test-kitchen/kitchen-pester.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-pester) | [![Status](https://travis-ci.org/test-kitchen/kitchen-joyent.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-joyent) | [![Status](https://travis-ci.org/test-kitchen/kitchen-opennebula.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-opennebula) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-hyperv.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-hyperv) | [![Status](https://travis-ci.org/test-kitchen/kitchen-cloudstack.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-cloudstack)
-[![Gem Version](https://badge.fury.io/rb/kitchen-dsc.svg)](http://badge.fury.io/rb/kitchen-dsc) | [![Gem Version](https://badge.fury.io/rb/kitchen-pester.svg)](http://badge.fury.io/rb/kitchen-pester) | [![Gem Version](https://badge.fury.io/rb/kitchen-joyent.svg)](http://badge.fury.io/rb/kitchen-joyent) | [![Gem Version](https://badge.fury.io/rb/kitchen-opennebula.svg)](http://badge.fury.io/rb/kitchen-opennebula) | [![Gem Version](https://badge.fury.io/rb/kitchen-hyperv.svg)](http://badge.fury.io/rb/kitchen-hyperv) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudstack.svg)](http://badge.fury.io/rb/kitchen-cloudstack)
+[kitchen-dsc][dsc] | [kitchen-pester][pester] | [kitchen-opennebula][opennebula] | [kitchen-hyperv][hyperv] | [kitchen-cloudstack][cloudstack]
+---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/test-kitchen/kitchen-dsc.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dsc)| [![Status](https://travis-ci.org/test-kitchen/kitchen-pester.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-pester) | [![Status](https://travis-ci.org/test-kitchen/kitchen-opennebula.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-opennebula) |  [![Status](https://travis-ci.org/test-kitchen/kitchen-hyperv.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-hyperv) | [![Status](https://travis-ci.org/test-kitchen/kitchen-cloudstack.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-cloudstack)
+[![Gem Version](https://badge.fury.io/rb/kitchen-dsc.svg)](http://badge.fury.io/rb/kitchen-dsc) | [![Gem Version](https://badge.fury.io/rb/kitchen-pester.svg)](http://badge.fury.io/rb/kitchen-pester) | [![Gem Version](https://badge.fury.io/rb/kitchen-opennebula.svg)](http://badge.fury.io/rb/kitchen-opennebula) | [![Gem Version](https://badge.fury.io/rb/kitchen-hyperv.svg)](http://badge.fury.io/rb/kitchen-hyperv) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudstack.svg)](http://badge.fury.io/rb/kitchen-cloudstack)
 
-The following are written by the [chef][chef] company.
+ [kitchen-dokken][dokken] | [kitchen-azurerm][azurerm] | [kitchen-vra][vra] | [kitchen-vro][vro] | [kitchen-vcair][vcair]
+ ---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/test-kitchen/kitchen-dokken.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-dokken)| [![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/test-kitchen/kitchen-vra.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vra)| [![Status](https://travis-ci.org/test-kitchen/kitchen-vro.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vro) | [![Status](https://travis-ci.org/test-kitchen/kitchen-vcair.svg?branch=master)](https://travis-ci.org/test-kitchen/kitchen-vcair)
+[![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) | [![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
-[kitchen-appbundle-updater][appbundle-updater] | [kitchen-inspec][inspec]
----- | ---- |
-[![Status](https://travis-ci.org/chef/kitchen-appbundle-updater.svg?branch=master)](https://travis-ci.org/chef/kitchen-appbundle-updater)| [![Status](https://travis-ci.org/chef/kitchen-inspec.svg?branch=master)](https://travis-ci.org/chef/kitchen-inspec) |
-[![Gem Version](https://badge.fury.io/rb/kitchen-appbundle-updater.svg)](http://badge.fury.io/rb/kitchen-appbundle-updater) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
+[kitchen-habtiat][habitat] |
+---- | 
+[![CI](https://github.com/test-kitchen/kitchen-habitat/workflows/CI/badge.svg?branch=master)](https://github.com/test-kitchen/kitchen-habitat/actions?query=workflow%3ACI+branch%3Amaster) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-habitat.svg)](http://badge.fury.io/rb/kitchen-habitat) |
 
-[kitchen-vra][vra] | [kitchen-vro][vro] | [kitchen-vcair][vcair] | [kitchen-oraclecloud][oracle] | [kitchen-ssh-cisco][sadpanda] | [kitchen-vcenter][vcenter]
----- | ---- | ---- | ---- | ---- | ---- |
-[![Status](https://travis-ci.org/chef-partners/kitchen-vra.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vra)| [![Status](https://travis-ci.org/chef-partners/kitchen-vro.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vro) | [![Status](https://travis-ci.org/chef-partners/kitchen-vcair.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-vcair) | [![Status](https://travis-ci.org/chef-partners/kitchen-oraclecloud.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-oraclecloud) |  [![Status](https://travis-ci.org/chef-partners/kitchen-ssh-cisco.svg?branch=master)](https://travis-ci.org/chef-partners/kitchen-ssh-cisco) | [![Status](https://travis-ci.org/chef/kitchen-vcenter.svg?branch=master)](https://travis-ci.org/chef/kitchen-vcenter)
-[![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-oraclecloud.svg)](http://badge.fury.io/rb/kitchen-oraclecloud) | [![Gem Version](https://badge.fury.io/rb/kitchen-ssh-cisco.svg)](http://badge.fury.io/rb/kitchen-ssh-cisco) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](http://badge.fury.io/rb/kitchen-vcenter)
+The following are written by the [Chef Software][chef].
 
-The following are community driven plugins.
+[kitchen-vcenter][vcenter] | [kitchen-inspec][inspec]
+---- | ----
+[![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | [![Status](https://travis-ci.org/inspec/kitchen-inspec.svg?branch=master)](https://travis-ci.org/inspec/kitchen-inspec) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](https://rubygems.org/gems/kitchen-vcenter) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
 
-[kitchen-sync][sync] | [kitchen-ansible][ansible] | [kitchen-puppet][puppet] | [kitchen-salt][salt] | [kitchen-dokken][dokken] | [kitchen-lxc][lxc]
----- | ---- | ---- | ---- | ---- | ----
-[![Status](https://travis-ci.org/coderanger/kitchen-sync.svg?branch=master)](https://travis-ci.org/coderanger/kitchen-sync)| [![Status](https://travis-ci.org/neillturner/kitchen-ansible.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-ansible) | [![Status](https://travis-ci.org/neillturner/kitchen-puppet.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-puppet) | [![Status](https://travis-ci.org/kitchen-salt/kitchen-salt.svg?branch=master)](https://travis-ci.org/kitchen-salt/kitchen-salt) |  [![Status](https://travis-ci.org/someara/kitchen-dokken.svg?branch=master)](https://travis-ci.org/someara/kitchen-dokken) | [![Status](https://travis-ci.org/chrisroberts/kitchen-lxc.svg?branch=master)](https://travis-ci.org/chrisroberts/kitchen-lxc)
-[![Gem Version](https://badge.fury.io/rb/kitchen-sync.svg)](http://badge.fury.io/rb/kitchen-sync) | [![Gem Version](https://badge.fury.io/rb/kitchen-ansible.svg)](http://badge.fury.io/rb/kitchen-ansible) | [![Gem Version](https://badge.fury.io/rb/kitchen-puppet.svg)](http://badge.fury.io/rb/kitchen-puppet) | [![Gem Version](https://badge.fury.io/rb/kitchen-salt.svg)](http://badge.fury.io/rb/kitchen-salt) | [![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-lxc.svg)](http://badge.fury.io/rb/kitchen-lxc)
+The following are community-maintained plugins
 
-[kitchen-nodes][nodes] | [kitchen-zcloudjp][zcloudjp] | [kitchen-bluebox][bluebox] | [kitchen-softlayer][softlayer] | [kitchen-linode][linode] | [kitchen-docker][docker]
----- | ---- | ---- | ---- | ---- | ----
-[![Status](https://travis-ci.org/mwrock/kitchen-nodes.svg?branch=master)](https://travis-ci.org/mwwrock/kitchen-nodes) | [![Status](https://travis-ci.org/higanworks/kitchen-zcloudjp.svg?branch=master)](https://travis-ci.org/higanworks/kitchen-zcloudjp) | [![Status](https://travis-ci.org/blueboxgroup/kitchen-bluebox.svg?branch=master)](https://travis-ci.org/blueboxgroup/kitchen-bluebox) |  [![Status](https://travis-ci.org/neillturner/kitchen-softlayer.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-softlayer) | [![Status](https://travis-ci.org/ssplatt/kitchen-linode.svg?branch=master)](https://travis-ci.org/ssplatt/kitchen-linode) | [![Status](https://travis-ci.org/ssplatt/kitchen-docker.svg?branch=master)](https://travis-ci.org/portertech/kitchen-docker)
-[![Gem Version](https://badge.fury.io/rb/kitchen-nodes.svg)](http://badge.fury.io/rb/kitchen-nodes) | [![Gem Version](https://badge.fury.io/rb/kitchen-zcloudjp.svg)](http://badge.fury.io/rb/kitchen-zcloudjp) | [![Gem Version](https://badge.fury.io/rb/kitchen-bluebox.svg)](http://badge.fury.io/rb/kitchen-bluebox) | [![Gem Version](https://badge.fury.io/rb/kitchen-softlayer.svg)](http://badge.fury.io/rb/kitchen-softlayer) | [![Gem Version](https://badge.fury.io/rb/kitchen-linode.svg)](http://badge.fury.io/rb/kitchen-linode)  | [![Gem Version](https://badge.fury.io/rb/kitchen-docker.svg)](http://badge.fury.io/rb/kitchen-docker)
+[kitchen-sync][sync] | [kitchen-ansible][ansible] | [kitchen-puppet][puppet] | [kitchen-salt][salt] | [kitchen-lxc][lxc]
+---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/coderanger/kitchen-sync.svg?branch=master)](https://travis-ci.org/coderanger/kitchen-sync)| [![Status](https://travis-ci.org/neillturner/kitchen-ansible.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-ansible) | [![Status](https://travis-ci.org/neillturner/kitchen-puppet.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-puppet) | [![Status](https://travis-ci.org/kitchen-salt/kitchen-salt.svg?branch=master)](https://travis-ci.org/kitchen-salt/kitchen-salt) | [![Status](https://travis-ci.org/chrisroberts/kitchen-lxc.svg?branch=master)](https://travis-ci.org/chrisroberts/kitchen-lxc)
+[![Gem Version](https://badge.fury.io/rb/kitchen-sync.svg)](http://badge.fury.io/rb/kitchen-sync) | [![Gem Version](https://badge.fury.io/rb/kitchen-ansible.svg)](http://badge.fury.io/rb/kitchen-ansible) | [![Gem Version](https://badge.fury.io/rb/kitchen-puppet.svg)](http://badge.fury.io/rb/kitchen-puppet) | [![Gem Version](https://badge.fury.io/rb/kitchen-salt.svg)](http://badge.fury.io/rb/kitchen-salt) | [![Gem Version](https://badge.fury.io/rb/kitchen-lxc.svg)](http://badge.fury.io/rb/kitchen-lxc)
 
-[kitchen-qemu][qemu] | [kitchen-cfengine][cfengine] | [kitchen-cloudformation][cloudformation] | [kitchen-wpar][wpar] | [kitchen-powervc][powervc] | [kitchen-terraform][terraform]
----- | ---- | ---- | ---- | ---- | ----
-[![Status](https://travis-ci.org/esmil/kitchen-qemu.svg?branch=master)](https://travis-ci.org/esmil/kitchen-qemu)| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |  [![Status](https://travis-ci.org/chmod666org/kitchen-powervc.svg?branch=master)](https://travis-ci.org/chmod666org/kitchen-powervc) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
-[![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
+[kitchen-nodes][nodes] | [kitchen-zcloudjp][zcloudjp] | [kitchen-softlayer][softlayer] | [kitchen-linode][linode] | [kitchen-docker][docker]
+---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/mwrock/kitchen-nodes.svg?branch=master)](https://travis-ci.org/mwwrock/kitchen-nodes) | [![Status](https://travis-ci.org/higanworks/kitchen-zcloudjp.svg?branch=master)](https://travis-ci.org/higanworks/kitchen-zcloudjp) |  [![Status](https://travis-ci.org/neillturner/kitchen-softlayer.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-softlayer) | [![Status](https://github.com/ssplatt/kitchen-linode/actions/workflows/ci.yml/badge.svg)](https://github.com/ssplatt/kitchen-linode/actions/workflows/ci.yml) | [![Status](https://travis-ci.org/ssplatt/kitchen-docker.svg?branch=master)](https://travis-ci.org/portertech/kitchen-docker)
+[![Gem Version](https://badge.fury.io/rb/kitchen-nodes.svg)](http://badge.fury.io/rb/kitchen-nodes) | [![Gem Version](https://badge.fury.io/rb/kitchen-zcloudjp.svg)](http://badge.fury.io/rb/kitchen-zcloudjp) | [![Gem Version](https://badge.fury.io/rb/kitchen-softlayer.svg)](http://badge.fury.io/rb/kitchen-softlayer) | [![Gem Version](https://badge.fury.io/rb/kitchen-linode.svg)](http://badge.fury.io/rb/kitchen-linode)  | [![Gem Version](https://badge.fury.io/rb/kitchen-docker.svg)](http://badge.fury.io/rb/kitchen-docker)
 
-[kitchen-azurerm][azurerm] | [kitchen-sparkleformation][sparkleformation] 
----- | ---- 
-[![Status](https://travis-ci.org/pendrica/kitchen-azurerm.svg?branch=master)](https://travis-ci.org/pendrica/kitchen-azurerm) | [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) 
-[![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) |  [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) 
+[kitchen-qemu][qemu] | [kitchen-cfengine][cfengine] | [kitchen-cloudformation][cloudformation] | [kitchen-wpar][wpar] | [kitchen-powervc][powervc]
+---- | ---- | ---- | ---- | ----
+[![Status](https://travis-ci.org/esmil/kitchen-qemu.svg?branch=master)](https://travis-ci.org/esmil/kitchen-qemu)| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |  [![Status](https://travis-ci.org/chmod666org/kitchen-powervc.svg?branch=master)](https://travis-ci.org/chmod666org/kitchen-powervc)
+[![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc)
 
+[kitchen-sparkleformation][sparkleformation] | [kitchen-terraform][terraform]
+---- | ----
+[![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
+[![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
 
 [chefpartners]: https://github.com/chef-partners/
 [ec2]: https://github.com/test-kitchen/kitchen-ec2
@@ -58,9 +62,9 @@ The following are community driven plugins.
 [vagrant]: https://github.com/test-kitchen/kitchen-vagrant
 [dsc]: https://github.com/test-kitchen/kitchen-dsc
 [pester]: https://github.com/test-kitchen/kitchen-pester
-[joyent]: https://github.com/test-kitchen/kitchen-joyent
 [opennebula]: https://github.com/test-kitchen/kitchen-opennebula
 [hyperv]: https://github.com/test-kitchen/kitchen-hyperv
+[habitat]: https://github.com/test-kitchen/kitchen-habitat
 [cloudstack]: https://github.com/test-kitchen/kitchen-cloudstack
 [vra]: https://github.com/chef-partners/kitchen-vra
 [vro]: https://github.com/chef-partners/kitchen-vro
@@ -72,7 +76,7 @@ The following are community driven plugins.
 [ansible]: https://github.com/neillturner/kitchen-ansible
 [puppet]: https://github.com/neillturner/kitchen-puppet
 [salt]: https://github.com/kitchen-salt/kitchen-salt
-[dokken]: https://github.com/someara/kitchen-dokken
+[dokken]: https://github.com/test-kitchen/kitchen-dokken
 [lxc]: https://github.com/chrisroberts/kitchen-lxc
 [nodes]: https://github.com/mwrock/kitchen-nodes
 [zcloudjp]: https://github.com/higanworks/kitchen-zcloudjp
@@ -85,7 +89,7 @@ The following are community driven plugins.
 [sparkleformation]: https://github.com/devkid/kitchen-sparkleformation
 [wpar]:  https://github.com/adejoux/kitchen-wpar
 [powervc]:  https://github.com/chmod666org/kitchen-powervc
-[appbundle-updater]: https://github.com/chef/kitchen-appbundle-updater
+[vsphereater]: https://github.com/chef/kitchen-vsphere
 [inspec]: https://github.com/chef/kitchen-inspec
 [chef]: https://chef.io
 [azurerm]: http://github.com/pendrica/kitchen-azurerm

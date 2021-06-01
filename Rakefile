@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 require "bundler/gem_tasks"
 
 require "rake/testtask"
@@ -43,29 +41,7 @@ end
 desc "Run all quality tasks"
 task quality: %i{style stats}
 
-begin
-  require "yard"
-  YARD::Rake::YardocTask.new
-rescue LoadError
-  puts "yard is not available. (sudo) gem install yard to generate yard documentation."
-end
-
 task default: %i{test quality}
-
-begin
-  require "github_changelog_generator/task"
-  require "kitchen/version"
-
-  GitHubChangelogGenerator::RakeTask.new :changelog do |config|
-    config.future_release = "v#{Kitchen::VERSION}"
-    config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature,Improvement".split(",")
-    config.bug_labels = "bug,Bug".split(",")
-    config.exclude_labels = %w{Duplicate Question Discussion No_Changelog}
-  end
-rescue LoadError
-  puts "github_changelog_generator is not available." \
-       " (sudo) gem install github_changelog_generator to generate changelogs"
-end
 
 namespace :docs do
   desc "Deploy docs"

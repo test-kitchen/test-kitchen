@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier/base"
+require_relative "base"
 
 module Kitchen
   module Verifier
@@ -24,7 +23,7 @@ module Kitchen
     #
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Shell < Kitchen::Verifier::Base
-      require "mixlib/shellout"
+      require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
 
       kitchen_verifier_api_version 1
 
@@ -89,6 +88,7 @@ module Kitchen
         env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
         env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
         env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
+        env_state[:environment]["KITCHEN_USERNAME"] = instance.transport[:username] if instance.respond_to?(:transport)
         state.each_pair do |key, value|
           env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
         end

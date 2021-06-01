@@ -1,27 +1,22 @@
-Documentation for KitchenCI.
+Documentation for Test Kitchen.
 
-## Overview
-
-To preview the documentation in your browser run the following:
-
-~~~ shell
-bundle install
-bundle exec middleman server
-~~~
-
-While the Getting Started guide is written in primarily [Markdown][markdown] a few pages use [Slim](http://slim-lang.com/), an HTML templating engine for Ruby.
-
-Then go view the docs at [http://localhost:4567](http://localhost:4567). Edits to the documentation source files should cause the `middleman` server to reload so you can see your changes update live.
+The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendered using [Hugo](https://gohugo.io).
 
 ## Hosting
 
-All documentation will be hosted on the official Kitchen website (http://kitchen.ci), which is a static site built with [Middleman][middleman].
+All documentation will be hosted on the official Kitchen website <https://kitchen.ci/>, which is a static site stored in an S3 bucket and fronted by CloudFront.
 
-The important parts to familiarize yourself with for contributing to the KitchenCI documentation are the markdown renderer and syntax highlighting engines used to power http://kitchen.ci.
+## Running Locally
 
-Markdown rendering is handled by [kramdown][kramdown]. It would be worth your while to briefly review the kramdown documentation as there are some subtle differences (as well as a number of helpful extensions) that deviate from the Markdown standard.
+### Install Hugo
 
-Syntax Highlighting is handled by [middleman-syntax][syntax], which uses [Rouge][rouge], which is a ruby-based syntax highlighting engine that is compatible with [Pygments][pygments] templates and supports things like "fenced code blocks" and language-specific syntax highlighting from Markdown.
+- On macOS run: `brew install hugo`
+- On Windows run: `choco install hugo`
+- On Ubuntu run: `apt install -y build-essential; snap install hugo --channel=extended`
+
+### Run Hugo
+
+Run `hugo serve` and browse the the URL presented
 
 ## Style Guide
 
@@ -29,7 +24,7 @@ There are four elements that may be used for "styling" the docs content: in-line
 
 ### In-line Code Highlighting
 
-To highlight `some code` inline with other content, just "quote" the text using backtick characters (`). See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#code-spans) for more details.
+To highlight `some code` inline with other content, just "quote" the text using backtick characters (`).
 
 ### Fenced Code Blocks
 
@@ -68,7 +63,7 @@ The Kitchen Documentation is released under the [MIT license][mit-license].
 
 
 [markdown]: http://daringfireball.net/projects/markdown/syntax
-[kitchenci]: http://kitchen.ci
+[kitchenci]: https://kitchen.ci/
 [middleman]: http://middlemanapp.com
 [pages]: http://pages.github.com/
 [kramdown]: http://kramdown.gettalong.org/

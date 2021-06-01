@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor"
+require "thor" unless defined?(Thor)
 
-require "kitchen"
+require_relative "../kitchen"
 
 module Kitchen
   # Kitchen Thor task generator.

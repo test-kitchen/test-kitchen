@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -18,8 +17,9 @@
 
 require "thor/util"
 
-require "kitchen/lazy_hash"
-require "benchmark"
+require_relative "../lazy_hash"
+require_relative "../plugin_base"
+require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Driver
@@ -43,7 +43,7 @@ module Kitchen
     #   Transport, and Verifier subsystems may not be picked up in these
     #   Drivers. When legacy Driver::SSHBase support is removed, this class
     #   will no longer be available.
-    class SSHBase
+    class SSHBase < Kitchen::Plugin::Base
       include ShellOut
       include Configurable
       include Logging
@@ -179,43 +179,6 @@ module Kitchen
       # @raise [UserError] if the driver will not be able to perform or if a
       #   documented dependency is missing from the system
       def verify_dependencies; end
-
-      class << self
-        # @return [Array<Symbol>] an array of action method names that cannot
-        #   be run concurrently and must be run in serial via a shared mutex
-        attr_reader :serial_actions
-      end
-
-      # Registers certain driver actions that cannot be safely run concurrently
-      # in threads across multiple instances. Typically this might be used
-      # for create or destroy actions that use an underlying resource that
-      # cannot be used at the same time.
-      #
-      # A shared mutex for this driver object will be used to synchronize all
-      # registered methods.
-      #
-      # @example a single action method that cannot be run concurrently
-      #
-      #   no_parallel_for :create
-      #
-      # @example multiple action methods that cannot be run concurrently
-      #
-      #   no_parallel_for :create, :destroy
-      #
-      # @param methods [Array<Symbol>] one or more actions as symbols
-      # @raise [ClientError] if any method is not a valid action method name
-      def self.no_parallel_for(*methods)
-        action_methods = %i{create converge setup verify destroy}
-
-        Array(methods).each do |meth|
-          next if action_methods.include?(meth)
-
-          raise ClientError, "##{meth} is not a valid no_parallel_for method"
-        end
-
-        @serial_actions ||= []
-        @serial_actions += methods
-      end
 
       # Cache directory that a driver could implement to inform the provisioner
       # that it can leverage it internally

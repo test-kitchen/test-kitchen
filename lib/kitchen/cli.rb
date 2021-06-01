@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "thor"
+# CI tests fail without an explicit unconditional require of Thor
+require "thor" # rubocop:disable Chef/Ruby/UnlessDefinedRequire
 
-require "kitchen"
-require "kitchen/generator/init"
+require_relative "../kitchen"
+require_relative "generator/init"
 
 module Kitchen
   # The command line runner for Kitchen.
@@ -162,7 +162,7 @@ module Kitchen
       long_desc <<-DESC
         The instance states are in order: destroy, create, converge, setup, verify, destroy.
         Change one or more instances from the current state to the #{action} state. Actions for all
-        intermediate states will be executed. See http://kitchen.ci for further explanation.
+        intermediate states will be executed. See https://kitchen.ci/ for further explanation.
       DESC
       method_option :concurrency,
         aliases: "-c",
@@ -285,7 +285,7 @@ module Kitchen
       perform("exec", "exec", args)
     end
 
-    desc "version", "Print Kitchen's version information"
+    desc "version", "Print Test Kitchen's version information"
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
     end
@@ -296,7 +296,7 @@ module Kitchen
       perform("sink", "sink")
     end
 
-    desc "console", "Kitchen Console!"
+    desc "console", "Test Kitchen Console!"
     def console
       perform("console", "console")
     end

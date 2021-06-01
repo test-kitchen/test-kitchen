@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -136,7 +135,7 @@ module Kitchen
         rakedoc = <<-RAKE.gsub(/^ {10}/, "")
 
           begin
-            require 'kitchen/rake_tasks'
+            require_relative '../rake_tasks'
             Kitchen::RakeTasks.new
           rescue LoadError
             puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
@@ -154,7 +153,7 @@ module Kitchen
         thordoc = <<-THOR.gsub(/^ {10}/, "")
 
           begin
-            require 'kitchen/thor_tasks'
+            require_relative '../thor_tasks'
             Kitchen::ThorTasks.new
           rescue LoadError
             puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']

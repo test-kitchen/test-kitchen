@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,39 +15,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "thread"
+require "pathname" unless defined?(Pathname)
+require_relative "kitchen/errors"
+require_relative "kitchen/logger"
+require_relative "kitchen/logging"
+require_relative "kitchen/shell_out"
+require_relative "kitchen/configurable"
+require_relative "kitchen/util"
 
-require "kitchen/errors"
-require "kitchen/logger"
-require "kitchen/logging"
-require "kitchen/shell_out"
-require "kitchen/configurable"
-require "kitchen/util"
-
-require "kitchen/provisioner"
-require "kitchen/provisioner/base"
-require "kitchen/color"
-require "kitchen/collection"
-require "kitchen/config"
-require "kitchen/data_munger"
-require "kitchen/driver"
-require "kitchen/driver/base"
-require "kitchen/driver/ssh_base"
-require "kitchen/driver/proxy"
-require "kitchen/instance"
-require "kitchen/lifecycle_hooks"
-require "kitchen/transport"
-require "kitchen/transport/base"
-require "kitchen/loader/yaml"
-require "kitchen/metadata_chopper"
-require "kitchen/platform"
-require "kitchen/state_file"
-require "kitchen/ssh"
-require "kitchen/suite"
-require "kitchen/verifier"
-require "kitchen/verifier/base"
-require "kitchen/version"
+require_relative "kitchen/provisioner"
+require_relative "kitchen/provisioner/base"
+require_relative "kitchen/color"
+require_relative "kitchen/collection"
+require_relative "kitchen/config"
+require_relative "kitchen/data_munger"
+require_relative "kitchen/driver"
+require_relative "kitchen/driver/base"
+require_relative "kitchen/driver/ssh_base"
+require_relative "kitchen/driver/proxy"
+require_relative "kitchen/instance"
+require_relative "kitchen/lifecycle_hooks"
+require_relative "kitchen/transport"
+require_relative "kitchen/transport/base"
+require_relative "kitchen/loader/yaml"
+require_relative "kitchen/metadata_chopper"
+require_relative "kitchen/platform"
+require_relative "kitchen/state_file"
+require_relative "kitchen/ssh"
+require_relative "kitchen/suite"
+require_relative "kitchen/verifier"
+require_relative "kitchen/verifier/base"
+require_relative "kitchen/version"
 
 # Test Kitchen base module.
 #
@@ -68,7 +65,7 @@ module Kitchen
     #
     # @return [Pathname] root path of gem
     def source_root
-      @source_root ||= Pathname.new(File.expand_path("../../", __FILE__))
+      @source_root ||= Pathname.new(File.expand_path("..", __dir__))
     end
 
     # Returns a default logger which emits on standard output.

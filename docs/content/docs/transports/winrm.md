@@ -1,0 +1,55 @@
+---
+title: WinRM
+menu:
+  docs:
+    parent: transports
+    weight: 15
+---
+
+`winrm` is the default transport for all Windows hosts. For most users the default tranport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+
+## WinRM Tranport Settings
+
+### connection_retries
+
+Maximum number of times to retry after a failed attempt to open a connection. The default is `5`.
+
+### connection_retry_sleep
+
+The number of seconds to wait until attempting to make another connection after a failure.
+
+### max_wait_until_ready
+
+The maximum number of attempts to determine if the test instance is ready to accept commands. This defaults to `600`.
+
+### password
+
+The password used for authenticating to the test instance.
+
+### port
+
+The port used to connect to the test instance. This defaults `5985` when using `http` or `5986` when using `https`.
+
+### username
+
+The username used for authenticating to the test instance. This defaults to `administrator`. Some drivers may change this default.
+
+### elevated
+
+When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with windows updates and installing some MSIs such as sql server and .net runtimes. Defaults to `false`.
+
+### elevated_password
+
+The password used by the identity running the scheduled task. This may be null in the case of service accounts. Defaults to `password`.
+
+### elevated_username
+
+The identity that the task runs under. This may also be set to service accounts such as System. This defaults to `username`.
+
+### rdp_port
+
+Port used making rdp connections for kitchen login commands. Defaults to `3389`.
+
+### winrm_transport
+
+The transport type used by winrm as explained here. The default is `negotiate`. `ssl` and `plaintext` are also acceptable values.

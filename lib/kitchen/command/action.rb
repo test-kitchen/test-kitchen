@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,9 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/command"
+require_relative "../command"
 
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Command
@@ -30,12 +29,12 @@ module Kitchen
 
       # Invoke the command.
       def call
-        banner "Starting Kitchen (v#{Kitchen::VERSION})"
+        banner "Starting Test Kitchen (v#{Kitchen::VERSION})"
         elapsed = Benchmark.measure do
           results = parse_subcommand(args.first)
           run_action(action, results)
         end
-        banner "Kitchen is finished. #{Util.duration(elapsed.real)}"
+        banner "Test Kitchen is finished. #{Util.duration(elapsed.real)}"
       end
     end
   end

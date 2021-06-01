@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -18,7 +17,7 @@
 
 require "rake/tasklib"
 
-require "kitchen"
+require_relative "../kitchen"
 
 module Kitchen
   # Kitchen Rake task generator.

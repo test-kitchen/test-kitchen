@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/plugin"
+require_relative "plugin"
 
 module Kitchen
   # A verifier is responsible for running tests post-converge to confirm that

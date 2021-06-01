@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,18 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
-require "pathname"
-require "json"
-require "cgi"
+require "fileutils" unless defined?(FileUtils)
+require "pathname" unless defined?(Pathname)
+require "json" unless defined?(JSON)
+require "cgi" unless defined?(CGI)
 
-require "kitchen/provisioner/chef/policyfile"
-require "kitchen/provisioner/chef/berkshelf"
-require "kitchen/provisioner/chef/common_sandbox"
-require "kitchen/util"
-require "mixlib/install"
-require "mixlib/install/script_generator"
-require "license_acceptance/acceptor"
+require_relative "chef/policyfile"
+require_relative "chef/berkshelf"
+require_relative "chef/common_sandbox"
+require_relative "../util"
+module LicenseAcceptance
+  autoload :Acceptor, "license_acceptance/acceptor"
+end
 
 begin
   require "chef-config/config"
@@ -69,6 +68,7 @@ module Kitchen
         README.* VERSION metadata.{json,rb} attributes.rb recipe.rb
         attributes/**/* definitions/**/* files/**/* libraries/**/*
         providers/**/* recipes/**/* resources/**/* templates/**/*
+        ohai/**/*
       ).join(",")
       # to ease upgrades, allow the user to turn deprecation warnings into errors
       default_config :deprecations_as_errors, false
@@ -153,10 +153,10 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               install_strategy: skip
           MSG
-        when provisioner[:require_chef_omnibus].to_s.match(/\d/)
+        when provisioner[:require_chef_omnibus].to_s.match?(/\d/)
           Util.outdent!(<<-MSG)
             The 'require_chef_omnibus' attribute with version values will change
             to use the new 'product_version' attribute.
@@ -166,7 +166,7 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               product_version: #{provisioner[:require_chef_omnibus]}
           MSG
         when provisioner[:require_chef_omnibus] == "latest"
@@ -179,7 +179,7 @@ module Kitchen
 
             # New Usage #
             provisioner:
-              product_name: <chef or chefdk>
+              product_name: <chef or chef-workstation>
               install_strategy: always
           MSG
         end
@@ -199,11 +199,11 @@ module Kitchen
 
         # Deprecated Example #
         provisioner:
-          chef_omnibus_install_options: -P chefdk -c current
+          chef_omnibus_install_options: -P chef-workstation -c current
 
         # New Usage #
         provisioner:
-          product_name: chefdk
+          product_name: chef-workstation
           channel: current
       MSG
 
@@ -216,7 +216,7 @@ module Kitchen
 
         # New Usage #
         provisioner:
-          product_name: <chef or chefdk>
+          product_name: <chef or chef-workstation>
           download_url: http://direct-download-url
       MSG
 
@@ -225,9 +225,9 @@ module Kitchen
         fully managed by using attribute settings.
       MSG
 
-      # Reads the local Chef::Config object (if present).  We do this because
-      # we want to start bring Chef config and ChefDK tool config closer
-      # together.  For example, we want to configure proxy settings in 1
+      # Reads the local Chef::Config object (if present). We do this because
+      # we want to start bring Chef config and Chef Workstation config closer
+      # together. For example, we want to configure proxy settings in 1
       # location instead of 3 configuration files.
       #
       # @param config [Hash] initial provided configuration
@@ -328,7 +328,7 @@ module Kitchen
         return unless config[:require_chef_omnibus] || config[:product_name]
         return if config[:product_name] && config[:install_strategy] == "skip"
 
-        prefix_command(sudo(install_script_contents))
+        prefix_command(install_script_contents)
       end
 
       private
@@ -503,6 +503,7 @@ module Kitchen
       # @return [String] contents of product based install script
       # @api private
       def script_for_product
+        require "mixlib/install"
         installer = Mixlib::Install.new({
           product_name: config[:product_name],
           product_version: config[:product_version],
@@ -514,6 +515,12 @@ module Kitchen
           opts[:shell_type] = :ps1 if powershell_shell?
           %i{platform platform_version architecture}.each do |key|
             opts[key] = config[key] if config[key]
+          end
+
+          unless windows_os?
+            # omnitruck installer does not currently support a tmp dir option on windows
+            opts[:install_command_options][:tmp_dir] = config[:root_path]
+            opts[:install_command_options]["TMPDIR"] = config[:root_path]
           end
 
           if config[:download_url]
@@ -534,7 +541,6 @@ module Kitchen
             # install.ps1 only supports http_proxy
             prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
-
           opts[:install_command_options].merge!(proxies)
         end)
         config[:chef_omnibus_root] = installer.root
@@ -553,8 +559,14 @@ module Kitchen
       end
 
       def install_from_file(command)
-        install_file = "/tmp/chef-installer.sh"
-        script = ["cat > #{install_file} <<\"EOL\""]
+        install_file = "#{config[:root_path]}/chef-installer.sh"
+        script = []
+        script << "mkdir -p #{config[:root_path]}"
+        script << "if [ $? -ne 0 ]; then"
+        script << "  echo Kitchen config setting root_path: '#{config[:root_path]}' not creatable by regular user "
+        script << "  exit 1"
+        script << "fi"
+        script << "cat > #{install_file} <<\"EOL\""
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
@@ -565,11 +577,12 @@ module Kitchen
       # @return [String] contents of version based install script
       # @api private
       def script_for_omnibus_version
+        require "mixlib/install/script_generator"
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
         config[:chef_omnibus_root] = installer.root
-        installer.install_command
+        sudo(installer.install_command)
       end
 
       # Hook used in subclasses to indicate support for policyfiles.

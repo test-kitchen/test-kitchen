@@ -10,7 +10,7 @@ menu:
 Here we go, time to automate our Git installation! Open `recipes/default.rb` in your editor of choice and add the following:
 
 ~~~
-package "git"
+package 'git'
 ~~~
 
 Hrm. That was a bit too easy. Let's put our code to the test right away!

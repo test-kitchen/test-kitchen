@@ -147,7 +147,7 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Rakefile" should contain:
     """
     begin
-      require 'kitchen/rake_tasks'
+      require_relative '../rake_tasks'
       Kitchen::RakeTasks.new
     rescue LoadError
       puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
@@ -166,7 +166,7 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Thorfile" should contain:
     """
     begin
-      require 'kitchen/thor_tasks'
+      require_relative '../thor_tasks'
       Kitchen::ThorTasks.new
     rescue LoadError
       puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
@@ -196,8 +196,8 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-18.04
-      - name: centos-7
+      - name: ubuntu-20.04
+      - name: centos-8
 
     suites:
       - name: default
@@ -220,8 +220,8 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-18.04
-      - name: centos-7
+      - name: ubuntu-20.04
+      - name: centos-8
 
     suites:
       - name: default
@@ -243,8 +243,8 @@ Feature: Add Test Kitchen support to an existing project
       name: chef_solo
 
     platforms:
-      - name: ubuntu-18.04
-      - name: centos-7
+      - name: ubuntu-20.04
+      - name: centos-8
 
     suites:
       - name: default

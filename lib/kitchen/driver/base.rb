@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,18 +15,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/lazy_hash"
-require "kitchen/logging"
-require "kitchen/shell_out"
+require_relative "../configurable"
+require_relative "../errors"
+require_relative "../lazy_hash"
+require_relative "../logging"
+require_relative "../plugin_base"
+require_relative "../shell_out"
 
 module Kitchen
   module Driver
     # Base class for a driver.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
       include ShellOut
@@ -68,43 +68,6 @@ module Kitchen
       # @returns [Boolean] Return true if a problem is found.
       def doctor(state)
         false
-      end
-
-      class << self
-        # @return [Array<Symbol>] an array of action method names that cannot
-        #   be run concurrently and must be run in serial via a shared mutex
-        attr_reader :serial_actions
-      end
-
-      # Registers certain driver actions that cannot be safely run concurrently
-      # in threads across multiple instances. Typically this might be used
-      # for create or destroy actions that use an underlying resource that
-      # cannot be used at the same time.
-      #
-      # A shared mutex for this driver object will be used to synchronize all
-      # registered methods.
-      #
-      # @example a single action method that cannot be run concurrently
-      #
-      #   no_parallel_for :create
-      #
-      # @example multiple action methods that cannot be run concurrently
-      #
-      #   no_parallel_for :create, :destroy
-      #
-      # @param methods [Array<Symbol>] one or more actions as symbols
-      # @raise [ClientError] if any method is not a valid action method name
-      def self.no_parallel_for(*methods)
-        action_methods = %i{create setup converge verify destroy}
-
-        Array(methods).each do |meth|
-          next if action_methods.include?(meth)
-
-          raise ClientError, "##{meth} is not a valid no_parallel_for method"
-        end
-
-        @serial_actions ||= []
-        @serial_actions += methods
       end
 
       # Sets the API version for this driver. If the driver does not set this

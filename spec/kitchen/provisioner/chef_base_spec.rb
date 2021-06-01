@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -21,6 +20,8 @@ require_relative "../../spec_helper"
 require "kitchen"
 require "kitchen/provisioner/chef_base"
 require "fileutils"
+require "mixlib/install"
+require "mixlib/install/script_generator"
 
 describe Kitchen::Provisioner::ChefBase do
   let(:logged_output)   { StringIO.new }
@@ -1204,15 +1205,6 @@ describe Kitchen::Provisioner::ChefBase do
               POLICYFILE
             end
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
-          end
-
-          describe "when the chef executable is not in the PATH" do
-            it "raises a UserError" do
-              Kitchen::Provisioner::Chef::Policyfile.stubs(:detect_chef_command!).with do
-                raise Kitchen::UserError, "Load failed"
-              end
-              proc { provisioner }.must_raise Kitchen::UserError
-            end
           end
 
           describe "when using a provisoner that doesn't support policyfiles" do

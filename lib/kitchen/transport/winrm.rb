@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Salim Afiune (<salim@afiunemaya.com.mx>)
 # Author:: Matt Wrock (<matt@mattwrock.com>)
@@ -18,10 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "rbconfig"
-require "uri"
-require "kitchen"
-require "winrm"
+require "rbconfig" unless defined?(RbConfig)
+require "uri" unless defined?(URI)
+require_relative "../../kitchen"
+require "winrm" unless defined?(WinRM::Connection)
 
 module Kitchen
   module Transport
@@ -309,16 +308,20 @@ module Kitchen
 
         # Builds a `LoginCommand` for use by Linux-based platforms.
         #
-        # TODO: determine whether or not `desktop` exists
-        #
         # @return [LoginCommand] a login command
         # @api private
         def login_command_for_linux
-          args  = %W{-u #{options[:user]}}
-          args += %W{-p #{options[:password]}} if options.key?(:password)
-          args += %W{#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
+          xfreerdp = Util.command_exists? "xfreerdp"
+          unless xfreerdp
+            raise WinrmFailed, "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
+          end
 
-          LoginCommand.new("rdesktop", args)
+          args  = %W{/u:#{options[:user]}}
+          args += %W{/p:#{options[:password]}} if options.key?(:password)
+          args += %W{/v:#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
+          args += %W{/cert-tofu} # always accept certificate
+
+          LoginCommand.new(xfreerdp, args)
         end
 
         # Builds a `LoginCommand` for use by Mac-based platforms.
@@ -362,11 +365,9 @@ module Kitchen
         # @return [Winrm::Shells::Elevated] the elevated shell
         # @api private
         def elevated_session(retry_options = {})
-          @elevated_session ||= begin
-            connection(retry_options).shell(:elevated).tap do |shell|
-              shell.username = options[:elevated_username]
-              shell.password = options[:elevated_password]
-            end
+          @elevated_session ||= connection(retry_options).shell(:elevated).tap do |shell|
+            shell.username = options[:elevated_username]
+            shell.password = options[:elevated_password]
           end
         end
 

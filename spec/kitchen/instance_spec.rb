@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -78,6 +77,27 @@ class SerialDummyDriver < Kitchen::Driver::Dummy
   end
 end
 
+class SerialDummyVerifier < Kitchen::Verifier::Dummy
+  no_parallel_for :verify
+
+  attr_reader :action_in_mutex
+
+  def initialize(config = {})
+    super(config)
+    @action_in_mutex = {}
+  end
+
+  def track_locked(action)
+    @action_in_mutex ||= {}
+    @action_in_mutex[action] = Kitchen::Instance.mutexes[self.class].locked?
+  end
+
+  def call(state)
+    track_locked(:verify)
+    super
+  end
+end
+
 class LegacyDriver < Kitchen::Driver::SSHBase
   attr_reader :called_converge, :called_setup, :called_verify
 
@@ -99,7 +119,7 @@ describe Kitchen::Instance do
   let(:logger_io)       { StringIO.new }
   let(:logger)          { Kitchen::Logger.new(logdev: logger_io) }
   let(:instance)        { Kitchen::Instance.new(opts) }
-  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}) }
+  let(:lifecycle_hooks) { Kitchen::LifecycleHooks.new({}, state_file) }
   let(:provisioner)     { Kitchen::Provisioner::Dummy.new({}) }
   let(:state_file)      { DummyStateFile.new }
   let(:transport)       { Kitchen::Transport::Dummy.new({}) }
@@ -480,8 +500,8 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:create, :pre)
+          lifecycle_hooks.expects(:run).with(:create, :post)
 
           instance.create
         end
@@ -536,10 +556,10 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :create, state_file, :post)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:create, :pre)
+          lifecycle_hooks.expects(:run).with(:create, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :pre)
+          lifecycle_hooks.expects(:run).with(:converge, :post)
 
           instance.converge
         end
@@ -562,8 +582,8 @@ describe Kitchen::Instance do
         end
 
         it "calls lifecycle hooks" do
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :pre)
-          lifecycle_hooks.expects(:run).with(instance, :converge, state_file, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :pre)
+          lifecycle_hooks.expects(:run).with(:converge, :post)
 
           instance.converge
         end
@@ -953,13 +973,11 @@ describe Kitchen::Instance do
         end
 
         it "populates the InstanceFailure message" do
-          begin
-            instance.public_send(action)
-          rescue Kitchen::Error => e
-            e.message.must_match regex_for(
-              "Create failed on instance #{instance.to_str}"
-            )
-          end
+          instance.public_send(action)
+        rescue Kitchen::Error => e
+          e.message.must_match regex_for(
+            "Create failed on instance #{instance.to_str}"
+          )
         end
 
         it "logs the failure" do
@@ -996,13 +1014,11 @@ describe Kitchen::Instance do
         end
 
         it "populates the ActionFailed message" do
-          begin
-            instance.public_send(action)
-          rescue Kitchen::Error => e
-            e.message.must_match regex_for(
-              "Failed to complete #create action: [watwat]"
-            )
-          end
+          instance.public_send(action)
+        rescue Kitchen::Error => e
+          e.message.must_match regex_for(
+            "Failed to complete #create action: [watwat]"
+          )
         end
 
         it "logs the failure" do
@@ -1049,13 +1065,16 @@ describe Kitchen::Instance do
       end
     end
 
-    describe "on drivers with serial actions" do
+    describe "on plugins with serial actions" do
       let(:driver) { SerialDummyDriver.new({}) }
+      let(:verifier) { SerialDummyVerifier.new({}) }
 
       it "runs in a synchronized block for serial actions" do
-        instance.test
+        # require "byebug"; byebug
 
+        instance.test
         driver.action_in_mutex[:create].must_equal true
+        verifier.action_in_mutex[:verify].must_equal true
         driver.action_in_mutex[:destroy].must_equal true
       end
     end

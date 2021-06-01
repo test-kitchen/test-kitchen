@@ -206,7 +206,7 @@ unable_to_download() {
 main() {
   should_update_chef "$chef_omnibus_root" "$version"
   if test $? -eq 0; then
-    echo "-----> Installing Chef package (${pretty_version})";
+    echo "-----> Installing Chef Infra Client package (${pretty_version})";
 
     # solaris 10 lacks recent enough credentials, so http url is used
     platform="`/usr/bin/uname -s 2>/dev/null`";
@@ -218,7 +218,7 @@ main() {
     do_download "$chef_omnibus_url" /tmp/install.sh;
     $sudo_sh /tmp/install.sh $install_flags;
   else
-    echo "-----> Chef package installation detected (${pretty_version})";
+    echo "-----> Chef Infra Client package installation detected (${pretty_version})";
   fi
 }
 

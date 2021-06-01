@@ -5,13 +5,12 @@
 
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
-| Website     | [http://kitchen.ci][website]													|
-| Source Code | [http://kitchen.ci/docs/getting-started/][guide]								|
-| Slack       | [#test-kitchen][slack] channel on Chef Community Slack, [transcript][slack_log]	|
+| Website     | [https://kitchen.ci/][website]													|
+| Source Code | [https://kitchen.ci/docs/getting-started/][guide]								|
+| Slack       | [#test-kitchen][slack] channel on Chef Community Slack	|
 | Twitter     | [@kitchenci][twitter]															|
 
-> **Test Kitchen is an integration tool for developing and testing
-> infrastructure code and software on isolated target platforms.**
+**Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.**
 
 ## Getting Started Guide
 
@@ -38,7 +37,7 @@ init`:
 $ kitchen init
 ```
 
-A `.kitchen.yml` will be created in your project base directory. This file
+A `kitchen.yml` file will be created in your project base directory. This file
 describes your testing configuration; what you want to test and on which target
 platforms. Each of these suite and platform combinations are called instances.
 By default your instances will be converged with Chef Solo and run in Vagrant
@@ -50,10 +49,10 @@ Get a listing of your instances with:
 $ kitchen list
 ```
 
-Run Chef on an instance, in this case `default-ubuntu-1204`, with:
+Run Chef Infra Client on an instance, in this case `default-ubuntu-2004`, with:
 
 ```
-$ kitchen converge default-ubuntu-1204
+$ kitchen converge default-ubuntu-2004
 ```
 
 Destroy all instances with:
@@ -62,7 +61,7 @@ Destroy all instances with:
 $ kitchen destroy
 ```
 
-You can clone a Chef cookbook project that contains Test Kitchen support and
+You can clone a Chef Infra cookbook project that contains Test Kitchen support and
 run through all the instances in serial by running:
 
 ```
@@ -113,12 +112,13 @@ example:
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+5. Create a new Pull Request
 
 ## Authors
 
-Created and maintained by [Fletcher Nichol][fnichol] (<fnichol@nichol.ca>) and
-a growing community of [contributors][contributors].
+Created by [Fletcher Nichol][fnichol] (<fnichol@nichol.ca>).
+
+Maintained by Chef Software and a growing community of [contributors][contributors].
 
 ## License
 
@@ -127,12 +127,11 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
 [ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
 [fnichol]: https://github.com/fnichol
-[guide]: http://kitchen.ci/docs/getting-started/
+[guide]: https://kitchen.ci/docs/getting-started/introduction/
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
 [semver]: http://semver.org/
 [slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
-[slack_log]: https://chefcommunity.slackarchive.io/test-kitchen
 [twitter]: https://twitter.com/kitchenci
-[website]: http://kitchen.ci
+[website]: https://kitchen.ci/

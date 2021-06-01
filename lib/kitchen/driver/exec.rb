@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +12,10 @@
 # limitations under the License.
 #
 
-require "kitchen/driver/base"
-require "kitchen/shell_out"
-require "kitchen/transport/exec"
-require "kitchen/version"
+require_relative "base"
+require_relative "../shell_out"
+require_relative "../transport/exec"
+require_relative "../version"
 
 module Kitchen
   module Driver

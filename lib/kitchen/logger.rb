@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
+require "fileutils" unless defined?(FileUtils)
 require "logger"
 
 module Kitchen
@@ -294,11 +293,11 @@ module Kitchen
       logger = StdoutLogger.new(stdout)
       if colorize
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize(msg.to_s, color).concat("\n")
+          Color.colorize(msg.dup.to_s, color).concat("\n")
         end
       else
         logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          msg.concat("\n")
+          msg.dup.concat("\n")
         end
       end
       logger

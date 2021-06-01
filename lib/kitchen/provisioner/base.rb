@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,16 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/logging"
+require_relative "../configurable"
+require_relative "../errors"
+require_relative "../logging"
+require_relative "../plugin_base"
 
 module Kitchen
   module Provisioner
     # Base class for a provisioner.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
 
@@ -51,6 +51,7 @@ module Kitchen
 
       default_config :command_prefix, nil
 
+      default_config :uploads, {}
       default_config :downloads, {}
 
       expand_path_for :test_base_path
@@ -72,6 +73,10 @@ module Kitchen
         sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
+          config[:uploads].to_h.each do |locals, remote|
+            debug("Uploading #{Array(locals).join(", ")} to #{remote}")
+            conn.upload(locals.to_s, remote)
+          end
           conn.execute(install_command)
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
@@ -172,11 +177,9 @@ module Kitchen
       # @raise [ClientError] if the sandbox directory has no yet been created
       #   by calling `#create_sandbox`
       def sandbox_path
-        @sandbox_path ||= begin
-          raise ClientError, "Sandbox directory has not yet " \
+        @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
           "been created. Please run #{self.class}#create_sandox before " \
           "trying to access the path."
-        end
       end
 
       # Deletes the sandbox path. Without calling this method, the sandbox path

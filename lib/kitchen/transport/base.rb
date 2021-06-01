@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Salim Afiune (<salim@afiunemaya.com.mx>)
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
@@ -17,11 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/configurable"
-require "kitchen/errors"
-require "kitchen/lazy_hash"
-require "kitchen/logging"
-require "kitchen/login_command"
+require_relative "../configurable"
+require_relative "../errors"
+require_relative "../lazy_hash"
+require_relative "../logging"
+require_relative "../login_command"
+require_relative "../plugin_base"
 
 module Kitchen
   module Transport
@@ -41,7 +41,7 @@ module Kitchen
     #
     # @author Salim Afiune <salim@afiunemaya.com.mx>
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
 

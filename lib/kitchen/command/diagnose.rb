@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/command"
-require "kitchen/diagnostic"
+require_relative "../command"
+require_relative "../diagnostic"
 
-require "yaml"
+autoload :YAML, "yaml"
 
 module Kitchen
   module Command
@@ -33,9 +32,9 @@ module Kitchen
 
         loader = record_failure { load_loader }
 
-        puts Kitchen::Diagnostic.new(
+        puts YAML.dump(Kitchen::Diagnostic.new(
           loader: loader, instances: instances, plugins: plugins?
-        ).read.to_yaml
+        ).read)
       end
 
       private

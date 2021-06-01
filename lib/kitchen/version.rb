@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -17,5 +16,5 @@
 # limitations under the License.
 
 module Kitchen
-  VERSION = "2.3.1".freeze
+  VERSION = "2.11.2".freeze
 end

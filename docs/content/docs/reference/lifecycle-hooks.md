@@ -12,7 +12,7 @@ run either locally on your workstation (the default) or remotely on the test ins
 
 These hooks are configured under a new `lifecycle:` section in `kitchen.yml`:
 
-```
+```yaml
 lifecycle:
   pre_create: echo before
   post_create:
@@ -23,9 +23,9 @@ lifecycle:
 
 You can also configure hooks on a single platform or suite:
 
-```
+```yaml
 platforms:
-- name: ubuntu-18.04
+- name: ubuntu-20.04
   lifecycle:
     pre_converge:
     - remote: apt update
@@ -47,7 +47,7 @@ about which instance the hook is evaluating against:
 
 You can also pass additional configuration for local commands:
 
-```
+```yaml
 lifecycle:
   pre_converge:
   - local: ./setup.sh
@@ -69,7 +69,7 @@ lifecycle:
 
 This is a complete example of using a post_create hook to wait for cloud-init to complete for an AWS EC2 instance:
 
-```
+```yaml
 lifecycle:
   post_create:
   - local: echo 'Awaiting cloud-init completion'
@@ -87,4 +87,22 @@ lifecycle:
         sleep ${wait};
         let i+=${wait};
       done;
+```
+
+You can include or exclude platforms from specific lifecycle hooks with the `includes` or `excludes`
+keys, e.g.
+
+```yaml
+lifecycle:
+  post_create:
+  - local: echo 'Awaiting cloud-init completion'
+  - remote: |
+      echo "This is my *nix"
+    excludes:
+      - windows-2012r2
+      - windows-2016
+  - remote: |
+      Write-Host "This is my windows"
+    excludes:
+      - redhat-7
 ```

@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "base64"
-require "digest"
+require "base64" unless defined?(Base64)
+require "digest" unless defined?(Digest)
 
-require "kitchen/verifier/base"
+require_relative "base"
 
 module Kitchen
   module Verifier
@@ -169,7 +168,7 @@ module Kitchen
       # @api private
       def gem_install_args
         gem, version = config[:version].split("@")
-        if gem =~ /^\d+\.\d+\.\d+/
+        if /^\d+\.\d+\.\d+/.match?(gem)
           version = gem
           gem = "busser"
         end

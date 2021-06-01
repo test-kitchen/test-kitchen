@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/provisioner/chef_base"
+require_relative "chef_base"
 
 module Kitchen
   module Provisioner
@@ -27,6 +26,10 @@ module Kitchen
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
+
+      # ChefSolo is dependent on Berkshelf, which is not thread-safe.
+      # See discussion on https://github.com/test-kitchen/test-kitchen/issues/1307
+      no_parallel_for :converge
 
       default_config :solo_rb, {}
 

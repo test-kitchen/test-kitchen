@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -17,12 +16,13 @@
 # limitations under the License.
 
 require "logger"
-require "net/ssh"
-require "net/scp"
-require "socket"
+module Net
+  autoload :SSH, "net/ssh"
+end
+require "socket" unless defined?(Socket)
 
-require "kitchen/errors"
-require "kitchen/login_command"
+require_relative "errors"
+require_relative "login_command"
 
 module Kitchen
   # Wrapped exception for any internally raised SSH-related errors.
@@ -91,6 +91,7 @@ module Kitchen
     #   `Net::SCP.upload`
     # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload!(local, remote, options = {}, &progress)
+      require "net/scp" unless defined?(Net::SCP)
       if progress.nil?
         progress = lambda do |_ch, name, sent, total|
           logger.debug("Uploaded #{name} (#{total} bytes)") if sent == total
@@ -101,6 +102,7 @@ module Kitchen
     end
 
     def upload(local, remote, options = {}, &progress)
+      require "net/scp" unless defined?(Net::SCP)
       if progress.nil?
         progress = lambda do |_ch, name, sent, total|
           if sent == total

@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "vendor/hash_recursive_merge"
+require_relative "../vendor/hash_recursive_merge"
 
 module Kitchen
   # Class to handle recursive merging of configuration between platforms,

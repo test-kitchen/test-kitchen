@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -57,6 +56,10 @@ module Kitchen
       def sandbox_path
         "/tmp/sandbox"
       end
+    end
+
+    class Dodgy < Kitchen::Verifier::Base
+      no_parallel_for :verify
     end
   end
 end
@@ -159,6 +162,11 @@ describe Kitchen::Verifier::Base do
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute)
       connection.stubs(:upload)
+      connection.stubs(:download)
+      config[:downloads] = {
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"] => "./test/fixtures",
+        "/remote" => "/local",
+      }
     end
 
     after do
@@ -204,6 +212,8 @@ describe Kitchen::Verifier::Base do
 
       logged_output.string
         .must_match(/INFO -- : Transferring files to instance$/)
+      logged_output.string
+        .must_match(/INFO -- : Downloading files from instance$/)
     end
 
     it "uploads sandbox files" do
@@ -216,6 +226,24 @@ describe Kitchen::Verifier::Base do
       cmd
 
       logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+      logged_output.string.must_match(
+        %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
+      )
+      logged_output.string.must_match(
+        %r{DEBUG -- : Downloading /remote to /local$}
+      )
+      logged_output.string.must_match(/DEBUG -- : Download complete$/)
+    end
+
+    it "downloads files" do
+      connection.expects(:download).with(
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
+        "./test/fixtures"
+      )
+
+      connection.expects(:download).with("/remote", "/local")
+
+      cmd
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
@@ -241,10 +269,8 @@ describe Kitchen::Verifier::Base do
 
   describe "sandbox" do
     after do
-      begin
-        verifier.cleanup_sandbox
-      rescue # rubocop:disable Lint/HandleExceptions
-      end
+      verifier.cleanup_sandbox
+    rescue # rubocop:disable Lint/HandleExceptions
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
@@ -341,6 +367,22 @@ describe Kitchen::Verifier::Base do
       it "returns an unaltered command" do
         verifier.send(:prefix_command, "my_command").must_equal("my_command")
       end
+    end
+  end
+
+  describe ".no_parallel_for" do
+    it "registers no serial actions when none are declared" do
+      Kitchen::Verifier::TestingDummy.serial_actions.must_be_nil
+    end
+
+    it "registers a single serial action method" do
+      Kitchen::Verifier::Dodgy.serial_actions.must_equal [:verify]
+    end
+
+    it "raises a ClientError if value is not an action method" do
+      proc do
+        Class.new(Kitchen::Verifier::Base) { no_parallel_for :telling_stories }
+      end.must_raise Kitchen::ClientError
     end
   end
 end

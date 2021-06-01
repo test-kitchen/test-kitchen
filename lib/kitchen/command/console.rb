@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/command"
+require_relative "../command"
 
 module Kitchen
   module Command
@@ -44,7 +43,7 @@ module Kitchen
       def prompt(char)
         proc do |target_self, nest_level, pry|
           [
-            "[#{pry.input_array.size}] ",
+            "[#{pry.input_ring.size}] ",
             "kc(#{Pry.view_clip(target_self.class)})",
             "#{":#{nest_level}" unless nest_level == 0}#{char} ",
           ].join

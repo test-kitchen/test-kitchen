@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -18,7 +17,7 @@
 
 require "thor/util"
 
-require "kitchen/lazy_hash"
+require_relative "lazy_hash"
 
 module Kitchen
   # A mixin for providing configuration-related behavior such as default
@@ -349,6 +348,12 @@ module Kitchen
       code_parts = resolve_proxy_settings_from_config
       code_parts << shell_env_var("TEST_KITCHEN", 1)
       code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
+      code_parts << shell_env_var("CHEF_LICENSE", ENV["CHEF_LICENSE"]) if ENV["CHEF_LICENSE"]
+      ENV.select { |key, value| key.start_with?("TKENV_") }.each do |key, value|
+        env_var_name = "#{key}".sub!("TKENV_", "")
+        code_parts << shell_env_var(env_var_name, value)
+      end
+
       code_parts << code
       code_parts.join("\n")
     end

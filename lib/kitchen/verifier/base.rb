@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,16 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/errors"
-require "kitchen/configurable"
-require "kitchen/logging"
+require_relative "../errors"
+require_relative "../configurable"
+require_relative "../logging"
+require_relative "../plugin_base"
 
 module Kitchen
   module Verifier
     # Base class for a verifier.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
-    class Base
+    class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging
 
@@ -75,6 +75,13 @@ module Kitchen
           debug("Transfer complete")
           conn.execute(prepare_command)
           conn.execute(run_command)
+
+          info("Downloading files from #{instance.to_str}")
+          config[:downloads].to_h.each do |remotes, local|
+            debug("Downloading #{Array(remotes).join(", ")} to #{local}")
+            conn.download(remotes, local)
+          end
+          debug("Download complete")
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
@@ -162,11 +169,9 @@ module Kitchen
       # @raise [ClientError] if the sandbox directory has no yet been created
       #   by calling `#create_sandbox`
       def sandbox_path
-        @sandbox_path ||= begin
-           raise ClientError, "Sandbox directory has not yet " \
+        @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
            "been created. Please run #{self.class}#create_sandox before " \
            "trying to access the path."
-         end
       end
 
       # Sets the API version for this verifier. If the verifier does not set

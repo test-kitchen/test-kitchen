@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -19,6 +18,16 @@
 require_relative "../../spec_helper"
 
 require "kitchen"
+
+module Kitchen
+  module Transport
+    class TestingDummy < Kitchen::Transport::Base; end
+
+    class Dodgy < Kitchen::Transport::Base
+      no_parallel_for :setup
+    end
+  end
+end
 
 describe Kitchen::Transport::Base do
   let(:logged_output)   { StringIO.new }
@@ -67,6 +76,22 @@ describe Kitchen::Transport::Base do
       it "#exit_code returns the supplied exit code" do
         failure_with_exit_code.exit_code.must_equal 123
       end
+    end
+  end
+
+  describe ".no_parallel_for" do
+    it "registers no serial actions when none are declared" do
+      Kitchen::Transport::TestingDummy.serial_actions.must_be_nil
+    end
+
+    it "registers a single serial action method" do
+      Kitchen::Transport::Dodgy.serial_actions.must_equal [:setup]
+    end
+
+    it "raises a ClientError if value is not an action method" do
+      proc do
+        Class.new(Kitchen::Transport::Base) { no_parallel_for :telling_stories }
+      end.must_raise Kitchen::ClientError
     end
   end
 end

@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Noah Kantrowitz
 #
@@ -44,11 +43,16 @@ describe Kitchen::Provisioner::Chef::Policyfile do
     $VERBOSE = verbose
   end
 
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Layout/LineLength
   describe "#resolve" do
     subject { described_object.resolve }
 
-    describe "on Unix" do
+    describe "on Unix with chef" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns(false)
+        described_object.expects(:which).with("chef").returns("chef")
+      end
+
       let(:os) { "linux-gnu" }
 
       describe "with simple paths" do
@@ -70,7 +74,38 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Windows" do
+    describe "on Unix with chef-cli" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns("chef-cli")
+      end
+
+      let(:os) { "linux-gnu" }
+
+      describe "with simple paths" do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        it do
+          described_object.expects(:run_command).with("chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        it do
+          described_object.expects(:run_command).with('chef-cli export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force')
+          subject
+        end
+      end
+    end
+
+    describe "on Windows with chef" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns(false)
+        described_object.expects(:which).with("chef").returns("chef")
+      end
+
       let(:os) { "mswin" }
 
       describe "with simple paths" do
@@ -91,12 +126,107 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         end
       end
     end
+
+    describe "on Windows with chef-cli" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns("chef-cli")
+      end
+
+      let(:os) { "mswin" }
+
+      describe "with simple paths" do
+        let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
+        let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        it do
+          described_object.expects(:run_command).with('chef-cli export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        it do
+          described_object.expects(:run_command).with('chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force')
+          subject
+        end
+      end
+    end
+
+    describe "failure to resolve paths" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns(false)
+        described_object.expects(:which).with("chef").returns(false)
+      end
+
+      let(:os) { "linux-gnu" }
+
+      let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+      let(:path) { "/tmp/kitchen/cookbooks" }
+      it do
+        null_logger.expects(:fatal)
+        proc { subject }.must_raise Kitchen::UserError
+      end
+    end
   end
 
   describe "#compile" do
     subject { described_object.compile }
 
-    describe "on Unix" do
+    describe "on Unix with chef-cli" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns("chef-cli")
+      end
+
+      let(:os) { "linux-gnu" }
+
+      describe "with simple paths" do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        it do
+          described_object.expects(:run_command).with("chef-cli install /home/user/cookbook/Policyfile.rb")
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        it do
+          described_object.expects(:run_command).with('chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb')
+          subject
+        end
+      end
+    end
+
+    describe "on Windows with chef-cli" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns("chef-cli")
+      end
+
+      let(:os) { "mswin" }
+
+      describe "with simple paths" do
+        let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
+        it do
+          described_object.expects(:run_command).with('chef-cli install C:\\cookbook\\Policyfile.rb')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        it do
+          described_object.expects(:run_command).with('chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb"')
+          subject
+        end
+      end
+    end
+
+    describe "on Unix with chef" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns(false)
+        described_object.expects(:which).with("chef").returns("chef")
+      end
+
       let(:os) { "linux-gnu" }
 
       describe "with simple paths" do
@@ -116,7 +246,12 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Windows" do
+    describe "on Windows with chef" do
+      before do
+        described_object.expects(:which).with("chef-cli").returns(false)
+        described_object.expects(:which).with("chef").returns("chef")
+      end
+
       let(:os) { "mswin" }
 
       describe "with simple paths" do
@@ -136,5 +271,5 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
   end
-  # rubocop:enable Metrics/LineLength
+  # rubocop:enable Layout/LineLength
 end

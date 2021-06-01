@@ -1,12 +1,12 @@
 ---
-title: Fixture Cookbooks  
+title: Fixture Cookbooks
 menu:
   docs:
     parent: reference
     weight: 20
 ---
 
-Cookbooks, especially ones that provide resources exclusively, often utilize what are known as "fixture cookbooks". These are cookbooks and recipes included expressly for the purpose of testing. 
+Cookbooks, especially ones that provide resources exclusively, often utilize what are known as "fixture cookbooks". These are cookbooks and recipes included expressly for the purpose of testing.
 
 Fixture cookbooks are most often made available via a Berksfile:
 
@@ -29,4 +29,4 @@ suites:
     - recipe[test_cookbook::default]
 ```
 
-Working examples can be found in many of the chef-cookbooks, like the [openldap cookbok](https://github.com/chef-cookbooks/openldap/tree/master/test/cookbooks/openldap-test)
+Working examples can be found in many of the chef-cookbooks, like the [openldap cookbook](https://github.com/chef-cookbooks/openldap/tree/master/test/cookbooks/openldap-test)

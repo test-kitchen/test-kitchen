@@ -17,27 +17,41 @@ Kitchen has a **login** subcommand for just these kinds of situations:
 
 ~~~
 $ kitchen login
-Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-116-generic x86_64)
+Welcome to Ubuntu 20.04 LTS (GNU/Linux 5.4.0-31-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/advantage
 
-0 packages can be updated.
-0 updates are security updates.
+  System information as of Wed 10 Jun 2020 07:20:35 PM UTC
+
+  System load:  0.01              Processes:             100
+  Usage of /:   2.6% of 61.31GB   Users logged in:       0
+  Memory usage: 16%               IPv4 address for eth0: 10.0.2.15
+  Swap usage:   0%
 
 
-Last login: Sat Sep 22 17:17:36 2018 from 10.0.2.2
-vagrant@default-ubuntu-1604:~$
+0 updates can be installed immediately.
+0 of these updates are security updates.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+Last login: Wed Jun 10 19:17:07 2020 from 10.0.2.2
+vagrant@default-ubuntu-2004:~$
 ~~~
 
-As you can see by the prompt above we are now in the `default-ubuntu-1604` instance. We'll denote the prompt in an instance with `$ ` for clarity. Now to check if Git is installed:
+As you can see by the prompt above we are now in the `default-ubuntu-2004` instance. We'll denote the prompt in an instance with `$ ` for clarity. Now to check if Git is installed:
 
 ~~~
 $ which git
 /usr/bin/git
 $ git --version
-git version 2.7.4
+git version 2.25.1
 ~~~
 
 Rockin. Now we can exit out back to our workstation:

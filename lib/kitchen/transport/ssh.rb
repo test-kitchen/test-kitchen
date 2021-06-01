@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,15 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require_relative "../../kitchen"
 
-require "fileutils"
-require "net/ssh"
+require "fileutils" unless defined?(FileUtils)
+require "net/ssh" unless defined?(Net::SSH)
 require "net/ssh/gateway"
 require "net/ssh/proxy/http"
 require "net/scp"
-require "timeout"
-require "benchmark"
+require "timeout" unless defined?(Timeout)
+require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Transport
@@ -196,18 +195,16 @@ module Kitchen
           FileUtils.mkdir_p(File.dirname(local))
 
           Array(remotes).each do |file|
+            logger.debug("Attempting to download '#{file}' as file")
+            session.scp.download!(file, local)
+          rescue Net::SCP::Error
             begin
-              logger.debug("Attempting to download '#{file}' as file")
-              session.scp.download!(file, local)
+              logger.debug("Attempting to download '#{file}' as directory")
+              session.scp.download!(file, local, recursive: true)
             rescue Net::SCP::Error
-              begin
-                logger.debug("Attempting to download '#{file}' as directory")
-                session.scp.download!(file, local, recursive: true)
-              rescue Net::SCP::Error
-                logger.warn(
-                  "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
-                )
-              end
+              logger.warn(
+                "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
+              )
             end
           end
         rescue Net::SSH::Exception => ex

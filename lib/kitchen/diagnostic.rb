@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/util"
-require "kitchen/version"
+require_relative "util"
+require_relative "version"
 
 module Kitchen
   # Combines and compiles diagnostic information about a Test Kitchen

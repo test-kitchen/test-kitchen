@@ -1,0 +1,18 @@
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 3 | @import "foundation";
+ *   |         ^^^^^^^^^^^^
+ *   '
+ *   kitchen/static/sass/_core.scss 3:9    @import
+ *   kitchen/static/sass/kitchen.scss 3:9  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 3 \2502  @import \"foundation\";\a   \2502          ^^^^^^^^^^^^\a   \2575 \a   kitchen/static/sass/_core.scss 3:9    @import\a   kitchen/static/sass/kitchen.scss 3:9  root stylesheet";
+}

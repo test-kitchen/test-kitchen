@@ -1,4 +1,107 @@
-# Change Log
+# Test Kitchen Change Log
+
+## [2.11.2](https://github.com/test-kitchen/test-kitchen/tree/v2.11.1) (2021-03-24)
+
+- Fixed frozen string errors that could occur in the logger - [#1731](https://github.com/test-kitchen/test-kitchen/pull/1731)([tas50](https://github.com/tas50))
+
+## [2.11.1](https://github.com/test-kitchen/test-kitchen/tree/v2.11.1) (2021-03-02)
+
+- Fix an incorrect require in the new `Kitchen::Which` module - [#1726](https://github.com/test-kitchen/test-kitchen/pull/1726)([lamont-granquist](https://github.com/lamont-granquist))
+
+## [2.11.0](https://github.com/test-kitchen/test-kitchen/tree/v2.11.0) (2021-03-01)
+
+- The `policyfile` provisioner can now use the `chef-cli` for policyfile depsolving allowing for the testing of Chef Infra cookbooks with Policyfiles when using a gem installed Test Kitchen. - [#1725](https://github.com/test-kitchen/test-kitchen/pull/1725)([lamont-granquist](https://github.com/lamont-granquist))
+
+## [2.10.0](https://github.com/test-kitchen/test-kitchen/tree/v2.10.0) (2021-01-17)
+
+- Add support for uploading files to the systems within the provisioners similar to the `download` feature - [@tecracer-theinen](https://github.com/tecracer-theinen)
+- Allow using includes/excludes filters in the lifecycle hooks - [@jasonwbarnett](https://github.com/jasonwbarnett)
+- Resolved `uninitialized constant Kitchen::Loader::YAML::Psych` error - [@dwmarshall](https://github.com/dwmarshall)
+
+## [2.9.0](https://github.com/test-kitchen/test-kitchen/tree/v2.9.0) (2020-12-23)
+
+- Policyfile error messages no longer mention EOL ChefDK
+- When using winrm to login to a Windows guest from a Linux host we now use `xfreerdp` to avoid CredSSP error messages. If you're currently using `rdesktop` you'll need to install `xfreerdp`. This solution works out of the box without configuration, making it easier to test Windows guests on Linux hosts. Thanks [@ramereth](https://github.com/ramereth)
+
+## [2.8.0](https://github.com/test-kitchen/test-kitchen/tree/v2.8.0) (2020-12-02)
+
+- Better support Test Kitchen execution on Windows by running commands through a script file. This avoids failures when the command length becomes too long for Windows to handle.
+
+## [2.7.2](https://github.com/test-kitchen/test-kitchen/tree/v2.7.2) (2020-09-29)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.7.1...v2.7.2)
+
+- Various performance optimizations
+
+## [2.7.1](https://github.com/test-kitchen/test-kitchen/tree/v2.7.1) (2020-09-15)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.7.0...v2.7.1)
+
+- Mark chef_solo provisioner unsafe for concurrency
+
+## [2.7.0](https://github.com/test-kitchen/test-kitchen/tree/v2.7.0) (2020-09-08)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.6.0...v2.7.0)
+
+- Allow all plugins to toggle concurrency
+- Optimize our requires
+
+## [2.6.0](https://github.com/test-kitchen/test-kitchen/tree/v2.6.0) (2020-08-13)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.4...v2.6.0)
+
+- Remove support for EOL Ruby 2.3
+- Relax dependency on license-acceptance to allow for 2.x
+
+## [2.5.4](https://github.com/test-kitchen/test-kitchen/tree/v2.5.4) (2020-07-29)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.3...v2.5.4)
+
+- Revert root_path changes that caused failures installing Chef Infra Client on Windows
+
+## [2.5.3](https://github.com/test-kitchen/test-kitchen/tree/v2.5.3) (2020-07-10)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.2...v2.5.3)
+
+- Respect root_path when product_name is specified [#1662](https://github.com/test-kitchen/test-kitchen/pull/1662)([clintoncwolfe](https://github.com/clintoncwolfe))
+
+## [2.5.2](https://github.com/test-kitchen/test-kitchen/tree/v2.5.2) (2020-06-11)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.1...v2.5.2)
+
+- Update thor requirement from ~> 0.19 to >= 0.19, < 2.0 [#1608](https://github.com/test-kitchen/test-kitchen/pull/1608)([dependabot-preview](https://github.com/dependabot-preview))
+
+## [2.5.1](https://github.com/test-kitchen/test-kitchen/tree/v2.5.1) (2020-05-16)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.5.0...v2.5.1)
+
+- Pin the Aruba dev dep to prevent test failures [#1646](https://github.com/test-kitchen/test-kitchen/pull/1646)([Xorima](https://github.com/Xorima))
+- Update install scripts messaging from Chef -> Chef Infra Client [#1644](https://github.com/test-kitchen/test-kitchen/pull/1644)([tas50](https://github.com/tas50))
+
+## [2.5.0](https://github.com/test-kitchen/test-kitchen/tree/v2.5.0) (2020-05-06)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.4.0...v2.5.0)
+
+- Allow copying Ohai plugins from the /ohai cookbook directory into the instance [#1634](https://github.com/test-kitchen/test-kitchen/pull/1634)([SAPDanJoe](https://github.com/SAPDanJoe))
+- Fix failures using the PowerShell provisioner [#1639](https://github.com/test-kitchen/test-kitchen/pull/1639)([alanghartJC](https://github.com/alanghartJC))
+- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}-etm@openssh.com MAC algorithms and to allow spaces / comment lines in the known_hosts file.
+
+## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.4...v2.4.0)
+
+- The `CHEF_LICENSE` env var is now automatically exported from the workstation to the instance running in Test Kitchen [#1629](https://github.com/test-kitchen/test-kitchen/pull/1629)([Xorima](https://github.com/Xorima))
+- All local Workstation env vars are now passed to the instance running in Test Kitchen with the `TKENV_` prefix. [#1623](https://github.com/test-kitchen/test-kitchen/pull/1623)([Xorima](https://github.com/Xorima))
+- Add kitchen*.yml to the chefignore in kitchen init [#1627](https://github.com/test-kitchen/test-kitchen/pull/1627)([tas50](https://github.com/tas50))
+- Use require_relative instead of require [#1613](https://github.com/test-kitchen/test-kitchen/pull/1613)([tas50](https://github.com/tas50))
+- Add download capability to verifier base with a new `downloads` config option in verify [#1605](https://github.com/test-kitchen/test-kitchen/pull/1605) ([smurawski](https://github.com/smurawski))
+
+## [2.3.4](https://github.com/test-kitchen/test-kitchen/tree/v2.3.4) (2019-10-31)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.3...v2.3.4)
+
+- Updated several log events from "Kitchen" to "Test Kitchen" to be consistent [#1598](https://github.com/test-kitchen/test-kitchen/pull/1598)([tas50](https://github.com/tas50))
+- Fixed a typo in a policyfile error message [#1599](https://github.com/test-kitchen/test-kitchen/pull/1599)([gep13](https://github.com/gep13))
+- Updated the policyfile provisioner to search for multiple varients of the chef CLI [\#1601](https://github.com/test-kitchen/test-kitchen/pull/1601)([afiune](https://github.com/afiune))
+
+## [2.3.3](https://github.com/test-kitchen/test-kitchen/tree/v2.3.3) (2019-09-18)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.2...v2.3.3)
+
+- Make sure Policyfile.lock.json exists before calling chef update [\#1590](https://github.com/test-kitchen/test-kitchen/pull/1590)([teknofire](https://github.com/teknofire))
+
+## [2.3.2](https://github.com/test-kitchen/test-kitchen/tree/v2.3.2) (2019-08-26)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.1...v2.3.2)
+
+- allow mixlib-shellout 3.x [\#1583](https://github.com/test-kitchen/test-kitchen/pull/1583)([lamont-granquist](https://github.com/lamont-granquist))
 
 ## [2.3.1](https://github.com/test-kitchen/test-kitchen/tree/v2.3.1) (2019-08-26)
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v2.3.0...v2.3.1)
@@ -1038,7 +1141,7 @@
 - Don't reset locale in Kitchen::Driver::Base run\_command\(\) [\#485](https://github.com/test-kitchen/test-kitchen/issues/485)
 - Intermittent 'kitchen test' failures [\#449](https://github.com/test-kitchen/test-kitchen/issues/449)
 - shell-provisioner: lots of trouble with a noexec /tmp, failing workaround. [\#444](https://github.com/test-kitchen/test-kitchen/issues/444)
-- Support Chef-DK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
+- Support ChefDK [\#443](https://github.com/test-kitchen/test-kitchen/issues/443)
 - Message: Failed to complete \#converge action: \[Permission denied [\#441](https://github.com/test-kitchen/test-kitchen/issues/441)
 - Idea: enable chef-zero to run on another server than the converged node. [\#437](https://github.com/test-kitchen/test-kitchen/issues/437)
 - Test Artifact Fetch Feature [\#434](https://github.com/test-kitchen/test-kitchen/issues/434)
