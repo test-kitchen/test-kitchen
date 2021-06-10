@@ -1,14 +1,15 @@
+---
 version: 2
 updates:
-- package-ecosystem: bundler
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: chefstyle
-    versions:
-    - 1.6.1
-  - dependency-name: aruba
-    versions:
-    - 1.0.2
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: chefstyle
+        versions:
+          - 1.6.1
+      - dependency-name: aruba
+        versions:
+          - 1.0.2
