@@ -41,7 +41,7 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(policyfile, path, logger: Kitchen.logger, always_update: false)
+        def initialize(policyfile, path, logger: Kitchen.logger, always_update: true)
           @policyfile    = policyfile
           @path          = path
           @logger        = logger
