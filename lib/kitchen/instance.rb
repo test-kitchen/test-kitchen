@@ -536,7 +536,7 @@ module Kitchen
       log_failure(what, e)
       state[:last_error] = e.class.name
       raise ActionFailed,
-      "Failed to complete ##{what} action: [#{e.message} in the specified region #{self.driver.config[:region]}. Please check this AMI is available in this region.]", e.backtrace
+        "Failed to complete ##{what} action: [#{e.message} in the specified region #{self.driver.config[:region]}. Please check this AMI is available in this region.]", e.backtrace
     ensure
       state_file.write(state)
     end
