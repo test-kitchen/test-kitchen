@@ -35,13 +35,13 @@ module Kitchen
 
       default_config :chef_client_path do |provisioner|
         provisioner
-          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
-          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
+            .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
+            .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       default_config :ruby_bindir do |provisioner|
         provisioner
-          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
+            .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
       end
 
       # (see Base#create_sandbox)
@@ -70,7 +70,6 @@ module Kitchen
           json = remote_path_join(config[:root_path], "dna.json")
           args << "--json-attributes #{json}"
         end
-
         args << "--logfile #{config[:log_file]}" if config[:log_file]
 
         # these flags are chef-client local mode only and will not work
@@ -78,20 +77,10 @@ module Kitchen
         if config[:chef_zero_host]
           args << "--chef-zero-host #{config[:chef_zero_host]}"
         end
-
         if config[:chef_zero_port]
           args << "--chef-zero-port #{config[:chef_zero_port]}"
         end
-
         args << "--profile-ruby" if config[:profile_ruby]
-
-        if config[:slow_resource_report]
-          if config[:slow_resource_report].is_a?(Integer)
-            args << "--slow-report #{config[:slow_resource_report]}"
-          else
-            args << "--slow-report"
-          end
-        end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
 
@@ -102,10 +91,10 @@ module Kitchen
       def chef_args(client_rb_filename)
         level = config[:log_level]
         args = [
-          "--config #{remote_path_join(config[:root_path], client_rb_filename)}",
-          "--log_level #{level}",
-          "--force-formatter",
-          "--no-color",
+            "--config #{remote_path_join(config[:root_path], client_rb_filename)}",
+            "--log_level #{level}",
+            "--force-formatter",
+            "--no-color",
         ]
         add_optional_chef_client_args!(args)
 
@@ -123,10 +112,10 @@ module Kitchen
         gem_cache = remote_path_join(gem_home, "cache")
 
         [
-          shell_env_var("CHEF_REPO_PATH", root),
-          shell_env_var("GEM_HOME", gem_home),
-          shell_env_var("GEM_PATH", gem_path),
-          shell_env_var("GEM_CACHE", gem_cache),
+            shell_env_var("CHEF_REPO_PATH", root),
+            shell_env_var("GEM_HOME", gem_home),
+            shell_env_var("GEM_PATH", gem_path),
+            shell_env_var("GEM_CACHE", gem_cache),
         ].join("\n").concat("\n")
       end
 
@@ -138,7 +127,7 @@ module Kitchen
         debug("Using a dummy validation.pem")
 
         source = File.join(File.dirname(__FILE__),
-          %w{.. .. .. support dummy-validation.pem})
+                           %w{.. .. .. support dummy-validation.pem})
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 
@@ -149,7 +138,7 @@ module Kitchen
       # @api private
       def shim_command
         ruby = remote_path_join(config[:ruby_bindir], "ruby")
-          .tap { |path| path.concat(".exe") if windows_os? }
+                   .tap { |path| path.concat(".exe") if windows_os? }
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
         "#{chef_client_zero_env}\n#{sudo(ruby)} #{shim}"
