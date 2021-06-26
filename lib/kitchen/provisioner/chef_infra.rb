@@ -35,13 +35,13 @@ module Kitchen
 
       default_config :chef_client_path do |provisioner|
         provisioner
-            .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
-            .tap { |path| path.concat(".bat") if provisioner.windows_os? }
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
+          .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
       default_config :ruby_bindir do |provisioner|
         provisioner
-            .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} embedded bin})
       end
 
       # (see Base#create_sandbox)
@@ -149,7 +149,7 @@ module Kitchen
       # @api private
       def shim_command
         ruby = remote_path_join(config[:ruby_bindir], "ruby")
-                   .tap { |path| path.concat(".exe") if windows_os? }
+          .tap { |path| path.concat(".exe") if windows_os? }
         shim = remote_path_join(config[:root_path], "chef-client-zero.rb")
 
         "#{chef_client_zero_env}\n#{sudo(ruby)} #{shim}"
