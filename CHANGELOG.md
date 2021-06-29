@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [2.12.0](https://github.com/test-kitchen/test-kitchen/tree/v2.12.0) (2021-06-10)
+
+- Update kitchen console to work with the newer releases of pry - [#1738](https://github.com/test-kitchen/test-kitchen/pull/1738)([@jayaddison-collabora](https://github.com/jayaddison-collabora))
+- Upgrade usage of deprecated minitest global assertions in unit tests that capture stderr output - [#1734](https://github.com/test-kitchen/test-kitchen/pull/1734)([@jayaddison-collabora](https://github.com/jayaddison-collabora))
+- Add a new slow_resource_report config for Chef Infra Client 17.2 - [#1759](https://github.com/test-kitchen/test-kitchen/pull/1759)([tas50](https://github.com/tas50))
+- Squash SSH fails in the lifecycle_hooks if skipable is set to true - [#1579](https://github.com/test-kitchen/test-kitchen/pull/1579)([tarcinil](https://github.com/tarcinil))
+
 ## [2.11.2](https://github.com/test-kitchen/test-kitchen/tree/v2.11.1) (2021-03-24)
 
 - Fixed frozen string errors that could occur in the logger - [#1731](https://github.com/test-kitchen/test-kitchen/pull/1731)([tas50](https://github.com/tas50))
