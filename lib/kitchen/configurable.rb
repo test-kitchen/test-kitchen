@@ -149,7 +149,7 @@ module Kitchen
     # @return [String] joined path for instance's os_type
     def remote_path_join(*parts)
       path = File.join(*parts)
-      windows_os? ? path.tr("/", '\\') : path.tr('\\', "/")
+      windows_os? ? path.tr("/", "\\") : path.tr("\\", "/")
     end
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or

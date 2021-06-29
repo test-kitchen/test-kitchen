@@ -32,6 +32,8 @@ named_run_list :server, "git_cookbook::server"
 cookbook 'git_cookbook', path: '.'
 ~~~
 
+To apply the changes we've just made to `Policyfile.rb` let's now run `chef update`.
+
 With our Policyfile updated to point to the server recipe it's time to create that recipe by creating a file called `recipes/server.rb` with the following:
 
 ~~~
