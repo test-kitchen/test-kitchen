@@ -46,6 +46,7 @@ module Kitchen
       default_config :chef_omnibus_install_options, nil
       default_config :chef_license, nil
       default_config :run_list, []
+      default_config :policy_group, nil
       default_config :attributes, {}
       default_config :config_path, nil
       default_config :log_file, nil

@@ -73,6 +73,10 @@ module Kitchen
         # @api private
         attr_reader :sandbox_path
 
+        # @return [String] name of the policy_group, nil results in "local"
+        # @api private
+        attr_reader :policy_group
+
         # Generates a list of all files in the cookbooks directory in the
         # sandbox path.
         #
@@ -281,19 +285,17 @@ module Kitchen
         end
 
         def update_dna_for_policyfile
-          if !config[:run_list].nil? && !config[:run_list].empty?
-            warn("You must set your run_list in your Policyfile instead of "\
-                 "kitchen config. The run_list in your config will be ignored.")
-            warn("Ignored run_list: #{config[:run_list].inspect}")
-          end
-          policy = Chef::Policyfile.new(policyfile, sandbox_path,
+          policy = Chef::Policyfile.new(
+            policyfile, sandbox_path,
             logger: logger,
-            always_update: config[:always_update_cookbooks])
+            always_update: config[:always_update_cookbooks],
+            policy_group: policy_group
+          )
           Kitchen.mutex.synchronize do
             policy.compile
           end
           policy_name = JSON.parse(IO.read(policy.lockfile))["name"]
-          policy_group = "local"
+          policy_group = config[:policy_group] || "local"
           config[:attributes].merge(policy_name: policy_name, policy_group: policy_group)
         end
 
@@ -302,9 +304,12 @@ module Kitchen
         # @api private
         def resolve_with_policyfile
           Kitchen.mutex.synchronize do
-            Chef::Policyfile.new(policyfile, sandbox_path,
+            Chef::Policyfile.new(
+              policyfile, sandbox_path,
               logger: logger,
-              always_update: config[:always_update_cookbooks]).resolve
+              always_update: config[:always_update_cookbooks],
+              policy_group: config[:policy_group]
+            ).resolve
           end
         end
 
