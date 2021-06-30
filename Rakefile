@@ -11,7 +11,7 @@ begin
   require "cucumber"
   require "cucumber/rake/task"
   Cucumber::Rake::Task.new(:features) do |t|
-    t.cucumber_opts = ["features", "-x", "--format progress", "--no-color", "--tags ~@ignore"]
+    t.cucumber_opts = ["features", "-x", "--format progress", "--no-color", "--tags 'not @ignore'"]
   end
 rescue LoadError
   puts "cucumber is not available. (sudo) gem install cucumber to run tests."

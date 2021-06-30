@@ -35,7 +35,7 @@ end
 
 require "fakefs/safe"
 require "minitest/autorun"
-require "mocha/setup"
+require "mocha/minitest"
 require "tempfile"
 
 # Nasty hack to redefine IO.read in terms of File#read for fakefs
