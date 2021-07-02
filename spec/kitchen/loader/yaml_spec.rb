@@ -613,7 +613,7 @@ describe Kitchen::Loader::YAML do
 
       it "global config contains a filename" do
         loader.diagnose[:global_config][:filename]
-          .must_equal File.join(ENV["HOME"].tr('\\', "/"), ".kitchen/config.yml")
+          .must_equal File.join(ENV["HOME"].tr("\\", "/"), ".kitchen/config.yml")
       end
 
       it "global config contains raw data" do

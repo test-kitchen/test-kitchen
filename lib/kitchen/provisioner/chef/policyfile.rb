@@ -128,7 +128,7 @@ module Kitchen
             # Windows command line parsing libraries. This covers the 99% case of
             # spaces in the path without breaking other stuff.
             if /[ \t\n\v"]/.match?(path)
-              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| '\\' + m[0] }}\""
+              "\"#{path.gsub(/[ \t\n\v\"\\]/) { |m| "\\" + m[0] }}\""
             else
               path
             end
