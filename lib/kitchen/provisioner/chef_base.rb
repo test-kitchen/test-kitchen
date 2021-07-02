@@ -64,7 +64,7 @@ module Kitchen
       default_config :berksfile_path, nil
       # If set to true (which is the default from `chef generate`), try to update
       # backend cookbook downloader on every kitchen run.
-      default_config :always_update_cookbooks, false
+      default_config :always_update_cookbooks, true
       default_config :cookbook_files_glob, %w(
         README.* VERSION metadata.{json,rb} attributes.rb recipe.rb
         attributes/**/* definitions/**/* files/**/* libraries/**/*
