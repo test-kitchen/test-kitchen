@@ -720,12 +720,14 @@ module Kitchen
         move_data_to!(:provisioner, suite, :attributes)
         move_data_to!(:provisioner, suite, :run_list)
         move_data_to!(:provisioner, suite, :named_run_list)
+        move_data_to!(:provisioner, suite, :policy_group)
       end
 
       data.fetch(:platforms, []).each do |platform|
         move_data_to!(:provisioner, platform, :attributes)
         move_data_to!(:provisioner, platform, :run_list)
         move_data_to!(:provisioner, platform, :named_run_list)
+        move_data_to!(:provisioner, platform, :policy_group)
       end
     end
 
