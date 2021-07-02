@@ -37,4 +37,6 @@ _site/
 _cache
 .tddium*
 docs/public
+.idea/
+
 

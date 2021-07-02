@@ -41,11 +41,12 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(policyfile, path, logger: Kitchen.logger, always_update: false)
+        def initialize(policyfile, path, logger: Kitchen.logger, always_update: false, policy_group: nil)
           @policyfile    = policyfile
           @path          = path
           @logger        = logger
           @always_update = always_update
+          @policy_group  = policy_group
         end
 
         # Loads the library code required to use the resolver.
@@ -59,8 +60,13 @@ module Kitchen
         # Performs the cookbook resolution and vendors the resulting cookbooks
         # in the desired path.
         def resolve
-          info("Exporting cookbook dependencies from Policyfile #{path} using `#{cli_path} export`...")
-          run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force")
+          if policy_group
+            info("Exporting cookbook dependencies from Policyfile #{path} with policy_group #{policy_group} using `#{cli_path} export`...")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --policy_group #{policy_group} --force")
+          else
+            info("Exporting cookbook dependencies from Policyfile #{path} using `#{cli_path} export`...")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force")
+          end
         end
 
         # Runs `chef install` to determine the correct cookbook set and
@@ -103,6 +109,10 @@ module Kitchen
         # @return [Boolean] If true, always update cookbooks in the policy.
         # @api private
         attr_reader :always_update
+
+        # @return [String] name of the policy_group, nil results in "local"
+        # @api private
+        attr_reader :policy_group
 
         # Escape spaces in a path in way that works with both Sh (Unix) and
         # Windows.
