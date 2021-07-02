@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.0.0](https://github.com/test-kitchen/test-kitchen/tree/v3.0.0) (2021-07-02)
+
+- The `chef_zero` provisioner has been renamed `chef_infra` to avoid confusion. Note: The existing name will continue to work going forward.
+- The default provisioner for Test Kitchen has been changed from chef_solo to chef_infra (chef_zero)
+- The `always_update_cookbooks` config for the `chef_infra` and `chef_solo` provisioners is now default so cookbook changes will automatically be picked up without the need to run `chef update` first. Set this value to false to maintain the existing behavior.
+- A new `policy_group` config has been added to allow setting the Policy Group to test a node in. This can be set in the provisioner block or within individual suites. Note: This config option requires `chef-cli` 5.2 or later.
+
 ## [2.12.0](https://github.com/test-kitchen/test-kitchen/tree/v2.12.0) (2021-06-10)
 
 - Update kitchen console to work with the newer releases of pry - [#1738](https://github.com/test-kitchen/test-kitchen/pull/1738)([@jayaddison-collabora](https://github.com/jayaddison-collabora))
