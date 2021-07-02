@@ -2,6 +2,7 @@
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
 # Copyright (C) 2013, Fletcher Nichol
+# Copyright (C) Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ module Kitchen
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Provisioner
     # Default provisioner to use
-    DEFAULT_PLUGIN = "chef_solo".freeze
+    DEFAULT_PLUGIN = "chef_infra".freeze
 
     # Returns an instance of a provisioner given a plugin type string.
     #
@@ -34,6 +35,7 @@ module Kitchen
     # @return [Provisioner::Base] a provisioner instance
     # @raise [ClientError] if a provisioner instance could not be created
     def self.for_plugin(plugin, config)
+      plugin, config[:name] = "chef_infra", "chef_infra" if plugin == "chef_zero"
       Kitchen::Plugin.load(self, plugin, config)
     end
   end
