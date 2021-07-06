@@ -8,7 +8,7 @@ driver:
   password: <%= ENV["machine_pass"] %>
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
   # Using product_name exercises a different code path in the chef client installer
   product_name: chef
   chef_license: accept-no-persist

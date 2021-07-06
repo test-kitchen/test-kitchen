@@ -8,7 +8,7 @@ driver:
   password: <%= ENV["MACHINE_PASS"] %>
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
   chef_license: accept-no-persist
 
 platforms:
