@@ -28,7 +28,7 @@ provisioner:
     - chef-23 # deprecation numeric ID
     - recipes/install.rb:22 # specific line in a file
   product_name: chef # which package to install chef || chef-workstation
-  chef_license: nil # to accept the Chef Infra license automatically in Test Kitchen. Accepts `accept`, `accept-no-persist` and `accept-silent`
+  chef_license: nil # to accept the Chef Infra license automatically in Test Kitchen. Valid values: `accept`, `accept-no-persist`, or `accept-silent`
   product_version: latest # 'latest', partial, or full version number
   root_path: /tmp # Directory to create and execute the chef installer from
   channel: stable # stable, current or unstable
