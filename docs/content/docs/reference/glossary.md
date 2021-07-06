@@ -6,7 +6,7 @@ menu:
     weight: 25
 ---
 
-Berksfile 
+Berksfile
 : the file `berks` loads to determine sources and dependencies
 
 Berkshelf
@@ -16,7 +16,7 @@ hypervisor
 : a piece of software that allows one to create and run virtual machines
 
 regular expression
-: a "a sequence of characters that define a search pattern", in the context of kitchen we allow a user to specify instances with regular expressions like `^default-ubuntu`
+: a "a sequence of characters that define a search pattern", in the context of Test Kitchen we allow a user to specify instances with regular expressions like `^default-ubuntu`
 
 Vagrant
 : a piece of software that makes abstracts away hypervisor details to provide a consistent experience and interface to virtual machines

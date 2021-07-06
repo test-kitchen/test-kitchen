@@ -47,7 +47,7 @@ transport:
 
 ##### I need to set up a cache or proxy using Vagrant, what are some options for me?
 
-So there are a few things that already exist that sort of cover this in the kitchen world:
+So there are a few things that already exist that sort of cover this in the Test Kitchen world:
 
 - the host ENV vars for proxies are automatically passed to instances
 - Example of using [polipo](https://gist.github.com/fnichol/7551540) locally
