@@ -7,7 +7,7 @@ menu:
     weight: 5
 ---
 
-Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_zero`, which support nearly identical options. Note: In Test Kitchen 3.0 and later the `chef_zero` provisioner has been renamed to `chef_infra` for improved clarity. You may use either name going forward, but older releases of Test Kitchen will still need to use `chef_zero`.
+Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_infra`, that support similar options.  `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0. This change is backward-compatible, and both names work starting with Test Kitchen 3.0. In older releases, you will need to use `chef_zero`.
 
 ```
 ---
