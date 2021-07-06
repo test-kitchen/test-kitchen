@@ -4,12 +4,6 @@ updates:
   - package-ecosystem: bundler
     directory: "/"
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
-    ignore:
-      - dependency-name: chefstyle
-        versions:
-          - 1.6.1
-      - dependency-name: aruba
-        versions:
-          - 1.0.2
+      interval: "daily"
+      time: "06:00"
+      timezone: America/Los_Angeles
