@@ -46,7 +46,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "fakefs",    "~> 1.0"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.15"
   gem.add_development_dependency "mocha",     "~> 1.1"
-  gem.add_development_dependency "cucumber",  ">= 2.1", "< 4.0" # we just need to validate 4.0 when it comes out
+  gem.add_development_dependency "cucumber",  ">= 2.1", "< 8.0" # we just need to validate 4.0 when it comes out
   gem.add_development_dependency "countloc",  "~> 0.4"
   gem.add_development_dependency "maruku",    "~> 0.6"
 end
