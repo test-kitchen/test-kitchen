@@ -10,7 +10,7 @@ kitchen-vcenter is a Test Kitchen *driver* for VMware vCenter.
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: vcenter

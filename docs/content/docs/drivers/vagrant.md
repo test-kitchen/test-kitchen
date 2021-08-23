@@ -10,7 +10,7 @@ kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant. A full example
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: vagrant
