@@ -10,7 +10,7 @@ kitchen-openstack is a Test Kitchen *driver* for OpenStack.
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: openstack

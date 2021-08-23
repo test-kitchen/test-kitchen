@@ -10,7 +10,7 @@ kitchen-google is a Test Kitchen *driver* for Google Cloud Platform.
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: gce

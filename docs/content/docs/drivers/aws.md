@@ -10,7 +10,7 @@ kitchen-ec2 is a Test Kitchen *driver* for EC2 in Amazon AWS.
 
 Example **kitchen.yml**:
 
-```
+```yaml
 ---
 driver:
   name: ec2
