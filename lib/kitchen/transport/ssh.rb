@@ -176,9 +176,11 @@ module Kitchen
             Array(locals).map do |local|
               opts = File.directory?(local) ? { recursive: true } : {}
 
-              waits.push session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
-                logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
-              end
+              waits.push(
+                session.scp.upload(local, remote, opts) do |_ch, name, sent, total|
+                  logger.debug("Async Uploaded #{name} (#{total} bytes)") if sent == total
+                end
+              )
               waits.shift.wait while waits.length >= max_ssh_sessions
             end
             waits.each(&:wait)
