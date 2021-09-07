@@ -6,9 +6,9 @@ menu:
     weight: 15
 ---
 
-`winrm` is the default transport for all Windows hosts. For most users the default tranport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`winrm` is the default transport for all Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
 
-## WinRM Tranport Settings
+## WinRM Transport Settings
 
 ### connection_retries
 

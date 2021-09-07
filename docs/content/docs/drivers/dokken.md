@@ -122,7 +122,7 @@ driver:
 
 #### chef_version
 
-The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivelant to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
+The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivalent to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
 
 ```yaml
 driver:
