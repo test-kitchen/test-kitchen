@@ -463,6 +463,138 @@ describe Kitchen::Transport::Winrm do
     end
   end
 
+  describe "#connection_options" do
+    let(:data) do
+      {
+        kitchen_root: "path_to_kitchen",
+        username: "Administrator",
+        password: "bogus",
+        rdp_port: 3389,
+        connection_retries: 3,
+        connection_retry_sleep: 1,
+        operation_timeout: 60,
+        receive_timeout: 70,
+        max_wait_until_ready: 680,
+        winrm_transport: :ssl,
+        elevated: true,
+        elevated_username: "SYSTEM",
+        elevated_password: nil,
+        scheme: "https",
+        hostname: "myhost",
+        port: 5986,
+      }
+    end
+    let(:opts) do
+      {
+        user: "whatever",
+        password: "whatever",
+      }
+    end
+    let(:additional_opts) do
+      {
+        client_cert: "my_cert_path",
+        client_key: "my_key_path",
+      }
+    end
+
+    describe "when transport_type is :ssl and the client cert and key options are present" do
+      before { transport.stubs(:additional_transport_args).returns(additional_opts) }
+
+      it "removes the user and password keys in order to try to use certificate authentication" do
+        final_opts = transport.send(:connection_options, data)
+        assert_equal true, final_opts.key?(:client_cert)
+        assert_equal true, final_opts.key?(:client_key)
+        assert_equal false, final_opts.key?(:user)
+        assert_equal false, final_opts.key?(:password)
+      end
+    end
+  end
+
+  describe "#additional_transport_args" do
+    let(:opts) do
+      {
+        disable_sspi: false,
+        basic_auth_only: false,
+      }
+    end
+    let(:data) do
+      {
+        client_cert: "dummy",
+        client_key: "dummy",
+      }
+    end
+
+    describe "when transport type is :ssl" do
+      let(:transport_type) { :ssl }
+
+      describe "when :client_cert and :client_key are provided" do
+        it "adds the :client_cert and :client_key into additional opts" do
+          opts = transport.send(:additional_transport_args, data, transport_type)
+          assert_equal true, opts.key?(:client_cert)
+          assert_equal true, opts.key?(:client_key)
+        end
+
+        it "has the expected number of key value pairs" do
+          opts = transport.send(:additional_transport_args, data, transport_type)
+          assert_equal 5, opts.size
+        end
+      end
+
+      describe "when :client_cert or :client_key are not provided" do
+        let(:data) { {} }
+
+        it "has the expected number of key value pairs" do
+          opts = transport.send(:additional_transport_args, data, transport_type)
+          assert_equal 3, opts.size
+        end
+      end
+
+      describe "when :no_ssl_peer_verification is not provided explicitly" do
+        it "sets it to true" do
+          opts = transport.send(:additional_transport_args, data, transport_type)
+          assert_equal true, opts[:no_ssl_peer_verification]
+        end
+      end
+
+      describe "when :no_ssl_peer_verification is provided" do
+        it "sets it to the given value" do
+          data[:no_ssl_peer_verification] = false
+          opts = transport.send(:additional_transport_args, data, transport_type)
+          assert_equal false, opts[:no_ssl_peer_verification]
+        end
+      end
+
+      it "sets the other values as expected" do
+        opts = transport.send(:additional_transport_args, data, transport_type)
+        assert_equal false, opts[:disable_sspi]
+        assert_equal false, opts[:basic_auth_only]
+      end
+    end
+
+    describe "when transport type is :negotiate" do
+      let(:transport_type) { :negotiate }
+
+      it "sets the values as expected" do
+        opts = transport.send(:additional_transport_args, data, transport_type)
+        assert_equal true, opts[:no_ssl_peer_verification]
+        assert_equal false, opts[:disable_sspi]
+        assert_equal false, opts[:basic_auth_only]
+        assert_equal 3, opts.size
+      end
+    end
+
+    describe "when transport type is :plaintext" do
+      let(:transport_type) { :plaintext }
+
+      it "sets the values as expected" do
+        opts = transport.send(:additional_transport_args, data, transport_type)
+        assert_equal true, opts[:disable_sspi]
+        assert_equal true, opts[:basic_auth_only]
+        assert_equal 2, opts.size
+      end
+    end
+  end
+
   describe "#load_needed_dependencies" do
     describe "winrm-elevated" do
       let(:transport) { Kitchen::Transport::Winrm.new(config) }
