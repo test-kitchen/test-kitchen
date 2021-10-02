@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [3.1.0](https://github.com/test-kitchen/test-kitchen/tree/v3.1.0) (2021-10-02)
+
+- Removed support for EOL Ruby 2.5
+- Add support for WinRM certificate authentication (@gholtiii)
+
 ## [3.0.0](https://github.com/test-kitchen/test-kitchen/tree/v3.0.0) (2021-07-02)
 
 - The `chef_zero` provisioner has been renamed `chef_infra` to avoid confusion. Note: The existing name will continue to work going forward.
