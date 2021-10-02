@@ -36,7 +36,7 @@ The username used for authenticating to the test instance. This defaults to `adm
 
 ### client_cert
 
-The path to a local client certificate used as the CA for authentication in lieue of a username and password. Client certs only work with local accounts on the remote host per winrm documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When client_cert and client_key are provided the username and password will be ignored.
+The path to a local client certificate used as the CA for authentication in lieue of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When client_cert and client_key are provided the username and password will be ignored.
 
 ### client_key
 
@@ -44,7 +44,7 @@ The path to a local client key used for authentication in lieue of a username an
 
 ### elevated
 
-When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with windows updates and installing some MSIs such as sql server and .net runtimes. Defaults to `false`.
+When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with Windows updates and installing some MSIs such as SQL Server and .NET runtimes. Defaults to `false`.
 
 ### elevated_password
 
