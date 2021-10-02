@@ -1068,6 +1068,16 @@ describe Kitchen::Transport::Ssh::Connection do
           connection.upload(src.path, "/tmp/remote")
         end
       end
+
+      it "logger reports uploaded file on debug" do
+        assert_scripted do
+          connection.upload(src.path, "/tmp/remote")
+        end
+
+        logged_output.string.lines.count do |l|
+          l =~ debug_line("Async Uploaded #{src.path} (#{content.length} bytes)")
+        end.must_equal 1
+      end
     end
 
     describe "for a path" do
@@ -1125,6 +1135,16 @@ describe Kitchen::Transport::Ssh::Connection do
         with_sorted_dir_entries do
           assert_scripted { connection.upload(@dir, "/tmp/remote") }
         end
+      end
+
+      it "logger reports three uploaded files on debug" do
+        with_sorted_dir_entries do
+          assert_scripted { connection.upload(@dir, "/tmp/remote") }
+        end
+
+        logged_output.string.lines.count do |l|
+          l =~ debug_line_with("Async Uploaded ")
+        end.must_equal 3
       end
     end
 
