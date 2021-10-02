@@ -6,9 +6,9 @@ menu:
     weight: 15
 ---
 
-`winrm` is the default transport for all Windows hosts. For most users the default tranport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`winrm` is the default transport for all Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
 
-## WinRM Tranport Settings
+## WinRM Transport Settings
 
 ### connection_retries
 
@@ -34,9 +34,17 @@ The port used to connect to the test instance. This defaults `5985` when using `
 
 The username used for authenticating to the test instance. This defaults to `administrator`. Some drivers may change this default.
 
+### client_cert
+
+The path to a local client certificate used as the CA for authentication in lieue of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When client_cert and client_key are provided the username and password will be ignored.
+
+### client_key
+
+The path to a local client key used for authentication in lieue of a username and password.
+
 ### elevated
 
-When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with windows updates and installing some MSIs such as sql server and .net runtimes. Defaults to `false`.
+When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with Windows updates and installing some MSIs such as SQL Server and .NET runtimes. Defaults to `false`.
 
 ### elevated_password
 

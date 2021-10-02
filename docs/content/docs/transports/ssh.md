@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-`ssh` is the default transport for all non-Windows hosts. For most users the default tranport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`ssh` is the default transport for all non-Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
 
 ## SSH Tranport Settings
 

@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-kitchen-dokken is a Test Kitchen *plugin* for Docker that uses specially created Linux distribution Docker images and Chef Infra Docker images. Utilizing the Docker container engine instead of hypervisors or cloud providers allows for Chef Infra cookbook testing that can run on a local workstation or in CI pipelines without modification or extra costs.
+kitchen-dokken is a Test Kitchen *plugin* for Docker that uses specially created Linux distribution Docker images and Chef Infra Docker images. Utilizing the Docker or Podman container engines instead of hypervisors or cloud providers allows for Chef Infra cookbook testing that can run on a local workstation or in CI pipelines without modification or extra costs.
 
 Unlike all other Test Kitchen drivers, kitchen-dokken handles all the tasks of the driver, transport, and provisioner itself. This approach focuses purely on Chef Infra cookbook testing to provide ultra-fast testing times. Docker containers have a fast creation and start time, and kitchen-dokken uses the official Chef Infra Client containers instead of spending the time to download and install the Chef Infra Client packages. These design decisions result in tests that run in seconds instead of minutes and don't require high bandwidth Internet connections.
 
@@ -122,7 +122,7 @@ driver:
 
 #### chef_version
 
-The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivelant to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
+The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivalent to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
 
 ```yaml
 driver:
@@ -204,7 +204,7 @@ driver:
 
 #### hostname
 
-The `hostname` configuration allows you to set a custom hostname for the container. This configuration option can be used to set a hostname per suite to test clusters or client/server architectectures. This is possible due to Docker's internal DNS resolution which allows each container on the internal `dokken` network to resolve the IP of one another. This configuration option defaults to `dokken`
+The `hostname` configuration allows you to set a custom hostname for the container. This configuration option can be used to set a hostname per suite to test clusters or client/server architectures. This is possible due to Docker's internal DNS resolution which allows each container on the internal `dokken` network to resolve the IP of one another. This configuration option defaults to `dokken`
 
 ```yaml
 ---
@@ -267,7 +267,7 @@ driver:
 
 #### intermediate_instructions
 
-The `intermediate_instructions` configuration option allows you to define steps to run on the Test Kitchen container before you converge Chef Infra Client. This is very useful for updating package caches on operation systems like Debian/Ubuntu or other preperation tasks that you might need to run.
+The `intermediate_instructions` configuration option allows you to define steps to run on the Test Kitchen container before you converge Chef Infra Client. This is very useful for updating package caches on operation systems like Debian/Ubuntu or other preparation tasks that you might need to run.
 
 ```yaml
 platforms:
@@ -313,7 +313,7 @@ Some containers require the ip6table_filter kernel module to be loaded on the ho
 sudo lsmod | grep ip6table_filter
 ```
 
-If there is no output than the module is not loaded and should be loaded using the command
+If there is no output then the module is not loaded and should be loaded using the command
 
 ```
 modprobe ip6table_filter
@@ -478,7 +478,7 @@ The `profile_ruby` configuration option specifies enabling low level Ruby profil
 
 #### slow_resource_report
 
-The `slow_resource_report` configuration option specifies running Chef Infra Client with the slow resource report mode enabled. This functionality is availale in Chef Infra Client 17.2 or later and provides timing information on the 10 slowest resources in your cookbooks.
+The `slow_resource_report` configuration option specifies running Chef Infra Client with the slow resource report mode enabled. This functionality is available in Chef Infra Client 17.2 or later and provides timing information on the 10 slowest resources in your cookbooks.
 
 ```yaml
 provisioner:
