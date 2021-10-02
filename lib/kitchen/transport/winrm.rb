@@ -439,18 +439,31 @@ module Kitchen
           elevated_username: data[:elevated_username] || data[:username],
           elevated_password: elevated_password,
         }
-        opts.merge!(additional_transport_args(opts[:transport]))
+        opts.merge!(additional_transport_args(data, opts[:transport]))
+        if opts[:transport].to_sym == :ssl && opts.key?(:client_cert) && opts.key?(:client_key)
+          opts.delete(:user)
+          opts.delete(:password)
+        end
         opts
       end
 
-      def additional_transport_args(transport_type)
+      def additional_transport_args(data, transport_type)
+        opts = {
+          disable_sspi: false,
+          basic_auth_only: false,
+        }
+
         case transport_type.to_sym
-        when :ssl, :negotiate
-          {
-            no_ssl_peer_verification: true,
-            disable_sspi: false,
-            basic_auth_only: false,
-          }
+        when :ssl
+          if data.key?(:client_cert) && data.key?(:client_key)
+            opts[:client_cert] = data[:client_cert]
+            opts[:client_key] = data[:client_key]
+          end
+          opts[:no_ssl_peer_verification] = data.key?(:no_ssl_peer_verification) ? data[:no_ssl_peer_verification] : true
+          opts
+        when :negotiate
+          opts[:no_ssl_peer_verification] = true
+          opts
         when :plaintext
           {
             disable_sspi: true,
