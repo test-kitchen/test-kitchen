@@ -22,12 +22,6 @@ stages:
       - job: Windows
         strategy:
           matrix:
-            Windows_Ruby25:
-              version: 2.5
-              machine_user: test_user
-              machine_pass: Pass@word1
-              machine_port: 5985
-              KITCHEN_YAML: kitchen.windows.yml
             Windows_Ruby26:
               version: 2.6
               machine_user: test_user
@@ -87,8 +81,6 @@ stages:
       - job: Mac
         strategy:
           matrix:
-            Mac_Ruby25:
-              version: 2.5
             Mac_Ruby26:
               version: 2.6
             Mac_Ruby27:
@@ -128,8 +120,6 @@ stages:
       - job: Linux
         strategy:
           matrix:
-            Linux_Ruby25:
-              version: 2.5
             Linux_Ruby26:
               version: 2.6
             Linux_Ruby27:
