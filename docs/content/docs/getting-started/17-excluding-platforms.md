@@ -68,7 +68,7 @@ Finally let's destroy our running instances:
 
 ~~~
 $ kitchen destroy
------> Starting Test Kitchen (v2.5.2)
+-----> Starting Test Kitchen (v3.1.0)
 -----> Destroying <default-ubuntu-2004>...
        Finished destroying <default-ubuntu-2004> (0m0.00s).
 -----> Destroying <default-centos-8>...
