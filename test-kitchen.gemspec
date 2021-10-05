@@ -42,7 +42,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
 
-  gem.add_development_dependency "aruba",     "~> 2.0", "< 3.0"
+  gem.add_development_dependency "aruba",     ">= 0.11", "< 3.0"
   gem.add_development_dependency "fakefs",    "~> 1.0"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.15"
   gem.add_development_dependency "mocha",     "~> 1.1"
