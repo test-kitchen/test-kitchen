@@ -45,7 +45,7 @@ about which instance the hook is evaluating against:
 * `KITCHEN_PLATFORM_NAME` - The name of the platform of the instance
 * `KITCHEN_INSTANCE_HOSTNAME` - The hostname of the instance as reported by the driver plugin
 
-You can also pass additional configuration for local commands:
+For local commands you can also pass additional configuration of `cwd:` to run in a folder relative to the test kitchen root and `environment:` to pass in additional variables:
 
 ```yaml
 lifecycle:
@@ -53,7 +53,7 @@ lifecycle:
   - local: ./setup.sh
     environment:
       API_KEY: asdf1234
-    timeout: 60
+    cwd: /my-test-folder
 ```
 
 Remote commands are normally not allowed during `pre_create` or `post_destroy`
