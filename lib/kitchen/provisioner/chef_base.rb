@@ -681,24 +681,41 @@ module Kitchen
         chef_cmds(base_cmd).join(separator)
       end
 
-      # Gives an array of command
+      # Gives an array of commands
       # @api private
       def chef_cmds(base_cmd)
-        cmd = prefix_command(wrap_shell_code(
-          [base_cmd, *chef_args(config_filename), last_exit_code].join(" ")
-          .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-        ))
+        cmds = []
+        num_converges = config[:multiple_converge].to_i
+        idempotency   = config[:enforce_idempotency]
 
-        cmds = [cmd].cycle(config[:multiple_converge].to_i).to_a
-
-        if config[:enforce_idempotency]
-          idempotent_cmd = prefix_command(wrap_shell_code(
-            [base_cmd, *chef_args("client_no_updated_resources.rb"), last_exit_code].join(" ")
-            .tap { |str| str.insert(0, reload_ps1_path) if windows_os? }
-          ))
-          cmds[-1] = idempotent_cmd
+        # Execute Chef Client n-1 times, without exiting
+        (num_converges - 1).times do
+          cmds << wrapped_chef_cmd(base_cmd, config_filename)
         end
+
+        # Append another execution with Windows specific Exit code helper or (for
+        # idempotency check) a specific config file which assures no changed resources.
+        cmds << unless idempotency
+                  wrapped_chef_cmd(base_cmd, config_filename, append: last_exit_code)
+                else
+                  wrapped_chef_cmd(base_cmd, "client_no_updated_resources.rb", append: last_exit_code)
+                end
         cmds
+      end
+
+      # Concatenate all arguments and wrap it with shell-specifics
+      # @api private
+      def wrapped_chef_cmd(base_cmd, configfile, append: "")
+        args = []
+
+        args << base_cmd
+        args << chef_args(configfile)
+        args << append
+
+        shell_cmd = args.flatten.join(" ")
+        shell_cmd = shell_cmd.prepend(reload_ps1_path) if windows_os?
+
+        prefix_command(wrap_shell_code(shell_cmd))
       end
     end
   end

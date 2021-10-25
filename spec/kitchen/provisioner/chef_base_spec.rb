@@ -1323,10 +1323,10 @@ describe Kitchen::Provisioner::ChefBase do
           describe "when the policyfile lock doesn't exist" do
             before do
               File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
-                file.write(<<-POLICYFILE)
-  name 'wat'
-  run_list 'wat'
-  cookbook 'wat'
+                file.write(<<~POLICYFILE)
+                  name 'wat'
+                  run_list 'wat'
+                  cookbook 'wat'
                 POLICYFILE
               end
 
@@ -1716,6 +1716,127 @@ describe Kitchen::Provisioner::ChefBase do
 
     def debug_line(msg)
       /^D, .* : #{Regexp.escape(msg)}$/
+    end
+  end
+
+  describe "#chef_cmds" do
+    before do
+      provisioner.singleton_class.send(:public, :chef_cmds)
+
+      platform.stubs(:os_type).returns("unix")
+      platform.stubs(:shell_type).returns("bash")
+
+      provisioner.stubs(:chef_args).returns([
+        "--config /root/path/solo.rb",
+        "--log_level auto",
+        "--force-formatter",
+        "--no-color",
+        "--json-attributes dna.json",
+      ])
+    end
+
+    describe "without :multiple_converge or :enforce_idempotency" do
+      before do
+        config[:multiple_converge] = 1
+        config[:enforce_idempotency] = false
+      end
+
+      it "only includes one chef run" do
+        provisioner.chef_cmds("chef-bin").count == 1
+      end
+    end
+
+    describe "with :multiple_converge = 2" do
+      before do
+        config[:multiple_converge] = 2
+        config[:enforce_idempotency] = false
+      end
+
+      it "includes exactly two chef runs" do
+        provisioner.chef_cmds("chef-bin").count == 2
+      end
+    end
+
+    describe "with :multiple_converge = 2 and :enforce_idempotency" do
+      before do
+        config[:multiple_converge] = 2
+        config[:enforce_idempotency] = true
+      end
+
+      it "includes the config for idempotency on last run" do
+        provisioner.chef_cmds("chef-bin").last.include? "client_no_updated_resources.rb"
+      end
+    end
+
+    describe "on Windows instances" do
+      before do
+        platform.stubs(:os_type).returns("windows")
+        platform.stubs(:shell_type).returns("powershell")
+      end
+
+      describe "with :multiple_converge = 2" do
+        before do
+          config[:multiple_converge] = 2
+          config[:enforce_idempotency] = true
+        end
+
+        # Issue 1798
+        it "only includes `exit` once" do
+          provisioner.chef_cmds("chef-bin").join("\n").scan("exit $LastExitCode").count == 1
+        end
+
+        it "only includes `exit` on last command" do
+          provisioner.chef_cmds("chef-bin").last.include? "exit $LastExitCode"
+        end
+      end
+    end
+  end
+
+  describe "#wrapped_chef_cmd" do
+    before do
+      provisioner.singleton_class.send(:public, :wrapped_chef_cmd)
+      platform.stubs(:shell_type).returns("bash")
+
+      provisioner.stubs(:chef_args).returns([
+        "--config /root/path/solo.rb",
+        "--log_level auto",
+        "--force-formatter",
+        "--no-color",
+        "--json-attributes dna.json",
+      ])
+    end
+
+    let(:normal_call) { provisioner.wrapped_chef_cmd("chef_bin", "individual_config.rb") }
+    let(:appended_call) { provisioner.wrapped_chef_cmd("chef_bin", "individual_config.rb", append: "; echo $?") }
+
+    it "includes the base_cmd" do
+      normal_call.include? "chef_bin"
+    end
+
+    it "calls #chef_args" do
+      normal_call.include? "--force-formatter"
+      normal_call.include? "--json-attributes dna.json"
+    end
+
+    it "ends includes the config file name" do
+      normal_call.include? "individual_config.rb"
+    end
+
+    it "appends a string, if given" do
+      appended_call.include? "; echo $?"
+    end
+
+    describe "on Windows instances" do
+      before do
+        platform.stubs(:os_type).returns("windows")
+        platform.stubs(:shell_type).returns("powershell")
+      end
+
+      let(:windows_call) { provisioner.wrapped_chef_cmd("chef_bin", "individual_config.rb") }
+
+      it "includes #reload_ps1_path output" do
+        windows_call.include? "[System.Environment]::GetEnvironmentVariable"
+      end
     end
   end
 
