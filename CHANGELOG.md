@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [3.1.1](https://github.com/test-kitchen/test-kitchen/tree/v3.1.1) (2021-10-26)
+
+- Fix progress reporting in ssh transport - [#1796](https://github.com/test-kitchen/test-kitchen/pull/1796)([@karmix](https://github.com/karmix))
+
 ## [3.1.0](https://github.com/test-kitchen/test-kitchen/tree/v3.1.0) (2021-10-02)
 
 - Removed support for EOL Ruby 2.5
