@@ -39,7 +39,12 @@ module Kitchen
               end
         # Build the options for mixlib-shellout.
         opts = {}.merge(user).merge(cwd: cwd, environment: environment)
-        run_command(command, opts)
+        #command run here
+        if block_given?
+          yield command
+        else
+          run_command(command, opts)
+        end
       end
 
       private

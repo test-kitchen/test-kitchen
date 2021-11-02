@@ -18,13 +18,20 @@ module Kitchen
           end
         end
 
-        begin
-          conn = instance.transport.connection(state_file.read)
-          conn.execute(command)
-        rescue Kitchen::Transport::SshFailed => e
-          return if hook[:skippable] && e.message.match(/^SSH exited \(\d{1,3}\) for command: \[.+\]$/)
+        if block_given?
+          # doblock
+          raise NotImplementedError
+          # This should use yield command but need to setup the remote connection
+        else
+          begin
+            conn = instance.transport.connection(state_file.read)
+            #command run here
+            conn.execute(command)
+          rescue Kitchen::Transport::SshFailed => e
+            return if hook[:skippable] && e.message.match(/^SSH exited \(\d{1,3}\) for command: \[.+\]$/)
 
-          raise
+            raise
+          end
         end
       end
 
