@@ -138,6 +138,26 @@ TODO: Investigate if this is something we need to even document
 default: "dokken/kitchen-cache:latest"
 -->
 
+#### creds_file
+
+The `creds_file` configuration options allows you to specify the location of a `json` file that contains the authentication credentials for the private docker registries.
+```yaml
+platforms:
+  - name: centos-7
+    driver:
+      image: reg/centos-7
+      creds_file: './creds.json'
+```
+The credentials file should contain all the necessary details that are required to authenticate the private registry. A sample credentials file is as follows.
+```json
+{
+   "username": "org_username",
+   "password": "password",
+   "email": "email@org.com",
+   "serveraddress": "https://registry.org.com/"
+}
+```
+
 #### deprecations_as_errors
 
 The `deprecations_as_errors` configuration option specifies that Test Kitchen should fail if any deprecations are encountered in Chef Infra cookbooks. This flag is useful when testing cookbooks in CI systems as it helps identify code that will later block upgrading Chef Infra Client.
