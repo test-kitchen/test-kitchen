@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [3.2.0](https://github.com/test-kitchen/test-kitchen/tree/v3.2.0) (2021-11-17)
+
+- Support the new `compliance` directory in the `chef_infra` (`chef_zero`) provisioner - [#1827](https://github.com/test-kitchen/test-kitchen/pull/1827)([@tas50](https://github.com/tas50))
+
 ## [3.1.1](https://github.com/test-kitchen/test-kitchen/tree/v3.1.1) (2021-10-26)
 
 - Fix progress reporting in ssh transport - [#1796](https://github.com/test-kitchen/test-kitchen/pull/1796)([@karmix](https://github.com/karmix))
