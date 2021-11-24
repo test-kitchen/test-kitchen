@@ -1,3 +1,5 @@
+require_relative "../platform_filter"
+
 module Kitchen
   class LifecycleHook
     class Base
@@ -59,14 +61,14 @@ module Kitchen
         lifecycle_hooks.state_file
       end
 
-      # @return [Array<String>] names of excluded platforms
+      # @return [Array<PlatformFilter>] names of excluded platforms
       def excludes
-        @excludes ||= hook.fetch(:excludes, [])
+        @excludes ||= PlatformFilter.convert(hook.fetch(:excludes, []))
       end
 
-      # @return [Array<String>] names of only included platforms
+      # @return [Array<PlatformFilter>] names of only included platforms
       def includes
-        @includes ||= hook.fetch(:includes, [])
+        @includes ||= PlatformFilter.convert(hook.fetch(:includes, []))
       end
 
       # @return [String]

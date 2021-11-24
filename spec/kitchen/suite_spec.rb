@@ -24,8 +24,8 @@ describe Kitchen::Suite do
   let(:opts) do
     {
       name: "suitezy",
-      includes: %w{testbuntu testcent},
-      excludes: %w{prodbuntu},
+      includes: %w{testbuntu /win/},
+      excludes: %w{prodbuntu /darwin/},
     }
   end
 
@@ -40,8 +40,8 @@ describe Kitchen::Suite do
     _ { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
   end
 
-  it "returns the includes" do
-    _(suite.includes).must_equal %w{testbuntu testcent}
+  it "returns the includes as array of PlatformFilter" do
+    _(suite.includes).must_equal [Kitchen::PlatformFilter.new("testbuntu"), Kitchen::PlatformFilter.new(/win/)]
   end
 
   it "returns an empty Array when includes not given" do
@@ -50,7 +50,7 @@ describe Kitchen::Suite do
   end
 
   it "returns the excludes" do
-    _(suite.excludes).must_equal %w{prodbuntu}
+    _(suite.excludes).must_equal [Kitchen::PlatformFilter.new("prodbuntu"), Kitchen::PlatformFilter.new(/darwin/)]
   end
 
   it "returns an empty Array when excludes not given" do
