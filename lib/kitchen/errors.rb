@@ -96,11 +96,12 @@ module Kitchen
     end
 
     # Log a warn message on STDERR device.
-    # This will help the developer to distinguish between the errors and
-    # output from other commands like diagnose.
+    # This will help to distinguish between the errors and
+    # output when parsing the output from the commands like
+    # kitchen diagnose.
     #
     # @params lines [Array<String>] Array of lines that needs to be printed
-    def self.stderr_warn(lines)
+    def self.warn_on_stderr(lines)
       Array(lines).each do |line|
         line = Color.colorize(line, :blue) if Kitchen.tty?
         $stderr.puts(line)
