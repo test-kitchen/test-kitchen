@@ -1,5 +1,9 @@
 # Test Kitchen Change Log
 
+## [3.2.2](https://github.com/test-kitchen/test-kitchen/tree/v3.2.1) (2021-12-01)
+
+- Moved the `kitchen diagnose` warnings to stderr to prevent YAML parsing errors - [@ashiqueps](https://github.com/ashiqueps)
+
 ## [3.2.1](https://github.com/test-kitchen/test-kitchen/tree/v3.2.1) (2021-11-29)
 
 - Fix multiple converges on Windows platforms - [#1820](https://github.com/test-kitchen/test-kitchen/pull/1820)([@tecracer-theinen](https://github.com/tecracer-theinen))
