@@ -241,7 +241,7 @@ module Kitchen
           #{deprecated_config.keys.join("\n")}
           Run 'kitchen doctor' for details.
         MSG
-        warn(warning)
+        Error.warn_on_stderr(warning)
 
         # Set global var that the deprecation message has been printed
         @@has_been_warned_of_deprecations = true

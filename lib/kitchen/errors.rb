@@ -94,6 +94,19 @@ module Kitchen
         "".center(22, "-"),
       ]
     end
+
+    # Log a warn message on STDERR device.
+    # This will help to distinguish between the errors and
+    # output when parsing the output from the commands like
+    # kitchen diagnose.
+    #
+    # @params lines [Array<String>] Array of lines that needs to be printed
+    def self.warn_on_stderr(lines)
+      Array(lines).each do |line|
+        line = Color.colorize(line, :blue) if Kitchen.tty?
+        $stderr.puts(line)
+      end
+    end
   end
 
   # Base exception class from which all Kitchen exceptions derive. This class
