@@ -48,9 +48,9 @@ module HashRecursiveMerge
   # When both +hsh+ and +other_hash+ contains an entry with the same key,
   # it merges and returns the values from both arrays.
   #
-  # Compared with Hash#merge, this method provides a different approch
-  # for merging nasted hashes.
-  # If the value of a given key is an Hash and both +other_hash+ abd +hsh
+  # Compared with Hash#merge, this method provides a different approach
+  # for merging nested hashes.
+  # If the value of a given key is an Hash and both +other_hash+ and +hsh
   # includes the same key, the value is merged instead replaced with
   # +other_hash+ value.
   #
