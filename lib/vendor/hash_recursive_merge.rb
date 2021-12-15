@@ -22,7 +22,9 @@ module HashRecursiveMerge
   # Compared with Hash#merge!, this method supports nested hashes and
   # arrays.
   # When both +hsh+ and +other_hash+ contains an entry with the same key,
-  # it merges and returns the values from both hashes or arrays.
+  # it merges and returns the values from both hashes.
+  # If the values are arrays and +merge_arrays+ is true, underlying
+  # arrays are also merged, as sets (guaranteeing unique values)
   #
   # @example
   #
@@ -36,11 +38,11 @@ module HashRecursiveMerge
   #
   #    h1.merge!(h2)    #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
-  def rmerge!(other_hash)
+  def rmerge!(other_hash, merge_arrays=false)
     merge!(other_hash) do |_key, oldval, newval|
       if oldval.class == self.class
         oldval.rmerge!(newval)
-      elsif oldval.is_a?(Array) && newval.is_a?(Array)
+      elsif merge_arrays && oldval.is_a?(Array) && newval.is_a?(Array)
         oldval |= newval
       else
         newval
@@ -57,9 +59,12 @@ module HashRecursiveMerge
   #
   # Compared with Hash#merge, this method provides a different approach
   # for merging nested hashes and arrays.
-  # If the value of a given key is an Hash or Array and both
-  # +other_hash+ and +hsh includes the same key, the value is merged
-  # instead of being replaced with +other_hash+ value.
+  # If the value of a given key is an Hash and both +other_hash+ and
+  # +hsh+ includes the same key, the value is merged instead of being
+  # replaced with +other_hash+ value.
+  # If the value of a given key is an Array, +merge_arrays+ is true and
+  # both +other_hash+ and +hsh+ include the same key, the underlying
+  # arrays are also merged, as sets (guaranteeing unique values).
   #
   # @example
   #
@@ -73,12 +78,12 @@ module HashRecursiveMerge
   #
   #    h1.merge(h2)     #=> {"a" => 100, "b" = >254, "c" => {"c1" => 16, "c3" => 94}}
   #
-  def rmerge(other_hash)
+  def rmerge(other_hash, merge_arrays=false)
     r = {}
     merge(other_hash) do |key, oldval, newval|
       if oldval.class == self.class
         r[key] = oldval.rmerge(newval)
-      elsif oldval.is_a?(Array) && newval.is_a?(Array)
+      elsif merge_arrays && oldval.is_a?(Array) && newval.is_a?(Array)
         r[key] = oldval | newval
       else
         newval
