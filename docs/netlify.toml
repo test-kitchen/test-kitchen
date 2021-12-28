@@ -6,3 +6,11 @@
     Referrer-Policy = "no-referrer-when-downgrade"
     Strict-Transport-Security = "max-age=2592000"
     Permissions-Policy = "vibrate=(), geolocation=(), midi=(), notifications=(), push=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), speaker=(), vibrate=(), fullscreen=(), payment=()"
+    Content-Security-Policy = '''
+    default-src 'self'
+    font-src 'self' data: https://fonts.gstatic.com 'unsafe-eval'
+    img-src 'self'
+    script-src * data: blob: 'unsafe-inline' 'unsafe-eval'
+    style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css 'unsafe-inline' 'unsafe-eval'
+    frame-src 'self'
+    connect-src * data'''
