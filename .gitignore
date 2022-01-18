@@ -38,5 +38,6 @@ _cache
 .tddium*
 docs/public
 .idea/
+docs/.hugo_build.lock
 
 
