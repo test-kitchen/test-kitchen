@@ -8,23 +8,6 @@ menu:
 
 kitchen-vra is a Test Kitchen driver for vRealize Automation that runs against the VMware vRealize Automation  [V8.x] API.
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'kitchen-vra'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install kitchen-vra
-
-
 ## Usage
 
 After installing the gem as described above, edit your .kitchen.yml file to set the driver to 'vra' and supply your login credentials:
@@ -67,8 +50,10 @@ driver:
   image_mapping: VRA-nc-lnx-ce8.4-Docker
   flavor_mapping: Small
   version: 1
+
 provisioner:
   name: chef_zero
+
 platforms:
   - name: chef-progress
     driver:
@@ -77,6 +62,7 @@ platforms:
         hardware-config:
           type: string
           value: Small
+
 suites:
   - name: default
     run_list:
