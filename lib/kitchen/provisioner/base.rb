@@ -185,7 +185,7 @@ module Kitchen
       #
       # @return [String] path of items in the sandbox directory
       def sandbox_dirs
-        Util.list_directory sandbox_path
+        Util.list_directory(sandbox_path)
       end
 
       # Deletes the sandbox path. Without calling this method, the sandbox path
