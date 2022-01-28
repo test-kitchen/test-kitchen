@@ -70,7 +70,6 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
-        sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
