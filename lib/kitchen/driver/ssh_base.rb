@@ -70,7 +70,7 @@ module Kitchen
       def converge(state) # rubocop:disable Metrics/AbcSize
         provisioner = instance.provisioner
         provisioner.create_sandbox
-        sandbox_dirs = Util.list_directory(provisioner.sandbox_path)
+        sandbox_dirs = provisioner.sandbox_dirs
 
         instance.transport.connection(backcompat_merged_state(state)) do |conn|
           conn.execute(env_cmd(provisioner.install_command))

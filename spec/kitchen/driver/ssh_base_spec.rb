@@ -77,7 +77,8 @@ describe Kitchen::Driver::SSHBase do
       run_command: "run",
       create_sandbox: true,
       cleanup_sandbox: true,
-      sandbox_path: "/tmp/sandbox"
+      sandbox_path: "/tmp/sandbox",
+      sandbox_dirs: ["/tmp/sandbox/stuff"]
     )
   end
 
@@ -445,8 +446,6 @@ describe Kitchen::Driver::SSHBase do
     describe "transferring files" do
       before do
         transport.stubs(:connection).yields(connection)
-        connection.stubs(:upload)
-        FileUtils.mkdir_p "/tmp/sandbox/stuff"
       end
 
       it "uploads files" do

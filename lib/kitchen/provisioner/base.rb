@@ -182,6 +182,13 @@ module Kitchen
           "trying to access the path."
       end
 
+      # Returns the list of items in the sandbox directory
+      #
+      # @return [String] path of items in the sandbox directory
+      def sandbox_dirs
+        Util.list_directory sandbox_path
+      end
+
       # Deletes the sandbox path. Without calling this method, the sandbox path
       # will persist after the process terminates. In other words, cleanup is
       # explicit. This method is safe to call multiple times.
