@@ -53,6 +53,10 @@ module Kitchen
       def sandbox_path
         "/tmp/sandbox"
       end
+
+      def sandbox_dirs
+        ["/tmp/sandbox/stuff"]
+      end
     end
 
     class Dodgy < Kitchen::Provisioner::Base
