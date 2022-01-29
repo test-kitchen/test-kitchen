@@ -65,7 +65,6 @@ module Kitchen
       # @raise [ActionFailed] if the action could not be completed
       def call(state)
         create_sandbox
-        sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
           conn.execute(install_command)
@@ -172,6 +171,13 @@ module Kitchen
         @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
            "been created. Please run #{self.class}#create_sandox before " \
            "trying to access the path."
+      end
+
+      # Returns the list of items in the sandbox directory
+      #
+      # @return [String] the absolute path of sandbox directory files
+      def sandbox_dirs
+        Util.list_directory(sandbox_path)
       end
 
       # Sets the API version for this verifier. If the verifier does not set

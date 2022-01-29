@@ -11,7 +11,7 @@ Now it's time to introduce to the **test** meta-action which helps you automate 
 
 ~~~
 $ kitchen test
------> Starting Test Kitchen (v2.5.2)
+-----> Starting Test Kitchen (v3.1.0)
 -----> Cleaning up any prior instances of <default-ubuntu-2004>
 -----> Destroying <default-ubuntu-2004>...
        ==> default: Forcing shutdown of VM...

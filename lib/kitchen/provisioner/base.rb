@@ -70,7 +70,6 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
-        sandbox_dirs = Util.list_directory(sandbox_path)
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
@@ -180,6 +179,13 @@ module Kitchen
         @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
           "been created. Please run #{self.class}#create_sandox before " \
           "trying to access the path."
+      end
+
+      # Returns the list of items in the sandbox directory
+      #
+      # @return [String] path of items in the sandbox directory
+      def sandbox_dirs
+        Util.list_directory(sandbox_path)
       end
 
       # Deletes the sandbox path. Without calling this method, the sandbox path

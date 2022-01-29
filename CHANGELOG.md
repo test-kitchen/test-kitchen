@@ -1,5 +1,21 @@
 # Test Kitchen Change Log
 
+## [3.2.2](https://github.com/test-kitchen/test-kitchen/tree/v3.2.1) (2021-12-01)
+
+- Moved the `kitchen diagnose` warnings to stderr to prevent YAML parsing errors - [@ashiqueps](https://github.com/ashiqueps)
+
+## [3.2.1](https://github.com/test-kitchen/test-kitchen/tree/v3.2.1) (2021-11-29)
+
+- Fix multiple converges on Windows platforms - [#1820](https://github.com/test-kitchen/test-kitchen/pull/1820)([@tecracer-theinen](https://github.com/tecracer-theinen))
+
+## [3.2.0](https://github.com/test-kitchen/test-kitchen/tree/v3.2.0) (2021-11-17)
+
+- Support the new `compliance` directory in the `chef_infra` (`chef_zero`) provisioner - [#1827](https://github.com/test-kitchen/test-kitchen/pull/1827)([@tas50](https://github.com/tas50))
+
+## [3.1.1](https://github.com/test-kitchen/test-kitchen/tree/v3.1.1) (2021-10-26)
+
+- Fix progress reporting in ssh transport - [#1796](https://github.com/test-kitchen/test-kitchen/pull/1796)([@karmix](https://github.com/karmix))
+
 ## [3.1.0](https://github.com/test-kitchen/test-kitchen/tree/v3.1.0) (2021-10-02)
 
 - Removed support for EOL Ruby 2.5
