@@ -19,7 +19,7 @@ Chef Workstation includes:
 * [kitchen-openstack](https://github.com/test-kitchen/kitchen-openstack)
 * [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant)
 * [kitchen-vcenter](https://github.com/chef/kitchen-vcenter)
-* [kitchen-vra](https://github.com/chef/kitchen-vra)
+* [kitchen-vra](https://github.com/test-kitchen/kitchen-vra)
 
 Community Drivers:
 
