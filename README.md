@@ -6,9 +6,8 @@
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
 | Website     | [https://kitchen.ci/][website]													|
-| Source Code | [https://kitchen.ci/docs/getting-started/][guide]								|
-| Slack       | [#test-kitchen][slack] channel on Chef Community Slack	|
-| Twitter     | [@kitchenci][twitter]															|
+| Source Code | [https://kitchen.ci/docs/getting-started/introduction/][guide]   				|
+| Slack       | [#test-kitchen][slack] channel on Chef Community Slack	                        |
 
 **Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.**
 
@@ -131,7 +130,6 @@ Apache License, Version 2.0 (see [LICENSE][license])
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
 [license]: https://github.com/test-kitchen/test-kitchen/blob/main/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
-[semver]: http://semver.org/
+[semver]: https://semver.org/
 [slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
-[twitter]: https://twitter.com/kitchenci
 [website]: https://kitchen.ci/
