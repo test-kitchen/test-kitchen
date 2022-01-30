@@ -17,8 +17,8 @@ First let's add the `server` named run list to the `Policyfile.rb` in our cookbo
 # For more information on the Policyfile feature, visit
 # https://docs.chef.io/policyfile/
 
-# A name that describes what the system you're building with Chef does.
-name 'git_cookbook'
+# Use the cookbook's metadata.rb file for sourcing the name and other details
+metadata
 
 # Where to find external cookbooks:
 default_source :supermarket
@@ -27,9 +27,6 @@ default_source :supermarket
 run_list 'git_cookbook::default'
 
 named_run_list :server, "git_cookbook::server"
-
-# Specify a custom source for a single cookbook:
-cookbook 'git_cookbook', path: '.'
 ```
 
 To apply the changes we've just made to `Policyfile.rb` let's now run `chef update`.
