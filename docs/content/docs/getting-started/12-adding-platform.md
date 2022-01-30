@@ -37,8 +37,8 @@ Now let's check the status of our instances:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 We're going to use two shortcuts in the next command:
@@ -201,8 +201,8 @@ Let's make sure everything has been destroyed:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 <div class="sidebar--footer">

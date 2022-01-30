@@ -60,7 +60,7 @@ Let's check the status of our instance now:
 ```bash
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Created        <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        Created        <None>
 ```
 
 Ok, we have an instance created and ready for some Chef Infra code. Onward!

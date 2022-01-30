@@ -43,7 +43,7 @@ To see the results of our work, let's run the `kitchen list` subcommand:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 Let's talk about what an **instance** is and how kitchen interacts with these.

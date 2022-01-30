@@ -14,10 +14,10 @@ Let's give `kitchen list` a look:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-server-ubuntu-2004   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
-server-centos-8      Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-ubuntu-2004   Vagrant  ChefInfra     Inspec    Ssh        Verified       <None>
+server-centos-8      Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 > **Add a platform name to an `excludes` array in a suite to remove the platform/suite combination from testing.**
@@ -59,9 +59,9 @@ Now let's run `kitchen list` to ensure the instance is gone:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-server-ubuntu-2004   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-ubuntu-2004   Vagrant  ChefInfra     Inspec    Ssh        Verified       <None>
 ```
 
 Finally let's destroy our running instances:

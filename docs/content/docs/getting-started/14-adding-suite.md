@@ -41,10 +41,10 @@ Now run `kitchen list` to see our new suite in action:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-server-ubuntu-2004   Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-server-centos-8      Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-ubuntu-2004   Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-centos-8      Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 Woah, we've doubled our number of instances! Yes, that is going to happen. This explosion of test cases is just one reason why testing is hard.

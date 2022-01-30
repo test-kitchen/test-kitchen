@@ -44,7 +44,7 @@ Let's check the status of our instance again:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
-default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Verified     <None>
+default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        Verified     <None>
 ```
 
 So what would a failing test look like? Let's see. Open `test/integration/default/default_test.rb` and edit the test so that we're testing that git is _not_ installed:
