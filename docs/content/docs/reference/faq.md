@@ -12,7 +12,7 @@ These are frequently asked questions or tips that don't have a better home just 
 
 ##### How do I add another driver other than Vagrant?
 
-If you're using Chef Workstation, check for it `chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md),
+If you're using Chef Workstation, check for it `chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/main/ECOSYSTEM.md),
 if it does:
 
 ~~~
