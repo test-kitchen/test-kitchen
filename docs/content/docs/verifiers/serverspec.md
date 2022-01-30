@@ -13,7 +13,7 @@ Files can be placed in `test/integration/$SUITE/serverspec/` and no configuratio
 
 Example test to check that the httpd package is installed:
 
-```
+```ruby
 describe package('httpd') do
   it { should be_installed }
 end

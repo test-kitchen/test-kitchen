@@ -37,7 +37,7 @@ suites:
 
 Here we are telling the verifier with the `inspec_tests` key to look in this directory. In our example we are pointing to a local directory but `kitchen-inspec` supports [remote locations](https://github.com/inspec/kitchen-inspec#use-remote-inspec-profiles) such as git repositories or even a Chef Automate server.
 
-Can you guess what this does even if you haven't seen a Chef InSpec test before? If not, then take a look at Chef InSpec's [package resource documentation](https://www.inspec.io/docs/reference/resources/package/). Otherwise your friends in the [Chef Community Slack](https://community.chef.io/slack) should be able to help.
+Can you guess what this does even if you haven't seen a Chef InSpec test before? If not, then take a look at Chef InSpec's [package resource documentation](https://docs.chef.io/inspec/resources/package/). Otherwise your friends in the [Chef Community Slack](https://community.chef.io/slack) should be able to help.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/running-verify">Next - kitchen verify</a>

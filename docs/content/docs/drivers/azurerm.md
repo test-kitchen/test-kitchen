@@ -256,7 +256,7 @@ platforms:
 
 #### plan
 
-* _hash_ : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://aka.ms/azuremarketplaceapideployment) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
+* _hash_ : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
 
 #### vm_tags
 
