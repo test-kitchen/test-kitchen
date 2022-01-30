@@ -11,7 +11,7 @@ In order to execute our test, we use the command `kitchen verify`:
 
 ```ruby
 $ kitchen verify default-ubuntu-2004
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Setting up <default-ubuntu-2004>...
        Finished setting up <default-ubuntu-2004> (0m0.00s).
 -----> Verifying <default-ubuntu-2004>...
@@ -59,7 +59,7 @@ And re-run the **verify** subcommand:
 
 ```ruby
 $ kitchen verify default-ubuntu-2004
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Verifying <default-ubuntu-2004>...
        Loaded tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"}
 
@@ -95,7 +95,7 @@ Then verify our revert:
 
 ```ruby
 $ kitchen verify default-ubuntu-2004
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Verifying <default-ubuntu-2004>...
        Loaded tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"}
 

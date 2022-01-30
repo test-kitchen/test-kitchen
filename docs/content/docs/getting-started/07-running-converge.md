@@ -10,7 +10,7 @@ menu:
 Now that we have a recipe, let's use `kitchen converge` to see if it works:
 
 ```text
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Converging <default-ubuntu-2004>...
        Preparing files for transfer
        Policy lock file doesn't exist, running `chef install` for Policyfile /Users/tsmith/git_cookbook/Policyfile.rb...

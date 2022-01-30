@@ -68,7 +68,7 @@ Finally let's destroy our running instances:
 
 ```ruby
 $ kitchen destroy
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Destroying <default-ubuntu-2004>...
        Finished destroying <default-ubuntu-2004> (0m0.00s).
 -----> Destroying <default-centos-8>...

@@ -52,7 +52,7 @@ Let's see how CentOS runs our cookbook:
 
 ```ruby
 $ kitchen verify 8
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Creating <default-centos-8>...
        Bringing machine 'default' up with 'virtualbox' provider...
        ==> default: Importing base box 'bento/centos-8'...
@@ -181,7 +181,7 @@ Nice! We've verified that our cookbook works on Ubuntu 20.04 and CentOS 8. Since
 
 ```ruby
 $ kitchen destroy
------> Starting Test Kitchen (v3.1.0)
+-----> Starting Test Kitchen (v3.2.2)
 -----> Destroying <default-ubuntu-2004>...
        Finished destroying <default-ubuntu-2004> (0m0.00s).
 -----> Destroying <default-centos-8>...
