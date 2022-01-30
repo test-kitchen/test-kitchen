@@ -27,13 +27,13 @@ First, install the [Chef Workstation](https://downloads.chef.io/chef-workstation
 
 ```ruby
 $ chef --version
-Chef Workstation version: 21.4.365
-Chef Infra Client version: 16.12.3
-Chef InSpec version: 4.29.3
-Chef CLI version: 4.0.0
-Chef Habitat version: 1.6.288
-Test Kitchen version: 2.11.2
-Cookstyle version: 7.10.0
+Chef Workstation version: 22.1.774
+Chef Habitat version: 1.6.420
+Test Kitchen version: 3.2.2
+Cookstyle version: 7.30.4
+Chef Infra Client version: 17.9.26
+Chef InSpec version: 4.52.9
+Chef CLI version: 5.5.6
 ```
 
 ##### VirtualBox
