@@ -9,7 +9,7 @@ menu:
 
 Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_infra`, that support similar options.  `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0. This change is backward-compatible, and both names work starting with Test Kitchen 3.0. In older releases, you will need to use `chef_zero`.
 
-```
+```ruby
 ---
 provisioner:
   name: chef_infra # chef_solo or chef_infra
