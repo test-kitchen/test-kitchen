@@ -1,7 +1,7 @@
 # Test Kitchen
 
 [![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
-[![Build Status](https://dev.azure.com/test-kitchen/test-kitchen/_apis/build/status/test-kitchen.test-kitchen?branchName=master)](https://dev.azure.com/test-kitchen/test-kitchen/_build/latest?definitionId=6&branchName=master)
+[![Build Status](https://dev.azure.com/test-kitchen/test-kitchen/_apis/build/status/test-kitchen.test-kitchen?branchName=main)](https://dev.azure.com/test-kitchen/test-kitchen/_build/latest?definitionId=6&branchName=main)
 
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
@@ -125,11 +125,11 @@ Maintained by Chef Software and a growing community of [contributors][contributo
 Apache License, Version 2.0 (see [LICENSE][license])
 
 [contributors]: https://github.com/test-kitchen/test-kitchen/graphs/contributors
-[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/master/ECOSYSTEM.md
+[ecosystem]: https://github.com/test-kitchen/test-kitchen/blob/main/ECOSYSTEM.md
 [fnichol]: https://github.com/fnichol
 [guide]: https://kitchen.ci/docs/getting-started/introduction/
 [issues]: https://github.com/test-kitchen/test-kitchen/issues
-[license]: https://github.com/test-kitchen/test-kitchen/blob/master/LICENSE
+[license]: https://github.com/test-kitchen/test-kitchen/blob/main/LICENSE
 [repo]: https://github.com/test-kitchen/test-kitchen
 [semver]: http://semver.org/
 [slack]: https://chefcommunity.slack.com/messages/testkitchen/details/
