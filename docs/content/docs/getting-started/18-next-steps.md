@@ -11,7 +11,7 @@ This concludes the getting started guide for Test Kitchen. Hopefully you are now
 
 From here, there are a few resources that can help you along your infrastructure testing journey:
 
-* Jump in the `#test-kitchen` channel on [Chef Community Slack](http://community-slack.chef.io/)
+* Jump in the `#test-kitchen` channel on [Chef Community Slack](https://community.chef.io/slack)
 * Submit an [issue](https://github.com/test-kitchen/test-kitchen/issues)
 * Write a blog post describing getting started with Test Kitchen, or an interesting problem Test Kitchen has allowed you to solve
 
