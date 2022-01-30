@@ -34,7 +34,7 @@ verifier:
 platforms:
   # Drivers may support defaults that automatically
   # map certain names to an image for the given driver
-  - name: ubuntu-16.04
+  - name: ubuntu-20.04
   - name: centos-8
 
 # Enumerate suites
@@ -87,7 +87,7 @@ provisioner:
     environment: test
 
 platforms:
-  - name: ubuntu-16.04
+  - name: ubuntu-20.04
 
 suites:
   - name: default
