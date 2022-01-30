@@ -11,21 +11,21 @@ Perhaps our enterprise has standardized on Ubuntu 20.04 for server tasks so we r
 
 Let's give `kitchen list` a look:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 server-ubuntu-2004   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
 server-centos-8      Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-~~~
+```
 
 > **Add a platform name to an `excludes` array in a suite to remove the platform/suite combination from testing.**
 
 Let's exclude the `centos-8` platform from the `server` suite so that it
 doesn't accidentally get run. Update `kitchen.yml` to look like the following:
 
-~~~
+```yaml
 ---
 driver:
   name: vagrant
@@ -52,21 +52,21 @@ suites:
         - test/integration/server
     excludes:
       - centos-8
-~~~
+```
 
 Now let's run `kitchen list` to ensure the instance is gone:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 server-ubuntu-2004   Vagrant  ChefZero     Inspec    Ssh        Verified       <None>
-~~~
+```
 
 Finally let's destroy our running instances:
 
-~~~
+```ruby
 $ kitchen destroy
 -----> Starting Test Kitchen (v3.1.0)
 -----> Destroying <default-ubuntu-2004>...
@@ -79,7 +79,7 @@ $ kitchen destroy
        Vagrant instance <server-ubuntu-2004> destroyed.
        Finished destroying <server-ubuntu-2004> (0m12.55s).
 -----> Test Kitchen is finished. (0m17.39s)
-~~~
+```
 
 Now that we've completed our git daemon feature and made sure we're testing it on only the
 platform we care about we've come to the end of our guide!

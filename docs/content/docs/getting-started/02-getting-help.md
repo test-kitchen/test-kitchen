@@ -9,7 +9,7 @@ menu:
 
 Use the `kitchen help` for a quick reminder of what the `kitchen` command provides:
 
-~~~
+```ruby
 $ kitchen help
 Commands:
   kitchen console                                 # Test Kitchen Console!
@@ -28,11 +28,11 @@ Commands:
   kitchen test [INSTANCE|REGEXP|all]              # Test (destroy, create, converge, setup, verify and destroy) one or more instances
   kitchen verify [INSTANCE|REGEXP|all]            # Change instance state to verify. Run automated tests on one or more instances
   kitchen version                                 # Print Test Kitchen's version information
-~~~
+```
 
 For more detailed help on a given subcommand, add it to end of the `help` subcommand. Let's take a look at the useful `kitchen diagnose` subcommand. This particular command is helpful when trying to visualize the layers of Test Kitchen configuration and troubleshoot.
 
-~~~
+```ruby
 $ kitchen help diagnose
 Usage:
   kitchen diagnose [INSTANCE|REGEXP|all]
@@ -49,7 +49,7 @@ Options:
   -t, [--test-base-path=TEST_BASE_PATH]        # Set the base path of the tests
 
 Show computed diagnostic configuration
-~~~
+```
 
 Remember, you can also ask for assistance in the [Chef Community Slack](http://community-slack.chef.io/) `#test-kitchen` channel where community members can help answer questions.
 

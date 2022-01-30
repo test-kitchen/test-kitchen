@@ -1,4 +1,4 @@
-Documentation for Test Kitchen.
+# Documentation for Test Kitchen
 
 The Getting Started guide is written in [Markdown](https://daringfireball.net/projects/markdown/) and rendered using [Hugo](https://gohugo.io).
 
@@ -32,25 +32,25 @@ To highlight a block of code, start and finish the block with three or more tild
 
 For example, this code:
 
-    ~~~yaml
-    ---
-    title: "KitchenCI Overview"
-    next:
-      url: installing-kitchen
-      text: "Installing KitchenCI"
-    ---
-    ~~~
-
-...will yield this output:
-
-~~~~yaml
+```yaml
 ---
 title: "KitchenCI Overview"
 next:
   url: installing-kitchen
   text: "Installing KitchenCI"
 ---
-~~~~
+```
+
+...yields this output:
+
+```yaml
+---
+title: "KitchenCI Overview"
+next:
+  url: installing-kitchen
+  text: "Installing KitchenCI"
+---
+```
 
 See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#fenced-code-blocks) for more information.
 
@@ -59,8 +59,8 @@ See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#fence
 To draw attention to some content with a blockquote, just start the line(s) with a `>` (right angle bracket / greater than symbol). See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#blockquotes) for more information.
 
 ## License
-The Kitchen Documentation is released under the [MIT license][mit-license].
 
+The Kitchen Documentation is released under the [MIT license][mit-license].
 
 [markdown]: http://daringfireball.net/projects/markdown/syntax
 [kitchenci]: https://kitchen.ci/

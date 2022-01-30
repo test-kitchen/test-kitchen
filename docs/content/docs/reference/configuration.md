@@ -15,11 +15,11 @@ There are a few basic ways of dynamically configuring Test Kitchen:
 
 To specify a path to a global `config.yml`, project or local `kitchen.yml` file, set the following environment variables:
 
-~~~
+```bash
 export KITCHEN_GLOBAL_YAML=/path/to/your/global/config.yml
 export KITCHEN_YAML=/path/to/your/project/kitchen.yml
 export KITCHEN_LOCAL_YAML=/path/to/your/local/kitchen.local.yml
-~~~
+```
 
 **Note:** If `$HOME/.kitchen/config.yml` is present, Test Kitchen will merge this file with your project's `kitchen.yml`, and/or `kitchen.local.yml` file. Merge precedence is:
 
@@ -29,7 +29,7 @@ export KITCHEN_LOCAL_YAML=/path/to/your/local/kitchen.local.yml
 
 For example, one could modify `kitchen.yml` (or `kitchen.local.yml`, or `$HOME/.kitchen/config.yml`) to look like:
 
-~~~
+```yaml
 ---
 driver:
   name: openstack
@@ -38,16 +38,16 @@ driver:
   openstack_auth_url: <%= ENV['YOUR_OPENSTACK_AUTH_URL'] %>
   image_ref: <%= ENV['SERVER_IMAGE_ID'] %>
   flavor_ref: <%= ENV['SERVER_FLAVOR_ID'] %>
-~~~
+```
 
 Keep in mind, this assumes you have an OpenStack deployment setup and ready to use. This is only an example so to illustrate using environment variables via ERB snippets in the configuration file.
 
 Another handy use of the ERB fragments is to dynamically override the log_level of
 the provisioner. Since Test Kitchen 1.7.0 the log level for the provisioner is now independent of the Test Kitchen log level. Using the following snippet, allows the environment to override the provisioner log level without modifying the config file.:
 
-~~~
+```yaml
 ---
 provisioner:
   name: chef_infra
   log_level: <%= ENV['CHEF_LOG_LEVEL'] || "auto" %>
-~~~
+```

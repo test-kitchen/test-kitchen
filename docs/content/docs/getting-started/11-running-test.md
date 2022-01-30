@@ -9,7 +9,7 @@ menu:
 
 Now it's time to introduce to the **test** meta-action which helps you automate all the previous actions so far into one command. Checking `kitchen list`, the "Last Action" of our instance should be "Verified". With this in mind, let's run `kitchen test`:
 
-~~~
+```ruby
 $ kitchen test
 -----> Starting Test Kitchen (v3.1.0)
 -----> Cleaning up any prior instances of <default-ubuntu-2004>
@@ -144,7 +144,7 @@ Test Summary: 1 successful, 0 failures, 0 skipped
        Finished destroying <default-ubuntu-2004> (0m7.03s).
        Finished testing <default-ubuntu-2004> (1m2.79s).
 -----> Test Kitchen is finished. (1m4.19s)
-~~~
+```
 
 There's only one remaining action left that needs a mention: the **Destroy Action** which as one might expect, destroys the instance. With this in mind, here's what Test Kitchen is doing in the **Test Action**:
 
@@ -162,11 +162,11 @@ A few details with regards to test:
 
 Finally, let's check the status of the instance:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-~~~
+```
 
 Back to square one.
 

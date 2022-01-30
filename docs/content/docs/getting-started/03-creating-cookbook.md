@@ -11,7 +11,7 @@ In order to keep our example as simple as possible let's create a Chef Infra coo
 
 First of all, let's generate a cookbook skeleton.
 
-~~~
+```ruby
 $ chef generate cookbook git_cookbook
 Generating cookbook git_cookbook
 - Ensuring correct cookbook content
@@ -29,7 +29,7 @@ test/integration/default/default_test.rb
 If you'd prefer to dive right in, the default recipe can be found at:
 
 recipes/default.rb
-~~~
+```
 
 **Congratulations. You've authored a Chef Infra cookbook.**
 

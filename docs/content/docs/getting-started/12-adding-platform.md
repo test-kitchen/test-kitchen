@@ -9,7 +9,7 @@ menu:
 
 Now that we have Ubuntu working, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and the `centos-8` line to your platforms list so that it resembles:
 
-~~~
+```yaml
 ---
 driver:
   name: vagrant
@@ -30,16 +30,16 @@ suites:
       inspec_tests:
         - test/integration/default
     attributes:
-~~~
+```
 
 Now let's check the status of our instances:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-~~~
+```
 
 We're going to use two shortcuts in the next command:
 
@@ -50,7 +50,7 @@ In our next example we'll select the `default-centos-8` instance with simply `8`
 
 Let's see how CentOS runs our cookbook:
 
-~~~
+```ruby
 $ kitchen verify 8
 -----> Starting Test Kitchen (v3.1.0)
 -----> Creating <default-centos-8>...
@@ -175,11 +175,11 @@ Target:  ssh://vagrant@127.0.0.1:2222
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-centos-8> (0m0.80s).
 -----> Test Kitchen is finished. (1m54.59s)
-~~~
+```
 
 Nice! We've verified that our cookbook works on Ubuntu 20.04 and CentOS 8. Since the CentOS instance is no longer needed, let's destroy it for now:
 
-~~~
+```ruby
 $ kitchen destroy
 -----> Starting Test Kitchen (v3.1.0)
 -----> Destroying <default-ubuntu-2004>...
@@ -190,7 +190,7 @@ $ kitchen destroy
        Vagrant instance <default-centos-8> destroyed.
        Finished destroying <default-centos-8> (0m7.11s).
 -----> Test Kitchen is finished. (0m8.76s)
-~~~
+```
 
 Interesting. Test Kitchen tried to destroy both instances, one that was created and the other that was not. Which brings us to another tip with the `kitchen` command:
 
@@ -198,12 +198,12 @@ Interesting. Test Kitchen tried to destroy both instances, one that was created 
 
 Let's make sure everything has been destroyed:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
 default-centos-8     Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-~~~
+```
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/adding-feature">Next - Adding a Feature</a>

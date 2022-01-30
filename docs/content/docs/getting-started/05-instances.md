@@ -13,7 +13,7 @@ A Test Kitchen **Instance** is a combination of a **Suite** and a **Platform** a
 
 Let's spin this **Instance** up to see what happens. We're going to be painfully explicit and ask kitchen to _only_ create the `default-ubuntu-2004` instance:
 
-~~~
+```ruby
 $ kitchen create default-ubuntu-2004
 -----> Starting Test Kitchen (v3.1.0)
 -----> Creating <default-ubuntu-2004>...
@@ -50,18 +50,18 @@ $ kitchen create default-ubuntu-2004
        Vagrant instance <default-ubuntu-2004> created.
        Finished creating <default-ubuntu-2004> (0m39.37s).
 -----> Test Kitchen is finished. (0m40.73s)
-~~~
+```
 
 Test Kitchen calls this the **Create Action** and several subcommands that we'll learn about later map directly to other **actions**. If you are a Vagrant user then the line containing `vagrant up --no-provision` will look familiar. This may take several minutes depending on your internet connection as kitchen will automatically fetch the `bento/ubuntu-20.04`
 Vagrant box if it does not already exist.
 
 Let's check the status of our instance now:
 
-~~~
+```bash
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Created        <None>
-~~~
+```
 
 Ok, we have an instance created and ready for some Chef Infra code. Onward!
 
