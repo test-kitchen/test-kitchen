@@ -40,6 +40,12 @@ stages:
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.windows-product.yml
+            WindowsProduct_Ruby30:
+              version: 3.0
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows-product.yml
         pool:
           vmImage: windows-latest
         steps:
@@ -85,6 +91,8 @@ stages:
               version: 2.6
             Mac_Ruby27:
               version: 2.7
+            Mac_Ruby30:
+              version: 3.0
         pool:
           vmImage: "macOS-latest"
         steps:
@@ -124,6 +132,8 @@ stages:
               version: 2.6
             Linux_Ruby27:
               version: 2.7
+            Linux_Ruby30:
+              version: 3.0
         pool:
           vmImage: "ubuntu-latest"
         steps:
