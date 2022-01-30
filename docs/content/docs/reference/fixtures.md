@@ -29,4 +29,4 @@ suites:
     - recipe[test_cookbook::default]
 ```
 
-Working examples can be found in many of the chef-cookbooks, like the [openldap cookbook](https://github.com/chef-cookbooks/openldap/tree/master/test/cookbooks/openldap-test)
+Working examples can be found in many of the chef-cookbooks, like the [openldap cookbook](https://github.com/sous-chefs/openldap/tree/main/test/cookbooks/openldap-test)
