@@ -152,7 +152,7 @@ module Kitchen
         def no_cli_found_error
           @logger.fatal("The `chef` or `chef-cli` executables cannot be found in your " \
                         "PATH. Ensure you have installed Chef Workstation " \
-                        "from https://downloads.chef.io and that your PATH " \
+                        "from https://www.chef.io/downloads/ and that your PATH " \
                         "setting includes the path to the `chef` or `chef-cli` commands.")
           raise UserError, "Could not find the chef or chef-cli executables in your PATH."
         end
