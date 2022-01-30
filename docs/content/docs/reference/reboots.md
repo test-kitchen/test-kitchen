@@ -10,7 +10,7 @@ Test Kitchen has support for enduring reboots initiated by a Chef Infra provisio
 
 ```
 provisioner:
-  name: chef_zero
+  name: chef_infra
   max_retries: 3 # tweak in conjunction with wait_for_retry
   wait_for_retry: 90 # tweak based on machine shutdown speed
   retry_on_exit_code: [35, 213] # retry for array of exit codes

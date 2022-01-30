@@ -21,7 +21,7 @@ driver:
 
 # Configure the provisioner (config management)
 provisioner:
-  name: chef_zero #chef_zero, chef_solo, salt_solo, puppet_apply, ansible_playbook, shell
+  name: chef_infra #chef_infra (legacy of chef_zero), chef_solo, salt_solo, puppet_apply, ansible_playbook, shell
 
 # Configure the verifier (testing framework)
 verifier:

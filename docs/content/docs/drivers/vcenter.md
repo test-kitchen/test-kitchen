@@ -22,7 +22,7 @@ driver:
     annotation: "Kitchen VM by <%= ENV['USER'] %> on <%= Time.now.to_s %>"
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
 
 verifier:
   name: inspec

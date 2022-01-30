@@ -19,7 +19,7 @@ driver:
   machine_size: 'Standard_D2_V2'
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
 
 verifier:
   name: inspec

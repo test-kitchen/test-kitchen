@@ -52,7 +52,7 @@ driver:
   version: 1
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
 
 platforms:
   - name: chef-progress

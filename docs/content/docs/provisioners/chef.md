@@ -12,7 +12,7 @@ Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_inf
 ```
 ---
 provisioner:
-  name: chef_zero # chef_solo or chef_zero
+  name: chef_infra # chef_solo or chef_infra
   data_path: test/data # Path to directory of files to copy to instance
   data_bags_path: test/data_bags # Path to directory containing data_bags
   environments_path: test/envs # Path to directory containing environments

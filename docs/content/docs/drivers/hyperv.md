@@ -20,7 +20,7 @@ driver:
   memory_startup_bytes: 4GB
 ​
 provisioner:
-  name: chef_zero
+  name: chef_infra
 ​
 transport:
   password: password123

@@ -48,6 +48,6 @@ the provisioner. Since Test Kitchen 1.7.0 the log level for the provisioner is n
 ~~~
 ---
 provisioner:
-  name: chef_zero
+  name: chef_infra
   log_level: <%= ENV['CHEF_LOG_LEVEL'] || "auto" %>
 ~~~

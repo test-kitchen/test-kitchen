@@ -25,7 +25,7 @@ driver:
     - userinfo.email
 
 provisioner:
-  name: chef_zero
+  name: chef_infra
 
 verifier:
   name: inspec
