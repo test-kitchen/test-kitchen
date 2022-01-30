@@ -23,7 +23,7 @@ Unfortunately Hyper-V doesn't like other hypervisors running at the same time an
 
 ##### Chef Workstation
 
-First, install the [Chef Workstation](https://downloads.chef.io/chef-workstation). This package includes Chef Infra Client, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
+First, install the [Chef Workstation](https://www.chef.io/downloads/tools/workstation). This package includes Chef Infra Client, Chef InSpec, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
 
 ```ruby
 $ chef --version
@@ -42,12 +42,12 @@ VirtualBox is a hypervisor that lets you run virtual machines on your local work
 
 ```bash
 $ VBoxManage --version
-6.1.18r142142
+6.1.32r149290
 ```
 
 ##### Vagrant
 
-Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes". Obtain the correct installer for your platform [here](https://www.vagrantup.com/downloads.html).
+Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes". Obtain the correct installer for your platform [here](https://www.vagrantup.com/downloads).
 
 ```bash
 $ vagrant --version

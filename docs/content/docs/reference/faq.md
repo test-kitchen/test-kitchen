@@ -32,9 +32,9 @@ to change these at the very least.
 
 Certain drivers, like `kitchen-dokken` [recommend](https://github.com/test-kitchen/kitchen-dokken#usage) setting `KITCHEN_LOCAL_YAML` environment variable to ensure these configs are used when there are multiple in a directory.
 
-##### How do I update just test-kitchen if I'm using Chef Workstation?
+##### How do I update just Test Kitchen if I'm using Chef Workstation?
 
-Due to the nature of how the Chef Workstation is built, it is not possible to update a gem that is part of the package. To get the latest versions of component software, builds from the [current](https://downloads.chef.io/chefdk/current) channel can be consumed.
+Due to the nature of how the Chef Workstation is built, it is not possible to update a gem that is part of the package. To get the latest versions of component software, builds from the [current](https://www.chef.io/downloads/tools/workstation) channel can be consumed.
 
 ##### How do I change the user to access the instance?
 
