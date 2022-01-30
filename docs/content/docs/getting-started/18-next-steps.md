@@ -15,7 +15,7 @@ From here, there are a few resources that can help you along your infrastructure
 * Submit an [issue](https://github.com/test-kitchen/test-kitchen/issues)
 * Write a blog post describing getting started with Test Kitchen, or an interesting problem Test Kitchen has allowed you to solve
 
-Everyone can contribute to making Test Kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/test-kitchen/tree/main/docs) and open a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)!
+Everyone can contribute to making Test Kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/test-kitchen/tree/main/docs) and open a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)!
 
 <div class="sidebar--footer">
 <a class="sidebar--footer--back" href="/docs/getting-started/excluding-platforms">Back to previous step</a>
