@@ -11,13 +11,13 @@ Our first test was created for us automatically for us by our cookbook generator
 
 First we're going to create a directory for our test file:
 
-~~~
+```bash
 mkdir -p test/integration/server
-~~~
+```
 
 Next, create a file called `test/integration/server/git_daemon_test.rb` with the following:
 
-~~~
+```ruby
 # InSpec test for recipe git_cookbook::server
 
 describe port(9418) do
@@ -28,13 +28,13 @@ describe service('git-daemon') do
   it { should be_enabled }
   it { should be_running }
 end
-~~~
+```
 
 This test checks that a process is listening on port 9418 and a service called "git-daemon" is installed, enabled, and running.
 
 As our primary target platform was Ubuntu 20.04, we'll target this one first for development. Now, in test driven development (TDD) style we'll run `kitchen test server` to watch our tests fail spectacularly:
 
-~~~
+```ruby
 ...
 ================================================================================
 Chef encountered an error attempting to load the node data for "server-ubuntu-2004"
@@ -44,15 +44,15 @@ Unexpected Error:
 -----------------
 Chef::PolicyBuilder::Policyfile::ConfigurationError: Policy 'git_cookbook' revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8' does not have named_run_list 'server'(available named_run_lists: [])
 ...
-~~~
+```
 
 One quick check of `kitchen list` tells us that our instance was created but not successfully converged:
 
-~~~
+```ruby
 $ kitchen list server-ubuntu-2004
 Instance            Driver   Provisioner  Verifier  Transport  Last Action  Last Error
 server-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Created      Kitchen::ActionFailed
-~~~
+```
 
 Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` sub-commands.
 

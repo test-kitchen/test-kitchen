@@ -11,7 +11,7 @@ As we've already added our tests, we have a pretty good idea of what needs to ha
 
 First let's add the `server` named run list to the `Policyfile.rb` in our cookbook by making that file look something like this:
 
-~~~
+```ruby
 # Policyfile.rb - Describe how you want Chef Infra Client to build your system.
 #
 # For more information on the Policyfile feature, visit
@@ -30,13 +30,13 @@ named_run_list :server, "git_cookbook::server"
 
 # Specify a custom source for a single cookbook:
 cookbook 'git_cookbook', path: '.'
-~~~
+```
 
 To apply the changes we've just made to `Policyfile.rb` let's now run `chef update`.
 
 With our Policyfile updated to point to the server recipe it's time to create that recipe by creating a file called `recipes/server.rb` with the following:
 
-~~~
+```ruby
 # the default recipe is implied if only the cookbook name is provided
 # effectively `include_recipe "git_cookbook::default"`
 include_recipe "git_cookbook"
@@ -68,7 +68,7 @@ systemd_unit 'git-daemon.service' do
 
   action [ :create, :enable, :start ]
 end
-~~~
+```
 
 Before we give our new recipe a go, a quick detour to cover how we might exclude a particular platform from a suite's tests.
 

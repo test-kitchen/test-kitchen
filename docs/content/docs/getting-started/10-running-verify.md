@@ -9,7 +9,7 @@ menu:
 
 In order to execute our test, we use the command `kitchen verify`:
 
-~~~
+```ruby
 $ kitchen verify default-ubuntu-2004
 -----> Starting Test Kitchen (v3.1.0)
 -----> Setting up <default-ubuntu-2004>...
@@ -27,13 +27,12 @@ Target:  ssh://vagrant@127.0.0.1:2222
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-2004> (0m0.54s).
 -----> Test Kitchen is finished. (0m2.76s)
-~~~
+```
 
 A few things of note from the output above:
 
 * `Verifying <default-ubuntu-2004>` output corresponds to the start of the **Verify Action**
 * `System Package git is expected to be installed` is output from the Chef InSpec test
-
 
 <div class="callout">
 <h3 class="callout--title">Pro Tip</h3>
@@ -42,23 +41,23 @@ If using a Bash-like shell, <code>echo $?</code> is will print the exit code of 
 
 Let's check the status of our instance again:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action  Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        Verified     <None>
-~~~
+```
 
 So what would a failing test look like? Let's see. Open `test/integration/default/default_test.rb` and edit the test so that we're testing that git is _not_ installed:
 
-~~~
+```ruby
 describe package('git') do
   it { should_not be_installed }
 end
-~~~
+```
 
 And re-run the **verify** subcommand:
 
-~~~
+```ruby
 $ kitchen verify default-ubuntu-2004
 -----> Starting Test Kitchen (v3.1.0)
 -----> Verifying <default-ubuntu-2004>...
@@ -80,21 +79,21 @@ Test Summary: 0 successful, 1 failure, 0 skipped
 >>>>>> ----------------------
 >>>>>> Please see .kitchen/logs/kitchen.log for more details
 >>>>>> Also try running `kitchen diagnose --all` for configuration
-~~~
+```
 
 Unsurprisingly, we get the message `×  is expected not to be installed` and Test Kitchen throws an exception.
 
 Let's revert our forced failure:
 
-~~~
+```ruby
 describe package('git') do
   it { should be_installed }
 end
-~~~
+```
 
 Then verify our revert:
 
-~~~
+```ruby
 $ kitchen verify default-ubuntu-2004
 -----> Starting Test Kitchen (v3.1.0)
 -----> Verifying <default-ubuntu-2004>...
@@ -110,7 +109,7 @@ Target:  ssh://vagrant@127.0.0.1:2222
 Test Summary: 1 successful, 0 failures, 0 skipped
        Finished verifying <default-ubuntu-2004> (0m0.54s).
 -----> Test Kitchen is finished. (0m2.40s)
-~~~
+```
 
 One of the advantages of `kitchen-inspec` is that the Chef InSpec tests are executed from the host over the transport (SSH or WinRM) to the instance. No tests need to be uploaded to the instance itself.
 

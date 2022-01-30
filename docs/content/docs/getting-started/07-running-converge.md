@@ -9,7 +9,7 @@ menu:
 
 Now that we have a recipe, let's use `kitchen converge` to see if it works:
 
-~~~
+```text
 -----> Starting Test Kitchen (v3.1.0)
 -----> Converging <default-ubuntu-2004>...
        Preparing files for transfer
@@ -88,7 +88,7 @@ Now that we have a recipe, let's use `kitchen converge` to see if it works:
        Downloading files from <default-ubuntu-2004>
        Finished converging <default-ubuntu-2004> (0m13.07s).
 -----> Test Kitchen is finished. (0m14.99s)
-~~~
+```
 
 If you are a Chef Infra user then part of the output above should look familiar to you. Here's what happened at a high level:
 

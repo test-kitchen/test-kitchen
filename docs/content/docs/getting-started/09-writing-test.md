@@ -13,15 +13,15 @@ Test Kitchen presumes you want to test things and supports a variety of differen
 
 The cookbook skeleton already has conveniently created a test for you at `test/integration/default/default_test.rb`. Open this file in your editor and edit to match the following content:
 
-~~~
+```ruby
 describe package('git') do
   it { should be_installed }
 end
-~~~
+```
 
 Why `test/integration/default/default_test.rb`? Let's take a look again at our `kitchen.yml`:
 
-~~~
+```yaml
 # relevant sections of config
 ---
 verifier:
@@ -33,7 +33,7 @@ suites:
       inspec_tests:
         - test/integration/default
     attributes:
-~~~
+```
 
 Here we are telling the verifier with the `inspec_tests` key to look in this directory. In our example we are pointing to a local directory but `kitchen-inspec` supports [remote locations](https://github.com/inspec/kitchen-inspec#use-remote-inspec-profiles) such as git repositories or even a Chef Automate server.
 

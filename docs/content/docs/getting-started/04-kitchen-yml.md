@@ -16,7 +16,7 @@ Let's turn our attention to the `kitchen.yml` file for a minute. While Chef Work
 
 For the moment let's say we only care about running our Chef cookbook on Ubuntu 20.04 with the latest Chef Infra Client release. In that case, we can edit the `kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
 
-~~~
+```yaml
 ---
 driver:
   name: vagrant
@@ -36,15 +36,15 @@ suites:
       inspec_tests:
         - test/integration/default
     attributes:
-~~~
+```
 
 To see the results of our work, let's run the `kitchen list` subcommand:
 
-~~~
+```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
 default-ubuntu-2004  Vagrant  ChefZero     Inspec    Ssh        <Not Created>  <None>
-~~~
+```
 
 Let's talk about what an **instance** is and how kitchen interacts with these.
 

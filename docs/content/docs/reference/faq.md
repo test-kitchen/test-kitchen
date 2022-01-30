@@ -10,15 +10,15 @@ menu:
 
 These are frequently asked questions or tips that don't have a better home just yet.
 
-##### How do I add another driver other than Vagrant?
+#### How do I add another driver other than Vagrant?
 
 If you're using Chef Workstation, check for it `chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/main/ECOSYSTEM.md),
 if it does:
 
-~~~
+```bash
 ~$ gem install kitchen-openstack # for instance
 ~$ vi cookbooks/demo/kitchen.yml # wherever your kitchen.yml is for your cookbook
-~~~
+```
 
 Examples:
 
@@ -40,10 +40,10 @@ Due to the nature of how the Chef Workstation is built, it is not possible to up
 
 Add/edit the `transport` section in `kitchen.yml`, for instance:
 
-~~~
+```yaml
 transport:
   username: ubuntu
-~~~
+```
 
 ##### I need to set up a cache or proxy using Vagrant, what are some options for me?
 

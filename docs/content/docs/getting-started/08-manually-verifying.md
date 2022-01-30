@@ -15,7 +15,7 @@ Let's verify this right now.
 
 Kitchen has a **login** subcommand for just these kinds of situations:
 
-~~~
+```ruby
 $ kitchen login
 Welcome to Ubuntu 20.04 LTS (GNU/Linux 5.4.0-31-generic x86_64)
 
@@ -43,24 +43,24 @@ This system is built by the Bento project by Chef Software
 More information can be found at https://github.com/chef/bento
 Last login: Wed Jun 10 19:17:07 2020 from 10.0.2.2
 vagrant@default-ubuntu-2004:~$
-~~~
+```
 
-As you can see by the prompt above we are now in the `default-ubuntu-2004` instance. We'll denote the prompt in an instance with `$ ` for clarity. Now to check if Git is installed:
+As you can see by the prompt above we are now in the `default-ubuntu-2004` instance. We'll denote the prompt in an instance with `$` for clarity. Now to check if Git is installed:
 
-~~~
+```bash
 $ which git
 /usr/bin/git
 $ git --version
 git version 2.25.1
-~~~
+```
 
 Rockin. Now we can exit out back to our workstation:
 
-~~~
+```bash
 $ exit
 logout
 Connection to 127.0.0.1 closed.
-~~~
+```
 
 Feel free to use the **login** subcommand any time you have the urge to poke around, uninstall packages, turn off services, grep logs, etc. Go to town, this is a sandbox and isn't production after all.
 

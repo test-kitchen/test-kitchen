@@ -10,7 +10,7 @@ A Test Kitchen *provisioner* takes care of configuring the compute instance prov
 
 There are common settings that all provisioners inherit and can override. These are typically set in the context of a specific provisioner but are provided here for reference.
 
-```
+```ruby
 provisioner:
   root_path: '/tmp/kitchen' # when platform is Windows '$env:TEMP\\kitchen'
   sudo: true # when platform is Windows, nil
