@@ -51,12 +51,12 @@ Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute p
 
 ```bash
 $ vagrant --version
-Vagrant 2.2.14
+Vagrant 2.2.18
 ```
 
 We've just installed Chef Workstation, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for Test Kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
 
-Kitchen is modular so that one may use a variety of different drivers (Vagrant, EC2, Docker), provisioners (Chef Infra, Ansible, Puppet, Salt, DSC), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef Infra, and InSpec.
+Kitchen is modular so that one may use a variety of different drivers (Vagrant, VMware, Azure, EC2, Docker), provisioners (Chef Infra, Ansible, Puppet, Salt, DSC), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef Infra, and InSpec.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/getting-help">Next - Getting Help</a>
