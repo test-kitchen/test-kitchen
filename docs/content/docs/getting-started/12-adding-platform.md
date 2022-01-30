@@ -112,11 +112,11 @@ $ kitchen verify 8
        trying wget...
        sha1	599b3294c243e362ca77fb89a723c42fc29dae68
        sha256	ccf3b233b2e971a9fde360b6c9a3536ad31369c6c0c256b1f7619650c03695ab
-       url	https://packages.chef.io/files/stable/chef/16.1.16/el/8/chef-16.1.16-1.el7.x86_64.rpm
-       version	16.1.16
+       url	https://packages.chef.io/files/stable/chef/17.9.42/el/8/chef-17.9.42-1.el7.x86_64.rpm
+       version	17.9.42
        downloaded metadata file looks valid...
-       downloading https://packages.chef.io/files/stable/chef/16.1.16/el/8/chef-16.1.16-1.el7.x86_64.rpm
-         to file /tmp/omnibus/cache/chef-16.1.16-1.el7.x86_64.rpm
+       downloading https://packages.chef.io/files/stable/chef/17.9.42/el/8/chef-17.9.42-1.el7.x86_64.rpm
+         to file /tmp/omnibus/cache/chef-17.9.42-1.el7.x86_64.rpm
        trying wget...
        Comparing checksum with sha256sum...
 
@@ -132,17 +132,17 @@ $ kitchen verify 8
 
        Installing chef
        installing with rpm...
-       warning: /tmp/omnibus/cache/chef-16.1.16-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+       warning: /tmp/omnibus/cache/chef-17.9.42-1.el7.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
        Verifying...                          ################################# [100%]
        Preparing...                          ################################# [100%]
        Updating / installing...
-          1:chef-16.1.16-1.el7               ################################# [100%]
+          1:chef-17.9.42-1.el7               ################################# [100%]
        Thank you for installing Chef Infra Client! For help getting started visit https://learn.chef.io
        Transferring files to <default-centos-8>
        +---------------------------------------------+
        ✔ 2 product licenses accepted.
        +---------------------------------------------+
-       Starting Chef Infra Client, version 16.1.16
+       Starting Chef Infra Client, version 17.9.42
        Creating a new client identity for default-centos-8 using the validator key.
        Using policy 'git_cookbook' at revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8'
        resolving cookbooks for run list: ["git_cookbook::default@0.1.0 (4def6b4)"]

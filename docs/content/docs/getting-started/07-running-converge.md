@@ -42,10 +42,10 @@ Now that we have a recipe, let's use `kitchen converge` to see if it works:
        trying wget...
        sha1	1466b9dbfcce80987e145d58e12c076216f9a5b5
        sha256	f1f1cc5787bb56d5d3cb37339bb458f8d715e0be9a58abaad7e52ade90a2bfec
-       url	https://packages.chef.io/files/stable/chef/16.1.16/ubuntu/20.04/chef_16.1.16-1_amd64.deb
-       version	16.1.16
+       url	https://packages.chef.io/files/stable/chef/17.9.42/ubuntu/20.04/chef_17.9.42-1_amd64.deb
+       version	17.9.42
        downloaded metadata file looks valid...
-       /tmp/omnibus/cache/chef_16.1.16-1_amd64.deb exists
+       /tmp/omnibus/cache/chef_17.9.42-1_amd64.deb exists
        Comparing checksum with sha256sum...
 
        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
@@ -62,15 +62,15 @@ Now that we have a recipe, let's use `kitchen converge` to see if it works:
        installing with dpkg...
        Selecting previously unselected package chef.
 (Reading database ... 44414 files and directories currently installed.)
-       Preparing to unpack .../cache/chef_16.1.16-1_amd64.deb ...
-       Unpacking chef (16.1.16-1) ...
-       Setting up chef (16.1.16-1) ...
+       Preparing to unpack .../cache/chef_17.9.42-1_amd64.deb ...
+       Unpacking chef (17.9.42-1) ...
+       Setting up chef (17.9.42-1) ...
        Thank you for installing Chef Infra Client! For help getting started visit https://learn.chef.io
        Transferring files to <default-ubuntu-2004>
        +---------------------------------------------+
        ✔ 2 product licenses accepted.
        +---------------------------------------------+
-       Starting Chef Infra Client, version 16.1.16
+       Starting Chef Infra Client, version 17.9.42
        Creating a new client identity for default-ubuntu-2004 using the validator key.
        Using policy 'git_cookbook' at revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8'
        resolving cookbooks for run list: ["git_cookbook::default@0.1.0 (4def6b4)"]
