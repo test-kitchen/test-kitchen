@@ -1,6 +1,7 @@
 baseURL = "/"
 languageCode = "en-us"
 theme = "kitchen"
+googleAnalytics = 'G-GL7W81V957'
 
 [params]
 enable_search = true  # set to true to show search bar
