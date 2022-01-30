@@ -32,7 +32,7 @@ Tell us which operating system distribution and version Test Kitchen is running 
 
 ## Replication Case
 
-Tell us what steps to take to replicate your problem. See [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve)
+Tell us what steps to take to replicate your problem. See [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/minimal-reproducible-example)
 for information on how to create a good replication case.
 
 ## Kitchen Output

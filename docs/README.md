@@ -64,10 +64,4 @@ The Kitchen Documentation is released under the [MIT license][mit-license].
 
 [markdown]: http://daringfireball.net/projects/markdown/syntax
 [kitchenci]: https://kitchen.ci/
-[middleman]: http://middlemanapp.com
-[pages]: http://pages.github.com/
-[kramdown]: http://kramdown.gettalong.org/
-[syntax]: https://github.com/middleman/middleman-syntax
-[rouge]: https://github.com/jayferd/rouge
-[pygments]: http://pygments.org/
 [mit-license]: MIT-LICENSE.txt
