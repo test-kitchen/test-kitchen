@@ -5,7 +5,7 @@ name: linters
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   yamllint:

@@ -3,14 +3,12 @@ trigger:
   batch: true
   branches:
     include:
-      - master
-      - 1-stable
+      - main
 pr:
   autoCancel: true
   branches:
     include:
-      - master
-      - 1-stable
+      - main
 
 variables:
   BUNDLE_PATH: $(Pipeline.Workspace)/.bundle
@@ -294,7 +292,7 @@ stages:
     dependsOn: Build
     jobs:
       - job: Package
-        condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'), notIn(variables['Build.Reason'], 'PullRequest'))
+        condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'), notIn(variables['Build.Reason'], 'PullRequest'))
         pool:
           imageName: "ubuntu-16.04"
         steps:
