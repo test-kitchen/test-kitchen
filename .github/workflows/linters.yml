@@ -27,4 +27,5 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rake style
+      - uses: r7kamura/rubocop-problem-matchers-action@v1
+      - run: bundle exec chefstyle
