@@ -14,7 +14,7 @@
 ## Getting Started Guide
 
 To learn how to install and setup Test Kitchen for developing infrastructure
-code, check out the [Getting Started Guide][guide].
+code, check out the [Getting Started Guide][guide]
 
 If you want to get going super fast, then try the Quick Start next...
 
