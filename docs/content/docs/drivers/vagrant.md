@@ -627,17 +627,6 @@ end
 
 For more details on this setting please read the [config.vm.hostname](http://docs.vagrantup.com/v2/vagrantfile/machine_settings.html) section of the Vagrant documentation.
 
-## Unsupported Hypervisors
-
-The following providers are reported to work but are unsupported:
-
-* [CloudStack][cloudstack] via [vagrant-cloudstack][vagrant_cloudstack]
-* [KVM][kvm]/[Libvirt][libvirt] via [vagrant-libvirt][vagrant_libvirt]
-* [LXC][lxc] via [vagrant-lxc][vagrant_lxc]
-* [OpenStack][openstack]
-* [RackSpace][rackspace] via [vagrant-rackspace][vagrant_rackspace]
-* [SoftLayer][softlayer] via [vagrant-softlayer][vagrant_softlayer]
-
 ## Example **kitchen.yml**
 
 ```yaml
@@ -670,18 +659,12 @@ suites:
 
 [bento]:                    https://github.com/chef/bento
 [bento_org]:                https://app.vagrantup.com/bento
-[cloudstack]:               https://cloudstack.apache.org/
 [fusion_dl]:                https://www.vmware.com/products/fusion.html
 [hyperv_about]:             https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
-[kvm]:                      https://www.linux-kvm.org/page/Main_Page
-[libvirt]:                  https://libvirt.org/
-[lxc]:                      https://linuxcontainers.org/
 [machine settings]:         https://www.vagrantup.com/docs/vagrantfile/machine_settings
 [openstack]:                https://www.openstack.org/
 [parallels_dl]:             https://www.parallels.com/products/desktop/download/
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
-[rackspace]:                https://www.rackspace.com/
-[softlayer]:                https://www.ibm.com/cloud
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
 [vagrant_cloud]:            https://app.vagrantup.com/boxes/search
 [vagrant_cloudstack]:       https://github.com/MissionCriticalCloud/vagrant-cloudstack
