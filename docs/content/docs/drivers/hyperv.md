@@ -79,18 +79,18 @@ driver:
       * The type of virtual disk to create, .VHD or .VHDX.  Defaults to the file extension of the parent virtual hard drive.
   * Example:
 
-```yaml
-driver:
-  name: hyperv
-  parent_vhd_folder: 'D:\Hyper-V\Virtual Hard Disks'
-  parent_vhd_name: tk_test.vhdx
-  additional_disks:
-    - name: disk1
-      size_gb: 10
-    - name: disk2
-      size_gb: 50
-      type: .VHD
-```
+    ```yaml
+    driver:
+      name: hyperv
+      parent_vhd_folder: 'D:\Hyper-V\Virtual Hard Disks'
+      parent_vhd_name: tk_test.vhdx
+      additional_disks:
+        - name: disk1
+          size_gb: 10
+        - name: disk2
+          size_gb: 50
+          type: .VHD
+    ```
 
 * vm_note
   * A note to add to the VM's note field. Defaults to empty.
@@ -98,13 +98,13 @@ driver:
   * An array of hashes (`source` and `dest`) of files or directories to copy over to the system under test. Requires enable_guest_services to be true.
   * example:
 
-```yaml
-driver:
-  name: hyperv
-  copy_vm_files:
-    - source: c:/users/steven/downloads/chef-client-12.19.36-1-x64.msi
-      dest: c:/users/administrator/appdata/local/temp/chef-client-12.19.36-1-x64.msi
-```
+    ```yaml
+    driver:
+      name: hyperv
+      copy_vm_files:
+        - source: c:/users/steven/downloads/chef-client-12.19.36-1-x64.msi
+          dest: c:/users/administrator/appdata/local/temp/chef-client-12.19.36-1-x64.msi
+    ```
 
 * static_mac_address
   * String value specifying a static MAC Address to be set at virtual machine creation time.
@@ -125,17 +125,17 @@ driver:
 
 You can use a remote Hyper-V installation with this driver. For this you need to set:
 
-- `hyperv_server` as the IP or FQDN of the server
-- `hyperv_username`
-- `hyperv_password`
+* `hyperv_server` as the IP or FQDN of the server
+* `hyperv_username`
+* `hyperv_password`
 
 All PowerShell commands to create and manage the VM will then be forwarded via WinRM by the Train framework. The accompanying `hyperv.ps1` helper script will be uploaded on the first connection.
 
 ### Optional Parameters
 
-- `hyperv_ssl` (default: `false`) controls if the connection should be encrypted
-- `hyperv_insecure` (default: `true`) sets if self-signed certificates should be accepted
-- `remote_vm_path` (default: `C:\Users\Public\Documents\Hyper-V`) to specify where VMs should be stored
+* `hyperv_ssl` (default: `false`) controls if the connection should be encrypted
+* `hyperv_insecure` (default: `true`) sets if self-signed certificates should be accepted
+* `remote_vm_path` (default: `C:\Users\Public\Documents\Hyper-V`) to specify where VMs should be stored
 
 ## Example **kitchen.yml**
 
