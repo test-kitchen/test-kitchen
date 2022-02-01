@@ -8,7 +8,7 @@ menu:
 
 kitchen-hyperv is a Test Kitchen *driver* for Microsoft Hyper-V.
 
-Example **kitchen.yml**:
+## Example **kitchen.yml**
 
 ```yaml
 ---
