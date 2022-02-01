@@ -8,39 +8,6 @@ menu:
 
 kitchen-digitalocean is a Test Kitchen *driver* for DigitalOcean that runs against the DigitalOcean V2 API.
 
-### Example **kitchen.yml**
-
-```yaml
----
-driver:
-  name: digitalocean
-
-provisioner:
-  name: chef_infra
-
-verifier:
-  name: inspec
-
-platforms:
-  - name: ubuntu-20
-  - name: ubuntu-18
-    region: sfo1
-    driver:
-      tags:
-        - test-kitchen-instance
-      monitoring: true # disabled by default
-      vpcs:
-        - 3a92ae2d-f1b7-4589-81b8-8ef144374453
-      ipv6: true # disabled by default
-      private_networking: false # enabled by default
-
-suites:
-  - name: default
-    run_list:
-      - recipe[my_cookbook::default]
-    attributes:
-```
-
 ### Setting Driver Configuration
 
 The DigitalOcean driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
@@ -251,4 +218,37 @@ Note that your `vpc_uuid` must be the numeric ids of your vpc. To get the numeri
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/vpcs -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
+```
+
+### Example **kitchen.yml**
+
+```yaml
+---
+driver:
+  name: digitalocean
+
+provisioner:
+  name: chef_infra
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-20
+  - name: ubuntu-18
+    region: sfo1
+    driver:
+      tags:
+        - test-kitchen-instance
+      monitoring: true # disabled by default
+      vpcs:
+        - 3a92ae2d-f1b7-4589-81b8-8ef144374453
+      ipv6: true # disabled by default
+      private_networking: false # enabled by default
+
+suites:
+  - name: default
+    run_list:
+      - recipe[my_cookbook::default]
+    attributes:
 ```

@@ -10,45 +10,6 @@ kitchen-dokken is a Test Kitchen *plugin* for Docker that uses specially created
 
 Unlike all other Test Kitchen drivers, kitchen-dokken handles all the tasks of the driver, transport, and provisioner itself. This approach focuses purely on Chef Infra cookbook testing to provide ultra-fast testing times. Docker containers have a fast creation and start time, and kitchen-dokken uses the official Chef Infra Client containers instead of spending the time to download and install the Chef Infra Client packages. These design decisions result in tests that run in seconds instead of minutes and don't require high bandwidth Internet connections.
 
-### Example **kitchen.yml**
-
-```yaml
----
-driver:
-  name: dokken
-  privileged: true  # allows systemd services to start
-
-provisioner:
-  name: dokken
-
-transport:
-  name: dokken
-
-verifier:
-  name: inspec
-
-platforms:
-  - name: ubuntu-20.04
-    driver:
-      image: dokken/ubuntu-20.04
-      pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get update
-
-  - name: centos-8
-    driver:
-      image: dokken/centos-8
-      pid_one_command: /usr/lib/systemd/systemd
-
-suites:
-  - name: default
-    run_list:
-      - recipe[my_cookbook::default]
-    verifier:
-      inspec_tests:
-        - test/integration/default
-```
-
 ### Driver vs. Provisioner vs. Transport
 
 Since kitchen-dokken combines driver, transport, and provisioner functionality into a single plugin, its configuration differs from other Test Kitchen drivers. kitchen-dokken includes specific configuration options that can be set in the driver, provisioner, or transport sections or in the individual platforms / suites. At a bare minimum to use kitchen-dokken you must specify dokken as the driver, provisioner, and transport sections of your `kitchen.yml` file:
@@ -537,3 +498,42 @@ The `timeout` configuration option specifies the timeout in seconds for communic
 ### Dokken Linux Containers
 
 Specially created containers for kitchen-dokken, build off official Linux distro images, but include all of the packages and services necessary to test Chef Infra cookbooks. These containers are produced for leading Linux distributions such as CentOS, OpenSUSE, Amazon Linux, and Ubuntu. For a complete list of available dokken specific container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.
+
+### Example **kitchen.yml**
+
+```yaml
+---
+driver:
+  name: dokken
+  privileged: true  # allows systemd services to start
+
+provisioner:
+  name: dokken
+
+transport:
+  name: dokken
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+
+  - name: centos-8
+    driver:
+      image: dokken/centos-8
+      pid_one_command: /usr/lib/systemd/systemd
+
+suites:
+  - name: default
+    run_list:
+      - recipe[my_cookbook::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+```
