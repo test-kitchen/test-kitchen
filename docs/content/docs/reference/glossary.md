@@ -28,7 +28,7 @@ VirtualBox
 : a freely available hypervisor from Oracle
 
 VMware Fusion
-: a for-pay hypervisor from VMware exclusively for macOS/OS X
+: a for-pay hypervisor from VMware exclusively for macOS
 
 VMware Workstation
 : a for-pay hypervisor from VMware for Linux and Windows

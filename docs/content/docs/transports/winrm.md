@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-`winrm` is the default transport for all Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`winrm` is the default transport for all Windows hosts. The default transport settings are sufficient for most users, and the transport section does not need to be defined in the `kitchen.yml` file.
 
 ## WinRM Transport Settings
 
@@ -34,7 +34,7 @@ The path to a local client key used for authentication in lieue of a username an
 
 #### elevated
 
-When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with Windows updates and installing some MSIs such as SQL Server and .NET runtimes. This defaults to `false`.
+When true, all commands are executed via a scheduled task. This may eliminate access denied errors related to double hop authentication, interacting with Windows updates, and installing some MSIs such as SQL Server and .NET runtimes. This defaults to `false`.
 
 #### elevated_password
 
@@ -50,7 +50,7 @@ Port used making rdp connections for kitchen login commands. This defaults to `3
 
 #### winrm_transport
 
-The transport type used by winrm as explained here. This defaults to `negotiate`. `ssl` and `plaintext` are also acceptable values.
+The transport type used by winrm as explained here. This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
 
 ### Retry Settings
 

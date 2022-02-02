@@ -6,7 +6,7 @@ menu:
     weight: 10
 ---
 
-We've collected a variety of examples to highlight all the different things one can do with kitchen.
+We've collected a variety of examples to highlight all the different things one can do with Test Kitchen.
 
 #### kitchen-vagrant
 
@@ -52,8 +52,8 @@ suites:
     attributes:
 ```
 
-Sometimes you'd like to add another NIC to your vm, or bump up the memory. You might have a `forwarded_port` you'd like
-to add also. The following snippet has a couple suggestions for doing this. You can even turn on the `auto_correct` if you think
+Sometimes you'd like to add another NIC to your VM or bump up the memory. You might have a `forwarded_port` you'd like
+to add also. The following snippet has a couple of suggestions for doing this. You can even turn on the `auto_correct` if you think
 you'll need it.
 
 ```yaml
@@ -69,7 +69,7 @@ you'll need it.
 
 The driver tries to closely mirror the upstream, as illustrated by [forwarded_port](https://www.vagrantup.com/docs/networking/forwarded_ports) and [private_network](https://www.vagrantup.com/docs/networking/private_network).
 
-If you would like more information the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) github page has more.
+If you would like more information, the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) GitHub page has more.
 
 [hangops-jobbot/.kitchen.yml](https://github.com/rrxtns/hangops-jobbot/blob/master/cookbooks/hangops-jobbot/.kitchen.yml)
 
