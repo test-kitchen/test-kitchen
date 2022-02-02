@@ -10,7 +10,7 @@ menu:
 
 ## SSH Transport Settings
 
-### Basic Settings
+### General Settings
 
 #### port
 
@@ -36,7 +36,7 @@ Wether or not to use compression. The default is `false`.
 
 This defaults to 6 if compression is `true`.
 
-### max_ssh_sessions
+#### max_ssh_sessions
 
 Maximum number of parallel ssh sessions. This defaults to `9`.
 
@@ -72,18 +72,18 @@ This defaults to `3`.
 
 ### Proxy Settings
 
-### ssh_http_proxy
+#### ssh_http_proxy
 
 The address of a HTTP proxy to use for the SSH connection. This has no default value.
 
-### ssh_http_proxy_port
+#### ssh_http_proxy_port
 
 The port of the HTTP proxy to use for the SSH connection. This has no default value.
 
-### ssh_http_proxy_user
+#### ssh_http_proxy_user
 
 The username for the HTTP proxy to use for the SSH connection. This has no default value.
 
-### ssh_http_proxy_password
+#### ssh_http_proxy_password
 
 The password for the HTTP proxy to use for the SSH connection. This has no default value.
