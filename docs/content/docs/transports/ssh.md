@@ -48,15 +48,15 @@ Defaults to ### .
 
 ### keepalive
 
-Defaults to ### .
+Defaults to true.
 
-###  keepalive_interval
+### keepalive_interval
 
-Defaults to ### .
+Defaults to 60 (seconds).
 
 ### max_ssh_sessions
 
-Maximum number of parallel ssh sessions.
+Maximum number of parallel ssh sessions. Defaults to 9.
 
 ### ssh_key
 
