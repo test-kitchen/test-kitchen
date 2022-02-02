@@ -56,19 +56,19 @@ The maximum number of attempts to determine if the test instance is ready to acc
 
 #### connection_timeout
 
-This defaults to `15` (seconds).
+The number of seconds attempting to connect before timing out. This defaults to `15`.
 
 #### keepalive
 
-This defaults to `true`.
+Send keepalive messages to keep the SSH connection open. This defaults to `true`.
 
 #### keepalive_interval
 
-This defaults to `60` (seconds).
+The number of seconds to wait after receiving data before sending a keepalive message. This defaults to `60`.
 
 #### keepalive_maxcount
 
-This defaults to `3`.
+The maximum number of keepalive messages to be sent without a response. This defaults to `3`.
 
 ### Proxy Settings
 
