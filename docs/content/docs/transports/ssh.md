@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-`ssh` is the default transport for all non-Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`ssh` is the default transport for all non-Windows hosts. The default transport settings are sufficient for most users, and the transport section does not need to be defined in the `kitchen.yml` file.
 
 ## SSH Transport Settings
 
@@ -30,11 +30,11 @@ The password used for authenticating to the test instance.
 
 #### compression
 
-Wether or not to use compression. The default is `false`.
+Whether or not to use compression. The default is `false`.
 
 #### compression_level
 
-This defaults to 6 if compression is `true`.
+This defaults to `6` if compression is `true`.
 
 #### max_ssh_sessions
 
