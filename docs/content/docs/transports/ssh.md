@@ -36,15 +36,15 @@ The username used for authenticating to the test instance. This defaults to `roo
 
 ### compression
 
-Wether or not to use compression. The default is ### .
+Wether or not to use compression. The default is false.
 
 ### compression_level
 
-The default is 6 if compression is ### .
+The default is 6 if compression is true.
 
 ### connection_timeout
 
-Defaults to ### .
+Defaults to 15 (seconds).
 
 ### keepalive
 
