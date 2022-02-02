@@ -12,11 +12,11 @@ menu:
 
 ### connection_retries
 
-Maximum number of times to retry after a failed attempt to open a connection. This defaults to `5`.
+The jaximum number of times to retry after a failed attempt to open a connection. This defaults to `5`.
 
 ### connection_retry_sleep
 
-The number of seconds to wait until attempting to make another connection after a failure. This defaults to `1`
+The number of seconds to wait until attempting to make another connection after a failure. This defaults to `1`.
 
 ### max_wait_until_ready
 
@@ -36,31 +36,31 @@ The username used for authenticating to the test instance. This defaults to `roo
 
 ### compression
 
-Wether or not to use compression. The default is false.
+Wether or not to use compression. The default is `false`.
 
 ### compression_level
 
-The default is 6 if compression is true.
+This defaults to 6 if compression is `true`.
 
 ### connection_timeout
 
-Defaults to 15 (seconds).
+This defaults to `15` (seconds).
 
 ### keepalive
 
-Defaults to true.
+This defaults to `true`.
 
 ### keepalive_interval
 
-Defaults to 60 (seconds).
+This defaults to `60` (seconds).
 
 ### keepalive_maxcount
 
-Defaults to 3.
+This defaults to `3`.
 
 ### max_ssh_sessions
 
-Maximum number of parallel ssh sessions. Defaults to 9.
+Maximum number of parallel ssh sessions. This defaults to `9`.
 
 ### ssh_key
 
