@@ -12,11 +12,11 @@ menu:
 
 ### connection_retries
 
-Maximum number of times to retry after a failed attempt to open a connection. The default is `5`.
+Maximum number of times to retry after a failed attempt to open a connection. This defaults to `5`.
 
 ### connection_retry_sleep
 
-The number of seconds to wait until attempting to make another connection after a failure.
+The number of seconds to wait until attempting to make another connection after a failure. This defaults to `1`
 
 ### max_wait_until_ready
 
@@ -53,6 +53,10 @@ Defaults to true.
 ### keepalive_interval
 
 Defaults to 60 (seconds).
+
+### keepalive_maxcount
+
+Defaults to 3.
 
 ### max_ssh_sessions
 
