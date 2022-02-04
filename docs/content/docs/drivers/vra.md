@@ -8,9 +8,39 @@ menu:
 
 kitchen-vra is a Test Kitchen driver for vRealize Automation that runs against the VMware vRealize Automation  [V8.x] API.
 
-## Usage
+### Setting Driver Configuration
 
-After installing the gem as described above, edit your .kitchen.yml file to set the driver to 'vra' and supply your login credentials:
+The VMware vra driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
+
+#### Example Global Driver Option
+
+This configuration sets the driver to `vra` and then sets the `some_config` configuration to true.
+
+```yaml
+driver:
+  name: vra
+  some_config: true
+```
+
+#### Example Platform Driver Option
+
+This configuration sets the driver to `vra` globally and then sets the `some_config` configuration to true for just `ubuntu-20`.
+
+```yaml
+driver:
+  name: vra
+
+platforms:
+  - name: ubuntu-20
+    driver:
+      some_config: true
+```
+
+### Driver Configuration Options
+
+#### Specifying login credentials
+
+Edit your .kitchen.yml file to set the driver to 'vra' and supply your login credentials:
 
 ```yaml
 driver:
@@ -36,6 +66,81 @@ If you don't want to explicitly specify username and password in the kitchen.yml
     $ export VRA_USER_NAME='myuser@corp.local'
     $ export VRA_USER_PASSWORD='mypassword'
 
+
+#### catalog_id
+
+id of the catalog item from which you are requesting the deployment
+
+#### project_id
+
+id of the project
+
+#### image_mapping
+
+specifies the OS image for a VM
+
+#### flavor_mapping
+
+specifies the CPU count and RAM of the machine
+
+#### version
+
+You can specify or skip providing a version. If version is not provided the latest version will be fetched automatically and used.
+
+#### catalog_id , catalog_name
+
+Either a catalog_id or a catalog_name is required for each platform. If both catalog_id and catalog_name are mentioned in .kitchen.yml then catalog_name would be used to derive the catalog_id and this catalog_id would override the catalog_id being passed in .kitchen.yml. In the below example as can be seen we are using catalog_id for centos6 driver while catalog_name for the centos7 driver just to demonstrate that we can use either of the two.
+
+```yaml
+platforms:
+  - name: centos6
+    driver:
+      catalog_id: e9db1084-d1c6-4c1f-8e3c-eb8f3dc574f9
+      project_id: 6ba69375-79d5-42c3-a099-7d32739f71a9
+      image_mapping: SQL 2016
+      flavor_mapping: Small
+      version: 1
+  - name: centos7
+    driver:
+      catalog_name: my_catalog_name
+      project_id: 6ba69375-79d5-42c3-a099-7d32739f71a9
+      image_mapping: VRA-nc-lnx-ce8.4-Docker
+      flavor_mapping: Small
+```
+
+#### request_timeout
+
+amount of time, in seconds, to wait for a vRA request to complete. Default is 600 seconds.
+
+#### server_ready_retries
+
+Number of times to retry the "waiting for server to be ready" check. In some cases, this will error out immediately due to DNS propagation issues, etc. Setting this to a number greater than 0 will retry the `wait_until_ready` method with a growing sleep in between each attempt. Defaults to 1. Set to 0 to disable any retrying of the `wait_until_ready` method.
+
+#### subtenant_id
+
+the Business Group ID to list as the owner. This is required if the catalog item is a shared/global item; we are unable to determine the subtenant_id from the catalog, and vRA requires it to be set on every request.
+
+#### subtenant_name
+
+the Business Group Name as the owner. This can be passed instead of subtenant_id and would act as a more friendly name. subtenant_id would be internally retrieved based on the provided subtenant_name. In case both subtenant_id and subtenant_name are passed, subtenant_name would take the precendence and would try to retrieve subtenant_id based on subtenant_name passed.
+
+#### private_key_path
+
+path to the SSH private key to use when logging in. Defaults to '~/.ssh/id_rsa' or '~/.ssh/id_dsa', preferring the RSA key. Only applies to instances where SSH transport is used; i.e., does not apply to Windows hosts with the WinRM transport configured.
+
+#### use_dns
+
+Defaults to `false`.  Set to `true` if vRA doesn't manage vm ip addresses.  This will cause kitchen to attempt to connect via hostname.
+
+#### dns_suffix
+
+Defaults to `nil`.  Set to your domain suffix, for example 'mydomain.com'.  This only takes effect when `use_dns` == true and is appended to the hostname returned by vRA.
+
+#### extra_parameters
+
+a hash of other data to set on a catalog request, most notably custom properties. Allows updates to existing properties on the blueprint as well as the addition of new properties. Each key in the hash is the property name, and the value is a another hash containing the value data type and the value itself. It is possible to use a `~` to add nested parameters.
+
+
 Example **kitchen.yml**:
 
 ```yaml
@@ -43,9 +148,9 @@ driver:
   name: vra
   username: myuser@corp.local
   password: <%= ENV['VRA_USER_PASSWORD'] %>
-  tenant: bedford.progress.com
+  tenant: example.com
   project_id: xxxxx-xxxxxxxx
-  base_url: https://lxmarpvra8-01.bedford.progress.com
+  base_url: https://example.com
   verify_ssl: false
   image_mapping: VRA-nc-lnx-ce8.4-Docker
   flavor_mapping: Small
@@ -55,28 +160,19 @@ provisioner:
   name: chef_infra
 
 platforms:
-  - name: chef-progress
+  - name: centos
     driver:
       catalog_id: 97aac381-327d-3b5c-ad93-e18fc855045e
       extra_parameters:
-        hardware-config:
+        mycustompropname:
           type: string
-          value: Small
+          value: largevalue
+        Vrm.DataCenter.Location:
+          type: string
+          value: Prod
 
 suites:
   - name: default
     run_list:
       - recipe[my_cookbook::default]
 ```
-
- * **image_mapping**:  specifies the OS image for a machine and the flavor_mapping specifies the CPU count and RAM of the machine.
- * **flavor_mapping**: flavor mapping groups a set of target deployment sizings for a specific cloud account/region.
-
-Other options that you can set include:
-
- * **request_timeout**: amount of time, in seconds, to wait for a vRA request to complete. Default is 600 seconds.
- * **server_ready_retries**: Number of times to retry the "waiting for server to be ready" check. In some cases, this will error out immediately due to DNS propagation issues, etc. Setting this to a number greater than 0 will retry the `wait_until_ready` method with a growing sleep in between each attempt. Defaults to 1. Set to 0 to disable any retrying of the `wait_until_ready` method.
- * **private_key_path**: path to the SSH private key to use when logging in. Defaults to '~/.ssh/id_rsa' or '~/.ssh/id_dsa', preferring the RSA key. Only applies to instances where SSH transport is used; i.e., does not apply to Windows hosts with the WinRM transport configured.
- * **use_dns**: Defaults to `false`.  Set to `true` if vRA doesn't manage vm ip addresses.  This will cause kitchen to attempt to connect via hostname.
- * **dns_suffix**: Defaults to `nil`.  Set to your domain suffix, for example 'mydomain.com'.  This only takes effect when `use_dns` == true and is appended to the hostname returned by vRA.
- * **extra_parameters**: a hash of other data to set on a catalog request, most notably custom properties. Allows updates to existing properties on the blueprint as well as the addition of new properties. Each key in the hash is the property name, and the value is a another hash containing the value data type and the value itself. It is possible to use a `~` to add nested parameters.
