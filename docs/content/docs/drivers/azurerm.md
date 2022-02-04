@@ -55,6 +55,11 @@ platforms:
 
 * _string_ : Azure location to use, example `"Central US"`
 
+#### zone
+
+* _string_ : Used for specifying the availability zone for vm creation.
+  * Default Value: `"1"`
+
 #### azure_resource_group_prefix
 
 * _string_ : Prefix to use for the resource group configuration which will be created.
