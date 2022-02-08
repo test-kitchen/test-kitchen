@@ -6,58 +6,84 @@ menu:
     weight: 15
 ---
 
-`ssh` is the default transport for all non-Windows hosts. For most users the default transport settings are sufficient and the transport section does not need to be defined in the `kitchen.yml` file.
+`ssh` is the default transport for all non-Windows hosts. The default transport settings are sufficient for most users, and the transport section does not need to be defined in the `kitchen.yml` file.
 
-## SSH Tranport Settings
+## SSH Transport Settings
 
-### connection_retries
+### General Settings
 
-Maximum number of times to retry after a failed attempt to open a connection. The default is `5`.
-
-### connection_retry_sleep
-
-The number of seconds to wait until attempting to make another connection after a failure.
-
-### max_wait_until_ready
-
-The maximum number of attempts to determine if the test instance is ready to accept commands. This defaults to `600`.
-
-### password
-
-The password used for authenticating to the test instance.
-
-### port
+#### port
 
 The port used to connect to the test instance. This defaults to `22`.
 
-### username
+#### ssh_key
+
+Path to an ssh key identity file.
+
+#### username
 
 The username used for authenticating to the test instance. This defaults to `root`. Some drivers may change this default.
 
-### compression
+#### password
 
-Wether or not to use compression. The default is ### .
+The password used for authenticating to the test instance.
 
-### compression_level
+#### compression
 
-The default is 6 if compression is ### .
+Whether or not to use compression. The default is `false`.
 
-### connection_timeout
+#### compression_level
 
-Defaults to ### .
+This defaults to `6` if compression is `true`.
 
-### keepalive
+#### max_ssh_sessions
 
-Defaults to ### .
+Maximum number of parallel ssh sessions. This defaults to `9`.
 
-###  keepalive_interval
+### Retry and Timeout Settings
 
-Defaults to ### .
+#### connection_retries
 
-### max_ssh_sessions
+The maximum number of times to retry after a failed attempt to open a connection. This defaults to `5`.
 
-Maximum number of parallel ssh sessions.
+#### connection_retry_sleep
 
-### ssh_key
+The number of seconds to wait until attempting to make another connection after a failure. This defaults to `1`.
 
-Path to an ssh key identity file.
+#### max_wait_until_ready
+
+The maximum number of attempts to determine if the test instance is ready to accept commands. This defaults to `600`.
+
+#### connection_timeout
+
+The number of seconds attempting to connect before timing out. This defaults to `15`.
+
+#### keepalive
+
+Send keepalive messages to keep the SSH connection open. This defaults to `true`.
+
+#### keepalive_interval
+
+The number of seconds to wait after receiving data before sending a keepalive message. This defaults to `60`.
+
+#### keepalive_maxcount
+
+The maximum number of keepalive messages to be sent without a response. This defaults to `3`.
+
+### Proxy Settings
+
+#### ssh_http_proxy
+
+The address of a HTTP proxy to use for the SSH connection. This has no default value.
+
+#### ssh_http_proxy_port
+
+The port of the HTTP proxy to use for the SSH connection. This has no default value.
+
+#### ssh_http_proxy_user
+
+The username for the HTTP proxy to use for the SSH connection. This has no default value.
+
+#### ssh_http_proxy_password
+
+The password for the HTTP proxy to use for the SSH connection. This has no default value.

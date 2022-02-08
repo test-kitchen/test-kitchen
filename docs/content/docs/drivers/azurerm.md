@@ -8,37 +8,6 @@ menu:
 
 kitchen-azurerm is a Test Kitchen *driver* for Microsoft Azure.
 
-### Example **kitchen.yml**
-
-```yaml
----
-driver:
-  name: azurerm
-  subscription_id: '4801fa9d-YOUR-GUID-HERE-b265ff49ce21'
-  location: 'West Europe'
-  machine_size: 'Standard_D2_V2'
-
-provisioner:
-  name: chef_infra
-
-verifier:
-  name: inspec
-
-platforms:
-  - name: windows2016
-    driver:
-      image_urn: MicrosoftWindowsServer:WindowsServer:2016-Datacenter:latest
-    transport:
-      name: winrm
-      elevated: true
-
-suites:
-  - name: default
-    run_list:
-      - recipe[my_cookbook::default]
-    attributes:
-```
-
 ### Setting Driver Configuration
 
 The Microsoft Azure driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
@@ -85,6 +54,11 @@ platforms:
 #### location (required)
 
 * _string_ : Azure location to use, example `"Central US"`
+
+#### zone
+
+* _string_ : Used for specifying the availability zone for vm creation.
+  * Default Value: `"1"`
 
 #### azure_resource_group_prefix
 
@@ -331,3 +305,34 @@ identities.
 
 * _boolean_ : When true, Kitchen will use the FQDN that is assigned to the Virtual Machine. When false, kitchen will use the public IP address of the machine. This may overcome issues with Corporate firewalls or VPNs blocking Public IP addresses.
   * Default Value: `false`
+
+### Example **kitchen.yml**
+
+```yaml
+---
+driver:
+  name: azurerm
+  subscription_id: '4801fa9d-YOUR-GUID-HERE-b265ff49ce21'
+  location: 'West Europe'
+  machine_size: 'Standard_D2_V2'
+
+provisioner:
+  name: chef_infra
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: windows2016
+    driver:
+      image_urn: MicrosoftWindowsServer:WindowsServer:2016-Datacenter:latest
+    transport:
+      name: winrm
+      elevated: true
+
+suites:
+  - name: default
+    run_list:
+      - recipe[my_cookbook::default]
+    attributes:
+```
