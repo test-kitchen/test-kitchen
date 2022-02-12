@@ -70,23 +70,22 @@ driver:
   - ["public_network", bridge: "Default Switch"]
 ```
 
-## Default Configuration
+## Default Boxes
 
-For a set of platforms and hypervisors, boxes are published under the [Bento organization][bento_org]
-on [Vagrant Cloud][vagrant_cloud] which serve as the default boxes for common platforms:
+Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose built for use with Test Kitchen are can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
+
+Example configuration using Bento images:
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
   - name: centos-7
   - name: freebsd-12
 ```
 
-This will effectively generate a configuration similar to:
+This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -97,33 +96,51 @@ platforms:
   - name: freebsd-12
     driver:
       box: bento/freebsd-12
-  # ...
 ```
 
-Any other platform names will set a more reasonable default for `box` and leave `box_url` unset. For example:
+### Supported Bento Platforms
+
+Platforms published by the Bento project:
+
+- almalinux
+- centos
+- centos-stream
+- debian
+- fedora
+- freebsd
+- freebsd-latest
+- opensuse-leap
+- oracle
+- rockylinux
+- scientific
+- springdalelinux
+- ubuntu
+
+### Using Non-Bento Vagrant Boxes
+
+If a platform name is specified that is not published by the Bento project it will be assumed this is a fully qualified Vagrant box name.
 
 ```yaml
----
 platforms:
-  - name: slackware-14.1
-  - name: openbsd-5.6
-  - name: windows-2012r2
+  - name: my_vagrant_acccount/redhat-8
 ```
 
-This will effectively generate a configuration similar to:
+This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
----
 platforms:
-  - name: slackware-14.1
+  - name: my_vagrant_acccount/redhat-8
     driver:
-      box: slackware-14.1
-  - name: openbsd-5.6
+      box: my_vagrant_acccount/redhat-8
+```
+
+Vagrant boxes can also be fetched from non-Vagrant Cloud loation by specifying the `box_url`:
+
+```yaml
+platforms:
+  - name: my-redhat
     driver:
-      box: openbsd-5.6
-  - name: windows-2012r2
-    driver:
-      box: windows-2012r2
+      box_url: "https://example.com/my-redhat.box"
 ```
 
 ## Configuration
@@ -136,7 +153,6 @@ Valid options are `:box` or `:machine`, setting to a truthy value yields `:box`
 For example:
 
 ```yaml
----
 driver:
   cachier: true
 ```
@@ -221,7 +237,6 @@ For overriding the default communicator setting of the base box.
 For example:
 
 ```yaml
----
 driver:
   communicator: ssh
 ```
@@ -241,7 +256,6 @@ pair will be passed to your providers customization block. For example, with
 the default `virtualbox` provider:
 
 ```yaml
----
 driver:
   customize:
     memory: 1024
@@ -355,7 +369,6 @@ to the `config.vm.provider` but only for the VirtualBox and VMware-based
 providers.
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -381,7 +394,6 @@ For more info about GUI vs. Headless mode please see [vagrant configuration docs
 Allows to use linked clones to import boxes for VirtualBox, VMware, Parallels Desktop and Hyper-V. Default is **nil**.
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -421,7 +433,6 @@ element is itself an Array of arguments to be passed to the `config.vm.network`
 method. For example:
 
 ```yaml
----
 driver:
   network:
     - ["forwarded_port", {guest: 80, host: 8080}]
@@ -459,7 +470,6 @@ For example, if your project requires
 [Bindler](https://github.com/fgrehm/bindler), this command could be:
 
 ```yaml
----
 driver
   pre_create_command: cp .vagrant_plugins.json {{vagrant_root}}/ && vagrant plugin bundle
 ```
