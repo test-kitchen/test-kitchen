@@ -52,7 +52,7 @@ To learn more about the installation, upgrade, and usage of these plugins see [V
 
 ### Setting up Hyper-V
 
-As Hyper-V is an exclusive hypervisor, it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
+Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
 
 1) environment variable `KITCHEN_HYPERV_SWITCH`
 2) If on Windows 10 Fall Creators Update, use the built-in 'Default Switch'
