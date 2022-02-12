@@ -22,7 +22,7 @@ Vagrant supports a large number of hypervisors, including both commercial and fr
 
 ### Specifying Your Hypervisor
 
-Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high performance virtualization experience on macOS, Windows, and Linux hosts. Specify the `provider` within your `kitchen.yml` config to use a different hypervisor.
+Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high-performance virtualization experience on macOS, Windows, and Linux hosts. Specify the `provider` within your `kitchen.yml` config to use a different hypervisor.
 
 Example configuration using parallels:
 
@@ -72,7 +72,7 @@ driver:
 
 ## Default Boxes
 
-Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose built for use with Test Kitchen are can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
+Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose-built for use with Test Kitchen are can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
 
 Example configuration using Bento images:
 
@@ -121,23 +121,23 @@ Currently supported Bento platforms:
 
 ### Using Non-Bento Vagrant Boxes
 
-If a platform name is specified that is not published by the Bento project it will be assumed this is a fully qualified Vagrant box name.
+If a platform name is specified that is not published by the Bento project, it will be assumed this is a fully qualified Vagrant box name.
 
 ```yaml
 platforms:
-  - name: my_vagrant_acccount/redhat-8
+  - name: my_vagrant_account/redhat-8
 ```
 
 This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
 platforms:
-  - name: my_vagrant_acccount/redhat-8
+  - name: my_vagrant_account/redhat-8
     driver:
-      box: my_vagrant_acccount/redhat-8
+      box: my_vagrant_account/redhat-8
 ```
 
-Vagrant boxes can also be fetched from non-Vagrant Cloud loation by specifying the `box_url`:
+Vagrant boxes can also be fetched from non-Vagrant Cloud location by specifying the `box_url`:
 
 ```yaml
 platforms:
@@ -188,7 +188,7 @@ Whether to check for box updates (enabled by default).
 
 ### box_auto_update
 
-Whether to update box to the latest version prior to vagrant up command
+Whether to update box to the latest version prior to running the `vagrant up` command
 
 ### box_auto_prune
 
