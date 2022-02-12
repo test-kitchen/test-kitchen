@@ -453,6 +453,15 @@ The `chef_log_level` configuration option specifies the logging level used when 
 
 The `chef_output_format` configuration option specifies the output formatter used by Chef Infra Client when logging. By default this is set to `doc` for the documentation formatter. For less verbose output you may set this to `minimal`.
 
+#### chef_license
+
+The `chef_license` configuration option specified if the Chef Infra license should be automatically accepted in the Test Kitchen run. Valid values: `accept`, `accept-no-persist`, or `accept-silent`
+
+```yaml
+provisioner:
+  chef_license: accept-no-persist
+```
+
 #### profile_ruby
 
 The `profile_ruby` configuration option specifies enabling low level Ruby profiling of the Chef Infra Client when run by Test Kitchen. This flag is used by Chef Infra Client contributors for testing of the application itself. For testing performance of cookbooks see `slow_resource_report` instead.
