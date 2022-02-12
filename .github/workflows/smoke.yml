@@ -7,20 +7,52 @@ name: Smoke
     branches:
       - main
 
-env:
-  KITCHEN_YAML: kitchen.dokken.yml
-
 jobs:
   linux:
+    env:
+      KITCHEN_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby: ['2.6', '2.7', '3.0']
-    name: Smoke test on Ruby ${{ matrix.ruby }}
+    name: Linux Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - run: bundle exec kitchen test
+  linux-product:
+    env:
+      MACHINE_USER: kitchen
+      MACHINE_PASS: K1tch3nY@ml!
+      MACHINE_PORT: 22
+      KITCHEN_YAML: kitchen.linux-product.yml
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.7']
+    name: Linux 'product' Smoke test on Ruby ${{ matrix.ruby }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Setup Kitchen User
+        run: |
+          sudo -E useradd $MACHINE_USER --shell /bin/bash --create-home
+          sudo -E usermod -p `openssl passwd -1 $MACHINE_PASS` $MACHINE_USER
+          sudo -E usermod -aG sudo $MACHINE_USER
+      - name: Start SSHD
+        run: |
+          sudo mkdir -p /var/run/sshd
+          sudo service ssh restart
+      - name: Update path and sudo privs for Kitchen user
+        run: |
+          sudo echo 'Defaults	secure_path="/opt/hostedtoolcache/Ruby/2.7.1/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+          sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+          sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
+          sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
       - run: bundle exec kitchen test
