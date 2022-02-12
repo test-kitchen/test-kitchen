@@ -100,7 +100,9 @@ platforms:
 
 ### Supported Bento Platforms
 
-Platforms published by the Bento project:
+Bento boxes are created for many popular open-source operating systems. All boxes are published for the VirtualBox hypervisor and many, but not all, are also published for VMware and Parallels hypervisors.
+
+Currently supported Bento platforms:
 
 - almalinux
 - amazonlinux
