@@ -9,10 +9,9 @@ name: Smoke
 
 env:
   KITCHEN_YAML: kitchen.dokken.yml
-  CHEF_LICENSE: accept
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -1,11 +1,11 @@
 ---
 driver:
   name: dokken
-  # because Docker and SystemD/Upstart
   privileged: true
 
 provisioner:
   name: dokken
+  chef_license: accept-no-persist
 
 transport:
   name: dokken
