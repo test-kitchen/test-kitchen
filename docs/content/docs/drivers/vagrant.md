@@ -6,11 +6,11 @@ menu:
     weight: 15
 ---
 
-kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant.
+Kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant.
 
 ## Supported Virtualization Hypervisors
 
-Vagrant supports a large number of hypervisors including both commercial and free / open-source products. Our recommended hypervisors for use with kitchen-vagrant are:
+Vagrant supports a large number of hypervisors, including both commercial and free/open-source products. Our recommended hypervisors for use with kitchen-vagrant are:
 
 | Provider                             | Vagrant Plugin              | Paid Hypervisor
 | ---------                            | ---------                   | ---------
@@ -22,7 +22,7 @@ Vagrant supports a large number of hypervisors including both commercial and fre
 
 ### Specifying Your Hypervisor
 
-Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high performance virtualization experience on macOS, Windows, and Linux hosts. To use a different hypervsiro specify the `provider` within your kitchen.yml config.
+Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high performance virtualization experience on macOS, Windows, and Linux hosts. Specify the `provider` within your `kitchen.yml` config to use a different hypervisor.
 
 Example configuration using parallels:
 
@@ -34,7 +34,7 @@ driver:
 
 ### Installing Hypervisor Plugins
 
-VMware and Parallels hypervisors require the installation hypervisor plugins in Vagrant.
+VMware and Parallels hypervisors require the installation of hypervisor plugins in Vagrant.
 
 For VMware Fusion or Workstation Pro run:
 
@@ -234,7 +234,7 @@ The default is `nil` assuming ssh will be used.
 
 ### customize
 
-A **Hash** of customizations to a Vagrant virtual machine.  Each key/value
+A **Hash** of customizations to a Vagrant virtual machine. Each key/value
 pair will be passed to your providers customization block. For example, with
 the default `virtualbox` provider:
 
