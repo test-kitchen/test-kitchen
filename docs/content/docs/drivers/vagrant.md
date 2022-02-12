@@ -52,11 +52,13 @@ To learn more about the installation, upgrade, and usage of these plugins see [V
 
 ### Setting up Hyper-V
 
-Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
+Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that you either set the provider to `hyperv` in your `kitchen.yml` config or set the environment variable `VAGRANT_DEFAULT_PROVIDER` to `hyperv`. The `VAGRANT_DEFAULT_PROVIDER` environment variable allows controlling the default provider when one is not defined in the `kitchen.yml`. This environment variable is particularly useful is you are using Hyper-V in a project where other users rely on VirtualBox.
 
-1) environment variable `KITCHEN_HYPERV_SWITCH`
-2) If on Windows 10 Fall Creators Update, use the built-in 'Default Switch'
-3) the first switch returned
+It is also important to consider how network switches are defined and selected when using Hyper-V. Kitchen-vagrant will select the switch to use with new VMs in the following order:
+
+1) The environment variable `KITCHEN_HYPERV_SWITCH`
+2) 'Default Switch' when running on Windows 10 Fall Creator edition and later
+3) The first switch defined on the system
 
 If `VAGRANT_DEFAULT_PROVIDER` is set and the above logic has a valid virtual switch, no additional configuration is needed. This will effectively generate a configuration similar to:
 
