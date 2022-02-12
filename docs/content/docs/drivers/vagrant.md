@@ -103,6 +103,7 @@ platforms:
 Platforms published by the Bento project:
 
 - almalinux
+- amazonlinux
 - centos
 - centos-stream
 - debian
