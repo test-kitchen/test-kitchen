@@ -6,9 +6,11 @@ menu:
     weight: 15
 ---
 
-kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local testing of cookbooks due to the extensive platform and hypervisor support in Vagrant.
+kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant.
 
 ## Supported Virtualization Hypervisors
+
+Vagrant supports a large number of hypervisors including both commercial and free / open-source products. Our recommended hypervisors for use with kitchen-vagrant are:
 
 | Provider                             | Vagrant Plugin              | Paid Hypervisor
 | ---------                            | ---------                   | ---------
@@ -17,6 +19,18 @@ kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. 
 | [VMware Workstation Pro][ws_dl]      | vagrant-vmware-desktop      | Y
 | [Parallels Desktop][parallels_dl]    | vagrant-parallels           | Y
 | [Microsoft Hyper-V][hyperv_about]    | built-in                    | N
+
+### Specifying Your Hypervisor
+
+Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high performance virtualization experience on macOS, Windows, and Linux hosts. To use a different hypervsiro specify the `provider` within your kitchen.yml config.
+
+Example configuration using parallels:
+
+```yaml
+driver:
+  name: vagrant
+  provider: parallels
+```
 
 ### Installing Hypervisor Plugins
 
@@ -35,6 +49,24 @@ vagrant plugin install vagrant-parallels
 ```
 
 To learn more about the installation, upgrade, and usage of these plugins see [Vagrant VMware Desktop Plugin Documentation][vmware_plugin] and [Parallels + Vagrant Documentation][parallels_plugin].
+
+### Setting up Hyper-V
+
+As Hyper-V is an exclusive hypervisor, it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
+
+1) environment variable `KITCHEN_HYPERV_SWITCH`
+2) If on Windows 10 Fall Creators Update, use the built-in 'Default Switch'
+3) the first switch returned
+
+If `VAGRANT_DEFAULT_PROVIDER` is set and the above logic has a valid virtual switch, no additional configuration is needed. This will effectively generate a configuration similar to:
+
+```yaml
+driver:
+  name: vagrant
+  provider: hyperv
+  network:
+  - ["public_network", bridge: "Default Switch"]
+```
 
 ## Default Configuration
 
@@ -90,24 +122,6 @@ platforms:
   - name: windows-2012r2
     driver:
       box: windows-2012r2
-```
-
-### Hyper-V
-
-As Hyper-V is an exclusive hypervisor, it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
-
-1) environment variable `KITCHEN_HYPERV_SWITCH`
-2) If on Windows 10 Fall Creators Update, use the built-in 'Default Switch'
-3) the first switch returned
-
-If `VAGRANT_DEFAULT_PROVIDER` is set and the above logic has a valid virtual switch, no additional configuration is needed. This will effectively generate a configuration similar to:
-
-```yaml
-driver:
-  name: vagrant
-  provider: hyperv
-  network:
-  - ["public_network", bridge: "Default Switch"]
 ```
 
 ## Configuration
