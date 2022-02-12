@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later.
+kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local testing of cookbooks due to the extensive platform and hypervisor support in Vagrant.
 
 ## Supported Virtualization Hypervisors
 
