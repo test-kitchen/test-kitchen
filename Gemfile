@@ -8,7 +8,6 @@ group :integration do
   gem "kitchen-inspec"
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
-  gem "chef-config"
 end
 
 group :debug do
