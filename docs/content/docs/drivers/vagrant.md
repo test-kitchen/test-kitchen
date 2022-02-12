@@ -12,13 +12,13 @@ Kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. 
 
 Vagrant supports a large number of hypervisors, including both commercial and free/open-source products. Our recommended hypervisors for use with kitchen-vagrant are:
 
-| Provider                             | Vagrant Plugin              | Paid Hypervisor
-| ---------                            | ---------                   | ---------
-| [Oracle VirtualBox][virtualbox_dl]   | built-in                    | N
-| [VMware Fusion][fusion_dl]           | vagrant-vmware-desktop      | Y
-| [VMware Workstation Pro][ws_dl]      | vagrant-vmware-desktop      | Y
-| [Parallels Desktop][parallels_dl]    | vagrant-parallels           | Y
-| [Microsoft Hyper-V][hyperv_about]    | built-in                    | N
+| Provider                                          | Vagrant Plugin              | Paid Hypervisor
+| ---------                                         | ---------                   | ---------
+| virtualbox - [Oracle VirtualBox][virtualbox_dl]   | built-in                    | N
+| vmware_fusion - [VMware Fusion][fusion_dl]        | vagrant-vmware-desktop      | Y
+| vmware_desktop - [VMware Workstation Pro][ws_dl]  | vagrant-vmware-desktop      | Y
+| parallels- [Parallels Desktop][parallels_dl]      | vagrant-parallels           | Y
+| hyperv - [Microsoft Hyper-V][hyperv_about]        | built-in                    | N
 
 ### Specifying Your Hypervisor
 
