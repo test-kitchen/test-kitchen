@@ -1,0 +1,27 @@
+---
+name: Smoke
+
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  KITCHEN_YAML: kitchen.dokken.yml
+  CHEF_LICENSE: accept
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.6', '2.7', '3.0']
+    name: Smoke test on Ruby ${{ matrix.ruby }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec kitchen test
