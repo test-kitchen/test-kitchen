@@ -141,26 +141,3 @@ stages:
               sudo cat /var/log/squid/cache.log
               sudo cat /var/log/squid/access.log
             displayName: Run proxy tests
-  - stage:
-    dependsOn: Build
-    jobs:
-      - job: Package
-        condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'), notIn(variables['Build.Reason'], 'PullRequest'))
-        pool:
-          imageName: "ubuntu-16.04"
-        steps:
-          - task: UseRubyVersion@0
-            inputs:
-              versionSpec: 2.6
-              addToPath: true
-          - script: |
-              gem install bundler --quiet
-              bundle install || bundle install || bundle install
-              bundle exec rake build
-            displayName: Package Gem
-          - task: PublishBuildArtifacts@1
-            displayName: "Publish Artifact: Release Build"
-            inputs:
-              PathtoPublish: ./pkg
-              ArtifactName: gem
-              ArtifactType: Container
