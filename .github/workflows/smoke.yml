@@ -56,3 +56,62 @@ jobs:
           sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
           sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
       - run: bundle exec kitchen test
+  linux-proxy:
+    env:
+      MACHINE_USER: kitchen
+      MACHINE_PASS: K1tch3nY@ml!
+      MACHINE_PORT: 22
+      KITCHEN_YAML: ../../../../../../../kitchen.proxy.yml
+      PROXY_TESTS_DIR: proxy_tests/files/default/scripts
+      PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.7']
+    name: Linux 'proxy' Smoke test on Ruby ${{ matrix.ruby }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Setup Kitchen User
+        run: |
+          sudo -E useradd $MACHINE_USER --shell /bin/bash --create-home
+          sudo -E usermod -p `openssl passwd -1 $MACHINE_PASS` $MACHINE_USER
+          sudo -E usermod -aG sudo $MACHINE_USER
+      - name: gem check
+        run: |
+          bundle exec which kitchen
+      - name: Start SSHD
+        run: |
+          sudo mkdir -p /var/run/sshd
+          sudo service ssh restart
+      - name: Install packages we need
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install squid3 curl
+      - name: Checkout smurawski/proxy_tests repo
+        uses: actions/checkout@v2
+        with:
+          repository: smurawski/proxy_tests
+          path: proxy_tests
+      - name: Update path and sudo privs for Kitchen user
+        run: |
+              sudo echo 'Defaults	secure_path="./vendor/bundle/ruby/2.7.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
+              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+      - name: Run the proxy test script
+        run: |
+              sudo -E $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
+              cat /tmp/out.txt
+
+              echo ""
+              echo "===================="
+              echo "Tests finished."
+              echo "===================="
+              echo ""
+
+              sudo cat /var/log/squid/cache.log
+              sudo cat /var/log/squid/access.log

@@ -9,6 +9,8 @@ name: Unit
 
 jobs:
   test:
+    env:
+      BUNDLE_WITHOUT: integration
     runs-on: ubuntu-latest
     strategy:
       matrix:
