@@ -6,21 +6,35 @@ menu:
     weight: 15
 ---
 
-kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later.
+Kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant before running Test Kitchen.
 
 ## Supported Virtualization Hypervisors
 
-| Provider                             | Vagrant Plugin              | Paid Hypervisor
-| ---------                            | ---------                   | ---------
-| [Oracle VirtualBox][virtualbox_dl]   | built-in                    | N
-| [VMware Fusion][fusion_dl]           | vagrant-vmware-desktop      | Y
-| [VMware Workstation Pro][ws_dl]      | vagrant-vmware-desktop      | Y
-| [Parallels Desktop][parallels_dl]    | vagrant-parallels           | Y
-| [Microsoft Hyper-V][hyperv_about]    | built-in                    | N
+Vagrant supports a large number of hypervisors, including both commercial and free/open-source products. Our recommended hypervisors for use with kitchen-vagrant are:
+
+| Provider                                            | Vagrant Plugin              | Paid Hypervisor
+| ---------                                           | ---------                   | ---------
+| `virtualbox` - [Oracle VirtualBox][virtualbox_dl]   | built-in                    | N
+| `vmware_fusion` - [VMware Fusion][fusion_dl]        | vagrant-vmware-desktop      | Y
+| `vmware_desktop` - [VMware Workstation Pro][ws_dl]  | vagrant-vmware-desktop      | Y
+| `parallels`- [Parallels Desktop][parallels_dl]      | vagrant-parallels           | Y
+| `hyperv` - [Microsoft Hyper-V][hyperv_about]        | built-in                    | N
+
+### Specifying Your Hypervisor
+
+Kitchen-vagrant defaults to the `virtualbox` provider, which provides a high-performance virtualization experience on macOS, Windows, and Linux hosts. Specify the `provider` within your `kitchen.yml` config to use a different hypervisor.
+
+Example configuration using parallels:
+
+```yaml
+driver:
+  name: vagrant
+  provider: parallels
+```
 
 ### Installing Hypervisor Plugins
 
-VMware and Parallels hypervisors require the installation hypervisor plugins in Vagrant.
+VMware and Parallels hypervisors require the installation of hypervisor plugins in Vagrant.
 
 For VMware Fusion or Workstation Pro run:
 
@@ -36,23 +50,42 @@ vagrant plugin install vagrant-parallels
 
 To learn more about the installation, upgrade, and usage of these plugins see [Vagrant VMware Desktop Plugin Documentation][vmware_plugin] and [Parallels + Vagrant Documentation][parallels_plugin].
 
-## Default Configuration
+### Setting up Hyper-V
 
-For a set of platforms and hypervisors, boxes are published under the [Bento organization][bento_org]
-on [Vagrant Cloud][vagrant_cloud] which serve as the default boxes for common platforms:
+Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that you either set the provider to `hyperv` in your `kitchen.yml` config or set the environment variable `VAGRANT_DEFAULT_PROVIDER` to `hyperv`. The `VAGRANT_DEFAULT_PROVIDER` environment variable allows controlling the default provider when one is not defined in the `kitchen.yml`. This environment variable is particularly useful is you are using Hyper-V in a project where other users rely on VirtualBox.
+
+It is also important to consider how network switches are defined and selected when using Hyper-V. Kitchen-vagrant will select the switch to use with new VMs in the following order:
+
+1) The environment variable `KITCHEN_HYPERV_SWITCH`
+2) 'Default Switch' when running on Windows 10 Fall Creator edition and later
+3) The first switch defined on the system
+
+If `VAGRANT_DEFAULT_PROVIDER` is set and the above logic has a valid virtual switch, no additional configuration is needed. This will effectively generate a configuration similar to:
 
 ```yaml
----
+driver:
+  name: vagrant
+  provider: hyperv
+  network:
+  - ["public_network", bridge: "Default Switch"]
+```
+
+## Default Boxes
+
+Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose-built for use with Test Kitchen are can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
+
+Example configuration using Bento images:
+
+```yaml
 platforms:
   - name: ubuntu-20.04
   - name: centos-7
   - name: freebsd-12
 ```
 
-This will effectively generate a configuration similar to:
+This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -63,51 +96,54 @@ platforms:
   - name: freebsd-12
     driver:
       box: bento/freebsd-12
-  # ...
 ```
 
-Any other platform names will set a more reasonable default for `box` and leave `box_url` unset. For example:
+### Supported Bento Platforms
+
+Bento boxes are created for many popular open-source operating systems. All boxes are published for the VirtualBox hypervisor and many, but not all, are also published for VMware and Parallels hypervisors.
+
+Currently supported Bento platforms:
+
+- almalinux
+- amazonlinux
+- centos
+- centos-stream
+- debian
+- fedora
+- freebsd
+- freebsd-latest
+- opensuse-leap
+- oracle
+- rockylinux
+- scientific
+- springdalelinux
+- ubuntu
+
+### Using Non-Bento Vagrant Boxes
+
+If a platform name is specified that is not published by the Bento project, it will be assumed this is a fully qualified Vagrant box name.
 
 ```yaml
----
 platforms:
-  - name: slackware-14.1
-  - name: openbsd-5.6
-  - name: windows-2012r2
+  - name: my_vagrant_account/redhat-8
 ```
 
-This will effectively generate a configuration similar to:
+This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
----
 platforms:
-  - name: slackware-14.1
+  - name: my_vagrant_account/redhat-8
     driver:
-      box: slackware-14.1
-  - name: openbsd-5.6
-    driver:
-      box: openbsd-5.6
-  - name: windows-2012r2
-    driver:
-      box: windows-2012r2
+      box: my_vagrant_account/redhat-8
 ```
 
-### Hyper-V
-
-As Hyper-V is an exclusive hypervisor, it is recommended that the environment variable `VAGRANT_DEFAULT_PROVIDER` be set to `hyperv`. Vagrant currently requires user input to choose a virtual switch so we try to detect this automatically and use a workaround. If no network configuration is provided, we check:
-
-1) environment variable `KITCHEN_HYPERV_SWITCH`
-2) If on Windows 10 Fall Creators Update, use the built-in 'Default Switch'
-3) the first switch returned
-
-If `VAGRANT_DEFAULT_PROVIDER` is set and the above logic has a valid virtual switch, no additional configuration is needed. This will effectively generate a configuration similar to:
+Vagrant boxes can also be fetched from non-Vagrant Cloud location by specifying the `box_url`:
 
 ```yaml
-driver:
-  name: vagrant
-  provider: hyperv
-  network:
-  - ["public_network", bridge: "Default Switch"]
+platforms:
+  - name: my-redhat
+    driver:
+      box_url: "https://example.com/my-redhat.box"
 ```
 
 ## Configuration
@@ -120,7 +156,6 @@ Valid options are `:box` or `:machine`, setting to a truthy value yields `:box`
 For example:
 
 ```yaml
----
 driver:
   cachier: true
 ```
@@ -153,7 +188,7 @@ Whether to check for box updates (enabled by default).
 
 ### box_auto_update
 
-Whether to update box to the latest version prior to vagrant up command
+Whether to update box to the latest version prior to running the `vagrant up` command
 
 ### box_auto_prune
 
@@ -205,7 +240,6 @@ For overriding the default communicator setting of the base box.
 For example:
 
 ```yaml
----
 driver:
   communicator: ssh
 ```
@@ -220,12 +254,11 @@ The default is `nil` assuming ssh will be used.
 
 ### customize
 
-A **Hash** of customizations to a Vagrant virtual machine.  Each key/value
+A **Hash** of customizations to a Vagrant virtual machine. Each key/value
 pair will be passed to your providers customization block. For example, with
 the default `virtualbox` provider:
 
 ```yaml
----
 driver:
   customize:
     memory: 1024
@@ -339,7 +372,6 @@ to the `config.vm.provider` but only for the VirtualBox and VMware-based
 providers.
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -365,7 +397,6 @@ For more info about GUI vs. Headless mode please see [vagrant configuration docs
 Allows to use linked clones to import boxes for VirtualBox, VMware, Parallels Desktop and Hyper-V. Default is **nil**.
 
 ```yaml
----
 platforms:
   - name: ubuntu-20.04
     driver:
@@ -405,7 +436,6 @@ element is itself an Array of arguments to be passed to the `config.vm.network`
 method. For example:
 
 ```yaml
----
 driver:
   network:
     - ["forwarded_port", {guest: 80, host: 8080}]
@@ -443,7 +473,6 @@ For example, if your project requires
 [Bindler](https://github.com/fgrehm/bindler), this command could be:
 
 ```yaml
----
 driver
   pre_create_command: cp .vagrant_plugins.json {{vagrant_root}}/ && vagrant plugin bundle
 ```
