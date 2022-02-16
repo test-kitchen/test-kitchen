@@ -289,7 +289,8 @@ module Kitchen
             policyfile, sandbox_path,
             logger: logger,
             always_update: config[:always_update_cookbooks],
-            policy_group: policy_group
+            policy_group: policy_group,
+            license: config[:chef_license]
           )
           Kitchen.mutex.synchronize do
             policy.compile
@@ -308,7 +309,8 @@ module Kitchen
               policyfile, sandbox_path,
               logger: logger,
               always_update: config[:always_update_cookbooks],
-              policy_group: config[:policy_group]
+              policy_group: config[:policy_group],
+              license: config[:chef_license]
             ).resolve
           end
         end
