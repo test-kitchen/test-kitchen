@@ -21,12 +21,13 @@ require "kitchen/provisioner/chef/policyfile"
 describe Kitchen::Provisioner::Chef::Policyfile do
   let(:policyfile) { "" }
   let(:path) { "" }
+  let(:license) { "" }
   let(:null_logger) do
     stub(fatal: nil, error: nil, warn: nil, info: nil,
          debug: nil, banner: nil)
   end
   let(:described_object) do
-    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, logger: null_logger)
+    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, license: license, logger: null_logger)
   end
   let(:os) { "" }
   before do
@@ -58,8 +59,9 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept")
           subject
         end
       end
@@ -67,8 +69,19 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force')
+          described_object.expects(:run_command).with("chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-silent")
+          subject
+        end
+      end
+
+      describe "with simple paths given accept-no-persist " do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-no-persist")
           subject
         end
       end
@@ -84,8 +97,9 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force")
+          described_object.expects(:run_command).with("chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept")
           subject
         end
       end
@@ -93,8 +107,19 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef-cli export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force')
+          described_object.expects(:run_command).with("chef-cli export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-silent")
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with("chef-cli export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-no-persist")
           subject
         end
       end
@@ -111,8 +136,9 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with simple paths" do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force')
+          described_object.expects(:run_command).with('chef export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force --chef-license accept')
           subject
         end
       end
@@ -120,8 +146,19 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with Jenkins-y paths" do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force')
+          described_object.expects(:run_command).with('chef export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-no-persist')
           subject
         end
       end
@@ -137,8 +174,9 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with simple paths" do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef-cli export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force')
+          described_object.expects(:run_command).with('chef-cli export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force --chef-license accept')
           subject
         end
       end
@@ -146,8 +184,19 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       describe "with Jenkins-y paths" do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force')
+          described_object.expects(:run_command).with('chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-no-persist')
           subject
         end
       end
@@ -182,16 +231,27 @@ describe Kitchen::Provisioner::Chef::Policyfile do
 
       describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef-cli install /home/user/cookbook/Policyfile.rb")
+          described_object.expects(:run_command).with("chef-cli install /home/user/cookbook/Policyfile.rb --chef-license accept")
           subject
         end
       end
 
       describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb')
+          described_object.expects(:run_command).with('chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-no-persist')
           subject
         end
       end
@@ -206,16 +266,27 @@ describe Kitchen::Provisioner::Chef::Policyfile do
 
       describe "with simple paths" do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef-cli install C:\\cookbook\\Policyfile.rb')
+          described_object.expects(:run_command).with('chef-cli install C:\\cookbook\\Policyfile.rb --chef-license accept')
           subject
         end
       end
 
       describe "with Jenkins-y paths" do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb"')
+          described_object.expects(:run_command).with('chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-no-persist')
           subject
         end
       end
@@ -231,16 +302,27 @@ describe Kitchen::Provisioner::Chef::Policyfile do
 
       describe "with simple paths" do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb")
+          described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb --chef-license accept")
           subject
         end
       end
 
       describe "with Jenkins-y paths" do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb')
+          described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-no-persist')
           subject
         end
       end
@@ -256,16 +338,27 @@ describe Kitchen::Provisioner::Chef::Policyfile do
 
       describe "with simple paths" do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
+        let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef install C:\\cookbook\\Policyfile.rb')
+          described_object.expects(:run_command).with('chef install C:\\cookbook\\Policyfile.rb --chef-license accept')
           subject
         end
       end
 
       describe "with Jenkins-y paths" do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb"')
+          described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-silent')
+          subject
+        end
+      end
+
+      describe "with Jenkins-y paths" do
+        let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
+        let(:license) { "accept-no-persist" }
+        it do
+          described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-no-persist')
           subject
         end
       end
