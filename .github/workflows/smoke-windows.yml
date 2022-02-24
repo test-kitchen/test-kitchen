@@ -1,0 +1,42 @@
+
+---
+name: Windows Smoke
+
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  windows:
+    env:
+      KITCHEN_YAML: kitchen.windows.yml
+    runs-on: windows-2016
+    strategy:
+      matrix:
+        ruby: ['2.6', '2.7', '3.0', '3.1']
+    name: Windows Smoke test on Ruby ${{ matrix.ruby }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec kitchen test
+          # - script: |
+          #     bundle install || bundle install || bundle install
+          #   displayName: Bundle Install Dependencies
+          # - script: |
+          #     bundle exec rake unit && bundle exec rake quality
+          #   displayName: Run Tests
+          #   env:
+          #     SPEC_OPTS: --format progress
+          # - script: |
+          #     winrm.cmd quickconfig -q
+          #     net user /add %machine_user% %machine_pass%
+          #     net localgroup administrators %machine_user% /add
+          #     bundle install --with integration
+          #     bundle exec kitchen verify windows
+          #   displayName: Run Converge
