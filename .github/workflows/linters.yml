@@ -13,9 +13,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@master
-      - name: Run yaml Lint
-        uses: actionshub/yamllint@main
+      - name: Lint YAML
+        uses: koozz/yamllint-action@main
   chefstyle:
+    env:
+      BUNDLE_WITHOUT: integration
     runs-on: ubuntu-latest
     strategy:
       matrix:
