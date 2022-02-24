@@ -203,20 +203,21 @@ describe Kitchen::Util do
       (expected - listed).must_equal []
     end
 
-    ## with Ruby 3.1, Dir.glob() does not return files such as "bar/."
-    # it "recusivly lists and provides dots when recurse and include_dot" do
-    #   listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
-    #   expected = [
-    #     "foo",
-    #     ".foo",
-    #     "bar",
-    #     "bar/baz",
-    #     "bar/.",
-    #     "bar/.baz",
-    #   ].map { |f| File.join(@root, f) }
-    #   (listed - expected).must_equal []
-    #   (expected - listed).must_equal []
-    # end
+    it "recusivly lists and provides dots when recurse and include_dot" do
+      listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
+      expected = [
+        "foo",
+        ".foo",
+        "bar",
+        "bar/baz",
+        "bar/.",
+        "bar/.baz",
+      ].map { |f| File.join(@root, f) }
+      # with Ruby 3.1, Dir.glob() does not return files such as "bar/."
+      expected -= [File.join(@root, "bar/.")] if RUBY_VERSION >= "3.1"
+      (listed - expected).must_equal []
+      (expected - listed).must_equal []
+    end
   end
 
   describe ".safe_glob" do
