@@ -213,6 +213,8 @@ describe Kitchen::Util do
         "bar/.",
         "bar/.baz",
       ].map { |f| File.join(@root, f) }
+      # with Ruby 3.1, Dir.glob() does not return files such as "bar/."
+      expected -= [File.join(@root, "bar/.")] if RUBY_VERSION >= "3.1"
       (listed - expected).must_equal []
       (expected - listed).must_equal []
     end
