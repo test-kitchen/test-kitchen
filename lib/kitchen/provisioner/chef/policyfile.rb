@@ -41,12 +41,13 @@ module Kitchen
         #   cookbooks
         # @param logger [Kitchen::Logger] a logger to use for output, defaults
         #   to `Kitchen.logger`
-        def initialize(policyfile, path, logger: Kitchen.logger, always_update: false, policy_group: nil)
+        def initialize(policyfile, path, license: nil, logger: Kitchen.logger, always_update: false, policy_group: nil)
           @policyfile    = policyfile
           @path          = path
           @logger        = logger
           @always_update = always_update
           @policy_group  = policy_group
+          @license       = license
         end
 
         # Loads the library code required to use the resolver.
@@ -62,10 +63,10 @@ module Kitchen
         def resolve
           if policy_group
             info("Exporting cookbook dependencies from Policyfile #{path} with policy_group #{policy_group} using `#{cli_path} export`...")
-            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --policy_group #{policy_group} --force")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --policy_group #{policy_group} --force --chef-license #{license}")
           else
             info("Exporting cookbook dependencies from Policyfile #{path} using `#{cli_path} export`...")
-            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force --chef-license #{license}")
           end
         end
 
@@ -77,11 +78,11 @@ module Kitchen
           else
             info("Policy lock file doesn't exist, running `#{cli_path} install` for Policyfile #{policyfile}...")
           end
-          run_command("#{cli_path} install #{escape_path(policyfile)}")
+          run_command("#{cli_path} install #{escape_path(policyfile)} --chef-license #{license}")
 
           if always_update
             info("Updating policy lock using `#{cli_path} update`")
-            run_command("#{cli_path} update #{escape_path(policyfile)}")
+            run_command("#{cli_path} update #{escape_path(policyfile)} --chef-license #{license}")
           end
         end
 
@@ -113,6 +114,10 @@ module Kitchen
         # @return [String] name of the policy_group, nil results in "local"
         # @api private
         attr_reader :policy_group
+
+        # @return [String] name of the chef_license
+        # @api private
+        attr_reader :license
 
         # Escape spaces in a path in way that works with both Sh (Unix) and
         # Windows.
