@@ -21,6 +21,7 @@ require "rbconfig" unless defined?(RbConfig)
 require "uri" unless defined?(URI)
 require_relative "../../kitchen"
 require "winrm" unless defined?(WinRM::Connection)
+require "winrm/exceptions" unless defined?(WinRM::WinRMHTTPTransportError)
 
 module Kitchen
   module Transport
@@ -116,6 +117,22 @@ module Kitchen
               exit_code
             )
           end
+        end
+
+        def retry?(current_try, max_retries, retryable_exit_codes, exception)
+          # Avoid duplicating Kitchen::Transport::Base#retry?
+          result = super
+          return result if result == true
+
+          case exception
+          when WinRM::WinRMHTTPTransportError
+            return current_try <= max_retries &&
+                [400, 500].include?(exception.status_code)
+          when WinRM::WinRMWSManFault
+            return current_try <= max_retries
+          end
+
+          false
         end
 
         # (see Base::Connection#login_command)
