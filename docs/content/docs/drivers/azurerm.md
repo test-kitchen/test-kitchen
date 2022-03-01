@@ -306,6 +306,11 @@ identities.
 * _boolean_ : When true, Kitchen will use the FQDN that is assigned to the Virtual Machine. When false, kitchen will use the public IP address of the machine. This may overcome issues with Corporate firewalls or VPNs blocking Public IP addresses.
   * Default Value: `false`
 
+#### store_deployment_credentials_in_state
+
+* _boolean_ : When enabled it will store the provisioner credentials in the state (default). Otherwise you will need to specify credentials under the transport. Disabling this is only useful in extremely unusual circumstances, e.g. you want to use credentials setup by cloud init or some other means other than the azure provisioning process.
+  * Default Value: `true`
+
 ### Example **kitchen.yml**
 
 ```yaml
