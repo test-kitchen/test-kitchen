@@ -1,4 +1,3 @@
-
 ---
 name: Windows Smoke
 
@@ -14,6 +13,7 @@ jobs:
     env:
       KITCHEN_YAML: kitchen.windows.yml
     runs-on: windows-2016
+    timeout-minutes: 600
     strategy:
       matrix:
         ruby: ['2.6', '2.7', '3.0', '3.1']
