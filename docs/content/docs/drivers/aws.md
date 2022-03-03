@@ -254,6 +254,17 @@ The Hash of EC tag name/value pairs which will be applied to the instance.
 
 The default is `{ "created-by" => "test-kitchen" }`.
 
+#### metadata_options
+
+The metadata options for the instance can be used to configure IMDSv2 and enable Instance Tags via metadata.
+
+Example enforcing IMDSv2 and enabling Instance Tags via IMDS:
+```yaml
+metadata_options:
+  http_tokens: 'required'
+  http_put_response_hop_limit: 1
+  instance_metadata_tags: 'enabled'
+```
 
 #### user_data
 
