@@ -44,18 +44,18 @@ describe Kitchen::Provisioner::ChefApply do
   end
 
   it "provisioner api_version is 2" do
-    provisioner.diagnose_plugin[:api_version].must_equal 2
+    _(provisioner.diagnose_plugin[:api_version]).must_equal 2
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(provisioner.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "default config" do
     it "sets :chef_apply_path to a path using :chef_omnibus_root" do
       config[:chef_omnibus_root] = "/nice/place"
 
-      provisioner[:chef_apply_path].must_equal "/nice/place/bin/chef-apply"
+      _(provisioner[:chef_apply_path]).must_equal "/nice/place/bin/chef-apply"
     end
   end
 
@@ -85,45 +85,45 @@ describe Kitchen::Provisioner::ChefApply do
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
+        _(cmd).must_match(/\Ash -c '$/)
+        _(cmd).must_match(/'\Z/)
       end
 
       it "uses sudo for chef-apply when configured" do
         config[:chef_omnibus_root] = "/c"
         config[:sudo] = true
 
-        cmd.must_match regexify("sudo -E /c/bin/chef-apply apply/appry_recipe1.rb ", :partial_line)
-        cmd.must_match regexify("sudo -E /c/bin/chef-apply apply/appry_recipe2.rb ", :partial_line)
+        _(cmd).must_match regexify("sudo -E /c/bin/chef-apply apply/appry_recipe1.rb ", :partial_line)
+        _(cmd).must_match regexify("sudo -E /c/bin/chef-apply apply/appry_recipe2.rb ", :partial_line)
       end
 
       it "does not use sudo for chef-apply when configured" do
         config[:chef_omnibus_root] = "/c"
         config[:sudo] = false
 
-        cmd.must_match regexify("chef-apply apply/appry_recipe1.rb ", :partial_line)
-        cmd.must_match regexify("chef-apply apply/appry_recipe2.rb ", :partial_line)
-        cmd.wont_match regexify("sudo -E /c/bin/chef-apply ")
+        _(cmd).must_match regexify("chef-apply apply/appry_recipe1.rb ", :partial_line)
+        _(cmd).must_match regexify("chef-apply apply/appry_recipe2.rb ", :partial_line)
+        _(cmd).wont_match regexify("sudo -E /c/bin/chef-apply ")
       end
 
       it "sets log level flag on chef-apply to auto by default" do
-        cmd.must_match regexify(" --log_level auto", :partial_line)
+        _(cmd).must_match regexify(" --log_level auto", :partial_line)
       end
 
       it "set log level flag for custom level" do
         config[:log_level] = :extreme
 
-        cmd.must_match regexify(" --log_level extreme", :partial_line)
+        _(cmd).must_match regexify(" --log_level extreme", :partial_line)
       end
 
       it "sets no color flag on chef-apply" do
-        cmd.must_match regexify(" --no-color", :partial_line)
+        _(cmd).must_match regexify(" --no-color", :partial_line)
       end
 
       it "accepts the chef license" do
         config[:chef_license] = "accept-no-persist"
 
-        cmd.must_match regexify(" --chef-license accept-no-persist", :partial_line)
+        _(cmd).must_match regexify(" --chef-license accept-no-persist", :partial_line)
       end
     end
   end
