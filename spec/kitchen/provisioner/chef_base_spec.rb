@@ -1541,7 +1541,7 @@ describe Kitchen::Provisioner::ChefBase do
           create_full_cookbook("#{kitchen_root}/cookbooks/full")
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line(
+          _(logged_output.string).must_match info_line(
             "Removing non-cookbook files before transfer"
           )
         end
