@@ -20,32 +20,32 @@ stages:
       - job: Windows
         strategy:
           matrix:
-            Windows_Ruby26:
-              version: 2.6
+            Windows_Ruby27:
+              version: 2.7
               machine_user: test_user
               machine_pass: Pass@word1
               machine_port: 5985
               KITCHEN_YAML: kitchen.windows.yml
-            # Windows_Ruby27:
-            #   version: 2.7
-            #   machine_user: test_user
-            #   machine_pass: Pass@word1
-            #   machine_port: 5985
-            #   KITCHEN_YAML: kitchen.windows.yml
-            # WindowsProduct_Ruby27:
-            #   version: 2.7
-            #   machine_user: test_user
-            #   machine_pass: Pass@word1
-            #   machine_port: 5985
-            #   KITCHEN_YAML: kitchen.windows-product.yml
-            # WindowsProduct_Ruby30:
-            #   version: 3.0
-            #   machine_user: test_user
-            #   machine_pass: Pass@word1
-            #   machine_port: 5985
-            #   KITCHEN_YAML: kitchen.windows-product.yml
+            Windows_Ruby30:
+              version: 3.0
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows.yml
+            WindowsProduct_Ruby27:
+              version: 2.7
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows-product.yml
+            WindowsProduct_Ruby30:
+              version: 3.0
+              machine_user: test_user
+              machine_pass: Pass@word1
+              machine_port: 5985
+              KITCHEN_YAML: kitchen.windows-product.yml
         pool:
-          vmImage: windows-latest
+          vmImage: windows-2019
         steps:
           - task: Cache@2
             inputs:
