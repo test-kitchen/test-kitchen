@@ -4,7 +4,7 @@ name: code-coverage
 'on':
   pull_request:
     branches:
-     - main
+      - main
   push:
     branches:
       - main
@@ -33,4 +33,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           failedThreshold: 79
-          resultPath: coverage/.last_run.json 
+          resultPath: coverage/.last_run.json
