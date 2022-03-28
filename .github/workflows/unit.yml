@@ -9,8 +9,8 @@ name: Unit
 
 jobs:
   test:
-    # env:
-    #   BUNDLE_WITHOUT: integration
+    env:
+      BUNDLE_WITHOUT: integration
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,4 +32,3 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           failedThreshold: 90
-          resultPath: coverage/.last_run.json
