@@ -8,7 +8,7 @@ Gemfile*.lock
 Gemfile.local
 InstalledFiles
 _yardoc
-coverage
+# coverage
 doc/
 lib/bundler/man
 pkg

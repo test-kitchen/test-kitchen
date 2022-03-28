@@ -11,10 +11,6 @@ jobs:
   coverage-test:
     name: Coverage
     runs-on: ubuntu-18.04
-    permissions:
-      id-token: write
-      contents: write              # This is required for actions/checkout@v1
-      security-events: write   # To upload sarif files
     steps:
       - uses: actions/checkout@v2
       - name: Set up ruby 2.7
