@@ -15,6 +15,9 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7', '3.0', '3.1']
+    permissions:
+      contents: write
+      pull-requests: write
     name: Unit test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
