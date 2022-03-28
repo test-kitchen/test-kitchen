@@ -45,6 +45,11 @@ describe Kitchen::Transport::Winrm do
   let(:logger)        { Logger.new(logged_output) }
   let(:config)        { {} }
   let(:state)         { {} }
+  let(:options)       { { logger: logger } }
+
+  let(:connection) do
+    Kitchen::Transport::Winrm::Connection.new(options)
+  end
 
   let(:instance) do
     stub(name: "coolbeans", logger: logger, to_str: "instance")
@@ -592,6 +597,69 @@ describe Kitchen::Transport::Winrm do
         assert_equal true, opts[:basic_auth_only]
         assert_equal 2, opts.size
       end
+    end
+  end
+
+  describe "#retry?" do
+    let(:exception) { Kitchen::Transport::TransportFailed.new("failure message", 35) }
+
+    it "raises an exception when multiple retryable exit codes are passed as a String" do
+      proc { connection.retry?(2, 2, "35 1", exception) }
+        .must_raise("undefined method `flatten' for \"35 1\":String")
+    end
+
+    it "returns true when the retryable exit codes are formatted in a nested array" do
+      connection.retry?(1, 2, [[35, 1]], exception).must_equal true
+      connection.retry?(2, 2, [[35, 1]], exception).must_equal true
+    end
+
+    describe "when exception is anything other than Kitchen::Transport::TransportFailed" do
+      let(:exception) { RuntimeError.new("failure message") }
+
+      it "returns false when the exception is anything other than Kitchen::Transport::TransportFailed" do
+        connection.retry?(1, 2, [35, 1], exception).must_equal false
+        connection.retry?(2, 2, [35, 1], exception).must_equal false
+      end
+    end
+
+    describe "when exception is WinRM::WinRMHTTPTransportError" do
+      let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 400) }
+
+      describe "when status code is 400" do
+        let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 400) }
+
+        it "returns true" do
+          connection.retry?(1, 2, [35, 1], exception).must_equal true
+        end
+      end
+
+      describe "when status code is 401" do
+        let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 401) }
+
+        it "returns false" do
+          connection.retry?(1, 2, [35, 1], exception).must_equal false
+        end
+      end
+
+      describe "when status code is 500" do
+        let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 500) }
+
+        it "returns true" do
+          connection.retry?(1, 2, [35, 1], exception).must_equal true
+        end
+      end
+    end
+
+    describe "when exception is WinRM::WinRMWSManFault" do
+      let(:exception) { WinRM::WinRMWSManFault.new("failure message", 42) }
+
+      it "returns true" do
+        connection.retry?(1, 2, [35, 1], exception).must_equal true
+      end
+    end
+
+    it "returns false when the maximum retries have been exceeded" do
+      connection.retry?(3, 2, [35, 1], exception).must_equal false
     end
   end
 

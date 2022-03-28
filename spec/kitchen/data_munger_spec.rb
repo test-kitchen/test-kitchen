@@ -1,7 +1,7 @@
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
-# Copyright (C) 2013, Fletcher Nichol
+# Copyright:: (C) 2013, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
   describe DataMunger do
     describe "#platform_data" do
       it "returns an array of platform data" do
-        DataMunger.new(
+        result = DataMunger.new(
           platforms: [
             {
               name: "one",
@@ -34,26 +34,28 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               misc: "things",
             },
           ]
-        ).platform_data.must_equal([
-                                     {
-                                       name: "one",
-                                       stuff: "junk",
-                                     },
-                                     {
-                                       name: "two",
-                                       misc: "things",
-                                     },
-                                   ])
+        ).platform_data
+
+        _(result).must_equal([
+                               {
+                                 name: "one",
+                                 stuff: "junk",
+                               },
+                               {
+                                 name: "two",
+                                 misc: "things",
+                               },
+                             ])
       end
 
       it "returns an empty array if platforms is not defined" do
-        DataMunger.new({}).platform_data.must_equal([])
+        _(DataMunger.new({}).platform_data).must_equal([])
       end
     end
 
     describe "#suite_data" do
       it "returns an array of suite data" do
-        DataMunger.new(
+        result = DataMunger.new(
           suites: [
             {
               name: "one",
@@ -64,20 +66,22 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               misc: "things",
             },
           ]
-        ).suite_data.must_equal([
-                                  {
-                                    name: "one",
-                                    stuff: "junk",
-                                  },
-                                  {
-                                    name: "two",
-                                    misc: "things",
-                                  },
-                                ])
+        ).suite_data
+
+        _(result).must_equal([
+          {
+            name: "one",
+            stuff: "junk",
+          },
+          {
+            name: "two",
+            misc: "things",
+          },
+        ])
       end
 
       it "returns an empty array if suites is not defined" do
-        DataMunger.new({}).suite_data.must_equal([])
+        _(DataMunger.new({}).suite_data).must_equal([])
       end
     end
 
@@ -92,56 +96,66 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       describe "##{key}" do
         describe "from single source" do
           it "returns empty hash if no common #{key} hash is provided" do
-            DataMunger.new(
+            result = DataMunger.new(
               {},
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal({})
+            ).public_send("#{key}_data_for", "suite", "platform")
+
+            _(result).must_equal({})
           end
 
           it "drops common #{key} if hash is nil" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => nil,
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal({})
           end
 
           it "returns kitchen config #{key} name" do
-            DataMunger.new(
+            result = DataMunger.new(
               {},
               defaults: {
                 key => "thenoseknows",
               }
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
+            ).public_send("#{key}_data_for", "suite", "platform")
+
+            _(result).must_equal(
               default_key => "thenoseknows"
             )
           end
 
           it "returns kitchen config #{key} name from callable" do
-            DataMunger.new(
+            result = DataMunger.new(
               {},
               defaults: {
                 key => ->(suite, platform) { "#{suite}++#{platform}" },
               }
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
+            ).public_send("#{key}_data_for", "suite", "platform")
+
+            _(result).must_equal(
               default_key => "suite++platform"
             )
           end
 
           it "returns common #{key} name" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => "starship",
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
+            ).public_send("#{key}_data_for", "suite", "platform")
+
+            _(result).must_equal(
               default_key => "starship"
             )
           end
 
           it "returns common #{key} config" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => {
                   default_key => "starship",
@@ -149,25 +163,29 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 },
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform").must_equal(
+            ).public_send("#{key}_data_for", "suite", "platform")
+
+            _(result).must_equal(
               default_key => "starship",
               :speed => 42
             )
           end
 
           it "returns empty hash if platform config doesn't have #{key} hash" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 platforms: [
                   { name: "plat" },
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal({})
           end
 
           it "drops platform #{key} if hash is nil" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 platforms: [
                   {
@@ -177,11 +195,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal({})
           end
 
           it "returns platform #{key} name" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 platforms: [
                   {
@@ -191,13 +211,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal(
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal(
               default_key => "flip"
             )
           end
 
           it "returns platform config containing #{key} hash" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 platforms: [
                   {
@@ -210,25 +232,29 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal(
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal(
               default_key => "flip",
               :flop => "yep"
             )
           end
 
           it "returns empty hash if suite config doesn't have #{key} hash" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 suites: [
                   { name: "sweet" },
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal({})
+            ).public_send("#{key}_data_for", "sweet", "platform")
+
+            _(result).must_equal({})
           end
 
           it "drops suite #{key} hash is nil" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 suites: [
                   {
@@ -238,11 +264,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat").must_equal({})
+            ).public_send("#{key}_data_for", "suite", "plat")
+
+            _(result).must_equal({})
           end
 
           it "returns suite #{key} name" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 suites: [
                   {
@@ -252,13 +280,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "platform")
+
+            _(result).must_equal(
               default_key => "waz"
             )
           end
 
           it "returns suite config containing #{key} hash" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 suites: [
                   {
@@ -271,7 +301,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "platform")
+
+            _(result).must_equal(
               default_key => "waz",
               :up => "nope"
             )
@@ -280,7 +312,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
         describe "from multiple sources merging" do
           it "suite into platform into common" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => {
                   default_key => "commony",
@@ -310,7 +342,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "plat")
+
+            _(result).must_equal(
               default_key => "suitey",
               :color => "purple",
               :fruit => ["banana"],
@@ -324,7 +358,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           end
 
           it "platform into common" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => {
                   default_key => "commony",
@@ -344,7 +378,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "plat")
+
+            _(result).must_equal(
               default_key => "platformy",
               :color => "purple",
               :fruit => ["banana"],
@@ -356,7 +392,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           end
 
           it "suite into common" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 key => {
                   default_key => "commony",
@@ -376,7 +412,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "plat")
+
+            _(result).must_equal(
               default_key => "suitey",
               :color => "purple",
               :fruit => %w{apple pear},
@@ -389,7 +427,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           end
 
           it "suite into platform" do
-            DataMunger.new(
+            result = DataMunger.new(
               {
                 platforms: [
                   {
@@ -413,7 +451,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat").must_equal(
+            ).public_send("#{key}_data_for", "sweet", "plat")
+
+            _(result).must_equal(
               default_key => "suitey",
               :fruit => ["banana"],
               :vehicle => "car",
@@ -430,7 +470,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     describe "primary Chef data" do
       describe "in a suite" do
         it "moves attributes into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               suites: [
@@ -441,14 +481,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             attributes: { one: "two" }
           )
         end
 
         it "moves run_list into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               suites: [
@@ -459,14 +501,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "moves named_run_list into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               suites: [
@@ -477,13 +521,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             named_run_list: "other_run_list"
           )
         end
         it "maintains run_list in provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               suites: [
@@ -496,14 +542,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "merge provisioner into attributes if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -514,14 +562,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             attributes: { one: "two" }
           )
         end
 
         it "merge provisioner into run_list if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -532,14 +582,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "merge provisioner into named_run_list if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -550,13 +602,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             named_run_list: "other_run_list"
           )
         end
+
         it "drops nil run_list" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -567,13 +622,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
-          )
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(name: "chefy")
         end
 
         it "drops nil attributes" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -584,7 +639,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy"
           )
         end
@@ -592,7 +649,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
       describe "in a platform" do
         it "moves attributes into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -603,14 +660,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             attributes: { one: "two" }
           )
         end
 
         it "moves run_list into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -621,14 +680,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "moves named_run_list into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -639,13 +700,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             named_run_list: "other_run_list"
           )
         end
         it "maintains run_list in provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -658,14 +721,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "merge provisioner into attributes if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -676,14 +741,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             attributes: { one: "two" }
           )
         end
 
         it "merge provisioner into run_list if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -694,14 +761,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two}
           )
         end
 
         it "merge provisioner into named_run_list if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -712,13 +781,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             named_run_list: "other_run_list"
           )
         end
         it "drops nil run_list" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -729,13 +800,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
-          )
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(name: "chefy")
         end
 
         it "drops nil attributes" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -746,15 +817,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
-            name: "chefy"
-          )
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(name: "chefy")
         end
       end
 
       describe "in a suite and platform" do
         it "merges suite attributes into platform attributes" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -777,7 +848,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             attributes: {
               color: "pink",
@@ -790,7 +863,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "concats suite run_list to platform run_list" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -807,14 +880,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two three four}
           )
         end
 
         it "concats suite run_list in provisioner to platform run_list" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -833,14 +908,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two three four}
           )
         end
 
         it "concats suite run_list to platform run_list in provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -859,14 +936,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: %w{one two three four}
           )
         end
 
         it "concats to nil run_lists into an empty Array" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               platforms: [
@@ -885,7 +964,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             run_list: []
           )
@@ -926,7 +1007,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           munger.provisioner_data_for("s1", "p2")
           munger.provisioner_data_for("s2", "p1")
 
-          munger.provisioner_data_for("s2", "p2").must_equal(
+          _(munger.provisioner_data_for("s2", "p2")).must_equal(
             name: "chefy",
             run_list: %w{one two three four}
           )
@@ -939,7 +1020,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         describe "for #{key}" do
           describe "for #driver_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   driver: "chefy",
                   platforms: [
@@ -950,14 +1031,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -971,14 +1054,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -992,14 +1077,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in driver data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   driver: {
                     :name => "chefy",
@@ -1013,7 +1100,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 name: "chefy"
               )
             end
@@ -1021,7 +1110,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
           describe "for #provisioner_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   provisioner: "chefy",
                   platforms: [
@@ -1032,14 +1121,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1053,14 +1144,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1074,14 +1167,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in provisioner data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   provisioner: {
                     :name => "chefy",
@@ -1095,7 +1190,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 name: "chefy"
               )
             end
@@ -1103,7 +1200,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
           describe "for #verifier_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   verifier: "chefy",
                   platforms: [
@@ -1114,14 +1211,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1135,14 +1234,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1156,14 +1257,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in verifier data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   verifier: {
                     :version => "chefy",
@@ -1177,7 +1280,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 version: "chefy"
               )
             end
@@ -1185,7 +1290,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
           describe "for #transport_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   transport: "pipes",
                   platforms: [
@@ -1196,14 +1301,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1217,14 +1324,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1238,14 +1347,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in transport data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   transport: {
                     :name => "pipes",
@@ -1259,7 +1370,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 name: "pipes"
               )
             end
@@ -1271,7 +1384,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         describe "for #{key}" do
           describe "for #driver_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   driver: "chefy",
                   platforms: [
@@ -1282,14 +1395,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1303,14 +1418,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1324,14 +1441,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).driver_data_for("sweet", "plat").must_equal(
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in driver data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   driver: {
                     :name => "chefy",
@@ -1345,15 +1464,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).driver_data_for("sweet", "plat").must_equal(
-                name: "chefy"
-              )
+              ).driver_data_for("sweet", "plat")
+
+              _(result).must_equal(name: "chefy")
             end
           end
 
           describe "for #provisioner_data_for" do
             it "uses value in provisioner data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   provisioner: {
                     :name => "chefy",
@@ -1367,14 +1486,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "imevil",
@@ -1388,7 +1509,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).provisioner_data_for("sweet", "plat").must_equal(
+              ).provisioner_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 name: "chefy"
               )
             end
@@ -1396,7 +1519,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
           describe "for #verifier_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   verifier: "chefy",
                   platforms: [
@@ -1407,14 +1530,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1428,14 +1553,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1449,14 +1576,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "chefy",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in verifier data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   verifier: {
                     :version => "chefy",
@@ -1470,7 +1599,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).verifier_data_for("sweet", "plat").must_equal(
+              ).verifier_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 version: "chefy"
               )
             end
@@ -1478,7 +1609,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
           describe "for #transport_data_for" do
             it "is returned when provided" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   transport: "pipes",
                   platforms: [
@@ -1489,14 +1620,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "datvalue"
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "is returned when provided in user data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1510,14 +1643,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "user data value beats provided value" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   kitchen: {
                     key => "datvalue",
@@ -1531,14 +1666,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 key => "ilose"
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 :name => "pipes",
                 key => "datvalue"
               )
             end
 
             it "rejects any value in transport data" do
-              DataMunger.new(
+              result = DataMunger.new(
                 {
                   transport: {
                     :name => "pipes",
@@ -1552,7 +1689,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                   ],
                 },
                 {}
-              ).transport_data_for("sweet", "plat").must_equal(
+              ).transport_data_for("sweet", "plat")
+
+              _(result).must_equal(
                 name: "pipes"
               )
             end
@@ -1564,30 +1703,34 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     describe "legacy driver_config and driver_plugin" do
       describe "from a single source" do
         it "returns common driver name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "starship",
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "starship"
           )
         end
 
         it "merges driver into driver_plugin if driver exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "starship",
               driver: "zappa",
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "zappa"
           )
         end
 
         it "returns common driver config" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "starship",
               driver_config: {
@@ -1595,14 +1738,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "starship",
             speed: 42
           )
         end
 
         it "merges driver into driver_config if driver with name exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_config: {
                 eh: "yep",
@@ -1610,14 +1755,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               driver: "zappa",
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "zappa",
             eh: "yep"
           )
         end
 
         it "merges driver into driver_config if driver exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "imold",
               driver_config: {
@@ -1630,7 +1777,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "zappa",
             eh: "yep",
             color: "black"
@@ -1638,7 +1787,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "returns platform driver name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -1648,13 +1797,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
+          ).driver_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "flip"
           )
         end
 
         it "returns platform config containing driver hash" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -1667,14 +1818,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
+          ).driver_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "flip",
             flop: "yep"
           )
         end
 
         it "returns suite driver name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -1684,13 +1837,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
+          ).driver_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "waz"
           )
         end
 
         it "returns suite config containing driver hash" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -1703,7 +1858,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
+          ).driver_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "waz",
             up: "nope"
           )
@@ -1712,7 +1869,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
       describe "from multiple sources" do
         it "suite into platform into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "commony",
               driver_config: {
@@ -1742,7 +1899,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
+          ).driver_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "suitey",
             color: "purple",
             fruit: ["banana"],
@@ -1756,7 +1915,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "commony",
               driver_config: {
@@ -1776,7 +1935,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
+          ).driver_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "platformy",
             color: "purple",
             fruit: ["banana"],
@@ -1788,7 +1949,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               driver_plugin: "commony",
               driver_config: {
@@ -1808,7 +1969,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
+          ).driver_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "suitey",
             color: "purple",
             fruit: %w{apple pear},
@@ -1821,7 +1984,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite into platform" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -1845,7 +2008,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "plat").must_equal(
+          ).driver_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "suitey",
             fruit: ["banana"],
             vehicle: "car",
@@ -1866,7 +2031,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
       LEGACY_CHEF_PATHS.each do |key|
         it "moves #{key} into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               suites: [
@@ -1877,14 +2042,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             :name => "chefy",
             key => "mypath"
           )
         end
 
         it "merges provisioner into data_path if provisioner exists" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -1895,7 +2062,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "plat").must_equal(
+          ).provisioner_data_for("sweet", "plat")
+
+          _(result).must_equal(
             :name => "chefy",
             key => "mypath"
           )
@@ -1906,7 +2075,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     describe "legacy require_chef_omnibus from driver" do
       describe "from a single source" do
         it "common driver value moves into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               driver: {
@@ -1915,14 +2084,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
+          ).provisioner_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
         end
 
         it "common driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: {
                 name: "chefy",
@@ -1934,14 +2105,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
+          ).provisioner_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
         end
 
         it "suite driver value moves into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -1955,14 +2128,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
+          ).provisioner_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
         end
 
         it "suite driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -1979,14 +2154,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
+          ).provisioner_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
         end
 
         it "platform driver value moves into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2000,14 +2177,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
+          ).provisioner_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
         end
 
         it "platform driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2024,7 +2203,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
+          ).provisioner_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             require_chef_omnibus: "it's probably fine"
           )
@@ -2035,7 +2216,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     describe "legacy http_proxy & https_proxy from driver" do
       describe "from a single source" do
         it "common driver value remains in driver" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               driver: {
@@ -2045,7 +2226,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).driver_data_for("suite", "platform").must_equal(
+          ).driver_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "starship",
             http_proxy: "http://proxy",
             https_proxy: "https://proxy"
@@ -2053,7 +2236,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "common driver value copies into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: "chefy",
               driver: {
@@ -2063,7 +2246,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
+          ).provisioner_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "http://proxy",
             https_proxy: "https://proxy"
@@ -2071,7 +2256,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "common driver value copies into verifier" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               verifier: "bussy",
               driver: {
@@ -2081,7 +2266,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "http://proxy",
             https_proxy: "https://proxy"
@@ -2089,7 +2276,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "common driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               provisioner: {
                 name: "chefy",
@@ -2103,7 +2290,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).provisioner_data_for("suite", "platform").must_equal(
+          ).provisioner_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2111,7 +2300,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "common driver value loses to existing verifier value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               verifier: {
                 name: "bussy",
@@ -2125,7 +2314,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2133,7 +2324,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite driver value remains in driver" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2148,7 +2339,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("sweet", "platform").must_equal(
+          ).driver_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "starship",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2156,7 +2349,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite driver value copies into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2171,7 +2364,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
+          ).provisioner_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2179,7 +2374,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite driver value copies into verifier" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2194,7 +2389,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
+          ).verifier_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2202,7 +2399,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2221,7 +2418,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("sweet", "platform").must_equal(
+          ).provisioner_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2229,7 +2428,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite driver value loses to existing verifier value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2248,7 +2447,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
+          ).verifier_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2256,7 +2457,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform driver value remains in driver" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2271,7 +2472,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).driver_data_for("suite", "plat").must_equal(
+          ).driver_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "starship",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2279,7 +2482,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform driver value copies into provisioner" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2294,7 +2497,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
+          ).provisioner_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2302,7 +2507,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform driver value copies into verifier" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2317,7 +2522,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
+          ).verifier_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2325,7 +2532,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform driver value loses to existing provisioner value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2344,7 +2551,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).provisioner_data_for("suite", "plat").must_equal(
+          ).provisioner_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "chefy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2352,7 +2561,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform driver value loses to existing verifier value" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2371,7 +2580,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
+          ).verifier_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "bussy",
             http_proxy: "it's probably fine",
             https_proxy: "la quinta"
@@ -2383,19 +2594,21 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
     describe "legacy busser blocks to verifier" do
       describe "from a single source" do
         it "merges old common busser name to version into verifier" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: "starship",
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "busser",
             version: "starship"
           )
         end
 
         it "merges old common busser name to version with exising verifier" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: "starship",
               verifier: {
@@ -2403,7 +2616,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "busser",
             version: "starship",
             a: "b"
@@ -2411,20 +2626,22 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "merges old common busser name to version into verifier with name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: "starship",
               verifier: "stellar",
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "stellar",
             version: "starship"
           )
         end
 
         it "merges old busser data into verifier with name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: {
                 a: "b",
@@ -2432,14 +2649,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               verifier: "stellar",
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "stellar",
             a: "b"
           )
         end
 
         it "merges old busser data into verifier data" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: {
                 a: "b",
@@ -2452,7 +2671,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               },
             },
             {}
-          ).verifier_data_for("suite", "platform").must_equal(
+          ).verifier_data_for("suite", "platform")
+
+          _(result).must_equal(
             name: "stellar",
             a: "b",
             c: "d",
@@ -2461,7 +2682,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "returns platform verifier name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2471,14 +2692,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
+          ).verifier_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "flip"
           )
         end
 
         it "return platform config containing verifier hash" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2491,7 +2714,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("suite", "plat").must_equal(
+          ).verifier_data_for("suite", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "flip",
             flop: "yep"
@@ -2499,7 +2724,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "returns suite driver name" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2509,14 +2734,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
+          ).verifier_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "busser",
             version: "waz"
           )
         end
 
         it "returns suite config containing verifier hash" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               suites: [
                 {
@@ -2529,7 +2756,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "platform").must_equal(
+          ).verifier_data_for("sweet", "platform")
+
+          _(result).must_equal(
             name: "busser",
             version: "waz",
             up: "nope"
@@ -2539,7 +2768,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
       describe "from multiple sources" do
         it "suite into platform into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: {
                 version: "commony",
@@ -2569,7 +2798,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
+          ).verifier_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "suitey",
             color: "purple",
@@ -2584,7 +2815,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "platform into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: {
                 version: "commony",
@@ -2604,7 +2835,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
+          ).verifier_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "platformy",
             color: "purple",
@@ -2617,7 +2850,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite into common" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               busser: {
                 version: "commony",
@@ -2637,7 +2870,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
+          ).verifier_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "suitey",
             color: "purple",
@@ -2651,7 +2886,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         end
 
         it "suite into platform" do
-          DataMunger.new(
+          result = DataMunger.new(
             {
               platforms: [
                 {
@@ -2675,7 +2910,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ],
             },
             {}
-          ).verifier_data_for("sweet", "plat").must_equal(
+          ).verifier_data_for("sweet", "plat")
+
+          _(result).must_equal(
             name: "busser",
             version: "suitey",
             fruit: ["banana"],
@@ -2691,7 +2928,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
 
     describe "lifecycle_hooks stuff" do
       it "handles a single global hook" do
-        DataMunger.new(
+        result = DataMunger.new(
           {
             lifecycle: {
               pre_create: "echo foo",
@@ -2700,13 +2937,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             suites: [{ name: "sweet" }],
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+        ).lifecycle_hooks_data_for("sweet", "plat")
+
+        _(result).must_equal(
           pre_create: ["echo foo"]
         )
       end
 
       it "handles multiple global hooks" do
-        DataMunger.new(
+        result = DataMunger.new(
           {
             lifecycle: {
               pre_create: "echo foo",
@@ -2717,7 +2956,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             suites: [{ name: "sweet" }],
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+        ).lifecycle_hooks_data_for("sweet", "plat")
+
+        _(result).must_equal(
           pre_create: ["echo foo"],
           post_converge: ["echo bar", { local: "echo baz" }],
           pre_verify: [{ remote: "echo other" }]
@@ -2725,7 +2966,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       end
 
       it "handles hooks in platforms and suites" do
-        DataMunger.new(
+        result = DataMunger.new(
           {
             lifecycle: {
               pre_create: "echo foo",
@@ -2745,14 +2986,16 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             }],
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+        ).lifecycle_hooks_data_for("sweet", "plat")
+
+        _(result).must_equal(
           pre_create: ["echo foo", "echo bar", "echo baz"],
           post_create: ["echo post"]
         )
       end
 
       it "munges a global legacy pre_create_command" do
-        DataMunger.new(
+        result = DataMunger.new(
           {
             driver: {
               pre_create_command: "echo bar",
@@ -2764,13 +3007,15 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             suites: [{ name: "sweet" }],
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+        ).lifecycle_hooks_data_for("sweet", "plat")
+
+        _(result).must_equal(
           pre_create: ["echo foo", { local: "echo bar" }]
         )
       end
 
       it "munges a platform/suite legacy pre_create_commands" do
-        DataMunger.new(
+        result = DataMunger.new(
           {
             lifecycle: {
               pre_create: "echo foo",
@@ -2789,11 +3034,12 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             }],
           },
           {}
-        ).lifecycle_hooks_data_for("sweet", "plat").must_equal(
+        ).lifecycle_hooks_data_for("sweet", "plat")
+
+        _(result).must_equal(
           pre_create: ["echo foo", { local: "echo bar" }, { local: "echo baz" }]
         )
       end
-
     end
   end
 end

@@ -58,12 +58,11 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":chef_omnibus_url has a default" do
-        provisioner[:chef_omnibus_url]
-          .must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.chef.io/install.sh"
       end
 
       it ":chef_metadata_url defaults to nil" do
-        provisioner[:chef_metadata_url].must_be_nil
+        _(provisioner[:chef_metadata_url]).must_be_nil
       end
     end
 
@@ -71,113 +70,105 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":chef_omnibus_url has a default" do
-        provisioner[:chef_omnibus_url]
-          .must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.chef.io/install.sh"
       end
     end
 
     it ":require_chef_omnibus defaults to true" do
-      provisioner[:require_chef_omnibus].must_equal true
+      _(provisioner[:require_chef_omnibus]).must_equal true
     end
 
     it ":chef_omnibus_install_options defaults to nil" do
-      provisioner[:chef_omnibus_install_options].must_be_nil
+      _(provisioner[:chef_omnibus_install_options]).must_be_nil
     end
 
     it ":run_list defaults to an empty array" do
-      provisioner[:run_list].must_equal []
+      _(provisioner[:run_list]).must_equal []
     end
 
     it ":attributes defaults to an empty hash" do
-      provisioner[:attributes].must_equal({})
+      _(provisioner[:attributes]).must_equal({})
     end
 
     it ":log_level defaults to auto" do
-      provisioner[:log_level].must_equal "auto"
+      _(provisioner[:log_level]).must_equal "auto"
     end
 
     it ":log_level is debug when in debug mode" do
       config[:debug] = true
-      provisioner[:log_level].must_equal "debug"
+      _(provisioner[:log_level]).must_equal "debug"
     end
 
     it ":log_file defaults to nil" do
-      provisioner[:log_file].must_be_nil
+      _(provisioner[:log_file]).must_be_nil
     end
 
     it ":cookbook_files_glob includes a metadata file" do
-      provisioner[:cookbook_files_glob].must_match(/,metadata.\{json,rb\}/)
+      _(provisioner[:cookbook_files_glob]).must_match(/,metadata.\{json,rb\}/)
     end
 
     it ":data_path uses calculate_path and is expanded" do
-      provisioner[:data_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/data")
+      _(provisioner[:data_path]).must_equal os_safe_root_path("/rooty/<calculated>/data")
     end
 
     it ":data_bags_path uses calculate_path and is expanded" do
-      provisioner[:data_bags_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/data_bags")
+      _(provisioner[:data_bags_path]).must_equal os_safe_root_path("/rooty/<calculated>/data_bags")
     end
 
     it ":environments_path uses calculate_path and is expanded" do
-      provisioner[:environments_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/environments")
+      _(provisioner[:environments_path]).must_equal os_safe_root_path("/rooty/<calculated>/environments")
     end
 
     it ":nodes_path uses calculate_path and is expanded" do
-      provisioner[:nodes_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/nodes")
+      _(provisioner[:nodes_path]).must_equal os_safe_root_path("/rooty/<calculated>/nodes")
     end
 
     it ":roles_path uses calculate_path and is expanded" do
-      provisioner[:roles_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/roles")
+      _(provisioner[:roles_path]).must_equal os_safe_root_path("/rooty/<calculated>/roles")
     end
 
     it ":clients_path uses calculate_path and is expanded" do
-      provisioner[:clients_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/clients")
+      _(provisioner[:clients_path]).must_equal os_safe_root_path("/rooty/<calculated>/clients")
     end
 
     it "...secret_key_path uses calculate_path and is expanded" do
-      provisioner[:encrypted_data_bag_secret_key_path]
-        .must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
+      _(provisioner[:encrypted_data_bag_secret_key_path]).must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
     end
 
     it ":product_name default to nil" do
-      provisioner[:product_name].must_be_nil
+      _(provisioner[:product_name]).must_be_nil
     end
 
     it ":product_version defaults to :latest" do
-      provisioner[:product_version].must_equal :latest
+      _(provisioner[:product_version]).must_equal :latest
     end
 
     it ":channel defaults to :stable" do
-      provisioner[:channel].must_equal :stable
+      _(provisioner[:channel]).must_equal :stable
     end
 
     it ":platform default to nil" do
-      provisioner[:platform].must_be_nil
+      _(provisioner[:platform]).must_be_nil
     end
 
     it ":platform_version default to nil" do
-      provisioner[:platform_version].must_be_nil
+      _(provisioner[:platform_version]).must_be_nil
     end
 
     it ":architecture default to nil" do
-      provisioner[:architecture].must_be_nil
+      _(provisioner[:architecture]).must_be_nil
     end
 
     it ":download_url default to nil" do
-      provisioner[:download_url].must_be_nil
+      _(provisioner[:download_url]).must_be_nil
     end
 
     it ":checksum default to nil" do
-      provisioner[:checksum].must_be_nil
+      _(provisioner[:checksum]).must_be_nil
     end
 
     it ":retry_on_exit_code defaults to standard values" do
-      provisioner[:retry_on_exit_code].must_equal [35, 213]
+      _(provisioner[:retry_on_exit_code]).must_equal [35, 213]
     end
   end
 
@@ -203,7 +194,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       installer.expects(:root).never
       installer.expects(:install_command).never
-      cmd.must_be_nil
+      _(cmd).must_be_nil
     end
 
     describe "common behaviour" do
@@ -349,13 +340,13 @@ describe Kitchen::Provisioner::ChefBase do
       it "prefixs the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 
-        cmd.must_match(/\Amy_prefix /)
+        _(cmd).must_match(/\Amy_prefix /)
       end
 
       it "does not prefix the command if command_prefix is not set" do
         config[:command_prefix] = nil
 
-        cmd.wont_match(/\Amy_prefix /)
+        _(cmd).wont_match(/\Amy_prefix /)
       end
 
       describe "when driver implements the cache_directory interface" do
@@ -403,9 +394,9 @@ describe Kitchen::Provisioner::ChefBase do
         config[:channel] = "channel"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:product_name].must_equal "my_product"
-          opts[:product_version].must_equal "version"
-          opts[:channel].must_equal :channel
+          _(opts[:product_name]).must_equal "my_product"
+          _(opts[:product_version]).must_equal "version"
+          _(opts[:channel]).must_equal :channel
         end.returns(installer)
         cmd
       end
@@ -414,7 +405,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:architecture] = "architecture"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:architecture].must_equal "architecture"
+          _(opts[:architecture]).must_equal "architecture"
         end.returns(installer)
         cmd
       end
@@ -423,7 +414,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:platform] = "platform"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:platform].must_equal "platform"
+          _(opts[:platform]).must_equal "platform"
         end.returns(installer)
         cmd
       end
@@ -432,42 +423,42 @@ describe Kitchen::Provisioner::ChefBase do
         config[:platform_version] = "platform_version"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:platform_version].must_equal "platform_version"
+          _(opts[:platform_version]).must_equal "platform_version"
         end.returns(installer)
         cmd
       end
 
       it "will omit the architecture if not given" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts.key?(:architecture).must_equal false
+          _(opts.key?(:architecture)).must_equal false
         end.returns(installer)
         cmd
       end
 
       it "will omit the platform if not given" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts.key?(:platform).must_equal false
+          _(opts.key?(:platform)).must_equal false
         end.returns(installer)
         cmd
       end
 
       it "will omit the platform_version if not given" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts.key?(:platform_version).must_equal false
+          _(opts.key?(:platform_version)).must_equal false
         end.returns(installer)
         cmd
       end
 
       it "will use stable channel when none specified" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:channel].must_equal :stable
+          _(opts[:channel]).must_equal :stable
         end.returns(installer)
         cmd
       end
 
       it "will set install_strategy to once when not given" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:install_strategy].must_equal "once"
+          _(opts[:install_command_options][:install_strategy]).must_equal "once"
         end.returns(installer)
         cmd
       end
@@ -475,7 +466,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "will set install_strategy when given" do
         config[:install_strategy] = "always"
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:install_strategy].must_equal "always"
+          _(opts[:install_command_options][:install_strategy]).must_equal "always"
         end.returns(installer)
         cmd
       end
@@ -485,8 +476,8 @@ describe Kitchen::Provisioner::ChefBase do
         config[:checksum] = "abcd"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:download_url_override].must_equal "http://url/path"
-          opts[:install_command_options][:checksum].must_equal "abcd"
+          _(opts[:install_command_options][:download_url_override]).must_equal "http://url/path"
+          _(opts[:install_command_options][:checksum]).must_equal "abcd"
         end.returns(installer)
         cmd
       end
@@ -496,8 +487,8 @@ describe Kitchen::Provisioner::ChefBase do
         config[:https_proxy] = "http://url/path:8000"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:http_proxy].must_equal "http://url/path:8000"
-          opts[:install_command_options][:https_proxy].must_equal "http://url/path:8000"
+          _(opts[:install_command_options][:http_proxy]).must_equal "http://url/path:8000"
+          _(opts[:install_command_options][:https_proxy]).must_equal "http://url/path:8000"
         end.returns(installer)
         cmd
       end
@@ -509,15 +500,15 @@ describe Kitchen::Provisioner::ChefBase do
         platform.stubs(:os_type).returns("windows")
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:http_proxy].must_equal "http://url/path:8000"
-          opts[:install_command_options][:https_proxy].must_be_nil
+          _(opts[:install_command_options][:http_proxy]).must_equal "http://url/path:8000"
+          _(opts[:install_command_options][:https_proxy]).must_be_nil
         end.returns(installer)
         cmd
       end
 
       it "will not set proxies when not given" do
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:install_command_options][:http_proxy].must_be_nil
+          _(opts[:install_command_options][:http_proxy]).must_be_nil
         end.returns(installer)
         cmd
       end
@@ -532,7 +523,7 @@ describe Kitchen::Provisioner::ChefBase do
             platform.stubs(:os_type).returns("windows")
 
             Mixlib::Install.expects(:new).with do |opts|
-              opts[:install_command_options][:download_directory].must_equal '$env:TEMP\\dummy\\place'
+              _(opts[:install_command_options][:download_directory]).must_equal '$env:TEMP\\dummy\\place'
             end.returns(installer)
             cmd
           end
@@ -543,7 +534,7 @@ describe Kitchen::Provisioner::ChefBase do
 
           it "will have the set behavior on non-windows" do
             Mixlib::Install.expects(:new).with do |opts|
-              opts[:install_command_options][:cmdline_dl_dir].must_equal "/tmp"
+              _(opts[:install_command_options][:cmdline_dl_dir]).must_equal "/tmp"
             end.returns(installer)
             cmd
           end
@@ -577,14 +568,14 @@ describe Kitchen::Provisioner::ChefBase do
 
         Mixlib::Install::ScriptGenerator.expects(:new)
           .with(default_version, false, install_opts_clone).returns(installer)
-        cmd.must_equal "my_sudo_command my_install_command"
+        _(cmd).must_equal "my_sudo_command my_install_command"
       end
 
       it "does not pass shell type for product based command" do
         config[:product_name] = "product_name"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts.key?(:shell_type).must_equal false
+          _(opts.key?(:shell_type)).must_equal false
         end.returns(installer)
         cmd
       end
@@ -596,7 +587,7 @@ describe Kitchen::Provisioner::ChefBase do
         install_opts_clone[:sudo_command] = ""
         Mixlib::Install::ScriptGenerator.expects(:new)
           .with(default_version, false, install_opts_clone).returns(installer)
-        cmd.must_equal "my_install_command"
+        _(cmd).must_equal "my_install_command"
       end
     end
 
@@ -620,7 +611,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:product_name] = "product_name"
 
         Mixlib::Install.expects(:new).with do |opts|
-          opts[:shell_type].must_equal :ps1
+          _(opts[:shell_type]).must_equal :ps1
         end.returns(installer)
         cmd
       end
@@ -651,13 +642,13 @@ describe Kitchen::Provisioner::ChefBase do
       it "prefixs the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 
-        cmd.must_match(/\Amy_prefix /)
+        _(cmd).must_match(/\Amy_prefix /)
       end
 
       it "does not prefix the command if command_prefix is not set" do
         config[:command_prefix] = nil
 
-        cmd.wont_match(/\Amy_prefix /)
+        _(cmd).wont_match(/\Amy_prefix /)
       end
     end
 
@@ -665,18 +656,18 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:shell_type).returns("bourne") }
 
       it "uses bourne shell" do
-        cmd.must_match(/\Ash -c '$/)
-        cmd.must_match(/'\Z/)
+        _(cmd).must_match(/\Ash -c '$/)
+        _(cmd).must_match(/'\Z/)
       end
 
       it "ends with a single quote" do
-        cmd.must_match(/'\Z/)
+        _(cmd).must_match(/'\Z/)
       end
 
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
-        cmd.lines.to_a[1..2].must_equal([
+        _(cmd.lines.to_a[1..2]).must_equal([
                                           %{http_proxy="http://proxy"; export http_proxy\n},
                                           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
                                         ])
@@ -685,7 +676,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines.to_a[1..2].must_equal([
+        _(cmd.lines.to_a[1..2]).must_equal([
                                           %{https_proxy="https://proxy"; export https_proxy\n},
                                           %{HTTPS_PROXY="https://proxy"; export HTTPS_PROXY\n},
                                         ])
@@ -695,7 +686,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines.to_a[1..4].must_equal([
+        _(cmd.lines.to_a[1..4]).must_equal([
                                           %{http_proxy="http://proxy"; export http_proxy\n},
                                           %{HTTP_PROXY="http://proxy"; export HTTP_PROXY\n},
                                           %{https_proxy="https://proxy"; export https_proxy\n},
@@ -706,13 +697,13 @@ describe Kitchen::Provisioner::ChefBase do
       it "prepends sudo for rm when :sudo is set" do
         config[:sudo] = true
 
-        cmd.must_match regexify(%{sudo_rm="sudo -E rm"})
+        _(cmd).must_match regexify(%{sudo_rm="sudo -E rm"})
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
         config[:sudo] = false
 
-        cmd.must_match regexify(%{sudo_rm="rm"})
+        _(cmd).must_match regexify(%{sudo_rm="rm"})
       end
 
       it "sets chef component dirs for deletion" do
@@ -722,13 +713,13 @@ describe Kitchen::Provisioner::ChefBase do
           /route/encrypted_data_bag_secret /route/environments /route/roles
         }.join(" ")
 
-        cmd.must_match regexify(%{dirs="#{dirs}"})
+        _(cmd).must_match regexify(%{dirs="#{dirs}"})
       end
 
       it "sets the root_path from :root_path" do
         config[:root_path] = "RIGHT_HERE"
 
-        cmd.must_match regexify(%{root_path="RIGHT_HERE"})
+        _(cmd).must_match regexify(%{root_path="RIGHT_HERE"})
       end
     end
 
@@ -741,7 +732,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
-        cmd.lines.to_a[0..1].must_equal([
+        _(cmd.lines.to_a[0..1]).must_equal([
                                           %{$env:http_proxy = "http://proxy"\n},
                                           %{$env:HTTP_PROXY = "http://proxy"\n},
                                         ])
@@ -750,7 +741,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines.to_a[0..1].must_equal([
+        _(cmd.lines.to_a[0..1]).must_equal([
                                           %{$env:https_proxy = "https://proxy"\n},
                                           %{$env:HTTPS_PROXY = "https://proxy"\n},
                                         ])
@@ -760,7 +751,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
 
-        cmd.lines.to_a[0..3].must_equal([
+        _(cmd.lines.to_a[0..3]).must_equal([
                                           %{$env:http_proxy = "http://proxy"\n},
                                           %{$env:HTTP_PROXY = "http://proxy"\n},
                                           %{$env:https_proxy = "https://proxy"\n},
@@ -782,7 +773,7 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the root_path from :root_path" do
         config[:root_path] = "RIGHT_HERE"
 
-        cmd.must_match regexify(%{$root_path = "RIGHT_HERE"})
+        _(cmd).must_match regexify(%{$root_path = "RIGHT_HERE"})
       end
     end
   end
@@ -791,7 +782,7 @@ describe Kitchen::Provisioner::ChefBase do
     describe "when require_chef_omnibus is true and product_version is not set" do
       it "returns :latest" do
         config[:require_chef_omnibus] = true
-        provisioner.product_version.must_equal :latest
+        _(provisioner.product_version).must_equal :latest
       end
     end
 
@@ -799,21 +790,21 @@ describe Kitchen::Provisioner::ChefBase do
       it "returns nil" do
         config[:product_version] = nil
         config[:require_chef_omnibus] = false
-        provisioner.product_version.must_be_nil
+        _(provisioner.product_version).must_be_nil
       end
     end
 
     describe "when require_chef_omnibus is a string" do
       it "returns the require_chef_omnibus string" do
         config[:require_chef_omnibus] = "15.0.0"
-        provisioner.product_version.must_match "15.0.0"
+        _(provisioner.product_version).must_match "15.0.0"
       end
     end
 
     describe "when product_version is set" do
       it "returns the product_version string" do
         config[:product_version] = "15.0.0"
-        provisioner.product_version.must_match "15.0.0"
+        _(provisioner.product_version).must_match "15.0.0"
       end
     end
   end
@@ -860,7 +851,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
       it "does not call the license-acceptance flow" do
         provisioner.check_license
-        config[:chef_license].must_be_nil
+        _(config[:chef_license]).must_be_nil
       end
     end
 
@@ -870,7 +861,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
       it "does not call the license-acceptance flow" do
         provisioner.check_license
-        config[:chef_license].must_equal "foo"
+        _(config[:chef_license]).must_equal "foo"
       end
 
       describe "when there is an error accepting the license" do
@@ -885,7 +876,7 @@ describe Kitchen::Provisioner::ChefBase do
             raise LicenseAcceptance::LicenseNotAcceptedError.new(product, [product])
           end
           assert_raises(LicenseAcceptance::LicenseNotAcceptedError) { provisioner.check_license }
-          config[:chef_license].must_be_nil
+          _(config[:chef_license]).must_be_nil
         end
       end
     end
@@ -927,42 +918,41 @@ describe Kitchen::Provisioner::ChefBase do
         config[:attributes] = { "one" => { "two" => "three" } }
         provisioner.create_sandbox
 
-        json["one"].must_equal("two" => "three")
+        _(json["one"]).must_equal("two" => "three")
       end
 
       it "creates a json file with run_list" do
         config[:run_list] = %w{alpha bravo charlie}
         provisioner.create_sandbox
 
-        json["run_list"].must_equal %w{alpha bravo charlie}
+        _(json["run_list"]).must_equal %w{alpha bravo charlie}
       end
 
       it "creates a json file with an empty run_list" do
         config[:run_list] = []
         provisioner.create_sandbox
 
-        json["run_list"].must_equal []
+        _(json["run_list"]).must_equal []
       end
 
       it "logs a message on info" do
         provisioner.create_sandbox
 
-        logged_output.string.must_match info_line("Preparing dna.json")
+        _(logged_output.string).must_match info_line("Preparing dna.json")
       end
 
       it "logs a message on debug" do
         config[:run_list] = ["yo"]
         provisioner.create_sandbox
 
-        logged_output.string
-          .must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
+        _(logged_output.string).must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
       end
     end
 
     it "creates a cache directory" do
       provisioner.create_sandbox
 
-      sandbox_path("cache").directory?.must_equal true
+      _(sandbox_path("cache").directory?).must_equal true
     end
 
     %w{data data_bags environments nodes roles clients}.each do |thing|
@@ -976,29 +966,29 @@ describe Kitchen::Provisioner::ChefBase do
           config[:"#{thing}_path"] = nil
           provisioner.create_sandbox
 
-          sandbox_path(thing).directory?.must_equal false
+          _(sandbox_path(thing).directory?).must_equal false
         end
 
         it "copies tree from :#{thing}_path into sandbox" do
           provisioner.create_sandbox
 
-          sandbox_path("#{thing}/alpha.txt").file?.must_equal true
-          IO.read(sandbox_path("#{thing}/alpha.txt")).must_equal "stuff"
-          sandbox_path("#{thing}/sub").directory?.must_equal true
-          sandbox_path("#{thing}/sub/bravo.txt").file?.must_equal true
-          IO.read(sandbox_path("#{thing}/sub/bravo.txt")).must_equal "junk"
+          _(sandbox_path("#{thing}/alpha.txt").file?).must_equal true
+          _(IO.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
+          _(sandbox_path("#{thing}/sub").directory?).must_equal true
+          _(sandbox_path("#{thing}/sub/bravo.txt").file?).must_equal true
+          _(IO.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
         end
 
         it "logs a message on info" do
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line("Preparing #{thing}")
+          _(logged_output.string).must_match info_line("Preparing #{thing}")
         end
 
         it "logs a message on debug" do
           provisioner.create_sandbox
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "Using #{thing} from #{config[:kitchen_root]}/my_#{thing}"
           )
         end
@@ -1018,26 +1008,26 @@ describe Kitchen::Provisioner::ChefBase do
         config[:encrypted_data_bag_secret_key_path] = nil
         provisioner.create_sandbox
 
-        sandbox_path("encrypted_data_bag_secret").file?.must_equal false
+        _(sandbox_path("encrypted_data_bag_secret").file?).must_equal false
       end
 
       it "copies file from :encrypted_data_bag_secret_key_path into sandbox" do
         provisioner.create_sandbox
 
-        sandbox_path("encrypted_data_bag_secret").file?.must_equal true
-        IO.read(sandbox_path("encrypted_data_bag_secret")).must_equal "p@ss"
+        _(sandbox_path("encrypted_data_bag_secret").file?).must_equal true
+        _(IO.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
       end
 
       it "logs a message on info" do
         provisioner.create_sandbox
 
-        logged_output.string.must_match info_line("Preparing secret")
+        _(logged_output.string).must_match info_line("Preparing secret")
       end
 
       it "logs a message on debug" do
         provisioner.create_sandbox
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "Using secret from #{config[:kitchen_root]}/my_secret"
         )
       end
@@ -1052,12 +1042,10 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/cookbooks/jahva")
           provisioner.create_sandbox
 
-          sandbox_path("cookbooks/epache").directory?.must_equal true
-          sandbox_path("cookbooks/epache/recipes/default.rb")
-            .file?.must_equal true
-          sandbox_path("cookbooks/jahva").directory?.must_equal true
-          sandbox_path("cookbooks/jahva/recipes/default.rb")
-            .file?.must_equal true
+          _(sandbox_path("cookbooks/epache").directory?).must_equal true
+          _(sandbox_path("cookbooks/epache/recipes/default.rb").file?).must_equal true
+          _(sandbox_path("cookbooks/jahva").directory?).must_equal true
+          _(sandbox_path("cookbooks/jahva/recipes/default.rb").file?).must_equal true
         end
 
         it "copies from kitchen_root as cookbook if it contains metadata.rb" do
@@ -1067,9 +1055,9 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/cookbooks/bk")
           provisioner.create_sandbox
 
-          sandbox_path("cookbooks/bk").directory?.must_equal true
-          sandbox_path("cookbooks/wat").directory?.must_equal true
-          sandbox_path("cookbooks/wat/metadata.rb").file?.must_equal true
+          _(sandbox_path("cookbooks/bk").directory?).must_equal true
+          _(sandbox_path("cookbooks/wat").directory?).must_equal true
+          _(sandbox_path("cookbooks/wat/metadata.rb").file?).must_equal true
         end
 
         it "copies site-cookbooks/ if it exists" do
@@ -1077,16 +1065,16 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/site-cookbooks/mine")
           provisioner.create_sandbox
 
-          sandbox_path("cookbooks/upstream").directory?.must_equal true
-          sandbox_path("cookbooks/mine").directory?.must_equal true
-          sandbox_path("cookbooks/mine/attributes/all.rb").file?.must_equal true
+          _(sandbox_path("cookbooks/upstream").directory?).must_equal true
+          _(sandbox_path("cookbooks/mine").directory?).must_equal true
+          _(sandbox_path("cookbooks/mine/attributes/all.rb").file?).must_equal true
         end
 
         it "logs a message on info for cookbooks/ directory" do
           create_cookbook("#{kitchen_root}/cookbooks/epache")
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line(
+          _(logged_output.string).must_match info_line(
             "Preparing cookbooks from project directory"
           )
         end
@@ -1095,7 +1083,7 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/cookbooks/epache")
           provisioner.create_sandbox
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "Using cookbooks from #{kitchen_root}/cookbooks"
           )
         end
@@ -1105,7 +1093,7 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/site-cookbooks/mine")
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line(
+          _(logged_output.string).must_match info_line(
             "Preparing site-cookbooks from project directory"
           )
         end
@@ -1115,7 +1103,7 @@ describe Kitchen::Provisioner::ChefBase do
           create_cookbook("#{kitchen_root}/site-cookbooks/mine")
           provisioner.create_sandbox
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "Using cookbooks from #{kitchen_root}/site-cookbooks"
           )
         end
@@ -1131,14 +1119,14 @@ describe Kitchen::Provisioner::ChefBase do
         it "copies from kitchen_root as cookbook if it contains metadata.rb" do
           provisioner.create_sandbox
 
-          sandbox_path("cookbooks/wat").directory?.must_equal true
-          sandbox_path("cookbooks/wat/metadata.rb").file?.must_equal true
+          _(sandbox_path("cookbooks/wat").directory?).must_equal true
+          _(sandbox_path("cookbooks/wat/metadata.rb").file?).must_equal true
         end
 
         it "logs a message on info" do
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line(
+          _(logged_output.string).must_match info_line(
             "Preparing current project directory as a cookbook"
           )
         end
@@ -1146,7 +1134,7 @@ describe Kitchen::Provisioner::ChefBase do
         it "logs a meesage on debug" do
           provisioner.create_sandbox
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "Using metadata.rb from #{kitchen_root}/metadata.rb"
           )
         end
@@ -1156,7 +1144,7 @@ describe Kitchen::Provisioner::ChefBase do
             file.write("nameeeeee 'wat'")
           end
 
-          proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+          _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
         end
       end
 
@@ -1165,16 +1153,15 @@ describe Kitchen::Provisioner::ChefBase do
           name = File.basename(@root)
           provisioner.create_sandbox
 
-          sandbox_path("cookbooks/#{name}").directory?.must_equal true
-          sandbox_path("cookbooks/#{name}/metadata.rb").file?.must_equal true
-          IO.read(sandbox_path("cookbooks/#{name}/metadata.rb"))
-            .must_equal %{name "#{name}"\n}
+          _(sandbox_path("cookbooks/#{name}").directory?).must_equal true
+          _(sandbox_path("cookbooks/#{name}/metadata.rb").file?).must_equal true
+          _(IO.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
         end
 
         it "logs a warning" do
           provisioner.create_sandbox
 
-          logged_output.string.must_match regexify(
+          _(logged_output.string).must_match regexify(
             "Berksfile, cookbooks/, or metadata.rb not found",
             :partial_line
           )
@@ -1210,7 +1197,7 @@ describe Kitchen::Provisioner::ChefBase do
           describe "when using a provisoner that doesn't support policyfiles" do
             # This is be the default, provisioners must opt-in.
             it "raises a UserError" do
-              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
             end
           end
 
@@ -1223,7 +1210,7 @@ describe Kitchen::Provisioner::ChefBase do
             it "logs on debug that it autodetected the policyfile" do
               provisioner
 
-              logged_output.string.must_match debug_line(
+              _(logged_output.string).must_match debug_line(
                 "Policyfile found at #{kitchen_root}/Policyfile.rb, "\
                 "using Policyfile to resolve cookbook dependencies"
               )
@@ -1253,7 +1240,7 @@ describe Kitchen::Provisioner::ChefBase do
                 "policy_group" => "local",
               }
 
-              dna_json_data.must_equal(expected)
+              _(dna_json_data).must_equal(expected)
             end
           end
         end
@@ -1317,7 +1304,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
           describe "when the policyfile doesn't exist" do
             it "raises a UserError" do
-              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
             end
           end
           describe "when the policyfile lock doesn't exist" do
@@ -1396,7 +1383,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
           describe "when the policyfile doesn't exist" do
             it "raises a UserError" do
-              proc { provisioner.create_sandbox }.must_raise Kitchen::UserError
+              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
             end
           end
         end
@@ -1416,14 +1403,14 @@ describe Kitchen::Provisioner::ChefBase do
           Kitchen::Provisioner::Chef::Berkshelf.stubs(:load_berkshelf!).with do
             raise Kitchen::UserError, "Load failed"
           end
-          proc { provisioner }.must_raise Kitchen::UserError
+          _(proc { provisioner }).must_raise Kitchen::UserError
         end
 
         it "logs on debug that Berkshelf is loading" do
           Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
           provisioner
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "Berksfile found at #{kitchen_root}/Berksfile, using Berkshelf to resolve cookbook dependencies"
           )
         end
@@ -1462,7 +1449,7 @@ describe Kitchen::Provisioner::ChefBase do
             Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
             provisioner
 
-            logged_output.string.must_match debug_line(
+            _(logged_output.string).must_match debug_line(
               "Berksfile found at #{kitchen_root}/foo-berks.rb, using Berkshelf to resolve cookbook dependencies"
             )
           end
@@ -1502,7 +1489,7 @@ describe Kitchen::Provisioner::ChefBase do
             Kitchen::Provisioner::Chef::Berkshelf.stubs(:load!)
             provisioner
 
-            logged_output.string.must_match debug_line(
+            _(logged_output.string).must_match debug_line(
               "Berksfile found at #{File.expand_path("../foo-berks.rb", kitchen_root)}, using Berkshelf to resolve cookbook dependencies"
             )
           end
@@ -1529,7 +1516,7 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           full_cookbook_files.each do |file|
-            sandbox_path("cookbooks/full/#{file}").file?.must_equal true
+            _(sandbox_path("cookbooks/full/#{file}").file?).must_equal true
           end
         end
 
@@ -1546,7 +1533,7 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           extras.each do |file|
-            sandbox_path("cookbooks/full/#{file}").file?.must_equal false
+            _(sandbox_path("cookbooks/full/#{file}").file?).must_equal false
           end
         end
 
@@ -1554,7 +1541,7 @@ describe Kitchen::Provisioner::ChefBase do
           create_full_cookbook("#{kitchen_root}/cookbooks/full")
           provisioner.create_sandbox
 
-          logged_output.string.must_match info_line(
+          _(logged_output.string).must_match info_line(
             "Removing non-cookbook files before transfer"
           )
         end
@@ -1568,76 +1555,76 @@ describe Kitchen::Provisioner::ChefBase do
         it "#create_sanbox creates a generic.rb" do
           provisioner.create_sandbox
 
-          sandbox_path("generic.rb").file?.must_equal true
+          _(sandbox_path("generic.rb").file?).must_equal true
         end
 
         describe "defaults" do
           before { provisioner.create_sandbox }
 
           it "sets node_name to the instance name" do
-            file.must_include %{node_name "#{instance.name}"}
+            _(file).must_include %{node_name "#{instance.name}"}
           end
 
           it "does not contain chef_license" do
-            file.wont_include %{chef_license}
+            _(file).wont_include %{chef_license}
           end
 
           it "sets checksum_path" do
-            file.must_include %{checksum_path "/tmp/kitchen/checksums"}
+            _(file).must_include %{checksum_path "/tmp/kitchen/checksums"}
           end
 
           it "sets file_backup_path" do
-            file.must_include %{file_backup_path "/tmp/kitchen/backup"}
+            _(file).must_include %{file_backup_path "/tmp/kitchen/backup"}
           end
 
           it "sets cookbook_path" do
-            file.must_include %{cookbook_path } +
+            _(file).must_include %{cookbook_path } +
               %{["/tmp/kitchen/cookbooks", "/tmp/kitchen/site-cookbooks"]}
           end
 
           it "sets data_bag_path" do
-            file.must_include %{data_bag_path "/tmp/kitchen/data_bags"}
+            _(file).must_include %{data_bag_path "/tmp/kitchen/data_bags"}
           end
 
           it "sets environment_path" do
-            file.must_include %{environment_path "/tmp/kitchen/environments"}
+            _(file).must_include %{environment_path "/tmp/kitchen/environments"}
           end
 
           it "sets node_path" do
-            file.must_include %{node_path "/tmp/kitchen/nodes"}
+            _(file).must_include %{node_path "/tmp/kitchen/nodes"}
           end
 
           it "sets role_path" do
-            file.must_include %{role_path "/tmp/kitchen/roles"}
+            _(file).must_include %{role_path "/tmp/kitchen/roles"}
           end
 
           it "sets client_path" do
-            file.must_include %{client_path "/tmp/kitchen/clients"}
+            _(file).must_include %{client_path "/tmp/kitchen/clients"}
           end
 
           it "sets user_path" do
-            file.must_include %{user_path "/tmp/kitchen/users"}
+            _(file).must_include %{user_path "/tmp/kitchen/users"}
           end
 
           it "sets validation_key" do
-            file.must_include %{validation_key "/tmp/kitchen/validation.pem"}
+            _(file).must_include %{validation_key "/tmp/kitchen/validation.pem"}
           end
 
           it "sets client_key" do
-            file.must_include %{client_key "/tmp/kitchen/client.pem"}
+            _(file).must_include %{client_key "/tmp/kitchen/client.pem"}
           end
 
           it "sets chef_server_url" do
-            file.must_include %{chef_server_url "http://127.0.0.1:8889"}
+            _(file).must_include %{chef_server_url "http://127.0.0.1:8889"}
           end
 
           it "sets encrypted_data_bag_secret" do
-            file.must_include %{encrypted_data_bag_secret } +
+            _(file).must_include %{encrypted_data_bag_secret } +
               %{"/tmp/kitchen/encrypted_data_bag_secret"}
           end
 
           it "disables deprecation warnings" do
-            file.must_include %{treat_deprecation_warnings_as_errors false}
+            _(file).must_include %{treat_deprecation_warnings_as_errors false}
           end
         end
 
@@ -1649,9 +1636,9 @@ describe Kitchen::Provisioner::ChefBase do
           }
           provisioner.create_sandbox
 
-          file.must_include %{node_name "eagles"}
-          file.must_include %{user_path "/a/b/c/u"}
-          file.must_include %{chef_server_url "https://whereever.io"}
+          _(file).must_include %{node_name "eagles"}
+          _(file).must_include %{user_path "/a/b/c/u"}
+          _(file).must_include %{chef_server_url "https://whereever.io"}
         end
 
         it " supports adding new configuration" do
@@ -1660,14 +1647,14 @@ describe Kitchen::Provisioner::ChefBase do
           }
           provisioner.create_sandbox
 
-          file.must_include %{dark_secret "golang"}
+          _(file).must_include %{dark_secret "golang"}
         end
 
         it "supports accepting the chef_license" do
           config[:chef_license] = "accept-no-persist"
           provisioner.create_sandbox
 
-          file.must_include %{chef_license "accept-no-persist"}
+          _(file).must_include %{chef_license "accept-no-persist"}
         end
       end
 

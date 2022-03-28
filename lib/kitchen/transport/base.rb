@@ -128,8 +128,8 @@ module Kitchen
             tries += 1
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
-          rescue Kitchen::Transport::TransportFailed => e
-            if retry?(tries, max_retries, retryable_exit_codes, e.exit_code)
+          rescue Exception => e
+            if retry?(tries, max_retries, retryable_exit_codes, e)
               close
               sleep wait_time
               retry
@@ -139,10 +139,14 @@ module Kitchen
           end
         end
 
-        def retry?(current_try, max_retries, retryable_exit_codes, exit_code)
-          current_try <= max_retries &&
-            !retryable_exit_codes.nil? &&
-            retryable_exit_codes.flatten.include?(exit_code)
+        def retry?(current_try, max_retries, retryable_exit_codes, exception)
+          if exception.is_a?(Kitchen::Transport::TransportFailed)
+            return current_try <= max_retries &&
+                !retryable_exit_codes.nil? &&
+                retryable_exit_codes.flatten.include?(exception.exit_code)
+          end
+
+          false
         end
 
         # Builds a LoginCommand which can be used to open an interactive
