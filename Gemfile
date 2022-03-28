@@ -19,3 +19,5 @@ end
 group :chefstyle do
   gem "chefstyle", "2.2.2"
 end
+
+gem "simplecov", require: false
