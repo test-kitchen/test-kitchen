@@ -27,17 +27,10 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - run: bundle exec kitchen test
-
-          # - script: |
-          #     bundle exec rake unit && bundle exec rake quality
-          #   displayName: Run Tests
-          #   env:
-          #     SPEC_OPTS: --format progress
-          # - script: |
-          #     winrm.cmd quickconfig -q
-          #     net user /add %machine_user% %machine_pass%
-          #     net localgroup administrators %machine_user% /add
-          #     bundle install --with integration
-          #     bundle exec kitchen verify windows
-          #   displayName: Run Converge
+      - run: bundle exec rake unit && bundle exec rake quality
+      - run: |
+          winrm.cmd quickconfig -q
+          net user /add %machine_user% %machine_pass%
+          net localgroup administrators %machine_user% /add
+          bundle install --with integration
+          bundle exec kitchen verify windows
