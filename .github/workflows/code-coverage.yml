@@ -2,9 +2,7 @@
 name: code-coverage
 
 'on':
-  pull_request_target:
-    types:
-     - opened
+  pull_request:
     branches:
      - main
   push:
