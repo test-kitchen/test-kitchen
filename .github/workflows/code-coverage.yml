@@ -3,10 +3,7 @@ name: code-coverage
 
 'on':
   pull_request_target:
-    types:
-      - opened
-    branches:
-      - main
+    types: [assigned, opened, synchronize, reopened, edited]
 
 jobs:
   coverage-test:
