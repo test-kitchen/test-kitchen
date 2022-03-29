@@ -23,3 +23,14 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - run: bundle exec rake unit features
+  coverage-report:
+    needs: test
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coverage Report
+        uses: aki77/simplecov-report-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          failedThreshold: 90
+          resultPath: coverage/.last_run.json
