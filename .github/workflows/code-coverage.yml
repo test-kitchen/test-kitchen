@@ -2,8 +2,7 @@
 name: code-coverage
 
 'on':
-  pull_request_target:
-    types: [assigned, opened, synchronize, reopened, edited]
+  pull_request_target
 
 jobs:
   coverage-test:
@@ -12,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{github.event.pull_request.head.ref}}
+          ref: ${{github.event.pull_request.head.sha}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
       - name: Set up ruby 2.7
         uses: ruby/setup-ruby@v1
