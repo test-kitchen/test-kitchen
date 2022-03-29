@@ -57,24 +57,24 @@ describe Kitchen::Verifier::Shell do
   end
 
   it "verifier api_version is 1" do
-    verifier.diagnose_plugin[:api_version].must_equal 1
+    _(verifier.diagnose_plugin[:api_version]).must_equal 1
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    verifier.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(verifier.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "configuration" do
     it "sets :sleep to 0 by default" do
-      verifier[:sleep].must_equal 0
+      _(verifier[:sleep]).must_equal 0
     end
 
     it "sets :command to 'true' by default" do
-      verifier[:command].must_equal "true"
+      _(verifier[:command]).must_equal "true"
     end
 
     it "sets :live_stream to stdout by default" do
-      verifier[:live_stream].must_equal $stdout
+      _(verifier[:live_stream]).must_equal $stdout
     end
   end
 
@@ -92,31 +92,31 @@ describe Kitchen::Verifier::Shell do
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
         verifier.call(state)
-        config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"].must_equal "testhost"
-        config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"].must_equal "i-xxxxxx"
-        config[:shellout_opts][:environment]["KITCHEN_PORT"].must_equal "22"
-        config[:shellout_opts][:environment]["KITCHEN_INSTANCE"].must_equal "coolbeans-fries"
-        config[:shellout_opts][:environment]["KITCHEN_PLATFORM"].must_equal "coolbeans"
-        config[:shellout_opts][:environment]["KITCHEN_SUITE"].must_equal "fries"
-        config[:shellout_opts][:environment]["KITCHEN_USERNAME"].must_be_nil
+        _(config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"]).must_equal "testhost"
+        _(config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"]).must_equal "i-xxxxxx"
+        _(config[:shellout_opts][:environment]["KITCHEN_PORT"]).must_equal "22"
+        _(config[:shellout_opts][:environment]["KITCHEN_INSTANCE"]).must_equal "coolbeans-fries"
+        _(config[:shellout_opts][:environment]["KITCHEN_PLATFORM"]).must_equal "coolbeans"
+        _(config[:shellout_opts][:environment]["KITCHEN_SUITE"]).must_equal "fries"
+        _(config[:shellout_opts][:environment]["KITCHEN_USERNAME"]).must_be_nil
       end
 
       it "transport username is set to environment" do
         transport.stubs(:[]).with(:username).returns("demigod")
         verifier.call(state)
-        config[:shellout_opts][:environment]["KITCHEN_USERNAME"].must_equal "demigod"
+        _(config[:shellout_opts][:environment]["KITCHEN_USERNAME"]).must_equal "demigod"
       end
 
       it "raises ActionFailed if set false to :command" do
         config[:command] = "false"
 
-        proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+        _(proc { verifier.call(state) }).must_raise Kitchen::ActionFailed
       end
 
       it "logs a converge event to INFO" do
         verifier.call(state)
 
-        logged_output.string.must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
+        _(logged_output.string).must_match(/^.+ INFO .+ \[Shell\] Verify on .+$/)
       end
     end
 
@@ -166,7 +166,7 @@ describe Kitchen::Verifier::Shell do
 
     it "returns string when remote_exec" do
       config[:remote_exec] = true
-      verifier.run_command.must_equal "true"
+      _(verifier.run_command).must_equal "true"
     end
   end
 end

@@ -61,21 +61,21 @@ describe Kitchen::Driver::Base do
   end
 
   it "#instance returns its instance" do
-    driver.instance.must_equal instance
+    _(driver.instance).must_equal instance
   end
 
   it "#puts calls logger.info" do
     driver.send(:puts, "yo")
 
-    logged_output.string.must_match(/I, /)
-    logged_output.string.must_match(/yo\n/)
+    _(logged_output.string).must_match(/I, /)
+    _(logged_output.string).must_match(/yo\n/)
   end
 
   it "#print calls logger.info" do
     driver.send(:print, "yo")
 
-    logged_output.string.must_match(/I, /)
-    logged_output.string.must_match(/yo\n/)
+    _(logged_output.string).must_match(/I, /)
+    _(logged_output.string).must_match(/yo\n/)
   end
 
   %i{create setup verify destroy}.each do |action|
@@ -101,31 +101,31 @@ describe Kitchen::Driver::Base do
       Kitchen::Driver::Base.any_instance.stubs(:run_command).raises(ShellCommandFailed, "Expected process to exit with [0], but received '1'")
 
       config[:pre_create_command] = "touch /this/dir/does/not/exist 2&>1 > /dev/null"
-      proc { driver.send(:pre_create_command) }.must_raise Kitchen::ActionFailed
+      _(proc { driver.send(:pre_create_command) }).must_raise Kitchen::ActionFailed
     end
   end
 
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
-      Kitchen::Driver::Speedy.serial_actions.must_be_nil
+      _(Kitchen::Driver::Speedy.serial_actions).must_be_nil
     end
 
     it "registers a single serial action method" do
-      Kitchen::Driver::Dodgy.serial_actions.must_equal [:setup]
+      _(Kitchen::Driver::Dodgy.serial_actions).must_equal [:setup]
     end
 
     it "registers multiple serial action methods" do
       actions = Kitchen::Driver::Slow.serial_actions
 
-      actions.must_include :create
-      actions.must_include :verify
-      actions.must_include :destroy
+      _(actions).must_include :create
+      _(actions).must_include :verify
+      _(actions).must_include :destroy
     end
 
     it "raises a ClientError if value is not an action method" do
-      proc do
+      _(proc do
         Class.new(Kitchen::Driver::Base) { no_parallel_for :telling_stories }
-      end.must_raise Kitchen::ClientError
+      end).must_raise Kitchen::ClientError
     end
   end
 end

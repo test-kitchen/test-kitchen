@@ -37,16 +37,16 @@ describe Kitchen::Driver::Proxy do
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(driver.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "non-parallel action" do
     it "create must be serially executed" do
-      Kitchen::Driver::Proxy.serial_actions.must_include :create
+      _(Kitchen::Driver::Proxy.serial_actions).must_include :create
     end
 
     it "destroy must be serially executed" do
-      Kitchen::Driver::Proxy.serial_actions.must_include :destroy
+      _(Kitchen::Driver::Proxy.serial_actions).must_include :destroy
     end
   end
 
@@ -54,7 +54,7 @@ describe Kitchen::Driver::Proxy do
     it "requires host" do
       config.delete(:host)
       err = assert_raises(Kitchen::UserError) { driver }
-      err.message.must_include "config[:host] cannot be blank"
+      _(err.message).must_include "config[:host] cannot be blank"
     end
 
     it "does not require reset_command" do
@@ -68,13 +68,13 @@ describe Kitchen::Driver::Proxy do
       driver.stubs(:ssh)
       driver.create(state)
 
-      state[:hostname].must_equal "foobnoobs.com"
+      _(state[:hostname]).must_equal "foobnoobs.com"
     end
 
     it "calls the reset command over ssh" do
       driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "foobnoobs.com"
-        cmd.must_equal "mulligan"
+        _(ssh_args[0]).must_equal "foobnoobs.com"
+        _(cmd).must_equal "mulligan"
       end
 
       driver.create(state)
@@ -97,13 +97,13 @@ describe Kitchen::Driver::Proxy do
       driver.stubs(:ssh)
       driver.destroy(state)
 
-      state[:hostname].must_be_nil
+      _(state[:hostname]).must_be_nil
     end
 
     it "calls the reset command over ssh" do
       driver.expects(:ssh).with do |ssh_args, cmd|
-        ssh_args[0].must_equal "beep"
-        cmd.must_equal "mulligan"
+        _(ssh_args[0]).must_equal "beep"
+        _(cmd).must_equal "mulligan"
       end
 
       driver.destroy(state)
