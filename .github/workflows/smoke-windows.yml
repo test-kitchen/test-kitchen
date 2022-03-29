@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ['2.6', '2.7', '3.0', '3.1']
-        yaml: ['windows.yml', 'windows-product.yml']
+        yaml: ['kitchen.windows.yml', 'kitchen.windows-product.yml']
     name: Windows Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
