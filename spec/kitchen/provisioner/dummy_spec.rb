@@ -48,20 +48,20 @@ describe Kitchen::Provisioner::Dummy do
   end
 
   it "provisioner api_version is 2" do
-    provisioner.diagnose_plugin[:api_version].must_equal 2
+    _(provisioner.diagnose_plugin[:api_version]).must_equal 2
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    provisioner.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(provisioner.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "configuration" do
     it "sets :sleep to 0 by default" do
-      provisioner[:sleep].must_equal 0
+      _(provisioner[:sleep]).must_equal 0
     end
 
     it "sets :random_failure to false by default" do
-      provisioner[:random_failure].must_equal false
+      _(provisioner[:random_failure]).must_equal false
     end
   end
 
@@ -76,20 +76,20 @@ describe Kitchen::Provisioner::Dummy do
     it "raises ActionFailed if :fail is set" do
       config[:fail] = true
 
-      proc { provisioner.call(state) }.must_raise Kitchen::ActionFailed
+      _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       provisioner.stubs(:randomly_fail?).returns(true)
 
-      proc { provisioner.call(state) }.must_raise Kitchen::ActionFailed
+      _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a converge event to INFO" do
       provisioner.call(state)
 
-      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)
+      _(logged_output.string).must_match(/^.+ INFO .+ \[Dummy\] Converge on .+$/)
     end
   end
 end

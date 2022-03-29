@@ -214,7 +214,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       let(:path) { "/tmp/kitchen/cookbooks" }
       it do
         null_logger.expects(:fatal)
-        proc { subject }.must_raise Kitchen::UserError
+        _ { subject }.must_raise Kitchen::UserError
       end
     end
   end
