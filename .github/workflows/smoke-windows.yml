@@ -46,6 +46,6 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Windows
-          bundle exec kitchen verify windows
+        run: bundle exec kitchen verify windows
         env:
           KITCHEN_YAML: ${{ matrix.yaml}}
