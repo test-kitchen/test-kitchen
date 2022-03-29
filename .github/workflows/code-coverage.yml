@@ -1,0 +1,30 @@
+---
+name: code-coverage
+
+'on':
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  coverage-test:
+    name: Coverage
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - name: run specs
+        run: bundle exec rake unit features
+      - name: Simplecov Report
+        uses: aki77/simplecov-report-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          failedThreshold: 90
+          resultPath: coverage/.last_run.json
