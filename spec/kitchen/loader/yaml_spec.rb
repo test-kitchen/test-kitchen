@@ -463,7 +463,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      err = _{ loader.read }.must_raise Kitchen::UserError
+      err = _ { loader.read }.must_raise Kitchen::UserError
 
       _(err.message).must_match Regexp.new(
         "Error parsing ERB content in ([a-zA-Z]:)?/tmp/.kitchen.yml"
