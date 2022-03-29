@@ -2,10 +2,9 @@
 name: code-coverage
 
 'on':
-  pull_request:
-    branches:
-      - main
-  push:
+  pull_request_target:
+    types:
+      - opened
     branches:
       - main
 
@@ -13,20 +12,6 @@ jobs:
   coverage-test:
     name: Coverage
     runs-on: ubuntu-18.04
-    permissions:
-      actions: write
-      checks: write
-      contents: write
-      deployments: write
-      id-token: write
-      issues: write
-      discussions: write
-      packages: write
-      pages: write
-      pull-requests: write
-      repository-projects: write
-      security-events: write
-      statuses: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up ruby 2.7
