@@ -16,9 +16,17 @@ jobs:
     permissions:
       actions: write
       checks: write
-      pull-requests: write
-      statuses: write
+      contents: write
+      deployments: write
+      id-token: write
       issues: write
+      discussions: write
+      packages: write
+      pages: write
+      pull-requests: write
+      repository-projects: write
+      security-events: write
+      statuses: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up ruby 2.7
