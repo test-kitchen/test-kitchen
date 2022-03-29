@@ -13,12 +13,6 @@ jobs:
   coverage-test:
     name: Coverage
     runs-on: ubuntu-18.04
-    permissions:
-      actions: write
-      checks: write
-      pull-requests: write
-      statuses: write
-      issues: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up ruby 2.7
