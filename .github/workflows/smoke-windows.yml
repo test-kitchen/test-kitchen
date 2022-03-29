@@ -20,8 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
-        yaml: ['kitchen.windows.yml', 'kitchen.windows-product.yml']
+        # ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.6']
+        # yaml: ['kitchen.windows.yml', 'kitchen.windows-product.yml']
+        yaml: ['kitchen.windows.yml']
     name: Windows Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
@@ -33,9 +35,10 @@ jobs:
       - run: bundle exec rake unit && bundle exec rake quality
       - run: |
           winrm.cmd quickconfig -q
-          net user /add %machine_user% %machine_pass%
-          net localgroup administrators %machine_user% /add
-          bundle install --with integration
+          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+          net localgroup administrators ${{ env.machine_user }} /add
+          bundle config set --local with 'integration'
+          bundle install
           bundle exec kitchen verify windows
         env:
           KITCHEN_YAML: ${{ matrix.yaml}}
