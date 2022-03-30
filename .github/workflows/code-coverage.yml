@@ -22,9 +22,9 @@ jobs:
           bundler-cache: true
       - name: run specs
         run: bundle exec rake unit features
-      - name: Simplecov Report
-        uses: aki77/simplecov-report-action@v1
+      - name: Upload coverage results
+        uses: actions/upload-artifact@master
+        if: always()
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          failedThreshold: 90
-          resultPath: coverage/.last_run.json
+          name: coverage-report
+          path: coverage
