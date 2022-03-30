@@ -118,11 +118,11 @@ describe Kitchen::Driver::SSHBase do
   end
 
   it "#create raises a ClientError" do
-    _ { driver.create(state) }).must_raise Kitchen::ClientError
+    _ { driver.create(state) }.must_raise Kitchen::ClientError
   end
 
   it "#destroy raises a ClientError" do
-    _ { driver.destroy(state) }).must_raise Kitchen::ClientError
+    _ { driver.destroy(state) }.must_raise Kitchen::ClientError
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -469,7 +469,7 @@ describe Kitchen::Driver::SSHBase do
       it "raises an ActionFailed on transfer when SshFailed is raised" do
         connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-        _ { cmd }).must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
@@ -514,7 +514,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      _ { cmd }).must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -576,7 +576,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      _ { cmd }).must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -679,13 +679,13 @@ describe Kitchen::Driver::SSHBase do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      _ { cmd }).must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed when SSHFailed is raised" do
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      _ { cmd }).must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -1083,14 +1083,14 @@ describe Kitchen::Driver::SSHBase do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:exec).raises(Kitchen::SSHFailed.new("dang"))
 
-        _ { cmd }).must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
 
       it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:exec).raises(Net::SSH::Exception.new("dang"))
 
-        _ { cmd }).must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
@@ -1122,14 +1122,14 @@ describe Kitchen::Driver::SSHBase do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:upload_path).raises(Kitchen::SSHFailed.new("dang"))
 
-        _ { cmd }).must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
 
       it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:upload_path).raises(Net::SSH::Exception.new("dang"))
 
-        _ { cmd }).must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
   end
