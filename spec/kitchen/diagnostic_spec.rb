@@ -115,7 +115,7 @@ describe Kitchen::Diagnostic do
     _(Kitchen::Diagnostic.new(
       instances: { error: "shoot" }, plugins: true
     ).read["plugins"])
-    .must_equal("error" => "shoot")
+      .must_equal("error" => "shoot")
   end
 
   it "#read returns the instances' diganose hashes if instances are present" do
@@ -125,6 +125,6 @@ describe Kitchen::Diagnostic do
 
   it "#read returns an error hash for instances if error hash is passed in" do
     _(Kitchen::Diagnostic.new(instances: { error: "shoot" }).read["instances"])
-    .must_equal("error" => "shoot")
+      .must_equal("error" => "shoot")
   end
 end

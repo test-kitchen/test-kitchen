@@ -714,7 +714,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         it "raises an SshFailed exception" do
-          e = _{ connection.execute("nope") }
+          e = _ { connection.execute("nope") }
             .must_raise Kitchen::Transport::SshFailed
 
           _(e.message).must_match regexify("SSH session could not be established")
@@ -915,7 +915,7 @@ describe Kitchen::Transport::Ssh::Connection do
       it "raises an SshFailed exception" do
         err = _ { assert_scripted { connection.execute("doit") } }
           .must_raise Kitchen::Transport::SshFailed
-          
+
         _(err.message).must_equal "SSH exited (42) for command: [doit]"
       end
 
@@ -1231,7 +1231,7 @@ describe Kitchen::Transport::Ssh::Connection do
       it "raises SshFailed when an SSH exception is raised" do
         conn.stubs(:scp).raises(Net::SSH::Exception)
 
-        e = _{ connection.download("nope", "fail") }
+        e = _ { connection.download("nope", "fail") }
           .must_raise Kitchen::Transport::SshFailed
 
         _(e.message).must_match regexify("SCP download failed")

@@ -980,8 +980,7 @@ describe Kitchen::Instance do
           instance.public_send(action)
         rescue Kitchen::Error => e
           _(e.message)
-            .must_match regex_for("Create failed on instance #{instance.to_str}"
-          )
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
 
         it "logs the failure" do
@@ -992,8 +991,7 @@ describe Kitchen::Instance do
           end
 
           _(logger_io.string)
-            .must_match regex_for("Create failed on instance #{instance.to_str}"
-          )
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
       end
 
@@ -1021,8 +1019,7 @@ describe Kitchen::Instance do
           instance.public_send(action)
         rescue Kitchen::Error => e
           _(e.message)
-            .must_match regex_for("Failed to complete #create action: [watwat]"
-          )
+            .must_match regex_for("Failed to complete #create action: [watwat]")
         end
 
         it "logs the failure" do
@@ -1033,8 +1030,7 @@ describe Kitchen::Instance do
           end
 
           _(logger_io.string)
-            .must_match regex_for("Create failed on instance #{instance.to_str}"
-          )
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
       end
     end
