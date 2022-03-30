@@ -70,14 +70,14 @@ describe Kitchen::Driver::Dummy do
     it "raises ActionFailed if :fail_create is set" do
       config[:fail_create] = true
 
-      _ { driver.create(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.create(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      _ { driver.create(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.create(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "will only raise ActionFailed if :random_failure is set" do
@@ -110,14 +110,14 @@ describe Kitchen::Driver::Dummy do
     it "raises ActionFailed if :fail_setup is set" do
       config[:fail_setup] = true
 
-      _ { driver.setup(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.setup(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      _ { driver.setup(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.setup(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a setup event to INFO" do
@@ -138,14 +138,14 @@ describe Kitchen::Driver::Dummy do
     it "raises ActionFailed if :fail_verify is set" do
       config[:fail_verify] = true
 
-      _ { driver.verify(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.verify(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      _ { driver.verify(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.verify(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a verify event to INFO" do
@@ -173,14 +173,14 @@ describe Kitchen::Driver::Dummy do
     it "raises ActionFailed if :fail_destroy is set" do
       config[:fail_destroy] = true
 
-      _ { driver.destroy(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.destroy(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       driver.stubs(:randomly_fail?).returns(true)
 
-      _ { driver.destroy(state) }).must_raise Kitchen::ActionFailed
+      _ { driver.destroy(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a destroy event to INFO" do
