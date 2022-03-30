@@ -50,7 +50,7 @@ describe Kitchen::SSH do
         end
 
         it "reraises the #{klass} exception" do
-          proc { ssh.exec("nope") }.must_raise klass
+          _ { ssh.exec("nope") }.must_raise klass
         end
 
         it "attempts to connect ':ssh_retries' times" do
@@ -198,7 +198,7 @@ describe Kitchen::SSH do
       end
 
       it "raises an SSHFailed exception" do
-        err = proc { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
+        err = _ { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
         err.message.must_equal "SSH exited (42) for command: [doit]"
       end
     end

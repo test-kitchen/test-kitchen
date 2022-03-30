@@ -50,37 +50,39 @@ describe Kitchen::Diagnostic do
   end
 
   it "#read returns a Hash" do
-    Kitchen::Diagnostic.new.read.must_be_instance_of Hash
+    _(Kitchen::Diagnostic.new.read)
+      .must_be_instance_of Hash
   end
 
   it "#read returns the version of Test Kitchen" do
-    Kitchen::Diagnostic.new.read["kitchen_version"].must_equal Kitchen::VERSION
+    _(Kitchen::Diagnostic.new.read["kitchen_version"])
+      .must_equal Kitchen::VERSION
   end
 
   it "#read returns a timestamp in UTC" do
     Time.stubs(:now).returns(Time.at(0))
 
-    Kitchen::Diagnostic.new.read["timestamp"]
+    _(Kitchen::Diagnostic.new.read["timestamp"])
       .must_equal "1970-01-01 00:00:00 UTC"
   end
 
   it "#read doesn't return a loader hash if not given one" do
-    Kitchen::Diagnostic.new.read.key?("loader").must_equal false
+    _(Kitchen::Diagnostic.new.read.key?("loader"))
+      .must_equal false
   end
 
   it "#read returns the loader's diganose hash if a loader is present" do
-    Kitchen::Diagnostic.new(loader: loader)
-      .read["loader"].must_equal("who" => "loader")
+    _(Kitchen::Diagnostic.new(loader: loader).read["loader"])
+      .must_equal("who" => "loader")
   end
 
   it "#read returns an error hash for loader if error hash is passed in" do
-    Kitchen::Diagnostic.new(loader: { error: "damn" })
-      .read["loader"].must_equal("error" => "damn")
+    _(Kitchen::Diagnostic.new(loader: { error: "damn" }).read["loader"])
+      .must_equal("error" => "damn")
   end
 
   it "#read returns the unique set of plugins' diagnose hash if :plugins is set" do
-    Kitchen::Diagnostic.new(instances: instances, plugins: true)
-      .read["plugins"]
+    _(Kitchen::Diagnostic.new(instances: instances, plugins: true).read["plugins"])
       .must_equal(
         "driver" => {
           "driva" => { "a" => "b" },
@@ -100,28 +102,29 @@ describe Kitchen::Diagnostic do
   end
 
   it "#read returns an empty plugins hash if no instances were given" do
-    Kitchen::Diagnostic.new(plugins: true)
-      .read["plugins"].must_equal({})
+    _(Kitchen::Diagnostic.new(plugins: true).read["plugins"])
+      .must_equal({})
   end
 
   it "#read returns an empty instances hash if no instances were given" do
-    Kitchen::Diagnostic.new.read["instances"].must_equal({})
+    _(Kitchen::Diagnostic.new.read["instances"])
+      .must_equal({})
   end
 
   it "#read returns an error hash for plugins if error hash is passed in" do
-    Kitchen::Diagnostic.new(
+    _(Kitchen::Diagnostic.new(
       instances: { error: "shoot" }, plugins: true
-    ).read["plugins"].must_equal("error" => "shoot")
+    ).read["plugins"])
+    .must_equal("error" => "shoot")
   end
 
   it "#read returns the instances' diganose hashes if instances are present" do
-    Kitchen::Diagnostic.new(instances: instances)
-      .read["instances"]
+    _(Kitchen::Diagnostic.new(instances: instances).read["instances"])
       .must_equal("i1" => { "stuff" => "sup" }, "i2" => { "stuff" => "yo" })
   end
 
   it "#read returns an error hash for instances if error hash is passed in" do
-    Kitchen::Diagnostic.new(instances: { error: "shoot" })
-      .read["instances"].must_equal("error" => "shoot")
+    _(Kitchen::Diagnostic.new(instances: { error: "shoot" }).read["instances"])
+    .must_equal("error" => "shoot")
   end
 end

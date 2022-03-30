@@ -43,7 +43,7 @@ describe Kitchen::Transport::Base do
   end
 
   it "has an #connection method which raises a ClientError" do
-    proc { transport.connection({}) }.must_raise Kitchen::ClientError
+    _ { transport.connection({}) }.must_raise Kitchen::ClientError
   end
 
   describe "#logger" do
@@ -110,20 +110,20 @@ describe Kitchen::Transport::Base::Connection do
   end
 
   it "has an #execute method which raises a ClientError" do
-    proc { connection.execute("boo") }.must_raise Kitchen::ClientError
+    _ { connection.execute("boo") }.must_raise Kitchen::ClientError
   end
 
   it "has a #login_command method which raises an ActionFailed" do
-    proc { connection.login_command }.must_raise Kitchen::ActionFailed
+    _ { connection.login_command }.must_raise Kitchen::ActionFailed
   end
 
   it "has an #upload method which raises a ClientError" do
-    proc { connection.upload(["file"], "/path/to") }
+    _ { connection.upload(["file"], "/path/to") }
       .must_raise Kitchen::ClientError
   end
 
   it "has an #download method which raises a ClientError" do
-    proc { connection.download(["remote"], "local") }
+    _ { connection.download(["remote"], "local") }
       .must_raise Kitchen::ClientError
   end
 
@@ -135,7 +135,7 @@ describe Kitchen::Transport::Base::Connection do
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
     it "raises ClientError with no retries" do
-      proc { connection.execute_with_retry("hi", [], nil, nil) }
+      _ { connection.execute_with_retry("hi", [], nil, nil) }
         .must_raise Kitchen::ClientError
     end
 
@@ -155,7 +155,7 @@ describe Kitchen::Transport::Base::Connection do
     let(:exception) { Kitchen::Transport::TransportFailed.new("failure message", 35) }
 
     it "raises an exception when multiple retryable exit codes are passed as a String" do
-      proc { connection.retry?(2, 2, "35 1", exception) }
+      _ { connection.retry?(2, 2, "35 1", exception) }
         .must_raise("undefined method `flatten' for \"35 1\":String")
     end
 

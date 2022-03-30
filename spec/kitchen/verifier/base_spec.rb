@@ -254,14 +254,14 @@ describe Kitchen::Verifier::Base do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -278,7 +278,7 @@ describe Kitchen::Verifier::Base do
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
-      proc { verifier.sandbox_path }.must_raise Kitchen::ClientError
+      _ { verifier.sandbox_path }.must_raise Kitchen::ClientError
     end
 
     it "#create_sandbox creates a temporary directory" do

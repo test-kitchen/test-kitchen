@@ -68,7 +68,7 @@ describe Kitchen::Loader::YAML do
     it "errors when kitchen.yml and .kitchen.yml are both present" do
       stub_file(File.join(Dir.pwd, "kitchen.yml"), {})
       stub_file(File.join(Dir.pwd, ".kitchen.yml"), {})
-      _(proc { Kitchen::Loader::YAML.new }).must_raise Kitchen::UserError
+      _ { Kitchen::Loader::YAML.new }).must_raise Kitchen::UserError
     end
 
     it "sets project_config from parameter, if given" do
@@ -102,7 +102,7 @@ describe Kitchen::Loader::YAML do
     it "errors if both visible and hidden copies of default local_config exist" do
       stub_file("/tmp/kitchen.local.yml", {})
       stub_file("/tmp/.kitchen.local.yml", {})
-      _(proc { Kitchen::Loader::YAML.new(project_config: "/tmp/.kitchen.yml") })
+      _ { Kitchen::Loader::YAML.new(project_config: "/tmp/.kitchen.yml") })
         .must_raise Kitchen::UserError
     end
 
@@ -363,7 +363,7 @@ describe Kitchen::Loader::YAML do
     end
 
     it "raises an UserError if the config_file does not exist" do
-      _(proc { loader.read }).must_raise Kitchen::UserError
+      _ { loader.read }).must_raise Kitchen::UserError
     end
 
     it "arbitrary objects aren't deserialized in kitchen.yml" do
@@ -375,7 +375,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      _(proc { loader.read }).must_raise Kitchen::UserError
+      _ { loader.read }).must_raise Kitchen::UserError
     end
 
     it "arbitrary objects aren't deserialized in kitchen.local.yml" do
@@ -388,7 +388,7 @@ describe Kitchen::Loader::YAML do
       end
       stub_yaml!({})
 
-      _(proc { loader.read }).must_raise Kitchen::UserError
+      _ { loader.read }).must_raise Kitchen::UserError
     end
 
     it "raises a UserError if kitchen.yml cannot be parsed" do

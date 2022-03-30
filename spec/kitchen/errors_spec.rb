@@ -25,34 +25,36 @@ describe Kitchen::Error do
 
   describe ".formatted_exception" do
     it "returns an array of a formatted message" do
-      Kitchen::Error.formatted_exception(exception).must_equal([
-                                                                 "------Exception-------",
-                                                                 "Class: Kitchen::StandardError",
-                                                                 "Message: shoot",
-                                                                 "----------------------",
-                                                               ])
+      _(Kitchen::Error.formatted_exception(exception))
+        .must_equal([
+          "------Exception-------",
+          "Class: Kitchen::StandardError",
+          "Message: shoot",
+          "----------------------",
+        ])
     end
 
     it "takes a customized title" do
-      Kitchen::Error.formatted_exception(exception, "Trouble").first
+      _(Kitchen::Error.formatted_exception(exception, "Trouble").first)
         .must_equal("-------Trouble--------")
     end
   end
 
   describe ".formatted_exception" do
     it "returns an array of a formatted message with a nil backtrace" do
-      Kitchen::Error.formatted_trace(exception).must_equal([
-                                                             "------Exception-------",
-                                                             "Class: Kitchen::StandardError",
-                                                             "Message: shoot",
-                                                             "----------------------",
-                                                           ])
+      _(Kitchen::Error.formatted_trace(exception))
+        .must_equal([
+          "------Exception-------",
+          "Class: Kitchen::StandardError",
+          "Message: shoot",
+          "----------------------",
+        ])
     end
 
     it "returns an array containing the exception's backtrace" do
       raise Kitchen::StandardError, "shoot"
     rescue => e
-      Kitchen::Error.formatted_trace(e)[5...-1].must_equal e.backtrace
+      _(Kitchen::Error.formatted_trace(e)[5...-1]).must_equal e.backtrace
     end
 
     it "returns an array containing a nested exception, if given" do
@@ -60,16 +62,17 @@ describe Kitchen::Error do
     rescue
       e = Kitchen::StandardError.new("shoot")
 
-      Kitchen::Error.formatted_trace(e).must_equal([
-                                                     "------Exception-------",
-                                                     "Class: Kitchen::StandardError",
-                                                     "Message: shoot",
-                                                     "----------------------",
-                                                     "---Nested Exception---",
-                                                     "Class: IOError",
-                                                     "Message: no disk, yo",
-                                                     "----------------------",
-                                                   ])
+      _(Kitchen::Error.formatted_trace(e))
+        .must_equal([
+          "------Exception-------",
+          "Class: Kitchen::StandardError",
+          "Message: shoot",
+          "----------------------",
+          "---Nested Exception---",
+          "Class: IOError",
+          "Message: no disk, yo",
+          "----------------------",
+        ])
     end
 
     it "returns an array when an error has more than one error in original" do
@@ -78,41 +81,42 @@ describe Kitchen::Error do
       error_array << Kitchen::StandardError.new("two")
       composite_error = Kitchen::StandardError.new("array", error_array)
 
-      Kitchen::Error.formatted_trace(composite_error).must_equal([
-                                                                   "------Exception-------",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: array",
-                                                                   "----------------------",
-                                                                   "-Composite Exception--",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: one", "----------------------",
-                                                                   "-Composite Exception--",
-                                                                   "Class: Kitchen::StandardError",
-                                                                   "Message: two",
-                                                                   "----------------------"
-                                                                 ])
+      _(Kitchen::Error.formatted_trace(composite_error))
+        .must_equal([
+          "------Exception-------",
+          "Class: Kitchen::StandardError",
+          "Message: array",
+          "----------------------",
+          "-Composite Exception--",
+          "Class: Kitchen::StandardError",
+          "Message: one", "----------------------",
+          "-Composite Exception--",
+          "Class: Kitchen::StandardError",
+          "Message: two",
+          "----------------------"
+        ])
     end
   end
 end
 
 describe Kitchen::StandardError do
   it "is a kind of Kitchen::Error" do
-    Kitchen::StandardError.new("oops").must_be_kind_of Kitchen::Error
+    _(Kitchen::StandardError.new("oops")).must_be_kind_of Kitchen::Error
   end
 
   it "by default, sets original exception to the last raised exception" do
     raise IOError, "crap"
   rescue
     original = Kitchen::StandardError.new("oops").original
-    original.must_be_kind_of IOError
-    original.message.must_equal "crap"
+    _(original).must_be_kind_of IOError
+    _(original.message).must_equal "crap"
 
   end
 
   it "can embed an exception when constructing" do
     original = Kitchen::StandardError.new("durn", IOError.new("ack")).original
-    original.must_be_kind_of IOError
-    original.message.must_equal "ack"
+    _(original).must_be_kind_of IOError
+    _(original.message).must_equal "ack"
   end
 end
 
@@ -121,7 +125,7 @@ end
 ].each do |klass|
   describe klass do
     it "is a kind of Kitchen::StandardError" do
-      klass.new("oops").must_be_kind_of Kitchen::StandardError
+      _(klass.new("oops")).must_be_kind_of Kitchen::StandardError
     end
   end
 end
@@ -131,7 +135,7 @@ end
 ].each do |klass|
   describe klass do
     it "is a kind of Kitchen::TransientFailure" do
-      klass.new("oops").must_be_kind_of Kitchen::TransientFailure
+      _(klass.new("oops")).must_be_kind_of Kitchen::TransientFailure
     end
   end
 end

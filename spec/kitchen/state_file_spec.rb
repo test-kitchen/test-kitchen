@@ -65,13 +65,13 @@ describe Kitchen::StateFile do
         yoinks: zoinks
       YAML
 
-      proc { state_file.read }.must_raise Kitchen::StateFileLoadError
+      _ { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
 
     it "raises a StateFileLoadError if the state file cannot be parsed" do
       stub_state_file!("&*%^*")
 
-      proc { state_file.read }.must_raise Kitchen::StateFileLoadError
+      _ { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
   end
 

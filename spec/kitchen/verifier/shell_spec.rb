@@ -110,7 +110,7 @@ describe Kitchen::Verifier::Shell do
       it "raises ActionFailed if set false to :command" do
         config[:command] = "false"
 
-        _(proc { verifier.call(state) }).must_raise Kitchen::ActionFailed
+        _ { verifier.call(state) }.must_raise Kitchen::ActionFailed
       end
 
       it "logs a converge event to INFO" do

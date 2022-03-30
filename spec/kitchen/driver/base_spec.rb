@@ -101,7 +101,7 @@ describe Kitchen::Driver::Base do
       Kitchen::Driver::Base.any_instance.stubs(:run_command).raises(ShellCommandFailed, "Expected process to exit with [0], but received '1'")
 
       config[:pre_create_command] = "touch /this/dir/does/not/exist 2&>1 > /dev/null"
-      _(proc { driver.send(:pre_create_command) }).must_raise Kitchen::ActionFailed
+      _ { driver.send(:pre_create_command) }.must_raise Kitchen::ActionFailed
     end
   end
 

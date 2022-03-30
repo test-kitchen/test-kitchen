@@ -39,43 +39,43 @@ describe Kitchen::Driver do
       Kitchen::Plugin.stubs(:load).returns(faux_driver)
       driver = Kitchen::Driver.for_plugin("faux", {})
 
-      driver.must_equal faux_driver
+      _(driver).must_equal faux_driver
     end
 
     it "returns a driver object of the correct class" do
       driver = Kitchen::Driver.for_plugin("coolbeans", {})
 
-      driver.must_be_kind_of Kitchen::Driver::Coolbeans
+      _(driver).must_be_kind_of Kitchen::Driver::Coolbeans
     end
 
     it "returns a driver initialized with its config" do
       driver = Kitchen::Driver.for_plugin("coolbeans", jelly: "beans")
 
-      driver[:jelly].must_equal "beans"
+      _(driver[:jelly]).must_equal "beans"
     end
 
     it "raises ClientError if the driver could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("coolbeans", {}) }
-      error.message.must_include "Could not load the 'coolbeans' driver from the load path."
-      error.message.must_include "Did you mean"
+      _(error.message).must_include "Could not load the 'coolbeans' driver from the load path."
+      _(error.message).must_include "Did you mean"
     end
 
     it "raises ClientError if driver is found on load path but require still fails" do
       Kitchen::Plugin.stubs(:require).raises(LoadError, "Some other problem.")
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("dummy", {}) }
-      error.message.must_include "Could not load the 'dummy' driver from the load path."
-      error.message.must_include "Some other problem."
-      error.message.wont_include "Did you mean"
+      _(error.message).must_include "Could not load the 'dummy' driver from the load path."
+      _(error.message).must_include "Some other problem."
+      _(error.message).wont_include "Did you mean"
     end
 
     it "raises ClientError if the driver's class constant could not be found" do
       Kitchen::Plugin.stubs(:require).returns(true) # pretend require worked
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Driver.for_plugin("nope", {}) }
-      error.message.must_include "uninitialized constant Kitchen::Driver::Nope"
+      _(error.message).must_include "uninitialized constant Kitchen::Driver::Nope"
     end
   end
 end

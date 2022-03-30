@@ -72,7 +72,7 @@ describe Kitchen::Provisioner do
     it "raises ClientError if the provisioner could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Provisioner.for_plugin("coolbeans", {}) }
+      _ { Kitchen::Provisioner.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -80,7 +80,7 @@ describe Kitchen::Provisioner do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Provisioner.for_plugin("nope", {}) }
+      _ { Kitchen::Provisioner.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
     end
   end

@@ -76,14 +76,14 @@ describe Kitchen::Verifier::Dummy do
     it "raises ActionFailed if :fail is set" do
       config[:fail] = true
 
-      proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      _ { verifier.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       verifier.stubs(:randomly_fail?).returns(true)
 
-      proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      _ { verifier.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a converge event to INFO" do

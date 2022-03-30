@@ -122,7 +122,7 @@ describe ".load" do
 
     it "raises UserError if #verify_dependencies fails" do
       Kitchen::Plugin.stubs(:require).returns(true)
-      proc { Kitchen::Plugin.load(Kitchen::RandoPlugin, "unstable_depends", {}) }
+      _ { Kitchen::Plugin.load(Kitchen::RandoPlugin, "unstable_depends", {}) }
         .must_raise Kitchen::UserError
     end
   end

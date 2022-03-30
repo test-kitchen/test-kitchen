@@ -604,7 +604,7 @@ describe Kitchen::Transport::Winrm do
     let(:exception) { Kitchen::Transport::TransportFailed.new("failure message", 35) }
 
     it "raises an exception when multiple retryable exit codes are passed as a String" do
-      proc { connection.retry?(2, 2, "35 1", exception) }
+      _ { connection.retry?(2, 2, "35 1", exception) }
         .must_raise("undefined method `flatten' for \"35 1\":String")
     end
 
@@ -1181,7 +1181,7 @@ describe Kitchen::Transport::Winrm::Connection do
         end
 
         it "reraises the #{klass} exception" do
-          proc { connection.execute("nope") }.must_raise klass
+          _ { connection.execute("nope") }.must_raise klass
         end
       end
     end
@@ -1344,7 +1344,7 @@ describe Kitchen::Transport::Winrm::Connection do
         end
 
         it "raises an WinrmFailed error" do
-          err = proc { login_command }.must_raise Kitchen::Transport::WinrmFailed
+          err = _ { login_command }.must_raise Kitchen::Transport::WinrmFailed
           err.message.must_equal "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
         end
       end
@@ -1356,7 +1356,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       it "raises an ActionFailed error" do
-        err = proc { login_command }.must_raise Kitchen::ActionFailed
+        err = _ { login_command }.must_raise Kitchen::ActionFailed
         err.message.must_equal "Remote login not supported in " \
           "Kitchen::Transport::Winrm::Connection from host OS 'cray'."
       end

@@ -87,7 +87,7 @@ describe Kitchen::ShellOut do
       command.stubs(:error!)
         .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
 
-      err = proc { subject.run_command("boom") }
+      err = _ { subject.run_command("boom") }
         .must_raise Kitchen::ShellOut::ShellCommandFailed
       err.message.must_equal "boom bad"
     end
@@ -95,7 +95,7 @@ describe Kitchen::ShellOut do
     it "raises a Kitchen::Errror tagged exception for unknown exceptions" do
       command.stubs(:error!).raises(IOError, "boom bad")
 
-      err = proc { subject.run_command("boom") }.must_raise IOError
+      err = _ { subject.run_command("boom") }.must_raise IOError
       err.must_be_kind_of Kitchen::Error
       err.message.must_equal "boom bad"
     end

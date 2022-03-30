@@ -56,7 +56,7 @@ describe Kitchen::Transport do
     it "raises ClientError if the transport could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Transport.for_plugin("coolbeans", {}) }
+      _ { Kitchen::Transport.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -64,7 +64,7 @@ describe Kitchen::Transport do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Transport.for_plugin("nope", {}) }
+      _ { Kitchen::Transport.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
     end
   end

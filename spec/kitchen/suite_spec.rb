@@ -37,7 +37,7 @@ describe Kitchen::Suite do
 
   it "raises an ArgumentError if name is missing" do
     opts.delete(:name)
-    proc { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
+    _ { Kitchen::Suite.new(opts) }.must_raise Kitchen::ClientError
   end
 
   it "returns the includes" do

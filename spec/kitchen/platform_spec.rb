@@ -26,7 +26,7 @@ describe Kitchen::Platform do
 
   it "raises an ArgumentError if name is missing" do
     opts.delete(:name)
-    proc { klass.new(opts) }.must_raise Kitchen::ClientError
+    _ { klass.new(opts) }.must_raise Kitchen::ClientError
   end
 
   it "#os_type returns value passed into constructor with :os_type" do
