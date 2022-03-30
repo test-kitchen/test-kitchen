@@ -36,11 +36,11 @@ describe Kitchen::Transport::Exec do
   end
 
   it "provisioner api_version is 1" do
-    transport.diagnose_plugin[:api_version].must_equal 1
+    _(transport.diagnose_plugin[:api_version]).must_equal 1
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(transport.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "#connection" do
@@ -52,7 +52,7 @@ describe Kitchen::Transport::Exec do
       end
 
       it "returns a Kitchen::Transport::Exec::Connection object" do
-        transport.connection(state).must_be_kind_of klass
+        _(transport.connection(state)).must_be_kind_of klass
       end
 
       it "sets :instance_name to the instance's name" do
