@@ -64,52 +64,52 @@ describe Kitchen::Transport::Winrm do
   end
 
   it "provisioner api_version is 1" do
-    transport.diagnose_plugin[:api_version].must_equal 1
+    _(transport.diagnose_plugin[:api_version]).must_equal 1
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    transport.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(transport.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "default_config" do
     it "sets :scheme to http by default" do
-      transport[:scheme].must_equal "http"
+      _(transport[:scheme]).must_equal "http"
     end
 
     it "sets :port to 5985 by default" do
-      transport[:port].must_equal 5985
+      _(transport[:port]).must_equal 5985
     end
 
     it "sets :username to administrator by default" do
-      transport[:username].must_equal "administrator"
+      _(transport[:username]).must_equal "administrator"
     end
 
     it "sets :password to nil by default" do
-      transport[:password].must_be_nil
+      _(transport[:password]).must_be_nil
     end
 
     it "sets :rdp_port to 3389 by default" do
-      transport[:rdp_port].must_equal 3389
+      _(transport[:rdp_port]).must_equal 3389
     end
 
     it "sets :connection_retries to 5 by default" do
-      transport[:connection_retries].must_equal 5
+      _(transport[:connection_retries]).must_equal 5
     end
 
     it "sets :connection_retry_sleep to 1 by default" do
-      transport[:connection_retry_sleep].must_equal 1
+      _(transport[:connection_retry_sleep]).must_equal 1
     end
 
     it "sets :max_wait_until_ready to 600 by default" do
-      transport[:max_wait_until_ready].must_equal 600
+      _(transport[:max_wait_until_ready]).must_equal 600
     end
 
     it "sets :winrm_transport to :negotiate" do
-      transport[:winrm_transport].must_equal :negotiate
+      _(transport[:winrm_transport]).must_equal :negotiate
     end
 
     it "sets :elevated to false" do
-      transport[:elevated].must_equal false
+      _(transport[:elevated]).must_equal false
     end
   end
 
@@ -125,7 +125,7 @@ describe Kitchen::Transport::Winrm do
       end
 
       it "returns a Kitchen::Transport::Winrm::Connection object" do
-        transport.connection(state).must_be_kind_of klass
+        _(transport.connection(state)).must_be_kind_of klass
       end
 
       it "sets :instance_name to the instance's name" do
@@ -412,23 +412,23 @@ describe Kitchen::Transport::Winrm do
         first_connection  = make_connection(state)
         second_connection = make_connection(state)
 
-        first_connection.object_id.must_equal second_connection.object_id
+        _(first_connection.object_id).must_equal second_connection.object_id
       end
 
       it "logs a debug message when the connection is reused" do
         make_connection(state)
         make_connection(state)
 
-        logged_output.string.lines.count do |l|
+        _(logged_output.string.lines.count do |l|
           l =~ debug_line_with("[WinRM] reusing existing connection ")
-        end.must_equal 1
+        end).must_equal 1
       end
 
       it "returns a new connection when called again if state differs" do
         first_connection  = make_connection(state)
         second_connection = make_connection(state.merge(port: 9000))
 
-        first_connection.object_id.wont_equal second_connection.object_id
+        _(first_connection.object_id).wont_equal second_connection.object_id
       end
 
       it "closes first connection when a second is created" do
@@ -442,9 +442,9 @@ describe Kitchen::Transport::Winrm do
         make_connection(state)
         make_connection(state.merge(port: 9000))
 
-        logged_output.string.lines.count do |l|
+        _(logged_output.string.lines.count do |l|
           l =~ debug_line_with("[WinRM] shutting previous connection ")
-        end.must_equal 1
+        end).must_equal 1
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -609,16 +609,16 @@ describe Kitchen::Transport::Winrm do
     end
 
     it "returns true when the retryable exit codes are formatted in a nested array" do
-      connection.retry?(1, 2, [[35, 1]], exception).must_equal true
-      connection.retry?(2, 2, [[35, 1]], exception).must_equal true
+      _(connection.retry?(1, 2, [[35, 1]], exception)).must_equal true
+      _(connection.retry?(2, 2, [[35, 1]], exception)).must_equal true
     end
 
     describe "when exception is anything other than Kitchen::Transport::TransportFailed" do
       let(:exception) { RuntimeError.new("failure message") }
 
       it "returns false when the exception is anything other than Kitchen::Transport::TransportFailed" do
-        connection.retry?(1, 2, [35, 1], exception).must_equal false
-        connection.retry?(2, 2, [35, 1], exception).must_equal false
+        _(connection.retry?(1, 2, [35, 1], exception)).must_equal false
+        _(connection.retry?(2, 2, [35, 1], exception)).must_equal false
       end
     end
 
@@ -629,7 +629,7 @@ describe Kitchen::Transport::Winrm do
         let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 400) }
 
         it "returns true" do
-          connection.retry?(1, 2, [35, 1], exception).must_equal true
+          _(connection.retry?(1, 2, [35, 1], exception)).must_equal true
         end
       end
 
@@ -637,7 +637,7 @@ describe Kitchen::Transport::Winrm do
         let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 401) }
 
         it "returns false" do
-          connection.retry?(1, 2, [35, 1], exception).must_equal false
+          _(connection.retry?(1, 2, [35, 1], exception)).must_equal false
         end
       end
 
@@ -645,7 +645,7 @@ describe Kitchen::Transport::Winrm do
         let(:exception) { WinRM::WinRMHTTPTransportError.new("failure message", 500) }
 
         it "returns true" do
-          connection.retry?(1, 2, [35, 1], exception).must_equal true
+          _(connection.retry?(1, 2, [35, 1], exception)).must_equal true
         end
       end
     end
@@ -654,12 +654,12 @@ describe Kitchen::Transport::Winrm do
       let(:exception) { WinRM::WinRMWSManFault.new("failure message", 42) }
 
       it "returns true" do
-        connection.retry?(1, 2, [35, 1], exception).must_equal true
+        _(connection.retry?(1, 2, [35, 1], exception)).must_equal true
       end
     end
 
     it "returns false when the maximum retries have been exceeded" do
-      connection.retry?(3, 2, [35, 1], exception).must_equal false
+      _(connection.retry?(3, 2, [35, 1], exception)).must_equal false
     end
   end
 
@@ -698,7 +698,7 @@ describe Kitchen::Transport::Winrm do
       it "logs a message to debug that code will be loaded" do
         transport
 
-        logged_output.string.must_match debug_line_with(
+        _(logged_output.string).must_match debug_line_with(
           "winrm-fs requested, loading winrm-fs gem"
         )
       end
@@ -709,7 +709,7 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require).with("winrm-fs").returns(true)
         transport.finalize_config!(instance)
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           /winrm-fs is loaded/
         )
       end
@@ -720,7 +720,7 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require).with("winrm-fs").returns(false)
         transport.finalize_config!(instance)
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           /winrm-fs was already loaded/
         )
       end
@@ -736,7 +736,7 @@ describe Kitchen::Transport::Winrm do
           # we are interested in the log output, not this exception
         end
 
-        logged_output.string.must_match fatal_line_with(
+        _(logged_output.string).must_match fatal_line_with(
           "The `winrm-fs` gem is missing and must be installed"
         )
       end
@@ -747,10 +747,10 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require).with("winrm-fs")
           .raises(LoadError, "uh oh")
 
-        err = proc do
-          transport.finalize_config!(instance)
-        end.must_raise Kitchen::UserError
-        err.message.must_match(/^Could not load or activate winrm-fs\. /)
+        err = _ { transport.finalize_config!(instance) }
+          .must_raise Kitchen::UserError
+
+        _(err.message).must_match(/^Could not load or activate winrm-fs\. /)
       end
     end
 
@@ -761,7 +761,7 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require)
         transport.finalize_config!(instance)
 
-        logged_output.string.must_match debug_line_with(
+        _(logged_output.string).must_match debug_line_with(
           "winrm requested, loading winrm gem"
         )
       end
@@ -773,7 +773,7 @@ describe Kitchen::Transport::Winrm do
 
         transport.finalize_config!(instance)
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           /winrm is loaded/
         )
       end
@@ -785,7 +785,7 @@ describe Kitchen::Transport::Winrm do
 
         transport.finalize_config!(instance)
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           /winrm was already loaded/
         )
       end
@@ -800,7 +800,7 @@ describe Kitchen::Transport::Winrm do
           # we are interested in the log output, not this exception
         end
 
-        logged_output.string.must_match fatal_line_with(
+        _(logged_output.string).must_match fatal_line_with(
           "The `winrm` gem is missing and must be installed"
         )
       end
@@ -810,10 +810,10 @@ describe Kitchen::Transport::Winrm do
         transport.stubs(:require).with("winrm-fs", anything)
         transport.stubs(:require).raises(LoadError, "uh oh")
 
-        err = proc do
-          transport.finalize_config!(instance)
-        end.must_raise Kitchen::UserError
-        err.message.must_match(/^Could not load or activate winrm\. /)
+        err = _ { transport.finalize_config!(instance) }
+          .must_raise Kitchen::UserError
+
+        _(err.message).must_match(/^Could not load or activate winrm\. /)
       end
     end
   end
@@ -955,7 +955,7 @@ describe Kitchen::Transport::Winrm::Connection do
       it "logger displays command on debug" do
         connection.execute("doit")
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "[WinRM] #{info} (doit)"
         )
       end
@@ -963,21 +963,21 @@ describe Kitchen::Transport::Winrm::Connection do
       it "logger captures stdout" do
         connection.execute("doit")
 
-        logged_output.string.must_match(/^ok$/)
+        _(logged_output.string).must_match(/^ok$/)
       end
 
       it "logger captures stderr on warn if logger is at debug level" do
         logger.level = Logger::DEBUG
         connection.execute("doit")
 
-        logged_output.string.must_match warn_line("congrats")
+        _(logged_output.string).must_match warn_line("congrats")
       end
 
       it "logger does not log stderr on warn if logger is below debug level" do
         logger.level = Logger::INFO
         connection.execute("doit")
 
-        logged_output.string.wont_match warn_line("congrats")
+        _(logged_output.string).wont_match warn_line("congrats")
       end
     end
 
@@ -1025,7 +1025,7 @@ describe Kitchen::Transport::Winrm::Connection do
         it "logger captures stdout" do
           connection.execute("doit")
 
-          logged_output.string.must_match(/^ok$/)
+          _(logged_output.string).must_match(/^ok$/)
         end
       end
 
@@ -1046,7 +1046,7 @@ describe Kitchen::Transport::Winrm::Connection do
         it "logger captures stdout" do
           connection.execute("doit")
 
-          logged_output.string.must_match(/^ok$/)
+          _(logged_output.string).must_match(/^ok$/)
         end
       end
     end
@@ -1092,7 +1092,7 @@ describe Kitchen::Transport::Winrm::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.must_match debug_line(
+          _(logged_output.string).must_match debug_line(
             "[WinRM] #{info} (doit)"
           )
         end
@@ -1104,7 +1104,7 @@ describe Kitchen::Transport::Winrm::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          logged_output.string.must_match(/^nope$/)
+          _(logged_output.string).must_match(/^nope$/)
         end
 
         it "stderr is printed on logger warn level" do
@@ -1127,7 +1127,7 @@ describe Kitchen::Transport::Winrm::Connection do
           MSG
 
           message.lines.each do |line|
-            logged_output.string.must_match warn_line(line.chomp)
+            _(logged_output.string).must_match warn_line(line.chomp)
           end
         end
       end
@@ -1137,16 +1137,16 @@ describe Kitchen::Transport::Winrm::Connection do
         common_failed_command_specs
 
         it "raises a WinrmFailed exception" do
-          err = proc do
-            connection.execute("doit")
-          end.must_raise Kitchen::Transport::WinrmFailed
-          err.message.must_equal "WinRM exited (1) for command: [doit]"
+          err = _ { connection.execute("doit") }
+            .must_raise Kitchen::Transport::WinrmFailed
+
+          _(err.message).must_equal "WinRM exited (1) for command: [doit]"
         end
 
         it "raises WinrmFailed exception with the exit code of the failure" do
           connection.execute("doit")
         rescue Kitchen::Transport::WinrmFailed => e
-          e.exit_code.must_equal 1
+          _(e.exit_code).must_equal 1
         end
       end
     end
@@ -1156,7 +1156,7 @@ describe Kitchen::Transport::Winrm::Connection do
         executor.expects(:open).never
         connection.execute(nil)
 
-        logged_output.string.must_equal ""
+        _(logged_output.string).must_equal ""
       end
     end
 
@@ -1204,7 +1204,7 @@ describe Kitchen::Transport::Winrm::Connection do
       it "returns a LoginCommand" do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
-          login_command.must_be_instance_of Kitchen::LoginCommand
+          _(login_command).must_be_instance_of Kitchen::LoginCommand
         end
       end
 
@@ -1216,7 +1216,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = IO.read(rdp_doc)
         end
 
-        actual.must_equal Kitchen::Util.outdent!(<<-RDP)
+        _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
           drivestoredirect:s:*
           full address:s:foo:rdpyeah
           prompt for credentials:i:1
@@ -1239,7 +1239,7 @@ describe Kitchen::Transport::Winrm::Connection do
           username:s:me
           ------------
         OUTPUT
-        debug_output(logged_output.string).must_match expected
+        _(debug_output(logged_output.string)).must_match expected
       end
 
       it "returns a LoginCommand which calls open on the rdp document" do
@@ -1249,7 +1249,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = login_command
         end
 
-        actual.exec_args.must_equal ["open", rdp_doc, {}]
+        _(actual.exec_args).must_equal ["open", rdp_doc, {}]
       end
     end
 
@@ -1261,7 +1261,7 @@ describe Kitchen::Transport::Winrm::Connection do
       it "returns a LoginCommand" do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
-          login_command.must_be_instance_of Kitchen::LoginCommand
+          _(login_command).must_be_instance_of Kitchen::LoginCommand
         end
       end
 
@@ -1273,7 +1273,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = IO.read(rdp_doc)
         end
 
-        actual.must_equal Kitchen::Util.outdent!(<<-RDP)
+        _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
           full address:s:foo:rdpyeah
           prompt for credentials:i:1
           username:s:me
@@ -1294,7 +1294,7 @@ describe Kitchen::Transport::Winrm::Connection do
           username:s:me
           ------------
         OUTPUT
-        debug_output(logged_output.string).must_match expected
+        _(debug_output(logged_output.string)).must_match expected
       end
 
       it "returns a LoginCommand which calls mstsc on the rdp document" do
@@ -1304,7 +1304,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = login_command
         end
 
-        actual.exec_args.must_equal ["mstsc", rdp_doc, {}]
+        _(actual.exec_args).must_equal ["mstsc", rdp_doc, {}]
       end
     end
 
@@ -1315,26 +1315,26 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       it "returns a LoginCommand" do
-        login_command.must_be_instance_of Kitchen::LoginCommand
+        _(login_command).must_be_instance_of Kitchen::LoginCommand
       end
 
       it "is an xfreerdp command" do
-        login_command.command.must_equal "/usr/bin/xfreerdp"
-        args.must_match(%r{ /cert-tofu$})
+        _(login_command.command).must_equal "/usr/bin/xfreerdp"
+        _(args).must_match(%r{ /cert-tofu$})
       end
 
       it "sets the user" do
-        args.must_match regexify("/u:me ")
+        _(args).must_match regexify("/u:me ")
       end
 
       it "sets the pass if given" do
-        args.must_match regexify(" /p:haha ")
+        _(args).must_match regexify(" /p:haha ")
       end
 
       it "won't set the pass if not given" do
         options.delete(:password)
 
-        args.wont_match regexify(" /p:haha ")
+        _(args).wont_match regexify(" /p:haha ")
       end
 
       describe "xfreerdp binary not found in path" do
@@ -1345,7 +1345,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
         it "raises an WinrmFailed error" do
           err = _ { login_command }.must_raise Kitchen::Transport::WinrmFailed
-          err.message.must_equal "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
+          _(err.message).must_equal "xfreerdp binary not found. Please install freerdp2-x11 on Debian-based systems or freerdp on Redhat-based systems."
         end
       end
     end
@@ -1357,7 +1357,7 @@ describe Kitchen::Transport::Winrm::Connection do
 
       it "raises an ActionFailed error" do
         err = _ { login_command }.must_raise Kitchen::ActionFailed
-        err.message.must_equal "Remote login not supported in " \
+        _(err.message).must_equal "Remote login not supported in " \
           "Kitchen::Transport::Winrm::Connection from host OS 'cray'."
       end
     end
@@ -1451,10 +1451,10 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       it "executes an empty command string to ensure working" do
-        err = proc do
-          connection.wait_until_ready
-        end.must_raise Kitchen::Transport::WinrmFailed
-        err.message.must_equal "WinRM exited (42) for command: " \
+        err = _ { connection.wait_until_ready }
+          .must_raise Kitchen::Transport::WinrmFailed
+
+        _(err.message).must_equal "WinRM exited (42) for command: " \
           "[Write-Host '[WinRM] Established\n']"
       end
 
@@ -1465,7 +1465,7 @@ describe Kitchen::Transport::Winrm::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        logged_output.string.must_match warn_line("Ah crap.\n")
+        _(logged_output.string).must_match warn_line("Ah crap.\n")
       end
     end
 
@@ -1477,9 +1477,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       it "fails with SSL error" do
-        proc do
-          connection.wait_until_ready
-        end.must_raise OpenSSL::SSL::SSLError
+        _ { connection.wait_until_ready }.must_raise OpenSSL::SSL::SSLError
       end
     end
 
@@ -1493,9 +1491,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       it "fails with SSL error" do
-        proc do
-          connection.wait_until_ready
-        end.must_raise OpenSSL::SSL::SSLError
+        _ { connection.wait_until_ready }.must_raise OpenSSL::SSL::SSLError
       end
     end
   end
