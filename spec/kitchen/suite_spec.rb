@@ -32,7 +32,7 @@ describe Kitchen::Suite do
   let(:suite) { Kitchen::Suite.new(opts) }
 
   it "returns the name" do
-    suite.name.must_equal "suitezy"
+    _(suite.name).must_equal "suitezy"
   end
 
   it "raises an ArgumentError if name is missing" do
@@ -41,20 +41,20 @@ describe Kitchen::Suite do
   end
 
   it "returns the includes" do
-    suite.includes.must_equal %w{testbuntu testcent}
+    _(suite.includes).must_equal %w{testbuntu testcent}
   end
 
   it "returns an empty Array when includes not given" do
     opts.delete(:includes)
-    suite.includes.must_equal []
+    _(suite.includes).must_equal []
   end
 
   it "returns the excludes" do
-    suite.excludes.must_equal %w{prodbuntu}
+    _(suite.excludes).must_equal %w{prodbuntu}
   end
 
   it "returns an empty Array when excludes not given" do
     opts.delete(:excludes)
-    suite.excludes.must_equal []
+    _(suite.excludes).must_equal []
   end
 end

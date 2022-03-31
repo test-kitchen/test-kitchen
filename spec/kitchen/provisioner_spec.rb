@@ -39,34 +39,37 @@ describe Kitchen::Provisioner do
       Kitchen::Plugin.stubs(:load).returns(faux_provisioner)
       provisioner = Kitchen::Provisioner.for_plugin("faux", {})
 
-      provisioner.must_equal faux_provisioner
+      _(provisioner).must_equal faux_provisioner
     end
 
     it "returns a provisioner object of the correct class" do
       provisioner = Kitchen::Provisioner.for_plugin("coolbeans", {})
 
-      provisioner.must_be_kind_of Kitchen::Provisioner::Coolbeans
+      _(provisioner).must_be_kind_of Kitchen::Provisioner::Coolbeans
     end
 
     it "returns a provisioner object of the chef infra for chef zero" do
       provisioner = Kitchen::Provisioner.for_plugin("chef_zero", {})
-      provisioner.must_be_kind_of Kitchen::Provisioner::ChefInfra
+
+      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefInfra
     end
 
     it "returns a provisioner object of the chef infra for chef_infra" do
       provisioner = Kitchen::Provisioner.for_plugin("chef_infra", {})
-      provisioner.must_be_kind_of Kitchen::Provisioner::ChefInfra
+
+      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefInfra
     end
 
     it "returns a provisioner object of the chef solo for provisioner chef solo" do
       provisioner = Kitchen::Provisioner.for_plugin("chef_solo", {})
-      provisioner.must_be_kind_of Kitchen::Provisioner::ChefSolo
+
+      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefSolo
     end
 
     it "returns a provisioner initialized with its config" do
       provisioner = Kitchen::Provisioner.for_plugin("coolbeans", foo: "bar")
 
-      provisioner[:foo].must_equal "bar"
+      _(provisioner[:foo]).must_equal "bar"
     end
 
     it "raises ClientError if the provisioner could not be required" do
