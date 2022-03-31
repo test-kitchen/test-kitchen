@@ -13,6 +13,8 @@ jobs:
   coverage-test:
     name: Coverage
     runs-on: ubuntu-18.04
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up ruby 2.7
@@ -22,9 +24,9 @@ jobs:
           bundler-cache: true
       - name: run specs
         run: bundle exec rake unit features
-      - name: Upload coverage results
-        uses: actions/upload-artifact@master
-        if: always()
+      - name: Simplecov Report
+        uses: aki77/simplecov-report-action@v1
         with:
-          name: coverage-report
-          path: coverage
+          token: ${{ secrets.GITHUB_TOKEN }}
+          failedThreshold: 90
+          resultPath: coverage/.last_run.json
