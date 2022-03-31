@@ -36,13 +36,13 @@ describe Kitchen::MetadataChopper do
     it "contains a :name attribute" do
       stub_metadata!("banzai")
 
-      described_class.new("/tmp/metadata.rb")[:name].must_equal "banzai"
+      _(described_class.new("/tmp/metadata.rb")[:name]).must_equal "banzai"
     end
 
     it "contains a :version attribute" do
       stub_metadata!("foobar", "1.2.3")
 
-      described_class.new("/tmp/metadata.rb")[:version].must_equal "1.2.3"
+      _(described_class.new("/tmp/metadata.rb")[:version]).must_equal "1.2.3"
     end
   end
 
@@ -50,7 +50,7 @@ describe Kitchen::MetadataChopper do
     it "returns a tuple" do
       stub_metadata!("foo", "1.2.3")
 
-      described_class.extract("/tmp/metadata.rb").must_equal ["foo", "1.2.3"]
+      _(described_class.extract("/tmp/metadata.rb")).must_equal ["foo", "1.2.3"]
     end
 
     it "returns nils for a name or version that isn't present" do
@@ -58,7 +58,7 @@ describe Kitchen::MetadataChopper do
         f.write %{maintainer       "Michael Bluth"\n}
       end
 
-      described_class.extract("/tmp/metadata.rb").must_equal [nil, nil]
+      _(described_class.extract("/tmp/metadata.rb")).must_equal [nil, nil]
     end
   end
 

@@ -49,7 +49,7 @@ describe Kitchen::Logging do
     it "##{meth} calls method on logger" do
       subject.public_send(meth, "ping")
 
-      logger.public_send("#{meth}_msg").must_equal "ping"
+      _(logger.public_send("#{meth}_msg")).must_equal "ping"
     end
   end
 end
