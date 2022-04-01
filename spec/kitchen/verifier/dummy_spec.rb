@@ -48,20 +48,20 @@ describe Kitchen::Verifier::Dummy do
   end
 
   it "verifier api_version is 1" do
-    verifier.diagnose_plugin[:api_version].must_equal 1
+    _(verifier.diagnose_plugin[:api_version]).must_equal 1
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    verifier.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(verifier.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   describe "configuration" do
     it "sets :sleep to 0 by default" do
-      verifier[:sleep].must_equal 0
+      _(verifier[:sleep]).must_equal 0
     end
 
     it "sets :random_failure to false by default" do
-      verifier[:random_failure].must_equal false
+      _(verifier[:random_failure]).must_equal false
     end
   end
 
@@ -76,20 +76,20 @@ describe Kitchen::Verifier::Dummy do
     it "raises ActionFailed if :fail is set" do
       config[:fail] = true
 
-      proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      _ { verifier.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "randomly raises ActionFailed if :random_failure is set" do
       config[:random_failure] = true
       verifier.stubs(:randomly_fail?).returns(true)
 
-      proc { verifier.call(state) }.must_raise Kitchen::ActionFailed
+      _ { verifier.call(state) }.must_raise Kitchen::ActionFailed
     end
 
     it "logs a converge event to INFO" do
       verifier.call(state)
 
-      logged_output.string.must_match(/^.+ INFO .+ \[Dummy\] Verify on .+$/)
+      _(logged_output.string).must_match(/^.+ INFO .+ \[Dummy\] Verify on .+$/)
     end
   end
 end

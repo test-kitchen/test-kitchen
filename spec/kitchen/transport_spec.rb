@@ -38,25 +38,25 @@ describe Kitchen::Transport do
       Kitchen::Plugin.stubs(:load).returns(faux_transport)
       transport = Kitchen::Transport.for_plugin("faux", {})
 
-      transport.must_equal faux_transport
+      _(transport).must_equal faux_transport
     end
 
     it "returns a transport object of the correct class" do
       transport = Kitchen::Transport.for_plugin("coolbeans", {})
 
-      transport.must_be_kind_of Kitchen::Transport::Coolbeans
+      _(transport).must_be_kind_of Kitchen::Transport::Coolbeans
     end
 
     it "returns a transport initialized with its config" do
       transport = Kitchen::Transport.for_plugin("coolbeans", foo: "bar")
 
-      transport[:foo].must_equal "bar"
+      _(transport[:foo]).must_equal "bar"
     end
 
     it "raises ClientError if the transport could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Transport.for_plugin("coolbeans", {}) }
+      _ { Kitchen::Transport.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -64,7 +64,7 @@ describe Kitchen::Transport do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Transport.for_plugin("nope", {}) }
+      _ { Kitchen::Transport.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
     end
   end

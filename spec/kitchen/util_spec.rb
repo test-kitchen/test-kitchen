@@ -24,12 +24,12 @@ require "kitchen/util"
 describe Kitchen::Util do
   describe ".to_logger_level" do
     it "returns nil for invalid symbols" do
-      Kitchen::Util.to_logger_level(:nope).must_be_nil
+      _(Kitchen::Util.to_logger_level(:nope)).must_be_nil
     end
 
     %w{debug info warn error fatal}.each do |level|
       it "returns Logger::#{level.upcase} for :#{level} input" do
-        Kitchen::Util.to_logger_level(level.to_sym)
+        _(Kitchen::Util.to_logger_level(level.to_sym))
           .must_equal Logger.const_get(level.upcase)
       end
     end
@@ -37,12 +37,13 @@ describe Kitchen::Util do
 
   describe ".from_logger_level" do
     it "returns :fatal for invalid symbols" do
-      Kitchen::Util.from_logger_level("nope").must_equal :fatal
+      _(Kitchen::Util.from_logger_level("nope"))
+        .must_equal :fatal
     end
 
     %w{debug info warn error fatal}.each do |level|
       it "returns :#{level} for Logger::#{level.upcase} input" do
-        Kitchen::Util.from_logger_level(Logger.const_get(level.upcase))
+        _(Kitchen::Util.from_logger_level(Logger.const_get(level.upcase)))
           .must_equal(level.to_sym)
       end
     end
@@ -51,17 +52,17 @@ describe Kitchen::Util do
   describe ".symbolized_hash" do
     it "returns itself if not a hash" do
       obj = Object.new
-      Kitchen::Util.symbolized_hash(obj).must_equal obj
+      _(Kitchen::Util.symbolized_hash(obj)).must_equal obj
     end
 
     it "preserves a symbolized hash" do
       hash = { one: [{ two: "three" }] }
-      Kitchen::Util.symbolized_hash(hash).must_equal hash
+      _(Kitchen::Util.symbolized_hash(hash)).must_equal hash
     end
 
     it "converts string keys into symbols" do
-      Kitchen::Util
-        .symbolized_hash("one" => [{ "two" => :three, :four => "five" }])
+      _(Kitchen::Util
+        .symbolized_hash("one" => [{ "two" => :three, :four => "five" }]))
         .must_equal(one: [{ two: :three, four: "five" }])
     end
   end
@@ -69,32 +70,35 @@ describe Kitchen::Util do
   describe ".stringified_hash" do
     it "returns itself if not a hash" do
       obj = Object.new
-      Kitchen::Util.stringified_hash(obj).must_equal obj
+      _(Kitchen::Util.stringified_hash(obj)).must_equal obj
     end
 
     it "preserves a stringified hash" do
       hash = { "one" => [{ "two" => "three" }] }
-      Kitchen::Util.stringified_hash(hash).must_equal hash
+      _(Kitchen::Util.stringified_hash(hash)).must_equal hash
     end
 
     it "converts symbol keys into strings" do
-      Kitchen::Util
-        .stringified_hash(one: [{ :two => :three, "four" => "five" }])
+      _(Kitchen::Util
+        .stringified_hash(one: [{ :two => :three, "four" => "five" }]))
         .must_equal("one" => [{ "two" => :three, "four" => "five" }])
     end
   end
 
   describe ".duration" do
     it "turns nil into a zero" do
-      Kitchen::Util.duration(nil).must_equal "(0m0.00s)"
+      _(Kitchen::Util.duration(nil))
+        .must_equal "(0m0.00s)"
     end
 
     it "formats seconds to 2 digits" do
-      Kitchen::Util.duration(60).must_equal "(1m0.00s)"
+      _(Kitchen::Util.duration(60))
+        .must_equal "(1m0.00s)"
     end
 
     it "formats large values into minutes and seconds" do
-      Kitchen::Util.duration(48_033).must_equal "(800m33.00s)"
+      _(Kitchen::Util.duration(48_033))
+        .must_equal "(800m33.00s)"
     end
   end
 
@@ -103,15 +107,18 @@ describe Kitchen::Util do
     end
 
     it "returns a false if command is nil" do
-      Kitchen::Util.wrap_command(nil).must_equal("sh -c '\nfalse\n'")
+      _(Kitchen::Util.wrap_command(nil))
+        .must_equal("sh -c '\nfalse\n'")
     end
 
     it "returns a true if command string is empty" do
-      Kitchen::Util.wrap_command("yoyo").must_equal("sh -c '\nyoyo\n'")
+      _(Kitchen::Util.wrap_command("yoyo"))
+        .must_equal("sh -c '\nyoyo\n'")
     end
 
     it "handles a command string with a trailing newline" do
-      Kitchen::Util.wrap_command("yep\n").must_equal("sh -c '\nyep\n'")
+      _(Kitchen::Util.wrap_command("yep\n"))
+        .must_equal("sh -c '\nyep\n'")
     end
   end
 
@@ -119,19 +126,22 @@ describe Kitchen::Util do
     it "modifies the argument string in place, destructively" do
       string = "yep"
 
-      Kitchen::Util.outdent!(string).object_id.must_equal string.object_id
+      _(Kitchen::Util.outdent!(string).object_id)
+        .must_equal string.object_id
     end
 
     it "returns the same string if no leading whitespace exists" do
       string = "one\ntwo\nthree"
 
-      Kitchen::Util.outdent!(string).must_equal "one\ntwo\nthree"
+      _(Kitchen::Util.outdent!(string))
+        .must_equal "one\ntwo\nthree"
     end
 
     it "strips same amount of leading whitespace as found on first line" do
       string = "  one\n    two\n      three\nfour"
 
-      Kitchen::Util.outdent!(string).must_equal "one\n  two\n    three\nfour"
+      _(Kitchen::Util.outdent!(string))
+        .must_equal "one\n  two\n    three\nfour"
     end
   end
 
@@ -140,12 +150,12 @@ describe Kitchen::Util do
       exists do_wget do_curl do_fetch do_perl do_python do_download
     }.each do |func|
       it "contains a #{func} shell function" do
-        Kitchen::Util.shell_helpers.must_match "#{func}() {"
+        _(Kitchen::Util.shell_helpers).must_match "#{func}() {"
       end
     end
 
     it "does not contain bare single quotes" do
-      Kitchen::Util.shell_helpers.wont_match "'"
+      _(Kitchen::Util.shell_helpers).wont_match "'"
     end
 
     def regexify(str)
@@ -168,7 +178,8 @@ describe Kitchen::Util do
     end
 
     it "returns [] when the directory does not exist" do
-      Kitchen::Util.list_directory(File.join(@root, "notexist")).must_equal []
+      _(Kitchen::Util.list_directory(File.join(@root, "notexist")))
+        .must_equal []
     end
 
     it "lists one level with no dot files by default" do
@@ -177,8 +188,8 @@ describe Kitchen::Util do
         foo
         bar
       }.map { |f| File.join(@root, f) }
-      (listed - expected).must_equal []
-      (expected - listed).must_equal []
+      _((listed - expected)).must_equal []
+      _((expected - listed)).must_equal []
     end
 
     it "matches dot files only when include_dot" do
@@ -188,8 +199,8 @@ describe Kitchen::Util do
         ".foo",
         "bar",
       ].map { |f| File.join(@root, f) }
-      (listed - expected).must_equal []
-      (expected - listed).must_equal []
+      _((listed - expected)).must_equal []
+      _((expected - listed)).must_equal []
     end
 
     it "recusivly lists only when recurse" do
@@ -199,8 +210,8 @@ describe Kitchen::Util do
         "bar",
         "bar/baz",
       ].map { |f| File.join(@root, f) }
-      (listed - expected).must_equal []
-      (expected - listed).must_equal []
+      _((listed - expected)).must_equal []
+      _((expected - listed)).must_equal []
     end
 
     it "recusivly lists and provides dots when recurse and include_dot" do
@@ -215,8 +226,8 @@ describe Kitchen::Util do
       ].map { |f| File.join(@root, f) }
       # with Ruby 3.1, Dir.glob() does not return files such as "bar/."
       expected -= [File.join(@root, "bar/.")] if RUBY_VERSION >= "3.1"
-      (listed - expected).must_equal []
-      (expected - listed).must_equal []
+      _((listed - expected)).must_equal []
+      _((expected - listed)).must_equal []
     end
   end
 
@@ -237,19 +248,23 @@ describe Kitchen::Util do
     it "globs without parameters" do
       expected = []
       Dir.glob(File.join(@root, "**/*")) { |f| expected << os_safe_temp_path(f) }
-      Kitchen::Util.safe_glob(@root, "**/*").must_equal expected
+      _(Kitchen::Util.safe_glob(@root, "**/*"))
+        .must_equal expected
     end
 
     it "globs with parameters" do
       expected = []
       Dir.glob(File.join(@root, "**/*"), File::FNM_DOTMATCH) { |f| expected << os_safe_temp_path(f) }
-      Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH).must_equal expected
+
+      _(Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH))
+        .must_equal expected
 
     end
 
     it "globs a folder that does not exist" do
       dne_dir = File.join(@root, "notexist")
-      Kitchen::Util.safe_glob(dne_dir, "**/*").must_equal Dir.glob(File.join(dne_dir, "**/*"))
+      _(Kitchen::Util.safe_glob(dne_dir, "**/*"))
+        .must_equal Dir.glob(File.join(dne_dir, "**/*"))
     end
   end
 end

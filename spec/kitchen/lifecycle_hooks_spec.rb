@@ -162,7 +162,7 @@ describe Kitchen::LifecycleHooks do
 
   it "rejects unknown hook targets" do
     config.update(post_create: [{ banana: "echo foo" }])
-    proc { run_lifecycle_hooks }.must_raise Kitchen::UserError
+    _ { run_lifecycle_hooks }.must_raise Kitchen::UserError
   end
 
   it "runs mixed local and remote commands" do
@@ -224,7 +224,7 @@ describe Kitchen::LifecycleHooks do
       config.update(post_create: [hook])
       remote_lifecycle_hook = Kitchen::LifecycleHook::Remote.new(lifecycle_hooks, :create, hook)
       remote_lifecycle_hook.expects(:run_command).never
-      proc { run_lifecycle_hooks }.must_raise Kitchen::UserError
+      _ { run_lifecycle_hooks }.must_raise Kitchen::UserError
     end
 
     it "ignores skippable remote commands" do

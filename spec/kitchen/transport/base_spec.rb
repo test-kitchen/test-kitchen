@@ -43,7 +43,7 @@ describe Kitchen::Transport::Base do
   end
 
   it "has an #connection method which raises a ClientError" do
-    proc { transport.connection({}) }.must_raise Kitchen::ClientError
+    _ { transport.connection({}) }.must_raise Kitchen::ClientError
   end
 
   describe "#logger" do
@@ -51,14 +51,14 @@ describe Kitchen::Transport::Base do
     after   { Kitchen.logger = @klog }
 
     it "returns the instance's logger" do
-      transport.send(:logger).must_equal logger
+      _(transport.send(:logger)).must_equal logger
     end
 
     it "returns the default logger if instance's logger is not set" do
       transport = Kitchen::Transport::Base.new(config)
       Kitchen.logger = "yep"
 
-      transport.send(:logger).must_equal Kitchen.logger
+      _(transport.send(:logger)).must_equal Kitchen.logger
     end
   end
 
@@ -68,30 +68,30 @@ describe Kitchen::Transport::Base do
 
     describe "when no exit code is provided" do
       it "#exit_code is nil" do
-        failure_with_no_exit_code.exit_code.must_be_nil
+        _(failure_with_no_exit_code.exit_code).must_be_nil
       end
     end
 
     describe "when an exit code is provided" do
       it "#exit_code returns the supplied exit code" do
-        failure_with_exit_code.exit_code.must_equal 123
+        _(failure_with_exit_code.exit_code).must_equal 123
       end
     end
   end
 
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
-      Kitchen::Transport::TestingDummy.serial_actions.must_be_nil
+      _(Kitchen::Transport::TestingDummy.serial_actions).must_be_nil
     end
 
     it "registers a single serial action method" do
-      Kitchen::Transport::Dodgy.serial_actions.must_equal [:setup]
+      _(Kitchen::Transport::Dodgy.serial_actions).must_equal [:setup]
     end
 
     it "raises a ClientError if value is not an action method" do
-      proc do
+      _(proc do
         Class.new(Kitchen::Transport::Base) { no_parallel_for :telling_stories }
-      end.must_raise Kitchen::ClientError
+      end).must_raise Kitchen::ClientError
     end
   end
 end
@@ -106,36 +106,36 @@ describe Kitchen::Transport::Base::Connection do
   end
 
   it "has a #close method that does nothing" do
-    connection.close.must_be_nil
+    _(connection.close).must_be_nil
   end
 
   it "has an #execute method which raises a ClientError" do
-    proc { connection.execute("boo") }.must_raise Kitchen::ClientError
+    _ { connection.execute("boo") }.must_raise Kitchen::ClientError
   end
 
   it "has a #login_command method which raises an ActionFailed" do
-    proc { connection.login_command }.must_raise Kitchen::ActionFailed
+    _ { connection.login_command }.must_raise Kitchen::ActionFailed
   end
 
   it "has an #upload method which raises a ClientError" do
-    proc { connection.upload(["file"], "/path/to") }
+    _ { connection.upload(["file"], "/path/to") }
       .must_raise Kitchen::ClientError
   end
 
   it "has an #download method which raises a ClientError" do
-    proc { connection.download(["remote"], "local") }
+    _ { connection.download(["remote"], "local") }
       .must_raise Kitchen::ClientError
   end
 
   it "has a #wait_until_ready method that does nothing" do
-    connection.wait_until_ready.must_be_nil
+    _(connection.wait_until_ready).must_be_nil
   end
 
   describe "#execute_with_retry" do
     let(:failure_with_exit_code) { Kitchen::Transport::TransportFailed.new("Boom", 123) }
 
     it "raises ClientError with no retries" do
-      proc { connection.execute_with_retry("hi", [], nil, nil) }
+      _ { connection.execute_with_retry("hi", [], nil, nil) }
         .must_raise Kitchen::ClientError
     end
 
@@ -147,7 +147,7 @@ describe Kitchen::Transport::Base::Connection do
       connection.expects(:execute).with("Hi").raises(failure_with_exit_code)
       connection.expects(:debug).with("Attempting to execute command - try 1 of 3.")
 
-      connection.execute_with_retry("Hi", [123], 3, 1).must_equal "Hello"
+      _(connection.execute_with_retry("Hi", [123], 3, 1)).must_equal "Hello"
     end
   end
 
@@ -155,26 +155,26 @@ describe Kitchen::Transport::Base::Connection do
     let(:exception) { Kitchen::Transport::TransportFailed.new("failure message", 35) }
 
     it "raises an exception when multiple retryable exit codes are passed as a String" do
-      proc { connection.retry?(2, 2, "35 1", exception) }
+      _ { connection.retry?(2, 2, "35 1", exception) }
         .must_raise("undefined method `flatten' for \"35 1\":String")
     end
 
     it "returns true when the retryable exit codes are formatted in a nested array" do
-      connection.retry?(1, 2, [[35, 1]], exception).must_equal true
-      connection.retry?(2, 2, [[35, 1]], exception).must_equal true
+      _(connection.retry?(1, 2, [[35, 1]], exception)).must_equal true
+      _(connection.retry?(2, 2, [[35, 1]], exception)).must_equal true
     end
 
     describe "when exception is anything other than Kitchen::Transport::TransportFailed" do
       let(:exception) { RuntimeError.new("failure message") }
 
       it "returns false when the exception is anything other than Kitchen::Transport::TransportFailed" do
-        connection.retry?(1, 2, [35, 1], exception).must_equal false
-        connection.retry?(2, 2, [35, 1], exception).must_equal false
+        _(connection.retry?(1, 2, [35, 1], exception)).must_equal false
+        _(connection.retry?(2, 2, [35, 1], exception)).must_equal false
       end
     end
 
     it "returns false when the maximum retries have been exceeded" do
-      connection.retry?(3, 2, [35, 1], exception).must_equal false
+      _(connection.retry?(3, 2, [35, 1], exception)).must_equal false
     end
   end
 end

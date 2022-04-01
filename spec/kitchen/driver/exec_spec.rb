@@ -34,7 +34,7 @@ describe Kitchen::Driver::Exec do
   end
 
   it "plugin_version is set to Kitchen::VERSION" do
-    driver.diagnose_plugin[:version].must_equal Kitchen::VERSION
+    _(driver.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
   it "sets the transport to exec" do

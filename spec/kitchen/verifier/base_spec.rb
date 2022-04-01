@@ -101,15 +101,15 @@ describe Kitchen::Verifier::Base do
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":sudo defaults to true" do
-        verifier[:sudo].must_equal true
+        _(verifier[:sudo]).must_equal true
       end
 
       it ":sudo_command defaults to sudo -E" do
-        verifier[:sudo_command].must_equal "sudo -E"
+        _(verifier[:sudo_command]).must_equal "sudo -E"
       end
 
       it ":root_path defaults to '/tmp/verifier'" do
-        verifier[:root_path].must_equal "/tmp/verifier"
+        _(verifier[:root_path]).must_equal "/tmp/verifier"
       end
     end
 
@@ -117,32 +117,32 @@ describe Kitchen::Verifier::Base do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":sudo defaults to nil" do
-        verifier[:sudo].must_be_nil
+        _(verifier[:sudo]).must_be_nil
       end
 
       it ":sudo_command defaults to nil" do
-        verifier[:sudo_command].must_be_nil
+        _(verifier[:sudo_command]).must_be_nil
       end
 
       it ':root_path defaults to $env:TEMP\\verifier' do
-        verifier[:root_path].must_equal '$env:TEMP\\verifier'
+        _(verifier[:root_path]).must_equal '$env:TEMP\\verifier'
       end
     end
 
     it ":suite_name defaults to the passed in suite name" do
-      verifier[:suite_name].must_equal "germany"
+      _(verifier[:suite_name]).must_equal "germany"
     end
 
     it ":http_proxy defaults to nil" do
-      verifier[:http_proxy].must_be_nil
+      _(verifier[:http_proxy]).must_be_nil
     end
 
     it ":http_proxys defaults to nil" do
-      verifier[:https_proxy].must_be_nil
+      _(verifier[:https_proxy]).must_be_nil
     end
 
     it ":ftp_proxy defaults to nil" do
-      verifier[:ftp_proxy].must_be_nil
+      _(verifier[:ftp_proxy]).must_be_nil
     end
   end
 
@@ -214,9 +214,9 @@ describe Kitchen::Verifier::Base do
     it "logs to info" do
       cmd
 
-      logged_output.string
+      _(logged_output.string)
         .must_match(/INFO -- : Transferring files to instance$/)
-      logged_output.string
+      _(logged_output.string)
         .must_match(/INFO -- : Downloading files from instance$/)
     end
 
@@ -229,14 +229,14 @@ describe Kitchen::Verifier::Base do
     it "logs to debug" do
       cmd
 
-      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
-      logged_output.string.must_match(
-        %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
-      )
-      logged_output.string.must_match(
-        %r{DEBUG -- : Downloading /remote to /local$}
-      )
-      logged_output.string.must_match(/DEBUG -- : Download complete$/)
+      _(logged_output.string)
+        .must_match(/DEBUG -- : Transfer complete$/)
+      _(logged_output.string)
+        .must_match(%r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$})
+      _(logged_output.string)
+        .must_match(%r{DEBUG -- : Downloading /remote to /local$})
+      _(logged_output.string)
+        .must_match(/DEBUG -- : Download complete$/)
     end
 
     it "downloads files" do
@@ -254,20 +254,20 @@ describe Kitchen::Verifier::Base do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
   %i{init_command install_command prepare_command run_command}.each do |cmd|
     it "has a #{cmd} method" do
-      verifier.public_send(cmd).must_be_nil
+      _(verifier.public_send(cmd)).must_be_nil
     end
   end
 
@@ -278,27 +278,29 @@ describe Kitchen::Verifier::Base do
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
-      proc { verifier.sandbox_path }.must_raise Kitchen::ClientError
+      _ { verifier.sandbox_path }.must_raise Kitchen::ClientError
     end
 
     it "#create_sandbox creates a temporary directory" do
       verifier.create_sandbox
 
-      File.directory?(verifier.sandbox_path).must_equal true
-      format("%o", File.stat(verifier.sandbox_path).mode)[1, 4]
+      _(File.directory?(verifier.sandbox_path))
+        .must_equal true
+      _(format("%o", File.stat(verifier.sandbox_path).mode)[1, 4])
         .must_equal "0755"
     end
 
     it "#create_sandbox logs an info message" do
       verifier.create_sandbox
 
-      logged_output.string.must_match info_line("Preparing files for transfer")
+      _(logged_output.string)
+        .must_match info_line("Preparing files for transfer")
     end
 
     it "#create_sandbox logs a debug message" do
       verifier.create_sandbox
 
-      logged_output.string
+      _(logged_output.string)
         .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
@@ -306,14 +308,14 @@ describe Kitchen::Verifier::Base do
       verifier.create_sandbox
       verifier.cleanup_sandbox
 
-      File.directory?(verifier.sandbox_path).must_equal false
+      _(File.directory?(verifier.sandbox_path)).must_equal false
     end
 
     it "#cleanup_sandbox logs a debug message" do
       verifier.create_sandbox
       verifier.cleanup_sandbox
 
-      logged_output.string
+      _(logged_output.string)
         .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
@@ -331,13 +333,13 @@ describe Kitchen::Verifier::Base do
       before { config[:sudo] = true }
 
       it "prepends sudo command" do
-        verifier.send(:sudo, "wakka").must_equal("sudo -E wakka")
+        _(verifier.send(:sudo, "wakka")).must_equal("sudo -E wakka")
       end
 
       it "customizes sudo when :sudo_command is set" do
         config[:sudo_command] = "blueto -Ohai"
 
-        verifier.send(:sudo, "wakka").must_equal("blueto -Ohai wakka")
+        _(verifier.send(:sudo, "wakka")).must_equal("blueto -Ohai wakka")
       end
     end
 
@@ -345,13 +347,13 @@ describe Kitchen::Verifier::Base do
       before { config[:sudo] = false }
 
       it "does not include sudo command" do
-        verifier.send(:sudo, "wakka").must_equal("wakka")
+        _(verifier.send(:sudo, "wakka")).must_equal("wakka")
       end
 
       it "does not include sudo command, even when :sudo_command is set" do
         config[:sudo_command] = "blueto -Ohai"
 
-        verifier.send(:sudo, "wakka").must_equal("wakka")
+        _(verifier.send(:sudo, "wakka")).must_equal("wakka")
       end
     end
   end
@@ -361,7 +363,7 @@ describe Kitchen::Verifier::Base do
       before { config[:command_prefix] = "my_prefix" }
 
       it "prepends the command with the prefix" do
-        verifier.send(:prefix_command, "my_command").must_equal("my_prefix my_command")
+        _(verifier.send(:prefix_command, "my_command")).must_equal("my_prefix my_command")
       end
     end
 
@@ -369,24 +371,23 @@ describe Kitchen::Verifier::Base do
       before { config[:command_prefix] = nil }
 
       it "returns an unaltered command" do
-        verifier.send(:prefix_command, "my_command").must_equal("my_command")
+        _(verifier.send(:prefix_command, "my_command")).must_equal("my_command")
       end
     end
   end
 
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
-      Kitchen::Verifier::TestingDummy.serial_actions.must_be_nil
+      _(Kitchen::Verifier::TestingDummy.serial_actions).must_be_nil
     end
 
     it "registers a single serial action method" do
-      Kitchen::Verifier::Dodgy.serial_actions.must_equal [:verify]
+      _(Kitchen::Verifier::Dodgy.serial_actions).must_equal [:verify]
     end
 
     it "raises a ClientError if value is not an action method" do
-      proc do
-        Class.new(Kitchen::Verifier::Base) { no_parallel_for :telling_stories }
-      end.must_raise Kitchen::ClientError
+      _ { Class.new(Kitchen::Verifier::Base) { no_parallel_for :telling_stories } }
+        .must_raise Kitchen::ClientError
     end
   end
 end

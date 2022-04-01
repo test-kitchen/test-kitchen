@@ -29,38 +29,41 @@ describe Kitchen::LoginCommand do
   it "#command returns the command" do
     cmd << "one"
 
-    login_command.command.must_equal "one"
+    _(login_command.command).must_equal "one"
   end
 
   it "#arguments defaults to an empty array" do
-    Kitchen::LoginCommand.new("echo", nil).arguments.must_equal []
+    _(Kitchen::LoginCommand.new("echo", nil).arguments).must_equal []
   end
 
   it "#arguments returns the command arguments" do
     argv.concat(["-o", "two"])
 
-    login_command.arguments.must_equal ["-o", "two"]
+    _(login_command.arguments).must_equal ["-o", "two"]
   end
 
   it "#options defaults to an empty hash" do
-    Kitchen::LoginCommand.new(cmd, argv).options.must_equal({})
+    _(Kitchen::LoginCommand.new(cmd, argv).options).must_equal({})
   end
 
   it "#options returns the options hash from the constructor" do
     opts[:cake] = "yummy"
 
-    login_command.options.must_equal(cake: "yummy")
+    _(login_command.options).must_equal(cake: "yummy")
   end
 
   it "#exec_args returns an array of arguments for Kernel.exec" do
     cmd << "alpha"
-    login_command.exec_args.must_equal ["alpha", {}]
+
+    _(login_command.exec_args).must_equal ["alpha", {}]
 
     argv.concat(["-o", "beta"])
-    login_command.exec_args.must_equal ["alpha", "-o", "beta", {}]
+
+    _(login_command.exec_args).must_equal ["alpha", "-o", "beta", {}]
 
     opts[:charlie] = "delta"
-    login_command.exec_args.must_equal [
+
+    _(login_command.exec_args).must_equal [
       "alpha", "-o", "beta", { charlie: "delta" }]
   end
 end

@@ -104,25 +104,25 @@ describe Kitchen::Driver::SSHBase do
   end
 
   it "plugin_version is not set" do
-    driver.diagnose_plugin[:version].must_be_nil
+    _(driver.diagnose_plugin[:version]).must_be_nil
   end
 
   describe "configuration" do
     it ":sudo defaults to true" do
-      driver[:sudo].must_equal true
+      _(driver[:sudo]).must_equal true
     end
 
     it ":port defaults to 22" do
-      driver[:port].must_equal 22
+      _(driver[:port]).must_equal 22
     end
   end
 
   it "#create raises a ClientError" do
-    proc { driver.create(state) }.must_raise Kitchen::ClientError
+    _ { driver.create(state) }.must_raise Kitchen::ClientError
   end
 
   it "#destroy raises a ClientError" do
-    proc { driver.destroy(state) }.must_raise Kitchen::ClientError
+    _ { driver.destroy(state) }.must_raise Kitchen::ClientError
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -130,7 +130,7 @@ describe Kitchen::Driver::SSHBase do
     describe "constructs an SSH connection" do
       it "with hostname set from state" do
         transport.expects(:connection).with do |state|
-          state[:hostname].must_equal "fizzy"
+          _(state[:hostname]).must_equal "fizzy"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -138,7 +138,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with username set from state" do
         transport.expects(:connection).with do |state|
-          state[:username].must_equal "bork"
+          _(state[:username]).must_equal "bork"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -148,7 +148,7 @@ describe Kitchen::Driver::SSHBase do
         config[:ssh_key] = "wicked"
 
         transport.expects(:connection).with do |state|
-          state[:ssh_key].must_equal "wicked"
+          _(state[:ssh_key]).must_equal "wicked"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -158,7 +158,7 @@ describe Kitchen::Driver::SSHBase do
         state[:ssh_key] = "wicked"
 
         transport.expects(:connection).with do |state|
-          state[:ssh_key].must_equal "wicked"
+          _(state[:ssh_key]).must_equal "wicked"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -176,7 +176,7 @@ describe Kitchen::Driver::SSHBase do
         config[:password] = "psst"
 
         transport.expects(:connection).with do |state|
-          state[:password].must_equal "psst"
+          _(state[:password]).must_equal "psst"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -186,7 +186,7 @@ describe Kitchen::Driver::SSHBase do
         state[:password] = "psst"
 
         transport.expects(:connection).with do |state|
-          state[:password].must_equal "psst"
+          _(state[:password]).must_equal "psst"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -204,7 +204,7 @@ describe Kitchen::Driver::SSHBase do
         config[:forward_agent] = "yeah?"
 
         transport.expects(:connection).with do |state|
-          state[:forward_agent].must_equal "yeah?"
+          _(state[:forward_agent]).must_equal "yeah?"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -214,7 +214,7 @@ describe Kitchen::Driver::SSHBase do
         state[:forward_agent] = "yeah?"
 
         transport.expects(:connection).with do |state|
-          state[:forward_agent].must_equal "yeah?"
+          _(state[:forward_agent]).must_equal "yeah?"
         end.returns(stub(login_command: stub))
 
         cmd
@@ -222,7 +222,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with :port option set to 22 by default" do
         transport.expects(:connection).with do |state|
-          state[:port].must_equal 22
+          _(state[:port]).must_equal 22
         end.returns(stub(login_command: stub))
 
         cmd
@@ -232,7 +232,7 @@ describe Kitchen::Driver::SSHBase do
         config[:port] = 1234
 
         transport.expects(:connection).with do |state|
-          state[:port].must_equal 1234
+          _(state[:port]).must_equal 1234
         end.returns(stub(login_command: stub))
 
         cmd
@@ -242,7 +242,7 @@ describe Kitchen::Driver::SSHBase do
         state[:port] = 9999
 
         transport.expects(:connection).with do |state|
-          state[:port].must_equal 9999
+          _(state[:port]).must_equal 9999
         end.returns(stub(login_command: stub))
 
         cmd
@@ -262,7 +262,7 @@ describe Kitchen::Driver::SSHBase do
     it "returns a LoginCommand" do
       transport.stubs(:connection).returns(stub(login_command: "command"))
 
-      cmd.must_equal "command"
+      _(cmd).must_equal "command"
     end
 
     constructs_an_ssh_connection
@@ -457,20 +457,19 @@ describe Kitchen::Driver::SSHBase do
       it "logs to info" do
         cmd
 
-        logged_output.string
-          .must_match(/INFO -- : Transferring files to instance$/)
+        _(logged_output.string).must_match(/INFO -- : Transferring files to instance$/)
       end
 
       it "logs to debug" do
         cmd
 
-        logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+        _(logged_output.string).must_match(/DEBUG -- : Transfer complete$/)
       end
 
       it "raises an ActionFailed on transfer when SshFailed is raised" do
         connection.stubs(:upload).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-        proc { cmd }.must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
@@ -493,7 +492,7 @@ describe Kitchen::Driver::SSHBase do
       it "logs to info" do
         cmd
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           /INFO -- : Downloading files from instance$/
         )
       end
@@ -501,13 +500,13 @@ describe Kitchen::Driver::SSHBase do
       it "logs to debug" do
         cmd
 
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
         )
-        logged_output.string.must_match(
+        _(logged_output.string).must_match(
           %r{DEBUG -- : Downloading /remote to /local$}
         )
-        logged_output.string.must_match(/DEBUG -- : Download complete$/)
+        _(logged_output.string).must_match(/DEBUG -- : Download complete$/)
       end
     end
 
@@ -515,7 +514,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -577,7 +576,7 @@ describe Kitchen::Driver::SSHBase do
       transport.stubs(:connection).yields(connection)
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -661,8 +660,7 @@ describe Kitchen::Driver::SSHBase do
     it "logs to info" do
       cmd
 
-      logged_output.string
-        .must_match(/INFO -- : Transferring files to instance$/)
+      _(logged_output.string).must_match(/INFO -- : Transferring files to instance$/)
     end
 
     it "uploads sandbox files" do
@@ -674,20 +672,20 @@ describe Kitchen::Driver::SSHBase do
     it "logs to debug" do
       cmd
 
-      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
+      _(logged_output.string).must_match(/DEBUG -- : Transfer complete$/)
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed when SSHFailed is raised" do
       connection.stubs(:execute).raises(Kitchen::Transport::SshFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
@@ -773,11 +771,11 @@ describe Kitchen::Driver::SSHBase do
     end
 
     it "#instance returns its instance" do
-      driver.instance.must_equal instance
+      _(driver.instance).must_equal instance
     end
 
     it "#name returns the name of the driver" do
-      driver.name.must_equal "BackCompat"
+      _(driver.name).must_equal "BackCompat"
     end
 
     describe "#logger" do
@@ -785,62 +783,62 @@ describe Kitchen::Driver::SSHBase do
       after   { Kitchen.logger = @klog }
 
       it "returns the instance's logger if defined" do
-        driver.send(:logger).must_equal logger
+        _(driver.send(:logger)).must_equal logger
       end
 
       it "returns the default logger if instance's logger is not set" do
         driver = Kitchen::Driver::BackCompat.new(config)
         Kitchen.logger = "yep"
 
-        driver.send(:logger).must_equal Kitchen.logger
+        _(driver.send(:logger)).must_equal Kitchen.logger
       end
     end
 
     it "#puts calls logger.info" do
       driver.send(:puts, "yo")
 
-      logged_output.string.must_match(/I, /)
-      logged_output.string.must_match(/yo\n/)
+      _(logged_output.string).must_match(/I, /)
+      _(logged_output.string).must_match(/yo\n/)
     end
 
     it "#print calls logger.info" do
       driver.send(:print, "yo")
 
-      logged_output.string.must_match(/I, /)
-      logged_output.string.must_match(/yo\n/)
+      _(logged_output.string).must_match(/I, /)
+      _(logged_output.string).must_match(/yo\n/)
     end
 
     it "has a default verify dependencies method" do
-      driver.verify_dependencies.must_be_nil
+      _(driver.verify_dependencies).must_be_nil
     end
 
     it "#busser returns the instance's verifier" do
-      driver.send(:busser).must_equal verifier
+      _(driver.send(:busser)).must_equal verifier
     end
 
     describe ".no_parallel_for" do
       it "registers no serial actions when none are declared" do
-        Kitchen::Driver::SpeedyCompat.serial_actions.must_be_nil
+        _(Kitchen::Driver::SpeedyCompat.serial_actions).must_be_nil
       end
 
       it "registers a single serial action method" do
-        Kitchen::Driver::DodgyCompat.serial_actions.must_equal [:converge]
+        _(Kitchen::Driver::DodgyCompat.serial_actions).must_equal [:converge]
       end
 
       it "registers multiple serial action methods" do
         actions = Kitchen::Driver::SlowCompat.serial_actions
 
-        actions.must_include :create
-        actions.must_include :verify
-        actions.must_include :destroy
+        _(actions).must_include :create
+        _(actions).must_include :verify
+        _(actions).must_include :destroy
       end
 
       it "raises a ClientError if value is not an action method" do
-        proc do
+        _(proc do
           Class.new(Kitchen::Driver::BackCompat) do
             no_parallel_for :telling_stories
           end
-        end.must_raise Kitchen::ClientError
+        end).must_raise Kitchen::ClientError
       end
     end
 
@@ -848,7 +846,7 @@ describe Kitchen::Driver::SSHBase do
     def self.constructs_an_ssh_object
       it "with hostname set from state" do
         Kitchen::SSH.expects(:new).with do |hostname, _username, _opts|
-          hostname.must_equal "fizzy"
+          _(hostname).must_equal "fizzy"
         end.returns(connection)
 
         cmd
@@ -856,7 +854,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with username set from state" do
         Kitchen::SSH.expects(:new).with do |_hostname, username, _opts|
-          username.must_equal "bork"
+          _(username).must_equal "bork"
         end.returns(connection)
 
         cmd
@@ -864,7 +862,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with :user_known_hosts_file option set to /dev/null" do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:user_known_hosts_file].must_equal "/dev/null"
+          _(opts[:user_known_hosts_file]).must_equal "/dev/null"
         end.returns(connection)
 
         cmd
@@ -872,7 +870,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with :verify_host_key option set to false" do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:verify_host_key].must_equal false
+          _(opts[:verify_host_key]).must_equal false
         end.returns(connection)
 
         cmd
@@ -890,7 +888,7 @@ describe Kitchen::Driver::SSHBase do
         config[:ssh_key] = "wicked"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys_only].must_equal true
+          _(opts[:keys_only]).must_equal true
         end.returns(connection)
 
         cmd
@@ -900,7 +898,7 @@ describe Kitchen::Driver::SSHBase do
         state[:ssh_key] = "wicked"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys_only].must_equal true
+          _(opts[:keys_only]).must_equal true
         end.returns(connection)
 
         cmd
@@ -918,7 +916,7 @@ describe Kitchen::Driver::SSHBase do
         config[:ssh_key] = "wicked"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys].must_equal ["wicked"]
+          _(opts[:keys]).must_equal ["wicked"]
         end.returns(connection)
 
         cmd
@@ -928,7 +926,7 @@ describe Kitchen::Driver::SSHBase do
         state[:ssh_key] = "wicked"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:keys].must_equal ["wicked"]
+          _(opts[:keys]).must_equal ["wicked"]
         end.returns(connection)
 
         cmd
@@ -946,7 +944,7 @@ describe Kitchen::Driver::SSHBase do
         config[:password] = "psst"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:password].must_equal "psst"
+          _(opts[:password]).must_equal "psst"
         end.returns(connection)
 
         cmd
@@ -956,7 +954,7 @@ describe Kitchen::Driver::SSHBase do
         state[:password] = "psst"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:password].must_equal "psst"
+          _(opts[:password]).must_equal "psst"
         end.returns(connection)
 
         cmd
@@ -974,7 +972,7 @@ describe Kitchen::Driver::SSHBase do
         config[:forward_agent] = "yeah?"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:forward_agent].must_equal "yeah?"
+          _(opts[:forward_agent]).must_equal "yeah?"
         end.returns(connection)
 
         cmd
@@ -984,7 +982,7 @@ describe Kitchen::Driver::SSHBase do
         state[:forward_agent] = "yeah?"
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:forward_agent].must_equal "yeah?"
+          _(opts[:forward_agent]).must_equal "yeah?"
         end.returns(connection)
 
         cmd
@@ -992,7 +990,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with :port option set to 22 by default" do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:port].must_equal 22
+          _(opts[:port]).must_equal 22
         end.returns(connection)
 
         cmd
@@ -1002,7 +1000,7 @@ describe Kitchen::Driver::SSHBase do
         config[:port] = 1234
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:port].must_equal 1234
+          _(opts[:port]).must_equal 1234
         end.returns(connection)
 
         cmd
@@ -1012,7 +1010,7 @@ describe Kitchen::Driver::SSHBase do
         state[:port] = 9999
 
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:port].must_equal 9999
+          _(opts[:port]).must_equal 9999
         end.returns(connection)
 
         cmd
@@ -1020,7 +1018,7 @@ describe Kitchen::Driver::SSHBase do
 
       it "with :logger option set to driver's logger" do
         Kitchen::SSH.expects(:new).with do |_hostname, _username, opts|
-          opts[:logger].must_equal logger
+          _(opts[:logger]).must_equal logger
         end.returns(connection)
 
         cmd
@@ -1085,14 +1083,14 @@ describe Kitchen::Driver::SSHBase do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:exec).raises(Kitchen::SSHFailed.new("dang"))
 
-        proc { cmd }.must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
 
       it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:exec).raises(Net::SSH::Exception.new("dang"))
 
-        proc { cmd }.must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
 
@@ -1124,14 +1122,14 @@ describe Kitchen::Driver::SSHBase do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:upload_path).raises(Kitchen::SSHFailed.new("dang"))
 
-        proc { cmd }.must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
 
       it "raises an ActionFailed on exec when Net::SSH:Exception is raised" do
         Kitchen::SSH.stubs(:new).returns(connection)
         connection.stubs(:upload_path).raises(Net::SSH::Exception.new("dang"))
 
-        proc { cmd }.must_raise Kitchen::ActionFailed
+        _ { cmd }.must_raise Kitchen::ActionFailed
       end
     end
   end

@@ -50,7 +50,7 @@ describe Kitchen::SSH do
         end
 
         it "reraises the #{klass} exception" do
-          proc { ssh.exec("nope") }.must_raise klass
+          _ { ssh.exec("nope") }.must_raise klass
         end
 
         it "attempts to connect ':ssh_retries' times" do
@@ -59,9 +59,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.count do |l|
+          _(logged_output.string.lines.count do |l|
             l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
-          end.must_equal opts[:ssh_retries]
+          end).must_equal opts[:ssh_retries]
         end
 
         it "sleeps for 1 second between retries" do
@@ -80,9 +80,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.count do |l|
+          _(logged_output.string.lines.count do |l|
             l =~ info_line_with("[SSH] connection failed, retrying ")
-          end.must_equal 2
+          end).must_equal 2
         end
 
         it "logs the last retry failures on warn" do
@@ -91,9 +91,9 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          logged_output.string.lines.count do |l|
+          _(logged_output.string.lines.count do |l|
             l =~ warn_line_with("[SSH] connection failed, terminating ")
-          end.must_equal 1
+          end).must_equal 1
         end
       end
     end
@@ -117,7 +117,7 @@ describe Kitchen::SSH do
       it "logger displays command on debug" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "[SSH] me@foo:22<{}> (doit)"
         )
       end
@@ -125,7 +125,7 @@ describe Kitchen::SSH do
       it "logger displays establishing connection on debug" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "[SSH] opening connection to me@foo:22<{}>"
         )
       end
@@ -133,13 +133,13 @@ describe Kitchen::SSH do
       it "logger captures stdout" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match(/^ok$/)
+        _(logged_output.string).must_match(/^ok$/)
       end
 
       it "logger captures stderr" do
         assert_scripted { ssh.exec("doit") }
 
-        logged_output.string.must_match(/^some stderr stuffs$/)
+        _(logged_output.string).must_match(/^some stderr stuffs$/)
       end
     end
 
@@ -163,7 +163,7 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "[SSH] me@foo:22<{}> (doit)"
         )
       end
@@ -174,7 +174,7 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match debug_line(
+        _(logged_output.string).must_match debug_line(
           "[SSH] opening connection to me@foo:22<{}>"
         )
       end
@@ -185,7 +185,7 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match(/^nope$/)
+        _(logged_output.string).must_match(/^nope$/)
       end
 
       it "logger captures stderr" do
@@ -194,12 +194,12 @@ describe Kitchen::SSH do
         rescue # rubocop:disable Lint/HandleExceptions
         end
 
-        logged_output.string.must_match(/^youdead$/)
+        _(logged_output.string).must_match(/^youdead$/)
       end
 
       it "raises an SSHFailed exception" do
-        err = proc { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
-        err.message.must_equal "SSH exited (42) for command: [doit]"
+        err = _ { assert_scripted { ssh.exec("doit") } }.must_raise Kitchen::SSHFailed
+        _(err.message).must_equal "SSH exited (42) for command: [doit]"
       end
     end
   end
@@ -242,12 +242,11 @@ describe Kitchen::SSH do
         ssh.upload!(src.path, "/tmp/remote")
       end
 
-      logged_output.string.must_match debug_line(
-        "[SSH] opening connection to me@foo:22<{}>"
-      )
-      logged_output.string.must_match debug_line(
-        "Uploaded #{src.path} (1234 bytes)"
-      )
+      _(logged_output.string)
+        .must_match debug_line("[SSH] opening connection to me@foo:22<{}>")
+
+      _(logged_output.string)
+        .must_match debug_line("Uploaded #{src.path} (1234 bytes)")
     end
   end
 
@@ -315,16 +314,16 @@ describe Kitchen::SSH do
         assert_scripted { ssh.upload_path!(@dir, "/tmp/remote") }
       end
 
-      logged_output.string.must_match debug_line(
+      _(logged_output.string).must_match debug_line(
         "[SSH] opening connection to me@foo:22<{}>"
       )
-      logged_output.string.must_match debug_line(
+      _(logged_output.string).must_match debug_line(
         "Uploaded #{remote_base}/alpha (15 bytes)"
       )
-      logged_output.string.must_match debug_line(
+      _(logged_output.string).must_match debug_line(
         "Uploaded #{remote_base}/subdir/beta (14 bytes)"
       )
-      logged_output.string.must_match debug_line(
+      _(logged_output.string).must_match debug_line(
         "Uploaded #{remote_base}/zulu (14 bytes)"
       )
     end
@@ -351,7 +350,7 @@ describe Kitchen::SSH do
         ssh.shutdown
       end
 
-      logged_output.string.must_match debug_line(
+      _(logged_output.string).must_match debug_line(
         "[SSH] closing connection to me@foo:22<{}>"
       )
     end
@@ -397,81 +396,81 @@ describe Kitchen::SSH do
     let(:args)          { login_command.arguments.join(" ") }
 
     it "returns a LoginCommand" do
-      login_command.must_be_instance_of Kitchen::LoginCommand
+      _(login_command).must_be_instance_of Kitchen::LoginCommand
     end
 
     it "is an SSH command" do
-      login_command.command.must_equal "ssh"
-      args.must_match(/ me@foo$/)
+      _(login_command.command).must_equal "ssh"
+      _(args).must_match(/ me@foo$/)
     end
 
     it "sets the UserKnownHostsFile option" do
-      args.must_match regexify("-o UserKnownHostsFile=/dev/null ")
+      _(args).must_match regexify("-o UserKnownHostsFile=/dev/null ")
     end
 
     it "sets the StrictHostKeyChecking option" do
-      args.must_match regexify(" -o StrictHostKeyChecking=no ")
+      _(args).must_match regexify(" -o StrictHostKeyChecking=no ")
     end
 
     it "won't set IdentitiesOnly option by default" do
-      args.wont_match regexify(" -o IdentitiesOnly=")
+      _(args).wont_match regexify(" -o IdentitiesOnly=")
     end
 
     it "sets the IdentiesOnly option if :keys option is given" do
       opts[:keys] = ["yep"]
 
-      args.must_match regexify(" -o IdentitiesOnly=yes ")
+      _(args).must_match regexify(" -o IdentitiesOnly=yes ")
     end
 
     it "sets the LogLevel option to VERBOSE if logger is set to debug" do
       logger.level = ::Logger::DEBUG
       opts[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=VERBOSE ")
+      _(args).must_match regexify(" -o LogLevel=VERBOSE ")
     end
 
     it "sets the LogLevel option to ERROR if logger is not set to debug" do
       logger.level = ::Logger::INFO
       opts[:logger] = logger
 
-      args.must_match regexify(" -o LogLevel=ERROR ")
+      _(args).must_match regexify(" -o LogLevel=ERROR ")
     end
 
     it "won't set the ForwardAgent option by default" do
-      args.wont_match regexify(" -o ForwardAgent=")
+      _(args).wont_match regexify(" -o ForwardAgent=")
     end
 
     it "sets the ForwardAgent option to yes if truthy" do
       opts[:forward_agent] = "yep"
 
-      args.must_match regexify(" -o ForwardAgent=yes")
+      _(args).must_match regexify(" -o ForwardAgent=yes")
     end
 
     it "sets the ForwardAgent option to no if falsey" do
       opts[:forward_agent] = false
 
-      args.must_match regexify(" -o ForwardAgent=no")
+      _(args).must_match regexify(" -o ForwardAgent=no")
     end
 
     it "won't add any SSH keys by default" do
-      args.wont_match regexify(" -i ")
+      _(args).wont_match regexify(" -i ")
     end
 
     it "sets SSH keys options if given" do
       opts[:keys] = %w{one two}
 
-      args.must_match regexify(" -i one ")
-      args.must_match regexify(" -i two ")
+      _(args).must_match regexify(" -i one ")
+      _(args).must_match regexify(" -i two ")
     end
 
     it "sets the port option to 22 by default" do
-      args.must_match regexify(" -p 22 ")
+      _(args).must_match regexify(" -p 22 ")
     end
 
     it "sets the port option" do
       opts[:port] = 1234
 
-      args.must_match regexify(" -p 1234 ")
+      _(args).must_match regexify(" -p 1234 ")
     end
   end
 
@@ -485,8 +484,8 @@ describe Kitchen::SSH do
 
       Net::SSH::Test::Extensions::IO.with_test_extension do
         result = ssh.send(:test_ssh)
-        result.wont_equal nil
-        result.wont_equal false
+        _(result).wont_equal nil
+        _(result).wont_equal false
       end
     end
 
@@ -505,7 +504,7 @@ describe Kitchen::SSH do
         before { TCPSocket.stubs(:new).raises(klass) }
 
         it "returns false" do
-          ssh.send(:test_ssh).must_equal false
+          _(ssh.send(:test_ssh)).must_equal false
         end
 
         it "sleeps for 2 seconds" do
@@ -523,7 +522,7 @@ describe Kitchen::SSH do
         it "returns false when #{klass} is raised" do
           TCPSocket.stubs(:new).raises(klass)
 
-          ssh.send(:test_ssh).must_equal false
+          _(ssh.send(:test_ssh)).must_equal false
         end
       end
     end
@@ -547,9 +546,9 @@ describe Kitchen::SSH do
       IO.stubs(:select).with([ready], nil, nil, 5).returns([[ready], [], []])
       ssh.wait
 
-      logged_output.string.lines.count do |l|
+      _(logged_output.string.lines.count do |l|
         l =~ info_line_with("Waiting for foo:22...")
-      end.must_equal 2
+      end).must_equal 2
     end
   end
 

@@ -141,166 +141,166 @@ describe Kitchen::Instance do
 
   describe ".name_for" do
     it "combines the suite and platform names with a dash" do
-      Kitchen::Instance.name_for(suite("suite"), platform("platform"))
+      _(Kitchen::Instance.name_for(suite("suite"), platform("platform")))
         .must_equal "suite-platform"
     end
 
     it "squashes periods in suite name" do
-      Kitchen::Instance.name_for(suite("suite.ness"), platform("platform"))
+      _(Kitchen::Instance.name_for(suite("suite.ness"), platform("platform")))
         .must_equal "suiteness-platform"
     end
 
     it "squashes periods in platform name" do
-      Kitchen::Instance.name_for(suite("suite"), platform("platform.s"))
+      _(Kitchen::Instance.name_for(suite("suite"), platform("platform.s")))
         .must_equal "suite-platforms"
     end
 
     it "squashes periods in suite and platform names" do
-      Kitchen::Instance.name_for(suite("s.s"), platform("p.p"))
+      _(Kitchen::Instance.name_for(suite("s.s"), platform("p.p")))
         .must_equal "ss-pp"
     end
 
     it "transforms underscores to dashes in suite name" do
-      Kitchen::Instance.name_for(suite("suite_ness"), platform("platform"))
+      _(Kitchen::Instance.name_for(suite("suite_ness"), platform("platform")))
         .must_equal "suite-ness-platform"
     end
 
     it "transforms underscores to dashes in platform name" do
-      Kitchen::Instance.name_for(suite("suite"), platform("platform_s"))
+      _(Kitchen::Instance.name_for(suite("suite"), platform("platform_s")))
         .must_equal "suite-platform-s"
     end
 
     it "transforms underscores to dashes in suite and platform names" do
-      Kitchen::Instance.name_for(suite("_s__s_"), platform("pp_"))
+      _(Kitchen::Instance.name_for(suite("_s__s_"), platform("pp_")))
         .must_equal "-s--s--pp-"
     end
 
     it "transforms forward slashes to dashes in suite name" do
-      Kitchen::Instance.name_for(suite("suite/ness"), platform("platform"))
+      _(Kitchen::Instance.name_for(suite("suite/ness"), platform("platform")))
         .must_equal "suite-ness-platform"
     end
 
     it "transforms forward slashes to dashes in platform name" do
-      Kitchen::Instance.name_for(suite("suite"), platform("platform/s"))
+      _(Kitchen::Instance.name_for(suite("suite"), platform("platform/s")))
         .must_equal "suite-platform-s"
     end
 
     it "transforms forward slashes to dashes in suite and platform names" do
-      Kitchen::Instance.name_for(suite("/s//s/"), platform("pp/"))
+      _(Kitchen::Instance.name_for(suite("/s//s/"), platform("pp/")))
         .must_equal "-s--s--pp-"
     end
   end
 
   describe "#suite" do
     it "returns its suite" do
-      instance.suite.must_equal suite
+      _(instance.suite).must_equal suite
     end
 
     it "raises an ArgumentError if missing" do
       opts.delete(:suite)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
   end
 
   describe "#platform" do
     it "returns its platform" do
-      instance.platform.must_equal platform
+      _(instance.platform).must_equal platform
     end
 
     it "raises an ArgumentError if missing" do
       opts.delete(:platform)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
   end
 
   describe "#driver" do
     it "returns its driver" do
-      instance.driver.must_equal driver
+      _(instance.driver).must_equal driver
     end
 
     it "raises an ArgumentError if missing" do
       opts.delete(:driver)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
     it "sets Driver#instance to itself" do
       # it's mind-bottling
-      instance.driver.instance.must_equal instance
+      _(instance.driver.instance).must_equal instance
     end
   end
 
   describe "#logger" do
     it "returns its logger" do
-      instance.logger.must_equal logger
+      _(instance.logger).must_equal logger
     end
 
     it "uses Kitchen.logger by default" do
       opts.delete(:logger)
-      instance.logger.must_equal Kitchen.logger
+      _(instance.logger).must_equal Kitchen.logger
     end
   end
 
   describe "#provisioner" do
     it "returns its provisioner" do
-      instance.provisioner.must_equal provisioner
+      _(instance.provisioner).must_equal provisioner
     end
 
     it "raises an ArgumentError if missing" do
       opts.delete(:provisioner)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
     it "sets Provisioner#instance to itself" do
       # it's mind-bottling
-      instance.provisioner.instance.must_equal instance
+      _(instance.provisioner.instance).must_equal instance
     end
   end
 
   describe "#transport" do
     it "returns its transport" do
-      instance.transport.must_equal transport
+      _(instance.transport).must_equal transport
     end
 
     it "raises an ArgumentError if missing" do
       opts.delete(:transport)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
     it "sets Transport#instance to itself" do
       # it's mind-bottling
-      instance.transport.instance.must_equal instance
+      _(instance.transport.instance).must_equal instance
     end
   end
 
   describe "#verifier" do
     it "returns its verifier" do
-      instance.verifier.must_equal verifier
+      _(instance.verifier).must_equal verifier
     end
 
     it "raises and ArgumentError if missing" do
       opts.delete(:verifier)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
 
     it "sets Verifier#instance to itself" do
       # it's mind-bottling
-      instance.verifier.instance.must_equal instance
+      _(instance.verifier.instance).must_equal instance
     end
   end
 
   describe "#state_file" do
     it "raises an ArgumentError if missing" do
       opts.delete(:state_file)
-      proc { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
+      _ { Kitchen::Instance.new(opts) }.must_raise Kitchen::ClientError
     end
   end
 
   it "#name returns it name" do
-    instance.name.must_equal "suite-platform"
+    _(instance.name).must_equal "suite-platform"
   end
 
   it "#to_str returns a string representation with its name" do
-    instance.to_str.must_equal "<suite-platform>"
+    _(instance.to_str).must_equal "<suite-platform>"
   end
 
   it "#login executes the transport's login_command" do
@@ -318,18 +318,18 @@ describe Kitchen::Instance do
   it "#login raises a UserError if the instance is not created" do
     state_file.write({})
 
-    proc { instance.login }.must_raise Kitchen::UserError
+    _ { instance.login }.must_raise Kitchen::UserError
   end
 
   describe "#diagnose" do
     it "returns a hash" do
-      instance.diagnose.must_be_instance_of Hash
+      _(instance.diagnose).must_be_instance_of Hash
     end
 
     it "sets :platform key to platform's diagnose info" do
       platform.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose[:platform].must_equal(a: "b")
+      _(instance.diagnose[:platform]).must_equal(a: "b")
     end
 
     it "sets :platform key to :unknown if obj can't respond to #diagnose" do
@@ -337,13 +337,13 @@ describe Kitchen::Instance do
         undef_method :diagnose
       end.new(name: "whoop")
 
-      instance.diagnose[:platform].must_equal :unknown
+      _(instance.diagnose[:platform]).must_equal :unknown
     end
 
     it "sets :state_file key to state_file's diganose info" do
       state_file.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose[:state_file].must_equal(a: "b")
+      _(instance.diagnose[:state_file]).must_equal(a: "b")
     end
 
     it "sets :state_file key to :unknown if obj can't respond to #diagnose" do
@@ -351,13 +351,13 @@ describe Kitchen::Instance do
         undef_method :diagnose
       end.new
 
-      instance.diagnose[:state_file].must_equal :unknown
+      _(instance.diagnose[:state_file]).must_equal :unknown
     end
 
     it "sets :provisioner key to provisioner's diganose info" do
       provisioner.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose[:provisioner].must_equal(a: "b")
+      _(instance.diagnose[:provisioner]).must_equal(a: "b")
     end
 
     it "sets :provisioner key to :unknown if obj can't respond to #diagnose" do
@@ -365,13 +365,13 @@ describe Kitchen::Instance do
         undef_method :diagnose
       end.new
 
-      instance.diagnose[:provisioner].must_equal :unknown
+      _(instance.diagnose[:provisioner]).must_equal :unknown
     end
 
     it "sets :verifier key to verifier's diganose info" do
       verifier.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose[:verifier].must_equal(a: "b")
+      _(instance.diagnose[:verifier]).must_equal(a: "b")
     end
 
     it "sets :verifier key to :unknown if obj can't respond to #diagnose" do
@@ -379,13 +379,13 @@ describe Kitchen::Instance do
         undef_method :diagnose
       end.new({})
 
-      instance.diagnose[:verifier].must_equal :unknown
+      _(instance.diagnose[:verifier]).must_equal :unknown
     end
 
     it "sets :transport key to transport's diganose info" do
       transport.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose[:transport].must_equal(a: "b")
+      _(instance.diagnose[:transport]).must_equal(a: "b")
     end
 
     it "sets :transport key to :unknown if obj can't respond to #diagnose" do
@@ -393,19 +393,19 @@ describe Kitchen::Instance do
         undef_method :diagnose
       end.new
 
-      instance.diagnose[:transport].must_equal :unknown
+      _(instance.diagnose[:transport]).must_equal :unknown
     end
   end
 
   describe "#diagnose_plugins" do
     it "returns a hash" do
-      instance.diagnose_plugins.must_be_instance_of Hash
+      _(instance.diagnose_plugins).must_be_instance_of Hash
     end
 
     it "sets :driver key to driver's plugin_diagnose info" do
       driver.class.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose_plugins[:driver].must_equal(
+      _(instance.diagnose_plugins[:driver]).must_equal(
         name: "Dummy",
         a: "b"
       )
@@ -416,13 +416,13 @@ describe Kitchen::Instance do
         undef_method :diagnose_plugin
       end.new({})
 
-      instance.diagnose_plugins[:driver].must_equal(:unknown)
+      _(instance.diagnose_plugins[:driver]).must_equal(:unknown)
     end
 
     it "sets :provisioner key to provisioner's plugin_diagnose info" do
       provisioner.class.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose_plugins[:provisioner].must_equal(
+      _(instance.diagnose_plugins[:provisioner]).must_equal(
         name: "Dummy",
         a: "b"
       )
@@ -433,13 +433,13 @@ describe Kitchen::Instance do
         undef_method :diagnose_plugin
       end.new({})
 
-      instance.diagnose_plugins[:provisioner].must_equal(:unknown)
+      _(instance.diagnose_plugins[:provisioner]).must_equal(:unknown)
     end
 
     it "sets :verifier key to verifier's plugin_diagnose info" do
       verifier.class.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose_plugins[:verifier].must_equal(
+      _(instance.diagnose_plugins[:verifier]).must_equal(
         name: "Dummy",
         a: "b"
       )
@@ -450,13 +450,13 @@ describe Kitchen::Instance do
         undef_method :diagnose_plugin
       end.new({})
 
-      instance.diagnose_plugins[:verifier].must_equal(:unknown)
+      _(instance.diagnose_plugins[:verifier]).must_equal(:unknown)
     end
 
     it "sets :transport key to transport's plugin_diagnose info" do
       transport.class.stubs(:diagnose).returns(a: "b")
 
-      instance.diagnose_plugins[:transport].must_equal(
+      _(instance.diagnose_plugins[:transport]).must_equal(
         name: "Dummy",
         a: "b"
       )
@@ -467,7 +467,7 @@ describe Kitchen::Instance do
         undef_method :diagnose_plugin
       end.new({})
 
-      instance.diagnose_plugins[:transport].must_equal(:unknown)
+      _(instance.diagnose_plugins[:transport]).must_equal(:unknown)
     end
   end
 
@@ -483,19 +483,19 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.create
 
-          state_file.read[:last_action].must_equal "create"
+          _(state_file.read[:last_action]).must_equal "create"
         end
 
         it "logs the action start" do
           instance.create
 
-          logger_io.string.must_match regex_for("Creating #{instance.to_str}")
+          _(logger_io.string).must_match regex_for("Creating #{instance.to_str}")
         end
 
         it "logs the action finish" do
           instance.create
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished creating #{instance.to_str}")
         end
 
@@ -520,7 +520,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.create
 
-          state_file.read[:last_action].must_equal "create"
+          _(state_file.read[:last_action]).must_equal "create"
         end
       end
     end
@@ -539,19 +539,20 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.converge
 
-          state_file.read[:last_action].must_equal "converge"
+          _(state_file.read[:last_action]).must_equal "converge"
         end
 
         it "logs the action start" do
           instance.converge
 
-          logger_io.string.must_match regex_for("Converging #{instance.to_str}")
+          _(logger_io.string)
+            .must_match regex_for("Converging #{instance.to_str}")
         end
 
         it "logs the action finish" do
           instance.converge
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished converging #{instance.to_str}")
         end
 
@@ -578,7 +579,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.converge
 
-          state_file.read[:last_action].must_equal "converge"
+          _(state_file.read[:last_action]).must_equal "converge"
         end
 
         it "calls lifecycle hooks" do
@@ -602,7 +603,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.converge
 
-          state_file.read[:last_action].must_equal "converge"
+          _(state_file.read[:last_action]).must_equal "converge"
         end
       end
     end
@@ -623,19 +624,20 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.setup
 
-          state_file.read[:last_action].must_equal "setup"
+          _(state_file.read[:last_action]).must_equal "setup"
         end
 
         it "logs the action start" do
           instance.setup
 
-          logger_io.string.must_match regex_for("Setting up #{instance.to_str}")
+          _(logger_io.string)
+            .must_match regex_for("Setting up #{instance.to_str}")
         end
 
         it "logs the action finish" do
           instance.setup
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished setting up #{instance.to_str}")
         end
       end
@@ -656,7 +658,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.setup
 
-          state_file.read[:last_action].must_equal "setup"
+          _(state_file.read[:last_action]).must_equal "setup"
         end
       end
 
@@ -674,7 +676,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.setup
 
-          state_file.read[:last_action].must_equal "setup"
+          _(state_file.read[:last_action]).must_equal "setup"
         end
       end
 
@@ -692,7 +694,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.setup
 
-          state_file.read[:last_action].must_equal "setup"
+          _(state_file.read[:last_action]).must_equal "setup"
         end
       end
     end
@@ -715,19 +717,20 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.verify
 
-          state_file.read[:last_action].must_equal "verify"
+          _(state_file.read[:last_action]).must_equal "verify"
         end
 
         it "logs the action start" do
           instance.verify
 
-          logger_io.string.must_match regex_for("Verifying #{instance.to_str}")
+          _(logger_io.string)
+            .must_match regex_for("Verifying #{instance.to_str}")
         end
 
         it "logs the action finish" do
           instance.verify
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished verifying #{instance.to_str}")
         end
       end
@@ -750,7 +753,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.verify
 
-          state_file.read[:last_action].must_equal "verify"
+          _(state_file.read[:last_action]).must_equal "verify"
         end
       end
 
@@ -770,7 +773,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.verify
 
-          state_file.read[:last_action].must_equal "verify"
+          _(state_file.read[:last_action]).must_equal "verify"
         end
       end
 
@@ -787,7 +790,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.verify
 
-          state_file.read[:last_action].must_equal "verify"
+          _(state_file.read[:last_action]).must_equal "verify"
         end
       end
 
@@ -804,7 +807,7 @@ describe Kitchen::Instance do
         it "writes the state file with last_action" do
           instance.verify
 
-          state_file.read[:last_action].must_equal "verify"
+          _(state_file.read[:last_action]).must_equal "verify"
         end
       end
     end
@@ -826,14 +829,14 @@ describe Kitchen::Instance do
         it "logs the action start" do
           instance.destroy
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Destroying #{instance.to_str}")
         end
 
         it "logs the create finish" do
           instance.destroy
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished destroying #{instance.to_str}")
         end
       end
@@ -873,13 +876,14 @@ describe Kitchen::Instance do
         it "logs the action start" do
           instance.test
 
-          logger_io.string.must_match regex_for("Testing #{instance.to_str}")
+          _(logger_io.string)
+            .must_match regex_for("Testing #{instance.to_str}")
         end
 
         it "logs the action finish" do
           instance.test
 
-          logger_io.string
+          _(logger_io.string)
             .must_match regex_for("Finished testing #{instance.to_str}")
         end
       end
@@ -964,20 +968,19 @@ describe Kitchen::Instance do
             true # no need to act here
           end
 
-          state_file.read[:last_action].must_be_nil
+          _(state_file.read[:last_action]).must_be_nil
         end
 
         it "raises an InstanceFailure" do
-          proc { instance.public_send(action) }
+          _ { instance.public_send(action) }
             .must_raise Kitchen::InstanceFailure
         end
 
         it "populates the InstanceFailure message" do
           instance.public_send(action)
         rescue Kitchen::Error => e
-          e.message.must_match regex_for(
-            "Create failed on instance #{instance.to_str}"
-          )
+          _(e.message)
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
 
         it "logs the failure" do
@@ -987,9 +990,8 @@ describe Kitchen::Instance do
             true # no need to act here
           end
 
-          logger_io.string.must_match regex_for(
-            "Create failed on instance #{instance.to_str}"
-          )
+          _(logger_io.string)
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
       end
 
@@ -1005,20 +1007,19 @@ describe Kitchen::Instance do
             true # no need to act here
           end
 
-          state_file.read[:last_action].must_be_nil
+          _(state_file.read[:last_action]).must_be_nil
         end
 
         it "raises an ActionFailed" do
-          proc { instance.public_send(action) }
+          _ { instance.public_send(action) }
             .must_raise Kitchen::ActionFailed
         end
 
         it "populates the ActionFailed message" do
           instance.public_send(action)
         rescue Kitchen::Error => e
-          e.message.must_match regex_for(
-            "Failed to complete #create action: [watwat]"
-          )
+          _(e.message)
+            .must_match regex_for("Failed to complete #create action: [watwat]")
         end
 
         it "logs the failure" do
@@ -1028,9 +1029,8 @@ describe Kitchen::Instance do
             true # no need to act here
           end
 
-          logger_io.string.must_match regex_for(
-            "Create failed on instance #{instance.to_str}"
-          )
+          _(logger_io.string)
+            .must_match regex_for("Create failed on instance #{instance.to_str}")
         end
       end
     end
@@ -1049,7 +1049,7 @@ describe Kitchen::Instance do
             true # no need to act here
           end
 
-          state_file.read[:last_action].must_equal "setup"
+          _(state_file.read[:last_action]).must_equal "setup"
         end
       end
 
@@ -1061,7 +1061,7 @@ describe Kitchen::Instance do
           true # no need to act here
         end
 
-        state_file.read[:last_action].must_equal "verify"
+        _(state_file.read[:last_action]).must_equal "verify"
       end
     end
 
@@ -1073,9 +1073,9 @@ describe Kitchen::Instance do
         # require "byebug"; byebug
 
         instance.test
-        driver.action_in_mutex[:create].must_equal true
-        verifier.action_in_mutex[:verify].must_equal true
-        driver.action_in_mutex[:destroy].must_equal true
+        _(driver.action_in_mutex[:create]).must_equal true
+        _(verifier.action_in_mutex[:verify]).must_equal true
+        _(driver.action_in_mutex[:destroy]).must_equal true
       end
     end
 
@@ -1305,87 +1305,87 @@ describe Kitchen::Instance do
 
     describe ".actions" do
       it "passing nils returns destroy" do
-        fsm.actions(nil, nil).must_equal [:destroy]
+        _(fsm.actions(nil, nil)).must_equal [:destroy]
       end
 
       it "accepts a string for desired argument" do
-        fsm.actions(nil, "create").must_equal [:create]
+        _(fsm.actions(nil, "create")).must_equal [:create]
       end
 
       it "accepts a symbol for desired argument" do
-        fsm.actions(nil, :create).must_equal [:create]
+        _(fsm.actions(nil, :create)).must_equal [:create]
       end
 
       it "starting from no state to create returns create" do
-        fsm.actions(nil, :create).must_equal [:create]
+        _(fsm.actions(nil, :create)).must_equal [:create]
       end
 
       it "starting from :create to create returns create" do
-        fsm.actions(:create, :create).must_equal [:create]
+        _(fsm.actions(:create, :create)).must_equal [:create]
       end
 
       it "starting from no state to converge returns create, converge" do
-        fsm.actions(nil, :converge).must_equal %i{create converge}
+        _(fsm.actions(nil, :converge)).must_equal %i{create converge}
       end
 
       it "starting from create to converge returns converge" do
-        fsm.actions(:create, :converge).must_equal [:converge]
+        _(fsm.actions(:create, :converge)).must_equal [:converge]
       end
 
       it "starting from converge to converge returns converge" do
-        fsm.actions(:converge, :converge).must_equal [:converge]
+        _(fsm.actions(:converge, :converge)).must_equal [:converge]
       end
 
       it "starting from no state to setup returns create, converge, setup" do
-        fsm.actions(nil, :setup).must_equal %i{create converge setup}
+        _(fsm.actions(nil, :setup)).must_equal %i{create converge setup}
       end
 
       it "starting from create to setup returns converge, setup" do
-        fsm.actions(:create, :setup).must_equal %i{converge setup}
+        _(fsm.actions(:create, :setup)).must_equal %i{converge setup}
       end
 
       it "starting from converge to setup returns setup" do
-        fsm.actions(:converge, :setup).must_equal [:setup]
+        _(fsm.actions(:converge, :setup)).must_equal [:setup]
       end
 
       it "starting from setup to setup return setup" do
-        fsm.actions(:setup, :setup).must_equal [:setup]
+        _(fsm.actions(:setup, :setup)).must_equal [:setup]
       end
 
       it "starting from no state to verify returns create, converge, setup, verify" do
-        fsm.actions(nil, :verify).must_equal %i{create converge setup verify}
+        _(fsm.actions(nil, :verify)).must_equal %i{create converge setup verify}
       end
 
       it "starting from create to verify returns converge, setup, verify" do
-        fsm.actions(:create, :verify).must_equal %i{converge setup verify}
+        _(fsm.actions(:create, :verify)).must_equal %i{converge setup verify}
       end
 
       it "starting from converge to verify returns setup, verify" do
-        fsm.actions(:converge, :verify).must_equal %i{setup verify}
+        _(fsm.actions(:converge, :verify)).must_equal %i{setup verify}
       end
 
       it "starting from setup to verify returns verify" do
-        fsm.actions(:setup, :verify).must_equal [:verify]
+        _(fsm.actions(:setup, :verify)).must_equal [:verify]
       end
 
       it "starting from verify to verify returns verify" do
-        fsm.actions(:verify, :verify).must_equal [:verify]
+        _(fsm.actions(:verify, :verify)).must_equal [:verify]
       end
 
       %i{verify setup converge}.each do |s|
         it "starting from #{s} to create returns create" do
-          fsm.actions(s, :create).must_equal [:create]
+          _(fsm.actions(s, :create)).must_equal [:create]
         end
       end
 
       %i{verify setup}.each do |s|
         it "starting from #{s} to converge returns converge" do
-          fsm.actions(s, :converge).must_equal [:converge]
+          _(fsm.actions(s, :converge)).must_equal [:converge]
         end
       end
 
       it "starting from verify to setup returns setup" do
-        fsm.actions(:verify, :setup).must_equal [:setup]
+        _(fsm.actions(:verify, :setup)).must_equal [:setup]
       end
     end
   end

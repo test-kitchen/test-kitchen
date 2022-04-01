@@ -80,24 +80,24 @@ describe Kitchen::ShellOut do
     it "returns the command's standard out" do
       command.stubs(:stdout).returns("sweetness")
 
-      subject.run_command("icecream").must_equal "sweetness"
+      _(subject.run_command("icecream")).must_equal "sweetness"
     end
 
     it "raises a ShellCommandFailed if the command does not cleanly exit" do
       command.stubs(:error!)
         .raises(Mixlib::ShellOut::ShellCommandFailed, "boom bad")
 
-      err = proc { subject.run_command("boom") }
+      err = _ { subject.run_command("boom") }
         .must_raise Kitchen::ShellOut::ShellCommandFailed
-      err.message.must_equal "boom bad"
+      _(err.message).must_equal "boom bad"
     end
 
     it "raises a Kitchen::Errror tagged exception for unknown exceptions" do
       command.stubs(:error!).raises(IOError, "boom bad")
 
-      err = proc { subject.run_command("boom") }.must_raise IOError
-      err.must_be_kind_of Kitchen::Error
-      err.message.must_equal "boom bad"
+      err = _ { subject.run_command("boom") }.must_raise IOError
+      _(err).must_be_kind_of Kitchen::Error
+      _(err.message).must_equal "boom bad"
     end
 
     it "prepends with sudo if :use_sudo is truthy" do
@@ -117,14 +117,15 @@ describe Kitchen::ShellOut do
     it "logs a debug BEGIN message" do
       subject.run_command("echo whoopa\ndoopa\ndo")
 
-      subject.logs.first
+      _(subject.logs.first)
         .must_equal "[local command] BEGIN (echo whoopa\ndoopa\ndo)"
     end
 
     it "logs a debug BEGIN message with custom log subject" do
       subject.run_command("tenac", log_subject: "thed")
 
-      subject.logs.first.must_equal "[thed command] BEGIN (tenac)"
+      _(subject.logs.first)
+        .must_equal "[thed command] BEGIN (tenac)"
     end
 
     it "truncates the debug BEGIN command if it spans multiple lines" do
@@ -133,13 +134,15 @@ describe Kitchen::ShellOut do
     it "logs a debug END message" do
       subject.run_command("echo whoopa doopa")
 
-      subject.logs.last.must_equal "[local command] END (2m3.00s)"
+      _(subject.logs.last)
+        .must_equal "[local command] END (2m3.00s)"
     end
 
     it "logs a debug END message with custom log subject" do
       subject.run_command("tenac", log_subject: "thed")
 
-      subject.logs.last.must_equal "[thed command] END (2m3.00s)"
+      _(subject.logs.last)
+        .must_equal "[thed command] END (2m3.00s)"
     end
   end
 end

@@ -96,15 +96,15 @@ describe Kitchen::Provisioner::Base do
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":root_path defaults to /tmp/kitchen" do
-        provisioner[:root_path].must_equal "/tmp/kitchen"
+        _(provisioner[:root_path]).must_equal "/tmp/kitchen"
       end
 
       it ":sudo defaults to true" do
-        provisioner[:sudo].must_equal true
+        _(provisioner[:sudo]).must_equal true
       end
 
       it ":sudo_command defaults to sudo -E" do
-        provisioner[:sudo_command].must_equal "sudo -E"
+        _(provisioner[:sudo_command]).must_equal "sudo -E"
       end
     end
 
@@ -112,28 +112,28 @@ describe Kitchen::Provisioner::Base do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ':root_path defaults to $env:TEMP\\kitchen' do
-        provisioner[:root_path].must_equal '$env:TEMP\\kitchen'
+        _(provisioner[:root_path]).must_equal '$env:TEMP\\kitchen'
       end
 
       it ":sudo defaults to nil" do
-        provisioner[:sudo].must_be_nil
+        _(provisioner[:sudo]).must_be_nil
       end
 
       it ":sudo_command defaults to nil" do
-        provisioner[:sudo_command].must_be_nil
+        _(provisioner[:sudo_command]).must_be_nil
       end
     end
 
     it ":http_proxy defaults to nil" do
-      provisioner[:http_proxy].must_be_nil
+      _(provisioner[:http_proxy]).must_be_nil
     end
 
     it ":http_proxys defaults to nil" do
-      provisioner[:https_proxy].must_be_nil
+      _(provisioner[:https_proxy]).must_be_nil
     end
 
     it ":ftp_proxy defaults to nil" do
-      provisioner[:ftp_proxy].must_be_nil
+      _(provisioner[:ftp_proxy]).must_be_nil
     end
   end
 
@@ -206,9 +206,9 @@ describe Kitchen::Provisioner::Base do
     it "logs to info" do
       cmd
 
-      logged_output.string
+      _(logged_output.string)
         .must_match(/INFO -- : Transferring files to instance$/)
-      logged_output.string
+      _(logged_output.string)
         .must_match(/INFO -- : Downloading files from instance$/)
     end
 
@@ -221,14 +221,14 @@ describe Kitchen::Provisioner::Base do
     it "logs to debug" do
       cmd
 
-      logged_output.string.must_match(/DEBUG -- : Transfer complete$/)
-      logged_output.string.must_match(
+      _(logged_output.string).must_match(/DEBUG -- : Transfer complete$/)
+      _(logged_output.string).must_match(
         %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
       )
-      logged_output.string.must_match(
+      _(logged_output.string).must_match(
         %r{DEBUG -- : Downloading /remote to /local$}
       )
-      logged_output.string.must_match(/DEBUG -- : Download complete$/)
+      _(logged_output.string).must_match(/DEBUG -- : Download complete$/)
     end
 
     it "downloads files" do
@@ -246,20 +246,20 @@ describe Kitchen::Provisioner::Base do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
 
     it "raises an ActionFailed on execute when TransportFailed is raised" do
       connection.stubs(:execute)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
 
-      proc { cmd }.must_raise Kitchen::ActionFailed
+      _ { cmd }.must_raise Kitchen::ActionFailed
     end
   end
 
   %i{init_command install_command prepare_command run_command}.each do |cmd|
     it "has a #{cmd} method" do
-      provisioner.public_send(cmd).must_be_nil
+      _(provisioner.public_send(cmd)).must_be_nil
     end
   end
 
@@ -270,27 +270,27 @@ describe Kitchen::Provisioner::Base do
     end
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
-      proc { provisioner.sandbox_path }.must_raise Kitchen::ClientError
+      _ { provisioner.sandbox_path }.must_raise Kitchen::ClientError
     end
 
     it "#create_sandbox creates a temporary directory" do
       provisioner.create_sandbox
 
-      File.directory?(provisioner.sandbox_path).must_equal true
-      format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4]
+      _(File.directory?(provisioner.sandbox_path)).must_equal true
+      _(format("%o", File.stat(provisioner.sandbox_path).mode)[1, 4])
         .must_equal "0755"
     end
 
     it "#create_sandbox logs an info message" do
       provisioner.create_sandbox
 
-      logged_output.string.must_match info_line("Preparing files for transfer")
+      _(logged_output.string).must_match info_line("Preparing files for transfer")
     end
 
     it "#create_sandbox logs a debug message" do
       provisioner.create_sandbox
 
-      logged_output.string
+      _(logged_output.string)
         .must_match debug_line_starting_with("Creating local sandbox in ")
     end
 
@@ -298,14 +298,14 @@ describe Kitchen::Provisioner::Base do
       provisioner.create_sandbox
       provisioner.cleanup_sandbox
 
-      File.directory?(provisioner.sandbox_path).must_equal false
+      _(File.directory?(provisioner.sandbox_path)).must_equal false
     end
 
     it "#cleanup_sandbox logs a debug message" do
       provisioner.create_sandbox
       provisioner.cleanup_sandbox
 
-      logged_output.string
+      _(logged_output.string)
         .must_match debug_line_starting_with("Cleaning up local sandbox in ")
     end
 
@@ -323,13 +323,13 @@ describe Kitchen::Provisioner::Base do
       before { config[:sudo] = true }
 
       it "prepends sudo command" do
-        provisioner.send(:sudo, "wakka").must_equal("sudo -E wakka")
+        _(provisioner.send(:sudo, "wakka")).must_equal("sudo -E wakka")
       end
 
       it "customizes sudo when :sudo_command is set" do
         config[:sudo_command] = "blueto -Ohai"
 
-        provisioner.send(:sudo, "wakka").must_equal("blueto -Ohai wakka")
+        _(provisioner.send(:sudo, "wakka")).must_equal("blueto -Ohai wakka")
       end
     end
 
@@ -337,13 +337,13 @@ describe Kitchen::Provisioner::Base do
       before { config[:sudo] = false }
 
       it "does not include sudo command" do
-        provisioner.send(:sudo, "wakka").must_equal("wakka")
+        _(provisioner.send(:sudo, "wakka")).must_equal("wakka")
       end
 
       it "does not include sudo command, even when :sudo_command is set" do
         config[:sudo_command] = "blueto -Ohai"
 
-        provisioner.send(:sudo, "wakka").must_equal("wakka")
+        _(provisioner.send(:sudo, "wakka")).must_equal("wakka")
       end
     end
   end
@@ -353,13 +353,13 @@ describe Kitchen::Provisioner::Base do
       before { config[:sudo] = true }
 
       it "returns the default sudo_command" do
-        provisioner.send(:sudo_command).must_equal("sudo -E")
+        _(provisioner.send(:sudo_command)).must_equal("sudo -E")
       end
 
       it "returns the custom sudo_command" do
         config[:sudo_command] = "mysudo"
 
-        provisioner.send(:sudo_command).must_equal("mysudo")
+        _(provisioner.send(:sudo_command)).must_equal("mysudo")
       end
     end
 
@@ -367,13 +367,13 @@ describe Kitchen::Provisioner::Base do
       before { config[:sudo] = false }
 
       it "returns empty string for default sudo_command" do
-        provisioner.send(:sudo_command).must_equal("")
+        _(provisioner.send(:sudo_command)).must_equal("")
       end
 
       it "returns empty string for custom sudo_command" do
         config[:sudo_command] = "mysudo"
 
-        provisioner.send(:sudo_command).must_equal("")
+        _(provisioner.send(:sudo_command)).must_equal("")
       end
     end
   end
@@ -383,7 +383,7 @@ describe Kitchen::Provisioner::Base do
       before { config[:command_prefix] = "my_prefix" }
 
       it "prepends the command with the prefix" do
-        provisioner.send(:prefix_command, "my_command").must_equal("my_prefix my_command")
+        _(provisioner.send(:prefix_command, "my_command")).must_equal("my_prefix my_command")
       end
     end
 
@@ -391,24 +391,24 @@ describe Kitchen::Provisioner::Base do
       before { config[:command_prefix] = nil }
 
       it "returns an unaltered command" do
-        provisioner.send(:prefix_command, "my_command").must_equal("my_command")
+        _(provisioner.send(:prefix_command, "my_command")).must_equal("my_command")
       end
     end
   end
 
   describe ".no_parallel_for" do
     it "registers no serial actions when none are declared" do
-      Kitchen::Provisioner::TestingDummy.serial_actions.must_be_nil
+      _(Kitchen::Provisioner::TestingDummy.serial_actions).must_be_nil
     end
 
     it "registers a single serial action method" do
-      Kitchen::Provisioner::Dodgy.serial_actions.must_equal [:converge]
+      _(Kitchen::Provisioner::Dodgy.serial_actions).must_equal [:converge]
     end
 
     it "raises a ClientError if value is not an action method" do
-      proc do
+      _(proc do
         Class.new(Kitchen::Provisioner::Base) { no_parallel_for :telling_stories }
-      end.must_raise Kitchen::ClientError
+      end).must_raise Kitchen::ClientError
     end
   end
 end

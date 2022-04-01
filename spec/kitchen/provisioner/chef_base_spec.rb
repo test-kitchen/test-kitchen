@@ -1144,7 +1144,7 @@ describe Kitchen::Provisioner::ChefBase do
             file.write("nameeeeee 'wat'")
           end
 
-          _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
+          _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
         end
       end
 
@@ -1197,7 +1197,7 @@ describe Kitchen::Provisioner::ChefBase do
           describe "when using a provisoner that doesn't support policyfiles" do
             # This is be the default, provisioners must opt-in.
             it "raises a UserError" do
-              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
+              _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
             end
           end
 
@@ -1304,7 +1304,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
           describe "when the policyfile doesn't exist" do
             it "raises a UserError" do
-              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
+              _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
             end
           end
           describe "when the policyfile lock doesn't exist" do
@@ -1383,7 +1383,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
           describe "when the policyfile doesn't exist" do
             it "raises a UserError" do
-              _(proc { provisioner.create_sandbox }).must_raise Kitchen::UserError
+              _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
             end
           end
         end
@@ -1403,7 +1403,7 @@ describe Kitchen::Provisioner::ChefBase do
           Kitchen::Provisioner::Chef::Berkshelf.stubs(:load_berkshelf!).with do
             raise Kitchen::UserError, "Load failed"
           end
-          _(proc { provisioner }).must_raise Kitchen::UserError
+          _ { provisioner }.must_raise Kitchen::UserError
         end
 
         it "logs on debug that Berkshelf is loading" do

@@ -39,25 +39,25 @@ describe Kitchen::Verifier do
       Kitchen::Plugin.stubs(:load).returns(faux_verifier)
       verifier = Kitchen::Verifier.for_plugin("faux", {})
 
-      verifier.must_equal faux_verifier
+      _(verifier).must_equal faux_verifier
     end
 
     it "returns a verifier object of the correct class" do
       verifier = Kitchen::Verifier.for_plugin("coolbeans", {})
 
-      verifier.must_be_kind_of Kitchen::Verifier::Coolbeans
+      _(verifier).must_be_kind_of Kitchen::Verifier::Coolbeans
     end
 
     it "returns a verifier initialized with its config" do
       verifier = Kitchen::Verifier.for_plugin("coolbeans", foo: "bar")
 
-      verifier[:foo].must_equal "bar"
+      _(verifier[:foo]).must_equal "bar"
     end
 
     it "raises ClientError if the verifier could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
-      proc { Kitchen::Verifier.for_plugin("coolbeans", {}) }
+      _ { Kitchen::Verifier.for_plugin("coolbeans", {}) }
         .must_raise Kitchen::ClientError
     end
 
@@ -65,7 +65,7 @@ describe Kitchen::Verifier do
       # pretend require worked
       Kitchen::Plugin.stubs(:require).returns(true)
 
-      proc { Kitchen::Verifier.for_plugin("nope", {}) }
+      _ { Kitchen::Verifier.for_plugin("nope", {}) }
         .must_raise Kitchen::ClientError
     end
   end

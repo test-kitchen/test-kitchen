@@ -33,7 +33,7 @@ describe Kitchen::Base64Stream do
           Kitchen::Base64Stream.strict_encode(input, output)
         end
 
-        output.string.must_equal Base64.strict_encode64(body)
+        _(output.string).must_equal Base64.strict_encode64(body)
       end
     end
 
@@ -44,7 +44,7 @@ describe Kitchen::Base64Stream do
         Kitchen::Base64Stream.strict_encode(input, output)
       end
 
-      output.string.must_equal Base64.strict_encode64(body)
+      _(output.string).must_equal Base64.strict_encode64(body)
     end
   end
 
@@ -56,7 +56,7 @@ describe Kitchen::Base64Stream do
           Kitchen::Base64Stream.strict_decode(input, output)
         end
 
-        output.string.must_equal Base64.strict_decode64(body)
+        _(output.string).must_equal Base64.strict_decode64(body)
       end
     end
 
@@ -67,7 +67,7 @@ describe Kitchen::Base64Stream do
         Kitchen::Base64Stream.strict_decode(input, output)
       end
 
-      output.string.must_equal Base64.strict_decode64(body)
+      _(output.string).must_equal Base64.strict_decode64(body)
     end
   end
 end

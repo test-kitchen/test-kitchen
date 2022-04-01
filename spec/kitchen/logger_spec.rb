@@ -47,55 +47,55 @@ describe Kitchen::Logger do
   end
 
   it "sets the log level to :info by default" do
-    logger.level.must_equal Kitchen::Util.to_logger_level(:info)
-    logger.debug?.must_equal false
-    logger.info?.must_equal true
-    logger.error?.must_equal true
-    logger.warn?.must_equal true
-    logger.fatal?.must_equal true
+    _(logger.level).must_equal Kitchen::Util.to_logger_level(:info)
+    _(logger.debug?).must_equal false
+    _(logger.info?).must_equal true
+    _(logger.error?).must_equal true
+    _(logger.warn?).must_equal true
+    _(logger.fatal?).must_equal true
   end
 
   it "sets a level at creation" do
     opts[:level] = Kitchen::Util.to_logger_level(:warn)
 
-    logger.level.must_equal Kitchen::Util.to_logger_level(:warn)
-    logger.info?.must_equal false
-    logger.warn?.must_equal true
-    logger.fatal?.must_equal true
+    _(logger.level).must_equal Kitchen::Util.to_logger_level(:warn)
+    _(logger.info?).must_equal false
+    _(logger.warn?).must_equal true
+    _(logger.fatal?).must_equal true
   end
 
   it "sets a level after creation" do
     logger.level = Kitchen::Util.to_logger_level(:fatal)
 
-    logger.level.must_equal Kitchen::Util.to_logger_level(:fatal)
-    logger.warn?.must_equal false
-    logger.fatal?.must_equal true
+    _(logger.level).must_equal Kitchen::Util.to_logger_level(:fatal)
+    _(logger.warn?).must_equal false
+    _(logger.fatal?).must_equal true
   end
 
   it "datetime_format is nil by default" do
-    logger.datetime_format.must_be_nil
+    _(logger.datetime_format).must_be_nil
   end
 
   it "sets datetime_format after creation" do
     logger.datetime_format = "smart?"
 
-    logger.datetime_format.must_equal "smart?"
+    _(logger.datetime_format).must_equal "smart?"
   end
 
   it "sets progname to Kitchen by default" do
-    logger.progname.must_equal "Kitchen"
+    _(logger.progname).must_equal "Kitchen"
   end
 
   it "sets progname at creation" do
     opts[:progname] = "Dream Theater"
 
-    logger.progname.must_equal "Dream Theater"
+    _(logger.progname).must_equal "Dream Theater"
   end
 
   it "sets progname after creation" do
     logger.progname = "MASTA"
 
-    logger.progname.must_equal "MASTA"
+    _(logger.progname).must_equal "MASTA"
   end
 
   describe "stdout-based logger" do
@@ -107,7 +107,7 @@ describe Kitchen::Logger do
       opts.delete(:stdout)
       logger.info("hello")
 
-      $stdout.string.must_equal colorize("       hello", opts[:color]) + "\n"
+      _($stdout.string).must_equal colorize("       hello", opts[:color]) + "\n"
     end
 
     it "sets up a simple STDOUT logger by default with no color" do
@@ -115,20 +115,20 @@ describe Kitchen::Logger do
       opts.delete(:stdout)
       logger.info("hello")
 
-      $stdout.string.must_equal "       hello\n"
+      _($stdout.string).must_equal "       hello\n"
     end
 
     it "accepts a :stdout option to redirect output" do
       logger.info("hello")
 
-      stdout.string.must_equal colorize("       hello", opts[:color]) + "\n"
+      _(stdout.string).must_equal colorize("       hello", opts[:color]) + "\n"
     end
 
     it "accepts a :stdout option to redirect output with no color" do
       opts[:colorize] = false
       logger.info("hello")
 
-      stdout.string.must_equal "       hello\n"
+      _(stdout.string).must_equal "       hello\n"
     end
 
     describe "for severity" do
@@ -137,92 +137,92 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        stdout.string.must_equal colorize("-----> yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("-----> yo", opts[:color]) + "\n"
       end
 
       it "logs to banner with no color" do
         opts[:colorize] = false
         logger.banner("yo")
 
-        stdout.string.must_equal "-----> yo\n"
+        _(stdout.string).must_equal "-----> yo\n"
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        stdout.string.must_equal colorize("D      yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("D      yo", opts[:color]) + "\n"
       end
 
       it "logs to debug with no color" do
         opts[:colorize] = false
         logger.debug("yo")
 
-        stdout.string.must_equal "D      yo\n"
+        _(stdout.string).must_equal "D      yo\n"
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        stdout.string.must_equal colorize("       yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("       yo", opts[:color]) + "\n"
       end
 
       it "logs to info with no color" do
         opts[:colorize] = false
         logger.info("yo")
 
-        stdout.string.must_equal "       yo\n"
+        _(stdout.string).must_equal "       yo\n"
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        stdout.string.must_equal colorize(">>>>>> yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize(">>>>>> yo", opts[:color]) + "\n"
       end
 
       it "logs to error with no color" do
         opts[:colorize] = false
         logger.error("yo")
 
-        stdout.string.must_equal ">>>>>> yo\n"
+        _(stdout.string).must_equal ">>>>>> yo\n"
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        stdout.string.must_equal colorize("$$$$$$ yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("$$$$$$ yo", opts[:color]) + "\n"
       end
 
       it "logs to warn with no color" do
         opts[:colorize] = false
         logger.warn("yo")
 
-        stdout.string.must_equal "$$$$$$ yo\n"
+        _(stdout.string).must_equal "$$$$$$ yo\n"
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        stdout.string.must_equal colorize("!!!!!! yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("!!!!!! yo", opts[:color]) + "\n"
       end
 
       it "logs to fatal with no color" do
         opts[:colorize] = false
         logger.fatal("yo")
 
-        stdout.string.must_equal "!!!!!! yo\n"
+        _(stdout.string).must_equal "!!!!!! yo\n"
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        stdout.string.must_equal colorize("?????? yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("?????? yo", opts[:color]) + "\n"
       end
 
       it "logs to unknown with no color" do
         opts[:colorize] = false
         logger.unknown("yo")
 
-        stdout.string.must_equal "?????? yo\n"
+        _(stdout.string).must_equal "?????? yo\n"
       end
     end
 
@@ -230,13 +230,13 @@ describe Kitchen::Logger do
       it "message with a newline are logged on info" do
         logger << "yo\n"
 
-        stdout.string.must_equal colorize("       yo", opts[:color]) + "\n"
+        _(stdout.string).must_equal colorize("       yo", opts[:color]) + "\n"
       end
 
       it "message with multiple newlines are separately logged on info" do
         logger << "yo\nheya\n"
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("       yo", opts[:color]) + "\n" +
           colorize("       heya", opts[:color]) + "\n"
         )
@@ -250,7 +250,7 @@ describe Kitchen::Logger do
           "vanilla",
         ].join("\n").concat("\n")
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("-----> banner", opts[:color]) + "\n" +
           colorize("       info", opts[:color]) + "\n" +
           colorize(">>>>>> error", opts[:color]) + "\n" +
@@ -265,7 +265,7 @@ describe Kitchen::Logger do
           "partial",
         ].join("\n")
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("-----> banner", opts[:color]) + "\n" +
           colorize("       info", opts[:color]) + "\n"
         )
@@ -275,7 +275,7 @@ describe Kitchen::Logger do
         logger << "partial"
         logger << "ly\nokay\n"
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("       partially", opts[:color]) + "\n" +
           colorize("       okay", opts[:color]) + "\n"
         )
@@ -285,7 +285,7 @@ describe Kitchen::Logger do
         logger << "partially\no"
         logger << "kay\n"
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("       partially", opts[:color]) + "\n" +
           colorize("       okay", opts[:color]) + "\n"
         )
@@ -297,7 +297,7 @@ describe Kitchen::Logger do
           "vanilla\r",
         ].join("\n").concat("\n")
 
-        stdout.string.must_equal(
+        _(stdout.string).must_equal(
           colorize("-----> banner", opts[:color]) + "\n" +
           colorize("       vanilla", opts[:color]) + "\n"
         )
@@ -318,43 +318,43 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        logdev.string.must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
+        _(logdev.string).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        logdev.string.must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        logdev.string.must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        logdev.string.must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        logdev.string.must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        logdev.string.must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        logdev.string.must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
+        _(logdev.string).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
     end
   end
@@ -381,43 +381,43 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        IO.read(logfile).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
+        _(IO.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        IO.read(logfile).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        IO.read(logfile).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        IO.read(logfile).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        IO.read(logfile).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        IO.read(logfile).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        IO.read(logfile).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
+        _(IO.read(logfile)).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
     end
   end

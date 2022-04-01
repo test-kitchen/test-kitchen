@@ -69,38 +69,38 @@ describe ".load" do
       Kitchen::Plugin.stubs(:require).returns(true)
       plugin = Kitchen::Plugin.load(Kitchen::RandoPlugin, "coolbeans", {})
 
-      plugin.must_be_kind_of Kitchen::RandoPlugin::Coolbeans
+      _(plugin).must_be_kind_of Kitchen::RandoPlugin::Coolbeans
     end
 
     it "returns a plugin initialized with its config" do
       Kitchen::Plugin.stubs(:require).returns(true)
       plugin = Kitchen::Plugin.load(Kitchen::RandoPlugin, "coolbeans", jelly: "beans")
 
-      plugin[:jelly].must_equal "beans"
+      _(plugin[:jelly]).must_equal "beans"
     end
 
     it "calls #verify_dependencies on the plugin object" do
       Kitchen::Plugin.stubs(:require).returns(true)
       driver = Kitchen::Plugin.load(Kitchen::RandoPlugin, "it_depends", {})
 
-      driver.verify_call_count.must_equal 1
+      _(driver.verify_call_count).must_equal 1
     end
 
     it "calls #verify_dependencies once per plugin require" do
       Kitchen::Plugin.stubs(:require).returns(true, false)
       plugin1 = Kitchen::Plugin.load(Kitchen::RandoPlugin, "it_depends", {})
-      plugin1.verify_call_count.must_equal 1
+      _(plugin1.verify_call_count).must_equal 1
       plugin2 = Kitchen::Plugin.load(Kitchen::RandoPlugin, "it_depends", {})
 
-      plugin2.verify_call_count.must_equal 0
+      _(plugin2.verify_call_count).must_equal 0
     end
 
     it "raises ClientError if the plugin could not be required" do
       Kitchen::Plugin.stubs(:require).raises(LoadError)
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Plugin.load(Kitchen::RandoPlugin, "coolbeans", {}) }
-      error.message.must_include "Could not load the 'coolbeans' rando_plugin from the load path."
-      error.message.must_include "Did you mean"
+      _(error.message).must_include "Could not load the 'coolbeans' rando_plugin from the load path."
+      _(error.message).must_include "Did you mean"
     end
 
     it "raises ClientError if plugin is found on load path but require still fails" do
@@ -108,21 +108,21 @@ describe ".load" do
       Kitchen::Plugin.stubs(:plugins_available).returns(%w{coolbeans})
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Plugin.load(Kitchen::RandoPlugin, "coolbeans", {}) }
-      error.message.must_include "Could not load the 'coolbeans' rando_plugin from the load path."
-      error.message.must_include "Some other problem."
-      error.message.wont_include "Did you mean"
+      _(error.message).must_include "Could not load the 'coolbeans' rando_plugin from the load path."
+      _(error.message).must_include "Some other problem."
+      _(error.message).wont_include "Did you mean"
     end
 
     it "raises ClientError if the plugin's class constant could not be found" do
       Kitchen::Plugin.stubs(:require).returns(true) # pretend require worked
 
       error = assert_raises(Kitchen::ClientError) { Kitchen::Plugin.load(Kitchen::RandoPlugin, "isnt_the_actual_class_name", {}) }
-      error.message.must_include "uninitialized constant Kitchen::RandoPlugin::IsntTheActualClassName"
+      _(error.message).must_include "uninitialized constant Kitchen::RandoPlugin::IsntTheActualClassName"
     end
 
     it "raises UserError if #verify_dependencies fails" do
       Kitchen::Plugin.stubs(:require).returns(true)
-      proc { Kitchen::Plugin.load(Kitchen::RandoPlugin, "unstable_depends", {}) }
+      _ { Kitchen::Plugin.load(Kitchen::RandoPlugin, "unstable_depends", {}) }
         .must_raise Kitchen::UserError
     end
   end

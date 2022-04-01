@@ -84,97 +84,97 @@ describe Kitchen::Config do
 
   describe "#loader" do
     it "returns its loader" do
-      config.loader.must_equal loader
+      _(config.loader).must_equal loader
     end
 
     it "creates a Kitchen::Loader::YAML loader by default" do
       opts.delete(:loader)
 
-      config.loader.must_be_kind_of Kitchen::Loader::YAML
+      _(config.loader).must_be_kind_of Kitchen::Loader::YAML
     end
   end
 
   describe "#kitchen_root" do
     it "returns its kitchen root" do
-      config.kitchen_root.must_equal "/tmp/that/place"
+      _(config.kitchen_root).must_equal "/tmp/that/place"
     end
 
     it "uses Dir.pwd by default" do
       opts.delete(:kitchen_root)
 
-      config.kitchen_root.must_equal Dir.pwd
+      _(config.kitchen_root).must_equal Dir.pwd
     end
   end
 
   describe "#log_root" do
     it "returns its log root" do
-      config.log_root.must_equal "/tmp/logs"
+      _(config.log_root).must_equal "/tmp/logs"
     end
 
     it "calculates a default log root using kitchen_root" do
       opts.delete(:log_root)
 
-      config.log_root.must_equal "/tmp/that/place/.kitchen/logs"
+      _(config.log_root).must_equal "/tmp/that/place/.kitchen/logs"
     end
   end
 
   describe "#test_base_path" do
     it "returns its base test path" do
-      config.test_base_path.must_equal "/testing/yo"
+      _(config.test_base_path).must_equal "/testing/yo"
     end
 
     it "calculates a default base using kitchen_root" do
       opts.delete(:test_base_path)
 
-      config.test_base_path.must_equal "/tmp/that/place/test/integration"
+      _(config.test_base_path).must_equal "/tmp/that/place/test/integration"
     end
   end
 
   describe "#log_level" do
     it "returns its log level" do
-      config.log_level.must_equal :debug
+      _(config.log_level).must_equal :debug
     end
 
     it "uses :info by default" do
       opts.delete(:log_level)
 
-      config.log_level.must_equal :info
+      _(config.log_level).must_equal :info
     end
   end
 
   describe "#log_overwrite" do
     it "returns its log level" do
-      config.log_overwrite.must_equal false
+      _(config.log_overwrite).must_equal false
     end
 
     it "uses :info by default" do
       opts.delete(:log_overwrite)
 
-      config.log_overwrite.must_equal true
+      _(config.log_overwrite).must_equal true
     end
   end
 
   describe "#colorize" do
     it "returns its colorize" do
-      config.colorize.must_equal false
+      _(config.colorize).must_equal false
     end
 
     it "uses true by default" do
       opts.delete(:colorize)
 
-      config.colorize.must_equal true
+      _(config.colorize).must_equal true
     end
   end
 
   describe "#debug" do
     it "returns its debug" do
-      config.debug.must_equal true
+      _(config.debug).must_equal true
     end
 
     it "uses false by default" do
       opts.delete(:debug)
 
-      config.debug.must_equal false
+      _(config.debug).must_equal false
     end
   end
 
@@ -200,8 +200,8 @@ describe Kitchen::Config do
       loader.stubs(:read).returns("datum")
 
       Kitchen::DataMunger.expects(:new).with do |data, kitchen_config|
-        data.must_equal "datum"
-        kitchen_config.is_a?(Hash).must_equal true
+        _(data).must_equal "datum"
+        _(kitchen_config.is_a?(Hash)).must_equal true
       end.returns(munger)
 
       config.platforms
@@ -226,7 +226,7 @@ describe Kitchen::Config do
       Kitchen::Platform.stubs(:new)
         .with(two: "b").returns(stub(name: "two"))
 
-      config.platforms.as_names.must_equal %w{one two}
+      _(config.platforms.as_names).must_equal %w{one two}
     end
   end
 
@@ -252,8 +252,8 @@ describe Kitchen::Config do
       loader.stubs(:read).returns("datum")
 
       Kitchen::DataMunger.expects(:new).with do |data, kitchen_config|
-        data.must_equal "datum"
-        kitchen_config.is_a?(Hash).must_equal true
+        _(data).must_equal "datum"
+        _(kitchen_config.is_a?(Hash)).must_equal true
       end.returns(munger)
 
       config.suites
@@ -277,8 +277,7 @@ describe Kitchen::Config do
         .with(one: "a").returns(stub(name: "one"))
       Kitchen::Suite.stubs(:new)
         .with(two: "b").returns(stub(name: "two"))
-
-      config.suites.as_names.must_equal %w{one two}
+      _(config.suites.as_names).must_equal %w{one two}
     end
   end
 
@@ -409,7 +408,7 @@ describe Kitchen::Config do
                                       stub(name: "allem", includes: [], excludes: []),
                                     ])
 
-      config.instances.as_names.must_equal %w{
+      _(config.instances.as_names).must_equal %w{
         selecta-good selecta-one allem-good allem-nope allem-one
       }
     end
@@ -427,7 +426,7 @@ describe Kitchen::Config do
                                       stub(name: "allem", includes: [], excludes: []),
                                     ])
 
-      config.instances.as_names.must_equal %w{
+      _(config.instances.as_names).must_equal %w{
         selecta-good selecta-one allem-good allem-nope allem-one
       }
     end
