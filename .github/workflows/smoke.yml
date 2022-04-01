@@ -61,7 +61,7 @@ jobs:
       MACHINE_USER: kitchen
       MACHINE_PASS: K1tch3nY@ml!
       MACHINE_PORT: 22
-      KITCHEN_YAML: ../../../../../../../kitchen.proxy.yml
+      KITCHEN_YAML: kitchen.proxy.yml
       PROXY_TESTS_DIR: proxy_tests/files/default/scripts
       PROXY_TESTS_REPO: proxy_tests/files/default/scripts/repo
     runs-on: ubuntu-latest
@@ -98,20 +98,18 @@ jobs:
           path: proxy_tests
       - name: Update path and sudo privs for Kitchen user
         run: |
-              sudo echo 'Defaults	secure_path="./vendor/bundle/ruby/2.7.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
-              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
-              sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
-              sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+          sudo echo 'Defaults	secure_path="./vendor/bundle/ruby/2.7.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"' | sudo tee /etc/sudoers.d/kitchen
+          sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
+          sudo echo "kitchen ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/kitchen
+          sudo echo "" | sudo tee -a /etc/sudoers.d/kitchen
       - name: Run the proxy test script
         run: |
-              sudo -E $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
-              cat /tmp/out.txt
-
-              echo ""
-              echo "===================="
-              echo "Tests finished."
-              echo "===================="
-              echo ""
-
-              sudo cat /var/log/squid/cache.log
-              sudo cat /var/log/squid/access.log
+          sudo -E $PROXY_TESTS_DIR/run_tests.sh kitchen \* \* /tmp/out.txt
+          cat /tmp/out.txt
+          echo ""
+          echo "===================="
+          echo "Tests finished."
+          echo "===================="
+          echo ""
+          sudo cat /var/log/squid/cache.log
+          sudo cat /var/log/squid/access.log
