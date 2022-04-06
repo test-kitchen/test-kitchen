@@ -102,6 +102,7 @@ default: "dokken/kitchen-cache:latest"
 #### creds_file
 
 The `creds_file` configuration options allows you to specify the location of a `json` file that contains the authentication credentials for the private docker registries.
+
 ```yaml
 platforms:
   - name: centos-7
@@ -109,7 +110,9 @@ platforms:
       image: reg/centos-7
       creds_file: './creds.json'
 ```
+
 The credentials file should contain all the necessary details that are required to authenticate the private registry. A sample credentials file is as follows.
+
 ```json
 {
    "username": "org_username",
@@ -273,7 +276,7 @@ driver:
 
 You can check to see if IPv6 is enabled on the dokken network by seeing if the following command returns true:
 
-```
+```shell
 docker network inspect dokken --format='{{.EnableIPv6}}'
 ```
 
@@ -290,13 +293,13 @@ To allow IPv6 Docker networks to reach the internet IPv6 firewall rules must be 
 
 Some containers require the ip6table_filter kernel module to be loaded on the host system or ip6tables will not dunction on the container (Centos 7 for example). To check if the module is loaded use the command
 
-```
+```shell
 sudo lsmod | grep ip6table_filter
 ```
 
 If there is no output then the module is not loaded and should be loaded using the command
 
-```
+```shell
 modprobe ip6table_filter
 ```
 
@@ -545,4 +548,49 @@ suites:
     verifier:
       inspec_tests:
         - test/integration/default
+```
+
+## Using Kitchen Dokken with Podman
+
+Using Dokken with podman is a little less straight forward than with Docker. The main problem is volumes are not populated when they are first created.
+
+As per [this issue](https://github.com/test-kitchen/kitchen-dokken/issues/255), we can use lifecycle hooks to create the volume and populate it with the Chef executable before we try and start the main container.
+
+*Note*, if you’re using a specific version of Chef, and not latest, then you need to reference the correct version in your podman create command because this breaks the automatic pulling of the correct version of the Chef Docker image by kitchen-dokken.
+
+```yaml
+---
+driver:
+  name: dokken
+  privileged: true  # allows systemd services to start
+provisioner:
+  name: dokken
+transport:
+  name: dokken
+verifier:
+  name: inspec
+platforms:
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+  - name: centos-8
+    driver:
+      image: dokken/centos-8
+      pid_one_command: /usr/lib/systemd/systemd
+suites:
+  - name: default
+    run_list:
+      - recipe[test_linux::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    lifecycle:
+      pre_create:
+        - podman create --name chef-latest --replace docker.io/chef/chef:latest sh
+        - podman start chef-latest
+      post_destroy:
+        - podman volume prune -f
 ```
