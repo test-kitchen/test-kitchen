@@ -55,7 +55,7 @@ lifecycle:
 
 Remote commands are normally not allowed during `pre_create` or `post_destroy` hooks as there is generally no instance running at that point, but with `pre_destroy` hooks you may want to use the `skippable` flag so as to not fail during `kitchen test`:
 
-```
+```yaml
 lifecycle:
   pre_destroy:
   - remote: myapp --unregister-license
