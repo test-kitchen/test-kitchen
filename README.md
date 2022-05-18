@@ -5,9 +5,9 @@
 
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
-| Website     | [https://kitchen.ci/][website]													|
-| Source Code | [https://kitchen.ci/docs/getting-started/introduction/][guide]   				|
-| Slack       | [#test-kitchen][slack] channel on Chef Community Slack	                        |
+| Website     | [https://kitchen.ci/][website]                                                  |
+| Source Code | [https://kitchen.ci/docs/getting-started/introduction/][guide]                  |
+| Slack       | [#test-kitchen][slack] channel on Chef Community Slack                          |
 
 **Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.**
 
@@ -22,8 +22,8 @@ If you want to get going super fast, then try the Quick Start next...
 
 Test Kitchen is a RubyGem and can be installed with:
 
-```
-$ gem install test-kitchen
+```shell
+gem install test-kitchen
 ```
 
 If you use Bundler, you can add `gem "test-kitchen"` to your Gemfile and make
@@ -32,8 +32,8 @@ sure to run `bundle install`.
 Next add support to your library, Chef cookbook, or empty project with `kitchen
 init`:
 
-```
-$ kitchen init
+```shell
+kitchen init
 ```
 
 A `kitchen.yml` file will be created in your project base directory. This file
@@ -44,27 +44,27 @@ virtual machines.
 
 Get a listing of your instances with:
 
-```
-$ kitchen list
+```shell
+kitchen list
 ```
 
 Run Chef Infra Client on an instance, in this case `default-ubuntu-2004`, with:
 
-```
-$ kitchen converge default-ubuntu-2004
+```shell
+kitchen converge default-ubuntu-2004
 ```
 
 Destroy all instances with:
 
-```
-$ kitchen destroy
+```shell
+kitchen destroy
 ```
 
 You can clone a Chef Infra cookbook project that contains Test Kitchen support and
 run through all the instances in serial by running:
 
-```
-$ kitchen test
+```shell
+kitchen test
 ```
 
 ## Usage
@@ -72,14 +72,14 @@ $ kitchen test
 There is help included with the `kitchen help` subcommand which will list all
 subcommands and their usage:
 
-```
-$ kitchen help test
+```shell
+kitchen help test
 ```
 
 More verbose logging for test-kitchen can be specified when running test-kitchen from the command line using:
 
-```
-$ kitchen test -l debug
+```shell
+kitchen test -l debug
 ```
 
 For the provisioner (e.g. chef-solo or chef-infra) add a `log_level` item to the provisioner section of the `.kitchen.yml`

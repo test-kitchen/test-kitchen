@@ -38,7 +38,7 @@ platforms:
 
 ### AWS Authentication
 
-In order to connect to AWS, you must specify AWS credentials. We rely on the SDK to find credentials in the standard way, documented here: https://github.com/aws/aws-sdk-ruby/#configuration
+In order to connect to AWS, you must specify AWS credentials. We rely on the SDK to find credentials in the standard way, documented here: <https://github.com/aws/aws-sdk-ruby/#configuration>
 
 The SDK Chain will search environment variables, then config files, then IAM role data from the instance profile, in that order. In the case config files being present, the 'default' profile will be used unless `shared_credentials_profile` is defined to point to another profile.
 
@@ -87,7 +87,7 @@ Unfortunately the RDP file format does not allow including login credentials, so
 
 There are three ways to specify the image you use for the instance: the `image_id`, `image_search` and `platform` name.
 
-##### _image_id_
+##### *image_id*
 
 `image_id` can be set explicitly. It must be an ami in the region you are working with!
 
@@ -100,7 +100,7 @@ platforms:
 
 image_id's have a format like ami-748e2903. The image_id values appear next to the image names when you select 'Launch Instance' from the AWS EC2 console. You can also see the list from the AWS CLI ````aws ec2 describe-images````.
 
-##### _image_search_
+##### *image_search*
 
 `image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the AWS CLI doc under `--filters` [here](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
 
@@ -115,22 +115,22 @@ platforms:
 
 In the event that there are multiple matches (as sometimes happens), we sort to get the best results. In order of priority from greatest to least, we prefer:
 
-- HVM images over paravirtual
-- SSD support over magnetic drives
-- 64-bit over 32-bit
-- The most recently created image (to pick up patch releases)
+* HVM images over paravirtual
+* SSD support over magnetic drives
+* 64-bit over 32-bit
+* The most recently created image (to pick up patch releases)
 
 Note that the image_search method *requires* that the AMI image names be in a specific format.
 Some examples are:
 
-- Windows-2012
-- Windows-2012r2
-- Windows-2012r2sp1
-- RHEL-7.2
+* Windows-2012
+* Windows-2012r2
+* Windows-2012r2sp1
+* RHEL-7.2
 
 It is safest to use the same naming convention as used by the public images published by the OS vendors on the AWS marketplace.
 
-##### _platform_ Name
+##### *platform* Name
 
 The third way to specify the image is by leaving `image_id` and `image_search` blank, and specifying a standard platform name.
 
@@ -194,6 +194,7 @@ The EC2 [security group(s)][group_docs] which will be applied to the instance, s
 The default is unset, or `nil`.
 
 An example of usage:
+
 ```yaml
 # By Name
 security_group_filter:
@@ -242,6 +243,7 @@ The EC2 [subnet][subnet_docs] to use, specified by tag.
 The default is unset, or `nil`.
 
 An example of usage:
+
 ```yaml
 subnet_filter:
   tag:   'Name'
@@ -259,6 +261,7 @@ The default is `{ "created-by" => "test-kitchen" }`.
 The metadata options for the instance can be used to configure IMDSv2 and enable Instance Tags via metadata.
 
 Example enforcing IMDSv2 and enabling Instance Tags via IMDS:
+
 ```yaml
 metadata_options:
   http_tokens: 'required'
@@ -282,6 +285,7 @@ The EC2 IAM profile name to use. The default is `nil`.
 
 Note: The user, whose AWS credentials you have defined, not only needs `AmazonEC2FullAccess` permissions, but also the ability to execute `iam:PassRole`.
 Hence, use a policy like below when using this option:
+
 ```json
 {
     "Version": "2012-10-17",
@@ -369,9 +373,10 @@ elastic_network_interface_id's have a format like eni-0545666738adeed14. You can
 
 ### Disk Configuration
 
-#### <a name="config-block_device_mappings"></a> `block_device_mappings`
+#### `block_device_mappings`
 
 A list of block device mappings for the machine.  An example of all available keys looks like:
+
 ```yaml
 block_device_mappings:
   - device_name: /dev/sda

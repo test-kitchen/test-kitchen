@@ -175,7 +175,7 @@ If your VMs have `cloud-init` enabled you can use `cloud_config` to generate use
 
 This will pass the following user data to OpenStack:
 
-```
+```text
 #cloud-config
 hostname: my-hostname
 ```
@@ -317,7 +317,7 @@ which one to use for further SSH connection. Default is 0 (first one)
 
 For example if you have openstack istance that has network with several IPs assigned like
 
-```
+```text
 +--------------------------------------+------------+--------+------------+-------------+----------------------------------+
 | ID                                   | Name       | Status | Task State | Power State | Networks                         |
 +--------------------------------------+------------+--------+------------+-------------+----------------------------------+

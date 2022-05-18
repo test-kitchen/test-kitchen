@@ -61,10 +61,13 @@ driver:
   base_url: https://vra.corp.local
   verify_ssl: true
 ```
+
 If you don't want to explicitly specify username and password in the kitchen.yml, you have an option to set it in the environment variable as
 
-    $ export VRA_USER_NAME='myuser@corp.local'
-    $ export VRA_USER_PASSWORD='mypassword'
+```shell
+  export VRA_USER_NAME='myuser@corp.local'
+  export VRA_USER_PASSWORD='mypassword'
+```
 
 
 #### catalog_id

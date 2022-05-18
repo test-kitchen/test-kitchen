@@ -46,7 +46,7 @@ The following optional parameters should be used in the `driver` for the platfor
 - `resource_pool` - Name of the resource pool to use when creating the machine. Default: first pool
 - `cluster` - Cluster on which the new virtual machine should be created. Default: cluster of the `targethost` machine.
 - `targethost` - Host on which the new virtual machine should be created. If not specified then the first host in the cluster is used.
-- `folder` - Folder into which the new machine should be stored. If specified the folder _must_ already exist. Nested folders can be specified by separating the folder names with a `/`.
+- `folder` - Folder into which the new machine should be stored. If specified the folder *must* already exist. Nested folders can be specified by separating the folder names with a `/`.
 - `poweron` - Power on the new virtual machine. Default: true
 - `vm_name` - Specify name of virtual machine in vSphere. Default: `<suite>-<platform>-<random-hexid>`
 - `clone_type` - Type of clone, use "full" to create complete copies of template. Values: "full", "linked", "instant". Default: "full"
@@ -80,17 +80,17 @@ The following `vm_customization` (previously `customize`) subkeys for VM customi
 
 The following `guest_customization` subkeys are available for general guest OS customization. Please note that this feature will significantly slow instance creation.
 
-- `ip_address` - (_Optional_) String for configuring a static IPv4 address (performs validation as IPv4 only is supported at this time), if omitted DHCP will be used
-- `gateway` - (_Optional_) Array for configuring IPv4 addresses as gateways
-- `subnet_mask` - (_Optional_) String for configuring subnet mask, this is _required if_ `ip_address` is set
-- `dns_domain` - (_Required_) String for configuring DNS domain
-- `timezone` - (_Required_) String for configuring timezone. Linux requires "Area/Location", while Windows requires a numeric value. Default: UTC
-- `hostname` - (_Optional_) Hostname, will revert to `vm_name` if not given
-- `dns_server_list` - (_Required_) Array for configuring DNS servers
-- `dns_suffix_list` - (_Required_) Array for configuring DNS suffixes
-- `timeout_task` - (_Optional_) Timeout for guest customization to finish. Default: 600 seconds
-- `timeout_ip` - (_Optional_) Time to wait after successful customization to let vSphere catch a new static IP. Default: 30 seconds
-- `continue_on_ip_conflict` - (_Optional_) Continue, even if a reachable host already uses the customized IP. Default: false
+- `ip_address` - (*Optional*) String for configuring a static IPv4 address (performs validation as IPv4 only is supported at this time), if omitted DHCP will be used
+- `gateway` - (*Optional*) Array for configuring IPv4 addresses as gateways
+- `subnet_mask` - (*Optional*) String for configuring subnet mask, this is *required if* `ip_address` is set
+- `dns_domain` - (*Required*) String for configuring DNS domain
+- `timezone` - (*Required*) String for configuring timezone. Linux requires "Area/Location", while Windows requires a numeric value. Default: UTC
+- `hostname` - (*Optional*) Hostname, will revert to `vm_name` if not given
+- `dns_server_list` - (*Required*) Array for configuring DNS servers
+- `dns_suffix_list` - (*Required*) Array for configuring DNS suffixes
+- `timeout_task` - (*Optional*) Timeout for guest customization to finish. Default: 600 seconds
+- `timeout_ip` - (*Optional*) Time to wait after successful customization to let vSphere catch a new static IP. Default: 30 seconds
+- `continue_on_ip_conflict` - (*Optional*) Continue, even if a reachable host already uses the customized IP. Default: false
 
 ### Linux Guest Customization
 
@@ -126,9 +126,9 @@ Known customization issues:
 
 The following `guest_customization` subkeys are Windows specific:
 
-- `org_name` - (_Optional_) Organization name for the Machine. Default: "TestKitchen"
-- `product_id` - (_Required_) Product Key for the OS. Default: Attempt automatic selection, but this might fail
-- `administrator_password` - (_Optional_) The plain text password to assign to the 'Administrator' account during customization
+- `org_name` - (*Optional*) Organization name for the Machine. Default: "TestKitchen"
+- `product_id` - (*Required*) Product Key for the OS. Default: Attempt automatic selection, but this might fail
+- `administrator_password` - (*Optional*) The plain text password to assign to the 'Administrator' account during customization
 
 On guest customizations after Windows Vista the machine SID will be regenerated to avoid conflicts.
 
