@@ -540,8 +540,8 @@ absolute path.
 
 The defaults are:
 
-* Windows: `C:\\omnibus\\cache`
-* Unix: `/tmp/omnibus/cache`
+- Windows: `C:\\omnibus\\cache`
+- Unix: `/tmp/omnibus/cache`
 
 The example:
 
@@ -560,8 +560,8 @@ absolute path.
 
 The defaults are:
 
-* Windows: `~/.kitchen/cache`
-* Unix: `~/.kitchen/cache`
+- Windows: `~/.kitchen/cache`
+- Unix: `~/.kitchen/cache`
 
 The example:
 

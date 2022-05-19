@@ -20,7 +20,7 @@ The following are in the test-kitchen GitHub organization
 [![Gem Version](https://badge.fury.io/rb/kitchen-dokken.svg)](http://badge.fury.io/rb/kitchen-dokken) | [![Gem Version](https://badge.fury.io/rb/kitchen-azurerm.svg)](http://badge.fury.io/rb/kitchen-azurerm) | [![Gem Version](https://badge.fury.io/rb/kitchen-vra.svg)](http://badge.fury.io/rb/kitchen-vra) | [![Gem Version](https://badge.fury.io/rb/kitchen-vro.svg)](http://badge.fury.io/rb/kitchen-vro) | [![Gem Version](https://badge.fury.io/rb/kitchen-vcair.svg)](http://badge.fury.io/rb/kitchen-vcair) | [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation)
 
 [kitchen-habtiat][habitat] |
----- | 
+---- |
 [![CI](https://github.com/test-kitchen/kitchen-habitat/workflows/CI/badge.svg?branch=master)](https://github.com/test-kitchen/kitchen-habitat/actions?query=workflow%3ACI+branch%3Amaster) |
 [![Gem Version](https://badge.fury.io/rb/kitchen-habitat.svg)](http://badge.fury.io/rb/kitchen-habitat) |
 
