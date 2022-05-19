@@ -9,5 +9,5 @@ updates:
       timezone: America/Los_Angeles
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule: 
+    schedule:
       interval: weekly
