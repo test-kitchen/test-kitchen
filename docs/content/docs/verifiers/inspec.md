@@ -26,7 +26,7 @@ end
 
 The plugin requires no configuration by default and expects tests exist as per:
 
-```
+```yaml
 .
 ├── Berksfile
 ├── Gemfile

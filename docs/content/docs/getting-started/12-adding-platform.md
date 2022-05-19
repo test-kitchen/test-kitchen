@@ -110,10 +110,10 @@ $ kitchen verify 8
        downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=el&pv=8&m=x86_64
          to file /tmp/install.sh.3312/metadata.txt
        trying wget...
-       sha1	599b3294c243e362ca77fb89a723c42fc29dae68
-       sha256	ccf3b233b2e971a9fde360b6c9a3536ad31369c6c0c256b1f7619650c03695ab
-       url	https://packages.chef.io/files/stable/chef/17.9.42/el/8/chef-17.9.42-1.el7.x86_64.rpm
-       version	17.9.42
+       sha1 599b3294c243e362ca77fb89a723c42fc29dae68
+       sha256 ccf3b233b2e971a9fde360b6c9a3536ad31369c6c0c256b1f7619650c03695ab
+       url https://packages.chef.io/files/stable/chef/17.9.42/el/8/chef-17.9.42-1.el7.x86_64.rpm
+       version 17.9.42
        downloaded metadata file looks valid...
        downloading https://packages.chef.io/files/stable/chef/17.9.42/el/8/chef-17.9.42-1.el7.x86_64.rpm
          to file /tmp/omnibus/cache/chef-17.9.42-1.el7.x86_64.rpm

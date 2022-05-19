@@ -76,10 +76,10 @@ $ kitchen test
        downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=20.04&m=x86_64
          to file /tmp/install.sh.1399/metadata.txt
        trying wget...
-       sha1	1466b9dbfcce80987e145d58e12c076216f9a5b5
-       sha256	f1f1cc5787bb56d5d3cb37339bb458f8d715e0be9a58abaad7e52ade90a2bfec
-       url	https://packages.chef.io/files/stable/chef/17.9.42/ubuntu/20.04/chef_17.9.42-1_amd64.deb
-       version	17.9.42
+       sha1 1466b9dbfcce80987e145d58e12c076216f9a5b5
+       sha256 f1f1cc5787bb56d5d3cb37339bb458f8d715e0be9a58abaad7e52ade90a2bfec
+       url https://packages.chef.io/files/stable/chef/17.9.42/ubuntu/20.04/chef_17.9.42-1_amd64.deb
+       version 17.9.42
        downloaded metadata file looks valid...
        /tmp/omnibus/cache/chef_17.9.42-1_amd64.deb exists
        Comparing checksum with sha256sum...

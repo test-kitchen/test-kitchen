@@ -8,7 +8,7 @@ menu:
 
 Test Kitchen has support for enduring reboots initiated by a Chef Infra provisioner.
 
-```
+```yaml
 provisioner:
   name: chef_infra
   max_retries: 3 # tweak in conjunction with wait_for_retry

@@ -23,10 +23,10 @@ A Test Kitchen *driver* is what supports configuring the compute instance that i
 
 The Test Kitchen community also maintains several additional plugins not bundled directly in Chef Workstation:
 
-* [kitchen-docker](https://github.com/test-kitchen/kitchen-docker)
-* [kitchen-rackspace](https://github.com/test-kitchen/kitchen-rackspace)
-* [kitchen-terraform](https://github.com/newcontext-oss/kitchen-terraform)
-* [kitchen-vcair](https://github.com/test-kitchen/kitchen-vcair)
-* [kitchen-vro](https://github.com/test-kitchen/kitchen-vro)
+- [kitchen-docker](https://github.com/test-kitchen/kitchen-docker)
+- [kitchen-rackspace](https://github.com/test-kitchen/kitchen-rackspace)
+- [kitchen-terraform](https://github.com/newcontext-oss/kitchen-terraform)
+- [kitchen-vcair](https://github.com/test-kitchen/kitchen-vcair)
+- [kitchen-vro](https://github.com/test-kitchen/kitchen-vro)
 
 There are other drivers that have existed over the life of Test Kitchen that we do not list here, either because they are un-maintained or have been supplanted by other drivers.
