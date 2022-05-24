@@ -7,6 +7,9 @@ name: Smoke
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   linux:
     env:
