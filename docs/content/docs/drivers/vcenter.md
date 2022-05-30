@@ -50,7 +50,7 @@ The following optional parameters should be used in the `driver` for the platfor
 - `poweron` - Power on the new virtual machine. Default: true
 - `vm_name` - Specify name of virtual machine in vSphere. Default: `<suite>-<platform>-<random-hexid>`
 - `clone_type` - Type of clone, use "full" to create complete copies of template. Values: "full", "linked", "instant". Default: "full"
-- `network_name` - Network to reconfigure the first interface to, needs a VM Network name. Default: do not change
+- `networks` - A list of networks to either reconfigure or attached to the newly created vm, needs a VM Network name. Default: do not change
 - `tags` - Array of pre-defined vCenter tag names to assign (VMware tags are not key/value pairs). Default: none
 - `vm_customization` - Dictionary customizations like annotation, memoryMB or numCPUs (see below for details). Default: none
 - `interface`- VM Network name to use for kitchen connections. Default: not set = first interface with usable IP
@@ -180,9 +180,9 @@ Required prilveges:
 - VirtualMachine.Config.Annotation (depending on `vm_customization` parameters)
 - VirtualMachine.Config.CPUCount (depending on `vm_customization` parameters)
 - VirtualMachine.Config.Memory (depending on `vm_customization` parameters)
-- VirtualMachine.Config.EditDevice (if `network_name` is used)
-- DVSwitch.CanUse (if `network_name` is used with dVS/lVS)
-- DVPortgroup.CanUse (if `network_name` is used with dVS/lVS)
+- VirtualMachine.Config.EditDevice (if `networks` is used)
+- DVSwitch.CanUse (if `networks` is used with dVS/lVS)
+- DVPortgroup.CanUse (if `networks` is used with dVS/lVS)
 
 ### Clone mode: linked
 
@@ -263,6 +263,29 @@ This file includes a header line describing the different fields such as the val
 steps within cloning a VM. The timing of steps is relative to each other and followed by a column with the total number of seconds for the whole cloning
 operation.
 
+## Networking
+
+When creating a VM using the vCenter driver, the user can reconfigure the existing network or attach multiple networks.
+
+The previous configuration for managing the networks was `network_name` which could be able to reconfigure the existing network when a new VM is created.
+This configuration is now deprecated and the `networks` configuration is introduced to support the multi-network functionality.
+
+The type of operation that needs to be performed on the network device is also configurable.
+By default, the network will be added to the VM. If the user specify the `edit` operation, then the existing network in the template will be replaced by the specified network.
+Currently, only `add` and `edit` operations are implemented.
+
+Example:
+
+```yaml
+driver:
+  # ... other settings
+  networks:
+    - name: VLAN-1
+      operation: "edit"
+    - name: VLAN-2
+      operation: "add"
+```
+
 ## 1:1 NAT Support
 
 Due to limited IPv4 space, some enterprises use NAT to transform the VM IPs into a routable IP. As the driver cannot detect such a NAT automatically,
@@ -273,7 +296,9 @@ Example:
 ```yaml
 driver:
   # ... other settings
-  network_name: TEST-NET
+  networks:
+    - name: TEST-NET
+      operation: "edit"
   transform_ip: "ip.sub '172.16.', '10.25.'"
 ```
 
@@ -331,7 +356,9 @@ platforms:
   - name: windows2012R2
     driver:
       targethost: 10.0.0.42
-      network_name: "Internal"
+      networks:
+        - name: "Internal"
+          operation: "edit"
       template: folder/windows2012R2-template
       datacenter: "Datacenter"
       vm_customization:
