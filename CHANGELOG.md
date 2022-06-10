@@ -1,5 +1,22 @@
 # Test Kitchen Change Log
 
+## [3.3.0](https://github.com/test-kitchen/test-kitchen/tree/v3.3.0) (2022-06-10)
+
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.2.2...v3.3.0)
+
+- Support for Ruby 3.1 [#1867](https://github.com/test-kitchen/test-kitchen/pull/1867)([@kasif-adnan](https://github.com/kasif-adnan))
+- Gracefully handle winrm errors [#1872](https://github.com/test-kitchen/test-kitchen/pull/1872)([@jasonwbarnett](https://github.com/jasonwbarnett))
+- Spec updates [#1876](https://github.com/test-kitchen/test-kitchen/pull/1876)([@damacus](https://github.com/damacus))
+- Using chefstyle linting [#1847](https://github.com/test-kitchen/test-kitchen/pull/1847)([@sanjain-progress](https://github.com/sanjain-progress))
+- Skip install chef-config  [#1863](https://github.com/test-kitchen/test-kitchen/pull/1863)([@tas50](https://github.com/tas50))
+- Fixed failing azure pipelines [#1880](https://github.com/test-kitchen/test-kitchen/pull/1880)([@kasif-adnan](https://github.com/kasif-adnan))
+- Fixed the chef provisioner spec deprecations [#1878](https://github.com/test-kitchen/test-kitchen/pull/1878)([@damacus](https://github.com/damacus))
+- Fixed the minitest deprecation errors [#1887](https://github.com/test-kitchen/test-kitchen/pull/1887), [#1885](https://github.com/test-kitchen/test-kitchen/pull/1885)([@damacus](https://github.com/damacus))
+- Fixed the issue with chef liscense when Policyfiles are used [#1859](https://github.com/test-kitchen/test-kitchen/pull/1859)([@sanjain-progress](https://github.com/sanjain-progress))
+- Fixed the unit test failures [#1840](https://github.com/test-kitchen/test-kitchen/pull/1840)([@ashiqueps](https://github.com/ashiqueps))
+- Github workflow updates
+- Documentation updates
+
 ## [3.2.2](https://github.com/test-kitchen/test-kitchen/tree/v3.2.1) (2021-12-01)
 
 - Moved the `kitchen diagnose` warnings to stderr to prevent YAML parsing errors - [@ashiqueps](https://github.com/ashiqueps)
