@@ -44,7 +44,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "aruba",     ">= 0.11", "< 3.0"
   gem.add_development_dependency "fakefs",    "~> 1.0"
-  gem.add_development_dependency "minitest",  "~> 5.3", "< 5.16"
+  gem.add_development_dependency "minitest",  "~> 5.3", "< 5.17"
   gem.add_development_dependency "mocha",     "~> 1.1"
   gem.add_development_dependency "cucumber",  ">= 2.1", "< 8.0"
   gem.add_development_dependency "countloc",  "~> 0.4"
