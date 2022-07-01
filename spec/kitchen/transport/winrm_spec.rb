@@ -1094,7 +1094,7 @@ describe Kitchen::Transport::Winrm::Connection do
           end
 
           _(logged_output.string).must_match debug_line(
-            "[WinRM] #{info} (doit)"
+            "[WinRM] #{Util.mask_values(info, %w{password ssh_http_proxy_password})} (doit)"
           )
         end
 
