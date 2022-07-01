@@ -88,6 +88,29 @@ module Kitchen
       end
     end
 
+    # Returns a new Hash with an object's attributes as key, value pairs.
+    #
+    # @param obj [Object] the object to be processed
+    # @return [Hash] a hash with instance properties as key, value pairs
+    def self.attributes(obj)
+      hash = {}
+      obj.instance_variables.each { |var| hash[var.to_s.delete("@")] = obj.instance_variable_get(var) }
+      return hash
+    end
+
+    # Returns a string with masked values for specified parameters.
+    #
+    # @param obj [Object] the object whose string representation is parsed
+    # @param [Array] the list of keys whose values should be masked
+    # @return [String] the string representation of passed object with masked values
+    def self.mask_values(obj, keys)
+      mask_conn = "#{obj}"
+      for key in keys do
+        mask_conn.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
+      end
+      return mask_conn
+    end
+
     # Returns a formatted string representing a duration in seconds.
     #
     # @param total [Integer] the total number of seconds

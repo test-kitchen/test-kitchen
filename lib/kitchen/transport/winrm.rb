@@ -20,6 +20,7 @@
 require "rbconfig" unless defined?(RbConfig)
 require "uri" unless defined?(URI)
 require_relative "../../kitchen"
+require_relative "../util"
 require "winrm" unless defined?(WinRM::Connection)
 require "winrm/exceptions" unless defined?(WinRM::WinRMHTTPTransportError)
 
@@ -104,7 +105,7 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          logger.debug("[WinRM] #{self} (#{command})")
+          logger.debug("[WinRM] #{Util.mask_values(self, ['password', 'ssh_http_proxy_password'])} (#{command})")
 
           exit_code, stderr = execute_with_exit_code(command)
 
@@ -411,7 +412,7 @@ module Kitchen
         #
         # @api private
         def to_s
-          "<#{options.inspect}>"
+          "<#{options}>"
         end
       end
 
@@ -499,7 +500,7 @@ module Kitchen
       # @api private
       def create_new_connection(options, &block)
         if @connection
-          logger.debug("[WinRM] shutting previous connection #{@connection}")
+          logger.debug("[WinRM] shutting previous connection #{Util.mask_values(@connection, ['password', 'ssh_http_proxy_password'])}")
           @connection.close
         end
 
@@ -559,7 +560,7 @@ module Kitchen
       # @return [Winrm::Connection] a WinRM Connection instance
       # @api private
       def reuse_connection
-        logger.debug("[WinRM] reusing existing connection #{@connection}")
+        logger.debug("[WinRM] reusing existing connection #{Util.mask_values(@connection, ['password', 'ssh_http_proxy_password'])}")
         yield @connection if block_given?
         @connection
       end
