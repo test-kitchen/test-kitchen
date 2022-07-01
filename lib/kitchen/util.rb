@@ -90,15 +90,15 @@ module Kitchen
 
     # Returns a string with masked values for specified parameters.
     #
-    # @param obj [Object] the object whose string representation is parsed
+    # @param string_to_mask [String] the object whose string representation is parsed
     # @param [Array] the list of keys whose values should be masked
     # @return [String] the string representation of passed object with masked values
-    def self.mask_values(obj, keys)
-      mask_conn = "#{obj}"
+    def self.mask_values(string_to_mask, keys)
+      masked_string = string_to_mask
       keys.each do |key|
-        mask_conn.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
+        masked_string.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
       end
-      mask_conn
+      masked_string
     end
 
     # Returns a formatted string representing a duration in seconds.

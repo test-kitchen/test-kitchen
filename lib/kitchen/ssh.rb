@@ -76,7 +76,9 @@ module Kitchen
     # @param cmd [String] command string to execute
     # @raise [SSHFailed] if the command does not exit with a 0 code
     def exec(cmd)
-      logger.debug("[SSH] #{Util.mask_values(self, %w{password ssh_http_proxy_password})} (#{cmd})")
+      string_to_mask = "[SSH] #{self} (#{cmd})"
+      masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+      logger.debug(masked_string)
       exit_code = exec_with_exit(cmd)
 
       if exit_code != 0
@@ -138,7 +140,9 @@ module Kitchen
     def shutdown
       return if @session.nil?
 
-      logger.debug("[SSH] closing connection to #{Util.mask_values(self, %w{password ssh_http_proxy_password})}")
+      string_to_mask = "[SSH] closing connection to #{self}"
+      masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+      logger.debug(masked_string)
       session.shutdown!
     ensure
       @session = nil
@@ -213,7 +217,9 @@ module Kitchen
       retries = options[:ssh_retries] || 3
 
       begin
-        logger.debug("[SSH] opening connection to #{Util.mask_values(self, %w{password ssh_http_proxy_password})}")
+        string_to_mask = "[SSH] opening connection to #{self}"
+        masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+        logger.debug(masked_string)
         Net::SSH.start(hostname, username, options)
       rescue *rescue_exceptions => e
         retries -= 1

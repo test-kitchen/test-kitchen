@@ -105,7 +105,9 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          logger.debug("[WinRM] #{Util.mask_values(self, %w{password ssh_http_proxy_password})} (#{command})")
+          string_to_mask = "[WinRM] #{self} (#{command})"
+          masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+          logger.debug(masked_string)
 
           exit_code, stderr = execute_with_exit_code(command)
 
@@ -412,7 +414,7 @@ module Kitchen
         #
         # @api private
         def to_s
-          "<#{options}>"
+          "<#{options.inspect}>"
         end
       end
 
@@ -495,12 +497,14 @@ module Kitchen
       # Creates a new WinRM Connection instance and save it for potential
       # future reuse.
       #
-      # @param options [Hash] conneciton options
+      # @param options [Hash] connection options
       # @return [Ssh::Connection] a WinRM Connection instance
       # @api private
       def create_new_connection(options, &block)
         if @connection
-          logger.debug("[WinRM] shutting previous connection #{Util.mask_values(@connection, %w{password ssh_http_proxy_password})}")
+          string_to_mask = "[WinRM] shutting previous connection #{@connection}"
+          masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+          logger.debug(masked_string)
           @connection.close
         end
 
@@ -560,7 +564,9 @@ module Kitchen
       # @return [Winrm::Connection] a WinRM Connection instance
       # @api private
       def reuse_connection
-        logger.debug("[WinRM] reusing existing connection #{Util.mask_values(@connection, %w{password ssh_http_proxy_password})}")
+        string_to_mask = "[WinRM] reusing existing connection #{@connection}"
+        masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+        logger.debug(masked_string)
         yield @connection if block_given?
         @connection
       end
