@@ -95,7 +95,7 @@ module Kitchen
     def self.attributes(obj)
       hash = {}
       obj.instance_variables.each { |var| hash[var.to_s.delete("@")] = obj.instance_variable_get(var) }
-      return hash
+      hash
     end
 
     # Returns a string with masked values for specified parameters.
@@ -105,10 +105,10 @@ module Kitchen
     # @return [String] the string representation of passed object with masked values
     def self.mask_values(obj, keys)
       mask_conn = "#{obj}"
-      for key in keys do
+      keys.each do |key|
         mask_conn.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
       end
-      return mask_conn
+      mask_conn
     end
 
     # Returns a formatted string representing a duration in seconds.

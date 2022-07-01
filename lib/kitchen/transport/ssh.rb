@@ -103,7 +103,7 @@ module Kitchen
       # (see Base#cleanup!)
       def cleanup!
         if @connection
-          logger.debug("[SSH] shutting previous connection #{Util.mask_values(@connection, ['password', 'ssh_http_proxy_password'])}")
+          logger.debug("[SSH] shutting previous connection #{Util.mask_values(@connection, %w{password ssh_http_proxy_password})}")
           @connection.close
           @connection = @connection_options = nil
         end
@@ -126,7 +126,7 @@ module Kitchen
         def close
           return if @session.nil?
 
-          logger.debug("[SSH] closing connection to #{Util.mask_values(self, ['password', 'ssh_http_proxy_password'])}")
+          logger.debug("[SSH] closing connection to #{Util.mask_values(self, %w{password ssh_http_proxy_password})}")
           session.close
         ensure
           @session = nil
@@ -136,7 +136,7 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          logger.debug("[SSH] #{Util.mask_values(self, ['password', 'ssh_http_proxy_password'])} (#{command})")
+          logger.debug("[SSH] #{Util.mask_values(self, %w{password ssh_http_proxy_password})} (#{command})")
           exit_code = execute_with_exit_code(command)
 
           if exit_code != 0
@@ -351,7 +351,7 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def retry_connection(opts)
-          log_msg = "[SSH] opening connection to #{Util.mask_values(self, ['password', 'ssh_http_proxy_password'])}}"
+          log_msg = "[SSH] opening connection to #{Util.mask_values(self, %w{password ssh_http_proxy_password})}}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           logger.debug(log_msg)
           yield
@@ -556,7 +556,7 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def reuse_connection
-        logger.debug("[SSH] reusing existing connection #{Util.mask_values(@connection, ['password', 'ssh_http_proxy_password'])}")
+        logger.debug("[SSH] reusing existing connection #{Util.mask_values(@connection, %w{password ssh_http_proxy_password})}")
         yield @connection if block_given?
         @connection
       end
