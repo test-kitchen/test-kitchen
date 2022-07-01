@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require_relative "../../spec_helper"
+require_relative "../../../lib/kitchen/util"
 
 require "kitchen/transport/winrm"
 require "winrm"
@@ -956,7 +957,7 @@ describe Kitchen::Transport::Winrm::Connection do
         connection.execute("doit")
 
         _(logged_output.string).must_match debug_line(
-          "[WinRM] #{info} (doit)"
+          "[WinRM] #{Util.mask_values(info, %w{password ssh_http_proxy_password})} (doit)"
         )
       end
 
