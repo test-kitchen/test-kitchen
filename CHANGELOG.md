@@ -1,8 +1,12 @@
 # Test Kitchen Change Log
 
-## [3.3.0](https://github.com/test-kitchen/test-kitchen/tree/v3.3.0) (2022-06-10)
+## [3.3.1](https://github.com/test-kitchen/test-kitchen/tree/v3.3.1) (2022-07-04)
 
-[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.2.2...v3.3.0)
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.3.0...v3.3.1)
+
+- Mask password in debug log [#1902](https://github.com/test-kitchen/test-kitchen/pull/1902)([@vkarve-chef](https://github.com/vkarve-chef))
+
+## [3.3.0](https://github.com/test-kitchen/test-kitchen/tree/v3.3.0) (2022-06-10)
 
 - Support for Ruby 3.1 [#1867](https://github.com/test-kitchen/test-kitchen/pull/1867)([@kasif-adnan](https://github.com/kasif-adnan))
 - Gracefully handle winrm errors [#1872](https://github.com/test-kitchen/test-kitchen/pull/1872)([@jasonwbarnett](https://github.com/jasonwbarnett))
