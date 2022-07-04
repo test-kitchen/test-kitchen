@@ -955,8 +955,11 @@ describe Kitchen::Transport::Winrm::Connection do
       it "logger displays command on debug" do
         connection.execute("doit")
 
+        string_to_mask = "[WinRM] #{info} (doit)"
+        masked_string = Kitchen::Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+
         _(logged_output.string).must_match debug_line(
-          "[WinRM] #{info} (doit)"
+          masked_string
         )
       end
 
@@ -1092,8 +1095,11 @@ describe Kitchen::Transport::Winrm::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
+          string_to_mask = "[WinRM] #{info} (doit)"
+          masked_string = Kitchen::Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+
           _(logged_output.string).must_match debug_line(
-            "[WinRM] #{info} (doit)"
+            masked_string
           )
         end
 

@@ -88,6 +88,19 @@ module Kitchen
       end
     end
 
+    # Returns a string with masked values for specified parameters.
+    #
+    # @param string_to_mask [String] the object whose string representation is parsed
+    # @param [Array] the list of keys whose values should be masked
+    # @return [String] the string representation of passed object with masked values
+    def self.mask_values(string_to_mask, keys)
+      masked_string = string_to_mask
+      keys.each do |key|
+        masked_string.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
+      end
+      masked_string
+    end
+
     # Returns a formatted string representing a duration in seconds.
     #
     # @param total [Integer] the total number of seconds
