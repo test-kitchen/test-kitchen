@@ -1,5 +1,11 @@
 # Test Kitchen Change Log
 
+## [3.3.2](https://github.com/test-kitchen/test-kitchen/tree/v3.3.2) (2022-08-03)
+
+[Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.3.1...v3.3.2)
+
+- Allow to use regexp in includes/excludes to filter platforms [#1828](https://github.com/test-kitchen/test-kitchen/pull/1828)([@Annih](https://github.com/Annih))
+
 ## [3.3.1](https://github.com/test-kitchen/test-kitchen/tree/v3.3.1) (2022-07-04)
 
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.3.0...v3.3.1)
