@@ -54,6 +54,8 @@ suites:
       - centos-8
 ```
 
+**Note:** in above example the `centos-8` platform is explicitly excluded. You could have use a regexp syntax `/<pattern>/` to exclude any platform matching the given pattern.
+
 Now let's run `kitchen list` to ensure the instance is gone:
 
 ```ruby
