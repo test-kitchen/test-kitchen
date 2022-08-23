@@ -10,12 +10,6 @@ group :integration do
   gem "kitchen-vagrant"
 end
 
-group :debug do
-  gem "pry", "~>0.12"
-  gem "pry-byebug"
-  gem "pry-stack_explorer"
-end
-
 group :chefstyle do
   gem "chefstyle", "2.2.2"
 end
