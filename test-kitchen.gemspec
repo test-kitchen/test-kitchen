@@ -23,7 +23,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.6"
 
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 4.0"
-  gem.add_dependency "net-scp",            ">= 1.1", "< 4.0" # pinning until we can confirm 4+ works
+  gem.add_dependency "net-scp",            ">= 1.1", "< 5.0" # pinning until we can confirm 4+ works
   gem.add_dependency "net-ssh",            ">= 2.9", "< 8.0" # pinning until we can confirm 8+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
   gem.add_dependency "ed25519",            "~> 1.2" # ed25519 ssh key support
