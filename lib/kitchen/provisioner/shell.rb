@@ -151,7 +151,6 @@ module Kitchen
           info("No provisioner script file specified, skipping")
         end
       end
-
     end
   end
 end

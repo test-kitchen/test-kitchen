@@ -17,7 +17,6 @@ require_relative "../../spec_helper"
 require "kitchen/transport/exec"
 
 describe Kitchen::Transport::Exec do
-
   before do
     RbConfig::CONFIG.stubs(:[]).with("host_os").returns("blah")
   end

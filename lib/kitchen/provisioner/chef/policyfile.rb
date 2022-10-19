@@ -161,7 +161,6 @@ module Kitchen
                         "setting includes the path to the `chef` or `chef-cli` commands.")
           raise UserError, "Could not find the chef or chef-cli executables in your PATH."
         end
-
       end
     end
   end

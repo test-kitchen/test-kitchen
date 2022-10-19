@@ -352,14 +352,7 @@ module Kitchen
       def parse_yaml_string(string, file_name)
         return {} if string.nil? || string.empty?
 
-        result =
-          if Gem::Requirement.new(">= 3.1.0").satisfied_by?(Gem::Version.new(Psych::VERSION))
-            # ruby >= 2.6.0
-            ::YAML.safe_load(string, permitted_classes: [Symbol], permitted_symbols: [], aliases: true) || {}
-          else
-            # ruby < 2.6.0
-            ::YAML.safe_load(string, [Symbol], [], true) || {}
-          end
+        result = ::YAML.safe_load(string, permitted_classes: [Symbol], permitted_symbols: [], aliases: true) || {}
         unless result.is_a?(Hash)
           raise UserError, "Error parsing #{file_name} as YAML " \
             "(Result of parse was not a Hash, but was a #{result.class}).\n" \
