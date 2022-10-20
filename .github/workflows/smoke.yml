@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux 'product' Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v3
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux 'proxy' Smoke test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v3

@@ -258,7 +258,6 @@ describe Kitchen::Util do
 
       _(Kitchen::Util.safe_glob(@root, "**/*", File::FNM_DOTMATCH))
         .must_equal expected
-
     end
 
     it "globs a folder that does not exist" do
