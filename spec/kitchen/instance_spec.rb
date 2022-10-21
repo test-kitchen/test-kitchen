@@ -502,6 +502,7 @@ describe Kitchen::Instance do
         it "calls lifecycle hooks" do
           lifecycle_hooks.expects(:run).with(:create, :pre)
           lifecycle_hooks.expects(:run).with(:create, :post)
+          lifecycle_hooks.expects(:run).with(:create, :finally)
 
           instance.create
         end
@@ -559,8 +560,10 @@ describe Kitchen::Instance do
         it "calls lifecycle hooks" do
           lifecycle_hooks.expects(:run).with(:create, :pre)
           lifecycle_hooks.expects(:run).with(:create, :post)
+          lifecycle_hooks.expects(:run).with(:create, :finally)
           lifecycle_hooks.expects(:run).with(:converge, :pre)
           lifecycle_hooks.expects(:run).with(:converge, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :finally)
 
           instance.converge
         end
@@ -585,6 +588,7 @@ describe Kitchen::Instance do
         it "calls lifecycle hooks" do
           lifecycle_hooks.expects(:run).with(:converge, :pre)
           lifecycle_hooks.expects(:run).with(:converge, :post)
+          lifecycle_hooks.expects(:run).with(:converge, :finally)
 
           instance.converge
         end
