@@ -43,9 +43,13 @@ module Kitchen
     # @param block [Proc] Block of code implementing the lifecycle phase.
     # @return [void]
     def run_with_hooks(phase, state_file, &block)
-      run(phase, :pre)
-      yield
-      run(phase, :post)
+      begin
+        run(phase, :pre)
+        yield
+        run(phase, :post)
+      ensure
+        run(phase, :finally)
+      end
     end
 
     # @return [Kitchen::StateFile]
@@ -56,7 +60,7 @@ module Kitchen
     # Execute a specific lifecycle hook.
     #
     # @param phase [String] Lifecycle phase which is being executed.
-    # @param hook_timing [Symbol] `:pre` or `:post` to indicate which hook to run.
+    # @param hook_timing [Symbol] `:pre`, `:post`, or `:finally` to indicate which hook to run.
     # @return [void]
     def run(phase, hook_timing)
       # Yes this has to be a symbol because of how data munger works.

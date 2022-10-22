@@ -108,6 +108,18 @@ describe Kitchen::LifecycleHooks do
     run_lifecycle_hooks
   end
 
+  it "runs finally even if stage fails" do
+    local_command = "echo foo"
+    config.update(finally_create: [local_command])
+    hook = expect_local_hook_generated_and_run(:finally, { local: local_command })
+    begin
+      lifecycle_hooks.run_with_hooks(:create, state_file) {
+        raise Error
+      }
+    rescue
+    end
+  end
+
   it "runs a local command with a user option" do
     hook = { local: "echo foo", user: "bar" }
     config.update(post_create: [hook])
