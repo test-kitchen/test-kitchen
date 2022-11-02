@@ -48,5 +48,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "fakefs",    "~> 1.0"
   gem.add_development_dependency "maruku",    "~> 0.6"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.16"
-  gem.add_development_dependency "mocha",     "~> 1.1"
+  gem.add_development_dependency "mocha",     "~> 2.0"
 end
