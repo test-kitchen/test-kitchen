@@ -43,13 +43,11 @@ module Kitchen
     # @param block [Proc] Block of code implementing the lifecycle phase.
     # @return [void]
     def run_with_hooks(phase, state_file, &block)
-      begin
-        run(phase, :pre)
-        yield
-        run(phase, :post)
-      ensure
-        run(phase, :finally)
-      end
+      run(phase, :pre)
+      yield
+      run(phase, :post)
+    ensure
+      run(phase, :finally)
     end
 
     # @return [Kitchen::StateFile]

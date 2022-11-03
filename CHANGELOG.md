@@ -2,8 +2,9 @@
 
 ## [3.4.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.0) (2022-10-20)
 
- - Support modern SSH keys on test instances with newer net-ssh/net-scp ([@tas50](https://github.com/tas50))
- - Require Ruby 2.7 or later since 2.6 is now EOL ([@tas50](https://github.com/tas50))
+- Support modern SSH keys on test instances with newer net-ssh/net-scp ([@tas50](https://github.com/tas50))
+- Require Ruby 2.7 or later since 2.6 is now EOL ([@tas50](https://github.com/tas50))
+
 ## [3.3.2](https://github.com/test-kitchen/test-kitchen/tree/v3.3.2) (2022-08-03)
 
 [Full Changelog](https://github.com/test-kitchen/test-kitchen/compare/v3.3.1...v3.3.2)
