@@ -73,7 +73,7 @@ module Kitchen
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
           conn.execute(prepare_command)
-          
+
           begin
             conn.execute(run_command)
           ensure
