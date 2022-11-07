@@ -125,17 +125,17 @@ driver:
 
 You can use a remote Hyper-V installation with this driver. For this you need to set:
 
-- `hyperv_server` as the IP or FQDN of the server
-- `hyperv_username`
-- `hyperv_password`
+* `hyperv_server` as the IP or FQDN of the server
+* `hyperv_username`
+* `hyperv_password`
 
 All PowerShell commands to create and manage the VM will then be forwarded via WinRM by the Train framework. The accompanying `hyperv.ps1` helper script will be uploaded on the first connection.
 
 ### Optional Parameters
 
-- `hyperv_ssl` (default: `false`) controls if the connection should be encrypted
-- `hyperv_insecure` (default: `true`) sets if self-signed certificates should be accepted
-- `remote_vm_path` (default: `C:\Users\Public\Documents\Hyper-V`) to specify where VMs should be stored
+* `hyperv_ssl` (default: `false`) controls if the connection should be encrypted
+* `hyperv_insecure` (default: `true`) sets if self-signed certificates should be accepted
+* `remote_vm_path` (default: `C:\Users\Public\Documents\Hyper-V`) to specify where VMs should be stored
 
 ## Example **kitchen.yml**
 

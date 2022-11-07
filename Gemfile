@@ -5,15 +5,9 @@ gemspec
 
 group :integration do
   gem "berkshelf"
-  gem "kitchen-inspec"
   gem "kitchen-dokken"
+  gem "kitchen-inspec"
   gem "kitchen-vagrant"
-end
-
-group :debug do
-  gem "pry", "~>0.12"
-  gem "pry-byebug"
-  gem "pry-stack_explorer"
 end
 
 group :chefstyle do

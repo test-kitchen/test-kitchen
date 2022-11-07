@@ -54,6 +54,8 @@ suites:
       - centos-8
 ```
 
+**Note:** in above example the `centos-8` platform is explicitly excluded. You could have use a regexp syntax `/<pattern>/` to exclude any platform matching the given pattern.
+
 Now let's run `kitchen list` to ensure the instance is gone:
 
 ```ruby
@@ -84,7 +86,7 @@ $ kitchen destroy
 Now that we've completed our git daemon feature and made sure we're testing it on only the
 platform we care about we've come to the end of our guide!
 
-#### Congratulations!
+#### Congratulations
 
 You've just written a valid Chef Infra cookbook, complete with tests, that is ready to
 be improved upon further. Before you leave, check out some further resources to

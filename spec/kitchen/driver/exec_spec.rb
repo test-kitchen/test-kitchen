@@ -71,5 +71,4 @@ describe Kitchen::Driver::Exec do
       driver.destroy(state)
     end
   end
-
 end

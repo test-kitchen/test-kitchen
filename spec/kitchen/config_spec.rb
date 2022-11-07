@@ -406,10 +406,11 @@ describe Kitchen::Config do
       config.stubs(:suites).returns([
                                       stub(name: "selecta", includes: %w{good one}, excludes: []),
                                       stub(name: "allem", includes: [], excludes: []),
+                                      stub(name: "regexp", includes: [Kitchen::PlatformFilter.new(/^good|one$/)], excludes: []),
                                     ])
 
       _(config.instances.as_names).must_equal %w{
-        selecta-good selecta-one allem-good allem-nope allem-one
+        selecta-good selecta-one allem-good allem-nope allem-one regexp-good regexp-one
       }
     end
   end
@@ -424,10 +425,11 @@ describe Kitchen::Config do
       config.stubs(:suites).returns([
                                       stub(name: "selecta", includes: [], excludes: ["nope"]),
                                       stub(name: "allem", includes: [], excludes: []),
+                                      stub(name: "regexp", includes: [], excludes: [Kitchen::PlatformFilter.new(/^nope$/)]),
                                     ])
 
       _(config.instances.as_names).must_equal %w{
-        selecta-good selecta-one allem-good allem-nope allem-one
+        selecta-good selecta-one allem-good allem-nope allem-one regexp-good regexp-one
       }
     end
   end

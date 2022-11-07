@@ -7,6 +7,9 @@ name: Smoke
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   linux:
     env:
@@ -14,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux Smoke test on Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -32,10 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux 'product' Smoke test on Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -67,10 +70,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1']
+        ruby: ['2.7', '3.0', '3.1']
     name: Linux 'proxy' Smoke test on Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -92,7 +95,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install squid3 curl
       - name: Checkout smurawski/proxy_tests repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: smurawski/proxy_tests
           path: proxy_tests

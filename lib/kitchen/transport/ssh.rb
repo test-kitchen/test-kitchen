@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require_relative "../../kitchen"
+require_relative "../util"
 
 require "fileutils" unless defined?(FileUtils)
 require "net/ssh" unless defined?(Net::SSH)
@@ -102,7 +103,9 @@ module Kitchen
       # (see Base#cleanup!)
       def cleanup!
         if @connection
-          logger.debug("[SSH] shutting previous connection #{@connection}")
+          string_to_mask = "[SSH] shutting previous connection #{@connection}"
+          masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+          logger.debug(masked_string)
           @connection.close
           @connection = @connection_options = nil
         end
@@ -125,7 +128,9 @@ module Kitchen
         def close
           return if @session.nil?
 
-          logger.debug("[SSH] closing connection to #{self}")
+          string_to_mask = "[SSH] closing connection to #{self}"
+          masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+          logger.debug(masked_string)
           session.close
         ensure
           @session = nil
@@ -135,7 +140,9 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          logger.debug("[SSH] #{self} (#{command})")
+          string_to_mask = "[SSH] #{self} (#{command})"
+          masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+          logger.debug(masked_string)
           exit_code = execute_with_exit_code(command)
 
           if exit_code != 0
@@ -352,7 +359,9 @@ module Kitchen
         def retry_connection(opts)
           log_msg = "[SSH] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
-          logger.debug(log_msg)
+          masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
+
+          logger.debug(masked_string)
           yield
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
@@ -541,7 +550,7 @@ module Kitchen
       # Creates a new SSH Connection instance and save it for potential future
       # reuse.
       #
-      # @param options [Hash] conneciton options
+      # @param options [Hash] connection options
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def create_new_connection(options, &block)
@@ -555,7 +564,9 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def reuse_connection
-        logger.debug("[SSH] reusing existing connection #{@connection}")
+        string_to_mask = "[SSH] reusing existing connection #{@connection}"
+        masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
+        logger.debug(masked_string)
         yield @connection if block_given?
         @connection
       end

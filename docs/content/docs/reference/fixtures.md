@@ -10,7 +10,7 @@ Cookbooks, especially ones that provide resources exclusively, often utilize wha
 
 Fixture cookbooks are most often made available via a Berksfile:
 
-```
+```yaml
 source 'https://supermarket.chef.io'
 
 metadata
@@ -22,7 +22,7 @@ end
 
 This will make the cookbook available and it can be called via `run_list`:
 
-```
+```yaml
 suites:
 - name: default
   run_list:

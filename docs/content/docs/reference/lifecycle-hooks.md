@@ -6,7 +6,7 @@ menu:
     weight: 30
 ---
 
-The life cycle hooks system allows running commands before or after any phase of Test Kitchen (`create`, `converge`, `verify`, or `destroy`). Commands can be run either locally on your workstation (the default) or remotely on the test instance.
+The life cycle hooks system allows running commands before, after, or always after any phase of Test Kitchen (`create`, `converge`, `verify`, or `destroy`). Commands can be run either locally on your workstation (the default) or remotely on the test instance.
 
 These hooks are configured under a new `lifecycle:` section in `kitchen.yml`:
 
@@ -17,6 +17,8 @@ lifecycle:
   - echo after
   - local: echo also after
   - remote: echo after but in the instance
+  finally_create:
+  - echo run regardless of failure in create
 ```
 
 You can also configure hooks on a single platform or suite:
@@ -55,7 +57,7 @@ lifecycle:
 
 Remote commands are normally not allowed during `pre_create` or `post_destroy` hooks as there is generally no instance running at that point, but with `pre_destroy` hooks you may want to use the `skippable` flag so as to not fail during `kitchen test`:
 
-```
+```yaml
 lifecycle:
   pre_destroy:
   - remote: myapp --unregister-license

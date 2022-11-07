@@ -54,7 +54,6 @@ module Kitchen
         @serial_actions ||= []
         @serial_actions += methods
       end
-
     end
   end
 end

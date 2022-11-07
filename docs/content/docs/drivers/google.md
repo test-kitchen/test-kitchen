@@ -41,14 +41,14 @@ into your project's Metadata tab in the GCP Console. GCE will add your key
 to the appropriate user's `~/.ssh/authorized_keys` file when Chef first
 connects to perform the bootstrap process.
 
- * If you don't have one, create a key using `ssh-keygen`
- * Log in to the GCP console, select your project, go to Compute Engine, and go to the Metadata tab.
- * Select the "SSH Keys" tab.
- * Add a new item, and paste in your public key.
-    * Note: to change the username automatically detected for the key, prefix your key with the username
+* If you don't have one, create a key using `ssh-keygen`
+* Log in to the GCP console, select your project, go to Compute Engine, and go to the Metadata tab.
+* Select the "SSH Keys" tab.
+* Add a new item, and paste in your public key.
+  * Note: to change the username automatically detected for the key, prefix your key with the username
       you plan to use to connect to a new instance. For example, if you plan to connect
       as "chefuser", your key should look like: `chefuser:ssh-rsa AAAAB3N...`
- * Click "Save".
+* Click "Save".
 
 Alternatively, the Google Cloud SDK (a.k.a. `gcloud`) will create a SSH key
 for you when you create and access your first instance:
@@ -258,10 +258,11 @@ Allows custom instance metadata to be set.
 The following metadata is set by default if no metadata configuration is provided:
 Default:
 
-
-    "created-by"            => "test-kitchen",
-    "test-kitchen-instance" => <instance.name>,
-    "test-kitchen-user"     => <env_user>,
+```text
+"created-by"            => "test-kitchen",
+"test-kitchen-instance" => <instance.name>,
+"test-kitchen-user"     => <env_user>,
+```
 
 ### Disk configuration
 
@@ -317,9 +318,9 @@ Type of the disk. Default: `pd-standard`.
 
 Valid disk types:
 
- - `pd-standard`: Attached magnetic hard drive
- - `pd-ssd`: Attached SSD
- - `local-ssd`: [Local scratch SSD](https://cloud.google.com/compute/docs/disks/#localssds). NOTE: You cannot specify their size. They always are 375 GB!
+* `pd-standard`: Attached magnetic hard drive
+* `pd-ssd`: Attached SSD
+* `local-ssd`: [Local scratch SSD](https://cloud.google.com/compute/docs/disks/#localssds). NOTE: You cannot specify their size. They always are 375 GB!
 
 ### Transport Settings
 

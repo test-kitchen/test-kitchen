@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative "platform_filter"
+
 module Kitchen
   # A logical configuration representing a test case or fixture that will be
   # executed on a platform.
@@ -41,8 +43,8 @@ module Kitchen
       @name = options.fetch(:name) do
         raise ClientError, "Suite#new requires option :name"
       end
-      @excludes = options.fetch(:excludes, [])
-      @includes = options.fetch(:includes, [])
+      @excludes = PlatformFilter.convert(options.fetch(:excludes, []))
+      @includes = PlatformFilter.convert(options.fetch(:includes, []))
     end
   end
 end

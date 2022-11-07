@@ -46,11 +46,11 @@ The following optional parameters should be used in the `driver` for the platfor
 - `resource_pool` - Name of the resource pool to use when creating the machine. Default: first pool
 - `cluster` - Cluster on which the new virtual machine should be created. Default: cluster of the `targethost` machine.
 - `targethost` - Host on which the new virtual machine should be created. If not specified then the first host in the cluster is used.
-- `folder` - Folder into which the new machine should be stored. If specified the folder _must_ already exist. Nested folders can be specified by separating the folder names with a `/`.
+- `folder` - Folder into which the new machine should be stored. If specified the folder *must* already exist. Nested folders can be specified by separating the folder names with a `/`.
 - `poweron` - Power on the new virtual machine. Default: true
 - `vm_name` - Specify name of virtual machine in vSphere. Default: `<suite>-<platform>-<random-hexid>`
 - `clone_type` - Type of clone, use "full" to create complete copies of template. Values: "full", "linked", "instant". Default: "full"
-- `network_name` - Network to reconfigure the first interface to, needs a VM Network name. Default: do not change
+- `networks` - A list of networks to either reconfigure or attached to the newly created vm, needs a VM Network name. Default: do not change
 - `tags` - Array of pre-defined vCenter tag names to assign (VMware tags are not key/value pairs). Default: none
 - `vm_customization` - Dictionary customizations like annotation, memoryMB or numCPUs (see below for details). Default: none
 - `interface`- VM Network name to use for kitchen connections. Default: not set = first interface with usable IP
@@ -80,17 +80,17 @@ The following `vm_customization` (previously `customize`) subkeys for VM customi
 
 The following `guest_customization` subkeys are available for general guest OS customization. Please note that this feature will significantly slow instance creation.
 
-- `ip_address` - (_Optional_) String for configuring a static IPv4 address (performs validation as IPv4 only is supported at this time), if omitted DHCP will be used
-- `gateway` - (_Optional_) Array for configuring IPv4 addresses as gateways
-- `subnet_mask` - (_Optional_) String for configuring subnet mask, this is _required if_ `ip_address` is set
-- `dns_domain` - (_Required_) String for configuring DNS domain
-- `timezone` - (_Required_) String for configuring timezone. Linux requires "Area/Location", while Windows requires a numeric value. Default: UTC
-- `hostname` - (_Optional_) Hostname, will revert to `vm_name` if not given
-- `dns_server_list` - (_Required_) Array for configuring DNS servers
-- `dns_suffix_list` - (_Required_) Array for configuring DNS suffixes
-- `timeout_task` - (_Optional_) Timeout for guest customization to finish. Default: 600 seconds
-- `timeout_ip` - (_Optional_) Time to wait after successful customization to let vSphere catch a new static IP. Default: 30 seconds
-- `continue_on_ip_conflict` - (_Optional_) Continue, even if a reachable host already uses the customized IP. Default: false
+- `ip_address` - (*Optional*) String for configuring a static IPv4 address (performs validation as IPv4 only is supported at this time), if omitted DHCP will be used
+- `gateway` - (*Optional*) Array for configuring IPv4 addresses as gateways
+- `subnet_mask` - (*Optional*) String for configuring subnet mask, this is *required if* `ip_address` is set
+- `dns_domain` - (*Required*) String for configuring DNS domain
+- `timezone` - (*Required*) String for configuring timezone. Linux requires "Area/Location", while Windows requires a numeric value. Default: UTC
+- `hostname` - (*Optional*) Hostname, will revert to `vm_name` if not given
+- `dns_server_list` - (*Required*) Array for configuring DNS servers
+- `dns_suffix_list` - (*Required*) Array for configuring DNS suffixes
+- `timeout_task` - (*Optional*) Timeout for guest customization to finish. Default: 600 seconds
+- `timeout_ip` - (*Optional*) Time to wait after successful customization to let vSphere catch a new static IP. Default: 30 seconds
+- `continue_on_ip_conflict` - (*Optional*) Continue, even if a reachable host already uses the customized IP. Default: false
 
 ### Linux Guest Customization
 
@@ -126,9 +126,9 @@ Known customization issues:
 
 The following `guest_customization` subkeys are Windows specific:
 
-- `org_name` - (_Optional_) Organization name for the Machine. Default: "TestKitchen"
-- `product_id` - (_Required_) Product Key for the OS. Default: Attempt automatic selection, but this might fail
-- `administrator_password` - (_Optional_) The plain text password to assign to the 'Administrator' account during customization
+- `org_name` - (*Optional*) Organization name for the Machine. Default: "TestKitchen"
+- `product_id` - (*Required*) Product Key for the OS. Default: Attempt automatic selection, but this might fail
+- `administrator_password` - (*Optional*) The plain text password to assign to the 'Administrator' account during customization
 
 On guest customizations after Windows Vista the machine SID will be regenerated to avoid conflicts.
 
@@ -180,9 +180,9 @@ Required prilveges:
 - VirtualMachine.Config.Annotation (depending on `vm_customization` parameters)
 - VirtualMachine.Config.CPUCount (depending on `vm_customization` parameters)
 - VirtualMachine.Config.Memory (depending on `vm_customization` parameters)
-- VirtualMachine.Config.EditDevice (if `network_name` is used)
-- DVSwitch.CanUse (if `network_name` is used with dVS/lVS)
-- DVPortgroup.CanUse (if `network_name` is used with dVS/lVS)
+- VirtualMachine.Config.EditDevice (if `networks` is used)
+- DVSwitch.CanUse (if `networks` is used with dVS/lVS)
+- DVPortgroup.CanUse (if `networks` is used with dVS/lVS)
 
 ### Clone mode: linked
 
@@ -263,6 +263,29 @@ This file includes a header line describing the different fields such as the val
 steps within cloning a VM. The timing of steps is relative to each other and followed by a column with the total number of seconds for the whole cloning
 operation.
 
+## Networking
+
+When creating a VM using the vCenter driver, the user can reconfigure the existing network or attach multiple networks.
+
+The previous configuration for managing the networks was `network_name` which could be able to reconfigure the existing network when a new VM is created.
+This configuration is now deprecated and the `networks` configuration is introduced to support the multi-network functionality.
+
+The type of operation that needs to be performed on the network device is also configurable.
+By default, the network will be added to the VM. If the user specify the `edit` operation, then the existing network in the template will be replaced by the specified network.
+Currently, only `add` and `edit` operations are implemented.
+
+Example:
+
+```yaml
+driver:
+  # ... other settings
+  networks:
+    - name: VLAN-1
+      operation: "edit"
+    - name: VLAN-2
+      operation: "add"
+```
+
 ## 1:1 NAT Support
 
 Due to limited IPv4 space, some enterprises use NAT to transform the VM IPs into a routable IP. As the driver cannot detect such a NAT automatically,
@@ -273,7 +296,9 @@ Example:
 ```yaml
 driver:
   # ... other settings
-  network_name: TEST-NET
+  networks:
+    - name: TEST-NET
+      operation: "edit"
   transform_ip: "ip.sub '172.16.', '10.25.'"
 ```
 
@@ -331,7 +356,9 @@ platforms:
   - name: windows2012R2
     driver:
       targethost: 10.0.0.42
-      network_name: "Internal"
+      networks:
+        - name: "Internal"
+          operation: "edit"
       template: folder/windows2012R2-template
       datacenter: "Datacenter"
       vm_customization:
