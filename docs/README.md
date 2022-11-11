@@ -32,7 +32,7 @@ To highlight a block of code, start and finish the block with three or more tild
 
 For example, this code:
 
-~~~~
+~~~~markdown
 ~~~yaml
 ---
 title: "KitchenCI Overview"
