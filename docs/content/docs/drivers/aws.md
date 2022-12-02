@@ -445,6 +445,34 @@ driver:
   interface: private_dns
 ```
 
+### Tenancy and Dedicated Hosts/Instances
+
+#### tenancy
+
+You can run instances on AWS in three different modes.
+
+The `default` mode places instances on a random host and executes them in a multi-tenant environment. This mode is also the cheapest one (besides Spot).
+
+If you want to run your instances on hardware that is not shared with other customers, mainly due to licensing or security considerations, you can select `dedicated` instances instead. This setting will incur an additional charge but AWS guarantees that no other customers will share the same hardware.
+
+The most specific run type is a dedicated `host`. In this mode your instance will not run on a random host dedicated to your account, but you can reserve a specific host instead. This approach offers options like selecting AZ-level separation or savings plans. It is used mainly for licensing or security considerations; for example, it is needed to work with `mac` instance types.
+
+The default is `default'.
+
+#### allocate_dedicated_host
+
+The most specific run type is a dedicated `host`. In this mode your instance will not run on a random host dedicated to your account, but you can reserve a specific host instead. This approach offers options like selecting AZ-level separation or savings plans. It is used mainly for licensing or security considerations; for example, it is needed to work with `mac` instance types.
+
+The default is `false`.
+
+#### deallocate_dedicated_host
+
+Dedicated hosts can be shared across accounts and might be associated with multi-year savings plans. Also, dedicated hosts of type `mac` have a 24-hour minimum allocation period.
+
+To avoid having Test Kitchen try to deallocate shared or minimum runtime hosts, the functionality of deallocating a host is guarded by this setting.
+
+The default is `false`.
+
 ### Example **kitchen.yml**
 
 ```yaml
