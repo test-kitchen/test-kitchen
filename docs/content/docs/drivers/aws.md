@@ -75,6 +75,10 @@ transport:
 
 For standard platforms we automatically provide the SSH username, but when specifying your own AMI you may need to configure that as well.
 
+The `aws_ssh_key_type` value is the type of SSH key pair to be automatically created if `aws_ssh_key_id` is not specified.
+
+The default value is `rsa`.  The value must be a valid KeyType as per the [AWS EC2 CreateKeyPair API documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateKeyPair.html).
+
 #### WinRM
 
 For Windows instances the generated Administrator password is fetched automatically from Amazon EC2 with the same private key as we use for SSH.
