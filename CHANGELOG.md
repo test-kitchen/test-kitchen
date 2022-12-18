@@ -1,5 +1,10 @@
 # Test Kitchen Change Log
 
+## [3.5.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.1) (2022-12-18)
+
+- Add `finally` lifecycle hook to always run regardless of failure ([@brycekahle](https://github.com/brycekahle))
+- Always download files even if verifier fails ([@brycekahle](https://github.com/brycekahle))
+
 ## [3.4.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.0) (2022-10-20)
 
 - Support modern SSH keys on test instances with newer net-ssh/net-scp ([@tas50](https://github.com/tas50))
