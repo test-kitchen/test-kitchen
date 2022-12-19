@@ -81,6 +81,23 @@ driver:
   chef_image: tas50/my_chef_fork
 ```
 
+#### cgroupns_host
+
+This configuration can be used to pass `--cgroupns=host` flag during the docker run, which can be beneficial in the following scenario.
+
+Docker Desktop 4.3.0+ uses cgroupv2 which breaks containers that use `systemd`.
+Containers that use `systemd` need to run with `--privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw`, which can be achieved with the following configuration.
+
+```yaml
+driver:
+  name: dokken
+  privileged: true
+  cgroupns_host: true
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+```
+Reference: [4.3.0 Release notes](https://docs.docker.com/desktop/release-notes/#430)
+
 #### chef_version
 
 The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivalent to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
