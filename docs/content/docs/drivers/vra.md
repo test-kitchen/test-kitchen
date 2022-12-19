@@ -47,7 +47,7 @@ driver:
   name: vra
   username: myuser@corp.local
   password: mypassword
-  tenant: mytenant
+  domain: domain.corp.com
   base_url: https://vra.corp.local
   verify_ssl: true
 ```
@@ -57,7 +57,7 @@ If you want username and password to be prompted, remove usename and password in
 ```yaml
 driver:
   name: vra
-  tenant: mytenant
+  domain: domain.corp.com
   base_url: https://vra.corp.local
   verify_ssl: true
 ```
@@ -69,6 +69,7 @@ If you don't want to explicitly specify username and password in the kitchen.yml
   export VRA_USER_PASSWORD='mypassword'
 ```
 
+The `domain` attribute is required, which you can utilize to specify which domain should be used to authenticate the users.
 
 #### catalog_id
 
@@ -151,7 +152,7 @@ driver:
   name: vra
   username: myuser@corp.local
   password: <%= ENV['VRA_USER_PASSWORD'] %>
-  tenant: example.com
+  domain: domain.corp.com
   project_id: xxxxx-xxxxxxxx
   base_url: https://example.com
   verify_ssl: false
