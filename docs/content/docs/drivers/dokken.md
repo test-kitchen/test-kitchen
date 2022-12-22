@@ -363,6 +363,26 @@ platforms:
       pid_one_command: /usr/lib/systemd/systemd
 ```
 
+#### platform
+
+This options can be used to specify which platform/architecture needs to be used. It allows users to specify either the following in a global config file
+
+```yaml
+---
+driver:
+  platform: linux/amd64
+```
+
+or the following under a specif platform.
+
+```yaml
+platforms:
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      platform: linux/amd64
+```
+
 #### ports
 
 The `ports` configuration option specifies ports on the local container to map back to the host running Test Kitchen. This is useful when testing web services so you can browse them locally on your workstation.
