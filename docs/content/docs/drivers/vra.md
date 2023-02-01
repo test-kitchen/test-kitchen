@@ -120,14 +120,6 @@ amount of time, in seconds, to wait for a vRA request to complete. Default is 60
 
 Number of times to retry the "waiting for server to be ready" check. In some cases, this will error out immediately due to DNS propagation issues, etc. Setting this to a number greater than 0 will retry the `wait_until_ready` method with a growing sleep in between each attempt. Defaults to 1. Set to 0 to disable any retrying of the `wait_until_ready` method.
 
-#### subtenant_id
-
-the Business Group ID to list as the owner. This is required if the catalog item is a shared/global item; we are unable to determine the subtenant_id from the catalog, and vRA requires it to be set on every request.
-
-#### subtenant_name
-
-the Business Group Name as the owner. This can be passed instead of subtenant_id and would act as a more friendly name. subtenant_id would be internally retrieved based on the provided subtenant_name. In case both subtenant_id and subtenant_name are passed, subtenant_name would take the precendence and would try to retrieve subtenant_id based on subtenant_name passed.
-
 #### private_key_path
 
 path to the SSH private key to use when logging in. Defaults to '~/.ssh/id_rsa' or '~/.ssh/id_dsa', preferring the RSA key. Only applies to instances where SSH transport is used; i.e., does not apply to Windows hosts with the WinRM transport configured.
