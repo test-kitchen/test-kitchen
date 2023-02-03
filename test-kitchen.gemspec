@@ -43,7 +43,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "aruba",     ">= 0.11", "< 3.0"
   gem.add_development_dependency "countloc",  "~> 0.4"
-  gem.add_development_dependency "cucumber",  ">= 2.1", "< 8.0"
+  gem.add_development_dependency "cucumber",  ">= 2.1", "< 9.0"
   gem.add_development_dependency "fakefs",    "~> 2.0"
   gem.add_development_dependency "maruku",    "~> 0.6"
   gem.add_development_dependency "minitest",  "~> 5.3", "< 5.16"
