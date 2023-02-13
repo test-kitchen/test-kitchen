@@ -26,8 +26,9 @@ describe Kitchen::Provisioner::Chef::Policyfile do
     stub(fatal: nil, error: nil, warn: nil, info: nil,
          debug: nil, banner: nil)
   end
+  let(:always_update) { false }
   let(:described_object) do
-    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, license: license, logger: null_logger)
+    Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, license: license, logger: null_logger, always_update: always_update)
   end
   let(:os) { "" }
   before do
@@ -305,6 +306,16 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:license) { "accept" }
         it do
           described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb --chef-license accept")
+          subject
+        end
+      end
+
+      describe "with simple paths - with always_update true" do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:license) { "accept" }
+        let(:always_update) { true }
+        it do
+          described_object.expects(:run_command).with("chef update /home/user/cookbook/Policyfile.rb --chef-license accept")
           subject
         end
       end
