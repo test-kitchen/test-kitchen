@@ -69,7 +69,7 @@ module Kitchen
             run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force --chef-license #{license}")
           end
         end
-        
+
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
