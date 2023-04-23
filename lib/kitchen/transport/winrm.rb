@@ -258,10 +258,10 @@ module Kitchen
           end
         end
 
-        # Execute a Powershell script over WinRM and return the command's
+        # Execute a PowerShell script over WinRM and return the command's
         # exit code and standard error.
         #
-        # @param command [String] Powershell script to execute
+        # @param command [String] PowerShell script to execute
         # @return [[Integer,String]] an array containing the exit code of the
         #   script and the standard error stream
         # @api private
