@@ -393,7 +393,7 @@ describe Kitchen::Loader::YAML do
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write "&*%^*" }
+      File.binwrite("/tmp/.kitchen.yml", "&*%^*")
 
       err = _ { loader.read }.must_raise Kitchen::UserError
 
@@ -404,7 +404,7 @@ describe Kitchen::Loader::YAML do
 
     it "raises a UserError if kitchen.yml cannot be parsed" do
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write "uhoh" }
+      File.binwrite("/tmp/.kitchen.yml", "uhoh")
 
       err = _ { loader.read }.must_raise Kitchen::UserError
 
@@ -415,14 +415,14 @@ describe Kitchen::Loader::YAML do
 
     it "handles a kitchen.yml if it is a commented out YAML document" do
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.yml", "wb") { |f| f.write '#---\n' }
+      File.binwrite("/tmp/.kitchen.yml", '#---\n')
 
       _(loader.read).must_equal({})
     end
 
     it "raises a UserError if kitchen.local.yml cannot be parsed" do
       FileUtils.mkdir_p "/tmp"
-      File.open("/tmp/.kitchen.local.yml", "wb") { |f| f.write "&*%^*" }
+      File.binwrite("/tmp/.kitchen.local.yml", "&*%^*")
       stub_yaml!({})
 
       _ { loader.read }.must_raise Kitchen::UserError
@@ -699,9 +699,7 @@ describe Kitchen::Loader::YAML do
 
       describe "for project on error" do
         before do
-          File.open("/tmp/.kitchen.yml", "wb") do |f|
-            f.write "&*%^*"
-          end
+          File.binwrite("/tmp/.kitchen.yml", "&*%^*")
         end
 
         it "uses an error hash with the raw file contents" do
@@ -727,9 +725,7 @@ describe Kitchen::Loader::YAML do
 
       describe "for local on error" do
         before do
-          File.open("/tmp/.kitchen.local.yml", "wb") do |f|
-            f.write "&*%^*"
-          end
+          File.binwrite("/tmp/.kitchen.local.yml", "&*%^*")
         end
 
         it "uses an error hash with the raw file contents" do
@@ -755,9 +751,7 @@ describe Kitchen::Loader::YAML do
 
       describe "for combined on error" do
         before do
-          File.open("/tmp/.kitchen.yml", "wb") do |f|
-            f.write "&*%^*"
-          end
+          File.binwrite("/tmp/.kitchen.yml", "&*%^*")
         end
 
         it "uses an error hash with nil raw file contents" do
@@ -787,7 +781,7 @@ describe Kitchen::Loader::YAML do
 
   def stub_file(path, hash)
     FileUtils.mkdir_p(File.dirname(path))
-    File.open(path, "wb") { |f| f.write(hash.to_yaml) }
+    File.binwrite(path, hash.to_yaml)
   end
 
   def stub_yaml!(hash, name = ".kitchen.yml")

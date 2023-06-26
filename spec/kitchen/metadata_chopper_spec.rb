@@ -54,9 +54,7 @@ describe Kitchen::MetadataChopper do
     end
 
     it "returns nils for a name or version that isn't present" do
-      File.open("/tmp/metadata.rb", "wb") do |f|
-        f.write %{maintainer       "Michael Bluth"\n}
-      end
+      File.binwrite("/tmp/metadata.rb", %{maintainer       "Michael Bluth"\n})
 
       _(described_class.extract("/tmp/metadata.rb")).must_equal [nil, nil]
     end

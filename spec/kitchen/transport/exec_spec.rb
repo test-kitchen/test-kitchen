@@ -175,6 +175,6 @@ describe Kitchen::Transport::Exec::Connection do
 
   def stub_file(path, content)
     FileUtils.mkdir_p(File.dirname(path))
-    File.open(path, "wb") { |f| f.write(content) }
+    File.binwrite(path, content)
   end
 end

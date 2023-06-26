@@ -904,15 +904,13 @@ describe Kitchen::Provisioner::ChefBase do
           super
 
           data = default_config_rb.merge(config[:generic_rb])
-          File.open(File.join(sandbox_path, "generic.rb"), "wb") do |file|
-            file.write(format_config_file(data))
-          end
+          File.binwrite(File.join(sandbox_path, "generic.rb"), format_config_file(data))
         end
       end.new(config).finalize_config!(instance)
     end
 
     describe "json file" do
-      let(:json) { JSON.parse(IO.read(sandbox_path("dna.json"))) }
+      let(:json) { JSON.parse(File.read(sandbox_path("dna.json"))) }
 
       it "creates a json file with node attributes" do
         config[:attributes] = { "one" => { "two" => "three" } }
@@ -973,10 +971,10 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           _(sandbox_path("#{thing}/alpha.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
+          _(File.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
           _(sandbox_path("#{thing}/sub").directory?).must_equal true
           _(sandbox_path("#{thing}/sub/bravo.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
+          _(File.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
         end
 
         it "logs a message on info" do
@@ -999,9 +997,7 @@ describe Kitchen::Provisioner::ChefBase do
       before do
         config[:encrypted_data_bag_secret_key_path] =
           "#{config[:kitchen_root]}/my_secret"
-        File.open("#{config[:kitchen_root]}/my_secret", "wb") do |file|
-          file.write("p@ss")
-        end
+        File.binwrite("#{config[:kitchen_root]}/my_secret", "p@ss")
       end
 
       it "skips file if :encrypted_data_bag_secret_key_path is not set" do
@@ -1015,7 +1011,7 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         _(sandbox_path("encrypted_data_bag_secret").file?).must_equal true
-        _(IO.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
+        _(File.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
       end
 
       it "logs a message on info" do
@@ -1049,9 +1045,7 @@ describe Kitchen::Provisioner::ChefBase do
         end
 
         it "copies from kitchen_root as cookbook if it contains metadata.rb" do
-          File.open("#{kitchen_root}/metadata.rb", "wb") do |file|
-            file.write("name 'wat'")
-          end
+          File.binwrite("#{kitchen_root}/metadata.rb", "name 'wat'")
           create_cookbook("#{kitchen_root}/cookbooks/bk")
           provisioner.create_sandbox
 
@@ -1111,9 +1105,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "with a cookbook as the project" do
         before do
-          File.open("#{kitchen_root}/metadata.rb", "wb") do |file|
-            file.write("name 'wat'")
-          end
+          File.binwrite("#{kitchen_root}/metadata.rb", "name 'wat'")
         end
 
         it "copies from kitchen_root as cookbook if it contains metadata.rb" do
@@ -1140,9 +1132,7 @@ describe Kitchen::Provisioner::ChefBase do
         end
 
         it "raises a UserError is name cannot be determined from metadata.rb" do
-          File.open("#{kitchen_root}/metadata.rb", "wb") do |file|
-            file.write("nameeeeee 'wat'")
-          end
+          File.binwrite("#{kitchen_root}/metadata.rb", "nameeeeee 'wat'")
 
           _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
         end
@@ -1155,7 +1145,7 @@ describe Kitchen::Provisioner::ChefBase do
 
           _(sandbox_path("cookbooks/#{name}").directory?).must_equal true
           _(sandbox_path("cookbooks/#{name}/metadata.rb").file?).must_equal true
-          _(IO.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
+          _(File.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
         end
 
         it "logs a warning" do
@@ -1177,20 +1167,16 @@ describe Kitchen::Provisioner::ChefBase do
 
         describe "with the default name `Policyfile.rb`" do
           before do
-            File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
-              file.write(<<~POLICYFILE)
+            File.binwrite("#{kitchen_root}/Policyfile.rb", <<~POLICYFILE)
                 name 'wat'
                 run_list 'wat'
                 cookbook 'wat'
-              POLICYFILE
-            end
-            File.open("#{kitchen_root}/Policyfile.lock.json", "wb") do |file|
-              file.write(<<~POLICYFILE)
+            POLICYFILE
+            File.binwrite("#{kitchen_root}/Policyfile.lock.json", <<~POLICYFILE)
                 {
                   "name": "wat"
                 }
-              POLICYFILE
-            end
+            POLICYFILE
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
           end
 
@@ -1233,7 +1219,7 @@ describe Kitchen::Provisioner::ChefBase do
               provisioner.create_sandbox
 
               dna_json_file = File.join(provisioner.sandbox_path, "dna.json")
-              dna_json_data = JSON.parse(IO.read(dna_json_file))
+              dna_json_data = JSON.parse(File.read(dna_json_file))
 
               expected = {
                 "policy_name" => "wat",
@@ -1265,20 +1251,16 @@ describe Kitchen::Provisioner::ChefBase do
             let(:policyfile_lock_path) { "#{kitchen_root}/foo-policy.lock.json" }
 
             before do
-              File.open(policyfile_path, "wb") do |file|
-                file.write(<<~POLICYFILE)
+              File.binwrite(policyfile_path, <<~POLICYFILE)
                   name 'wat'
                   run_list 'wat'
                   cookbook 'wat'
-                POLICYFILE
-              end
-              File.open(policyfile_lock_path, "wb") do |file|
-                file.write(<<~POLICYFILE)
+              POLICYFILE
+              File.binwrite(policyfile_lock_path, <<~POLICYFILE)
                   {
                     "name": "wat"
                   }
-                POLICYFILE
-              end
+              POLICYFILE
             end
 
             it "uses uses the policyfile to resolve dependencies" do
@@ -1309,13 +1291,11 @@ describe Kitchen::Provisioner::ChefBase do
           end
           describe "when the policyfile lock doesn't exist" do
             before do
-              File.open("#{kitchen_root}/Policyfile.rb", "wb") do |file|
-                file.write(<<~POLICYFILE)
+              File.binwrite("#{kitchen_root}/Policyfile.rb", <<~POLICYFILE)
                   name 'wat'
                   run_list 'wat'
                   cookbook 'wat'
-                POLICYFILE
-              end
+              POLICYFILE
 
               it "runs `chef install` to generate the lock" do
                 resolver.expects(:compile)
@@ -1344,20 +1324,16 @@ describe Kitchen::Provisioner::ChefBase do
             let(:policyfile_lock_path) { "#{kitchen_root}/foo-policy.lock.json" }
 
             before do
-              File.open(policyfile_path, "wb") do |file|
-                file.write(<<~POLICYFILE)
+              File.binwrite(policyfile_path, <<~POLICYFILE)
                   name 'wat'
                   run_list 'wat'
                   cookbook 'wat'
-                POLICYFILE
-              end
-              File.open(policyfile_lock_path, "wb") do |file|
-                file.write(<<~POLICYFILE)
+              POLICYFILE
+              File.binwrite(policyfile_lock_path, <<~POLICYFILE)
                   {
                     "name": "wat"
                   }
-                POLICYFILE
-              end
+              POLICYFILE
             end
 
             it "uses uses the policyfile to resolve dependencies" do
@@ -1393,9 +1369,7 @@ describe Kitchen::Provisioner::ChefBase do
         let(:resolver) { stub(resolve: true) }
 
         before do
-          File.open("#{kitchen_root}/Berksfile", "wb") do |file|
-            file.write("cookbook 'wat'")
-          end
+          File.binwrite("#{kitchen_root}/Berksfile", "cookbook 'wat'")
           Kitchen::Provisioner::Chef::Berkshelf.stubs(:new).returns(resolver)
         end
 
@@ -1439,9 +1413,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
 
           before do
-            File.open("#{kitchen_root}/foo-berks.rb", "wb") do |file|
-              file.write("cookbook 'wat'")
-            end
+            File.binwrite("#{kitchen_root}/foo-berks.rb", "cookbook 'wat'")
             Kitchen::Provisioner::Chef::Berkshelf.stubs(:new).returns(resolver)
           end
 
@@ -1479,9 +1451,7 @@ describe Kitchen::Provisioner::ChefBase do
           end
 
           before do
-            File.open(File.expand_path("../foo-berks.rb", kitchen_root), "wb") do |file|
-              file.write("cookbook 'wat'")
-            end
+            File.binwrite(File.expand_path("../foo-berks.rb", kitchen_root), "cookbook 'wat'")
             Kitchen::Provisioner::Chef::Berkshelf.stubs(:new).returns(resolver)
           end
 
@@ -1549,7 +1519,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "Chef config files" do
         let(:file) do
-          IO.read(sandbox_path("generic.rb")).lines.map(&:chomp)
+          File.read(sandbox_path("generic.rb")).lines.map(&:chomp)
         end
 
         it "#create_sanbox creates a generic.rb" do
@@ -1679,7 +1649,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       def create_file(path)
         FileUtils.mkdir_p(File.dirname(path))
-        File.open(path, "wb") { |f| f.write(path) }
+        File.binwrite(path, path)
       end
     end
 
@@ -1689,12 +1659,8 @@ describe Kitchen::Provisioner::ChefBase do
 
     def create_files_under(path)
       FileUtils.mkdir_p(File.join(path, "sub"))
-      File.open(File.join(path, "alpha.txt"), "wb") do |file|
-        file.write("stuff")
-      end
-      File.open(File.join(path, "sub", "bravo.txt"), "wb") do |file|
-        file.write("junk")
-      end
+      File.binwrite(File.join(path, "alpha.txt"), "stuff")
+      File.binwrite(File.join(path, "sub", "bravo.txt"), "junk")
     end
 
     def info_line(msg)

@@ -381,43 +381,43 @@ describe Kitchen::Logger do
       it "logs to banner" do
         logger.banner("yo")
 
-        _(IO.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
+        _(File.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: -----> yo$/)
       end
 
       it "logs to debug" do
         logger.debug("yo")
 
-        _(IO.read(logfile)).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^D, #{ts} DEBUG -- Kitchen: yo$/)
       end
 
       it "logs to info" do
         logger.info("yo")
 
-        _(IO.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
       it "logs to error" do
         logger.error("yo")
 
-        _(IO.read(logfile)).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^E, #{ts} ERROR -- Kitchen: yo$/)
       end
 
       it "logs to warn" do
         logger.warn("yo")
 
-        _(IO.read(logfile)).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^W, #{ts}  WARN -- Kitchen: yo$/)
       end
 
       it "logs to fatal" do
         logger.fatal("yo")
 
-        _(IO.read(logfile)).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^F, #{ts} FATAL -- Kitchen: yo$/)
       end
 
       it "logs to unknown" do
         logger.unknown("yo")
 
-        _(IO.read(logfile)).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
+        _(File.read(logfile)).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
     end
   end

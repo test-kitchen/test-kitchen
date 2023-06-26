@@ -98,7 +98,7 @@ describe "Kitchen" do
   it ".default_file_logger returns a logger that uses a file" do
     Kitchen.default_file_logger.warn("uhoh")
 
-    _(IO.read(File.join(%w{.kitchen logs kitchen.log})))
+    _(File.read(File.join(%w{.kitchen logs kitchen.log})))
       .must_match(/ -- Kitchen: uhoh$/)
   end
 

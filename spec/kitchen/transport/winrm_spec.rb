@@ -28,7 +28,7 @@ module Kitchen
       attr_reader :saved_command, :remote_path, :local_path
 
       def upload(locals, remote)
-        @saved_command = IO.read(locals)
+        @saved_command = File.read(locals)
         @local_path = locals
         @remote_path = remote
       end
@@ -1219,7 +1219,7 @@ describe Kitchen::Transport::Winrm::Connection do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
           login_command
-          actual = IO.read(rdp_doc)
+          actual = File.read(rdp_doc)
         end
 
         _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
@@ -1276,7 +1276,7 @@ describe Kitchen::Transport::Winrm::Connection do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
           login_command
-          actual = IO.read(rdp_doc)
+          actual = File.read(rdp_doc)
         end
 
         _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)

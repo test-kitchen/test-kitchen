@@ -626,9 +626,7 @@ module Kitchen
         info("Preparing #{config_filename}")
         debug("Creating #{config_filename} from #{data.inspect}")
 
-        File.open(File.join(sandbox_path, config_filename), "wb") do |file|
-          file.write(format_config_file(data))
-        end
+        File.binwrite(File.join(sandbox_path, config_filename), format_config_file(data))
 
         prepare_config_idempotency_check(data) if config[:enforce_idempotency]
       end

@@ -118,11 +118,11 @@ describe Kitchen::Provisioner::ChefInfra do
 
     describe "client.rb file" do
       let(:file) do
-        IO.read(sandbox_path("client.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client.rb")).lines.map(&:chomp)
       end
 
       let(:file_no_updated_resources) do
-        IO.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
       end
 
       it "creates a client.rb" do

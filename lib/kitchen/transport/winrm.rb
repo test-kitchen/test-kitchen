@@ -248,12 +248,12 @@ module Kitchen
           RDP
           content.prepend("drivestoredirect:s:*\n") if opts[:mac]
 
-          File.open(rdp_doc_path, "wb") { |f| f.write(content) }
+          File.binwrite(rdp_doc_path, content)
 
           if logger.debug?
             debug("Creating RDP document for #{instance_name} (#{rdp_doc_path})")
             debug("------------")
-            IO.read(rdp_doc_path).each_line { |l| debug(l.chomp.to_s) }
+            File.read(rdp_doc_path).each_line { |l| debug(l.chomp.to_s) }
             debug("------------")
           end
         end

@@ -507,7 +507,7 @@ describe Kitchen::Verifier::Busser do
 
         _(file.file?).must_equal true
         _(file.stat.mode.to_s(8)[2, 4]).must_equal md[:perms]
-        _(IO.read(file)).must_equal md[:content]
+        _(File.read(file)).must_equal md[:content]
       end
     end
 
@@ -519,7 +519,7 @@ describe Kitchen::Verifier::Busser do
 
         _(file.file?).must_equal true
         _(file.stat.mode.to_s(8)[2, 4]).must_equal md[:perms]
-        _(IO.read(file)).must_equal md[:content]
+        _(File.read(file)).must_equal md[:content]
       end
     end
 
@@ -553,7 +553,7 @@ describe Kitchen::Verifier::Busser do
 
   def create_file(file, content, perms)
     FileUtils.mkdir_p(File.dirname(file))
-    File.open(file, "wb") { |f| f.write(content) }
+    File.binwrite(file, content)
     FileUtils.chmod(perms.to_i(8), file)
   end
 

@@ -181,9 +181,7 @@ module Kitchen
           name = File.basename(config[:kitchen_root])
           fake_cb = File.join(tmpbooks_dir, name)
           FileUtils.mkdir_p(fake_cb)
-          File.open(File.join(fake_cb, "metadata.rb"), "wb") do |file|
-            file.write(%{name "#{name}"\n})
-          end
+          File.binwrite(File.join(fake_cb, "metadata.rb"), %{name "#{name}"\n})
         end
 
         # @return [String] an absolute path to a metadata.rb, relative to the
@@ -279,9 +277,7 @@ module Kitchen
           info("Preparing dna.json")
           debug("Creating dna.json from #{dna.inspect}")
 
-          File.open(File.join(sandbox_path, "dna.json"), "wb") do |file|
-            file.write(dna.to_json)
-          end
+          File.binwrite(File.join(sandbox_path, "dna.json"), dna.to_json)
         end
 
         def update_dna_for_policyfile
@@ -295,7 +291,7 @@ module Kitchen
           Kitchen.mutex.synchronize do
             policy.compile
           end
-          policy_name = JSON.parse(IO.read(policy.lockfile))["name"]
+          policy_name = JSON.parse(File.read(policy.lockfile))["name"]
           policy_group = config[:policy_group] || "local"
           config[:attributes].merge(policy_name: policy_name, policy_group: policy_group)
         end

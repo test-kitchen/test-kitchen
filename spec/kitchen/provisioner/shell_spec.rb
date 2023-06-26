@@ -484,10 +484,10 @@ describe Kitchen::Provisioner::Shell do
         provisioner.create_sandbox
 
         _(sandbox_path("data/alpha.txt").file?).must_equal true
-        _(IO.read(sandbox_path("data/alpha.txt"))).must_equal "stuff"
+        _(File.read(sandbox_path("data/alpha.txt"))).must_equal "stuff"
         _(sandbox_path("data/sub").directory?).must_equal true
         _(sandbox_path("data/sub/bravo.txt").file?).must_equal true
-        _(IO.read(sandbox_path("data/sub/bravo.txt"))).must_equal "junk"
+        _(File.read(sandbox_path("data/sub/bravo.txt"))).must_equal "junk"
       end
 
       it "logs a message on info" do
@@ -508,9 +508,7 @@ describe Kitchen::Provisioner::Shell do
     describe "script file" do
       describe "with a valid :script file" do
         before do
-          File.open("#{config[:kitchen_root]}/my_script", "wb") do |file|
-            file.write("gonuts")
-          end
+          File.binwrite("#{config[:kitchen_root]}/my_script", "gonuts")
           config[:script] = "#{config[:kitchen_root]}/my_script"
         end
 
@@ -518,7 +516,7 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           _(sandbox_path("my_script").file?).must_equal true
-          _(IO.read(sandbox_path("my_script"))).must_equal "gonuts"
+          _(File.read(sandbox_path("my_script"))).must_equal "gonuts"
         end
 
         it "logs a message on info" do
@@ -599,12 +597,8 @@ describe Kitchen::Provisioner::Shell do
 
     def create_files_under(path)
       FileUtils.mkdir_p(File.join(path, "sub"))
-      File.open(File.join(path, "alpha.txt"), "wb") do |file|
-        file.write("stuff")
-      end
-      File.open(File.join(path, "sub", "bravo.txt"), "wb") do |file|
-        file.write("junk")
-      end
+      File.binwrite(File.join(path, "alpha.txt"), "stuff")
+      File.binwrite(File.join(path, "sub", "bravo.txt"), "junk")
     end
 
     def info_line(msg)

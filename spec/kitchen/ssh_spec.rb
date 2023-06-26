@@ -260,13 +260,13 @@ describe Kitchen::SSH do
       @beta_file_mode = running_tests_on_windows? ? 0444 : 0555
 
       FileUtils.chmod(0700, @dir)
-      File.open("#{@dir}/alpha", "wb") { |f| f.write("alpha-contents\n") }
+      File.binwrite("#{@dir}/alpha", "alpha-contents\n")
       FileUtils.chmod(0644, "#{@dir}/alpha")
       FileUtils.mkdir_p("#{@dir}/subdir")
       FileUtils.chmod(0755, "#{@dir}/subdir")
-      File.open("#{@dir}/subdir/beta", "wb") { |f| f.write("beta-contents\n") }
+      File.binwrite("#{@dir}/subdir/beta", "beta-contents\n")
       FileUtils.chmod(0555, "#{@dir}/subdir/beta")
-      File.open("#{@dir}/zulu", "wb") { |f| f.write("zulu-contents\n") }
+      File.binwrite("#{@dir}/zulu", "zulu-contents\n")
       FileUtils.chmod(0444, "#{@dir}/zulu")
 
       expect_scp_session("-t -r /tmp/remote") do |channel|

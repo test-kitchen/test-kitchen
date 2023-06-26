@@ -58,7 +58,7 @@ module Kitchen
       serialized_string = serialize_hash(Util.stringified_hash(state))
 
       FileUtils.mkdir_p(dir) unless File.directory?(dir)
-      File.open(file_name, "wb") { |f| f.write(serialized_string) }
+      File.binwrite(file_name, serialized_string)
     end
 
     # Destroys a state file on disk if it exists.
@@ -85,7 +85,7 @@ module Kitchen
     # @return [String] a string representation of the yaml state file
     # @api private
     def read_file
-      IO.read(file_name)
+      File.read(file_name)
     end
 
     # Parses a YAML string and returns a Hash.

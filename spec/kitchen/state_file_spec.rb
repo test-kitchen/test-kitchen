@@ -85,7 +85,7 @@ describe Kitchen::StateFile do
     it "writes a state file with stringified keys" do
       state_file.write(thekey: "thyself")
 
-      _(IO.read(file_name).split("\n"))
+      _(File.read(file_name).split("\n"))
         .must_include "thekey: thyself"
     end
   end
@@ -117,6 +117,6 @@ describe Kitchen::StateFile do
     end
 
     FileUtils.mkdir_p(File.dirname(file_name))
-    File.open(file_name, "wb") { |f| f.write(yaml_string) }
+    File.binwrite(file_name, yaml_string)
   end
 end

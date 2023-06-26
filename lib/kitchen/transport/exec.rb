@@ -94,7 +94,7 @@ module Kitchen
             debug("Creating exec script for #{instance_name} (#{exec_script_file})")
             debug("Executing #{exec_script_file}")
           end
-          File.open(exec_script_file, "wb") { |file| file.write(command) }
+          File.binwrite(exec_script_file, command)
           %{powershell -file "#{exec_script_file}"}
         end
 
