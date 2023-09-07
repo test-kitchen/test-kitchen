@@ -18,6 +18,7 @@ for plugin in $plugins; do
     $gem specific_install https://github.com/test-kitchen/busser-serverspec.git
     $gem install 'bundler'
     $gem list
+    $busser plugin install $plugin || true
   elif test $? -ne 0; then
     echo "-----> Installing Busser plugin: $plugin"
     $busser plugin install $plugin
