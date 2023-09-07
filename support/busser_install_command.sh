@@ -13,6 +13,10 @@ fi
 for plugin in $plugins; do
   $gem list --no-versions | grep "^$plugin$" 2>&1 >/dev/null
   if test $? -ne 0; then
+    echo "-----> Installing Busser plugin the hacky way: $plugin"
+    $gem install specific_install
+    $gem specific_install https://github.com/test-kitchen/busser-serverspec.git
+  elif test $? -ne 0; then
     echo "-----> Installing Busser plugin: $plugin"
     $busser plugin install $plugin
   else
