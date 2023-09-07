@@ -16,6 +16,10 @@ for plugin in $plugins; do
     echo "-----> Installing Busser plugin the hacky way: $plugin"
     $gem install specific_install
     $gem specific_install https://github.com/test-kitchen/busser-serverspec.git
+    $gem install 'rspec-core'
+    $gem install 'rake'
+    $gem install 'busser'
+    $gem list
   elif test $? -ne 0; then
     echo "-----> Installing Busser plugin: $plugin"
     $busser plugin install $plugin
