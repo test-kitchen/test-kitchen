@@ -210,7 +210,7 @@ module Kitchen
 
       deprecate_config_for :install_msi_url, Util.outdent!(<<-MSG)
         The 'install_msi_url' will be relaced by the 'download_url' attribute.
-        'download_url' will be applied to Bourne and Powershell download scripts.
+        'download_url' will be applied to Bourne and PowerShell download scripts.
 
         Note: 'product_name' must be set in order to use 'download_url'
         until 'product_name' replaces 'require_chef_omnibus' as the default.
