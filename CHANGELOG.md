@@ -1,5 +1,7 @@
 # Test Kitchen Change Log
 
+## All future Releases will be documented in GitHub Releases
+
 ## [3.5.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.1) (2022-12-18)
 
 - Add `finally` lifecycle hook to always run regardless of failure ([@brycekahle](https://github.com/brycekahle))
@@ -156,7 +158,7 @@
 
 - Allow copying Ohai plugins from the /ohai cookbook directory into the instance [#1634](https://github.com/test-kitchen/test-kitchen/pull/1634)([SAPDanJoe](https://github.com/SAPDanJoe))
 - Fix failures using the PowerShell provisioner [#1639](https://github.com/test-kitchen/test-kitchen/pull/1639)([alanghartJC](https://github.com/alanghartJC))
-- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}-etm@openssh.com MAC algorithms and to allow spaces / comment lines in the known_hosts file.
+- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}<-etm@openssh.com> MAC algorithms and to allow spaces / comment lines in the known_hosts file.
 
 ## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
 
@@ -1536,7 +1538,7 @@
 - test-kitchen/lib/kitchen/provisioner/chef/powershell\_shell.rb expand\_version fails if behind proxy and http\_proxy is set [\#638](https://github.com/test-kitchen/test-kitchen/issues/638)
 - kitchen hangs on converge [\#624](https://github.com/test-kitchen/test-kitchen/issues/624)
 - help info for "kitchen driver incorrect" [\#613](https://github.com/test-kitchen/test-kitchen/issues/613)
-- Detect and warn users about Powershell bug KB2842230 that causes Out of Memory Errors [\#604](https://github.com/test-kitchen/test-kitchen/issues/604)
+- Detect and warn users about PowerShell bug KB2842230 that causes Out of Memory Errors [\#604](https://github.com/test-kitchen/test-kitchen/issues/604)
 - Need solution/best practice for installing gem in VM chef-client [\#495](https://github.com/test-kitchen/test-kitchen/issues/495)
 - Multi-project chaining of shared CLI subcommands [\#47](https://github.com/test-kitchen/test-kitchen/issues/47)
 - Create kitchen driver for Razor [\#45](https://github.com/test-kitchen/test-kitchen/issues/45)
@@ -1596,7 +1598,7 @@
 - RubyZip is corrupting zip files on windows hosts [\#643](https://github.com/test-kitchen/test-kitchen/issues/643)
 - windows guest support broke recntly  [\#641](https://github.com/test-kitchen/test-kitchen/issues/641)
 - Unable to parse WinRM response, missing attribute quote [\#635](https://github.com/test-kitchen/test-kitchen/issues/635)
-- Chef DownloadFile fails on Powershell 2.0/win 2003 [\#631](https://github.com/test-kitchen/test-kitchen/issues/631)
+- Chef DownloadFile fails on PowerShell 2.0/win 2003 [\#631](https://github.com/test-kitchen/test-kitchen/issues/631)
 - how can i pull the data from chef server policy environment override attributes [\#630](https://github.com/test-kitchen/test-kitchen/issues/630)
 - windows-guest-support branch does not download chef client rc version [\#626](https://github.com/test-kitchen/test-kitchen/issues/626)
 - Zip Transport fails on Windows Server Core [\#625](https://github.com/test-kitchen/test-kitchen/issues/625)
@@ -1623,9 +1625,9 @@
 - Windows2003 guest fix [\#610](https://github.com/test-kitchen/test-kitchen/pull/610) ([GolubevV](https://github.com/GolubevV))
 - Proxy Implementation for Windows Chef Omnibus [\#603](https://github.com/test-kitchen/test-kitchen/pull/603) ([afiune](https://github.com/afiune))
 - Adding --log-overwrite CLI option [\#600](https://github.com/test-kitchen/test-kitchen/pull/600) ([tyler-ball](https://github.com/tyler-ball))
-- Powershell no longer re-installs chef if version constraint is only major version [\#590](https://github.com/test-kitchen/test-kitchen/pull/590) ([tyler-ball](https://github.com/tyler-ball))
+- PowerShell no longer re-installs chef if version constraint is only major version [\#590](https://github.com/test-kitchen/test-kitchen/pull/590) ([tyler-ball](https://github.com/tyler-ball))
 - Check the exit code of msiexec [\#589](https://github.com/test-kitchen/test-kitchen/pull/589) ([jaym](https://github.com/jaym))
-- Change getchef.com chef.io in Powershell provisioner [\#588](https://github.com/test-kitchen/test-kitchen/pull/588) ([jaym](https://github.com/jaym))
+- Change getchef.com chef.io in PowerShell provisioner [\#588](https://github.com/test-kitchen/test-kitchen/pull/588) ([jaym](https://github.com/jaym))
 - winrm transport should use a single \(or minimal\) shell when transferring files. transfer via a zip file to optimize round trips [\#562](https://github.com/test-kitchen/test-kitchen/pull/562) ([mwrock](https://github.com/mwrock))
 - Stop uploading empty directories [\#530](https://github.com/test-kitchen/test-kitchen/pull/530) ([whiteley](https://github.com/whiteley))
 
