@@ -1,5 +1,7 @@
 # Test Kitchen Change Log
 
+## All future Releases will be documented in GitHub Releases
+
 ## [3.5.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.1) (2022-12-18)
 
 - Add `finally` lifecycle hook to always run regardless of failure ([@brycekahle](https://github.com/brycekahle))
@@ -156,7 +158,7 @@
 
 - Allow copying Ohai plugins from the /ohai cookbook directory into the instance [#1634](https://github.com/test-kitchen/test-kitchen/pull/1634)([SAPDanJoe](https://github.com/SAPDanJoe))
 - Fix failures using the PowerShell provisioner [#1639](https://github.com/test-kitchen/test-kitchen/pull/1639)([alanghartJC](https://github.com/alanghartJC))
-- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}-etm@openssh.com MAC algorithms and to allow spaces / comment lines in the known_hosts file.
+- Update the net-ssh and net-scp deps to allow the latest versions to add support for sha2-{256,512}<-etm@openssh.com> MAC algorithms and to allow spaces / comment lines in the known_hosts file.
 
 ## [2.4.0](https://github.com/test-kitchen/test-kitchen/tree/v2.4.0) (2020-03-04)
 
