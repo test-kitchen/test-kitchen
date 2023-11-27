@@ -53,7 +53,6 @@ The following are community-maintained plugins
 [![Status](https://travis-ci.org/devkid/kitchen-sparkleformation.svg?branch=master)](https://travis-ci.org/devkid/kitchen-sparkleformation) | [![Status](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
 [![Gem Version](https://badge.fury.io/rb/kitchen-sparkleformation.svg)](http://badge.fury.io/rb/kitchen-sparkleformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](http://badge.fury.io/rb/kitchen-terraform)
 
-[chefpartners]: https://github.com/chef-partners/
 [ec2]: https://github.com/test-kitchen/kitchen-ec2
 [do]: https://github.com/test-kitchen/kitchen-digitalocean
 [open]: https://github.com/test-kitchen/kitchen-openstack
@@ -70,8 +69,6 @@ The following are community-maintained plugins
 [vro]: https://github.com/chef-partners/kitchen-vro
 [vcenter]: https://github.com/chef/kitchen-vcenter
 [vcair]: https://github.com/chef-partners/kitchen-vcair
-[oracle]: https://github.com/chef-partners/kitchen-oraclecloud
-[sadpanda]:  https://github.com/chef-partners/kitchen-ssh-cisco
 [sync]:  https://github.com/coderanger/kitchen-sync
 [ansible]: https://github.com/neillturner/kitchen-ansible
 [puppet]: https://github.com/neillturner/kitchen-puppet
@@ -80,7 +77,6 @@ The following are community-maintained plugins
 [lxc]: https://github.com/chrisroberts/kitchen-lxc
 [nodes]: https://github.com/mwrock/kitchen-nodes
 [zcloudjp]: https://github.com/higanworks/kitchen-zcloudjp
-[bluebox]: https://github.com/blueboxgroup/kitchen-bluebox
 [softlayer]: https://github.com/neillturner/kitchen-softlayer
 [linode]:  https://github.com/ssplatt/kitchen-linode
 [qemu]:  https://github.com/esmil/kitchen-qemu
@@ -89,7 +85,6 @@ The following are community-maintained plugins
 [sparkleformation]: https://github.com/devkid/kitchen-sparkleformation
 [wpar]:  https://github.com/adejoux/kitchen-wpar
 [powervc]:  https://github.com/chmod666org/kitchen-powervc
-[vsphereater]: https://github.com/chef/kitchen-vsphere
 [inspec]: https://github.com/chef/kitchen-inspec
 [chef]: https://chef.io
 [azurerm]: http://github.com/pendrica/kitchen-azurerm

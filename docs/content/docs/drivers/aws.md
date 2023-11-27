@@ -177,23 +177,23 @@ We always pick the highest released stable version that matches your regex, and 
 
 #### availability_zone
 
-The AWS [availability zone][region_docs] to use.  Only request the letter designation - will attach this to the region used.
+The AWS availability zone to use.  Only request the letter designation - will attach this to the region used.
 
 If not specified, your instances will be placed in an AZ of AWS's choice in your region.
 
 #### instance_type
 
-The EC2 [instance type][instance_docs] (also known as size) to use.
+The EC2 instance type (also known as size) to use.
 
 The default is `t2.micro` or `t1.micro`, depending on whether the image is `hvm` or `paravirtual`. (`paravirtual` images are incompatible with `t2.micro`). When working with spots, you can provide an array of instance types in which case the driver will try each type until it can get a spot.
 
 #### security_group_ids
 
-An Array of EC2 [security groups][group_docs] which will be applied to the instance. If no security group is specified, a temporary group will be created automatically which allows SSH and WinRM (**>= 2.1.0**).
+An Array of EC2 security groups which will be applied to the instance. If no security group is specified, a temporary group will be created automatically which allows SSH and WinRM (**>= 2.1.0**).
 
 #### security_group_filter
 
-The EC2 [security group(s)][group_docs] which will be applied to the instance, specified by name or tag. One or more groups can be specified.
+The EC2 security group(s) which will be applied to the instance, specified by name or tag. One or more groups can be specified.
 
 The default is unset, or `nil`.
 
@@ -222,27 +222,27 @@ security_group_filter:
 
 #### security_group_cidr_ip
 
-The EC2 [security group][group_docs] ip address, in CIDR block format, to use when creating the security group. Optionally, you can provide an array of ip addresses instead when having multiple ip addresses for the security group is desirable.
+The EC2 security group ip address, in CIDR block format, to use when creating the security group. Optionally, you can provide an array of ip addresses instead when having multiple ip addresses for the security group is desirable.
 
 The default is "0.0.0.0/0".
 
 #### region
 
-**Required** The AWS [region][region_docs] to use.
+**Required** The AWS region to use.
 
 If the environment variable `AWS_REGION` is populated that will be used.
 Otherwise the default is `"us-east-1"`.
 
 #### subnet_id
 
-The EC2 [subnet][subnet_docs] to use.
+The EC2 subnet to use.
 When working with spots, you can provide an array in which case the driver will try each subnet until it can get a spot.
 
 The default is unset, or `nil`.
 
 #### subnet_filter
 
-The EC2 [subnet][subnet_docs] to use, specified by tag.
+The EC2 subnet to use, specified by tag.
 
 The default is unset, or `nil`.
 
@@ -404,7 +404,7 @@ block_device_mappings:
 
 See [Amazon EBS Volume Types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html) to find out more about volume types.
 
-If you have a block device mapping with a `device_name` equal to the root storage device name on your [image](#config-image-id) then the provided mapping will replace the settings in the image.
+If you have a block device mapping with a `device_name` equal to the root storage device name on your image then the provided mapping will replace the settings in the image.
 
 If this is not provided it will use the default block_device_mappings from the AMI.
 
@@ -418,11 +418,11 @@ The default is `false`.
 
 #### associate_public_ip
 
-AWS does not automatically allocate public IP addresses for instances created within non-default [subnets][subnet_docs]. Set this option to `true` to force allocation of a public IP and associate it with the launched instance.
+AWS does not automatically allocate public IP addresses for instances created within non-default subnets. Set this option to `true` to force allocation of a public IP and associate it with the launched instance.
 
-If you set this option to `false` when launching into a non-default [subnet][subnet_docs], Test Kitchen will be unable to communicate with the instance unless you have a VPN connection to your [Virtual Private Cloud][vpc_docs].
+If you set this option to `false` when launching into a non-default subnet, Test Kitchen will be unable to communicate with the instance unless you have a VPN connection to your Virtual Private Cloud.
 
-The default is `true` if you have configured a [subnet_id](#config-subnet-id), or `false` otherwise.
+The default is `true` if you have configured a subnet_id, or `false` otherwise.
 
 #### private_ip_address
 
@@ -438,7 +438,7 @@ The place from which to derive the hostname for communicating with the instance.
 2. Public IP Address
 3. Private IP Address
 4. Private DNS Name
-5. Instance ID (Useful for [SSH through Session Manager][ssh_over_ssm])
+5. Instance ID (Useful for SSH through Session Manager)
 
 The default is unset. Under normal circumstances, the lookup will return the `Private IP Address`.
 
