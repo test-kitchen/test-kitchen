@@ -1,0 +1,63 @@
+---
+name: "Test"
+
+"on":
+  pull_request:
+
+jobs:
+  lint-unit:
+    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@v0.1.2
+
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        with:
+          use-quiet-mode: "yes"
+          use-verbose-mode: "yes"
+          check-modified-files-only: "yes"
+          base-branch: "main"
+
+  linux-dokken:
+    name: Linux 'dokken' Smoke test on Ruby ${{ matrix.ruby }}
+    needs: [lint-unit, markdown-link-check]
+    env:
+      KITCHEN_YAML: kitchen.dokken.yml
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ["3.1", "3.2"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - run: bundle exec kitchen test
+
+  # TODO: Fixme
+  # Disabled due to: kitchen@localhost's password:
+  # linux-product:
+  #   name: Linux 'product' Smoke test on Ruby ${{ matrix.ruby }}
+  #   needs: [lint-unit, markdown-link-check]
+  #   env:
+  #     MACHINE_USER: kitchen
+  #     MACHINE_PASS: K1tch3nY@ml!
+  #     MACHINE_PORT: 22
+  #     KITCHEN_YAML: kitchen.linux-product.yml
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       ruby: ["3.1", "3.2"]
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: ${{ matrix.ruby }}
+  #         bundler-cache: true
+
+  #     - run: bundle exec kitchen test

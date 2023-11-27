@@ -44,7 +44,7 @@ module Kitchen
           action: task,
           help: -> { help(task) },
           config: @config,
-          shell: shell,
+          shell:,
         }.merge(additional_options)
 
         str_const = Thor::Util.camel_case(command)

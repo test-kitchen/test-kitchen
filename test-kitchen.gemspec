@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
-  gem.required_ruby_version = ">= 2.7"
+  gem.required_ruby_version = ">= 3.1"
 
   gem.add_dependency "bcrypt_pbkdf",       "~> 1.0" # ed25519 ssh key support
   gem.add_dependency "chef-utils",         ">= 16.4.35"
@@ -37,15 +37,4 @@ Gem::Specification.new do |gem|
   # Required to run the Chef provisioner local license check for remote systems
   # TK is not under Chef EULA
   gem.add_dependency "license-acceptance", ">= 1.0.11", "< 3.0" # pinning until we can confirm 3+ works
-
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "rb-readline"
-
-  gem.add_development_dependency "aruba",     ">= 0.11", "< 3.0"
-  gem.add_development_dependency "countloc",  "~> 0.4"
-  gem.add_development_dependency "cucumber",  ">= 2.1", "< 8.0"
-  gem.add_development_dependency "fakefs",    "~> 2.0"
-  gem.add_development_dependency "maruku",    "~> 0.6"
-  gem.add_development_dependency "minitest",  "~> 5.3", "< 5.16"
-  gem.add_development_dependency "mocha",     "~> 2.0"
 end

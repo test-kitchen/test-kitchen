@@ -690,24 +690,16 @@ suites:
 [bento_org]:                https://app.vagrantup.com/bento
 [fusion_dl]:                https://www.vmware.com/products/fusion.html
 [hyperv_about]:             https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
-[machine settings]:         https://www.vagrantup.com/docs/vagrantfile/machine_settings
-[openstack]:                https://www.openstack.org/
 [parallels_dl]:             https://www.parallels.com/products/desktop/download/
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
 [vagrant_cloud]:            https://app.vagrantup.com/boxes/search
-[vagrant_cloudstack]:       https://github.com/MissionCriticalCloud/vagrant-cloudstack
 [vagrant_config_vbox]:      https://www.vagrantup.com/docs/providers/virtualbox/configuration
 [vagrant_config_vmware]:    https://www.vagrantup.com/docs/providers/vmware/configuration
 [vagrant_default_provider]: https://www.vagrantup.com/docs/providers/default
-[vagrant_dl]:               https://www.vagrantup.com/downloads
-[vagrant_libvirt]:          https://github.com/vagrant-libvirt/vagrant-libvirt
-[vagrant_lxc]:              https://github.com/fgrehm/vagrant-lxc
 [vagrant_machine_settings]: https://www.vagrantup.com/docs/vagrantfile/machine_settings
 [vagrant_networking]:       https://www.vagrantup.com/docs/networking/basic_usage
 [vagrant_providers]:        https://www.vagrantup.com/docs/providers
-[vagrant_rackspace]:        https://github.com/mitchellh/vagrant-rackspace
-[vagrant_softlayer]:        https://github.com/audiolize/vagrant-softlayer
 [vagrant_versioning]:       https://docs.vagrantup.com/v2/boxes/versioning.html
 [vbox_ide_boot]:            https://www.virtualbox.org/ticket/6979
 [virtualbox_dl]:            https://www.virtualbox.org/wiki/Downloads

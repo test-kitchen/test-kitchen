@@ -58,7 +58,7 @@ module Kitchen
     #
     # @return [Hash] a diagnostic hash
     def diagnose
-      { os_type: os_type, shell_type: shell_type }
+      { os_type:, shell_type: }
     end
   end
 end
