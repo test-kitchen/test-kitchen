@@ -287,9 +287,9 @@ module Kitchen
         def update_dna_for_policyfile
           policy = Chef::Policyfile.new(
             policyfile, sandbox_path,
-            logger: logger,
+            logger:,
             always_update: config[:always_update_cookbooks],
-            policy_group: policy_group,
+            policy_group:,
             license: config[:chef_license]
           )
           Kitchen.mutex.synchronize do
@@ -297,7 +297,7 @@ module Kitchen
           end
           policy_name = JSON.parse(IO.read(policy.lockfile))["name"]
           policy_group = config[:policy_group] || "local"
-          config[:attributes].merge(policy_name: policy_name, policy_group: policy_group)
+          config[:attributes].merge(policy_name:, policy_group:)
         end
 
         # Performs a Policyfile cookbook resolution inside a common mutex.
@@ -307,7 +307,7 @@ module Kitchen
           Kitchen.mutex.synchronize do
             Chef::Policyfile.new(
               policyfile, sandbox_path,
-              logger: logger,
+              logger:,
               always_update: config[:always_update_cookbooks],
               policy_group: config[:policy_group],
               license: config[:chef_license]
@@ -321,7 +321,7 @@ module Kitchen
         def resolve_with_berkshelf
           Kitchen.mutex.synchronize do
             Chef::Berkshelf.new(berksfile, tmpbooks_dir,
-              logger: logger,
+              logger:,
               always_update: config[:always_update_cookbooks]).resolve
           end
         end

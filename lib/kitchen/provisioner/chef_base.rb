@@ -347,7 +347,7 @@ module Kitchen
           omnibus_url: config[:chef_omnibus_url],
           project: project.nil? ? nil : project[1],
           install_flags: config[:chef_omnibus_install_options],
-          sudo_command: sudo_command,
+          sudo_command:,
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
           %i{install_msi_url http_proxy https_proxy}.each do |key|
@@ -482,10 +482,10 @@ module Kitchen
         super
         if File.exist?(policyfile)
           debug("Policyfile found at #{policyfile}, using Policyfile to resolve cookbook dependencies")
-          Chef::Policyfile.load!(logger: logger)
+          Chef::Policyfile.load!(logger:)
         elsif File.exist?(berksfile)
           debug("Berksfile found at #{berksfile}, using Berkshelf to resolve cookbook dependencies")
-          Chef::Berkshelf.load!(logger: logger)
+          Chef::Berkshelf.load!(logger:)
         end
       end
 

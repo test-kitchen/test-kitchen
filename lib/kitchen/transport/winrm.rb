@@ -444,8 +444,8 @@ module Kitchen
         opts = {
           instance_name: instance.name,
           kitchen_root: data[:kitchen_root],
-          logger: logger,
-          endpoint: endpoint,
+          logger:,
+          endpoint:,
           user: data[:username],
           password: data[:password],
           rdp_port: data[:rdp_port],
@@ -457,7 +457,7 @@ module Kitchen
           transport: data[:winrm_transport],
           elevated: data[:elevated],
           elevated_username: data[:elevated_username] || data[:username],
-          elevated_password: elevated_password,
+          elevated_password:,
         }
         opts.merge!(additional_transport_args(data, opts[:transport]))
         if opts[:transport].to_sym == :ssl && opts.key?(:client_cert) && opts.key?(:client_key)

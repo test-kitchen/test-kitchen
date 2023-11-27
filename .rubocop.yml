@@ -1,8 +1,10 @@
----
+require:
+  - chefstyle
+
 AllCops:
-  TargetRubyVersion: 2.7
-Naming/FileName:
+  TargetRubyVersion: 3.1
+  Include:
+    - "**/*.rb"
   Exclude:
-    - 'support/**/*'
-Layout/EndOfLine:
-  EnforcedStyle: lf
+    - "vendor/**/*"
+    - "spec/**/*"
