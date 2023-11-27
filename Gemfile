@@ -22,5 +22,5 @@ group :integration do
 end
 
 group :chefstyle do
-  gem "chefstyle", "2.2.2"
+  gem "chefstyle", "2.2.3"
 end
