@@ -2,6 +2,18 @@
 
 ## All future Releases will be documented in GitHub Releases
 
+## [3.6.0](https://github.com/test-kitchen/test-kitchen/compare/v3.5.1...v3.6.0) (2023-11-27)
+
+
+### Features
+
+* Add publish workflow ([#1944](https://github.com/test-kitchen/test-kitchen/issues/1944)) ([22cae60](https://github.com/test-kitchen/test-kitchen/commit/22cae60b09bedca27ebea77e99ebc7dfa841dbca))
+
+
+### Bug Fixes
+
+* Remove Ruby 3.0 Testing ([#1948](https://github.com/test-kitchen/test-kitchen/issues/1948)) ([458261c](https://github.com/test-kitchen/test-kitchen/commit/458261c1a170e82b3b5d9f1a5fcad0e1542fabeb))
+
 ## [3.5.0](https://github.com/test-kitchen/test-kitchen/tree/v3.4.1) (2022-12-18)
 
 - Add `finally` lifecycle hook to always run regardless of failure ([@brycekahle](https://github.com/brycekahle))
