@@ -17,7 +17,6 @@ driver:
   openstack_api_key: [YOUR OPENSTACK API KEY] # AKA your OpenStack Password
   openstack_auth_url: [YOUR OPENSTACK AUTH URL] # if you are using v3, API_URL/v3/auth/tokens
   openstack_domain_id: [default is 'default'; otherwise YOUR OPENSTACK DOMAIN ID]
-  require_chef_omnibus: [e.g. 'true' or a version number if you need Chef]
   image_ref: [SERVER IMAGE ID]
   flavor_ref: [SERVER FLAVOR ID]
 transport:
