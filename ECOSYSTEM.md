@@ -21,14 +21,14 @@ The following are in the test-kitchen GitHub organization
 
 [kitchen-habtiat][habitat] |
 ---- |
-[![CI](https://github.com/test-kitchen/kitchen-habitat/workflows/CI/badge.svg?branch=master)](https://github.com/test-kitchen/kitchen-habitat/actions?query=workflow%3ACI+branch%3Amaster) |
+Unknown |
 [![Gem Version](https://badge.fury.io/rb/kitchen-habitat.svg)](http://badge.fury.io/rb/kitchen-habitat) |
 
 The following are written by the [Chef Software][chef].
 
 [kitchen-vcenter][vcenter] | [kitchen-inspec][inspec]
 ---- | ----
-[![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | [![Status](https://travis-ci.org/inspec/kitchen-inspec.svg?branch=master)](https://travis-ci.org/inspec/kitchen-inspec) |
+[![Build status](https://badge.buildkite.com/4b0ca1bb5cd02dee51d9ce789f8346eb05730685c5be7fbba9.svg?branch=master)](https://buildkite.com/chef-oss/chef-kitchen-vcenter-master-verify) | Unknown |
 [![Gem Version](https://badge.fury.io/rb/kitchen-vcenter.svg)](https://rubygems.org/gems/kitchen-vcenter) | [![Gem Version](https://badge.fury.io/rb/kitchen-inspec.svg)](http://badge.fury.io/rb/kitchen-inspec) |
 
 The following are community-maintained plugins
@@ -43,10 +43,10 @@ The following are community-maintained plugins
 [![Status](https://travis-ci.org/mwrock/kitchen-nodes.svg?branch=master)](https://travis-ci.org/mwwrock/kitchen-nodes) | [![Status](https://travis-ci.org/higanworks/kitchen-zcloudjp.svg?branch=master)](https://travis-ci.org/higanworks/kitchen-zcloudjp) |  [![Status](https://travis-ci.org/neillturner/kitchen-softlayer.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-softlayer) | [![Status](https://github.com/ssplatt/kitchen-linode/actions/workflows/ci.yml/badge.svg)](https://github.com/ssplatt/kitchen-linode/actions/workflows/ci.yml) | [![Status](https://travis-ci.org/ssplatt/kitchen-docker.svg?branch=master)](https://travis-ci.org/portertech/kitchen-docker)
 [![Gem Version](https://badge.fury.io/rb/kitchen-nodes.svg)](http://badge.fury.io/rb/kitchen-nodes) | [![Gem Version](https://badge.fury.io/rb/kitchen-zcloudjp.svg)](http://badge.fury.io/rb/kitchen-zcloudjp) | [![Gem Version](https://badge.fury.io/rb/kitchen-softlayer.svg)](http://badge.fury.io/rb/kitchen-softlayer) | [![Gem Version](https://badge.fury.io/rb/kitchen-linode.svg)](http://badge.fury.io/rb/kitchen-linode)  | [![Gem Version](https://badge.fury.io/rb/kitchen-docker.svg)](http://badge.fury.io/rb/kitchen-docker)
 
-[kitchen-qemu][qemu] | [kitchen-cfengine][cfengine] | [kitchen-cloudformation][cloudformation] | [kitchen-wpar][wpar] | [kitchen-powervc][powervc]
----- | ---- | ---- | ---- | ----
-[![Status](https://travis-ci.org/esmil/kitchen-qemu.svg?branch=master)](https://travis-ci.org/esmil/kitchen-qemu)| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |  [![Status](https://travis-ci.org/chmod666org/kitchen-powervc.svg?branch=master)](https://travis-ci.org/chmod666org/kitchen-powervc)
-[![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) | [![Gem Version](https://badge.fury.io/rb/kitchen-powervc.svg)](http://badge.fury.io/rb/kitchen-powervc)
+[kitchen-qemu][qemu] | [kitchen-cfengine][cfengine] | [kitchen-cloudformation][cloudformation] | [kitchen-wpar][wpar]
+---- | ---- | ---- | ---- |
+Unknown| [![Status](https://travis-ci.org/nmische/kitchen-cfengine.svg?branch=master)](https://travis-ci.org/nmische/kitchen-cfengine) | [![Status](https://travis-ci.org/neillturner/kitchen-cloudformation.svg?branch=master)](https://travis-ci.org/neillturner/kitchen-cloudformation)  | [![Status](https://travis-ci.org/adejoux/kitchen-wpar.svg?branch=master)](https://travis-ci.org/adejoux/kitchen-wpar) |
+[![Gem Version](https://badge.fury.io/rb/kitchen-qemu.svg)](http://badge.fury.io/rb/kitchen-qemu) | [![Gem Version](https://badge.fury.io/rb/kitchen-cfengine.svg)](http://badge.fury.io/rb/kitchen-cfengine) | [![Gem Version](https://badge.fury.io/rb/kitchen-cloudformation.svg)](http://badge.fury.io/rb/kitchen-cloudformation) | [![Gem Version](https://badge.fury.io/rb/kitchen-wpar.svg)](http://badge.fury.io/rb/kitchen-wpar) |
 
 [kitchen-sparkleformation][sparkleformation] | [kitchen-terraform][terraform]
 ---- | ----
@@ -84,7 +84,6 @@ The following are community-maintained plugins
 [cloudformation]: https://github.com/neillturner/kitchen-cloudformation
 [sparkleformation]: https://github.com/devkid/kitchen-sparkleformation
 [wpar]:  https://github.com/adejoux/kitchen-wpar
-[powervc]:  https://github.com/chmod666org/kitchen-powervc
 [inspec]: https://github.com/chef/kitchen-inspec
 [chef]: https://chef.io
 [azurerm]: http://github.com/pendrica/kitchen-azurerm
