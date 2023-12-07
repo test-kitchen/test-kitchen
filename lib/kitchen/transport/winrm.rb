@@ -24,6 +24,27 @@ require_relative "../util"
 require "winrm" unless defined?(WinRM::Connection)
 require "winrm/exceptions" unless defined?(WinRM::WinRMHTTPTransportError)
 
+# Added a monkey patch for WinRM::Shells::Powershell.close_shell if the thread is in dead or sleep state to fix the error - can't alloc thread (ThreadError).
+module WinRM
+  module Shells
+    # Proxy to a remote PowerShell instance
+    class Powershell
+      class << self
+        def close_shell(connection_opts, transport, shell_id)
+          return false unless Thread.current.alive?
+          Thread.current.wakeup if Thread.current.status =~ /sleep/
+          msg = WinRM::WSMV::CloseShell.new(
+            connection_opts,
+            shell_id: shell_id,
+            shell_uri: WinRM::WSMV::Header::RESOURCE_URI_POWERSHELL
+          )
+          transport.send_request(msg.build)
+        end
+      end
+    end
+  end
+end
+
 module Kitchen
   module Transport
     # Wrapped exception for any internally raised WinRM-related errors.
