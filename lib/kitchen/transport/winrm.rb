@@ -32,10 +32,11 @@ module WinRM
       class << self
         def close_shell(connection_opts, transport, shell_id)
           return false unless Thread.current.alive?
+
           Thread.current.wakeup if Thread.current.status =~ /sleep/
           msg = WinRM::WSMV::CloseShell.new(
             connection_opts,
-            shell_id: shell_id,
+            shell_id:,
             shell_uri: WinRM::WSMV::Header::RESOURCE_URI_POWERSHELL
           )
           transport.send_request(msg.build)
