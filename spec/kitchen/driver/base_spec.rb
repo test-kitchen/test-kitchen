@@ -91,8 +91,8 @@ describe Kitchen::Driver::Base do
     it "run command" do
       Kitchen::Driver::Base.any_instance.stubs(:run_command).returns(true)
 
-      config[:pre_create_command] = "echo works 2&>1 > /dev/null"
-      driver.expects(:run_command).with("echo works 2&>1 > /dev/null")
+      config[:pre_create_command] = "echo works 2>&1 > /dev/null"
+      driver.expects(:run_command).with("echo works 2>&1 > /dev/null")
       driver.send(:pre_create_command)
     end
 
@@ -100,7 +100,7 @@ describe Kitchen::Driver::Base do
       class ShellCommandFailed < Kitchen::ShellOut::ShellCommandFailed; end
       Kitchen::Driver::Base.any_instance.stubs(:run_command).raises(ShellCommandFailed, "Expected process to exit with [0], but received '1'")
 
-      config[:pre_create_command] = "touch /this/dir/does/not/exist 2&>1 > /dev/null"
+      config[:pre_create_command] = "touch /this/dir/does/not/exist 2>&1 > /dev/null"
       _ { driver.send(:pre_create_command) }.must_raise Kitchen::ActionFailed
     end
   end
