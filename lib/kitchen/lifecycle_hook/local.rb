@@ -38,7 +38,7 @@ module Kitchen
                 config[:kitchen_root]
               end
         # Build the options for mixlib-shellout.
-        opts = {}.merge(user).merge(cwd: cwd, environment: environment)
+        opts = {}.merge(user).merge(cwd:, environment:)
         run_command(command, opts)
       end
 

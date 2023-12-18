@@ -1,0 +1,35 @@
+---
+name: release-please
+
+"on":
+  push:
+    branches: [main]
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          release-type: ruby
+          package-name: workflow-testing-gem
+          version-file: lib/kitchen/version.rb
+          token: ${{ secrets.PORTER_GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Build and publish to GitHub Package
+        uses: actionshub/publish-gem-to-github@main
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ secrets.OWNER }}
+
+      - name: Build and publish to RubyGems
+        uses: actionshub/publish-gem-to-rubygems@main
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          token: ${{ secrets.RUBYGEMS_API_KEY }}

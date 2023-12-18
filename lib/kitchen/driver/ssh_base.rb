@@ -299,7 +299,7 @@ module Kitchen
       # @param options [Hash] configuration hash (default: `{}`)
       # @api private
       def wait_for_sshd(hostname, username = nil, options = {})
-        pseudo_state = { hostname: hostname }
+        pseudo_state = { hostname: }
         pseudo_state[:username] = username if username
         pseudo_state.merge!(options)
 

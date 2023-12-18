@@ -96,6 +96,7 @@ driver:
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
 ```
+
 Reference: [4.3.0 Release notes](https://docs.docker.com/desktop/release-notes/#430)
 
 #### chef_version

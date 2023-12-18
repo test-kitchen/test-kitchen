@@ -225,7 +225,7 @@ module Kitchen
           delay = 3
           session(
             retries: max_wait_until_ready / delay,
-            delay: delay,
+            delay:,
             message: "Waiting for SSH service on #{hostname}:#{port}, " \
               "retrying in #{delay} seconds"
           )
@@ -468,7 +468,7 @@ module Kitchen
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def connection_options(data)
         opts = {
-          logger: logger,
+          logger:,
           user_known_hosts_file: "/dev/null",
           hostname: data[:hostname],
           port: data[:port],

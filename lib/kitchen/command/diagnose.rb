@@ -33,7 +33,7 @@ module Kitchen
         loader = record_failure { load_loader }
 
         puts YAML.dump(Kitchen::Diagnostic.new(
-          loader: loader, instances: instances, plugins: plugins?
+          loader:, instances:, plugins: plugins?
         ).read)
       end
 

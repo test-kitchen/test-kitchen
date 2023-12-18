@@ -216,11 +216,11 @@ module Kitchen
             /^win/i.match?(platform) ? "winrm" : Transport::DEFAULT_PLUGIN
           end,
         },
-        kitchen_root: kitchen_root,
-        test_base_path: test_base_path,
-        log_level: log_level,
-        log_overwrite: log_overwrite,
-        debug: debug,
+        kitchen_root:,
+        test_base_path:,
+        log_level:,
+        log_overwrite:,
+        debug:,
       }
     end
 
@@ -250,8 +250,8 @@ module Kitchen
         driver: new_driver(suite, platform),
         lifecycle_hooks: new_lifecycle_hooks(suite, platform, sf),
         logger: new_instance_logger(suite, platform, index),
-        suite: suite,
-        platform: platform,
+        suite:,
+        platform:,
         provisioner: new_provisioner(suite, platform),
         transport: new_transport(suite, platform),
         verifier: new_verifier(suite, platform),
@@ -275,7 +275,7 @@ module Kitchen
         color: Color::COLORS[index % Color::COLORS.size].to_sym,
         logdev: log_location,
         level: Util.to_logger_level(log_level),
-        log_overwrite: log_overwrite,
+        log_overwrite:,
         progname: name,
         colorize: @colorize
       )

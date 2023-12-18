@@ -62,6 +62,4 @@ To draw attention to some content with a blockquote, just start the line(s) with
 
 The Kitchen Documentation is released under the [MIT license][mit-license].
 
-[markdown]: http://daringfireball.net/projects/markdown/syntax
-[kitchenci]: https://kitchen.ci/
-[mit-license]: MIT-LICENSE.txt
+[mit-license]: https://opensource.org/license/mit/

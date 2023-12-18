@@ -26,7 +26,7 @@ module Kitchen
   # @author Baptiste Courtois <b.courtois@criteo.com>
   class PlatformFilter
     # Pattern used to determine whether a filter should be handled as a Regexp
-    REGEXP_LIKE_PATTERN = %r{^/(?<pattern>.*)/(?<options>[ix]*)$}.freeze
+    REGEXP_LIKE_PATTERN = %r{^/(?<pattern>.*)/(?<options>[ix]*)$}
 
     # Converts platform filters into an array of PlatformFilter handling both strings and Regexp.
     # A string "looks-like" a regexp if it starts by / and end by / + Regexp options i or x
