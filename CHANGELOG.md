@@ -2,6 +2,13 @@
 
 ## All future Releases will be documented in GitHub Releases
 
+## [3.6.1](https://github.com/test-kitchen/test-kitchen/compare/v3.6.0...v3.6.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* replace 2&&gt;1 by 2>&1 ([#1932](https://github.com/test-kitchen/test-kitchen/issues/1932)) ([6468bac](https://github.com/test-kitchen/test-kitchen/commit/6468bac8990ee47da730e2abcc362170e387f6c6))
+
 ## [3.6.0](https://github.com/test-kitchen/test-kitchen/compare/v3.5.1...v3.6.0) (2023-11-27)
 
 
