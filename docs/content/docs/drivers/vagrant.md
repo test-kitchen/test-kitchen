@@ -100,7 +100,8 @@ platforms:
 
 ### Supported Bento Platforms
 
-Bento boxes are created for many popular open-source operating systems. All boxes are published for the VirtualBox hypervisor and many, but not all, are also published for VMware and Parallels hypervisors.
+Bento boxes are created for many popular open-source operating systems. All amd64(x86_64) boxes are published for the VirtualBox hypervisor and many, but not all, are also published for VMware and Parallels hypervisors.
+Where available arm64 boxes are also provided for Parallels and VMware hypervisors.
 
 Currently supported Bento platforms:
 
@@ -115,8 +116,6 @@ Currently supported Bento platforms:
 - opensuse-leap
 - oracle
 - rockylinux
-- scientific
-- springdalelinux
 - ubuntu
 
 ### Using Non-Bento Vagrant Boxes
@@ -224,6 +223,16 @@ The [version][vagrant_versioning] of the configured box.
 The default is `nil`, indicating unset.
 
 This option is only relevant when used with Vagrant Cloud boxes which support versioning.
+
+### box_arch
+
+Defaults to `nil`. When not set will use the host workstation cpu architecture for downloading boxes of similar architecture.
+Setting this option will make vagrant download a box the specified cpu architecture. Bento boxes only support `amd64` or `arm64` architectures.
+
+```yaml
+driver:
+  box_arch: arm64
+```
 
 ### communicator
 
