@@ -1,0 +1,12 @@
+{
+  "packages": {
+    ".": {
+      "package-name": "workflow-testing-gem",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "ruby",
+      "include-component-in-tag": false,
+      "version-file": "lib/kitchen/version.rb"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
