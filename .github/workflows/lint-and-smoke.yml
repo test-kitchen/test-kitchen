@@ -6,7 +6,7 @@ name: "Test"
 
 jobs:
   lint-unit:
-    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@v0.1.2
+    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
 
   markdown-link-check:
     runs-on: ubuntu-latest
