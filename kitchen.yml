@@ -1,0 +1,27 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_infra
+  product_name: chef
+  deprecations_as_errors: true
+  chef_license: accept-no-persist
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: almalinux-9
+  - name: ubuntu-24.04
+  - name: windows-2022
+    driver:
+      box: stromweld/windows-2022
+      customize:
+        memory: 4096
+
+suites:
+  - name: default
+    verifier:
+      inspec_tests:
+        - test/integration/default
