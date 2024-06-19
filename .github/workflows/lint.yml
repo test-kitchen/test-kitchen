@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Install Podman
         run: |
-          brew install podman
+          brew install podman podman-desktop
           podman machine init
           podman machine start
           podman info
