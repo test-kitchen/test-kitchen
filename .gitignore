@@ -30,7 +30,7 @@ tmp
 kitchen.yml
 kitchen.local.yml
 Berksfile.lock
-Polidyfile.lock.json
+Policyfile.lock.json
 *.swp
 *~
 .sass-cache

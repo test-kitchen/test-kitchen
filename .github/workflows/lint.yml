@@ -65,7 +65,7 @@ jobs:
       machine_pass: Pass@word1
       machine_port: 5985
       SPEC_OPTS: --format progress
-      KITCHEN_YAML: kitchen.windows.yml
+      KITCHEN_LOCAL_YAML: kitchen.windows.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
