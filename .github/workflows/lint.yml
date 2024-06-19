@@ -48,8 +48,9 @@ jobs:
     steps:
       - name: Install Docker
         run: |
-          brew install --cask docker
-          open --background -a Docker
+          brew install --cask orbstack
+          orbctl start
+          orbctl status
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
