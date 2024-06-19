@@ -46,11 +46,12 @@ jobs:
       matrix:
         ruby: ["3.3"]
     steps:
-      - name: Install Docker
+      - name: Install Podman
         run: |
-          brew install --cask orbstack
-          orbctl start
-          orbctl status
+          brew install podman
+          podman machine init
+          podman machine start
+          podman info
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
