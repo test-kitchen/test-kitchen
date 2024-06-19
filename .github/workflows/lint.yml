@@ -46,6 +46,10 @@ jobs:
       matrix:
         ruby: ["3.3"]
     steps:
+      - name: Install Docker
+        run: |
+          brew install --cask docker
+          open --background -a Docker
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
