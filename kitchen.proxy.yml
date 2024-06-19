@@ -12,7 +12,7 @@ provisioner:
   chef_license: accept-no-persist
 
 platforms:
-  - name: ubuntu-16.04
+  - name: ubuntu-24.04
 
 verifier:
   name: busser

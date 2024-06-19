@@ -14,7 +14,7 @@ provisioner:
   chef_license: accept-no-persist
 
 platforms:
-  - name: windows-2012R2
+  - name: windows-latest
     transport:
       name: winrm
       elevated: true

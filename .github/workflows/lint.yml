@@ -1,0 +1,76 @@
+---
+name: 'Lint, Unit & Integration Tests'
+
+"on":
+  pull_request:
+
+jobs:
+  lint-unit:
+    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
+
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        with:
+          use-quiet-mode: "yes"
+          use-verbose-mode: "yes"
+          check-modified-files-only: "yes"
+          base-branch: "main"
+
+  integration-linux:
+    name: Linux Dokken Integration Tests
+    needs: [lint-unit]
+    env:
+      KITCHEN_YAML: kitchen.dokken.yml
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ["3.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec kitchen test
+
+  integration-windows:
+    name: Windows Integration Tests
+    needs: [lint-unit]
+    env:
+      BUNDLE_without: integration
+      machine_user: test_user
+      machine_pass: Pass@word1
+      machine_port: 5985
+      SPEC_OPTS: --format progress
+    runs-on: windows-latest
+    timeout-minutes: 600
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3"]
+        # yaml: ['kitchen.windows.yml', 'kitchen.windows-product.yml']
+        yaml: ['kitchen.windows.yml']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Unit Tests
+        run: bundle exec rake unit
+      - name: Quality Tests
+        run: bundle exec rake quality
+      - name: Setup Machine
+        run: |
+          winrm.cmd quickconfig -q
+          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+          net localgroup administrators ${{ env.machine_user }} /add
+          bundle config set --local with 'integration'
+          bundle install
+      - name: Verify Windows
+        run: bundle exec kitchen verify windows
+        env:
+          KITCHEN_YAML: ${{ matrix.yaml}}

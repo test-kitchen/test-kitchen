@@ -14,16 +14,16 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-18.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-18.04
+      image: dokken/ubuntu-24.04
       pid_one_command: /bin/systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
 
-  - name: centos-7
+  - name: almalinux-9
     driver:
-      image: dokken/centos-7
+      image: dokken/almalinux-9
       pid_one_command: /usr/lib/systemd/systemd
 
 suites:
