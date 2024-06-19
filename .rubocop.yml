@@ -3,6 +3,7 @@ require:
   - chefstyle
 
 AllCops:
+  TargetRubyVersion: 3.3
   Include:
     - "**/*.rb"
   Exclude:
