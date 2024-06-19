@@ -51,9 +51,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: |
-        export LOGNAME=$USER
-        bundle exec kitchen test almalinux-9
+      - name: Kitchen Test
+        run: |
+          export LOGNAME=$USER
+          bundle exec kitchen test almalinux-9
 
   integration-windows:
     name: Windows Integration Tests
