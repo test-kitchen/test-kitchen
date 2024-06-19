@@ -7,22 +7,8 @@ driver:
   username: <%= ENV["machine_user"] %>
   password: <%= ENV["machine_pass"] %>
 
-provisioner:
-  name: chef_infra
-  # Using product_name exercises a different code path in the chef client installer
-  product_name: chef
-  chef_license: accept-no-persist
-
 platforms:
   - name: windows-latest
     transport:
       name: winrm
       elevated: true
-
-verifier:
-  name: inspec
-
-suites:
-  - name: default
-    run_list:
-      - recipe[test_cookbook::default]

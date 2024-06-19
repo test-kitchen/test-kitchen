@@ -23,7 +23,7 @@ jobs:
     name: Linux Dokken Integration Tests
     needs: [lint-unit]
     env:
-      KITCHEN_YAML: kitchen.dokken.yml
+      KITCHEN_LOCAL_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,25 +39,21 @@ jobs:
   integration-macos:
     name: MacOS Integration Tests
     needs: [lint-unit]
-    runs-on: macos-latest
-    env:
-      KITCHEN_YAML: kitchen.dokken.yml
+    runs-on: macos-13
     strategy:
       matrix:
         ruby: ["3.3"]
     steps:
-      - name: Install Podman
-        run: |
-          brew install podman podman-desktop
-          podman machine init
-          podman machine start
-          podman info
+      - name: Install Vagrant VirtualBox
+        run: brew install --cask virtualbox vagrant
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec kitchen test
+      - run: |
+        export LOGNAME=$USER
+        bundle exec kitchen test almalinux-9
 
   integration-windows:
     name: Windows Integration Tests
@@ -68,14 +64,13 @@ jobs:
       machine_pass: Pass@word1
       machine_port: 5985
       SPEC_OPTS: --format progress
+      KITCHEN_YAML: kitchen.windows.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.3"]
-        # yaml: ['kitchen.windows.yml', 'kitchen.windows-product.yml']
-        yaml: ['kitchen.windows.yml']
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -95,5 +90,3 @@ jobs:
           bundle install
       - name: Verify Windows
         run: bundle exec kitchen verify windows
-        env:
-          KITCHEN_YAML: ${{ matrix.yaml}}

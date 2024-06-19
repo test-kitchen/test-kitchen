@@ -30,6 +30,7 @@ tmp
 kitchen.yml
 kitchen.local.yml
 Berksfile.lock
+Polidyfile.lock.json
 *.swp
 *~
 .sass-cache
@@ -39,5 +40,3 @@ _cache
 docs/public
 .idea/
 docs/.hugo_build.lock
-
-
