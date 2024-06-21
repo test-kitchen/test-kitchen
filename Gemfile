@@ -15,8 +15,8 @@ group :test do
 end
 
 group :integration do
-  gem "berkshelf"
-  # gem "chef-cli"
+  # gem "berkshelf"
+  gem "chef-cli"
   gem "kitchen-dokken"
   gem "kitchen-inspec"
   gem "kitchen-vagrant"
