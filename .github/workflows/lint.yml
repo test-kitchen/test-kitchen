@@ -31,10 +31,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          # bundler-cache: true
+          bundler-cache: true
       - name: Rake Test
         if: steps.check.outputs.gemfile == 'true'
-        run: bundle exec rake test
+        run: bundle exec rake test --trace
 
   markdown-link-check:
     runs-on: ubuntu-latest
