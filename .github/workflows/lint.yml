@@ -6,35 +6,7 @@ name: 'Lint, Unit & Integration Tests'
 
 jobs:
   lint-unit:
-    # uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
-    name: Unit Test with Ruby
-    runs-on: ubuntu-latest
-    env:
-      BUNDLE_WITHOUT: development
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.1", "3.2", "3.3"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Check for Gemfile
-        id: check
-        run: |
-          if [ -f Gemfile ]; then
-           echo "gemfile=true" >> $GITHUB_OUTPUT
-          else
-            echo "gemfile=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Setup Ruby
-        if: steps.check.outputs.gemfile == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Rake Test
-        if: steps.check.outputs.gemfile == 'true'
-        run: bundle exec rake test --trace
+    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
 
   markdown-link-check:
     runs-on: ubuntu-latest
