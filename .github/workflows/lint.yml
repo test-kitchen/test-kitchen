@@ -40,7 +40,7 @@ jobs:
   integration-macos:
     name: MacOS Integration Tests
     needs: [lint-unit]
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
