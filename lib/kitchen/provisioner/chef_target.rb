@@ -23,9 +23,11 @@ module Kitchen
     #
     # @author Thomas Heinen <thomas.heinen@gmail.com>
     class ChefTarget < ChefInfra
-      MIN_VERSION_REQUIRED = '18.2.5'.freeze
+      MIN_VERSION_REQUIRED = "19.0.0".freeze
+      class ChefVersionTooLow < UserError; end
+      class ChefClientNotFound < UserError; end
+      class RequireTrainTransport < UserError; end
 
-      # TODO: Theoretically could adapt this to use Habitat for explicit version request
       default_config :install_strategy, "none"
       default_config :sudo, true
 
@@ -34,49 +36,41 @@ module Kitchen
       def prepare_command; ""; end
 
       def chef_args(client_rb_filename)
-        # Dummy execution to initialize and test remote connection (TODO: better?)
-        connection = instance.remote_exec('')
+        # Dummy execution to initialize and test remote connection
+        connection = instance.remote_exec("echo Connection established")
 
-        # TODO: Feels like the wrong spot to do this
         check_transport(connection)
         check_local_chef_client
 
-        # TODO
         instance_name = instance.name
-        credentials_file = File.join(kitchen_basepath, '.kitchen', instance_name + '.ini')
+        credentials_file = File.join(kitchen_basepath, ".kitchen", instance_name + ".ini")
         File.write(credentials_file, connection.credentials_file)
 
         super.concat([
           "--target #{instance_name}",
           "--credentials #{credentials_file}",
-          # "--log_level trace"
         ])
       end
 
-      # TODO
-      # - set `instance.transport` to `null` (avoid script execution)
-      # - twist execution to run... differently
-
       def check_transport(connection)
-        debug('Checking for active transport')
+        debug("Checking for active transport")
 
-        unless connection.respond_to? 'train_uri'
-          error('Chef Target Mode provisioner requires a Train-based transport like kitchen-transport-train')
-          raise
+        unless connection.respond_to? "train_uri"
+          error("Chef Target Mode provisioner requires a Train-based transport like kitchen-transport-train")
+          raise RequireTrainTransport.new("No Train transport")
         end
 
-        debug('Kitchen transport responds to train_uri function call, as required')
+        debug("Kitchen transport responds to train_uri function call, as required")
       end
 
       def check_local_chef_client
-        # - check for `chef-client` locally + right version
-        debug('Checking for chef-client version')
+        debug("Checking for chef-client version")
 
         begin
-          client_version = `chef-client -v`.chop.split(':')[-1]
+          client_version = `chef-client -v`.chop.split(":")[-1]
         rescue Errno::ENOENT => e
           error("Error determining Chef Infra version: #{e.exception.message}")
-          raise
+          raise ChefClientNotFound.new("Need chef-client installed locally")
         end
 
         minimum_version = Gem::Version.new(MIN_VERSION_REQUIRED)
@@ -84,7 +78,7 @@ module Kitchen
 
         if installed_version < minimum_version
           error("Found Chef Infra version #{installed_version}, but require #{minimum_version} for Target Mode")
-          raise
+          raise ChefVersionTooLow.new("Need version #{MIN_VERSION_REQUIRED} or higher")
         end
 
         debug("Chef Infra found and version constraints match")
@@ -114,17 +108,8 @@ module Kitchen
         create_sandbox
         # no prepare command
 
-        # TODO: in base transport - reimplement
-        # execute_with_retry(
-        #   run_command,
-        #   config[:retry_on_exit_code],
-        #   config[:max_retries],
-        #   config[:wait_for_retry]
-        # )
-
-        # Stream output to logger (TODO: check if this sets exit code)
-        require 'open3'
-        stdout, _sterr, _exitcode = Open3.popen2e(run_command)
+        # Stream output to logger
+        require "open3"
         Open3.popen2e(run_command) do |_stdin, output, _thread|
           output.each { |line| logger << line }
         end
@@ -141,19 +126,5 @@ module Kitchen
         cleanup_sandbox
       end
     end
-
-    # Speed up Ohai for development by disabling plugins??
-    # def default_config_rb
-    #   default_config_rb.merge({
-    #     ohai: {
-    #       disabled_plugins: %i[
-    #         Azure C DigitalOcean DMI Docker Elixir Erlang Eucalyptus Freebsd
-    #         Gce Go Groovy Haskell Java Joyent Linode Lua Mono Nodejs Openstack
-    #         Perl Php Powershell Rackspace Rust Scala Scaleway Shard Softlayer
-    #         Virtualbox Vmware Zpools
-    #       ]
-    #     }
-    #   })
-    # end
   end
 end
