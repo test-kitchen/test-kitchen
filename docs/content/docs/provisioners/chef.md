@@ -7,7 +7,7 @@ menu:
     weight: 5
 ---
 
-Test Kitchen includes three provisioners for Chef Infra, `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0. This change is backward-compatible, and both names work starting with Test Kitchen 3.0. In older releases, you will need to use `chef_zero`.
+Test Kitchen includes three provisioners for Chef Infra, `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0.
 
 `chef_target` is for using Chef 19 Target Mode without remotely installing any agents and is based on `kitchen-transport-train` and the Train framework, which are not installed from Test Kitchen by default. For links to these two tools, look at the end of this page.
 
