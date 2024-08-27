@@ -73,16 +73,18 @@ module Kitchen
         # Runs `chef install` to determine the correct cookbook set and
         # generate the policyfile lock.
         def compile
-          if File.exist?(lockfile)
-            info("Installing cookbooks for Policyfile #{policyfile} using `#{cli_path} install`")
+          if File.exist?(lockfile) && always_update
+            info("Policy lock file exists and always_update is set, running `#{cli_path} update` for Policyfile #{policyfile}...")
+            run_command("chef update #{escape_path(policyfile)}")
           else
-            info("Policy lock file doesn't exist, running `#{cli_path} install` for Policyfile #{policyfile}...")
-          end
-          run_command("#{cli_path} install #{escape_path(policyfile)} --chef-license #{license}")
+            if File.exist?(lockfile)
+              info("Policy lock file exists, running `#{cli_path} install` for Policyfile #{policyfile} using the #{lockfile} lock file...")
+            else
+              info("Policy lock file doesn't exist, running `#{cli_path} install` for Policyfile #{policyfile}...")
+            end
 
-          if always_update
-            info("Updating policy lock using `#{cli_path} update`")
-            run_command("#{cli_path} update #{escape_path(policyfile)} --chef-license #{license}")
+            run_command("chef install #{escape_path(policyfile)}")
+
           end
         end
 
