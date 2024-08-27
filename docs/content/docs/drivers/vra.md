@@ -71,10 +71,6 @@ If you don't want to explicitly specify username and password in the kitchen.yml
 
 The `domain` attribute is required, which you can utilize to specify which domain should be used to authenticate the users.
 
-#### catalog_id
-
-id of the catalog item from which you are requesting the deployment
-
 #### project_id
 
 id of the project

@@ -25,11 +25,10 @@ tmp
 .project
 .DS_Store
 .kitchen/
-.kitchen.yml
 .kitchen.local.yml
-kitchen.yml
 kitchen.local.yml
 Berksfile.lock
+Policyfile.lock.json
 *.swp
 *~
 .sass-cache
@@ -39,5 +38,3 @@ _cache
 docs/public
 .idea/
 docs/.hugo_build.lock
-
-
