@@ -244,6 +244,7 @@ module Kitchen
       end
 
       def doctor(state)
+        deprecated_config = instance.driver.instance_variable_get(:@deprecated_config)
         deprecated_config.each do |attr, msg|
           info("**** #{attr} deprecated\n#{msg}")
         end
