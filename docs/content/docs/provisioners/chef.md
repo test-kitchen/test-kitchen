@@ -7,12 +7,14 @@ menu:
     weight: 5
 ---
 
-Test Kitchen includes two provisioners for Chef Infra, `chef_solo` and `chef_infra`, that support similar options. `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0. This change is backward-compatible, and both names work starting with Test Kitchen 3.0. In older releases, you will need to use `chef_zero`.
+Test Kitchen includes three provisioners for Chef Infra, `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra` in Test Kitchen 3.0.
+
+`chef_target` is for using Chef 19 Target Mode without remotely installing any agents and is based on `kitchen-transport-train` and the Train framework, which are not installed from Test Kitchen by default. For links to these two tools, look at the end of this page.
 
 ```ruby
 ---
 provisioner:
-  name: chef_infra # chef_solo or chef_infra
+  name: chef_infra # chef_solo, chef_infra, or chef_target
   data_path: test/data # Path to directory of files to copy to instance
   data_bags_path: test/data_bags # Path to directory containing data_bags
   environments_path: test/envs # Path to directory containing environments
@@ -69,3 +71,9 @@ Will be set to the first match, in the following order:
 3. $KEY
 
 Where `$KEY` corresponds to a folder named `data, data_bags, environments, nodes, roles` - the exception being `encrypted_data_bag_secret_key_path` which looks for a file named `encrypted_data_bag_secret_key`.
+
+Additional Components for `chef_target`:
+
+* locally installed `chef-client` of version >= 19.0
+* [kitchen-transport-train >= 0.2](https://github.com/tecracer-chef/kitchen-transport-train)
+* [train >= 3.9](https://github.com/inspec/train)
