@@ -1,5 +1,28 @@
 # Test Kitchen Change Log
 
+## [3.7.0](https://github.com/test-kitchen/test-kitchen/compare/v3.6.2...v3.7.0) (2024-08-27)
+
+
+### Features
+
+* Add chef_target provisioner ([#1976](https://github.com/test-kitchen/test-kitchen/issues/1976)) ([ef11823](https://github.com/test-kitchen/test-kitchen/commit/ef1182324310d1ad0156d2c97d9f3de7ce804146))
+* add finally lifecycle hook to always run regardless of failure ([#1917](https://github.com/test-kitchen/test-kitchen/issues/1917)) ([9015ddc](https://github.com/test-kitchen/test-kitchen/commit/9015ddcbe63ee2fd9c46a736a88fe75a40984a4b))
+* add KITCHEN_USERNAME to shell verifier ([b109057](https://github.com/test-kitchen/test-kitchen/commit/b109057016b43123559436acc97ef84f99f04376))
+* Add publish workflow ([#1944](https://github.com/test-kitchen/test-kitchen/issues/1944)) ([22cae60](https://github.com/test-kitchen/test-kitchen/commit/22cae60b09bedca27ebea77e99ebc7dfa841dbca))
+
+
+### Bug Fixes
+
+* added the fix for depreceated config error ([#1979](https://github.com/test-kitchen/test-kitchen/issues/1979)) ([f44ef5c](https://github.com/test-kitchen/test-kitchen/commit/f44ef5c0f9859720e2a7b4732bf13591bcf5e2d6))
+* always download files even if verifier fails ([#1916](https://github.com/test-kitchen/test-kitchen/issues/1916)) ([75bdd71](https://github.com/test-kitchen/test-kitchen/commit/75bdd71b965d0d39c78664f751a15be9f665391d))
+* release please configs ([#1974](https://github.com/test-kitchen/test-kitchen/issues/1974)) ([c6ab966](https://github.com/test-kitchen/test-kitchen/commit/c6ab966a484a04cfbd5cd634da6f2268d9485cca))
+* Remove Ruby 3.0 Testing ([#1948](https://github.com/test-kitchen/test-kitchen/issues/1948)) ([458261c](https://github.com/test-kitchen/test-kitchen/commit/458261c1a170e82b3b5d9f1a5fcad0e1542fabeb))
+* replace 2&&gt;1 by 2>&1 ([#1932](https://github.com/test-kitchen/test-kitchen/issues/1932)) ([6468bac](https://github.com/test-kitchen/test-kitchen/commit/6468bac8990ee47da730e2abcc362170e387f6c6))
+* Update .release-please-manifest.json ([e8dba21](https://github.com/test-kitchen/test-kitchen/commit/e8dba21d6666ffb1300e25cf1ded54bc85572cb3))
+* Update .release-please-manifest.json ([#1980](https://github.com/test-kitchen/test-kitchen/issues/1980)) ([8f76939](https://github.com/test-kitchen/test-kitchen/commit/8f769397758370ae9e368b63cd3e0ba974ecd625))
+* Update CHANGELOG.md ([e1b7e4d](https://github.com/test-kitchen/test-kitchen/commit/e1b7e4df4004af6e22f150b49774dae1f18ac1aa))
+* update getting started link ([9660a4d](https://github.com/test-kitchen/test-kitchen/commit/9660a4dd3cf577e76decec53fca1bc7957a130ef))
+
 ## [3.6.0](https://github.com/test-kitchen/test-kitchen/compare/v3.5.1...v3.6.0) (2023-11-27)
 
 
