@@ -1,3 +1,3 @@
-*            @chef/chef-workstation-reviewers @chef/chef-workstation-approvers @chef/chef-workstation-owners
+*            @chef/chef-workstation-owners @chef/chef-workstation-approvers @chef/chef-workstation-reviewers
 .expeditor/  @chef/releng-ops
 *.md         @chef/docs-team

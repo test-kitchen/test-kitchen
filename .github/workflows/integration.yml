@@ -14,7 +14,6 @@ concurrency:
 jobs:
   integration-linux:
     name: Linux Dokken Integration Tests
-    needs: [lint-unit]
     env:
       KITCHEN_LOCAL_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
@@ -32,7 +31,6 @@ jobs:
 
   integration-macos:
     name: MacOS Integration Tests
-    needs: [lint-unit]
     runs-on: macos-13
     strategy:
       fail-fast: false
@@ -53,7 +51,6 @@ jobs:
 
   integration-windows:
     name: Windows Integration Tests
-    needs: [lint-unit]
     env:
       BUNDLE_without: integration
       machine_user: test_user
