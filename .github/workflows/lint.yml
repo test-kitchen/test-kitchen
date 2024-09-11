@@ -1,8 +1,15 @@
 ---
-name: 'Lint, Unit & Integration Tests'
+name: lint
 
 "on":
   pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   chefstyle:
@@ -67,78 +74,3 @@ jobs:
           use-verbose-mode: "yes"
           check-modified-files-only: "yes"
           base-branch: "main"
-
-  integration-linux:
-    name: Linux Dokken Integration Tests
-    needs: [lint-unit]
-    env:
-      KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - run: bundle exec kitchen test
-
-  integration-macos:
-    name: MacOS Integration Tests
-    needs: [lint-unit]
-    runs-on: macos-13
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - name: Install Vagrant VirtualBox
-        run: brew install --cask virtualbox vagrant
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Kitchen Test
-        run: |
-          export LOGNAME=$USER
-          bundle exec kitchen test almalinux-9
-
-  integration-windows:
-    name: Windows Integration Tests
-    needs: [lint-unit]
-    env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 5985
-      SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.windows.yml
-    runs-on: windows-latest
-    timeout-minutes: 600
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Unit Tests
-        run: bundle exec rake unit
-      - name: Quality Tests
-        run: bundle exec rake quality
-      - name: Setup Machine
-        run: |
-          winrm.cmd quickconfig -q
-          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
-          net localgroup administrators ${{ env.machine_user }} /add
-          bundle config set --local with 'integration'
-          bundle install
-      - name: Verify Windows
-        run: bundle exec kitchen verify windows
