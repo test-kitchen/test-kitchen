@@ -1,5 +1,11 @@
-# Test Kitchen Change Log
+<!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
+<!-- latest_release -->
+<!-- latest_release -->
 
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [3.7.0](https://github.com/test-kitchen/test-kitchen/compare/v3.6.2...v3.7.0) (2024-08-27)
 
 
