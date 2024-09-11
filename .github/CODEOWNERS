@@ -1,1 +1,3 @@
-@test-kitchen/maintainers
+*            @chef/chef-workstation-reviewers @chef/chef-workstation-approvers @chef/chef-workstation-owners
+.expeditor/  @chef/releng-ops
+*.md         @chef/docs-team
