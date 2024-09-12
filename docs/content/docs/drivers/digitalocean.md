@@ -52,6 +52,17 @@ Note that your `SSH_KEY_ID` must be the numeric id of your ssh key, not the symb
 curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
 ```
 
+#### server_name
+
+The `server_name` configuration option allows you to specify the hostname of the Droplet. By default, the hostname is set to the combination of base name, username, hostname, random string as well as seperators.
+
+For example to set the hostname provide the server_name attribute
+
+```yaml
+driver:
+  server_name: my_server
+```
+
 #### image
 
 The `image` configuration option allows you to control the operating system of the Droplet. DigitalOcean features many different images for creating Droplets that can be used by specifying the following image names:
