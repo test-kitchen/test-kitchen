@@ -63,10 +63,10 @@ module Kitchen
         def resolve
           if policy_group
             info("Exporting cookbook dependencies from Policyfile #{path} with policy_group #{policy_group} using `#{cli_path} export`...")
-            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --policy_group #{policy_group} --force --chef-license #{license}")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --policy_group #{policy_group} --force #{chef_license(license)}")
           else
             info("Exporting cookbook dependencies from Policyfile #{path} using `#{cli_path} export`...")
-            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force --chef-license #{license}")
+            run_command("#{cli_path} export #{escape_path(policyfile)} #{escape_path(path)} --force #{chef_license(license)}")
           end
         end
 
@@ -78,11 +78,11 @@ module Kitchen
           else
             info("Policy lock file doesn't exist, running `#{cli_path} install` for Policyfile #{policyfile}...")
           end
-          run_command("#{cli_path} install #{escape_path(policyfile)} --chef-license #{license}")
+          run_command("#{cli_path} install #{escape_path(policyfile)} #{chef_license(license)}")
 
           if always_update
             info("Updating policy lock using `#{cli_path} update`")
-            run_command("#{cli_path} update #{escape_path(policyfile)} --chef-license #{license}")
+            run_command("#{cli_path} update #{escape_path(policyfile)} #{chef_license(license)}")
           end
         end
 
@@ -161,6 +161,12 @@ module Kitchen
                         "setting includes the path to the `chef` or `chef-cli` commands.")
           raise UserError, "Could not find the chef or chef-cli executables in your PATH."
         end
+
+        # Return `"--chef-license #{license}"` when `license` is not nil or empty and the empty string otherwise.
+        def chef_license(license)
+          (license.nil? || license.empty?) ? "" : "--chef-license #{license}"
+        end
+          
       end
     end
   end

@@ -85,6 +85,16 @@ describe Kitchen::Provisioner::Chef::Policyfile do
           subject
         end
       end
+
+      describe "with simple paths and product_name is not chef " do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { nil }
+        it do
+          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force ")
+          subject
+        end
+      end
     end
 
     describe "on Unix with chef-cli" do
