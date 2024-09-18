@@ -25,7 +25,7 @@
 * release please configs ([#1974](https://github.com/test-kitchen/test-kitchen/issues/1974)) ([c6ab966](https://github.com/test-kitchen/test-kitchen/commit/c6ab966a484a04cfbd5cd634da6f2268d9485cca))
 * Remove Ruby 3.0 Testing ([#1948](https://github.com/test-kitchen/test-kitchen/issues/1948)) ([458261c](https://github.com/test-kitchen/test-kitchen/commit/458261c1a170e82b3b5d9f1a5fcad0e1542fabeb))
 * replace 2&&gt;1 by 2>&1 ([#1932](https://github.com/test-kitchen/test-kitchen/issues/1932)) ([6468bac](https://github.com/test-kitchen/test-kitchen/commit/6468bac8990ee47da730e2abcc362170e387f6c6))
-* Update .release-please-manifest.json ([e8dba21](https://github.com/test-kitchen/test-kitchen/commit/e8dba21d6666ffb1300e25cf1ded54bc85572cb3))
+* Update .release-please-manifest.json (e8dba21)
 * Update .release-please-manifest.json ([#1980](https://github.com/test-kitchen/test-kitchen/issues/1980)) ([8f76939](https://github.com/test-kitchen/test-kitchen/commit/8f769397758370ae9e368b63cd3e0ba974ecd625))
 * Update CHANGELOG.md ([e1b7e4d](https://github.com/test-kitchen/test-kitchen/commit/e1b7e4df4004af6e22f150b49774dae1f18ac1aa))
 * update getting started link ([9660a4d](https://github.com/test-kitchen/test-kitchen/commit/9660a4dd3cf577e76decec53fca1bc7957a130ef))
