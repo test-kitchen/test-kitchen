@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gemspec
+gem "appbundler"
 
 group :test do
   gem "rake"
