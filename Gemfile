@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 gem "appbundler"
-
+gem "pry"
 group :test do
   gem "rake"
   gem "rb-readline"
