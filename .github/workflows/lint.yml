@@ -1,12 +1,68 @@
 ---
-name: 'Lint, Unit & Integration Tests'
+name: lint
 
 "on":
   pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-unit:
-    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
+  chefstyle:
+    env:
+      BUNDLE_WITH: ${{ inputs.bundle_with }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3"]
+    name: Chefstyle on Ruby
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Check for Gemfile
+        id: check
+        run: |
+          if [ -f Gemfile ]; then
+           echo "gemfile=true" >> $GITHUB_OUTPUT
+          else
+            echo "gemfile=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup Ruby
+        if: steps.check.outputs.gemfile == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - uses: r7kamura/rubocop-problem-matchers-action@v1
+        if: steps.check.outputs.gemfile == 'true'
+      - name: Chef Style
+        if: steps.check.outputs.gemfile == 'true'
+        run: bundle exec chefstyle
+
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run yaml Lint
+        uses: actionshub/yamllint@main
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
 
   markdown-link-check:
     runs-on: ubuntu-latest
@@ -18,78 +74,3 @@ jobs:
           use-verbose-mode: "yes"
           check-modified-files-only: "yes"
           base-branch: "main"
-
-  integration-linux:
-    name: Linux Dokken Integration Tests
-    needs: [lint-unit]
-    env:
-      KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - run: bundle exec kitchen test
-
-  integration-macos:
-    name: MacOS Integration Tests
-    needs: [lint-unit]
-    runs-on: macos-13
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - name: Install Vagrant VirtualBox
-        run: brew install --cask virtualbox vagrant
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Kitchen Test
-        run: |
-          export LOGNAME=$USER
-          bundle exec kitchen test almalinux-9
-
-  integration-windows:
-    name: Windows Integration Tests
-    needs: [lint-unit]
-    env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 5985
-      SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.windows.yml
-    runs-on: windows-latest
-    timeout-minutes: 600
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Unit Tests
-        run: bundle exec rake unit
-      - name: Quality Tests
-        run: bundle exec rake quality
-      - name: Setup Machine
-        run: |
-          winrm.cmd quickconfig -q
-          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
-          net localgroup administrators ${{ env.machine_user }} /add
-          bundle config set --local with 'integration'
-          bundle install
-      - name: Verify Windows
-        run: bundle exec kitchen verify windows
