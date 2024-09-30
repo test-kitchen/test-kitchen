@@ -1,6 +1,6 @@
 _chef_client_ruby="core/ruby31"
 pkg_name="test-kitchen"
-pkg_origin="sanghinitin"
+pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 pkg_description="The Chef Test Kitchen"
 pkg_license=('Apache-2.0')
@@ -78,7 +78,7 @@ do_build() {
     build_line "Installing gems from git repos properly ..."
     build_line "Installing this project's gems ..."
     bundle exec rake install:local
-    gem install chef-utils chef-config appbundler aruba
+    gem install chef-utils chef-config appbundler aruba kitchen-dokken
   )
 }
 

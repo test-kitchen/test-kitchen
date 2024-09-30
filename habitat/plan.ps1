@@ -47,7 +47,7 @@ function Invoke-Build {
         gem build test-kitchen.gemspec
 	    Write-BuildLine " ** Using gem to  install"
 	    gem install test-kitchen-*.gem --no-document
-        
+        gem install kitchen-dokken
 
         If ($lastexitcode -ne 0) { Exit $lastexitcode }
     } finally {
