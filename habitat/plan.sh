@@ -1,6 +1,7 @@
+export HAB_BLDR_CHANNEL="LTS-2024"
 _chef_client_ruby="core/ruby31"
 pkg_name="test-kitchen"
-pkg_origin="chef"
+pkg_origin="ngupta26"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 pkg_description="The Chef Test Kitchen"
 pkg_license=('Apache-2.0')
@@ -99,7 +100,7 @@ do_after() {
   build_line "Trimming the fat ..."
 
   # We don't need the cache of downloaded .gem files ...
-  rm -r "$pkg_prefix/vendor/cache"
+  # rm -r "$pkg_prefix/vendor/cache"
 
   # We don't need the gem docs.
   rm -r "$pkg_prefix/vendor/doc"

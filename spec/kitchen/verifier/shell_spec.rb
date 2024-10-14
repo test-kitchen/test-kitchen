@@ -31,7 +31,7 @@ describe Kitchen::Verifier::Shell do
   let(:state)         { {} }
 
   let(:config) do
-    { test_base_path: "/basist", kitchen_root: "/rooty" }
+    { test_base_path: "/basist", kitchen_root: "/rooty", command: "exit 0" }
   end
 
   let(:transport) do
@@ -70,7 +70,7 @@ describe Kitchen::Verifier::Shell do
     end
 
     it "sets :command to 'true' by default" do
-      _(verifier[:command]).must_equal "true"
+      _(verifier[:command]).must_equal "exit 0"
     end
 
     it "sets :live_stream to stdout by default" do
@@ -166,7 +166,7 @@ describe Kitchen::Verifier::Shell do
 
     it "returns string when remote_exec" do
       config[:remote_exec] = true
-      _(verifier.run_command).must_equal "true"
+      _(verifier.run_command).must_equal "exit 0"
     end
   end
 end
