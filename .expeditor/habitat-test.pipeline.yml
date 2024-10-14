@@ -15,15 +15,5 @@ steps:
     expeditor:
     executor:
       docker:
-          image: ruby:3.1
-          privileged: true
-
-  # - label: ":windows: Validate Habitat Builds of test-kitchen"
-  #   commands:
-  #     - .expeditor/buildkite/artifact.habitat.test.ps1
-  #   expeditor:
-  #   executor:
-  #     windows:
-  #       privileged: true
-  #       single-use: true
-  #       shell: ["powershell", "-Command"]
+        image: ruby:3.1
+        privileged: true
