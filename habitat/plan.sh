@@ -101,7 +101,7 @@ do_after() {
   build_line "Trimming the fat ..."
 
   # We don't need the cache of downloaded .gem files ...
-  # rm -r "$pkg_prefix/vendor/cache"
+  rm -r "$pkg_prefix/vendor/cache"
 
   # We don't need the gem docs.
   rm -r "$pkg_prefix/vendor/doc"
