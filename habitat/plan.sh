@@ -33,6 +33,7 @@ do_before() {
 
 do_download() {
   build_line "Locally creating archive of latest repository commit at ${HAB_CACHE_SRC_PATH}/${pkg_filename}"
+  git config --add safe.directory /src
   # source is in this repo, so we're going to create an archive from the
   # appropriate path within the repo and place the generated tarball in the
   # location expected by do_unpack
