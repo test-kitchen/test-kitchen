@@ -9,11 +9,26 @@ expeditor:
 
 steps:
 
-  - label: ":linux: Validate Habitat Builds of test-kitchen"
+  - label: ":linux: Validate Habitat Builds of Test Kitchen"
     commands:
-      - sleep 60
+      - .expeditor/buildkite/artifact.habitat.test.sh
     expeditor:
-    executor:
-      docker:
-        image: ruby:3.1
-        privileged: true
+      executor:
+        docker:
+          image: ruby:3.1
+          privileged: true
+
+  - label: ":windows: Validate Habitat Builds of Test Kitchen"
+    commands:
+      - .expeditor/buildkite/artifact.habitat.test.ps1
+    expeditor:
+      executor:
+        docker:
+          host_os: windows
+          shell: ["powershell", "-Command"]
+          image: rubydistros/windows-2019:3.1
+          user: 'NT AUTHORITY\SYSTEM'
+          environment:
+            - FORCE_FFI_YAJL=ext
+            - EXPIRE_CACHE=true
+            - CHEF_LICENSE=accept-no-persist

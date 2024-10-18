@@ -1,0 +1,9 @@
+---
+origin: ngupta26
+
+expeditor:
+  defaults:
+    buildkite:
+      retry:
+        automatic:
+          limit: 1

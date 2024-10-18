@@ -35,6 +35,11 @@ steps:
           host_os: windows
           shell: ["powershell", "-Command"]
           image: rubydistros/windows-2019:3.1
+          user: 'NT AUTHORITY\SYSTEM'
+          environment:
+            - FORCE_FFI_YAJL=ext
+            - EXPIRE_CACHE=true
+            - CHEF_LICENSE=accept-no-persist
 
   - label: run-specs-windows-ruby-3.3
     command:
@@ -45,3 +50,8 @@ steps:
           host_os: windows
           shell: ["powershell", "-Command"]
           image: rubydistros/windows-2019:3.3
+          user: 'NT AUTHORITY\SYSTEM'
+          environment:
+            - FORCE_FFI_YAJL=ext
+            - EXPIRE_CACHE=true
+            - CHEF_LICENSE=accept-no-persist

@@ -31,7 +31,7 @@ describe Kitchen::Verifier::Shell do
   let(:state)         { {} }
 
   let(:config) do
-    { test_base_path: "/basist", kitchen_root: "/rooty" }
+    { test_base_path: "/basist", kitchen_root: "/rooty", command: "echo 'Command executed successfully'" }
   end
 
   let(:transport) do
@@ -69,8 +69,8 @@ describe Kitchen::Verifier::Shell do
       _(verifier[:sleep]).must_equal 0
     end
 
-    it "sets :command to 'true' by default" do
-      _(verifier[:command]).must_equal "true"
+    it "sets :command to 'echo Command executed successfully' by default" do
+      _(verifier[:command]).must_equal "echo 'Command executed successfully'"
     end
 
     it "sets :live_stream to stdout by default" do
@@ -160,13 +160,13 @@ describe Kitchen::Verifier::Shell do
   end
 
   describe "#run_command" do
-    it "execute localy and returns nil" do
+    it "execute locally and returns nil" do
       verifier.run_command
     end
 
     it "returns string when remote_exec" do
       config[:remote_exec] = true
-      _(verifier.run_command).must_equal "true"
+      _(verifier.run_command).must_equal "echo 'Command executed successfully'"
     end
   end
 end

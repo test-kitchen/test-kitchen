@@ -1,6 +1,7 @@
-_chef_client_ruby="core/ruby31"
+export HAB_BLDR_CHANNEL="LTS-2024"
+_chef_client_ruby="core/ruby3_1"
 pkg_name="test-kitchen"
-pkg_origin="chef"
+pkg_origin="ngupta26"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 pkg_description="The Chef Test Kitchen"
 pkg_license=('Apache-2.0')
@@ -32,6 +33,7 @@ do_before() {
 
 do_download() {
   build_line "Locally creating archive of latest repository commit at ${HAB_CACHE_SRC_PATH}/${pkg_filename}"
+  git config --global --add safe.directory /src
   # source is in this repo, so we're going to create an archive from the
   # appropriate path within the repo and place the generated tarball in the
   # location expected by do_unpack
