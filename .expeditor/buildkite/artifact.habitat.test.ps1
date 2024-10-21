@@ -25,6 +25,7 @@ function Stop-HabProcess {
   }
 }
 
+# Installing Habitat
 function Install-Habitat {
   Write-Host "Downloading and installing Habitat..."
   Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.ps1'))
