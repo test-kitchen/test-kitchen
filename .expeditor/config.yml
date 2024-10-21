@@ -16,6 +16,10 @@ github:
   major_bump_labels:
     - "Expeditor: Bump Version Major"
 
+release_branches:
+  - main:
+      version_constraint: 1.*
+
 changelog:
   rollup_header: Changes not yet released to rubygems.org
 
