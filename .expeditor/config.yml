@@ -23,6 +23,24 @@ release_branches:
 changelog:
   rollup_header: Changes not yet released to rubygems.org
 
+pipelines:
+  - verify:
+      description: Pull Request validation tests
+      public: true
+  - habitat/build:
+      env:
+        - HAB_NONINTERACTIVE: "true"
+        - HAB_NOCOLORING: "true"
+        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
+  - habitat/test:
+      description: Execute tests against the habitat artifact
+      definition: .expeditor/habitat-test.pipeline.yml
+      env:
+        - HAB_NONINTERACTIVE: "true"
+        - HAB_NOCOLORING: "true"
+        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
+      trigger: pull_request
+
 subscriptions:
   # These actions are taken, in order they are specified, anytime a Pull Request is merged.
   - workload: pull_request_merged:{{github_repo}}:{{release_branch}}:*
@@ -58,20 +76,3 @@ subscriptions:
     actions:
       - built_in:rollover_changelog
 
-pipelines:
-  - verify:
-      description: Pull Request validation tests
-      public: true
-  - habitat/build:
-      env:
-        - HAB_NONINTERACTIVE: "true"
-        - HAB_NOCOLORING: "true"
-        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
-  - habitat/test:
-      description: Execute tests against the habitat artifact
-      definition: .expeditor/habitat-test.pipeline.yml
-      env:
-        - HAB_NONINTERACTIVE: "true"
-        - HAB_NOCOLORING: "true"
-        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
-      trigger: pull_request
