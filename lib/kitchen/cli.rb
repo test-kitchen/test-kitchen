@@ -301,6 +301,11 @@ module Kitchen
       perform("console", "console")
     end
 
+    desc "license", "Manage the chef licenses"
+    def license(*args)
+      perform("license", "license", args)
+    end
+
     register Kitchen::Generator::Init, "init",
       "init", "Adds some configuration to your cookbook so Kitchen can rock"
     long_desc <<-D, for: "init"

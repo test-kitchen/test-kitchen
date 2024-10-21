@@ -192,7 +192,7 @@ module Kitchen
       # will persist after the process terminates. In other words, cleanup is
       # explicit. This method is safe to call multiple times.
       def cleanup_sandbox
-        return if sandbox_path.nil?
+        return if @sandbox_path.nil?
 
         debug("Cleaning up local sandbox in #{sandbox_path}")
         FileUtils.rmtree(sandbox_path)

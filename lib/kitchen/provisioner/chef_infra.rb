@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require_relative "chef_base"
+require "kitchen/licensing/base"
 
 module Kitchen
   module Provisioner
@@ -32,6 +33,8 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
+      default_config :chef_license_key, nil
+      default_config :chef_license_server, []
 
       default_config :chef_client_path do |provisioner|
         provisioner
@@ -46,13 +49,28 @@ module Kitchen
 
       # (see Base#create_sandbox)
       def create_sandbox
+        prepare_license_keys
         super
         prepare_validation_pem
         prepare_config_rb
       end
 
+      def prepare_command
+        secret_key = "2f3b66cbbafa2d326b2856bccc4c8ebe"
+        nonce = Base64.encode64(SecureRandom.random_bytes(16)).strip
+        timestamp = Time.now.utc.to_i.to_s
+
+        message = "#{nonce}:#{timestamp}"
+
+        signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, message)
+
+        file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
+
+        sudo("echo -e '#{file_content}' > /tmp/c769508738d671db424b7442")
+      end
+
       def run_command
-        cmd = "#{sudo(config[:chef_client_path])} --local-mode".tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = "#{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]}".tap { |str| str.insert(0, "& ") if powershell_shell? }
 
         chef_cmd(cmd)
       end
@@ -161,6 +179,18 @@ module Kitchen
       # @api private
       def supports_policyfile?
         true
+      end
+
+      def prepare_license_keys
+        info("Fetching the Chef license key")
+        return unless config[:chef_license_key].blank?
+
+        keys, type, url, ps1_url = ::Kitchen::Licensing::Base.get_license_keys
+
+        config[:chef_license_key] = keys
+        config[:install_sh_url] = url
+        config[:chef_license_type] = type
+        config[:install_ps1_url] = ps1_url
       end
     end
   end
