@@ -3,7 +3,7 @@ $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
 $env:HAB_BLDR_CHANNEL = "LTS-2024"
 $pkg_name="test-kitchen"
-$pkg_origin="ngupta26"
+$pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
 $pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 
