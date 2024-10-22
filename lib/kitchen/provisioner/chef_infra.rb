@@ -75,6 +75,24 @@ module Kitchen
         chef_cmd(cmd)
       end
 
+      def check_license
+        super
+
+        info("Fetching the Chef license key")
+        key, type, install_sh_url = if config[:chef_license_key].nil?
+                                      Licensing::Base.get_license_keys
+                                    else
+                                      key = config[:chef_license_key]
+                                      client = Licensing::Base.get_license_client([key])
+
+                                      [key, client.license_type, Licensing::Base.install_sh_url(client.license_type, [key])]
+                                    end
+
+        config[:chef_license_key] = key
+        config[:install_sh_url] = install_sh_url
+        config[:chef_license_type] = type
+      end
+
       private
 
       # Adds optional flags to a chef-client command, depending on
@@ -182,15 +200,7 @@ module Kitchen
       end
 
       def prepare_license_keys
-        info("Fetching the Chef license key")
-        return unless config[:chef_license_key].blank?
 
-        keys, type, url, ps1_url = ::Kitchen::Licensing::Base.get_license_keys
-
-        config[:chef_license_key] = keys
-        config[:install_sh_url] = url
-        config[:chef_license_type] = type
-        config[:install_ps1_url] = ps1_url
       end
     end
   end

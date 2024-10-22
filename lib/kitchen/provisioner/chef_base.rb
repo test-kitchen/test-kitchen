@@ -581,9 +581,7 @@ module Kitchen
         script << command
         script << "EOL"
         script << "chmod +x #{install_file}"
-        script << "sed -i 's/# end of platform_detection.sh/platform=linux/g' #{install_file}"
-        script << 'product_to_install=$(uname | grep -q "Darwin" && echo "chef" || echo "habitat")'
-        script << sudo("bash #{install_file} -P habitat")
+        script << sudo(install_file)
         script.join("\n")
       end
 

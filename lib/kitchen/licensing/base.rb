@@ -25,31 +25,27 @@ module Kitchen
     class Base
 
       OMNITRUCK_URLS = {
-        "free"       => "https://trial-acceptance.downloads.chef.co",
-        "trial"      => "https://trial-acceptance.downloads.chef.co",
-        "commercial" => "https://commercial-acceptance.downloads.chef.co",
+        "free"       => "https://chefdownload-trial.chef.io",
+        "trial"      => "https://chefdownload-trial.chef.io",
+        "commercial" => "https://chefdownload-commerical.chef.io",
       }.freeze
 
       class << self
         def get_license_keys
-          keys = ChefLicensing::LicenseKeyFetcher.fetch
+          keys = ChefLicensing.license_keys
           raise ChefLicensing::InvalidLicense, "A valid license is required to perform this action." if keys.blank?
 
-          is_valid = true # ChefLicensing::LicenseKeyValidator.validate!(keys)
-          raise ChefLicensing::InvalidLicense, "The license is not valid" unless is_valid
+          client = get_license_client(keys)
 
-          client = ChefLicensing::Api::Client.info(license_keys: keys)
-          ChefLicensing.check_software_entitlement!
-
-          [keys, client.license_type, install_sh_url(client.license_type, keys), install_ps1_url(client.license_type, keys)]
+          [keys.last, client.license_type, install_sh_url(client.license_type, keys)]
         end
 
-        def install_sh_url(type, keys)
-          OMNITRUCK_URLS[type] + "/install.sh?license_id=#{keys.join(",")}"
+        def get_license_client(keys)
+          ChefLicensing::Api::Client.info(license_keys: keys)
         end
 
-        def install_ps1_url(type, keys)
-          OMNITRUCK_URLS[type] + "/install.ps1?license_id=#{keys.join(",")}"
+        def install_sh_url(type, keys, ext = "sh")
+          OMNITRUCK_URLS[type] + "/install.#{ext}?license_id=#{keys.join(",")}"
         end
       end
     end
