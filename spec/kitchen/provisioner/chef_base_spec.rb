@@ -837,6 +837,24 @@ describe Kitchen::Provisioner::ChefBase do
         assert_equal("chef-workstation", provisioner.license_acceptance_id)
       end
     end
+
+    describe "when a policyfile exists and an alternative distribution is used" do
+      before do
+        @root = Dir.mktmpdir
+        config[:kitchen_root] = @root
+        config[:product_name] = 'foobar'
+        FileUtils.touch("#{config[:kitchen_root]}/Policyfile.rb")
+        Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+      end
+
+      after do
+        FileUtils.remove_entry(@root)
+      end
+
+      it "returns 'foobar'" do
+        assert_equal("foobar", provisioner.license_acceptance_id)
+      end
+    end
   end
 
   describe "#check_license" do
