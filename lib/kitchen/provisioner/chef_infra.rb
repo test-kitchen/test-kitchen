@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -24,6 +25,9 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefInfra < ChefBase
+      FILE_NAME = "c769508738d671db424b7442"
+      COMMON_KEY = "2f3b66cbbafa2d326b2856bccc4c8ebe"
+
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
@@ -56,17 +60,17 @@ module Kitchen
       end
 
       def prepare_command
-        secret_key = "2f3b66cbbafa2d326b2856bccc4c8ebe"
         nonce = Base64.encode64(SecureRandom.random_bytes(16)).strip
         timestamp = Time.now.utc.to_i.to_s
 
         message = "#{nonce}:#{timestamp}"
 
-        signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, message)
+        signature = OpenSSL::HMAC.hexdigest('SHA256', COMMON_KEY, message)
 
         file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
+        file_location = config[:root_path] + "/#{FILE_NAME}"
 
-        sudo("echo -e '#{file_content}' > /tmp/c769508738d671db424b7442")
+        sudo("echo '#{file_content}' > #{file_location}")
       end
 
       def run_command
