@@ -18,7 +18,7 @@ github:
 
 release_branches:
   - main:
-      version_constraint: 3.*
+      version_constraint: 1.*
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org
