@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
 $env:HAB_BLDR_CHANNEL = "LTS-2024"
-$pkg_name="test-kitchen"
+$pkg_name="chef-test-kitchen-enterprise"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
 $pkg_maintainer="The Chef Maintainers <humans@chef.io>"
@@ -47,7 +47,7 @@ function Invoke-Build {
 
         gem build test-kitchen.gemspec
 	    Write-BuildLine " ** Using gem to  install"
-	    gem install test-kitchen-*.gem --no-document
+	    gem install chef-test-kitchen-enterprise*.gem --no-document
         gem install kitchen-dokken
 
         If ($lastexitcode -ne 0) { Exit $lastexitcode }

@@ -4,7 +4,7 @@ require "kitchen/version"
 require "English"
 
 Gem::Specification.new do |gem|
-  gem.name          = "test-kitchen"
+  gem.name          = "chef-test-kitchen-enterprise"
   gem.version       = Kitchen::VERSION
   gem.license       = "Apache-2.0"
   gem.authors       = ["Fletcher Nichol"]
@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://kitchen.ci/"
 
   # The gemfile and gemspec are necessary for appbundler in ChefDK / Workstation
-  gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
+  gem.files         = %w{LICENSE chef-test-kitchen-enterprise.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
