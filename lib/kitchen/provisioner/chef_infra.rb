@@ -25,8 +25,6 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefInfra < ChefBase
-      FILE_NAME = "c769508738d671db424b7442"
-      COMMON_KEY = "2f3b66cbbafa2d326b2856bccc4c8ebe"
 
       kitchen_provisioner_api_version 2
 
@@ -53,7 +51,6 @@ module Kitchen
 
       # (see Base#create_sandbox)
       def create_sandbox
-        prepare_license_keys
         super
         prepare_validation_pem
         prepare_config_rb
@@ -64,17 +61,16 @@ module Kitchen
         timestamp = Time.now.utc.to_i.to_s
 
         message = "#{nonce}:#{timestamp}"
-
-        signature = OpenSSL::HMAC.hexdigest('SHA256', COMMON_KEY, message)
+        signature = OpenSSL::HMAC.hexdigest('SHA256', context_key, message)
 
         file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
-        file_location = config[:root_path] + "/#{FILE_NAME}"
+        file_location = config[:root_path] + "/#{context_key}"
 
         sudo("echo '#{file_content}' > #{file_location}")
       end
 
       def run_command
-        cmd = "#{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]}".tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]} "
 
         chef_cmd(cmd)
       end
@@ -203,8 +199,16 @@ module Kitchen
         true
       end
 
-      def prepare_license_keys
+      def context_key
+        @context_key ||= SecureRandom.hex(16)
+      end
 
+      def context_env_command
+        if powershell_shell?
+          "$env:TEST_KITCHEN_CONTEXT = '#{context_key}'; &"
+        else
+          "export TEST_KITCHEN_CONTEXT=#{context_key};"
+        end
       end
     end
   end
