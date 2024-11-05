@@ -3,6 +3,9 @@ source "https://rubygems.org"
 gemspec
 gem "appbundler"
 gem "pry"
+gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "test_kitchen_dep_change"
+gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent"
+
 group :test do
   gem "rake"
   gem "rb-readline"
@@ -17,8 +20,6 @@ end
 
 group :integration do
   gem "chef-cli"
-  gem "kitchen-dokken"
-  gem "kitchen-inspec"
   gem "kitchen-vagrant"
 end
 

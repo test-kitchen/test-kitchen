@@ -80,7 +80,7 @@ do_build() {
     build_line "Installing gems from git repos properly ..."
     build_line "Installing this project's gems ..."
     bundle exec rake install:local
-    gem install chef-utils chef-config appbundler aruba kitchen-dokken
+    gem install chef-utils chef-config appbundler aruba
   )
 }
 
