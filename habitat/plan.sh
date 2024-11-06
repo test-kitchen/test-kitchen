@@ -12,11 +12,11 @@ pkg_bin_dirs=(
 pkg_build_deps=(
   core/make
   core/gcc
-  core/git
 )
 pkg_deps=(
   $_chef_client_ruby
   core/coreutils
+  core/git
 )
 pkg_svc_user=root
 
