@@ -590,7 +590,7 @@ module Kitchen
       def script_for_omnibus_version
         require "mixlib/install/script_generator"
         opts = install_options
-        opts[:omnibus_url] = config[:install_sh_url]
+        opts[:omnibus_url] = config[:install_sh_url] if config[:install_sh_url]
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, opts
         )
