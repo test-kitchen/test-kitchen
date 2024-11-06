@@ -61,7 +61,7 @@ module Kitchen
         timestamp = Time.now.utc.to_i.to_s
 
         message = "#{nonce}:#{timestamp}"
-        signature = OpenSSL::HMAC.hexdigest('SHA256', context_key, message)
+        signature = OpenSSL::HMAC.hexdigest("SHA256", context_key, message)
 
         file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
         file_location = config[:root_path] + "/#{context_key}"
