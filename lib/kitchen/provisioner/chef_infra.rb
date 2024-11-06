@@ -79,6 +79,10 @@ module Kitchen
         super
 
         info("Fetching the Chef license key")
+        unless config[:chef_license_server].nil? || config[:chef_license_server].empty?
+          ENV["CHEF_LICENSE_SERVER"] = config[:chef_license_server].join(",")
+        end
+
         key, type, install_sh_url = if config[:chef_license_key].nil?
                                       Licensing::Base.get_license_keys
                                     else
