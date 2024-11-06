@@ -345,7 +345,7 @@ module Kitchen
         add_omnibus_directory_option if instance.driver.cache_directory
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
-          omnibus_url: config[:chef_omnibus_url],
+          omnibus_url: config[:install_sh_url] || config[:chef_omnibus_url],
           project: project.nil? ? nil : project[1],
           install_flags: config[:chef_omnibus_install_options],
           sudo_command:,
@@ -544,6 +544,15 @@ module Kitchen
             prox.delete_if { |p| %i{https_proxy ftp_proxy no_proxy}.include?(p) } if powershell_shell?
           end
           opts[:install_command_options].merge!(proxies)
+
+          if config[:install_sh_url] || config[:install_ps1_url]
+            opts[:new_omnibus_download_url] = if powershell_shell?
+                                                config[:install_ps1_url]
+                                              else
+                                                config[:install_sh_url]
+                                              end
+
+          end
         end)
         config[:chef_omnibus_root] = installer.root
         if powershell_shell?
@@ -580,8 +589,10 @@ module Kitchen
       # @api private
       def script_for_omnibus_version
         require "mixlib/install/script_generator"
+        opts = install_options
+        opts[:omnibus_url] = config[:install_sh_url] if config[:install_sh_url]
         installer = Mixlib::Install::ScriptGenerator.new(
-          config[:require_chef_omnibus], powershell_shell?, install_options
+          config[:require_chef_omnibus], powershell_shell?, opts
         )
         config[:chef_omnibus_root] = installer.root
         sudo(installer.install_command)

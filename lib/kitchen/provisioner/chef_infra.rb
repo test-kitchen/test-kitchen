@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Fletcher Nichol (<fnichol@nichol.ca>)
 #
@@ -16,6 +17,7 @@
 # limitations under the License.
 
 require_relative "chef_base"
+require "kitchen/licensing/base"
 
 module Kitchen
   module Provisioner
@@ -23,6 +25,7 @@ module Kitchen
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefInfra < ChefBase
+
       kitchen_provisioner_api_version 2
 
       plugin_version Kitchen::VERSION
@@ -32,6 +35,8 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
+      default_config :chef_license_key, nil
+      default_config :chef_license_server, []
 
       default_config :chef_client_path do |provisioner|
         provisioner
@@ -51,10 +56,45 @@ module Kitchen
         prepare_config_rb
       end
 
+      def prepare_command
+        nonce = Base64.encode64(SecureRandom.random_bytes(16)).strip
+        timestamp = Time.now.utc.to_i.to_s
+
+        message = "#{nonce}:#{timestamp}"
+        signature = OpenSSL::HMAC.hexdigest("SHA256", context_key, message)
+
+        file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
+        file_location = config[:root_path] + "/#{context_key}"
+
+        sudo("echo '#{file_content}' > #{file_location}")
+      end
+
       def run_command
-        cmd = "#{sudo(config[:chef_client_path])} --local-mode".tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]} "
 
         chef_cmd(cmd)
+      end
+
+      def check_license
+        super
+
+        info("Fetching the Chef license key")
+        unless config[:chef_license_server].nil? || config[:chef_license_server].empty?
+          ENV["CHEF_LICENSE_SERVER"] = config[:chef_license_server].join(",")
+        end
+
+        key, type, install_sh_url = if config[:chef_license_key].nil?
+                                      Licensing::Base.get_license_keys
+                                    else
+                                      key = config[:chef_license_key]
+                                      client = Licensing::Base.get_license_client([key])
+
+                                      [key, client.license_type, Licensing::Base.install_sh_url(client.license_type, [key])]
+                                    end
+
+        config[:chef_license_key] = key
+        config[:install_sh_url] = install_sh_url
+        config[:chef_license_type] = type
       end
 
       private
@@ -161,6 +201,18 @@ module Kitchen
       # @api private
       def supports_policyfile?
         true
+      end
+
+      def context_key
+        @context_key ||= SecureRandom.hex(16)
+      end
+
+      def context_env_command
+        if powershell_shell?
+          "$env:TEST_KITCHEN_CONTEXT = '#{context_key}'; &"
+        else
+          "export TEST_KITCHEN_CONTEXT=#{context_key};"
+        end
       end
     end
   end
