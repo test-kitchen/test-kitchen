@@ -44,12 +44,12 @@ function Invoke-Build {
         bundle config --local silence_root_warning 1
         Write-BuildLine " ** Using bundler to retrieve the Ruby dependencies"
         bundle install
-
+	bundle lock --local
         gem build chef-test-kitchen-enterprise.gemspec
 	    Write-BuildLine " ** Using gem to  install"
 	    gem install chef-test-kitchen-enterprise*.gem --no-document
-        gem install kitchen-dokken
 
+	ruby ./post-bundle-install.rb
         If ($lastexitcode -ne 0) { Exit $lastexitcode }
     } finally {
         Pop-Location
