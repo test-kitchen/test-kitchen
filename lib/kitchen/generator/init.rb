@@ -30,7 +30,7 @@ module Kitchen
       class_option :driver,
         type: :array,
         aliases: "-D",
-        default: %w{kitchen-vagrant},
+        default: %w{kitchen-dokken},
         desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
@@ -39,11 +39,18 @@ module Kitchen
       class_option :provisioner,
         type: :string,
         aliases: "-P",
-        default: "chef_solo",
+        default: "dokken",
         desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
         D
 
+      class_option :transport,
+        type: :string,
+        aliases: "-T",
+        default: "dokken",
+        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+          The default Kitchen Transport to use
+        D
       class_option :create_gemfile,
         type: :boolean,
         default: false,
@@ -81,6 +88,7 @@ module Kitchen
         template("kitchen.yml.erb", "kitchen.yml",
           driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
           provisioner: options[:provisioner],
+          transport: options[:transport],
           run_list: Array(run_list))
       end
 
@@ -213,8 +221,8 @@ module Kitchen
       #
       # @api private
       def add_gem_to_gemfile
-        if not_in_file?("Gemfile", /gem ('|")test-kitchen('|")/)
-          append_to_file("Gemfile", %{gem "test-kitchen"\n})
+        if not_in_file?("Gemfile", /gem ('|")chef-test-kitchen-enterprise('|")/)
+          append_to_file("Gemfile", %{gem "chef-test-kitchen-enterprise"\n})
           @display_bundle_msg = true
         end
       end
