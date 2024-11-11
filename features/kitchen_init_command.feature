@@ -26,7 +26,7 @@ Feature: Add Test Kitchen support to an existing project
     And the file "kitchen.yml" should contain:
     """
     driver:
-      name: vagrant
+      name: dokken
     """
     And a file named "Gemfile" should not exist
     And a file named "Rakefile" should not exist
@@ -40,7 +40,7 @@ Feature: Add Test Kitchen support to an existing project
     Then the file "Gemfile" should contain "https://rubygems.org"
     And the file "Gemfile" should contain:
     """
-    gem "test-kitchen"
+    gem "chef-test-kitchen-enterprise"
     """
     And the output should contain "You must run `bundle install'"
 
@@ -56,7 +56,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem "test-kitchen"
+    gem "chef-test-kitchen-enterprise"
 
     """
     And the output should contain "You must run `bundle install'"
@@ -67,7 +67,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem 'test-kitchen'
+    gem "chef-test-kitchen-enterprise"
 
     """
     When I successfully run `kitchen init`
@@ -75,7 +75,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem 'test-kitchen'
+    gem "chef-test-kitchen-enterprise"
 
     """
 
@@ -85,7 +85,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem 'test-kitchen'
+    gem "chef-test-kitchen-enterprise"
     gem 'kitchen-ec2'
 
     """
@@ -94,7 +94,7 @@ Feature: Add Test Kitchen support to an existing project
     """
     source "https://rubygems.org"
 
-    gem 'test-kitchen'
+    gem "chef-test-kitchen-enterprise"
     gem 'kitchen-ec2'
 
     """
@@ -122,13 +122,13 @@ Feature: Add Test Kitchen support to an existing project
     """
 
   Scenario: Running init without a provisioner sets the default provisioner
-    to chef_solo in kitchen.yml
+    to dokken in kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
     Then the file "kitchen.yml" should contain:
     """
     provisioner:
-      name: chef_solo
+      name: dokken
     """
 
   Scenario: Running init with a provisioner sets the provisioner in kitchen.yml
@@ -190,10 +190,13 @@ Feature: Add Test Kitchen support to an existing project
     """
     ---
     driver:
-      name: vagrant
+      name: dokken
 
     provisioner:
-      name: chef_solo
+      name: dokken
+
+    transport:
+      name: dokken
 
     platforms:
       - name: ubuntu-20.04
@@ -214,10 +217,13 @@ Feature: Add Test Kitchen support to an existing project
     """
     ---
     driver:
-      name: vagrant
+      name: dokken
 
     provisioner:
-      name: chef_solo
+      name: dokken
+
+    transport:
+      name: dokken
 
     platforms:
       - name: ubuntu-20.04
@@ -237,10 +243,13 @@ Feature: Add Test Kitchen support to an existing project
     """
     ---
     driver:
-      name: vagrant
+      name: dokken
 
     provisioner:
-      name: chef_solo
+      name: dokken
+
+    transport:
+      name: dokken
 
     platforms:
       - name: ubuntu-20.04
