@@ -70,7 +70,7 @@ module Kitchen
       end
 
       def run_command
-        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]} "
+        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode "
 
         chef_cmd(cmd)
       end
