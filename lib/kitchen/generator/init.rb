@@ -30,7 +30,7 @@ module Kitchen
       class_option :driver,
         type: :array,
         aliases: "-D",
-        default: %w{kitchen-vagrant},
+        default: %w{kitchen-dokken},
         desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           One or more Kitchen Driver gems to be installed or added to a
           Gemfile
@@ -213,8 +213,8 @@ module Kitchen
       #
       # @api private
       def add_gem_to_gemfile
-        if not_in_file?("Gemfile", /gem ('|")test-kitchen('|")/)
-          append_to_file("Gemfile", %{gem "test-kitchen"\n})
+        if not_in_file?("Gemfile", /gem ('|")chef-test-kitchen-enterprise('|")/)
+          append_to_file("Gemfile", %{gem "chef-test-kitchen-enterprise"\n})
           @display_bundle_msg = true
         end
       end
