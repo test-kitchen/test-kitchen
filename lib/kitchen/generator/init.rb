@@ -39,11 +39,18 @@ module Kitchen
       class_option :provisioner,
         type: :string,
         aliases: "-P",
-        default: "chef_solo",
+        default: "dokken",
         desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
         D
 
+      class_option :transport,
+        type: :string,
+        aliases: "-T",
+        default: "dokken",
+        desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
+          The default Kitchen Transport to use
+        D
       class_option :create_gemfile,
         type: :boolean,
         default: false,
@@ -81,6 +88,7 @@ module Kitchen
         template("kitchen.yml.erb", "kitchen.yml",
           driver_plugin: driver_plugin.sub(/^kitchen-/, ""),
           provisioner: options[:provisioner],
+          transport: options[:transport],
           run_list: Array(run_list))
       end
 
