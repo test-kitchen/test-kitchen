@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
 $env:HAB_BLDR_CHANNEL = "LTS-2024"
-$pkg_name="test-kitchen"
+$pkg_name="chef-test-kitchen-enterprise"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
 $pkg_maintainer="The Chef Maintainers <humans@chef.io>"
@@ -44,12 +44,12 @@ function Invoke-Build {
         bundle config --local silence_root_warning 1
         Write-BuildLine " ** Using bundler to retrieve the Ruby dependencies"
         bundle install
-
-        gem build test-kitchen.gemspec
+	bundle lock --local
+        gem build chef-test-kitchen-enterprise.gemspec
 	    Write-BuildLine " ** Using gem to  install"
-	    gem install test-kitchen-*.gem --no-document
-        gem install kitchen-dokken
+	    gem install chef-test-kitchen-enterprise*.gem --no-document
 
+	ruby ./post-bundle-install.rb
         If ($lastexitcode -ne 0) { Exit $lastexitcode }
     } finally {
         Pop-Location
@@ -65,11 +65,11 @@ function Invoke-Install {
     try {
         Push-Location $pkg_prefix
         bundle config --local gemfile $project_root/Gemfile
-         Write-BuildLine "** generating binstubs for test-kitchen with precise version pins"
-	 Write-BuildLine "** generating binstubs for test-kitchen with precise version pins $project_root $pkg_prefix/bin " 
-            Invoke-Expression -Command "appbundler.bat $project_root $pkg_prefix/bin test-kitchen"
+         Write-BuildLine "** generating binstubs for chef-test-kitchen-enterprise with precise version pins"
+	 Write-BuildLine "** generating binstubs for chef-test-kitchen-enterprise with precise version pins $project_root $pkg_prefix/bin " 
+            Invoke-Expression -Command "appbundler.bat $project_root $pkg_prefix/bin chef-test-kitchen-enterprise"
             If ($lastexitcode -ne 0) { Exit $lastexitcode }
-	Write-BuildLine " ** Running the test-kitchen project's 'rake install' to install the path-based gems so they look like any other installed gem."
+	Write-BuildLine " ** Running the chef-test-kitchen-enterprise project's 'rake install' to install the path-based gems so they look like any other installed gem."
 
         If ($lastexitcode -ne 0) { Exit $lastexitcode }
     } finally {

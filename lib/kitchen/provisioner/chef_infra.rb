@@ -70,7 +70,7 @@ module Kitchen
       end
 
       def run_command
-        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode --chef-license-key=#{config[:chef_license_key]} "
+        cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode "
 
         chef_cmd(cmd)
       end
@@ -92,6 +92,7 @@ module Kitchen
                                       [key, client.license_type, Licensing::Base.install_sh_url(client.license_type, [key])]
                                     end
 
+        info("Chef license key: #{key}")
         config[:chef_license_key] = key
         config[:install_sh_url] = install_sh_url
         config[:chef_license_type] = type

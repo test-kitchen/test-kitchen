@@ -13,4 +13,4 @@ Feature: A command line interface for Test Kitchen
   Scenario: Displaying the version of Test Kitchen
     When I run `kitchen version`
     Then the exit status should be 0
-    And the output should contain "Test Kitchen version"
+    And the output should contain "Chef Test Kitchen Enterprise Version"

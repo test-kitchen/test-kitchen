@@ -4,7 +4,7 @@ require "kitchen/version"
 require "English"
 
 Gem::Specification.new do |gem|
-  gem.name          = "test-kitchen"
+  gem.name          = "chef-test-kitchen-enterprise"
   gem.version       = Kitchen::VERSION
   gem.license       = "Apache-2.0"
   gem.authors       = ["Fletcher Nichol"]
@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://kitchen.ci/"
 
   # The gemfile and gemspec are necessary for appbundler in ChefDK / Workstation
-  gem.files         = %w{LICENSE test-kitchen.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
+  gem.files         = %w{LICENSE chef-test-kitchen-enterprise.gemspec Gemfile Rakefile} + Dir.glob("{bin,lib,templates,support}/**/*")
   gem.executables   = %w{kitchen}
   gem.require_paths = ["lib"]
 
@@ -30,7 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "net-scp",            ">= 1.1", "< 5.0" # pinning until we can confirm 4+ works
   gem.add_dependency "net-ssh",            ">= 2.9", "< 8.0" # pinning until we can confirm 8+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "thor",               ">= 0.19", "< 2.0"
+  gem.add_dependency "thor",               ">= 0.19", "< 1.3.0" # downgrading thor bec inspec-core depends on < 1.3.0
   gem.add_dependency "winrm",              "~> 2.0"
   gem.add_dependency "winrm-elevated",     "~> 1.0"
   gem.add_dependency "winrm-fs",           "~> 1.1"

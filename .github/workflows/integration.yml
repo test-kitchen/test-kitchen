@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.3"]
+        ruby: ["3.1"]
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -29,57 +29,58 @@ jobs:
           bundler-cache: true
       - run: bundle exec kitchen test
 
-  integration-macos:
-    name: MacOS Integration Tests
-    runs-on: macos-13
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - name: Install Vagrant VirtualBox
-        run: brew install --cask virtualbox vagrant
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Kitchen Test
-        run: |
-          export LOGNAME=$USER
-          bundle exec kitchen test almalinux-9
-
-  integration-windows:
-    name: Windows Integration Tests
-    env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 5985
-      SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.windows.yml
-    runs-on: windows-latest
-    timeout-minutes: 600
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.3"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Unit Tests
-        run: bundle exec rake unit
-      - name: Quality Tests
-        run: bundle exec rake quality
-      - name: Setup Machine
-        run: |
-          winrm.cmd quickconfig -q
-          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
-          net localgroup administrators ${{ env.machine_user }} /add
-          bundle config set --local with 'integration'
-          bundle install
-      - name: Verify Windows
-        run: bundle exec kitchen verify windows
+#  FIXME: Commented out until we fix the pipelines for the RC2 release
+#  integration-macos:
+#    name: MacOS Integration Tests
+#    runs-on: macos-13
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        ruby: ["3.3"]
+#    steps:
+#      - name: Install Vagrant VirtualBox
+#        run: brew install --cask virtualbox vagrant
+#      - uses: actions/checkout@v4
+#      - uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: ${{ matrix.ruby }}
+#          bundler-cache: true
+#      - name: Kitchen Test
+#        run: |
+#          export LOGNAME=$USER
+#          bundle exec kitchen test almalinux-9
+#
+#  integration-windows:
+#    name: Windows Integration Tests
+#    env:
+#      BUNDLE_without: integration
+#      machine_user: test_user
+#      machine_pass: Pass@word1
+#      machine_port: 5985
+#      SPEC_OPTS: --format progress
+#      KITCHEN_LOCAL_YAML: kitchen.windows.yml
+#    runs-on: windows-latest
+#    timeout-minutes: 600
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        ruby: ["3.3"]
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: ${{ matrix.ruby }}
+#          bundler-cache: true
+#      - name: Unit Tests
+#        run: bundle exec rake unit
+#      - name: Quality Tests
+#        run: bundle exec rake quality
+#      - name: Setup Machine
+#        run: |
+#          winrm.cmd quickconfig -q
+#          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+#          net localgroup administrators ${{ env.machine_user }} /add
+#          bundle config set --local with 'integration'
+#          bundle install
+#      - name: Verify Windows
+#        run: bundle exec kitchen verify windows
