@@ -15,6 +15,7 @@ Dir["#{gem_home}/bundler/gems/*"].each do |gempath|
   puts "#{gempath}"
   matches = File.basename(gempath).match(/.*-[A-Fa-f0-9]{12}/)
   next unless matches
+
   gem_name = File.basename(Dir["#{gempath}/*.gemspec"].first, ".gemspec")
   # FIXME: should strip any valid ruby platform off of the gem_name if it matches
 
@@ -26,5 +27,4 @@ Dir["#{gem_home}/bundler/gems/*"].each do |gempath|
     system("gem build #{gem_name}.gemspec") or raise "gem build failed"
     system("gem install #{gem_name}*.gem --conservative --minimal-deps --no-document") or raise "gem install failed"
   end
-  
 end

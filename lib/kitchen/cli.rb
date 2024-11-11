@@ -287,7 +287,7 @@ module Kitchen
 
     desc "version", "Print Test Kitchen's version information"
     def version
-      puts "Progress Chef Test Kitchen version #{Kitchen::VERSION}"
+      puts "Chef Test Kitchen Enterprise Version #{Kitchen::VERSION}"
     end
     map %w{-v --version} => :version
 
