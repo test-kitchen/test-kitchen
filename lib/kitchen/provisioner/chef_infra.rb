@@ -66,7 +66,7 @@ module Kitchen
         file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
         file_location = config[:root_path] + "/#{context_key}"
 
-        sudo("echo '#{file_content}' > #{file_location}")
+        "echo '#{file_content}' > #{file_location}"
       end
 
       def run_command
