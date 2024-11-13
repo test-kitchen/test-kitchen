@@ -55,13 +55,27 @@ do_install() {
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"
   gem install chef-test-kitchen-enterprise-*.gem --no-document
-  wrap_ruby_bin
+  gem install chef-cli
+  wrap_ruby_kitchen
+  wrap_ruby_chef_cli
   set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor/gems"
 }
 
-wrap_ruby_bin() {
+wrap_ruby_kitchen() {
   local bin="$pkg_prefix/bin/kitchen"
   local real_bin="$GEM_HOME/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen"
+  wrap_bin_with_ruby "$bin" "$real_bin"
+}
+
+wrap_ruby_chef_cli() {
+  local bin="$pkg_prefix/bin/chef-cli"
+  local real_bin="$GEM_HOME/bin/chef-cli"
+  wrap_bin_with_ruby "$bin" "$real_bin"
+}
+
+wrap_bin_with_ruby() {
+  local bin="$1"
+  local real_bin="$2"
   build_line "Adding wrapper $bin to $real_bin"
   cat <<EOF > "$bin"
 #!$(pkg_path_for core/bash)/bin/bash
@@ -71,9 +85,9 @@ set -e
 export PATH="/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:\$PATH"
 
 # Set Ruby paths defined from 'do_setup_environment()'
-  export GEM_HOME="$pkg_prefix/vendor/gems"
+export GEM_HOME="$pkg_prefix/vendor/gems"
+export GEM_PATH="\$GEM_HOME"
 
-  export GEM_PATH="$GEM_HOME"
 exec $(pkg_path_for $_chef_client_ruby)/bin/ruby $real_bin \$@
 EOF
   chmod -v 755 "$bin"
