@@ -47,7 +47,6 @@ do_build() {
   bundle install
   ruby ./post-bundle-install.rb
   gem build chef-test-kitchen-enterprise.gemspec
-  gem install chef-cli
 }
 
 do_install() {
@@ -58,7 +57,7 @@ do_install() {
   gem install chef-test-kitchen-enterprise-*.gem --no-document
   gem install chef-cli
   wrap_ruby_kitchen
-  wrap_ruby_chef_cli_bin
+  wrap_ruby_chef_cli
   set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor/gems"
 }
 
@@ -68,7 +67,7 @@ wrap_ruby_kitchen() {
   wrap_bin_with_ruby "$bin" "$real_bin"
 }
 
-wrap_ruby_chef_cli_bin() {
+wrap_ruby_chef_cli() {
   local bin="$pkg_prefix/bin/chef-cli"
   local real_bin="$GEM_HOME/bin/chef-cli"
   wrap_bin_with_ruby "$bin" "$real_bin"
