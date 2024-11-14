@@ -56,19 +56,6 @@ module Kitchen
         prepare_config_rb
       end
 
-      def prepare_command
-        nonce = Base64.encode64(SecureRandom.random_bytes(16)).strip
-        timestamp = Time.now.utc.to_i.to_s
-
-        message = "#{nonce}:#{timestamp}"
-        signature = OpenSSL::HMAC.hexdigest("SHA256", context_key, message)
-
-        file_content = "nonce:#{nonce}\ntimestamp:#{timestamp}\nsignature:#{signature}"
-        file_location = config[:root_path] + "/#{context_key}"
-
-        "echo '#{file_content}' > #{file_location}"
-      end
-
       def run_command
         cmd = "#{context_env_command} #{sudo(config[:chef_client_path])} --local-mode "
 
@@ -96,6 +83,14 @@ module Kitchen
         config[:chef_license_key] = key
         config[:install_sh_url] = install_sh_url
         config[:chef_license_type] = type
+      end
+
+      def chef_license_key
+        config[:chef_license_key]
+      end
+
+      def chef_license_server
+        config[:chef_license_server]
       end
 
       private
@@ -204,15 +199,11 @@ module Kitchen
         true
       end
 
-      def context_key
-        @context_key ||= SecureRandom.hex(16)
-      end
-
       def context_env_command
         if powershell_shell?
-          "$env:TEST_KITCHEN_CONTEXT = '#{context_key}'; &"
+          "$env:IS_KITCHEN = 'true'; &"
         else
-          "export TEST_KITCHEN_CONTEXT=#{context_key};"
+          "export IS_KITCHEN='true'; "
         end
       end
     end

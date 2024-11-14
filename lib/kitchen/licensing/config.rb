@@ -19,9 +19,8 @@
 require "chef-licensing"
 
 ChefLicensing.configure do |config|
-  config.chef_product_name = "Test Kitchen"
+  config.chef_product_name = "Chef Test Kitchen Enterprise"
   config.chef_entitlement_id = "x6f3bc76-a94f-4b6c-bc97-4b7ed2b045c0"
   config.chef_executable_name = "kitchen"
   config.license_server_url = "https://services.chef.io/licensing"
-  # config.license_server_url   = "https://licensing-acceptance.chef.co/License"
 end
