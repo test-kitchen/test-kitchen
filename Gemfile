@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 gem "appbundler"
 gem "pry"
-gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "hab_testing_branch"
+gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "main"
 gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent"
 
 group :test do
