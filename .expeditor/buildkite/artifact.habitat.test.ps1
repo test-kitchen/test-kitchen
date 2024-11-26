@@ -32,11 +32,9 @@ function Install-Habitat {
 }
 
 try {
-  $v = hab --version
-  Write-Host "Habitat version:$v is already installed."
+  hab --version
 }
 catch {
-  Write-Host "Habitat is not installed, installing..."
   Set-ExecutionPolicy Bypass -Scope Process -Force
 
   Stop-HabProcess
