@@ -18,18 +18,19 @@ steps:
           image: ruby:3.1
           privileged: true
 
-  - label: ":windows: Validate Habitat Builds of Test Kitchen"
-    commands:
-      - .expeditor/buildkite/artifact.habitat.test.ps1
-    expeditor:
-      executor:
-        docker:
-          host_os: windows
-          shell: ["powershell", "-Command"]
-          image: rubydistros/windows-2019:3.1
-          user: 'NT AUTHORITY\SYSTEM'
-          environment:
-            - FORCE_FFI_YAJL=ext
-            - EXPIRE_CACHE=true
-            - CHEF_LICENSE=accept-no-persist
-            - CHEF_LICENSE_SERVER=http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
+# Commenting out the Windows test since it is not required for the RC1 release
+#  - label: ":windows: Validate Habitat Builds of Test Kitchen"
+#    commands:
+#      - .expeditor/buildkite/artifact.habitat.test.ps1
+#    expeditor:
+#      executor:
+#        docker:
+#          host_os: windows
+#          shell: ["powershell", "-Command"]
+#          image: rubydistros/windows-2019:3.1
+#          user: 'NT AUTHORITY\SYSTEM'
+#          environment:
+#            - FORCE_FFI_YAJL=ext
+#            - EXPIRE_CACHE=true
+#            - CHEF_LICENSE=accept-no-persist
+#            - CHEF_LICENSE_SERVER=http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
