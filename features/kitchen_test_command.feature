@@ -25,11 +25,11 @@ Feature: Running a full test instance test
   @spawn
   Scenario: Running a single instance
     When I run `kitchen test client-beans`
-    Then the output should contain "Starting Test Kitchen"
+    Then the output should contain "Starting Chef Test Kitchen Enterprise"
     Then the output should contain "Cleaning up any prior instances of <client-beans>"
     Then the output should contain "Testing <client-beans>"
     Then the output should contain "Finished testing <client-beans>"
-    Then the output should contain "Test Kitchen is finished."
+    Then the output should contain "Chef Test Kitchen Enterprise is finished."
     And the exit status should be 0
 
   @spawn
@@ -74,12 +74,12 @@ Feature: Running a full test instance test
   @spawn
   Scenario: Running all instances
     When I run `kitchen test`
-    Then the output should contain "Starting Test Kitchen"
+    Then the output should contain "Starting Chef Test Kitchen Enterprise"
     Then the output should contain "Finished testing <client-cool>"
     Then the output should contain "Finished testing <client-beans>"
     Then the output should contain "Finished testing <server-cool>"
     Then the output should contain "Finished testing <server-beans>"
-    Then the output should contain "Test Kitchen is finished."
+    Then the output should contain "Chef Test Kitchen Enterprise is finished."
     And the exit status should be 0
     When I successfully run `kitchen list`
     Then the output should match /^client-cool\s+.+\s+\<Not Created\>\s+\<None\>$/
