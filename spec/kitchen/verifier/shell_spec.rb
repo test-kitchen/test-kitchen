@@ -160,7 +160,7 @@ describe Kitchen::Verifier::Shell do
   end
 
   describe "#run_command" do
-    it "execute localy and returns nil" do
+    it "execute locally and returns nil" do
       verifier.run_command
     end
 

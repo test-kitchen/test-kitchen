@@ -977,7 +977,7 @@ describe Kitchen::Transport::Ssh::Connection do
       _(args).wont_match regexify(" -o IdentitiesOnly=")
     end
 
-    it "sets the IdentiesOnly option if :keys option is given" do
+    it "sets the IdentitiesOnly option if :keys option is given" do
       options[:keys] = ["yep"]
 
       _(args).must_match regexify(" -o IdentitiesOnly=yes ")
@@ -1270,7 +1270,6 @@ describe Kitchen::Transport::Ssh::Connection do
         _(logged_output.string.lines.count do |l|
           l =~ warn_line_with("[SSH] connection failed, terminating ")
         end).must_equal 1
-
       end
 
       it "sleeps for 3 seconds between retries" do

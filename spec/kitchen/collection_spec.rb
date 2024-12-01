@@ -37,7 +37,7 @@ describe Kitchen::Collection do
       _(collection.get("three")).must_equal obj("three")
     end
 
-    it "returns the first occurance of an object by its name" do
+    it "returns the first occurrence of an object by its name" do
       _(collection.get("two")).must_equal obj("two", "a")
     end
 

@@ -19,7 +19,7 @@ require_relative "plugin"
 
 module Kitchen
   # A transport is responsible for the communication with an instance,
-  # that is remote comands and other actions such as file transfer,
+  # that is remote commands and other actions such as file transfer,
   # login, etc.
   #
   # @author Salim Afiune <salim@afiunemaya.com.mx>

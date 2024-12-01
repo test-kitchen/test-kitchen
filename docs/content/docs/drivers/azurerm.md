@@ -122,7 +122,7 @@ platforms:
 
 #### use_ephemeral_osdisk
 
-* *boolean* : Optional flag to use ephermeal disk for instances.
+* *boolean* : Optional flag to use ephemeral disk for instances.
   * Default Value: `false`
 
 #### os_disk_size_gb

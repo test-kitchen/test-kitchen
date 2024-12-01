@@ -23,7 +23,7 @@ module Kitchen
     class Base
       include Logging
 
-      # Contstructs a new Command object.
+      # Constructs a new Command object.
       #
       # @param cmd_args [Array] remainder of the arguments from processed ARGV
       # @param cmd_options [Hash] hash of Thor options
@@ -97,7 +97,7 @@ module Kitchen
         end
       end
 
-      # Return an array on instances whos name matches the regular expression.
+      # Return an array on instances whose name matches the regular expression.
       #
       # @param regexp [Regexp] a regular expression matching on instance names
       # @return [Array<Instance>] an array of instances
@@ -128,7 +128,7 @@ module Kitchen
         Kitchen.logger
       end
 
-      # Return an array on instances whos name matches the regular expression,
+      # Return an array on instances whose name matches the regular expression,
       # the full instance name, or  the `"all"` literal.
       #
       # @param arg [String] an instance name, a regular expression, the literal
@@ -146,7 +146,7 @@ module Kitchen
     module RunAction
       # Run an instance action (create, converge, setup, verify, destroy) on
       # a collection of instances. The instance actions will take place in a
-      # seperate thread of execution which may or may not be running
+      # separate thread of execution which may or may not be running
       # concurrently.
       #
       # @param action [String] action to perform

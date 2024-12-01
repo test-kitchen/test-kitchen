@@ -273,7 +273,7 @@ module Kitchen
       # @return [String] license id to prompt for acceptance
       def license_acceptance_id
         case
-          when File.exist?(policyfile) && (config[:product_name].nil? || config[:product_name].start_with?('chef'))
+          when File.exist?(policyfile) && (config[:product_name].nil? || config[:product_name].start_with?("chef"))
             "chef-workstation"
           when config[:product_name]
             config[:product_name]

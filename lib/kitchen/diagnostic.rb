@@ -125,7 +125,7 @@ module Kitchen
       end
     end
 
-    # Determins whether or not the object is an error hash. An error hash is
+    # Determines whether or not the object is an error hash. An error hash is
     # defined as a Hash containing an `:error` key.
     #
     # @param obj [Object] an object

@@ -345,21 +345,21 @@ If you need to turn off ssl certificate verification for HTTP calls made to AWS,
 
 #### retryable_tries
 
-The `retryable_tries` propery allows you to set the number of retries to try when creating a new instance.
+The `retryable_tries` property allows you to set the number of retries to try when creating a new instance.
 Combines with `retryable_sleep`.
 
 The default is `60`.
 
 #### retryable_sleep
 
-The `retryable_sleep` propery sets how long to wait between tries when creating a new instance.
+The `retryable_sleep` property sets how long to wait between tries when creating a new instance.
 Combines with `retryable_tries`.
 
 The default is `5`.
 
 #### skip_cost_warning
 
-The `skip_cost_warning` property allows for supressing the message that the instance will not be covered within the AWS free-tier.
+The `skip_cost_warning` property allows for suppressing the message that the instance will not be covered within the AWS free-tier.
 
 The default is `false`.
 

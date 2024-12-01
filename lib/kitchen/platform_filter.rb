@@ -50,7 +50,9 @@ module Kitchen
     #
     # @param [Regexp,String] value of the filter
     def initialize(value)
-      raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp" unless value.is_a?(::Regexp) || value.is_a?(::String)
+      unless value.is_a?(::Regexp) || value.is_a?(::String)
+        raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp"
+      end
 
       @value = value
     end

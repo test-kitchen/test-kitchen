@@ -203,7 +203,7 @@ describe Kitchen::Util do
       _((expected - listed)).must_equal []
     end
 
-    it "recusivly lists only when recurse" do
+    it "recursively lists only when recurse" do
       listed = Kitchen::Util.list_directory(@root, recurse: true)
       expected = [
         "foo",
@@ -214,7 +214,7 @@ describe Kitchen::Util do
       _((expected - listed)).must_equal []
     end
 
-    it "recusivly lists and provides dots when recurse and include_dot" do
+    it "recursively lists and provides dots when recurse and include_dot" do
       listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
       expected = [
         "foo",

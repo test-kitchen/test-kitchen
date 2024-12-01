@@ -22,7 +22,7 @@ require_relative "../spec_helper"
 # that what these specs are trying to ensure. This does lead to some less than
 # ideal "code golfing" to reduce the code payload, but at the end of the day
 # it's easier to see the entire context of the code vs. uploading partial code
-# fragements and calling them on the remote side (not to mention more expensive
+# fragments and calling them on the remote side (not to mention more expensive
 # in terms of PowerShell invocations).
 
 describe "PowerShell script max size" do

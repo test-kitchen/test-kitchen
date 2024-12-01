@@ -1135,7 +1135,6 @@ describe Kitchen::Configurable do
           mkdir foo
         CODE
       end
-
     end
   end
 

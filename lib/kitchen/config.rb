@@ -20,7 +20,7 @@ module Kitchen
   # as the location of the Kitchen config file, instances, log_levels, etc.
   # This object is a factory object, meaning that it is responsible for
   # consuming the desired testing configuration in and returning Ruby objects
-  # which are used to perfom the work.
+  # which are used to perform the work.
   #
   # Most internal objects are created with the expectation of being
   # *immutable*, meaning that internal state cannot be modified after creation.

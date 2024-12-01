@@ -24,7 +24,7 @@ module Kitchen
     def __config
       # this would need to be some kind of Chef::Config looking thing, which probably requires
       # a translation object from t-k config to Chef::Config layout if that ever becomes necessary.
-      # this ISNT the t-k config.
+      # this ISN'T the t-k config.
       {}
     end
 

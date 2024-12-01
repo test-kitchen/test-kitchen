@@ -166,7 +166,7 @@ module Kitchen
         def chef_license(license)
           (license.nil? || license.empty?) ? "" : "--chef-license #{license}"
         end
-          
+
       end
     end
   end

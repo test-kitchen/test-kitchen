@@ -87,7 +87,7 @@ module Kitchen
         class << self
           private
 
-          # Load the Berkshelf-specific libary code.
+          # Load the Berkshelf-specific library code.
           #
           # @param logger [Kitchen::Logger] the logger to use
           # @raise [UserError] if the library couldn't be loaded

@@ -478,7 +478,7 @@ module Kitchen
     #
     # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
     #   used in driver blocks, they should be added to the provisioner and
-    #   verifier blocks so that they can be independantly configured.
+    #   verifier blocks so that they can be independently configured.
     #   Provisioners and Verifiers are responsible for HTTP proxying and no
     #   longer are Drivers responsible for this.
     # @api private
@@ -499,7 +499,7 @@ module Kitchen
     # @param root [Hash] a hash to use as the root of the conversion
     # @deprecated The `:http_proxy` and `:https_proxy` should no longer be
     #   used in driver blocks, they should be added to the provisioner and
-    #   verifier blocks so that they can be independantly configured.
+    #   verifier blocks so that they can be independently configured.
     #   Provisioners and Verifiers are responsible for HTTP proxying and no
     #   longer are Drivers responsible for this.
     # @api private

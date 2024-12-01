@@ -514,7 +514,6 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       describe "when driver implements the cache_directory" do
-
         describe "for windows" do
           before { driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place') }
 

@@ -37,7 +37,7 @@ module Kitchen
       Logger.const_get(symbol.to_s.upcase)
     end
 
-    # Returns the symbol represenation of a logging levels for a given
+    # Returns the symbol representation of a logging levels for a given
     # standard library Logger::Severity constant.
     #
     # @param const [Integer] Logger::Severity constant value for a logging

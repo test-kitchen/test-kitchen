@@ -78,7 +78,7 @@ module Kitchen
         super
 
         # zlib was never a valid value and breaks in net-ssh >= 2.10
-        # TODO: remove these backwards compatiable casts in 2.0
+        # TODO: remove these backwards compatible casts in 2.0
         case config[:compression]
         when "zlib"
           config[:compression] = "zlib@openssh.com"

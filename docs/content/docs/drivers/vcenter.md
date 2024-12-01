@@ -168,7 +168,7 @@ Debugging customization issues on Windows:
 
 This takes a VM or template, copies the whole disk and then boots up the machine. Default mode of operation.
 
-Required prilveges:
+Required privileges:
 
 - Datastore.AllocateSpace
 - Network.Assign

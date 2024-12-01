@@ -16,7 +16,7 @@
 # limitations under the License.
 
 module Kitchen
-  # Utility methods to help ouput colorized text in a terminal. The
+  # Utility methods to help output colorized text in a terminal. The
   # implementation is a compressed mashup of code from the Thor and Foreman
   # projects.
   #

@@ -71,7 +71,7 @@ module Kitchen
       # Format and color the given last action.
       #
       # @param last_action [String] the last action
-      # @return [String] formated last action
+      # @return [String] formatted last action
       # @api private
       def format_last_action(last_action)
         case last_action
@@ -87,7 +87,7 @@ module Kitchen
       # Format and color the given last error.
       #
       # @param last_error [String] the last error
-      # @return [String] formated last error
+      # @return [String] formatted last error
       # @api private
       def format_last_error(last_error)
         case last_error

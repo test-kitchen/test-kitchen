@@ -110,7 +110,6 @@ describe Kitchen::StandardError do
     original = Kitchen::StandardError.new("oops").original
     _(original).must_be_kind_of IOError
     _(original.message).must_equal "crap"
-
   end
 
   it "can embed an exception when constructing" do
@@ -207,11 +206,9 @@ describe Kitchen do
       end
 
       it "logs the exception message on the common logger's error severity" do
-
         go_boom
       rescue SystemExit
         logger_io.string.must_match(/ERROR -- Kitchen: cannot do that$/)
-
       end
 
       it "logs the exception message on debug, if set" do
