@@ -159,7 +159,7 @@ platforms:
 Debugging customization issues on Windows:
 
 - Timezone IDs can be found at [Microsoft Support](https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values)
-- Official KMS 120 day evaluation keys can be found at [Microsoft Documentation](https://docs.microsoft.com/en-us/windows-server/get-started/kmsclientkeys)
+- Official KMS 120 day evaluation keys can be found at [Microsoft Documentation](https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys)
 - On "Windows could not parse or process the unattend answer file" errors press Shift-F10 and check `C:\\Windows\\Panther\\UnattendGC\\*.log`
 
 ## Clone types
@@ -220,7 +220,7 @@ Freezing the source VM:
 New clones resume from exactly the frozen point in time and also resume CPU activity automatically. The OS level network adapters get rescanned automatically
 to pick up MAC address changes, which requires the privileges to use the Guest Operations API and login credentials (`vm_username`/`vm_password`).
 
-Architectural description see <https://www.virtuallyghetto.com/2018/04/new-instant-clone-architecture-in-vsphere-6-7-part-1.html>
+Architectural description see <https://williamlam.com/2018/04/new-instant-clone-architecture-in-vsphere-6-7-part-1.html>
 
 Required privileges in addition to "Clone mode: full":
 

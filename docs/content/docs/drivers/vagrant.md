@@ -698,7 +698,7 @@ suites:
 [bento]:                    https://github.com/chef/bento
 [bento_org]:                https://app.vagrantup.com/bento
 [fusion_dl]:                https://www.vmware.com/products/fusion.html
-[hyperv_about]:             https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
+[hyperv_about]:             https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
 [parallels_dl]:             https://www.parallels.com/products/desktop/download/
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
