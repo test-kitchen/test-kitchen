@@ -21,6 +21,6 @@ group :integration do
   gem "kitchen-vagrant"
 end
 
-group :chefstyle do
-  gem "chefstyle", "2.2.3"
+group :linting do
+  gem "cookstyle", "7.32.8"
 end
