@@ -136,7 +136,7 @@ platforms:
 
 #### custom_data
 
-* *string* : Optional custom data which may be specified for instances [https://learn.microsoft.com/en-us/azure/virtual-machines/custom-data].
+* *string* : Optional custom data which may be specified for instances [https://learn.microsoft.com/azure/virtual-machines/custom-data].
   * Value can be a file or the data itself, this module handles base64 encoding for you.
 
 #### username
@@ -230,7 +230,7 @@ platforms:
 
 #### plan
 
-* *hash* : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
+* *hash* : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://learn.microsoft.com/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
 
 #### vm_tags
 

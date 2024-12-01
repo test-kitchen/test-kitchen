@@ -51,7 +51,7 @@ driver:
 
 #### cap_add
 
-The `cap_add` configuration option allows you to specify additional system capabilities to add to the container. See the [Docker Runtime Privilege and Linux Capabilities Documentation](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) for a complete list of capabilities.
+The `cap_add` configuration option allows you to specify additional system capabilities to add to the container. See the [Docker Runtime Privilege and Linux Capabilities Documentation](https://docs.docker.com/engine/containers/run/#runtime-privilege-and-linux-capabilities) for a complete list of capabilities.
 
 ```yaml
 driver:
