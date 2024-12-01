@@ -35,7 +35,7 @@ module Kitchen
     # @param command [String] command
     # @param arguments [Array] array of arguments to the command
     # @param options [Hash] options hash, passed to `Kernel#exec`
-    # @see http://www.ruby-doc.org/core-2.1.2/Kernel.html#method-i-exec
+    # @see https://ruby-doc.org/core-2.1.2/Kernel.html#method-i-exec
     def initialize(command, arguments, options = {})
       @command = command
       @arguments = Array(arguments)
