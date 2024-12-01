@@ -663,7 +663,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-For more details on this setting please read the [config.vm.hostname](http://docs.vagrantup.com/v2/vagrantfile/machine_settings.html) section of the Vagrant documentation.
+For more details on this setting please read the [config.vm.hostname](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings) section of the Vagrant documentation.
 
 ## Example **kitchen.yml**
 

@@ -106,7 +106,7 @@ image_id's have a format like ami-748e2903. The image_id values appear next to t
 
 ##### *image_search*
 
-`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the AWS CLI doc under `--filters` [here](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
+`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the AWS CLI doc under `--filters` [here](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
 
 ```yaml
 platforms:
@@ -326,7 +326,7 @@ The default is `nil`.
 
 #### block_duration_minutes
 
-The [specified duration](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#fixed-duration-spot-instances) for a spot instance, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
+The [specified duration](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#fixed-duration-spot-instances) for a spot instance, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
 If no duration is set, the spot instance will remain active until it is terminated.
 
 The default is `nil`.
@@ -337,7 +337,7 @@ Specify a proxy to send AWS requests through.  Should be of the format `http://<
 
 The default is `ENV["HTTPS_PROXY"] || ENV["HTTP_PROXY"]`.  If you have these environment variables set and do not want to use a proxy when contacting aws set `http_proxy: nil`.
 
-**Note** - The AWS command line utility allow you to specify [two proxies](http://docs.aws.amazon.com/cli/latest/userguide/cli-http-proxy.html), one for HTTP and one for HTTPS.  The AWS Ruby SDK only allows you to specify 1 proxy and because all requests are `https://` this proxy needs to support HTTPS.
+**Note** - The AWS command line utility allow you to specify [two proxies](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-proxy.html), one for HTTP and one for HTTPS.  The AWS Ruby SDK only allows you to specify 1 proxy and because all requests are `https://` this proxy needs to support HTTPS.
 
 #### ssl_verify_peer
 
@@ -402,7 +402,7 @@ block_device_mappings:
       iops: 100
 ```
 
-See [Amazon EBS Volume Types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html) to find out more about volume types.
+See [Amazon EBS Volume Types](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html) to find out more about volume types.
 
 If you have a block device mapping with a `device_name` equal to the root storage device name on your image then the provided mapping will replace the settings in the image.
 
@@ -410,7 +410,7 @@ If this is not provided it will use the default block_device_mappings from the A
 
 #### ebs_optimized
 
-Option to launch EC2 instance with optimized EBS volume. See [Amazon EC2 Instance Types](http://aws.amazon.com/ec2/instance-types/) to find out more about instance types that can be launched as EBS-optimized instances.
+Option to launch EC2 instance with optimized EBS volume. See [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/) to find out more about instance types that can be launched as EBS-optimized instances.
 
 The default is `false`.
 
