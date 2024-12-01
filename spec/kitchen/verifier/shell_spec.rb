@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -160,7 +160,7 @@ describe Kitchen::Verifier::Shell do
   end
 
   describe "#run_command" do
-    it "execute localy and returns nil" do
+    it "execute locally and returns nil" do
       verifier.run_command
     end
 

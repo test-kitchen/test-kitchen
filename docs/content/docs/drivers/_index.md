@@ -25,7 +25,6 @@ The Test Kitchen community also maintains several additional plugins not bundled
 
 - [kitchen-docker](https://github.com/test-kitchen/kitchen-docker)
 - [kitchen-rackspace](https://github.com/test-kitchen/kitchen-rackspace)
-- [kitchen-terraform](https://github.com/newcontext-oss/kitchen-terraform)
 - [kitchen-vcair](https://github.com/test-kitchen/kitchen-vcair)
 - [kitchen-vro](https://github.com/test-kitchen/kitchen-vro)
 

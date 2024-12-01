@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -213,7 +213,7 @@ describe Kitchen::Config do
       config.platforms
     end
 
-    it "contructs Platform objects" do
+    it "constructs Platform objects" do
       Kitchen::Platform.expects(:new).with(one: "a")
       Kitchen::Platform.expects(:new).with(two: "b")
 
@@ -265,7 +265,7 @@ describe Kitchen::Config do
       config.suites
     end
 
-    it "contructs Suite objects" do
+    it "constructs Suite objects" do
       Kitchen::Suite.expects(:new).with(one: "a")
       Kitchen::Suite.expects(:new).with(two: "b")
 

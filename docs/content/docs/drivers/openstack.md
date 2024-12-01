@@ -96,7 +96,7 @@ Your OpenStack region id.
 
 ### availability_zone
 
-Your OpenStack availablity zone.
+Your OpenStack availability zone.
 
 ### openstack_service_name
 

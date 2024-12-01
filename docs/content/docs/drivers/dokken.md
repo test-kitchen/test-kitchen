@@ -51,7 +51,7 @@ driver:
 
 #### cap_add
 
-The `cap_add` configuration option allows you to specify additional system capabilities to add to the container. See the [Docker Runtime Privilege and Linux Capabilities Documentation](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) for a complete list of capabilities.
+The `cap_add` configuration option allows you to specify additional system capabilities to add to the container. See the [Docker Runtime Privilege and Linux Capabilities Documentation](https://docs.docker.com/engine/containers/run/#runtime-privilege-and-linux-capabilities) for a complete list of capabilities.
 
 ```yaml
 driver:
@@ -309,7 +309,7 @@ To allow IPv6 Docker networks to reach the internet IPv6 firewall rules must be 
 }
 ```
 
-Some containers require the ip6table_filter kernel module to be loaded on the host system or ip6tables will not dunction on the container (Centos 7 for example). To check if the module is loaded use the command
+Some containers require the ip6table_filter kernel module to be loaded on the host system or ip6tables will not function on the container (Centos 7 for example). To check if the module is loaded use the command
 
 ```shell
 sudo lsmod | grep ip6table_filter

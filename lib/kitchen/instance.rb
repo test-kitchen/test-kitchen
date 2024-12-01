@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -123,7 +123,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def create
       transition_to(:create)
     end
@@ -134,7 +134,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def converge
       transition_to(:converge)
     end
@@ -145,7 +145,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def setup
       transition_to(:setup)
     end
@@ -156,7 +156,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def verify
       transition_to(:verify)
     end
@@ -167,7 +167,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def destroy
       transition_to(:destroy)
     end
@@ -181,7 +181,7 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     #
     # @todo rescue Driver::ActionFailed and return some kind of null object
-    #   to gracfully stop action chaining
+    #   to gracefully stop action chaining
     def test(destroy_mode = :passing)
       elapsed = Benchmark.measure do
         banner "Cleaning up any prior instances of #{to_str}"
@@ -513,10 +513,10 @@ module Kitchen
     #   would be a driver create action failing, a chef convergence crashing
     #   in normal course of development, failing acceptance tests in the
     #   verify action, etc.
-    # @raise [ActionFailed] if an unforseen or unplanned exception is raised.
+    # @raise [ActionFailed] if an unforeseen or unplanned exception is raised.
     #   This would usually indicate that a race condition was triggered, a
     #   bug exists in a driver, provisioner, or core, a transient IO error
-    #   occured, etc.
+    #   occurred, etc.
     # @api private
     def action(what, &block)
       state = state_file.read

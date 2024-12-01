@@ -71,7 +71,7 @@ transport:
     - ~/.ssh/google_compute_engine
 ```
 
-You can find [more information on configuring SSH keys](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys) in
+You can find [more information on configuring SSH keys](https://cloud.google.com/compute/docs/instances/access-overview) in
 the Google Compute Engine documentation.
 
 #### Instance Level Keys

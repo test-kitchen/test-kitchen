@@ -663,7 +663,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-For more details on this setting please read the [config.vm.hostname](http://docs.vagrantup.com/v2/vagrantfile/machine_settings.html) section of the Vagrant documentation.
+For more details on this setting please read the [config.vm.hostname](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings) section of the Vagrant documentation.
 
 ## Example **kitchen.yml**
 
@@ -696,21 +696,21 @@ suites:
 ```
 
 [bento]:                    https://github.com/chef/bento
-[bento_org]:                https://app.vagrantup.com/bento
-[fusion_dl]:                https://www.vmware.com/products/fusion.html
-[hyperv_about]:             https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
+[bento_org]:                https://portal.cloud.hashicorp.com/vagrant/discover/bento
+[fusion_dl]:                https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
+[hyperv_about]:             https://learn.microsoft.com/virtualization/hyper-v-on-windows/about/
 [parallels_dl]:             https://www.parallels.com/products/desktop/download/
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
 [vagrant_cloud]:            https://app.vagrantup.com/boxes/search
-[vagrant_config_vbox]:      https://www.vagrantup.com/docs/providers/virtualbox/configuration
-[vagrant_config_vmware]:    https://www.vagrantup.com/docs/providers/vmware/configuration
-[vagrant_default_provider]: https://www.vagrantup.com/docs/providers/default
-[vagrant_machine_settings]: https://www.vagrantup.com/docs/vagrantfile/machine_settings
-[vagrant_networking]:       https://www.vagrantup.com/docs/networking/basic_usage
-[vagrant_providers]:        https://www.vagrantup.com/docs/providers
-[vagrant_versioning]:       https://docs.vagrantup.com/v2/boxes/versioning.html
+[vagrant_config_vbox]:      https://developer.hashicorp.com/vagrant/docs/providers/virtualbox/configuration
+[vagrant_config_vmware]:    https://developer.hashicorp.com/vagrant/docs/providers/vmware/configuration
+[vagrant_default_provider]: https://developer.hashicorp.com/vagrant/docs/providers/default
+[vagrant_machine_settings]: https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings
+[vagrant_networking]:       https://developer.hashicorp.com/vagrant/docs/networking/basic_usage
+[vagrant_providers]:        https://developer.hashicorp.com/vagrant/docs/providers
+[vagrant_versioning]:       https://developer.hashicorp.com/vagrant/docs/boxes/versioning
 [vbox_ide_boot]:            https://www.virtualbox.org/ticket/6979
 [virtualbox_dl]:            https://www.virtualbox.org/wiki/Downloads
-[vmware_plugin]:            https://www.vagrantup.com/docs/providers/vmware
-[ws_dl]:                    https://www.vmware.com/products/workstation-pro.html
+[vmware_plugin]:            https://developer.hashicorp.com/vagrant/docs/providers/vmware
+[ws_dl]:                    https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion

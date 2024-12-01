@@ -52,11 +52,11 @@ next:
 ---
 ```
 
-See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#fenced-code-blocks) for more information.
+See [the kramdown documentation](https://kramdown.gettalong.org/syntax.html#fenced-code-blocks) for more information.
 
 ### Blockquotes
 
-To draw attention to some content with a blockquote, just start the line(s) with a `>` (right angle bracket / greater than symbol). See [the kramdown documentation](http://kramdown.gettalong.org/syntax.html#blockquotes) for more information.
+To draw attention to some content with a blockquote, just start the line(s) with a `>` (right angle bracket / greater than symbol). See [the kramdown documentation](https://kramdown.gettalong.org/syntax.html#blockquotes) for more information.
 
 ## License
 

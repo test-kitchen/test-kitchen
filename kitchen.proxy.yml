@@ -12,7 +12,7 @@ verifier:
 
 suites:
   # We run a different test based upon the configuration - basically each TK
-  # test asserts that the expected configuration is transfered to the target
+  # test asserts that the expected configuration is transferred to the target
   # machine
   - name: default
     run_list:

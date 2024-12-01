@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,7 +78,7 @@ module Kitchen
         super
 
         # zlib was never a valid value and breaks in net-ssh >= 2.10
-        # TODO: remove these backwards compatiable casts in 2.0
+        # TODO: remove these backwards compatible casts in 2.0
         case config[:compression]
         when "zlib"
           config[:compression] = "zlib@openssh.com"

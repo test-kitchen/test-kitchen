@@ -13,7 +13,7 @@
 
 ### Bug Fixes
 
-* added the fix for depreceated config error ([#1979](https://github.com/test-kitchen/test-kitchen/issues/1979)) ([f44ef5c](https://github.com/test-kitchen/test-kitchen/commit/f44ef5c0f9859720e2a7b4732bf13591bcf5e2d6))
+* added the fix for deprecated config error ([#1979](https://github.com/test-kitchen/test-kitchen/issues/1979)) ([f44ef5c](https://github.com/test-kitchen/test-kitchen/commit/f44ef5c0f9859720e2a7b4732bf13591bcf5e2d6))
 * always download files even if verifier fails ([#1916](https://github.com/test-kitchen/test-kitchen/issues/1916)) ([75bdd71](https://github.com/test-kitchen/test-kitchen/commit/75bdd71b965d0d39c78664f751a15be9f665391d))
 * release please configs ([#1974](https://github.com/test-kitchen/test-kitchen/issues/1974)) ([c6ab966](https://github.com/test-kitchen/test-kitchen/commit/c6ab966a484a04cfbd5cd634da6f2268d9485cca))
 * Remove Ruby 3.0 Testing ([#1948](https://github.com/test-kitchen/test-kitchen/issues/1948)) ([458261c](https://github.com/test-kitchen/test-kitchen/commit/458261c1a170e82b3b5d9f1a5fcad0e1542fabeb))
@@ -393,7 +393,7 @@
 - Running specific modules of puppet and testing for it [\#1445](https://github.com/test-kitchen/test-kitchen/issues/1445)
 - Double logging when Chef is the provisioner [\#1444](https://github.com/test-kitchen/test-kitchen/issues/1444)
 - winrm-fs can't transfer files with special characters like `+` [\#1391](https://github.com/test-kitchen/test-kitchen/issues/1391)
-- Configureable updated resource limits for idempotency checks [\#1260](https://github.com/test-kitchen/test-kitchen/issues/1260)
+- Configurable updated resource limits for idempotency checks [\#1260](https://github.com/test-kitchen/test-kitchen/issues/1260)
 - Add documentation for elevated transport [\#1054](https://github.com/test-kitchen/test-kitchen/issues/1054)
 - Option to set delay between converge and verify on test [\#598](https://github.com/test-kitchen/test-kitchen/issues/598)
 
@@ -1329,11 +1329,11 @@
 
 - Update release process to use github changelog generator [\#952](https://github.com/test-kitchen/test-kitchen/pull/952) ([jkeiser](https://github.com/jkeiser))
 - allow non-busser verifier to work with legacy drivers [\#944](https://github.com/test-kitchen/test-kitchen/pull/944) ([chris-rock](https://github.com/chris-rock))
-- The Net::SSH::Extensions were overwriting IO.select agressively, so we scaled this down some [\#935](https://github.com/test-kitchen/test-kitchen/pull/935) ([tyler-ball](https://github.com/tyler-ball))
+- The Net::SSH::Extensions were overwriting IO.select aggressively, so we scaled this down some [\#935](https://github.com/test-kitchen/test-kitchen/pull/935) ([tyler-ball](https://github.com/tyler-ball))
 - use winrm transport as alternative detection method [\#928](https://github.com/test-kitchen/test-kitchen/pull/928) ([chris-rock](https://github.com/chris-rock))
 - bypass execution policy when running powershell script files [\#925](https://github.com/test-kitchen/test-kitchen/pull/925) ([mwrock](https://github.com/mwrock))
 - Make chef-config an optional dependency. [\#924](https://github.com/test-kitchen/test-kitchen/pull/924) ([coderanger](https://github.com/coderanger))
-- Deprecating winrm-tansport and winrm-s gems [\#902](https://github.com/test-kitchen/test-kitchen/pull/902) ([mwrock](https://github.com/mwrock))
+- Deprecating winrm-transport and winrm-s gems [\#902](https://github.com/test-kitchen/test-kitchen/pull/902) ([mwrock](https://github.com/mwrock))
 - Add Provisioner chef\_apply [\#623](https://github.com/test-kitchen/test-kitchen/pull/623) ([sawanoboly](https://github.com/sawanoboly))
 
 ## [v1.5.0](https://github.com/test-kitchen/test-kitchen/tree/v1.5.0) (2016-01-21)
@@ -1652,7 +1652,7 @@
 - open zip file in binary mode to avoid corrupting zip files on  windows [\#644](https://github.com/test-kitchen/test-kitchen/pull/644) ([mwrock](https://github.com/mwrock))
 - Test Kitchen 1.4 Refactoring \(SSH/WinRM Transports, Windows Support, etc\) [\#640](https://github.com/test-kitchen/test-kitchen/pull/640) ([fnichol](https://github.com/fnichol))
 - \[WIP\] Test Kitchen 1.4 Refactoring \(SSH/WinRM Transports, Windows Support, etc\) [\#637](https://github.com/test-kitchen/test-kitchen/pull/637) ([fnichol](https://github.com/fnichol))
-- Fixing bad default setting - if ENV is not set we are accidently setting log\_level to nil for whole run [\#633](https://github.com/test-kitchen/test-kitchen/pull/633) ([tyler-ball](https://github.com/tyler-ball))
+- Fixing bad default setting - if ENV is not set we are accidentally setting log\_level to nil for whole run [\#633](https://github.com/test-kitchen/test-kitchen/pull/633) ([tyler-ball](https://github.com/tyler-ball))
 - Fixes Chef Client installation on Windows Guests [\#615](https://github.com/test-kitchen/test-kitchen/pull/615) ([robcoward](https://github.com/robcoward))
 - Pinning winrm to newer version to support latest httpclient [\#612](https://github.com/test-kitchen/test-kitchen/pull/612) ([tyler-ball](https://github.com/tyler-ball))
 - Windows2003 guest fix [\#610](https://github.com/test-kitchen/test-kitchen/pull/610) ([GolubevV](https://github.com/GolubevV))

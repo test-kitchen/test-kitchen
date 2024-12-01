@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,7 +63,7 @@ module Kitchen
     end
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
-    #   unset, for backwards compatability)
+    #   unset, for backwards compatibility)
     def bourne_shell?
       ["bourne", nil].include?(instance.platform.shell_type)
     end
@@ -72,7 +72,7 @@ module Kitchen
     # fallback rules or returns nil if path cannot be determined.
     #
     # Given an instance with suite named `"server"`, a `test_base_path` of
-    # `"/a/b"`, and a path segement of `"roles"` then following will be tried
+    # `"/a/b"`, and a path segment of `"roles"` then following will be tried
     # in order (first match that exists wins):
     #
     # 1. /a/b/server/roles

@@ -26,11 +26,11 @@ The password used for authenticating to the test instance.
 
 #### client_cert
 
-The path to a local client certificate used as the CA for authentication in lieue of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When `client_cert` and `client_key` are provided the username and password will be ignored.
+The path to a local client certificate used as the CA for authentication in lieu of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When `client_cert` and `client_key` are provided the username and password will be ignored.
 
 #### client_key
 
-The path to a local client key used for authentication in lieue of a username and password.
+The path to a local client key used for authentication in lieu of a username and password.
 
 #### elevated
 
