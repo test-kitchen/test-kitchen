@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.7.1](https://github.com/test-kitchen/test-kitchen/compare/v3.7.0...v3.7.1) (2024-12-02)
+
+
+### Bug Fixes
+
+* Prevent Test Kitchen from requiring Chef license acceptance when an alternative distribution (such as cinc) is used with a Policyfile. ([#1984](https://github.com/test-kitchen/test-kitchen/issues/1984)) ([332294e](https://github.com/test-kitchen/test-kitchen/commit/332294efc3ce27309afd49fa944448713b102070))
+
 ## [3.7.0](https://github.com/test-kitchen/test-kitchen/compare/v3.6.2...v3.7.0) (2024-08-27)
 
 
