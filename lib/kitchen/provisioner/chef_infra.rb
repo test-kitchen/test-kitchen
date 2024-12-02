@@ -138,7 +138,7 @@ module Kitchen
         debug("Using a dummy validation.pem")
 
         source = File.join(File.dirname(__FILE__),
-                           %w{.. .. .. support dummy-validation.pem})
+          %w{.. .. .. support dummy-validation.pem})
         FileUtils.cp(source, File.join(sandbox_path, "validation.pem"))
       end
 

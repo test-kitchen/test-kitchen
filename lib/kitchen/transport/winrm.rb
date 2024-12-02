@@ -339,7 +339,7 @@ module Kitchen
           args  = %W{/u:#{options[:user]}}
           args += %W{/p:#{options[:password]}} if options.key?(:password)
           args += %W{/v:#{URI.parse(options[:endpoint]).host}:#{rdp_port}}
-          args += %W{/cert-tofu} # always accept certificate
+          args += %w{/cert-tofu} # always accept certificate
 
           LoginCommand.new(xfreerdp, args)
         end
