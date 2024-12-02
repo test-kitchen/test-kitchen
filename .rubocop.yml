@@ -1,6 +1,6 @@
 ---
 require:
-  - chefstyle
+  - cookstyle/chefstyle
 
 AllCops:
   TargetRubyVersion: 3.1
