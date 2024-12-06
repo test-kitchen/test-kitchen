@@ -114,11 +114,11 @@ module Kitchen
       # @api private
       def combined_hash
         y = if @process_global
-              normalize(global_yaml).rmerge(normalize(yaml))
+              normalize(global_yaml).rmerge(normalize(yaml), merge_arrays=true)
             else
               normalize(yaml)
             end
-        @process_local ? y.rmerge(normalize(local_yaml)) : y
+        @process_local ? y.rmerge(normalize(local_yaml), merge_arrays=true) : y
       end
 
       # Loads and returns the Kitchen config YAML as a Hash.
