@@ -38,7 +38,7 @@ jobs:
       - run: bundle exec kitchen test
 
   integration-macos:
-    name: MacOS Integration Tests
+    name: macOS Integration Tests
     needs: [lint-unit]
     runs-on: macos-13
     strategy:
