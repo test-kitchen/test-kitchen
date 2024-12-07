@@ -43,7 +43,7 @@ module Kitchen
     # @raise [StateFileLoadError] if there is a problem loading the state file
     #   from disk and loading it into a Hash
     def read
-      if File.exist?(file_name) && !File.zero?(file_name)
+      if File.exist?(file_name) && !File.empty?(file_name)
         Util.symbolized_hash(deserialize_string(read_file))
       else
         {}

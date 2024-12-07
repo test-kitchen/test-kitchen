@@ -162,7 +162,7 @@ module Kitchen
           info("Removing non-cookbook files before transfer")
           FileUtils.rm(all_files_in_cookbooks - only_cookbook_files)
           Util.list_directory(tmpbooks_dir, recurse: true)
-            .reverse_each { |fn| FileUtils.rmdir(fn) if File.directory?(fn) && Dir.entries(fn).size == 2 }
+            .reverse_each { |fn| FileUtils.rmdir(fn) if File.directory?(fn) && Dir.empty?(fn) }
         end
 
         # @return [Logger] the instance's logger or Test Kitchen's common
