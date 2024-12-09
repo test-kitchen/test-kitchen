@@ -40,23 +40,40 @@ jobs:
   integration-macos:
     name: MacOS Integration Tests
     needs: [lint-unit]
-    runs-on: macos-13
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.3"]
     steps:
-      - name: Install Vagrant VirtualBox
+      - name: Install Xcode Command Line Tools
+        run: |
+          if ! xcode-select -p &> /dev/null; then
+            xcode-select --install
+          fi
+      - name: Install System Dependencies
+        run: |
+          brew install pkg-config libyaml
+      - name: Install VirtualBox and Vagrant
         run: brew install --cask virtualbox vagrant
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Kitchen Test
+          bundler-cache: false
+      - name: Install dependencies
+        env:
+          MAKE: "make -j4"
+          RUBY_CONFIGURE_OPTS: "--with-opt-dir=/opt/homebrew"
         run: |
-          export LOGNAME=$USER
-          bundle exec kitchen test almalinux-9
+          gem update --system
+          bundle config build.nokogiri --use-system-libraries
+          bundle config build.ffi --enable-system-libffi
+          bundle config build.unf_ext --with-cflags="-Wno-error=implicit-function-declaration"
+          # bundle config set --local without 'linting'
+          bundle install --jobs 4 --retry 3
+          bundle exec kitchen test
+      - run: bundle exec kitchen test
 
   integration-windows:
     name: Windows Integration Tests
