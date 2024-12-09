@@ -40,12 +40,17 @@ jobs:
   integration-macos:
     name: MacOS Integration Tests
     needs: [lint-unit]
-    runs-on: macos-13
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.3"]
     steps:
+      - name: Install Xcode Command Line Tools
+        run: |
+          if ! xcode-select -p &> /dev/null; then
+            xcode-select --install
+          fi
       - name: Install Vagrant VirtualBox
         run: brew install --cask virtualbox vagrant
       - uses: actions/checkout@v4
@@ -53,9 +58,16 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          cache-version: 1
       - name: Kitchen Test
+        env:
+          ARCHFLAGS: "-arch x86_64"
+          CFLAGS: "-Wno-error=implicit-function-declaration"
+          LOGNAME: ${{ github.actor }}
         run: |
-          export LOGNAME=$USER
+          bundle config build.ed25519 --with-cflags="-Wno-error=implicit-function-declaration"
+          bundle config build.unf_ext --with-cflags="-Wno-error=implicit-function-declaration"
+          bundle install
           bundle exec kitchen test almalinux-9
 
   integration-windows:
