@@ -30,7 +30,7 @@ describe Kitchen::LifecycleHooks do
   let(:last_action) { :create }
   let(:instance) { mock("instance").tap { |i| i.stubs(name: "default-toaster-10", transport: transport, last_action: last_action, suite: suite, platform: platform, state_file: state_file) } }
   let(:kitchen_root) do
-    if RUBY_PLATFORM =~ /mswin|mingw|windows/
+    if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
       "#{ENV["SYSTEMDRIVE"]}/kitchen"
     else
       "/kitchen"
@@ -145,7 +145,7 @@ describe Kitchen::LifecycleHooks do
   end
 
   it "runs a local command with an absolute cwd option" do
-    cwd = if RUBY_PLATFORM =~ /mswin|mingw|windows/
+    cwd = if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
             "#{ENV["SYSTEMDRIVE"]}/test"
           else
             "/test"

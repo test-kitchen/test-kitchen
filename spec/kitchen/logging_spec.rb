@@ -35,7 +35,7 @@ class LoggingDummy
 
     METHODS.each do |meth|
       define_method(meth) do |*args|
-        instance_variable_set("@#{meth}_msg", args.first)
+        instance_variable_set(:"@#{meth}_msg", args.first)
       end
     end
   end
@@ -49,7 +49,7 @@ describe Kitchen::Logging do
     it "##{meth} calls method on logger" do
       subject.public_send(meth, "ping")
 
-      _(logger.public_send("#{meth}_msg")).must_equal "ping"
+      _(logger.public_send(:"#{meth}_msg")).must_equal "ping"
     end
   end
 end

@@ -99,7 +99,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             result = DataMunger.new(
               {},
               {}
-            ).public_send("#{key}_data_for", "suite", "platform")
+            ).public_send(:"#{key}_data_for", "suite", "platform")
 
             _(result).must_equal({})
           end
@@ -110,7 +110,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 key => nil,
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal({})
           end
@@ -121,7 +121,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               defaults: {
                 key => "thenoseknows",
               }
-            ).public_send("#{key}_data_for", "suite", "platform")
+            ).public_send(:"#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
               default_key => "thenoseknows"
@@ -134,7 +134,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               defaults: {
                 key => ->(suite, platform) { "#{suite}++#{platform}" },
               }
-            ).public_send("#{key}_data_for", "suite", "platform")
+            ).public_send(:"#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
               default_key => "suite++platform"
@@ -147,7 +147,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 key => "starship",
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform")
+            ).public_send(:"#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
               default_key => "starship"
@@ -163,7 +163,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 },
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "platform")
+            ).public_send(:"#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
               default_key => "starship",
@@ -179,7 +179,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal({})
           end
@@ -195,7 +195,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal({})
           end
@@ -211,7 +211,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal(
               default_key => "flip"
@@ -232,7 +232,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal(
               default_key => "flip",
@@ -248,7 +248,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform")
+            ).public_send(:"#{key}_data_for", "sweet", "platform")
 
             _(result).must_equal({})
           end
@@ -264,7 +264,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "suite", "plat")
+            ).public_send(:"#{key}_data_for", "suite", "plat")
 
             _(result).must_equal({})
           end
@@ -280,7 +280,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform")
+            ).public_send(:"#{key}_data_for", "sweet", "platform")
 
             _(result).must_equal(
               default_key => "waz"
@@ -301,7 +301,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "platform")
+            ).public_send(:"#{key}_data_for", "sweet", "platform")
 
             _(result).must_equal(
               default_key => "waz",
@@ -342,7 +342,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat")
+            ).public_send(:"#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
               default_key => "suitey",
@@ -378,7 +378,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat")
+            ).public_send(:"#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
               default_key => "platformy",
@@ -412,7 +412,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat")
+            ).public_send(:"#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
               default_key => "suitey",
@@ -451,7 +451,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 ],
               },
               {}
-            ).public_send("#{key}_data_for", "sweet", "plat")
+            ).public_send(:"#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
               default_key => "suitey",

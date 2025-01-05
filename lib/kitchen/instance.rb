@@ -389,7 +389,7 @@ module Kitchen
       result = nil
       FSM.actions(last_action, desired).each do |transition|
         @lifecycle_hooks.run_with_hooks(transition, state_file) do
-          result = send("#{transition}_action")
+          result = send(:"#{transition}_action")
         end
       end
       result

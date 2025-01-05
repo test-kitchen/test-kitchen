@@ -55,7 +55,7 @@ module Kitchen
       def check_transport(connection)
         debug("Checking for active transport")
 
-        unless connection.respond_to? "train_uri"
+        unless connection.respond_to? :train_uri
           error("Chef Target Mode provisioner requires a Train-based transport like kitchen-transport-train")
           raise RequireTrainTransport.new("No Train transport")
         end
