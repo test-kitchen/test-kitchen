@@ -19,7 +19,10 @@ github:
 release_branches:
   - main:
       version_constraint: 1.*
-
+artifact_channels:
+  - dev
+  - workstation-build
+  - LTS-2024
 changelog:
   rollup_header: Changes not yet released to rubygems.org
 
@@ -71,7 +74,16 @@ subscriptions:
     actions:
       # when all of the hab package publish to the unstable channel, test and promote them
       - trigger_pipeline:habitat/test
+      - built_in:promote_habitat_packages
 
   - workload: project_promoted:{{agent_id}}:*
     actions:
       - built_in:rollover_changelog
+
+  # Subscribe to the promotion of the dev channel to acceptance
+  - workload: project_promoted:{{agent_id}}:dev:*
+    actions:
+      - built_in:promote_habitat_packages
+  - workload: project_promoted:{{agent_id}}:workstation-build:*
+    actions:
+      - built_in:promote_habitat_packages
