@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.0.7 -->
-## [v1.0.7](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.7) (2025-01-06)
+<!-- latest_release 1.0.8 -->
+## [v1.0.8](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.8) (2025-01-06)
 
 #### Merged Pull Requests
-- Removing changelog pipeline [#21](https://github.com/chef/chef-test-kitchen-enterprise/pull/21) ([sanghinitin](https://github.com/sanghinitin))
+- Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.8 -->
 - Removing changelog pipeline [#21](https://github.com/chef/chef-test-kitchen-enterprise/pull/21) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.7 -->
 - added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
@@ -22,6 +23,7 @@
 
 
 #### Merged Pull Requests
+- Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.8 -->
 - Removing changelog pipeline [#21](https://github.com/chef/chef-test-kitchen-enterprise/pull/21) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.7 -->
 - added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
