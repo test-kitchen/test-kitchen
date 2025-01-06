@@ -19,10 +19,12 @@ github:
 release_branches:
   - main:
       version_constraint: 1.*
+
 artifact_channels:
   - dev
   - workstation-build
   - LTS-2024
+
 changelog:
   rollup_header: Changes not yet released to rubygems.org
 
