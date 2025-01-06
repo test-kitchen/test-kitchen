@@ -4,7 +4,7 @@
 <!-- latest_release 1.0.5 -->
 ## [v1.0.5](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.5) (2024-11-27)
 
-#### Merged Pull Requests
+### Merged Pull Requests
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps))
 <!-- latest_release -->
 
@@ -18,7 +18,6 @@
 - Include the Chef-cli as gem with the test-kitchen hab package [#14](https://github.com/chef/chef-test-kitchen-enterprise/pull/14) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.2 -->
 - Kitchen init change [#13](https://github.com/chef/chef-test-kitchen-enterprise/pull/13) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.1 -->
 
-### Merged Pull Requests
 
 #### Merged Pull Requests
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
