@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.0.5 -->
-## [v1.0.5](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.5) (2024-11-27)
+<!-- latest_release 1.0.6 -->
+## [v1.0.6](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.6) (2025-01-06)
 
-### Merged Pull Requests
-- Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps))
+#### Merged Pull Requests
+- added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
 - Updated the pkg description and Gemfile [#16](https://github.com/chef/chef-test-kitchen-enterprise/pull/16) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.4 -->
 - Updated the kitchen context approach with env variable [#15](https://github.com/chef/chef-test-kitchen-enterprise/pull/15) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.3 -->
@@ -20,6 +21,7 @@
 
 
 #### Merged Pull Requests
+- added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
 - Updated the error message and start message branding [#17](https://github.com/chef/chef-test-kitchen-enterprise/pull/17) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
 - Updated the pkg description and Gemfile [#16](https://github.com/chef/chef-test-kitchen-enterprise/pull/16) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.4 -->
 - Updated the kitchen context approach with env variable [#15](https://github.com/chef/chef-test-kitchen-enterprise/pull/15) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.3 -->
