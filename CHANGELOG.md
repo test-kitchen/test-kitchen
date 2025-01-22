@@ -5,6 +5,7 @@
 ## [v1.0.8](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.8) (2025-01-06)
 
 ### Merged Pull Requests
+
 - Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin))
 
 <!-- latest_release -->
@@ -13,6 +14,7 @@
 ### Changes not yet released to rubygems.org
 
 ### Merged Pull Requests
+
 - Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.8 -->
 - Removing changelog pipeline [#21](https://github.com/chef/chef-test-kitchen-enterprise/pull/21) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.7 -->
 - added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
@@ -24,6 +26,7 @@
 
 
 ### Merged Pull Requests
+
 - Removed hab test duplicate pipeline [#22](https://github.com/chef/chef-test-kitchen-enterprise/pull/22) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.8 -->
 - Removing changelog pipeline [#21](https://github.com/chef/chef-test-kitchen-enterprise/pull/21) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.7 -->
 - added slack promot pipeline [#20](https://github.com/chef/chef-test-kitchen-enterprise/pull/20) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.6 -->
