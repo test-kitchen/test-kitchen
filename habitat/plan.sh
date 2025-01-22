@@ -7,7 +7,6 @@ pkg_description="The Chef Test Kitchen Enterprise"
 pkg_license=('Apache-2.0')
 pkg_bin_dirs=(
   bin
-  vendor/bin
 )
 pkg_build_deps=(
   core/make
@@ -15,7 +14,7 @@ pkg_build_deps=(
   core/gcc
 )
 pkg_deps=(
-  $_chef_client_ruby
+  ${_chef_client_ruby}
   core/coreutils
   core/git
 )
@@ -29,13 +28,20 @@ do_before() {
   update_pkg_version
 }
 
+do_setup_environment() {
+  build_line 'Setting GEM_HOME="$pkg_prefix/vendor"'
+  export GEM_HOME="$pkg_prefix/vendor"
+
+  build_line "Setting GEM_PATH=$GEM_HOME"
+  export GEM_PATH="$GEM_HOME"
+}
+
 do_unpack() {
   mkdir -pv "$HAB_CACHE_SRC_PATH/$pkg_dirname"
   cp -RT "$PLAN_CONTEXT"/.. "$HAB_CACHE_SRC_PATH/$pkg_dirname/"
 }
 
 do_build() {
-  echo $(pkg_path_for $_chef_client_ruby)
   export GEM_HOME="$pkg_prefix/vendor"
 
   build_line "Setting GEM_PATH=$GEM_HOME"
