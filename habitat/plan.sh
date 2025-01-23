@@ -1,10 +1,9 @@
-export HAB_REFRESH_CHANNEL="LTS-2024"
-_chef_client_ruby="core/ruby3_1"
 pkg_name="chef-test-kitchen-enterprise"
 pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 pkg_description="The Chef Test Kitchen Enterprise"
 pkg_license=('Apache-2.0')
+_chef_client_ruby="core/ruby3_1"
 pkg_bin_dirs=(
   bin
 )
