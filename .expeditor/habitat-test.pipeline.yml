@@ -3,6 +3,8 @@ expeditor:
   defaults:
     buildkite:
       timeout_in_minutes: 30
+      env:
+        HAB_REFRESH_CHANNEL: "LTS-2024"
       retry:
         automatic:
           limit: 1
