@@ -36,6 +36,7 @@ pipelines:
         - HAB_NONINTERACTIVE: "true"
         - HAB_NOCOLORING: "true"
         - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
+        - HAB_REFRESH_CHANNEL: "LTS-2024"
   - habitat/test:
       description: Execute tests against the habitat artifact
       definition: .expeditor/habitat-test.pipeline.yml
