@@ -6,7 +6,6 @@ export HAB_ORIGIN='ci'
 export PLAN='chef-test-kitchen-enterprise'
 export CHEF_LICENSE="accept-no-persist"
 export HAB_LICENSE="accept-no-persist"
-export HAB_BLDR_CHANNEL="LTS-2024"
 
 echo "--- checking if git is installed"
 if ! command -v git &> /dev/null; then

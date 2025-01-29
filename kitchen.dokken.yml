@@ -2,6 +2,7 @@
 driver:
   name: dokken
   privileged: true
+  chef_version: unstable
 
 provisioner:
   name: dokken

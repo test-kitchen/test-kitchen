@@ -5,7 +5,6 @@
 # TODO: Set-StrictMode -Version Latest
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 $ErrorActionPreference = 'Stop'
-$env:HAB_BLDR_CHANNEL = "LTS-2024"
 $env:HAB_ORIGIN = 'ci'
 $env:CHEF_LICENSE = 'accept-no-persist'
 $env:HAB_LICENSE = 'accept-no-persist'
