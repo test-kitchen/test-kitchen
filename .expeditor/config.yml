@@ -21,9 +21,8 @@ release_branches:
       version_constraint: 1.*
 
 artifact_channels:
-  - dev
-  - workstation-build
-  - LTS-2024
+  - unstable
+  - chef-dke-lts2024
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org
@@ -60,27 +59,13 @@ subscriptions:
           ignore_labels:
             - "Expeditor: Skip Changelog"
             - "Expeditor: Skip All"
-      - trigger_pipeline:habitat/test:
-          only_if: built_in:bump_version
-          ignore_labels:
-            - "Expeditor: Skip Habitat"
-            - "Expeditor: Skip All"
       - trigger_pipeline:habitat/build:
           only_if: built_in:bump_version
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
 
-  # the habitat chain
-  - workload: buildkite_hab_build_group_published:{{agent_id}}:*
-    actions:
-      # when all of the hab package publish to the unstable channel, test and promote them
-      - built_in:promote_habitat_packages
-
-  # Subscribe to the promotion of the dev channel to acceptance
-  - workload: project_promoted:{{agent_id}}:dev:*
-    actions:
-      - built_in:promote_habitat_packages
-  - workload: project_promoted:{{agent_id}}:workstation-build:*
+  # Subscribe to the promotion of the unstable channel to stable(chef-dke-lts2024)
+  - workload: project_promoted:{{agent_id}}:unstable:*
     actions:
       - built_in:promote_habitat_packages
