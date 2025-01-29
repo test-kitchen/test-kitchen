@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
+$env:HAB_BLDR_CHANNEL = "LTS-2024"
 $pkg_name="chef-test-kitchen-enterprise"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
