@@ -152,12 +152,14 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -166,24 +168,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -194,24 +200,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -220,24 +230,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -260,24 +274,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -286,24 +304,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -314,24 +336,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -340,24 +366,28 @@
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 ### Merged Pull Requests
 
-#### Merged Pull Requests
+### Merged Pull Requests
+
 - CHEF-18535-Added back the env to the plan files to test the pipelines [#27](https://github.com/chef/chef-test-kitchen-enterprise/pull/27) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.13 -->
 
 - CHEF-18535 Adding up HAB_BLDR_CHANNEL env  [#26](https://github.com/chef/chef-test-kitchen-enterprise/pull/26) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.12 -->
@@ -377,6 +407,7 @@
 - Include the Chef-cli as gem with the test-kitchen hab package [#14](https://github.com/chef/chef-test-kitchen-enterprise/pull/14) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.2 -->
 - Kitchen init change [#13](https://github.com/chef/chef-test-kitchen-enterprise/pull/13) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.1 -->
 - Rebranding Change and  the new version and change.log file [#11](https://github.com/chef/chef-test-kitchen-enterprise/pull/11) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.0 -->
+
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
