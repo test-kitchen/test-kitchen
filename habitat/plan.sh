@@ -1,4 +1,5 @@
 export HAB_BLDR_CHANNEL="LTS-2024"
+export HAB_REFRESH_CHANNEL="LTS-2024"
 pkg_name="chef-test-kitchen-enterprise"
 pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
