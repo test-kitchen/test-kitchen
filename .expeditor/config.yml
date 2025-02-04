@@ -32,12 +32,11 @@ pipelines:
       description: Pull Request validation tests
       public: true
   - habitat/build:
+      description: Build the habitat artifact for Chef-Test-Kitchen-Enterprise
       env:
         - HAB_NONINTERACTIVE: "true"
         - HAB_NOCOLORING: "true"
         - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
-        - HAB_BLDR_CHANNEL: "LTS-2024"
-        - HAB_REFRESH_CHANNEL: "LTS-2024"
   - habitat/test:
       description: Execute tests against the habitat artifact
       definition: .expeditor/habitat-test.pipeline.yml
@@ -67,7 +66,8 @@ subscriptions:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
 
-  # Subscribe to the promotion of the unstable channel to stable(chef-dke-lts2024)
-  - workload: project_promoted:{{agent_id}}:unstable:*
+  # this works for symantec version Promoting from unstable to chef-dke-lts2024
+  - workload: project_promoted:{{agent_id}}:*
     actions:
+      - built_in:rollover_changelog
       - built_in:promote_habitat_packages
