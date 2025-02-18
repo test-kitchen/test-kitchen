@@ -18,6 +18,7 @@
 
 require_relative "errors"
 require_relative "util"
+require "kitchen/licensing/config" unless defined?(Kitchen::Licensing)
 
 module Kitchen
   module Plugin
@@ -53,6 +54,12 @@ module Kitchen
                         " in your Gemfile if using Bundler."
                       end
       raise ClientError, "Could not load the '#{plugin}' #{type_name} from the load path." + error_message
+    ensure
+      # If any of the plugins has a different licensing configuration, after loading it,
+      # it might override the kitchen licensing configuration. To fix this issue we will reconfigure it again.
+      if ChefLicensing::Config.chef_entitlement_id != Kitchen::Licensing::ENTITLEMENT_ID
+        Kitchen::Licensing.configure_licensing
+      end
     end
 
     # given a type of plugin, searches the Ruby load path for plugins of that

@@ -16,6 +16,8 @@ module Kitchen
             puts "License_key: #{key}"
           end
         end
+      rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError
+        logger.debug("License key not fetched. Please try again.")
       end
     end
   end

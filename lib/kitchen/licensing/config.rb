@@ -18,9 +18,25 @@
 
 require "chef-licensing"
 
-ChefLicensing.configure do |config|
-  config.chef_product_name = "Chef Test Kitchen Enterprise"
-  config.chef_entitlement_id = "x6f3bc76-a94f-4b6c-bc97-4b7ed2b045c0"
-  config.chef_executable_name = "kitchen"
-  config.license_server_url = "https://services.chef.io/licensing"
+module Kitchen
+  module Licensing
+    PRODUCT_NAME = "Test Kitchen Enterprise"
+    ENTITLEMENT_ID = "x6f3bc76-a94f-4b6c-bc97-4b7ed2b045c0"
+    EXECUTABLE_NAME = "kitchen"
+    GLOBAL_LICENSE_SERVER = "https://services.chef.io/licensing"
+
+    class << self
+      def configure_licensing
+        ChefLicensing.configure do |config|
+          config.chef_product_name = PRODUCT_NAME
+          config.chef_entitlement_id = ENTITLEMENT_ID
+          config.chef_executable_name = EXECUTABLE_NAME
+          config.license_server_url = GLOBAL_LICENSE_SERVER
+        end
+      end
+    end
+  end
 end
+
+# This needs to be called initially to configure the licensing
+Kitchen::Licensing.configure_licensing
