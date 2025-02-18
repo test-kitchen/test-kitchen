@@ -1,22 +1,30 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.0.14 -->
-## [v1.0.14](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.14) (2025-02-04)
+<!-- latest_release 1.0.15 -->
+## [v1.0.15](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.15) (2025-02-18)
 
-### Merged Pull Requests
-
-- Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611))
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -24,9 +32,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -36,9 +50,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -46,9 +66,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -60,9 +86,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -70,9 +102,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -82,9 +120,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -92,9 +136,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -108,9 +158,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -118,9 +174,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -130,9 +192,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -140,9 +208,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -154,9 +228,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -164,9 +244,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -176,9 +262,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -186,9 +278,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -204,9 +302,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -214,9 +318,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -226,9 +336,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -236,9 +352,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -250,9 +372,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -260,9 +388,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -272,9 +406,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -282,9 +422,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -298,9 +444,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -308,9 +460,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -320,9 +478,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -330,9 +494,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -344,9 +514,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -354,9 +530,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -366,9 +548,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -376,9 +564,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -404,9 +598,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -414,9 +614,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -426,9 +632,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -436,9 +648,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -450,9 +668,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -460,9 +684,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -472,9 +702,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -482,9 +718,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -498,9 +740,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -508,9 +756,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -520,9 +774,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -530,9 +790,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -544,9 +810,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -554,9 +826,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -566,9 +844,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
@@ -576,9 +860,15 @@
 
 ### Merged Pull Requests
 
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
 ### Merged Pull Requests
+
+#### Merged Pull Requests
+- Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
 
 - Added back the env var and update the promote workload [#28](https://github.com/chef/chef-test-kitchen-enterprise/pull/28) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.0.14 -->
 
