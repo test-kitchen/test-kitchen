@@ -156,7 +156,7 @@ module Kitchen
         # If the habitat package for chef-cli is installed and not binlinked,
         # return the hab pkg exec command to run chef-cli.
         def hab_chef_cli
-          "hab pkg exec chef/chef-cli chef-cli" if hab_pkg_installed?("chef-cli")
+          "hab pkg exec chef/chef-cli chef-cli" if hab_pkg_installed?("chef/chef-cli")
         end
 
         # Check whether a habitat package is installed or not
