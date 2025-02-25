@@ -48,10 +48,10 @@ describe Kitchen::Provisioner::Chef::Policyfile do
   describe "#resolve" do
     subject { described_object.resolve }
 
-    describe "on Unix with chef" do
+    describe "on Unix with chef-cli hab pkg" do
       before do
         described_object.expects(:which).with("chef-cli").returns(false)
-        described_object.expects(:which).with("chef").returns("chef")
+        described_object.expects(:hab_pkg_installed?).with("chef/chef-cli").returns(true)
       end
 
       let(:os) { "linux-gnu" }
@@ -61,7 +61,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { "/tmp/kitchen/cookbooks" }
         let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept")
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept")
           subject
         end
       end
@@ -71,7 +71,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { "/tmp/kitchen/cookbooks" }
         let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with("chef export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-silent")
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-silent")
           subject
         end
       end
@@ -81,7 +81,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { "/tmp/kitchen/cookbooks" }
         let(:license) { "accept-no-persist" }
         it do
-          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-no-persist")
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-no-persist")
           subject
         end
       end
@@ -125,10 +125,10 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Windows with chef" do
+    describe "on Windows with chef-cli hab pkg" do
       before do
         described_object.expects(:which).with("chef-cli").returns(false)
-        described_object.expects(:which).with("chef").returns("chef")
+        described_object.expects(:hab_pkg_installed?).with("chef/chef-cli").returns(true)
       end
 
       let(:os) { "mswin" }
@@ -138,7 +138,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
         let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force --chef-license accept')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli export C:\\cookbook\\Policyfile.rb C:\\Temp\\kitchen\\cookbooks --force --chef-license accept')
           subject
         end
       end
@@ -148,7 +148,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
         let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-silent')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-silent')
           subject
         end
       end
@@ -158,7 +158,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { 'C:\\Temp\\kitchen\\cookbooks' }
         let(:license) { "accept-no-persist" }
         it do
-          described_object.expects(:run_command).with('chef export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-no-persist')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli export "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" C:\\Temp\\kitchen\\cookbooks --force --chef-license accept-no-persist')
           subject
         end
       end
@@ -205,7 +205,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
     describe "failure to resolve paths" do
       before do
         described_object.expects(:which).with("chef-cli").returns(false)
-        described_object.expects(:which).with("chef").returns(false)
+        described_object.expects(:hab_pkg_installed?).with("chef/chef-cli").returns(false)
       end
 
       let(:os) { "linux-gnu" }
@@ -292,10 +292,10 @@ describe Kitchen::Provisioner::Chef::Policyfile do
       end
     end
 
-    describe "on Unix with chef" do
+    describe "on Unix with chef-cli hab pkg" do
       before do
         described_object.expects(:which).with("chef-cli").returns(false)
-        described_object.expects(:which).with("chef").returns("chef")
+        described_object.expects(:hab_pkg_installed?).with("chef/chef-cli").returns(true)
       end
 
       let(:os) { "linux-gnu" }
@@ -304,7 +304,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
         let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with("chef install /home/user/cookbook/Policyfile.rb --chef-license accept")
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli install /home/user/cookbook/Policyfile.rb --chef-license accept")
           subject
         end
       end
@@ -313,7 +313,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-silent')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-silent')
           subject
         end
       end
@@ -322,16 +322,16 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { "/home/jenkins/My Chef Cookbook/workspace/current/Policyfile.rb" }
         let(:license) { "accept-no-persist" }
         it do
-          described_object.expects(:run_command).with('chef install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-no-persist')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli install /home/jenkins/My\\ Chef\\ Cookbook/workspace/current/Policyfile.rb --chef-license accept-no-persist')
           subject
         end
       end
     end
 
-    describe "on Windows with chef" do
+    describe "on Windows with chef-cli hab pkg" do
       before do
         described_object.expects(:which).with("chef-cli").returns(false)
-        described_object.expects(:which).with("chef").returns("chef")
+        described_object.expects(:hab_pkg_installed?).with("chef/chef-cli").returns(true)
       end
 
       let(:os) { "mswin" }
@@ -340,7 +340,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { 'C:\\cookbook\\Policyfile.rb' }
         let(:license) { "accept" }
         it do
-          described_object.expects(:run_command).with('chef install C:\\cookbook\\Policyfile.rb --chef-license accept')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli install C:\\cookbook\\Policyfile.rb --chef-license accept')
           subject
         end
       end
@@ -349,7 +349,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         let(:license) { "accept-silent" }
         it do
-          described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-silent')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-silent')
           subject
         end
       end
@@ -358,7 +358,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:policyfile) { 'C:\\Program Files\\Jenkins\\My Chef Cookbook\\workspace\\current\\Policyfile.rb' }
         let(:license) { "accept-no-persist" }
         it do
-          described_object.expects(:run_command).with('chef install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-no-persist')
+          described_object.expects(:run_command).with('hab pkg exec chef/chef-cli chef-cli install "C:\\\\Program\\ Files\\\\Jenkins\\\\My\\ Chef\\ Cookbook\\\\workspace\\\\current\\\\Policyfile.rb" --chef-license accept-no-persist')
           subject
         end
       end
