@@ -170,9 +170,9 @@ module Kitchen
 
         # @api private
         def no_cli_found_error
-          @logger.fatal("The `chef-cli` executable or `chef/chef-cli` habitat package cannot be found in your " \
-                        "PATH. Ensure you have installed Chef Development Kit Enterprise habitat package.")
-          raise UserError, "Could not find the chef-cli executables in your PATH."
+          @logger.fatal("The `chef-cli` executable or the `chef/chef-cli` Habitat package cannot be found in your PATH. " \
+                        "Ensure that you have installed the Chef Development Kit Enterprise Habitat package.")
+          raise UserError, "Could not find the chef-cli executables or the chef/chef-cli hab package."
         end
       end
     end
