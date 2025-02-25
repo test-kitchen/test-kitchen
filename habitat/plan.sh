@@ -18,6 +18,7 @@ pkg_deps=(
   ${_chef_client_ruby}
   core/coreutils
   core/git
+  chef/chef-cli/5.6.17/20250205114629
 )
 pkg_svc_user=root
 
@@ -57,39 +58,14 @@ do_build() {
 }
 
 do_install() {
-  export GEM_HOME="$pkg_prefix/vendor"
+  # The bin/kitchen is the executable that will 
+  cp "habitat/bin/kitchen" "$pkg_prefix/bin"
+  chmod 755 "$pkg_prefix/bin/kitchen"
 
+  export GEM_HOME="$pkg_prefix/vendor"
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"
   gem install chef-test-kitchen-enterprise-*.gem --no-document
-  wrap_ruby_kitchen
-  set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor"
-}
-
-wrap_ruby_kitchen() {
-  local bin="$pkg_prefix/bin/kitchen"
-  local real_bin="$GEM_HOME/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen"
-  wrap_bin_with_ruby "$bin" "$real_bin"
-}
-
-wrap_bin_with_ruby() {
-  local bin="$1"
-  local real_bin="$2"
-  build_line "Adding wrapper $bin to $real_bin"
-  cat <<EOF > "$bin"
-#!$(pkg_path_for core/bash)/bin/bash
-set -e
-
-# Set binary path that allows chef-test-kitchen-enterprise to use non-Hab pkg binaries
-export PATH="/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:\$PATH"
-
-# Set Ruby paths defined from 'do_setup_environment()'
-export GEM_HOME="$pkg_prefix/vendor"
-export GEM_PATH="\$GEM_HOME"
-
-exec $(pkg_path_for $_chef_client_ruby)/bin/ruby $real_bin \$@
-EOF
-  chmod -v 755 "$bin"
 }
 
 do_strip() {

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# expected to be invoked as kitchen install-gem <gem_name>
+export GEM_HOME="/hab/kitchen"
+env_version=$KITCHEN_VERSION
+
+if [[ -z "$env_version" ]]; then
+# it will install the latest version if a new version installed unless the version env variable was set
+	hab pkg exec $origin/$package gem install -- $@
+else
+	hab pkg exec $origin/$package/$env_version gem install -- $@
+fi
