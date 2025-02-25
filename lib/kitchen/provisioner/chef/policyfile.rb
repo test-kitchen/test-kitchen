@@ -150,16 +150,29 @@ module Kitchen
         # @api private
         # @returns [String]
         def cli_path
-          @cli_path ||= which("chef-cli") || which("chef") || no_cli_found_error
+          @cli_path ||= which("chef-cli") || hab_chef_cli || no_cli_found_error
+        end
+
+        # If the habitat package for chef-cli is installed and not binlinked,
+        # return the hab pkg exec command to run chef-cli.
+        def hab_chef_cli
+          "hab pkg exec chef/chef-cli chef-cli" if hab_pkg_installed?("chef/chef-cli")
+        end
+
+        # Check whether a habitat package is installed or not
+        def hab_pkg_installed?(pkg)
+          if which("hab")
+            `hab pkg list #{pkg} 2>/dev/null`.include?(pkg)
+          else
+            false
+          end
         end
 
         # @api private
         def no_cli_found_error
-          @logger.fatal("The `chef` or `chef-cli` executables cannot be found in your " \
-                        "PATH. Ensure you have installed Chef Workstation " \
-                        "from https://www.chef.io/downloads/ and that your PATH " \
-                        "setting includes the path to the `chef` or `chef-cli` commands.")
-          raise UserError, "Could not find the chef or chef-cli executables in your PATH."
+          @logger.fatal("The `chef-cli` executable or the `chef/chef-cli` Habitat package cannot be found in your PATH. " \
+                        "Ensure that you have installed the Chef Development Kit Enterprise Habitat package.")
+          raise UserError, "Could not find the chef-cli executables or the chef/chef-cli hab package."
         end
       end
     end
