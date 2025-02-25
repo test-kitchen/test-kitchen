@@ -4,27 +4,27 @@ origin="praj"
 package="chef-test-kitchen-enterprise"
 cmd="kitchen"
 env_version=$KITCHEN_VERSION
-pkg_version=$(hab pkg path praj/chef-test-kitchen-enterprise | cut -d '/' -f6)
-timestamp=$(hab pkg path praj/chef-test-kitchen-enterprise | cut -d '/' -f7)
-
-
-# exec $(hab pkg path core/ruby3_1)/bin/ruby "$GEM_HOME/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen"
+pkg_path=$(hab pkg path $origin/$package)
+pkg_version=$(echo "$pkg_path" | cut -d '/' -f6)
+pkg_timestamp=$(echo "$pkg_path" | cut -d '/' -f7)
+ruby_path=$(hab pkg path core/ruby3_1)
 
 if [[ -z "$env_version" ]]; then
     # Execute latest installed version unless overridden by env variable
-    # hab pkg exec $origin/$package $cmd -- "$@"
+
     # Force-reset GEM_PATH to prevent conflicts
-    export GEM_HOME="/hab/pkgs/$origin/$package/$pkg_version/$timestamp/vendor"
+    export GEM_HOME="/hab/pkgs/$origin/$package/$pkg_version/$pkg_timestamp/vendor"
     export GEM_PATH="$GEM_HOME"
     export PATH="$GEM_HOME/bin:$PATH"
-    echo $GEM_HOME
-    exec $(hab pkg path core/ruby3_1)/bin/ruby $(hab pkg path praj/chef-test-kitchen-enterprise)/vendor/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen $@
+
+    exec $ruby_path/bin/ruby $pkg_path/vendor/gems/$package-${pkg_version}/bin/kitchen $@
 else
-    #hab pkg exec $origin/$package/$env_version $cmd -- "$@"
     # Force-reset GEM_PATH to prevent conflicts
-    env_timepstamp=$(hab pkg path praj/chef-test-kitchen-enterprise/$env_version | cut -d '/' -f7)
+    env_path==$(hab pkg path $origin/$package/$env_version)
+    env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
     export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
     export GEM_PATH="$GEM_HOME"
     export PATH="$GEM_HOME/bin:$PATH"
-    exec $(hab pkg path core/ruby3_1)/bin/ruby $(hab pkg path praj/chef-test-kitchen-enterprise)/vendor/gems/chef-test-kitchen-enterprise-${env_version}/bin/kitchen $@
+
+    exec $ruby_path/bin/ruby $env_path/vendor/gems/$package-${env_version}/bin/kitchen $@
 fi
