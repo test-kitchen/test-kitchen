@@ -12,7 +12,8 @@ $pkg_deps=@(
   "chef/ruby31-plus-devkit"
   "core/git"
 )
-$pkg_bin_dirs=@("bin")
+$pkg_bin_dirs=@("bin"
+                "vendor/bin")
 $project_root= (Resolve-Path "$PLAN_CONTEXT/../").Path
 
 function pkg_version {
