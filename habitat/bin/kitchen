@@ -9,22 +9,39 @@ pkg_version=$(echo "$pkg_path" | cut -d '/' -f6)
 pkg_timestamp=$(echo "$pkg_path" | cut -d '/' -f7)
 ruby_path=$(hab pkg path core/ruby3_1)
 
-if [[ -z "$env_version" ]]; then
-    # Execute latest installed version unless overridden by env variable
+eval "$(hab pkg env $origin/$pkg)"
+hab_context=$TKE_VERSION
 
-    # Force-reset GEM_PATH to prevent conflicts
-    export GEM_HOME="/hab/pkgs/$origin/$package/$pkg_version/$pkg_timestamp/vendor"
-    export GEM_PATH="$GEM_HOME"
-    export PATH="$GEM_HOME/bin:$PATH"
+#TODO: (Praj) is there a binlinked case to be considered?
 
-    exec $ruby_path/bin/ruby $pkg_path/vendor/gems/$package-${pkg_version}/bin/kitchen $@
-else
-    # Force-reset GEM_PATH to prevent conflicts
-    env_path==$(hab pkg path $origin/$package/$env_version)
-    env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
-    export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
-    export GEM_PATH="$GEM_HOME"
-    export PATH="$GEM_HOME/bin:$PATH"
+if [[ -z "$hab_context" ]]; then # not in the hab context, it is executing the binlinked script?
+    if [[ -z "$env_version" ]]; then
+        # Execute latest installed version unless overridden by env variable
 
-    exec $ruby_path/bin/ruby $env_path/vendor/gems/$package-${env_version}/bin/kitchen $@
+        hab pkg exec $origin/$package $cmd -- $@
+    else
+        # Force-reset GEM_PATH to prevent conflicts
+        env_path=$(hab pkg path $origin/$package/$env_version)
+        env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
+        export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
+        export GEM_PATH="$GEM_HOME"
+        export PATH="$GEM_HOME/bin:$PATH"
+
+        hab pkg exec $origin/$package-${env_version}/${env_timestamp}/bin/$cmd $@
+    fi
+else #in hab context; this means the command is already being executed as hab pkg exec
+    if [[ -z "$env_version" ]]; then
+        # Execute latest installed version unless overridden by env variable
+
+        exec $ruby_path/bin/ruby $pkg_path/vendor/gems/$package-${pkg_version}/$pkg_timestamp/bin/$cmd $@
+    else
+        # Force-reset GEM_PATH to prevent conflicts
+        env_path=$(hab pkg path $origin/$package/$env_version)
+        env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
+        export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
+        export GEM_PATH="$GEM_HOME"
+        export PATH="$GEM_HOME/bin:$PATH"
+
+        exec $ruby_path/bin/ruby $env_path/vendor/gems/$package-${env_version}/$env_timestamp/bin/$cmd $@
+    fi
 fi
