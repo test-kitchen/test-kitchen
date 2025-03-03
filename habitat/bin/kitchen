@@ -5,7 +5,7 @@ package="chef-test-kitchen-enterprise"
 cmd="kitchen"
 env_version=$KITCHEN_VERSION
 ruby_path=$(hab pkg path core/ruby3_1)
-
+pkg_path=$(hab pkg path $origin/$package)
 hab_context=$TKE_VERSION
 
 # When the user does not binlink the hab pkg, hab pkg exec will use this script -> in $pkg_path/bin/kitchen
