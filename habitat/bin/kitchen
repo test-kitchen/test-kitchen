@@ -4,44 +4,38 @@ origin="praj"
 package="chef-test-kitchen-enterprise"
 cmd="kitchen"
 env_version=$KITCHEN_VERSION
-pkg_path=$(hab pkg path $origin/$package)
-pkg_version=$(echo "$pkg_path" | cut -d '/' -f6)
-pkg_timestamp=$(echo "$pkg_path" | cut -d '/' -f7)
 ruby_path=$(hab pkg path core/ruby3_1)
 
-eval "$(hab pkg env $origin/$pkg)"
 hab_context=$TKE_VERSION
 
-#TODO: (Praj) is there a binlinked case to be considered?
+# When the user does not binlink the hab pkg, hab pkg exec will use this script -> in $pkg_path/bin/kitchen
+# $pkg_path/bin/kitchen will call $pkg_path/vendor/bin/kitchen which will in turn call $pkg_path/vendor/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen
 
-if [[ -z "$hab_context" ]]; then # not in the hab context, it is executing the binlinked script?
+# When the user does binlink the hab pkg, kitchen <cmd> will use this script -> in $pkg_path/bin/kitchen
+# $pkg_path/bin/kitchen will call $pkg_path/vendor/bin/kitchen which will in turn call $pkg_path/vendor/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen
+
+# Where pkg_path=$(hab pkg path $origin/$package)
+
+if [[ -z "$hab_context" ]]; then
+# Not in the hab context
+# This script is being executed as the binlinked script hence it is safe to call the hab pkg exec 
     if [[ -z "$env_version" ]]; then
-        # Execute latest installed version unless overridden by env variable
-
-        hab pkg exec $origin/$package $cmd -- $@
-    else
-        # Force-reset GEM_PATH to prevent conflicts
-        env_path=$(hab pkg path $origin/$package/$env_version)
-        env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
-        export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
-        export GEM_PATH="$GEM_HOME"
-        export PATH="$GEM_HOME/bin:$PATH"
-
-        hab pkg exec $origin/$package-${env_version}/${env_timestamp}/bin/$cmd $@
+        # Execute latest installed version (not version that was last installed)
+        hab pkg exec $origin/$package $cmd "$@"
+    else # the KITCHEN_VERSION could be in the form <semver> or <semver/date>
+        # Do not need to export any paths since the hab pkg exec will have the GEM_PATH and PATH available
+        # This will effectively call this same script but in the hab context, since TKE_VERSION will be available.
+        hab pkg exec $origin/$package/$env_version "$@"
     fi
-else #in hab context; this means the command is already being executed as hab pkg exec
+else #in hab context
+# The script is being executed as hab pkg exec
+# The GEM_PATH and PATH will be available as setup in `hab pkg env`
     if [[ -z "$env_version" ]]; then
-        # Execute latest installed version unless overridden by env variable
-
-        exec $ruby_path/bin/ruby $pkg_path/vendor/gems/$package-${pkg_version}/$pkg_timestamp/bin/$cmd $@
+    # Execute latest installed version (not version that was last installed)
+        exec $ruby_path/bin/ruby $pkg_path/vendor/bin/$cmd "$@"
     else
-        # Force-reset GEM_PATH to prevent conflicts
+    # the KITCHEN_VERSION could be in the form <semver> or <semver/date>
         env_path=$(hab pkg path $origin/$package/$env_version)
-        env_timestamp=$(echo "$env_path" | cut -d '/' -f7)
-        export GEM_HOME="/hab/pkgs/$origin/$package/$env_version/$env_timestamp/vendor"
-        export GEM_PATH="$GEM_HOME"
-        export PATH="$GEM_HOME/bin:$PATH"
-
-        exec $ruby_path/bin/ruby $env_path/vendor/gems/$package-${env_version}/$env_timestamp/bin/$cmd $@
+        exec $ruby_path/bin/ruby $env_path/vendor/bin/$cmd "$@"
     fi
 fi

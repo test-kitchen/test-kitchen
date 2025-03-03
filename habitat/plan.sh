@@ -39,8 +39,8 @@ do_setup_environment() {
 
   # these will be available at runtime; after the package is built and installed
   set_runtime_env "GEM_HOME" "$GEM_HOME"
-  set_runtime_env "GEM_PATH" "$GEM_PATH"
-  set_runtime_env "PATH" "$GEM_HOME/bin:$PATH"
+  set_runtime_env -f "GEM_PATH" "$GEM_PATH"
+
   set_runtime_env "TKE_VERSION" "$pkg_version"
 }
 
