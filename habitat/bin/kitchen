@@ -3,10 +3,9 @@
 origin="praj"
 package="chef-test-kitchen-enterprise"
 cmd="kitchen"
-env_version=$KITCHEN_VERSION
-ruby_path=$(hab pkg path core/ruby3_1)
+env_version=$KITCHEN_VERSION # setup in the OS env for the user running the application
 pkg_path=$(hab pkg path $origin/$package)
-hab_context=$TKE_VERSION
+hab_context=$TKE_VERSION # setup in the plan.sh
 
 # When the user does not binlink the hab pkg, hab pkg exec will use this script -> in $pkg_path/bin/kitchen
 # $pkg_path/bin/kitchen will call $pkg_path/vendor/bin/kitchen which will in turn call $pkg_path/vendor/gems/chef-test-kitchen-enterprise-${pkg_version}/bin/kitchen
@@ -21,21 +20,26 @@ if [[ -z "$hab_context" ]]; then
 # This script is being executed as the binlinked script hence it is safe to call the hab pkg exec 
     if [[ -z "$env_version" ]]; then
         # Execute latest installed version (not version that was last installed)
+        echo "KITCHEN_VERSION is not set in the environment; The script is running as a binlinked script (Not in the hab context)"
         hab pkg exec $origin/$package $cmd "$@"
     else # the KITCHEN_VERSION could be in the form <semver> or <semver/date>
         # Do not need to export any paths since the hab pkg exec will have the GEM_PATH and PATH available
         # This will effectively call this same script but in the hab context, since TKE_VERSION will be available.
-        hab pkg exec $origin/$package/$env_version "$@"
+        echo "KITCHEN_VERSION: $env_version set in the environment; The script is running as a binlinked script (Not in the hab context)"
+        hab pkg exec $origin/$package/$env_version $cmd "$@"
     fi
 else #in hab context
 # The script is being executed as hab pkg exec
 # The GEM_PATH and PATH will be available as setup in `hab pkg env`
+# env_version is available in the hab context for the same user, if running as root pass the env variables with the -E flag.
     if [[ -z "$env_version" ]]; then
     # Execute latest installed version (not version that was last installed)
-        exec $ruby_path/bin/ruby $pkg_path/vendor/bin/$cmd "$@"
+        echo "KITCHEN_VERSION is not set in the environment; The script is running as hab pkg exec or calling itself recursively from the binlinked script (In the hab context)"
+        exec hab pkg exec $origin/$package ruby $pkg_path/vendor/bin/$cmd "$@"
     else
     # the KITCHEN_VERSION could be in the form <semver> or <semver/date>
         env_path=$(hab pkg path $origin/$package/$env_version)
-        exec $ruby_path/bin/ruby $env_path/vendor/bin/$cmd "$@"
+        echo "KITCHEN_VERSION: $env_version set in the environment; The script is running as hab pkg exec or calling itself recursively from the binlinked script (In the hab context)"
+        exec hab pkg exec $origin/$package/$env_version ruby $env_path/vendor/bin/$cmd "$@"
     fi
 fi
