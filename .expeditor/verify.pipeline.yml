@@ -47,7 +47,32 @@ steps:
             - EXPIRE_CACHE=true
             - CHEF_LICENSE=accept-no-persist
             - CHEF_LICENSE_SERVER=http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
+  - label: run-specs-ruby-3.4
+    command:
+      - .expeditor/run_linux_tests.sh rake test
+    expeditor:
+      executor:
+        docker:
+          image: ruby:3.4
+          environment:
+            - CHEF_LICENSE=accept-no-persist
+            - CHEF_LICENSE_SERVER=http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
 
+  - label: run-specs-windows-ruby-3.4
+    command:
+      - powershell .expeditor/run_windows_tests.ps1 rake test
+    expeditor:
+      executor:
+        docker:
+          host_os: windows
+          shell: ["powershell", "-Command"]
+          image: rubydistros/windows-2019:3.4
+          user: 'NT AUTHORITY\SYSTEM'
+          environment:
+            - FORCE_FFI_YAJL=ext
+            - EXPIRE_CACHE=true
+            - CHEF_LICENSE=accept-no-persist
+            - CHEF_LICENSE_SERVER=http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
   - label: run-specs-windows-ruby-3.3
     command:
       - powershell .expeditor/run_windows_tests.ps1 rake test
