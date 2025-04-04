@@ -226,7 +226,7 @@ module Kitchen
       def env_cmd(cmd)
         return if cmd.nil?
 
-        env = "env"
+        env = String.new("env")
         http_proxy = config[:http_proxy] || ENV["http_proxy"] ||
           ENV["HTTP_PROXY"]
         https_proxy = config[:https_proxy] || ENV["https_proxy"] ||

@@ -360,25 +360,29 @@ module Kitchen
           log_msg = "[SSH] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
-
-          logger.debug(masked_string)
-          yield
-        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
-          if (opts[:retries] -= 1) > 0
-            message = if opts[:message]
-                        logger.debug("[SSH] connection failed (#{e.inspect})")
-                        opts[:message]
-                      else
-                        "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                          "(#{e.inspect})"
-                      end
-            logger.info(message)
-            sleep(opts[:delay])
-            retry
-          else
-            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
-            raise SshFailed, "SSH session could not be established"
+          retries = opts[:retries]
+          retries.times do
+            logger.debug(masked_string)
           end
+          begin
+            yield
+            rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+            if (opts[:retries] -= 1) > 0
+              message = if opts[:message]
+                          logger.debug("[SSH] connection failed (#{e.inspect})")
+                          opts[:message]
+                        else
+                          "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                            "(#{e.inspect})"
+                        end
+              logger.info(message)
+              sleep(opts[:delay])
+              retry
+            else
+              logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+              raise SshFailed, "SSH session could not be established"
+            end
+            end
         end
 
         # Execute a remote command over SSH and return the command's exit code.

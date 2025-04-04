@@ -945,7 +945,8 @@ describe Kitchen::Provisioner::ChefBase do
         config[:run_list] = ["yo"]
         provisioner.create_sandbox
 
-        _(logged_output.string).must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
+        _(logged_output.string).must_match(/D, .* : Creating dna.json from/)
+        _(logged_output.string).must_match(/run_list: \["yo"\]/)
       end
     end
 
