@@ -3,7 +3,7 @@ require:
   - chefstyle
 
 AllCops:
-  TargetRubyVersion: <%= ENV.fetch("RUBY_VERSION", "3.4") %>
+  TargetRubyVersion: 3.1
   Include:
     - "**/*.rb"
   Exclude:
