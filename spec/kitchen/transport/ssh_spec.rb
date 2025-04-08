@@ -793,7 +793,7 @@ describe Kitchen::Transport::Ssh::Connection do
       end
 
       _(logged_output.string).must_match(/D,.* : \[SSH\] closing connection to me@foo</)
-      _(logged_output.string).must_match(/port: 22}/)
+      _(logged_output.string).must_match(/port.*22}/)
     end
 
     it "only closes the connection once for multiple calls" do
@@ -827,14 +827,14 @@ describe Kitchen::Transport::Ssh::Connection do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port: 22.*\(doit\)/)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger displays establishing connection on debug" do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port: 22.*\(doit\)/)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger captures stdout" do
@@ -872,7 +872,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port: 22.*\(doit\)/)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger displays establishing connection on debug" do
@@ -883,7 +883,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port: 22/)
+        _(logged_output.string).must_match(/port.*22/)
       end
 
       it "logger captures stdout" do

@@ -366,7 +366,7 @@ module Kitchen
           end
           begin
             yield
-            rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
             if (opts[:retries] -= 1) > 0
               message = if opts[:message]
                           logger.debug("[SSH] connection failed (#{e.inspect})")
@@ -382,7 +382,7 @@ module Kitchen
               logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
               raise SshFailed, "SSH session could not be established"
             end
-            end
+          end
         end
 
         # Execute a remote command over SSH and return the command's exit code.
