@@ -50,7 +50,7 @@ Port used making rdp connections for kitchen login commands. This defaults to `3
 
 #### winrm_transport
 
-The transport type used by winrm as explained here. This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
+The transport type used by winrm as [explained here](https://learn.microsoft.com/en-us/windows/win32/winrm/authentication-for-remote-connections). This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
 
 ### Retry Settings
 
