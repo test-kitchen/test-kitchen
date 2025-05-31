@@ -92,7 +92,7 @@ module Kitchen
     # @param remote [String] path to remote file destination
     # @param options [Hash] configuration options that are passed to
     #   `Net::SCP.upload`
-    # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
+    # @see https://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload!(local, remote, options = {}, &progress)
       require "net/scp" unless defined?(Net::SCP)
       if progress.nil?
@@ -124,7 +124,7 @@ module Kitchen
     # @param options [Hash] configuration options that are passed to
     #   `Net::SCP.upload`
     # @option options [true,false] :recursive recursive copy (default: `true`)
-    # @see http://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
+    # @see https://net-ssh.github.io/net-scp/classes/Net/SCP.html#method-i-upload
     def upload_path!(local, remote, options = {}, &progress)
       options = { recursive: true }.merge(options)
 
