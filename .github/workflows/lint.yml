@@ -6,7 +6,9 @@ name: 'Lint, Unit & Integration Tests'
 
 jobs:
   lint-unit:
-    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
+    uses: test-kitchen/.github/.github/workflows/lint-unit.yml@without
+    with:
+      bundle_only: "linting"
 
   markdown-link-check:
     runs-on: ubuntu-latest

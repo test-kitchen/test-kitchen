@@ -23,35 +23,35 @@ Unfortunately Hyper-V doesn't like other hypervisors running at the same time an
 
 ##### Chef Workstation
 
-First, install the [Chef Workstation](https://www.chef.io/downloads/tools/workstation). This package includes Chef Infra Client, Chef InSpec, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
+First, install the [Chef Workstation](https://www.chef.io/downloads). This package includes Chef Infra Client, Chef InSpec, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
 
 ```ruby
 $ chef --version
-Chef Workstation version: 22.1.774
-Chef Habitat version: 1.6.420
-Test Kitchen version: 3.2.2
-Cookstyle version: 7.30.4
-Chef Infra Client version: 17.9.26
-Chef InSpec version: 4.52.9
-Chef CLI version: 5.5.6
+Chef Workstation version: 25.5.1084
+Chef Infra Client version: 18.7.10
+Chef InSpec version: 5.22.80
+Chef CLI version: 5.6.21
+Chef Habitat version: 1.6.1243
+Test Kitchen version: 3.7.0
+Cookstyle version: 7.32.8
 ```
 
 ##### VirtualBox
 
-VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Obtain the correct installer for your platform [here](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the $PATH with the following:
+VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Download the appropriate installer for your operating system from the [VirtualBox Downloads page](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the `$PATH` with the following:
 
 ```bash
 $ VBoxManage --version
-6.1.32r149290
+7.1.6r167084
 ```
 
 ##### Vagrant
 
-Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes". Obtain the correct installer for your platform [here](https://www.vagrantup.com/downloads).
+Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes." Download the appropriate Vagrant installer for your platform from the [Vagrant Downloads page](https://www.vagrantup.com/downloads).
 
 ```bash
 $ vagrant --version
-Vagrant 2.2.18
+Vagrant 2.4.6
 ```
 
 We've just installed Chef Workstation, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for Test Kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
