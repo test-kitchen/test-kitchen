@@ -106,7 +106,7 @@ image_id's have a format like ami-748e2903. The image_id values appear next to t
 
 ##### *image_search*
 
-`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the AWS CLI doc under `--filters` [here](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
+`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the [AWS CLI documentation for ec2 describe-images](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
 
 ```yaml
 platforms:

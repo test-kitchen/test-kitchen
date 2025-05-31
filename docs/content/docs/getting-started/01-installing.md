@@ -38,7 +38,7 @@ Cookstyle version: 7.32.8
 
 ##### VirtualBox
 
-VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Obtain the correct installer for your platform [here](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the $PATH with the following:
+VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Download the appropriate installer for your operating system from the [VirtualBox Downloads page](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the `$PATH` with the following:
 
 ```bash
 $ VBoxManage --version
@@ -47,7 +47,7 @@ $ VBoxManage --version
 
 ##### Vagrant
 
-Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes". Obtain the correct installer for your platform [here](https://www.vagrantup.com/downloads).
+Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes." Download the appropriate Vagrant installer for your platform from the [Vagrant Downloads page](https://www.vagrantup.com/downloads).
 
 ```bash
 $ vagrant --version
