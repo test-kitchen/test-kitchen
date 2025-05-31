@@ -8,7 +8,7 @@ jobs:
   lint-unit:
     uses: test-kitchen/.github/.github/workflows/lint-unit.yml@main
     with:
-      bundle_with: "linting"
+      bundle_without: "test, integration"
 
   markdown-link-check:
     runs-on: ubuntu-latest
