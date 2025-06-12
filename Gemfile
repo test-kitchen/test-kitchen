@@ -7,7 +7,7 @@ group :test do
   gem "rb-readline"
   gem "aruba",     ">= 0.11", "< 3.0"
   gem "countloc",  "~> 0.4"
-  gem "cucumber",  ">= 9.2", "< 10"
+  gem "cucumber",  ">= 9.2", "< 11"
   gem "fakefs",    "~> 3.0"
   gem "maruku",    "~> 0.6"
   gem "minitest",  "~> 5.3", "< 6.0"
