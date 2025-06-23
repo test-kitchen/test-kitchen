@@ -120,6 +120,7 @@ module Kitchen
       class Connection < Kitchen::Transport::Base::Connection
         # (see Base::Connection#initialize)
         def initialize(config = {})
+          # binding.pry
           super(config)
           @session = nil
         end
@@ -139,6 +140,7 @@ module Kitchen
         # (see Base::Connection#execute)
         def execute(command)
           return if command.nil?
+          # binding.pry
 
           string_to_mask = "[SSH] #{self} (#{command})"
           masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
@@ -177,6 +179,7 @@ module Kitchen
 
         # (see Base::Connection#upload)
         def upload(locals, remote)
+          binding.pry
           logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh)")
           elapsed = Benchmark.measure do
             waits = []
@@ -196,6 +199,9 @@ module Kitchen
           logger.debug("TIMING: scp async upload (Kitchen::Transport::Ssh) took #{delta}")
         rescue Net::SSH::Exception => ex
           raise SshFailed, "SCP upload failed (#{ex.message})"
+        # rescue => ex
+        #   binding.pry
+        #   puts ex
         end
 
         # (see Base::Connection#download)
@@ -357,7 +363,8 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def retry_connection(opts)
-          log_msg = "[SSH] opening connection to #{self}"
+          # binding.pry
+          log_msg = "[SSHiing] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
 
@@ -389,6 +396,7 @@ module Kitchen
         def execute_with_exit_code(command)
           exit_code = nil
           session.open_channel do |channel|
+            # binding.pry
             channel.request_pty
 
             channel.exec(command) do |_ch, _success|
@@ -554,6 +562,7 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def create_new_connection(options, &block)
+        # binding.pry
         cleanup!
         @connection_options = options
         @connection = Kitchen::Transport::Ssh::Connection.new(options, &block)

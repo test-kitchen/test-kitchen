@@ -311,6 +311,7 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
+        binding.pry
         dirs = %w{
           cookbooks data data_bags environments roles clients
           encrypted_data_bag_secret

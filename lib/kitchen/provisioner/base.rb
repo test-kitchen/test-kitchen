@@ -70,14 +70,31 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
+        prepare_install_script
 
         instance.transport.connection(state) do |conn|
+          binding.pry
           config[:uploads].to_h.each do |locals, remote|
             debug("Uploading #{Array(locals).join(", ")} to #{remote}")
             conn.upload(locals.to_s, remote)
           end
-          conn.execute(install_command)
+
+          # Run the init command to initialize everything
           conn.execute(init_command)
+
+          # Upload the install script instead of directly executing the command
+          if install_command
+            remote_script_path = remote_path_join(config[:root_path], "install_script")
+            if install_script_path
+              debug("Uploading install script to #{remote_script_path}")
+              conn.upload(install_script_path, remote_script_path)
+              # Make script executable on remote host
+              conn.execute(make_executable_command(remote_script_path))
+              # Execute the uploaded script
+              conn.execute(run_script_command(remote_script_path))
+            end
+          end
+
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, config[:root_path])
           debug("Transfer complete")
@@ -195,6 +212,7 @@ module Kitchen
         return if sandbox_path.nil?
 
         debug("Cleaning up local sandbox in #{sandbox_path}")
+        @install_script_path = nil
         FileUtils.rmtree(sandbox_path)
       end
 
@@ -269,6 +287,76 @@ module Kitchen
       # @api private
       def prefix_command(script)
         config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
+      end
+
+      # Writes the install command to a file that will be uploaded to the instance
+      # and executed.
+      #
+      # @api private
+      def prepare_install_script
+        binding.pry
+        command = install_command
+        return if command.nil? || command.empty?
+
+        info("Preparing install script")
+        @install_script_path = File.join(sandbox_path, "install_script")
+
+        debug("Creating install script at #{@install_script_path}")
+        File.open(@install_script_path, "wb") do |file|
+          # Add shebang based on OS
+          if windows_os?
+            file.write("@echo off\n")
+          else
+            file.write("#!/bin/sh\n")
+          end
+
+          file.write(command)
+        end
+
+        # Make script executable locally
+        FileUtils.chmod(0755, @install_script_path) unless windows_os?
+      end
+
+      # Returns the path to the install script if it exists.
+      #
+      # @return [String] path to the install script
+      # @api private
+      def install_script_path
+        @install_script_path
+      end
+
+      # Returns a command to make a script executable on the remote host.
+      #
+      # @param script_path [String] path to the script on the remote host
+      # @return [String] command to make the script executable
+      # @api private
+      def make_executable_command(script_path)
+        return "echo Making script executable" if windows_os?
+
+        prefix_command(wrap_shell_code(sudo("chmod +x #{script_path}")))
+      end
+
+      # Returns a command to execute a script on the remote host.
+      #
+      # @param script_path [String] path to the script on the remote host
+      # @return [String] command to execute the script
+      # @api private
+      def run_script_command(script_path)
+        if windows_os?
+          script_path
+        else
+          prefix_command(wrap_shell_code(sudo(script_path)))
+        end
+      end
+
+      # Joins path parts to create a remote path on the remote instance.
+      #
+      # @param parts [Array<String>] parts of the path to join
+      # @return [String] joined path
+      # @api private
+      def remote_path_join(*parts)
+        path_separator = windows_os? ? "\\" : "/"
+        parts.join(path_separator)
       end
     end
   end

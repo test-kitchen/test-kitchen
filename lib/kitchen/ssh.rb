@@ -217,7 +217,7 @@ module Kitchen
       retries = options[:ssh_retries] || 3
 
       begin
-        string_to_mask = "[SSH] opening connection to #{self}"
+        string_to_mask = "[SSHing] opening connection to #{self}"
         masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
         logger.debug(masked_string)
         Net::SSH.start(hostname, username, options)
