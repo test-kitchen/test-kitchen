@@ -1,15 +1,15 @@
 $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
-$env:HAB_BLDR_CHANNEL = "LTS-2024"
-$env:HAB_REFRESH_CHANNEL = "LTS-2024"
+$env:HAB_BLDR_CHANNEL = "base-2025"
+$env:HAB_REFRESH_CHANNEL = "base-2025"
 $pkg_name="chef-test-kitchen-enterprise"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
 $pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 
 $pkg_deps=@(
-  "chef/ruby31-plus-devkit"
+  "core/ruby3_4-plus-devkit"
   "core/git"
 )
 $pkg_bin_dirs=@("bin"

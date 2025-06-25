@@ -15,8 +15,10 @@ steps:
     expeditor:
       executor:
         docker:
-          image: ruby:3.1
+          image: ruby:3.4
           privileged: true
+          environment:
+            - HAB_AUTH_TOKEN
 
   - label: ":windows: Validate Habitat Builds of Test Kitchen"
     commands:
@@ -26,9 +28,10 @@ steps:
         docker:
           host_os: windows
           shell: ["powershell", "-Command"]
-          image: rubydistros/windows-2019:3.1
+          image: rubydistros/windows-2019:3.4
           user: 'NT AUTHORITY\SYSTEM'
           environment:
+            - HAB_AUTH_TOKEN
             - FORCE_FFI_YAJL=ext
             - EXPIRE_CACHE=true
             - CHEF_LICENSE=accept-no-persist
