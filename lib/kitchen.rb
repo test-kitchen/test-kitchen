@@ -46,8 +46,7 @@ require_relative "kitchen/suite"
 require_relative "kitchen/verifier"
 require_relative "kitchen/verifier/base"
 require_relative "kitchen/version"
-require "pry"
-require "pry-nav"
+
 # Test Kitchen base module.
 #
 # @author Fletcher Nichol <fnichol@nichol.ca>
