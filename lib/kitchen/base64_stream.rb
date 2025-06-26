@@ -28,7 +28,7 @@ module Kitchen
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream
     def self.strict_encode(io_in, io_out)
-      buffer = ""
+      buffer = String.new("")
       io_out.write([buffer].pack("m0")) while io_in.read(3 * 1000, buffer)
       buffer = nil # rubocop:disable Lint/UselessAssignment
     end
@@ -40,7 +40,7 @@ module Kitchen
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream
     def self.strict_decode(io_in, io_out)
-      buffer = ""
+      buffer = String.new("")
       io_out.write(buffer.unpack("m0").first) while io_in.read(3 * 1000, buffer)
       buffer = nil # rubocop:disable Lint/UselessAssignment
     end

@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.0.18 -->
-## [v1.0.18](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.0.18) (2025-03-27)
+<!-- latest_release 1.1.0 -->
+## [v1.1.0](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.0) (2025-06-26)
 
 #### Merged Pull Requests
-- [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps))
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -20,6 +21,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -30,6 +32,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -42,6 +45,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -52,6 +56,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -66,6 +71,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -76,6 +82,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -88,6 +95,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -98,6 +106,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -114,6 +123,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -124,6 +134,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -136,6 +147,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -146,6 +158,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -160,6 +173,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -170,6 +184,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -182,6 +197,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -192,6 +208,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -210,6 +227,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -220,6 +238,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -232,6 +251,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -242,6 +262,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -256,6 +277,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -266,6 +288,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -278,6 +301,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -288,6 +312,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -304,6 +329,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -314,6 +340,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -326,6 +353,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -336,6 +364,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -350,6 +379,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -360,6 +390,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -372,6 +403,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -382,6 +414,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -402,6 +435,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -412,6 +446,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -424,6 +459,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -434,6 +470,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -448,6 +485,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -458,6 +496,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -470,6 +509,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -480,6 +520,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -496,6 +537,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -506,6 +548,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -518,6 +561,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -528,6 +572,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -542,6 +587,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -552,6 +598,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -564,6 +611,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -574,6 +622,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -592,6 +641,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -602,6 +652,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -614,6 +665,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -624,6 +676,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -638,6 +691,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -648,6 +702,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -660,6 +715,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -670,6 +726,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -686,6 +743,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -696,6 +754,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -708,6 +767,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -718,6 +778,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -732,6 +793,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -742,6 +804,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -754,6 +817,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -764,6 +828,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -794,6 +859,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -804,6 +870,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -816,6 +883,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -826,6 +894,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -840,6 +909,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -850,6 +920,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -862,6 +933,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -872,6 +944,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -888,6 +961,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -898,6 +972,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -910,6 +985,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -920,6 +996,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -934,6 +1011,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -944,6 +1022,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -956,6 +1035,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -966,6 +1046,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -984,6 +1065,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -994,6 +1076,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1006,6 +1089,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1016,6 +1100,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1030,6 +1115,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1040,6 +1126,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1052,6 +1139,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1062,6 +1150,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1078,6 +1167,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1088,6 +1178,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1100,6 +1191,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1110,6 +1202,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1124,6 +1217,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1134,6 +1228,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1146,6 +1241,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
@@ -1156,6 +1252,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
