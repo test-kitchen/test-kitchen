@@ -16,7 +16,6 @@ jobs:
     name: Linux Dokken Integration Tests
     env:
       KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-      ARUBA_EXIT_TIMEOUT: 60
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
