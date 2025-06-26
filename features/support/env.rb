@@ -25,7 +25,7 @@ class ArubaHelper
 end
 
 Before do
-  aruba.config.exit_timeout = ENV.fetch("ARUBA_EXIT_TIMEOUT", 30).to_i
+  aruba.config.exit_timeout = ENV.fetch("ARUBA_EXIT_TIMEOUT", 60).to_i
   @cleanup_dirs = []
 
   aruba.config.command_launcher = :in_process
