@@ -24,6 +24,3 @@ end
 group :linting do
   gem "cookstyle", "~>8.1"
 end
-
-gem "pry"
-gem "pry-nav"
