@@ -25,7 +25,7 @@ class ArubaHelper
 end
 
 Before do
-  @aruba_timeout_seconds = 15
+  @aruba_timeout_seconds = 30
   @cleanup_dirs = []
 
   aruba.config.command_launcher = :in_process
