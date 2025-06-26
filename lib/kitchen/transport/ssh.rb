@@ -357,7 +357,7 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def retry_connection(opts)
-          log_msg = "[SSH] opening connection to #{self}"
+          log_msg = "[SSHiing] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
 
