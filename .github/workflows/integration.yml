@@ -27,6 +27,13 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Install Habitat
+        run: |
+          curl https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.sh | sudo bash
+      - name: Ensure Habitat Path
+        run: echo 'export PATH="/hab/bin:$PATH"' >> $GITHUB_ENV
+      - name: Verify Habitat Installation
+        run: hab --version
       - run: bundle exec kitchen test
 
 #  FIXME: Commented out until we fix the pipelines for the RC2 release
