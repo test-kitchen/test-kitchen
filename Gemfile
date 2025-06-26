@@ -3,8 +3,11 @@ source "https://rubygems.org"
 gemspec
 gem "appbundler"
 gem "pry"
+gem "mutex_m"
+gem "benchmark"
 gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "main"
 gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent"
+
 
 group :test do
   gem "rake"
@@ -12,7 +15,7 @@ group :test do
   gem "aruba",     ">= 0.11", "< 3.0"
   gem "countloc",  "~> 0.4"
   gem "cucumber",  ">= 9.2", "< 10"
-  gem "fakefs",    "~> 2.0"
+  gem "fakefs",    "~> 3.0"
   gem "maruku",    "~> 0.6"
   gem "minitest",  "~> 5.3", "< 6.0"
   gem "mocha",     "~> 2.0"

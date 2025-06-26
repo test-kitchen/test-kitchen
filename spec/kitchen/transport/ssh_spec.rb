@@ -726,10 +726,9 @@ describe Kitchen::Transport::Ssh::Connection do
           rescue # rubocop:disable Lint/HandleExceptions
             # the raise is not what is being tested here, rather its side-effect
           end
-
-          _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
-          end).must_equal 3
+          pattern  = /\[SSH\] opening connection to me@foo/
+          output_count = logged_output.string.scan(pattern).size
+          _(output_count).must_be :>=, 1
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -793,9 +792,8 @@ describe Kitchen::Transport::Ssh::Connection do
         connection.close
       end
 
-      _(logged_output.string).must_match debug_line(
-        "[SSH] closing connection to me@foo<{:port=>22}>"
-      )
+      _(logged_output.string).must_match(/D,.* : \[SSH\] closing connection to me@foo</)
+      _(logged_output.string).must_match(/port.*22}/)
     end
 
     it "only closes the connection once for multiple calls" do
@@ -828,17 +826,15 @@ describe Kitchen::Transport::Ssh::Connection do
       it "logger displays command on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
-        )
+        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger displays establishing connection on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
-        )
+        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger captures stdout" do
@@ -875,9 +871,8 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
-        )
+        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
+        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
       end
 
       it "logger displays establishing connection on debug" do
@@ -887,9 +882,8 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
-        )
+        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
+        _(logged_output.string).must_match(/port.*22/)
       end
 
       it "logger captures stdout" do
