@@ -1241,7 +1241,7 @@ describe Kitchen::Transport::Ssh::Connection do
 
     describe "when failing to connect" do
       before do
-        Net::SSH.stubs(:start).raises(Errno::ECONNREFUSED.new("Connection refused"))
+        Net::SSH.stubs(:start).raises(Errno::ECONNREFUSED)
       end
 
       it "attempts to connect :max_wait_until_ready / 3 times if failing" do
