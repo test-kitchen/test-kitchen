@@ -73,7 +73,6 @@ module Kitchen
         prepare_install_script
 
         instance.transport.connection(state) do |conn|
-          binding.pry
           config[:uploads].to_h.each do |locals, remote|
             debug("Uploading #{Array(locals).join(", ")} to #{remote}")
             conn.upload(locals.to_s, remote)
@@ -84,7 +83,8 @@ module Kitchen
 
           # Upload the install script instead of directly executing the command
           if install_command
-            remote_script_path = remote_path_join(config[:root_path], "install_script")
+            script_filename = windows_os? ? "install_script.ps1" : "install_script"
+            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
             if install_script_path
               debug("Uploading install script to #{remote_script_path}")
               conn.upload(install_script_path, remote_script_path)
@@ -96,11 +96,11 @@ module Kitchen
           end
 
           info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, config[:root_path])
+          conn.upload(sandbox_dirs, resolve_remote_path(config[:root_path]))
           debug("Transfer complete")
           conn.execute(prepare_command)
           conn.execute_with_retry(
-            run_command,
+            encode_for_powershell(run_command),
             config[:retry_on_exit_code],
             config[:max_retries],
             config[:wait_for_retry]
@@ -289,12 +289,20 @@ module Kitchen
         config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
       end
 
+      def encode_for_powershell(script)
+        return script unless windows_os?
+
+        utf16le = script.encode(Encoding::UTF_16LE)
+        encoded = [utf16le].pack("m0")
+
+        "powershell -EncodedCommand #{encoded}"
+      end
+
       # Writes the install command to a file that will be uploaded to the instance
       # and executed.
       #
       # @api private
       def prepare_install_script
-        binding.pry
         command = install_command
         return if command.nil? || command.empty?
 
@@ -303,10 +311,7 @@ module Kitchen
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
-          # Add shebang based on OS
-          if windows_os?
-            file.write("@echo off\n")
-          else
+          unless windows_os?
             file.write("#!/bin/sh\n")
           end
 
@@ -317,10 +322,6 @@ module Kitchen
         FileUtils.chmod(0755, @install_script_path) unless windows_os?
       end
 
-      # Returns the path to the install script if it exists.
-      #
-      # @return [String] path to the install script
-      # @api private
       def install_script_path
         @install_script_path
       end
@@ -331,7 +332,8 @@ module Kitchen
       # @return [String] command to make the script executable
       # @api private
       def make_executable_command(script_path)
-        return "echo Making script executable" if windows_os?
+        debug "echo Making script executable"
+        return if windows_os?
 
         prefix_command(wrap_shell_code(sudo("chmod +x #{script_path}")))
       end
@@ -343,20 +345,42 @@ module Kitchen
       # @api private
       def run_script_command(script_path)
         if windows_os?
-          script_path
+          "powershell -File #{script_path}"
         else
           prefix_command(wrap_shell_code(sudo(script_path)))
         end
       end
 
-      # Joins path parts to create a remote path on the remote instance.
+      # Resolves PowerShell environment variables in remote paths to actual paths
+      # for use with net/scp and other transport operations that can't handle
+      # PowerShell variables like $env:TEMP.
       #
-      # @param parts [Array<String>] parts of the path to join
-      # @return [String] joined path
+      # @param path [String] the remote path that may contain PowerShell env vars
+      # @return [String] the resolved path
       # @api private
-      def remote_path_join(*parts)
-        path_separator = windows_os? ? "\\" : "/"
-        parts.join(path_separator)
+      def resolve_remote_path(path)
+        return path unless windows_os?
+        
+        # For Windows, resolve common PowerShell environment variables
+        resolved_path = path.dup
+        
+        # Replace $env:TEMP with the actual Windows temp directory based on the transport username
+        if resolved_path.include?("$env:TEMP")
+          # Try to get username from transport configuration
+          # For Windows systems, fallback to "Administrator" if not found
+          username = begin
+            instance.transport[:username]
+          rescue
+            nil
+          end
+          username ||= "Administrator"
+          
+          temp_path = "C:/Users/#{username}/AppData/Local/Temp"
+          resolved_path = resolved_path.gsub("$env:TEMP", temp_path)
+        end
+        
+        # Convert backslashes to forward slashes for cross-platform compatibility
+        resolved_path.tr("\\", "/")
       end
     end
   end

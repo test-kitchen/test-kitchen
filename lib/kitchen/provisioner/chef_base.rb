@@ -311,7 +311,6 @@ module Kitchen
 
       # (see Base#init_command)
       def init_command
-        binding.pry
         dirs = %w{
           cookbooks data data_bags environments roles clients
           encrypted_data_bag_secret
@@ -323,7 +322,7 @@ module Kitchen
                  init_command_vars_for_bourne(dirs)
                end
 
-        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
+        encode_for_powershell(prefix_command(shell_code_from_file(vars, "chef_base_init_command")))
       end
 
       # (see Base#install_command)
