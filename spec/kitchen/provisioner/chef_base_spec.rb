@@ -841,7 +841,7 @@ describe Kitchen::Provisioner::ChefBase do
       before do
         @root = Dir.mktmpdir
         config[:kitchen_root] = @root
-        config[:product_name] = 'foobar'
+        config[:product_name] = "foobar"
         FileUtils.touch("#{config[:kitchen_root]}/Policyfile.rb")
         Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
       end
@@ -1228,7 +1228,7 @@ describe Kitchen::Provisioner::ChefBase do
               provisioner
 
               _(logged_output.string).must_match debug_line(
-                "Policyfile found at #{kitchen_root}/Policyfile.rb, "\
+                "Policyfile found at #{kitchen_root}/Policyfile.rb, " \
                 "using Policyfile to resolve cookbook dependencies"
               )
             end
@@ -1746,7 +1746,7 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       it "only includes one chef run" do
-        provisioner.chef_cmds("chef-bin").count == 1
+        provisioner.chef_cmds("chef-bin").one?
       end
     end
 
@@ -1786,7 +1786,7 @@ describe Kitchen::Provisioner::ChefBase do
 
         # Issue 1798
         it "only includes `exit` once" do
-          provisioner.chef_cmds("chef-bin").join("\n").scan("exit $LastExitCode").count == 1
+          provisioner.chef_cmds("chef-bin").join("\n").scan("exit $LastExitCode").one?
         end
 
         it "only includes `exit` on last command" do

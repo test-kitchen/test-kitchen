@@ -26,7 +26,7 @@ describe Kitchen::LazyHash do
 
   let(:hash_obj) do
     {
-      shed_color: ->(c) { c.color },
+      shed_color: lambda(&:color),
       barn: "locked",
       genre: proc { |c| "#{c.metal} metal" },
     }
@@ -105,8 +105,7 @@ describe Kitchen::LazyHash do
     end
 
     it "yields each item to the block if a block is given to each()" do
-      items = []
-      Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i }
+      items = Kitchen::LazyHash.new(hash_obj, context).map { |i| i }
       _(items).must_equal [[:shed_color, "blue"], [:barn, "locked"], [:genre, "heavy metal"]]
     end
   end
