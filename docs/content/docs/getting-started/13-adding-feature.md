@@ -6,12 +6,11 @@ menu:
     parent: getting_started
     weight: 130
 ---
+In this section, we'll extend our Git cookbook to provide basic support for a read-only Git daemon. You'll learn how to add a new suite, create a dedicated recipe, and write targeted tests for this new functionality.
 
-Now we're going to add limited support to our Git cookbook for a read-only Git daemon. This will walk us through adding a new suite, recipe, and corresponding set of tests.
+Our goal here isn't to craft a flawless Chef Infra cookbook. Instead, we'll focus on quickly iterating and validating our changes, even if that means introducing some stylistic or structural imperfections along the way. This "first draft" approach keeps us moving forward and leaves room for future improvements.
 
-We're not looking to make the perfect Chef Infra cookbook in this guide. There will be more than a couple style and code smells as we go but this is to keep us focused on driving our tool. Think of it as a dirty first-pass implementation. Plenty of room for refactoring!
-
-It seems like the reasonable thing to do would be to create another recipe in our Chef Infra cookbook to deal with the Git server. After all, not every server that requires the Git tool needs to be a server. We are adding net-new behavior that needs to operate independently of the default recipe. So it's natural that we want to test these two behaviors in isolation.
+Since not every system that installs Git needs to run a Git server, it makes sense to isolate this new behavior in its own recipe. By doing so, we can test the Git daemon functionality independently from the default recipe, ensuring our changes are modular and maintainable.
 
 **Testing different behaviors of a codebase in isolation is the primary use case for Test Kitchen Suites.**
 
