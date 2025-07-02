@@ -78,7 +78,7 @@ module Kitchen
             conn.upload(locals.to_s, remote)
           end
 
-          # Run the init command to initialize everything
+          # Run the init command to create the kitchen tmp directory
           conn.execute(init_command)
 
           # Upload the install script instead of directly executing the command
@@ -95,6 +95,8 @@ module Kitchen
             end
           end
 
+          # The install script will remove the kitchen tmp directory, hence creating it again.
+          conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, resolve_remote_path(config[:root_path]))
           debug("Transfer complete")
@@ -295,7 +297,7 @@ module Kitchen
         utf16le = script.encode(Encoding::UTF_16LE)
         encoded = [utf16le].pack("m0")
 
-        "powershell -EncodedCommand #{encoded}"
+        "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand #{encoded}"
       end
 
       # Writes the install command to a file that will be uploaded to the instance
@@ -307,14 +309,14 @@ module Kitchen
         return if command.nil? || command.empty?
 
         info("Preparing install script")
-        @install_script_path = File.join(sandbox_path, "install_script")
+        script_filename = windows_os? ? "install_script.ps1" : "install_script"
+        @install_script_path = File.join(sandbox_path, script_filename)
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
           unless windows_os?
             file.write("#!/bin/sh\n")
           end
-
           file.write(command)
         end
 
@@ -345,7 +347,9 @@ module Kitchen
       # @api private
       def run_script_command(script_path)
         if windows_os?
-          "powershell -File #{script_path}"
+          # Use parameters to suppress PowerShell formatting and control characters
+          # that can interfere with console output over SSH
+          "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
         else
           prefix_command(wrap_shell_code(sudo(script_path)))
         end
@@ -360,25 +364,25 @@ module Kitchen
       # @api private
       def resolve_remote_path(path)
         return path unless windows_os?
-        
+
         # For Windows, resolve common PowerShell environment variables
         resolved_path = path.dup
-        
+
         # Replace $env:TEMP with the actual Windows temp directory based on the transport username
         if resolved_path.include?("$env:TEMP")
           # Try to get username from transport configuration
           # For Windows systems, fallback to "Administrator" if not found
           username = begin
             instance.transport[:username]
-          rescue
-            nil
+                     rescue
+                       nil
           end
           username ||= "Administrator"
-          
+
           temp_path = "C:/Users/#{username}/AppData/Local/Temp"
           resolved_path = resolved_path.gsub("$env:TEMP", temp_path)
         end
-        
+
         # Convert backslashes to forward slashes for cross-platform compatibility
         resolved_path.tr("\\", "/")
       end
