@@ -8,7 +8,7 @@ menu:
     aliases: /docs/getting-started/introduction/
 ---
 
-The best way to understand what Test Kitchen does is to see it in action so we're going to use it to help us write a simple Chef Infra cookbook. This cookbook will be complete with tests that verify the cookbook does what it's supposed to do. Test Kitchen comes at the process of software development with an approach that embraces the idea that writing the tests *first*, watching them fail, and then writing the code to make them pass is a great way to go. Also known as *red, green, refactor*, it's a great way to write quality software. By the end of this guide, you'll be familiar with this approach.
+Test Kitchen is best understood through hands-on experience. In this guide, you'll use Test Kitchen to create a simple Chef Infra cookbook, complete with tests that ensure your cookbook works as intended. Test Kitchen encourages a test-driven development (TDD) workflow: write the tests first, watch them fail, then implement code to make them pass. This cycle—commonly known as *red, green, refactor*—helps you build reliable, maintainable software. By following along, you'll become comfortable with this approach and see how Test Kitchen streamlines cookbook development.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/installing">Next - Installing</a>

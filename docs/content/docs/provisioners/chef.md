@@ -39,7 +39,7 @@ provisioner:
   checksum: <SHA256> # used in conjunction with download_url to validate
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     attributes:
       cookbook_a:
         attr_b: "value"

@@ -29,8 +29,8 @@
 #   name: chef_apply
 #
 # platforms:
-#   - name: ubuntu-20.04
-#   - name: centos-8
+#   - name: ubuntu-24.04
+#   - name: almalinux-10
 #
 # suites:
 #   - name: default

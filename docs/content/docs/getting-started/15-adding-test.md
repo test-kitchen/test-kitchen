@@ -32,12 +32,12 @@ end
 
 This test checks that a process is listening on port 9418 and a service called "git-daemon" is installed, enabled, and running.
 
-As our primary target platform was Ubuntu 20.04, we'll target this one first for development. Now, in test driven development (TDD) style we'll run `kitchen test server` to watch our tests fail spectacularly:
+As our primary target platform was Ubuntu 24.04, we'll target this one first for development. Now, in test driven development (TDD) style we'll run `kitchen test server` to watch our tests fail spectacularly:
 
 ```ruby
 ...
 ================================================================================
-Chef encountered an error attempting to load the node data for "server-ubuntu-2004"
+Chef encountered an error attempting to load the node data for "server-ubuntu-2404"
 ================================================================================
 
 Unexpected Error:
@@ -49,9 +49,9 @@ Chef::PolicyBuilder::Policyfile::ConfigurationError: Policy 'git_cookbook' revis
 One quick check of `kitchen list` tells us that our instance was created but not successfully converged:
 
 ```ruby
-$ kitchen list server-ubuntu-2004
+$ kitchen list server-ubuntu-2404
 Instance            Driver   Provisioner  Verifier  Transport  Last Action  Last Error
-server-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        Created      Kitchen::ActionFailed
+server-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        Created      Kitchen::ActionFailed
 ```
 
 Yes, you can specify one or more instances with the same Ruby regular expression globbing as any other `kitchen` sub-commands.
