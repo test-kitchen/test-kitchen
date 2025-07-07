@@ -78,24 +78,24 @@ Example configuration using Bento images:
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-7
-  - name: freebsd-12
+  - name: ubuntu-24.04
+  - name: almalinux-10
+  - name: freebsd-14
 ```
 
 This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      box: bento/ubuntu-20.04
-  - name: centos-7
+      box: bento/ubuntu-24.04
+  - name: almalinux-10
     driver:
-      box: bento/centos-7
-  - name: freebsd-12
+      box: bento/almalinux-10
+  - name: freebsd-14
     driver:
-      box: bento/freebsd-12
+      box: bento/freebsd-14
 ```
 
 ### Supported Bento Platforms
@@ -124,16 +124,16 @@ If a platform name is specified that is not published by the Bento project, it w
 
 ```yaml
 platforms:
-  - name: my_vagrant_account/redhat-8
+  - name: my_vagrant_account/redhat-10
 ```
 
 This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
 platforms:
-  - name: my_vagrant_account/redhat-8
+  - name: my_vagrant_account/redhat-10
     driver:
-      box: my_vagrant_account/redhat-8
+      box: my_vagrant_account/redhat-10
 ```
 
 Vagrant boxes can also be fetched from non-Vagrant Cloud location by specifying the `box_url`:
@@ -177,8 +177,8 @@ The default will be computed from the platform name of the instance. However,
 for a number of common platforms in the [Bento][bento] project, the default will
 prefix the name with `bento/` in accordance with Vagrant Cloud naming standards.
 
-For example, a platform with name `ubuntu-20.04` will produce a
-default `box` value of `bento/ubuntu-20.04`. Alternatively, a box called
+For example, a platform with name `ubuntu-24.04` will produce a
+default `box` value of `bento/ubuntu-24.04`. Alternatively, a box called
 `slackware-14.1` will produce a default `box` value of `slackware-14.1`.
 
 ### box_check_update
@@ -196,7 +196,7 @@ Whether to prune older versions of the box and only keep the newest version
 ### box_url
 
 A box_url is not required when using the Vagrant Cloud format of
-`bento/ubuntu-20.04` assuming the organization and box referenced
+`bento/ubuntu-24.04` assuming the organization and box referenced
 exist. If using a custom box this can be an `https://` or `file://`
 URL.
 
@@ -382,7 +382,7 @@ providers.
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       gui: true
 ```
@@ -407,7 +407,7 @@ Allows to use linked clones to import boxes for VirtualBox, VMware, Parallels De
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       linked_clone: true
 ```
@@ -648,7 +648,7 @@ to save on boot time and potential rebooting.
 ```yaml
 ---
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       vm_hostname: server1.example.com
 ```
@@ -679,8 +679,8 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
   - name: windows-2022
     driver:
       box: my-custom-box

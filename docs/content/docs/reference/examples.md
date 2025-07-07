@@ -34,8 +34,8 @@ verifier:
 platforms:
   # Drivers may support defaults that automatically
   # map certain names to an image for the given driver
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
 
 # Enumerate suites
 # At least 1 suite is **required**
@@ -87,7 +87,7 @@ provisioner:
     environment: test
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
 
 suites:
   - name: default

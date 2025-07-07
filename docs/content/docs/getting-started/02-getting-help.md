@@ -30,7 +30,7 @@ Commands:
   kitchen version                                 # Print Test Kitchen's version information
 ```
 
-For more detailed help on a given subcommand, add it to end of the `help` subcommand. Let's take a look at the useful `kitchen diagnose` subcommand. This particular command is helpful when trying to visualize the layers of Test Kitchen configuration and troubleshoot.
+For more detailed information about a specific subcommand, append its name to the `help` command. For example, the `kitchen diagnose` subcommand is especially useful for visualizing Test Kitchen's configuration layers and troubleshooting issues.
 
 ```ruby
 $ kitchen help diagnose

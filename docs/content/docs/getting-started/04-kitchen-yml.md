@@ -7,14 +7,9 @@ menu:
     weight: 40
 ---
 
-<div class="callout">
-<h3 class="callout--title">Note</h3>
-As of test-kitchen 1.21.0, we now prefer <code>kitchen.yml</code> over <code>.kitchen.yml</code>. This preference applies to <code>kitchen.local.yml</code> as well. This is backward compatible so the dot versions continue to work.
-</div>
+Let's take a closer look at the `kitchen.yml` file. Although Chef Workstation generates an initial version for you, it's important to review and customize this file to suit your testing needs.
 
-Let's turn our attention to the `kitchen.yml` file for a minute. While Chef Workstation may have created the initial file automatically, it's expected that you will read and edit this file. After all, you know what you want to test... right?
-
-For the moment let's say we only care about running our Chef cookbook on Ubuntu 20.04 with the latest Chef Infra Client release. In that case, we can edit the `kitchen.yml` file so that we pin the version of Chef and trim the list of `platforms` to only one entry like so:
+Suppose you want to test your Chef cookbook exclusively on Ubuntu 24.04 using the latest Chef Infra Client. In this scenario, you can update the `kitchen.yml` file to specify the desired Chef version and limit the `platforms` section to just one entry, as shown below:
 
 ```yaml
 ---
@@ -28,7 +23,7 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
 
 suites:
   - name: default
@@ -43,7 +38,7 @@ To see the results of our work, let's run the `kitchen list` subcommand:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 Let's talk about what an **instance** is and how kitchen interacts with these.

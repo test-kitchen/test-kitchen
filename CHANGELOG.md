@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.7.2](https://github.com/test-kitchen/test-kitchen/compare/v3.7.1...v3.7.2) (2025-07-03)
+
+
+### Bug Fixes
+
+* Update the docs + init for modern platforms ([#2009](https://github.com/test-kitchen/test-kitchen/issues/2009)) ([2c8cca1](https://github.com/test-kitchen/test-kitchen/commit/2c8cca1f77d2b589ae0ed7a6e5cc971de7141f5c))
+
 ## [3.7.1](https://github.com/test-kitchen/test-kitchen/compare/v3.7.0...v3.7.1) (2024-12-02)
 
 
