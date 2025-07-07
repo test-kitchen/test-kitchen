@@ -9,7 +9,7 @@ menu:
 
 Here we go, time to automate our Git installation! Open `recipes/default.rb` in your editor of choice and add the following:
 
-```bash
+```ruby
 package 'git'
 ```
 

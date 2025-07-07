@@ -37,7 +37,7 @@ describe Kitchen::LoginCommand do
   end
 
   it "#arguments returns the command arguments" do
-    argv.concat(["-o", "two"])
+    argv.push("-o", "two")
 
     _(login_command.arguments).must_equal ["-o", "two"]
   end
@@ -57,7 +57,7 @@ describe Kitchen::LoginCommand do
 
     _(login_command.exec_args).must_equal ["alpha", {}]
 
-    argv.concat(["-o", "beta"])
+    argv.push("-o", "beta")
 
     _(login_command.exec_args).must_equal ["alpha", "-o", "beta", {}]
 

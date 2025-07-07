@@ -7,9 +7,9 @@ menu:
     weight: 90
 ---
 
-Being able to manually verify the Chef Infra Client run is great but it would be even better if we had an executable test that would fail if our assumptions were ever proven to be false. Remember how we manually verified that Git was installed in the previous section? Seems like a pretty decent first test to me!
+Being able to manually verify that the Chef Infra Client run worked is helpful, but having an automated test that fails when our assumptions are wrong is even better. Remember how we manually checked that Git was installed in the last section? That’s a great candidate for our first automated test.
 
-Test Kitchen presumes you want to test things and supports a variety of different frameworks for doing so. For the purpose of our guide we're going to use a framework called Chef InSpec which Test Kitchen consumes via the `kitchen-inspec` plugin. For more information on available testing frameworks check out [Verifiers](/docs/verifiers)
+Test Kitchen is built with testing in mind and supports several testing frameworks. In this guide, we’ll use Chef InSpec, which integrates with Test Kitchen via the `kitchen-inspec` plugin. If you’re curious about other supported frameworks, check out the [Verifiers](/docs/verifiers) section.
 
 The cookbook skeleton already has conveniently created a test for you at `test/integration/default/default_test.rb`. Open this file in your editor and edit to match the following content:
 

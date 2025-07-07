@@ -167,7 +167,7 @@ describe Kitchen::Transport::Exec::Connection do
       ENV["temp"] = "/tmp"
       FileUtils.expects(:mkdir_p).with("/tmp/kitchen")
       FileUtils.expects(:cp_r).with("/tmp/sandbox/cookbooks", "/tmp/kitchen")
-      connection.upload(%w{/tmp/sandbox/cookbooks}, "\$env:TEMP\\kitchen")
+      connection.upload(%w{/tmp/sandbox/cookbooks}, "$env:TEMP\\kitchen")
     end
   end
 

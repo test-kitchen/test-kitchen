@@ -7,7 +7,7 @@ menu:
     weight: 120
 ---
 
-Now that we have Ubuntu working, let's add support for CentOS to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and the `centos-8` line to your platforms list so that it resembles:
+Now that we have Ubuntu working, let's add support for AlmaLinux to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and the `almalinux-10` line to your platforms list so that it resembles:
 
 ```yaml
 ---
@@ -21,8 +21,8 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
 
 suites:
   - name: default
@@ -37,8 +37,8 @@ Now let's check the status of our instances:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-almalinux-10 Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 We're going to use two shortcuts in the next command:
@@ -46,19 +46,19 @@ We're going to use two shortcuts in the next command:
 * Each instance has a simple state machine that tracks where it is in its lifecycle. Given its current state and the desired state, the instance is smart enough to run all actions in between current and desired.
 * Any `kitchen` subcommand that takes an instance name as an argument can take a Ruby regular expression that will be used to glob a list of instances together. This means that `kitchen test ubuntu` would run the **test** action on all instances that had `ubuntu` in their name. Note that the **list** subcommand also takes the regex-globbing argument so feel free to experiment there.
 
-In our next example we'll select the `default-centos-8` instance with simply `8` and will take it from uncreated to verified in one command.
+In our next example we'll select the `default-almalinux-10` instance with simply `10` and will take it from uncreated to verified in one command.
 
-Let's see how CentOS runs our cookbook:
+Let's see how AlmaLinux runs our cookbook:
 
 ```ruby
-$ kitchen verify 8
------> Starting Test Kitchen (v3.2.2)
------> Creating <default-centos-8>...
+$ kitchen verify 10
+-----> Starting Test Kitchen (v3.7.1)
+-----> Creating <default-almalinux-10>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'bento/centos-8'...
+       ==> default: Importing base box 'bento/almalinux-10'...
 ==> default: Matching MAC address for NAT networking...
-       ==> default: Checking if box 'bento/centos-8' version '202112.19.0' is up to date...
-       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-centos-8-6e8b4f65-b069-4529-9b0a-ad936dc45032
+       ==> default: Checking if box 'bento/almalinux-10' version '202112.19.0' is up to date...
+       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-almalinux-10-6e8b4f65-b069-4529-9b0a-ad936dc45032
        ==> default: Clearing any previously set network interfaces...
        ==> default: Preparing network interfaces based on configuration...
            default: Adapter 1: nat
@@ -84,19 +84,19 @@ $ kitchen verify 8
            default: /tmp/omnibus/cache => /Users/tsmith/.kitchen/cache
        ==> default: Machine not provisioned because `--no-provision` is specified.
        [SSH] Established
-       Vagrant instance <default-centos-8> created.
-       Finished creating <default-centos-8> (0m58.00s).
------> Converging <default-centos-8>...
+       Vagrant instance <default-almalinux-10> created.
+       Finished creating <default-almalinux-10> (0m58.00s).
+-----> Converging <default-almalinux-10>...
        Preparing files for transfer
        Installing cookbooks for Policyfile /Users/tsmith/git_cookbook/Policyfile.rb using `chef install`
        Installing cookbooks from lock
        Installing git_cookbook 0.1.0
        Preparing dna.json
-       Exporting cookbook dependencies from Policyfile /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww...
-       Exported policy 'git_cookbook' to /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww
+       Exporting cookbook dependencies from Policyfile /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-almalinux-10-sandbox-20200610-87075-1nvx3ww...
+       Exported policy 'git_cookbook' to /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-almalinux-10-sandbox-20200610-87075-1nvx3ww
 
        To converge this system with the exported policy, run:
-         cd /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-centos-8-sandbox-20200610-87075-1nvx3ww
+         cd /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-almalinux-10-sandbox-20200610-87075-1nvx3ww
          chef-client -z
        Removing non-cookbook files before transfer
        Preparing validation.pem
@@ -138,12 +138,12 @@ $ kitchen verify 8
        Updating / installing...
           1:chef-17.9.42-1.el7               ################################# [100%]
        Thank you for installing Chef Infra Client! For help getting started visit https://learn.chef.io
-       Transferring files to <default-centos-8>
+       Transferring files to <default-almalinux-10>
        +---------------------------------------------+
        ✔ 2 product licenses accepted.
        +---------------------------------------------+
        Starting Chef Infra Client, version 17.9.42
-       Creating a new client identity for default-centos-8 using the validator key.
+       Creating a new client identity for default-almalinux-10 using the validator key.
        Using policy 'git_cookbook' at revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8'
        resolving cookbooks for run list: ["git_cookbook::default@0.1.0 (4def6b4)"]
        Synchronizing Cookbooks:
@@ -153,16 +153,16 @@ $ kitchen verify 8
        Converging 1 resources
        Recipe: git_cookbook::default
          * dnf_package[git] action install
-           - install version 0:2.18.2-2.el8_1.x86_64 of package git
+           - install version 0:2.47.1-2.el10_0.x86_64 of package git
 
        Running handlers:
        Running handlers complete
        Chef Infra Client finished, 1/1 resources updated in 35 seconds
-       Downloading files from <default-centos-8>
-       Finished converging <default-centos-8> (0m53.28s).
------> Setting up <default-centos-8>...
-       Finished setting up <default-centos-8> (0m0.00s).
------> Verifying <default-centos-8>...
+       Downloading files from <default-almalinux-10>
+       Finished converging <default-almalinux-10> (0m53.28s).
+-----> Setting up <default-almalinux-10>...
+       Finished setting up <default-almalinux-10> (0m0.00s).
+-----> Verifying <default-almalinux-10>...
        Loaded tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"}
 
 Profile: tests from {:path=>"/Users/tsmith/git_cookbook/test/integration/default"} (tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"})
@@ -173,22 +173,22 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  is expected to be installed
 
 Test Summary: 1 successful, 0 failures, 0 skipped
-       Finished verifying <default-centos-8> (0m0.80s).
+       Finished verifying <default-almalinux-10> (0m0.80s).
 -----> Test Kitchen is finished. (1m54.59s)
 ```
 
-Nice! We've verified that our cookbook works on Ubuntu 20.04 and CentOS 8. Since the CentOS instance is no longer needed, let's destroy it for now:
+Nice! We've verified that our cookbook works on Ubuntu 24.04 and CentOS 8. Since the CentOS instance is no longer needed, let's destroy it for now:
 
 ```ruby
 $ kitchen destroy
------> Starting Test Kitchen (v3.2.2)
------> Destroying <default-ubuntu-2004>...
-       Finished destroying <default-ubuntu-2004> (0m0.00s).
------> Destroying <default-centos-8>...
+-----> Starting Test Kitchen (v3.7.1)
+-----> Destroying <default-ubuntu-2404>...
+       Finished destroying <default-ubuntu-2404> (0m0.00s).
+-----> Destroying <default-almalinux-10>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-centos-8> destroyed.
-       Finished destroying <default-centos-8> (0m7.11s).
+       Vagrant instance <default-almalinux-10> destroyed.
+       Finished destroying <default-almalinux-10> (0m7.11s).
 -----> Test Kitchen is finished. (0m8.76s)
 ```
 
@@ -201,8 +201,8 @@ Let's make sure everything has been destroyed:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-almalinux-10     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 <div class="sidebar--footer">

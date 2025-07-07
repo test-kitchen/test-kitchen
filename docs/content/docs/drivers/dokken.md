@@ -123,9 +123,9 @@ The `creds_file` configuration options allows you to specify the location of a `
 
 ```yaml
 platforms:
-  - name: centos-7
+  - name: almalinux-10
     driver:
-      image: reg/centos-7
+      image: reg/almalinux-10
       creds_file: './creds.json'
 ```
 
@@ -183,7 +183,7 @@ driver:
 
 #### docker_registry
 
-The `docker_registry` configuration option allows you to use Docker registries other than Docker Hub including Docker Hub mirrors or private registries. If using a private registry make sure that registry has the [Chef Infra image](https://hub.docker.com/r/chef/chef), any [dokken images](https://hub.docker.com/u/dokken) in your `kitchen.yml` file, as well as the [centos:7 image](https://hub.docker.com/_/centos) used during the converge process.
+The `docker_registry` configuration option allows you to use Docker registries other than Docker Hub including Docker Hub mirrors or private registries. If using a private registry make sure that registry has the [Chef Infra image](https://hub.docker.com/r/chef/chef), any [dokken images](https://hub.docker.com/u/dokken) in your `kitchen.yml` file, as well as the [almalinux:10 image](https://hub.docker.com/_/almalinux) used during the converge process.
 
 ```yaml
 driver:
@@ -220,9 +220,9 @@ transport:
   name: dokken
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-20.04
+      image: dokken/ubuntu-24.04
 
 suites:
   - name: cluster-server-1
@@ -309,7 +309,7 @@ To allow IPv6 Docker networks to reach the internet IPv6 firewall rules must be 
 }
 ```
 
-Some containers require the ip6table_filter kernel module to be loaded on the host system or ip6tables will not function on the container (Centos 7 for example). To check if the module is loaded use the command
+Some containers require the ip6table_filter kernel module to be loaded on the host system or ip6tables will not function on the container. To check if the module is loaded use the command
 
 ```shell
 sudo lsmod | grep ip6table_filter
@@ -353,14 +353,14 @@ The `pid_one_command` configuration option sets the pid 1 command of the contain
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-20.04
+      image: dokken/ubuntu-24.04
       pid_one_command: /bin/systemd
 
-  - name: centos-8
+  - name: almalinux-10
     driver:
-      image: dokken/centos-8
+      image: dokken/almalinux-10
       pid_one_command: /usr/lib/systemd/systemd
 ```
 
@@ -378,9 +378,9 @@ or the following under a specif platform.
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-20.04
+      image: dokken/ubuntu-24.04
       platform: linux/amd64
 ```
 
@@ -547,7 +547,7 @@ The `timeout` configuration option specifies the timeout in seconds for communic
 
 ### Dokken Linux Containers
 
-Specially created containers for kitchen-dokken, build off official Linux distro images, but include all of the packages and services necessary to test Chef Infra cookbooks. These containers are produced for leading Linux distributions such as CentOS, OpenSUSE, Amazon Linux, and Ubuntu. For a complete list of available dokken specific container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.
+Specially created containers for kitchen-dokken, build off official Linux distro images, but include all of the packages and services necessary to test Chef Infra cookbooks. These containers are produced for leading Linux distributions such as AlmaLinux, Amazon Linux, Fedora, OpenSUSE, and Ubuntu. For a complete list of available dokken specific container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.
 
 ### Example **kitchen.yml**
 
@@ -567,16 +567,16 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-20.04
+      image: dokken/ubuntu-24.04
       pid_one_command: /bin/systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
 
-  - name: centos-8
+  - name: almalinux-10
     driver:
-      image: dokken/centos-8
+      image: dokken/almalinux-10
       pid_one_command: /usr/lib/systemd/systemd
 
 suites:
@@ -608,15 +608,15 @@ transport:
 verifier:
   name: inspec
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      image: dokken/ubuntu-20.04
+      image: dokken/ubuntu-24.04
       pid_one_command: /bin/systemd
       intermediate_instructions:
         - RUN /usr/bin/apt-get update
-  - name: centos-8
+  - name: almalinux-10
     driver:
-      image: dokken/centos-8
+      image: dokken/almalinux-10
       pid_one_command: /usr/lib/systemd/systemd
 suites:
   - name: default
