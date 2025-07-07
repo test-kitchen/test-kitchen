@@ -473,7 +473,7 @@ describe Kitchen::Provisioner::Base do
       _(content).must_include("echo hello")
     end
 
-    it "for Windows, creates a batch script with the install command" do
+    it "for Windows, creates a PowerShell script with the install command" do
       provisioner.stubs(:windows_os?).returns(true)
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
@@ -481,7 +481,6 @@ describe Kitchen::Provisioner::Base do
       _(script_path).must_match(/install_script\.ps1$/)
       _(File.exist?(script_path)).must_equal true
       content = File.read(script_path)
-      _(content).must_include("@echo off")
       _(content).must_include("echo hello")
     end
 
