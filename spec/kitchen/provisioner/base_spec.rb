@@ -486,17 +486,22 @@ describe Kitchen::Provisioner::Base do
 
     it "makes the script executable on non-Windows platforms" do
       provisioner.stubs(:windows_os?).returns(false)
+      FileUtils.expects(:chmod).with(0755, anything)
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
-      _(File.stat(script_path).mode.to_s(8).end_with?("755")).must_equal true
+
+      # Verify the script was created
+      _(File.exist?(script_path)).must_equal true
     end
 
     it "does not make the script executable on Windows platforms" do
       provisioner.stubs(:windows_os?).returns(true)
+      FileUtils.expects(:chmod).never
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
-      # On Windows, chmod is skipped so the file won't have 755 permissions
-      _(File.stat(script_path).mode.to_s(8).end_with?("755")).must_equal false
+
+      # Verify the script was created
+      _(File.exist?(script_path)).must_equal true
     end
 
     it "handles nil install command" do
