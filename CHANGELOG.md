@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.8.0](https://github.com/test-kitchen/test-kitchen/compare/v3.7.2...v3.8.0) (2025-07-12)
+
+
+### Features
+
+* Support for SSH transport for windows platfoms ([#2007](https://github.com/test-kitchen/test-kitchen/issues/2007)) ([1c79066](https://github.com/test-kitchen/test-kitchen/commit/1c790661c7b81c917a4ea1eb0276296ade4b1f39))
+
 ## [3.7.2](https://github.com/test-kitchen/test-kitchen/compare/v3.7.1...v3.7.2) (2025-07-03)
 
 
