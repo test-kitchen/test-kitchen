@@ -364,7 +364,9 @@ module Kitchen
           logger.debug(masked_string)
           yield
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
-          if (opts[:retries] -= 1) > 0
+          retries_left = opts[:retries] - 1
+          if retries_left > 0
+            opts[:retries] = retries_left
             message = if opts[:message]
                         logger.debug("[SSH] connection failed (#{e.inspect})")
                         opts[:message]
