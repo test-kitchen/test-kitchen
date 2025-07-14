@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.1.1 -->
-## [v1.1.1](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.1) (2025-06-30)
+<!-- latest_release 1.1.2 -->
+## [v1.1.2](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.2) (2025-07-14)
 
 #### Merged Pull Requests
-- CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611))
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -22,6 +23,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -34,6 +36,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -48,6 +51,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -60,6 +64,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -76,6 +81,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -88,6 +94,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -102,6 +109,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -114,6 +122,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -132,6 +141,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -144,6 +154,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -158,6 +169,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -170,6 +182,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -186,6 +199,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -198,6 +212,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -212,6 +227,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -224,6 +240,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -244,6 +261,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -256,6 +274,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -270,6 +289,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -282,6 +302,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -298,6 +319,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -310,6 +332,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -324,6 +347,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -336,6 +360,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -354,6 +379,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -366,6 +392,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -380,6 +407,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -392,6 +420,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -408,6 +437,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -420,6 +450,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -434,6 +465,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -446,6 +478,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -468,6 +501,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -480,6 +514,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -494,6 +529,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -506,6 +542,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -522,6 +559,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -534,6 +572,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -548,6 +587,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -560,6 +600,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -578,6 +619,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -590,6 +632,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -604,6 +647,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -616,6 +660,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -632,6 +677,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -644,6 +690,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -658,6 +705,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -670,6 +718,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -690,6 +739,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -702,6 +752,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -716,6 +767,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -728,6 +780,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -744,6 +797,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -756,6 +810,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -770,6 +825,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -782,6 +838,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -800,6 +857,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -812,6 +870,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -826,6 +885,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -838,6 +898,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -854,6 +915,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -866,6 +928,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -880,6 +943,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -892,6 +956,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -924,6 +989,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -936,6 +1002,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -950,6 +1017,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -962,6 +1030,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -978,6 +1047,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -990,6 +1060,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1004,6 +1075,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1016,6 +1088,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1034,6 +1107,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1046,6 +1120,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1060,6 +1135,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1072,6 +1148,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1088,6 +1165,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1100,6 +1178,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1114,6 +1193,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1126,6 +1206,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1146,6 +1227,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1158,6 +1240,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1172,6 +1255,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1184,6 +1268,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1200,6 +1285,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1212,6 +1298,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1226,6 +1313,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1238,6 +1326,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1256,6 +1345,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1268,6 +1358,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1282,6 +1373,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1294,6 +1386,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1310,6 +1403,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1322,6 +1416,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1336,6 +1431,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
@@ -1348,6 +1444,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
 - CHEF-21187- Ruby 3.4 update in chef-test-kitchen-enterprise hab package [#46](https://github.com/chef/chef-test-kitchen-enterprise/pull/46) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.1 -->
 - Ruby upgrade 3.4 change [#43](https://github.com/chef/chef-test-kitchen-enterprise/pull/43) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.1.0 -->
 - [CHEF-20238] Updated the kitchen license commands with usage info [#39](https://github.com/chef/chef-test-kitchen-enterprise/pull/39) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.18 -->
