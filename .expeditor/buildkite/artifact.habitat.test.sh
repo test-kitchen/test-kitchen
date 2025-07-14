@@ -2,7 +2,6 @@
 
 set -eo pipefail
 
-export HAB_ORIGIN='ci'
 export PLAN='chef-test-kitchen-enterprise'
 export CHEF_LICENSE="accept-no-persist"
 export HAB_LICENSE="accept-no-persist"
@@ -40,6 +39,10 @@ uname -a
 echo "--- Installing Habitat"
 id -a
 curl https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.sh | bash
+
+# Set HAB_ORIGIN after Habitat installation
+echo "--- Setting HAB_ORIGIN to 'ci' after installation"
+export HAB_ORIGIN='ci'
 
 echo "--- :key: Generating fake origin key"
 hab origin key generate "$HAB_ORIGIN"
