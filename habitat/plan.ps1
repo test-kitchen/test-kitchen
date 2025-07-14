@@ -9,7 +9,7 @@ $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
 $pkg_maintainer="The Chef Maintainers <humans@chef.io>"
 
 $pkg_deps=@(
-  "core/ruby3_4-plus-devkit/3.4.2/20250428110641"
+  "core/ruby3_4-plus-devkit"
   "core/git"
 )
 $pkg_bin_dirs=@("bin"
