@@ -115,7 +115,7 @@ module Kitchen
           end
         end
 
-        code = powershell_shell? ? %{& #{script}} : sudo(script)
+        code = powershell_shell? ? %{& "#{script}"} : sudo(script)
 
         prefix_command(wrap_shell_code(code))
       end

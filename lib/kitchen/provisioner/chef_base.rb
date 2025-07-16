@@ -322,7 +322,7 @@ module Kitchen
                  init_command_vars_for_bourne(dirs)
                end
 
-        encode_for_powershell(prefix_command(shell_code_from_file(vars, "chef_base_init_command")))
+        prefix_command(shell_code_from_file(vars, "chef_base_init_command"))
       end
 
       # (see Base#install_command)

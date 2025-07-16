@@ -79,7 +79,7 @@ module Kitchen
           end
 
           # Run the init command to create the kitchen tmp directory
-          conn.execute(init_command)
+          conn.execute(encode_for_powershell(init_command))
 
           # Upload the install script instead of directly executing the command
           if install_command
@@ -293,6 +293,7 @@ module Kitchen
 
       def encode_for_powershell(script)
         return script unless windows_os?
+        return script if script.nil? || script.empty?
 
         utf16le = script.encode(Encoding::UTF_16LE)
         encoded = [utf16le].pack("m0")
