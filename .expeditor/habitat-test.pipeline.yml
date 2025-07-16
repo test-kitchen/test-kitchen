@@ -2,7 +2,7 @@
 expeditor:
   defaults:
     buildkite:
-      timeout_in_minutes: 30
+      timeout_in_minutes: 60
       retry:
         automatic:
           limit: 1
@@ -28,7 +28,7 @@ steps:
         docker:
           host_os: windows
           shell: ["powershell", "-Command"]
-          image: rubydistros/windows-2019:3.1
+          image: rubydistros/windows-2019:3.4
           user: 'NT AUTHORITY\SYSTEM'
           environment:
             - HAB_AUTH_TOKEN
