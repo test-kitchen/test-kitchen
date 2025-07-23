@@ -444,7 +444,7 @@ describe Kitchen::Provisioner::Shell do
       it "invokes the bootstrap.ps1 script" do
         config[:root_path] = '\\r'
 
-        _(cmd).must_match regexify(%{& \\r\\bootstrap.ps1})
+        _(cmd).must_match regexify(%{& "\\r\\bootstrap.ps1"})
       end
     end
   end

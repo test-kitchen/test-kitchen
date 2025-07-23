@@ -18,6 +18,7 @@
 require_relative "../../spec_helper"
 require "logger"
 require "stringio"
+require "base64"
 
 require "kitchen"
 
@@ -568,6 +569,77 @@ describe Kitchen::Provisioner::Base do
     it "joins paths with backslash on Windows" do
       provisioner.stubs(:windows_os?).returns(true)
       _(provisioner.send(:remote_path_join, "C:", "kitchen", "script")).must_equal("C:\\kitchen\\script")
+    end
+  end
+
+  describe "#encode_for_powershell" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    describe "on non-Windows systems" do
+      before { provisioner.stubs(:windows_os?).returns(false) }
+
+      it "returns the script unchanged when script is a string" do
+        script = "echo 'hello world'"
+        _(provisioner.send(:encode_for_powershell, script)).must_equal(script)
+      end
+
+      it "returns nil when script is nil" do
+        _(provisioner.send(:encode_for_powershell, nil)).must_be_nil
+      end
+
+      it "returns empty string when script is empty" do
+        _(provisioner.send(:encode_for_powershell, "")).must_equal("")
+      end
+    end
+
+    describe "on Windows systems" do
+      before { provisioner.stubs(:windows_os?).returns(true) }
+
+      it "returns nil when script is nil" do
+        _(provisioner.send(:encode_for_powershell, nil)).must_be_nil
+      end
+
+      it "returns empty string when script is empty" do
+        _(provisioner.send(:encode_for_powershell, "")).must_equal("")
+      end
+
+      it "encodes a simple PowerShell command" do
+        script = "Write-Host 'Hello World'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
+
+      it "encodes a multi-line PowerShell script" do
+        script = "Write-Host 'Line 1'\nWrite-Host 'Line 2'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
+
+      it "handles scripts with special characters" do
+        script = "Write-Host 'Special chars: äöü €'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
     end
   end
 end
