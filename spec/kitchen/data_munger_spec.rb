@@ -2607,7 +2607,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           )
         end
 
-        it "merges old common busser name to version with exising verifier" do
+        it "merges old common busser name to version with existing verifier" do
           result = DataMunger.new(
             {
               busser: "starship",
