@@ -31,7 +31,7 @@ describe Kitchen::PlatformFilter do
                                                                            Kitchen::PlatformFilter.new("windows-2016")]
     end
 
-    it "converts regexp-like strings into Regexp before wraping" do
+    it "converts regexp-like strings into Regexp before wrapping" do
       Kitchen::PlatformFilter.convert(%w{/^win/ /win$/}).must_equal [Kitchen::PlatformFilter.new(/^win/),
                                                                      Kitchen::PlatformFilter.new(/win$/)]
     end

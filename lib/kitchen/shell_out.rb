@@ -23,7 +23,7 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module ShellOut
-    # Wrapped exception for any interally raised shell out commands.
+    # Wrapped exception for any internally raised shell out commands.
     class ShellCommandFailed < TransientFailure; end
 
     # Executes a command in a subshell on the local running system.

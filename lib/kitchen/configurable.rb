@@ -485,7 +485,7 @@ module Kitchen
       #   end
       #
       # @param attr [String] configuration attribute name
-      # @param value [Object, nil] whether or not to exand the file path
+      # @param value [Object, nil] whether or not to expand the file path
       # @yieldparam object [Object] a reference to the instantiated object
       # @yieldreturn [Object, nil] dynamically compute whether or not to
       #   perform the file expansion

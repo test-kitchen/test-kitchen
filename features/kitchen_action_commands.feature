@@ -1,5 +1,5 @@
 Feature: Running instance actions
-  In order to trigger discrete instance lifecyle actions
+  In order to trigger discrete instance lifecycle actions
   As an operator
   I want to run a action commands
 

@@ -10,7 +10,7 @@ Feature: Using Test Kitchen CLI help
     And the output should contain "kitchen help [COMMAND]"
 
   @spawn
-  Scenario: Bad arugments should exit nonzero
+  Scenario: Bad arguments should exit nonzero
     When I run `kitchen help -d always -c`
     Then the exit status should not be 0
     And the output should contain "Usage: "

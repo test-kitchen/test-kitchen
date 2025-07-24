@@ -98,7 +98,7 @@ module Kitchen
     #   directory containing test suites and other testing-related files and
     #   directories (default: `"#{kitchen_root}/test/integration"`)
     # @option options [Symbol] :log_level the log level verbosity that the
-    #   loggers will use when outputing information (default: `:info`)
+    #   loggers will use when outputting information (default: `:info`)
     def initialize(options = {})
       @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }
