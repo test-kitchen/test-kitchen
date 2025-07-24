@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.8.1](https://github.com/test-kitchen/test-kitchen/compare/v3.8.0...v3.8.1) (2025-07-24)
+
+
+### Bug Fixes
+
+* Remove expired copyright ([#2017](https://github.com/test-kitchen/test-kitchen/issues/2017)) ([27ad560](https://github.com/test-kitchen/test-kitchen/commit/27ad560079ce2f21d384d207d6161c562ef3eda2))
+
 ## [3.8.0](https://github.com/test-kitchen/test-kitchen/compare/v3.7.2...v3.8.0) (2025-07-12)
 
 
