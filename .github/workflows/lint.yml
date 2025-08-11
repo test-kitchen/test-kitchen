@@ -13,7 +13,7 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         with:
           use-quiet-mode: "yes"
@@ -32,7 +32,7 @@ jobs:
       matrix:
         ruby: ["3.3"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -50,7 +50,7 @@ jobs:
     steps:
       - name: Install Vagrant VirtualBox
         run: brew install --cask virtualbox vagrant
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -77,7 +77,7 @@ jobs:
       matrix:
         ruby: ["3.3"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
