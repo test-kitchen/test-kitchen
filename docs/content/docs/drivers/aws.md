@@ -79,6 +79,26 @@ The `aws_ssh_key_type` value is the type of SSH key pair to be automatically cre
 
 The default value is `rsa`.  The value must be a valid KeyType as per the [AWS EC2 CreateKeyPair API documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateKeyPair.html).
 
+#### AWS EC2 Instance Connect
+
+To enable, set `use_instance_connect` to `true` and optionally configure the instance connect endpoint ID and max tunnel duration.
+
+Ensure that you have configured the prerequisites needed to use AWS EC2 Instance Connect in accordance with AWS documentation. Generally this means that your role should be able to perform the `ec2-instance-connect:SendSSHPublicKey` on the instance, but refer to AWS documentation for specific requirements.
+
+The AWS EC2 Instance Connect service operates by pushing a temporary SSH public key to the instance and then connecting directly or via a tunnel (Instance Connect Endpoint) facilitated by the AWS CLI. You must have the AWS CLI installed for the Instance Connect Endpoint connection method to work, as the tunnel functionality is not part of the AWS SDKs.
+
+The public key used for this purpose is chosen using the same configuration logic as the standard EC2 driver SSH configuration.
+
+Example configuration:
+
+```yaml
+driver:
+  name: ec2
+  use_instance_connect: true
+  instance_connect_endpoint_id: eice-abcdefg1234567 # Optional
+  instance_connect_max_tunnel_duration: 3600 # Optional
+```
+
 #### WinRM
 
 For Windows instances the generated Administrator password is fetched automatically from Amazon EC2 with the same private key as we use for SSH.

@@ -151,6 +151,10 @@ describe Kitchen::Transport::Ssh do
     it "sets :ssh_gateway_port to 22 by default" do
       _(transport[:ssh_gateway_port]).must_equal 22
     end
+
+    it "sets :ssh_proxy_command to nil by default" do
+      _(transport[:ssh_proxy_command]).must_be_nil
+    end
   end
 
   describe "#connection" do
@@ -472,6 +476,27 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
+      it "sets :ssh_proxy_command from config" do
+        config[:ssh_proxy_command] = "proxy command from config"
+
+        klass.expects(:new).with do |hash|
+          hash[:ssh_proxy_command] == "proxy command from config"
+        end
+
+        make_connection
+      end
+
+      it "sets :ssh_proxy_command from state over config data" do
+        state[:ssh_proxy_command] = "proxy command from state"
+        config[:ssh_proxy_command] = "proxy command from config"
+
+        klass.expects(:new).with do |hash|
+          hash[:ssh_proxy_command] == "proxy command from state"
+        end
+
+        make_connection
+      end
+
       it "sets :keys to an array if :ssh_key is set in config" do
         config[:kitchen_root] = "/r"
         config[:ssh_key] = "ssh_key_from_config"
@@ -696,6 +721,29 @@ describe Kitchen::Transport::Ssh::Connection do
   before do
     logger.level = Logger::DEBUG
     Net::SSH.stubs(:start).returns(conn)
+  end
+
+  describe "establishing a connection with ssh_proxy_command" do
+    let(:proxy_command_options) do
+      options.merge(ssh_proxy_command_string: "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0")
+    end
+
+    let(:proxy_command_connection) do
+      Kitchen::Transport::Ssh::Connection.new(proxy_command_options)
+    end
+
+    it "creates a proxy connection when ssh_proxy_command is provided" do
+      # Just verify that the connection has the ssh_proxy_command_string available
+      # (proxy object is created during connection establishment, not at initialization)
+      connection_options = proxy_command_connection.send(:options)
+      _(connection_options[:ssh_proxy_command_string]).must_equal "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+    end
+
+    it "stores ssh_proxy_command in connection options for proxy creation" do
+      proxy_conn = Kitchen::Transport::Ssh::Connection.new(proxy_command_options)
+      
+      _(proxy_conn.send(:options)[:ssh_proxy_command_string]).must_equal "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+    end
   end
 
   describe "establishing a connection" do
@@ -1032,6 +1080,30 @@ describe Kitchen::Transport::Ssh::Connection do
       options[:port] = 1234
 
       _(args).must_match regexify(" -p 1234 ")
+    end
+
+    it "sets the ProxyCommand option for ssh_gateway" do
+      options[:ssh_gateway] = "gateway.example.com"
+      options[:ssh_gateway_username] = "gateway_user"
+      options[:ssh_gateway_port] = 22
+
+      _(args).must_match regexify(' -o ProxyCommand=ssh -q gateway_user@gateway.example.com nc foo 22 ')
+    end
+
+    it "sets the ProxyCommand option for ssh_proxy_command" do
+      options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+
+      _(args).must_match regexify(' -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ')
+    end
+
+    it "prefers ssh_proxy_command over ssh_gateway when both are set" do
+      options[:ssh_gateway] = "gateway.example.com"
+      options[:ssh_gateway_username] = "gateway_user" 
+      options[:ssh_gateway_port] = 22
+      options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+
+      _(args).must_match regexify(' -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ')
+      _(args).wont_match regexify('gateway.example.com')
     end
   end
 
