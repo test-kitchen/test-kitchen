@@ -914,6 +914,71 @@ describe Kitchen::Provisioner::ChefBase do
     end
   end
 
+  describe "#check_license_key" do
+    describe "when product_name starts with 'chef'" do
+      before { config[:product_name] = "chef-workstation" }
+
+      it "raises an error when chef_license_key is nil" do
+        config[:chef_license_key] = nil
+        expect { provisioner.check_license_key }.must_raise(RuntimeError)
+      end
+
+      it "raises an error when chef_license_key is empty" do
+        config[:chef_license_key] = ""
+        expect { provisioner.check_license_key }.must_raise(RuntimeError)
+      end
+
+      it "returns the license key when present" do
+        config[:chef_license_key] = "test-license-key"
+        _(provisioner.check_license_key).must_equal "test-license-key"
+      end
+    end
+
+    describe "when product_name does not start with 'chef'" do
+      before { config[:product_name] = "cinc-workstation" }
+
+      it "returns the license key without validation" do
+        config[:chef_license_key] = nil
+        _(provisioner.check_license_key).must_be_nil
+      end
+    end
+  end
+
+  describe "#omnibus_download_url" do
+    describe "when product_name starts with 'chef'" do
+      before do
+        config[:product_name] = "chef-workstation"
+        config[:chef_license_key] = "test-license-key"
+      end
+
+      it "returns the commercial download URL with license key" do
+        expected_url = "https://chefdownload-commercial.chef.io/install.sh?license_id=test-license-key"
+        _(provisioner.omnibus_download_url).must_equal expected_url
+      end
+
+      it "calls check_license_key" do
+        provisioner.expects(:check_license_key).once
+        provisioner.omnibus_download_url
+      end
+    end
+
+    describe "when product_name starts with 'cinc'" do
+      before { config[:product_name] = "cinc-workstation" }
+
+      it "returns the CINC download URL" do
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.cinc.sh/install.sh"
+      end
+    end
+
+    describe "when product_name is something else" do
+      before { config[:product_name] = "other-product" }
+
+      it "returns nil" do
+        _(provisioner.omnibus_download_url).must_be_nil
+      end
+    end
+  end
+
   describe "#create_sandbox" do
     before do
       @root = Dir.mktmpdir

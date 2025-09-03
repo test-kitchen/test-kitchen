@@ -349,6 +349,7 @@ module Kitchen
       code_parts << shell_env_var("TEST_KITCHEN", 1)
       code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
       code_parts << shell_env_var("CHEF_LICENSE", ENV["CHEF_LICENSE"]) if ENV["CHEF_LICENSE"]
+      code_parts << shell_env_var("CHEF_LICENSE_KEY", ENV["CHEF_LICENSE_KEY"]) if ENV["CHEF_LICENSE_KEY"]
       ENV.select { |key, value| key.start_with?("TKENV_") }.each do |key, value|
         env_var_name = "#{key}".sub!("TKENV_", "")
         code_parts << shell_env_var(env_var_name, value)

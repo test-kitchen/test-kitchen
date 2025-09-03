@@ -42,9 +42,10 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
       default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
+      default_config :chef_omnibus_url, omnibus_download_url
       default_config :chef_omnibus_install_options, nil
       default_config :chef_license, nil
+      default_config :chef_license_key, nil
       default_config :run_list, []
       default_config :policy_group, nil
       default_config :attributes, {}
@@ -282,7 +283,7 @@ module Kitchen
         end
       end
 
-      # (see Base#check_license)
+      # (see Base#check_license) Check Chef EULA license acceptance
       def check_license
         name = license_acceptance_id
         version = product_version
@@ -299,6 +300,27 @@ module Kitchen
             raise
           end
           config[:chef_license] ||= acceptor.acceptance_value
+        end
+      end
+
+      # Check Chef license key if needed
+      def check_license_key
+        if config[:product_name].start_with?("chef")
+          if config[:chef_license_key].nil? || config[:chef_license_key].empty?
+            error("When specifying a chef product_name you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
+            raise
+          end
+        end
+        config[:chef_license_key]
+      end
+
+      # Select the download URL based on the product name
+      def omnibus_download_url
+        if config[:product_name].start_with?("chef")
+          check_license_key
+          "https://chefdownload-commercial.chef.io/install.sh?license_id=#{config[:chef_license_key]}"
+        elsif config[:product_name].start_with?("cinc")
+          "https://omnitruck.cinc.sh/install.sh"
         end
       end
 

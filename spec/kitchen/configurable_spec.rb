@@ -961,6 +961,18 @@ describe Kitchen::Configurable do
           '
         CODE
       end
+
+      it "exports CHEF_LICENSE_KEY when CHEF_LICENSE_KEY is set" do
+        ENV["CHEF_LICENSE_KEY"] = "FOO"
+
+        _(cmd).must_equal(outdent!(<<-CODE.chomp))
+          sh -c '
+          TEST_KITCHEN="1"; export TEST_KITCHEN
+          CHEF_LICENSE_KEY="FOO"; export CHEF_LICENSE_KEY
+          mkdir foo
+          '
+        CODE
+      end
     end
 
     describe "for powershell shells" do
@@ -1132,6 +1144,16 @@ describe Kitchen::Configurable do
         _(cmd).must_equal(outdent!(<<-CODE.chomp))
           $env:TEST_KITCHEN = "1"
           $env:CHEF_LICENSE = "FOO"
+          mkdir foo
+        CODE
+      end
+
+      it "exports CHEF_LICENSE_KEY when CHEF_LICENSE_KEY is set" do
+        ENV["CHEF_LICENSE_KEY"] = "FOO"
+
+        _(cmd).must_equal(outdent!(<<-CODE.chomp))
+          $env:TEST_KITCHEN = "1"
+          $env:CHEF_LICENSE_KEY = "FOO"
           mkdir foo
         CODE
       end
