@@ -33,7 +33,7 @@ module Kitchen
       class << self
         def get_license_keys
           keys = ChefLicensing.license_keys
-          raise ChefLicensing::InvalidLicense, "A valid license is required to perform this action. Run <kitchen license> command to generate/activate the license." if keys.blank?
+          raise ChefLicensing::InvalidLicense, "A valid license is required to perform this action. Run <kitchen license> command to generate/activate the license." if keys.empty?
 
           client = get_license_client(keys)
 
