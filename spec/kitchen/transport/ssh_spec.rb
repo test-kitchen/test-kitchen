@@ -728,7 +728,7 @@ describe Kitchen::Transport::Ssh::Connection do
           end
 
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
+            l =~ debug_line_with("[SSH] opening connection to me@foo<{:port=>22}>")
           end).must_equal 3
         end
 
