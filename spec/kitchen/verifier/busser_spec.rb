@@ -507,7 +507,7 @@ describe Kitchen::Verifier::Busser do
 
         _(file.file?).must_equal true
         _(file.stat.mode.to_s(8)[2, 4]).must_equal md[:perms]
-        _(IO.read(file)).must_equal md[:content]
+        _(File.read(file)).must_equal md[:content]
       end
     end
 
@@ -519,7 +519,7 @@ describe Kitchen::Verifier::Busser do
 
         _(file.file?).must_equal true
         _(file.stat.mode.to_s(8)[2, 4]).must_equal md[:perms]
-        _(IO.read(file)).must_equal md[:content]
+        _(File.read(file)).must_equal md[:content]
       end
     end
 

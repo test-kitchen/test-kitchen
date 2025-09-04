@@ -118,11 +118,11 @@ describe Kitchen::Provisioner::ChefInfra do
 
     describe "client.rb file" do
       let(:file) do
-        IO.read(sandbox_path("client.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client.rb")).lines.map(&:chomp)
       end
 
       let(:file_no_updated_resources) do
-        IO.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
       end
 
       it "creates a client.rb" do
@@ -636,6 +636,144 @@ describe Kitchen::Provisioner::ChefInfra do
           _(cmd).must_match regexify('& \\r\\chef-client.bat ', :partial_line)
         end
       end
+    end
+  end
+
+  describe "#chef_client_zero_env" do
+    before do
+      config[:root_path] = "/tmp/kitchen"
+      platform.stubs(:shell_type).returns("bourne")
+    end
+
+    it "sets CHEF_REPO_PATH environment variable" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'CHEF_REPO_PATH="/tmp/kitchen"; export CHEF_REPO_PATH'
+    end
+
+    it "sets GEM_HOME environment variable" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'GEM_HOME="/tmp/kitchen/chef-client-zero-gems"; export GEM_HOME'
+    end
+
+    it "sets GEM_PATH environment variable" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'GEM_PATH="/tmp/kitchen/chef-client-zero-gems"; export GEM_PATH'
+    end
+
+    it "sets GEM_CACHE environment variable" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'GEM_CACHE="/tmp/kitchen/chef-client-zero-gems/cache"; export GEM_CACHE'
+    end
+
+    it "sets CHEF_LICENSE_KEY when configured" do
+      config[:chef_license_key] = "accept-silent"
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'CHEF_LICENSE_KEY="accept-silent"; export CHEF_LICENSE_KEY'
+    end
+
+    it "does not set CHEF_LICENSE_KEY when not configured" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).wont_include "CHEF_LICENSE_KEY"
+    end
+
+    it "does not set CHEF_LICENSE_KEY when empty string" do
+      config[:chef_license_key] = ""
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).wont_include "CHEF_LICENSE_KEY"
+    end
+
+    it "sets CHEF_LICENSE_SERVER when configured" do
+      config[:chef_license_server] = "http://example.com"
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_include 'CHEF_LICENSE_SERVER="http://example.com"; export CHEF_LICENSE_SERVER'
+    end
+
+    it "does not set CHEF_LICENSE_SERVER when not configured" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).wont_include "CHEF_LICENSE_SERVER"
+    end
+
+    it "does not set CHEF_LICENSE_SERVER when empty string" do
+      config[:chef_license_key] = ""
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).wont_include "CHEF_LICENSE_SERVER"
+    end
+
+    it "ends with newline" do
+      env = provisioner.send(:chef_client_zero_env)
+
+      _(env).must_match(/\n\z/)
+    end
+  end
+
+  describe "#shim_command" do
+    before do
+      config[:root_path] = "/tmp/kitchen"
+      config[:ruby_bindir] = "/opt/chef/embedded/bin"
+      platform.stubs(:os_type).returns("unix")
+    end
+
+    it "includes the chef_client_zero_env" do
+      cmd = provisioner.send(:shim_command)
+
+      _(cmd).must_include 'CHEF_REPO_PATH="/tmp/kitchen"; export CHEF_REPO_PATH'
+    end
+
+    it "calls ruby from ruby_bindir" do
+      cmd = provisioner.send(:shim_command)
+
+      _(cmd).must_include "/opt/chef/embedded/bin/ruby"
+    end
+
+    it "calls chef-client-zero.rb shim script" do
+      cmd = provisioner.send(:shim_command)
+
+      _(cmd).must_include "/tmp/kitchen/chef-client-zero.rb"
+    end
+
+    it "uses sudo when configured" do
+      config[:sudo] = true
+      cmd = provisioner.send(:shim_command)
+
+      _(cmd).must_include "sudo -E /opt/chef/embedded/bin/ruby"
+    end
+
+    describe "for windows os types" do
+      before { platform.stubs(:os_type).returns("windows") }
+
+      it "appends .exe to ruby path" do
+        cmd = provisioner.send(:shim_command)
+
+        _(cmd).must_include "\\opt\\chef\\embedded\\bin\\ruby.exe"
+      end
+    end
+  end
+
+  describe "#supports_policyfile?" do
+    it "returns true" do
+      _(provisioner.send(:supports_policyfile?)).must_equal true
+    end
+  end
+
+  describe "default_config :named_run_list" do
+    it "defaults to empty hash" do
+      _(provisioner[:named_run_list]).must_equal({})
+    end
+
+    it "can be overridden" do
+      config[:named_run_list] = { "integration" => ["recipe[foo]"] }
+
+      _(provisioner[:named_run_list]).must_equal({ "integration" => ["recipe[foo]"] })
     end
   end
 

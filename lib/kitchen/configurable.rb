@@ -65,7 +65,8 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
     #   unset, for backwards compatibility)
     def bourne_shell?
-      ["bourne", nil].include?(instance.platform.shell_type)
+      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
+      ["bourne", nil].include?(shell_type)
     end
 
     # Find an appropriate path to a file or directory, based on graceful
@@ -141,7 +142,8 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
-      ["powershell"].include?(instance.platform.shell_type)
+      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
+      ["powershell"].include?(shell_type)
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -155,7 +157,8 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
     #   unset, for backwards compatibility)
     def unix_os?
-      ["unix", nil].include?(instance.platform.os_type)
+      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
+      ["unix", nil].include?(os_type)
     end
 
     # Performs whatever tests that may be required to ensure that this plugin
@@ -171,7 +174,8 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
-      ["windows"].include?(instance.platform.os_type)
+      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
+      ["windows"].include?(os_type)
     end
 
     private
@@ -349,6 +353,7 @@ module Kitchen
       code_parts << shell_env_var("TEST_KITCHEN", 1)
       code_parts << shell_env_var("CI", ENV["CI"]) if ENV["CI"]
       code_parts << shell_env_var("CHEF_LICENSE", ENV["CHEF_LICENSE"]) if ENV["CHEF_LICENSE"]
+      code_parts << shell_env_var("CHEF_LICENSE_KEY", ENV["CHEF_LICENSE_KEY"]) if ENV["CHEF_LICENSE_KEY"]
       ENV.select { |key, value| key.start_with?("TKENV_") }.each do |key, value|
         env_var_name = "#{key}".sub!("TKENV_", "")
         code_parts << shell_env_var(env_var_name, value)

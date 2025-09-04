@@ -914,6 +914,71 @@ describe Kitchen::Provisioner::ChefBase do
     end
   end
 
+  describe "#check_license_key" do
+    describe "when product_name starts with 'chef'" do
+      before { config[:product_name] = "chef-workstation" }
+
+      it "raises an error when chef_license_key is nil" do
+        config[:chef_license_key] = nil
+        expect { provisioner.check_license_key }.must_raise(RuntimeError)
+      end
+
+      it "raises an error when chef_license_key is empty" do
+        config[:chef_license_key] = ""
+        expect { provisioner.check_license_key }.must_raise(RuntimeError)
+      end
+
+      it "returns the license key when present" do
+        config[:chef_license_key] = "test-license-key"
+        _(provisioner.check_license_key).must_equal "test-license-key"
+      end
+    end
+
+    describe "when product_name does not start with 'chef'" do
+      before { config[:product_name] = "cinc-workstation" }
+
+      it "returns the license key without validation" do
+        config[:chef_license_key] = nil
+        _(provisioner.check_license_key).must_be_nil
+      end
+    end
+  end
+
+  describe "#omnibus_download_url" do
+    describe "when product_name starts with 'chef'" do
+      before do
+        config[:product_name] = "chef-workstation"
+        config[:chef_license_key] = "test-license-key"
+      end
+
+      it "returns the commercial download URL with license key" do
+        expected_url = "https://chefdownload-commercial.chef.io/install.sh?license_id=test-license-key"
+        _(provisioner.omnibus_download_url).must_equal expected_url
+      end
+
+      it "calls check_license_key" do
+        provisioner.expects(:check_license_key).once
+        provisioner.omnibus_download_url
+      end
+    end
+
+    describe "when product_name starts with 'cinc'" do
+      before { config[:product_name] = "cinc-workstation" }
+
+      it "returns the CINC download URL" do
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.cinc.sh/install.sh"
+      end
+    end
+
+    describe "when product_name is something else" do
+      before { config[:product_name] = "other-product" }
+
+      it "returns nil" do
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
+      end
+    end
+  end
+
   describe "#create_sandbox" do
     before do
       @root = Dir.mktmpdir
@@ -944,7 +1009,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     describe "json file" do
-      let(:json) { JSON.parse(IO.read(sandbox_path("dna.json"))) }
+      let(:json) { JSON.parse(File.read(sandbox_path("dna.json"))) }
 
       it "creates a json file with node attributes" do
         config[:attributes] = { "one" => { "two" => "three" } }
@@ -1005,10 +1070,10 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           _(sandbox_path("#{thing}/alpha.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
+          _(File.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
           _(sandbox_path("#{thing}/sub").directory?).must_equal true
           _(sandbox_path("#{thing}/sub/bravo.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
+          _(File.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
         end
 
         it "logs a message on info" do
@@ -1047,7 +1112,7 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         _(sandbox_path("encrypted_data_bag_secret").file?).must_equal true
-        _(IO.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
+        _(File.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
       end
 
       it "logs a message on info" do
@@ -1187,7 +1252,7 @@ describe Kitchen::Provisioner::ChefBase do
 
           _(sandbox_path("cookbooks/#{name}").directory?).must_equal true
           _(sandbox_path("cookbooks/#{name}/metadata.rb").file?).must_equal true
-          _(IO.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
+          _(File.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
         end
 
         it "logs a warning" do
@@ -1265,7 +1330,7 @@ describe Kitchen::Provisioner::ChefBase do
               provisioner.create_sandbox
 
               dna_json_file = File.join(provisioner.sandbox_path, "dna.json")
-              dna_json_data = JSON.parse(IO.read(dna_json_file))
+              dna_json_data = JSON.parse(File.read(dna_json_file))
 
               expected = {
                 "policy_name" => "wat",
@@ -1581,7 +1646,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "Chef config files" do
         let(:file) do
-          IO.read(sandbox_path("generic.rb")).lines.map(&:chomp)
+          File.read(sandbox_path("generic.rb")).lines.map(&:chomp)
         end
 
         it "#create_sanbox creates a generic.rb" do
