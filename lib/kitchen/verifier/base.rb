@@ -223,7 +223,7 @@ module Kitchen
           file + (powershell_shell? ? ".ps1" : ".sh")
         )
 
-        wrap_shell_code([vars, "", IO.read(src_file)].join("\n"))
+        wrap_shell_code([vars, "", File.read(src_file)].join("\n"))
       end
 
       # Conditionally prefixes a command with a sudo command.

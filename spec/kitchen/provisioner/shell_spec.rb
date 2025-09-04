@@ -484,10 +484,10 @@ describe Kitchen::Provisioner::Shell do
         provisioner.create_sandbox
 
         _(sandbox_path("data/alpha.txt").file?).must_equal true
-        _(IO.read(sandbox_path("data/alpha.txt"))).must_equal "stuff"
+        _(File.read(sandbox_path("data/alpha.txt"))).must_equal "stuff"
         _(sandbox_path("data/sub").directory?).must_equal true
         _(sandbox_path("data/sub/bravo.txt").file?).must_equal true
-        _(IO.read(sandbox_path("data/sub/bravo.txt"))).must_equal "junk"
+        _(File.read(sandbox_path("data/sub/bravo.txt"))).must_equal "junk"
       end
 
       it "logs a message on info" do
@@ -518,7 +518,7 @@ describe Kitchen::Provisioner::Shell do
           provisioner.create_sandbox
 
           _(sandbox_path("my_script").file?).must_equal true
-          _(IO.read(sandbox_path("my_script"))).must_equal "gonuts"
+          _(File.read(sandbox_path("my_script"))).must_equal "gonuts"
         end
 
         it "logs a message on info" do

@@ -118,11 +118,11 @@ describe Kitchen::Provisioner::ChefInfra do
 
     describe "client.rb file" do
       let(:file) do
-        IO.read(sandbox_path("client.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client.rb")).lines.map(&:chomp)
       end
 
       let(:file_no_updated_resources) do
-        IO.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
+        File.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
       end
 
       it "creates a client.rb" do
@@ -693,7 +693,7 @@ describe Kitchen::Provisioner::ChefInfra do
       config[:chef_license_server] = "http://example.com"
       env = provisioner.send(:chef_client_zero_env)
 
-      _(env).must_include 'CHEF_LICENSE_SERVER="http://example.com"; export CHEF_LICENSE_KEY'
+      _(env).must_include 'CHEF_LICENSE_SERVER="http://example.com"; export CHEF_LICENSE_SERVER'
     end
 
     it "does not set CHEF_LICENSE_SERVER when not configured" do

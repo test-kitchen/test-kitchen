@@ -22,29 +22,29 @@ require "minitest/autorun"
 require "mocha/minitest"
 require "tempfile"
 
-# Nasty hack to redefine IO.read in terms of File#read for fakefs
-class IO
-  def self.read(*args)
-    length = args[1]
-    offset = args[2]
-    opt = args[3]
-    if length.is_a? Hash
-      opt = length
-      length = nil
-    elsif offset.is_a? Hash
-      opt = offset
-    end
-    if opt
-      if opt.key?(:mode)
-        File.open(args[0], **opt) { |f| f.read(length) }
-      else
-        File.open(args[0], "rb", **opt) { |f| f.read(length) }
-      end
-    else
-      File.open(args[0], "rb") { |f| f.read(length) }
-    end
-  end
-end
+# # Nasty hack to redefine IO.read in terms of File#read for fakefs
+# class IO
+#   def self.read(*args)
+#     length = args[1]
+#     offset = args[2]
+#     opt = args[3]
+#     if length.is_a? Hash
+#       opt = length
+#       length = nil
+#     elsif offset.is_a? Hash
+#       opt = offset
+#     end
+#     if opt
+#       if opt.key?(:mode)
+#         File.open(args[0], **opt) { |f| f.read(length) }
+#       else
+#         File.open(args[0], "rb", **opt) { |f| f.read(length) }
+#       end
+#     else
+#       File.open(args[0], "rb") { |f| f.read(length) }
+#     end
+#   end
+# end
 
 # Hack to sort results in `Dir.entries` only within the yielded block, to limit
 # the "behavior pollution" to other code. This was needed for Net::SCP, as
