@@ -974,7 +974,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { config[:product_name] = "other-product" }
 
       it "returns nil" do
-        _(provisioner.omnibus_download_url).must_be_nil
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
       end
     end
   end
