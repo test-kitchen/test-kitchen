@@ -316,11 +316,13 @@ module Kitchen
 
       # Select the download URL based on the product name
       def omnibus_download_url
-        if config[:product_name].start_with?("chef")
+        if config[:product_name]&.start_with?("chef")
           check_license_key
           "https://chefdownload-commercial.chef.io/install.sh?license_id=#{config[:chef_license_key]}"
-        elsif config[:product_name].start_with?("cinc")
+        elsif config[:product_name]&.start_with?("cinc")
           "https://omnitruck.cinc.sh/install.sh"
+        else
+          "https://omnitruck.chef.io/install.sh"
         end
       end
 
