@@ -754,7 +754,7 @@ describe Kitchen::Provisioner::ChefInfra do
       it "appends .exe to ruby path" do
         cmd = provisioner.send(:shim_command)
 
-        _(cmd).must_include "/opt/chef/embedded/bin/ruby.exe"
+        _(cmd).must_include "\\opt\\chef\\embedded\\bin\\ruby.exe"
       end
     end
   end

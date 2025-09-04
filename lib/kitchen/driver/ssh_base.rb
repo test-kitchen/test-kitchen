@@ -298,7 +298,7 @@ module Kitchen
         pseudo_state[:username] = username if username
         pseudo_state.merge!(options)
 
-        instance.transport.connection(backcompat_merged_state(pseudo_state))
+        instance.transport.connection(**backcompat_merged_state(pseudo_state))
           .wait_until_ready
       end
 
