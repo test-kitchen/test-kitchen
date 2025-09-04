@@ -42,7 +42,9 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
       default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, omnibus_download_url
+      default_config :chef_omnibus_url do |provisioner|
+        provisioner.omnibus_download_url
+      end
       default_config :chef_omnibus_install_options, nil
       default_config :chef_license, nil
       default_config :chef_license_key, nil
