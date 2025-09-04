@@ -52,7 +52,7 @@ describe Kitchen::PlatformFilter do
 
   describe ".new" do
     it "raises an ArgumentError if value is neither a string nor Regexp" do
-      _{proc { Kitchen::PlatformFilter.new(Object.new) }}.must_raise ::ArgumentError
+      _ { Kitchen::PlatformFilter.new(Object.new) }.must_raise ::ArgumentError
     end
   end
 
