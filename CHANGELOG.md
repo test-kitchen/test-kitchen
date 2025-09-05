@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.9.0](https://github.com/test-kitchen/test-kitchen/compare/v3.8.2...v3.9.0) (2025-09-05)
+
+
+### Features
+
+* Added custom proxy command support for AWS EC2 Instance Connect EC2 driver support ([#2019](https://github.com/test-kitchen/test-kitchen/issues/2019)) ([0529e66](https://github.com/test-kitchen/test-kitchen/commit/0529e66447e68b495ef710116420154008fa2238))
+
 ## [3.8.2](https://github.com/test-kitchen/test-kitchen/compare/v3.8.1...v3.8.2) (2025-09-05)
 
 
