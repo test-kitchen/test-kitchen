@@ -58,10 +58,11 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: false
+          bundler-cache: true
       - name: Kitchen Test
         run: |
           export LOGNAME=$USER
+          bundle upgrade
           bundle exec kitchen test almalinux-9
 
   integration-windows:
