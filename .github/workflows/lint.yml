@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
+        ruby: ["3.1", "3.3", "3.4"]
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -46,10 +46,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
+        ruby: ["3.1", "3.3", "3.4"]
     steps:
       - name: Install Vagrant VirtualBox
-        run: brew install --cask virtualbox vagrant
+        run: |
+          brew tap hashicorp/tap
+          brew update
+          brew install --cask hashicorp/tap/hashicorp-vagrant
+          brew install --cask virtualbox
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
@@ -75,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
+        ruby: ["3.1", "3.3", "3.4"]
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
