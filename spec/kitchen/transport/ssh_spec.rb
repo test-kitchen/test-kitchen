@@ -728,7 +728,7 @@ describe Kitchen::Transport::Ssh::Connection do
           end
 
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line_with("[SSH] opening connection to me@foo<{port: 22}>")
+            l =~ debug_line_with("[SSH] opening connection to me@foo<#{{port: 22}.to_s}>")
           end).must_equal 3
         end
 
@@ -794,7 +794,7 @@ describe Kitchen::Transport::Ssh::Connection do
       end
 
       _(logged_output.string).must_match debug_line(
-        "[SSH] closing connection to me@foo<{port: 22}>"
+        "[SSH] closing connection to me@foo<#{{port: 22}.to_s}>"
       )
     end
 
@@ -829,7 +829,7 @@ describe Kitchen::Transport::Ssh::Connection do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{port: 22}> (doit)"
+          "[SSH] me@foo<#{{port: 22}.to_s}> (doit)"
         )
       end
 
@@ -837,7 +837,7 @@ describe Kitchen::Transport::Ssh::Connection do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{port: 22}>"
+          "[SSH] opening connection to me@foo<#{{port: 22}.to_s}>"
         )
       end
 
@@ -876,7 +876,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{port: 22}> (doit)"
+          "[SSH] me@foo<#{{port: 22}.to_s}> (doit)"
         )
       end
 
@@ -888,7 +888,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{port: 22}>"
+          "[SSH] opening connection to me@foo<#{{port: 22}.to_s}>"
         )
       end
 
