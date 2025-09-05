@@ -214,17 +214,17 @@ describe Kitchen::Config do
     end
 
     it "constructs Platform objects" do
-      Kitchen::Platform.expects(:new).with(one: "a")
-      Kitchen::Platform.expects(:new).with(two: "b")
+      Kitchen::Platform.expects(:new).with({ one: "a" })
+      Kitchen::Platform.expects(:new).with({ two: "b" })
 
       config.platforms
     end
 
     it "returns a Collection of platforms" do
       Kitchen::Platform.stubs(:new)
-        .with(one: "a").returns(stub(name: "one"))
+        .with({ one: "a" }).returns(stub(name: "one"))
       Kitchen::Platform.stubs(:new)
-        .with(two: "b").returns(stub(name: "two"))
+        .with({ two: "b" }).returns(stub(name: "two"))
 
       _(config.platforms.as_names).must_equal %w{one two}
     end
@@ -266,8 +266,8 @@ describe Kitchen::Config do
     end
 
     it "constructs Suite objects" do
-      Kitchen::Suite.expects(:new).with(**{ one: "a" })
-      Kitchen::Suite.expects(:new).with(**{ two: "b" })
+      Kitchen::Suite.expects(:new).with({ one: "a" })
+      Kitchen::Suite.expects(:new).with({ two: "b" })
 
       config.suites
     end
