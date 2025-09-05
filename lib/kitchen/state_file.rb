@@ -85,7 +85,7 @@ module Kitchen
     # @return [String] a string representation of the yaml state file
     # @api private
     def read_file
-      File.read(file_name)
+      IO.read(file_name)
     end
 
     # Parses a YAML string and returns a Hash.

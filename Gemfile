@@ -17,7 +17,7 @@ end
 group :integration do
   gem "chef-cli"
   gem "kitchen-dokken"
-  # gem "kitchen-inspec"
+  gem "kitchen-inspec"
   gem "kitchen-vagrant"
 end
 

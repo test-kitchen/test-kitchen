@@ -152,7 +152,7 @@ module Kitchen
     #
     # @return [String] a string representation of useful helper functions
     def self.shell_helpers
-      File.read(File.join(
+      IO.read(File.join(
         File.dirname(__FILE__), %w{.. .. support download_helpers.sh}
       ))
     end

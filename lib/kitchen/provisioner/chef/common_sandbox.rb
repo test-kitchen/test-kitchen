@@ -295,7 +295,7 @@ module Kitchen
           Kitchen.mutex.synchronize do
             policy.compile
           end
-          policy_name = JSON.parse(File.read(policy.lockfile))["name"]
+          policy_name = JSON.parse(IO.read(policy.lockfile))["name"]
           policy_group = config[:policy_group] || "local"
           config[:attributes].merge(policy_name:, policy_group:)
         end

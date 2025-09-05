@@ -185,7 +185,7 @@ module Kitchen
       def append_to_gitignore(line)
         create_file(".gitignore") unless File.exist?(File.join(destination_root, ".gitignore"))
 
-        if File.readlines(File.join(destination_root, ".gitignore")).grep(/^#{line}/).empty?
+        if IO.readlines(File.join(destination_root, ".gitignore")).grep(/^#{line}/).empty?
           append_to_file(".gitignore", "#{line}\n")
         end
       end
@@ -235,7 +235,7 @@ module Kitchen
       # @return [true,false] whether or not a pattern is found in a file
       # @api private
       def not_in_file?(filename, regexp)
-        File.readlines(File.join(destination_root, filename)).grep(regexp).empty?
+        IO.readlines(File.join(destination_root, filename)).grep(regexp).empty?
       end
 
       # Save off any Bundler/Ruby-related environment variables so that the

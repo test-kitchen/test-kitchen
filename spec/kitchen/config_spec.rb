@@ -266,17 +266,17 @@ describe Kitchen::Config do
     end
 
     it "constructs Suite objects" do
-      Kitchen::Suite.expects(:new).with(**{ one: "a" })
-      Kitchen::Suite.expects(:new).with(**{ two: "b" })
+      Kitchen::Suite.expects(:new).with(one: "a")
+      Kitchen::Suite.expects(:new).with(two: "b")
 
       config.suites
     end
 
     it "returns a Collection of suites" do
       Kitchen::Suite.stubs(:new)
-        .with(**{ one: "a" }).returns(stub(name: "one"))
+        .with(one: "a").returns(stub(name: "one"))
       Kitchen::Suite.stubs(:new)
-        .with(**{ two: "b" }).returns(stub(name: "two"))
+        .with(two: "b").returns(stub(name: "two"))
       _(config.suites.as_names).must_equal %w{one two}
     end
   end
@@ -330,7 +330,7 @@ describe Kitchen::Config do
         .returns(name: "provey", datum: "lots")
       Kitchen::Provisioner.unstub(:for_plugin)
       Kitchen::Provisioner.expects(:for_plugin)
-        .with("provey", { name: "provey", datum: "lots" })
+        .with("provey", name: "provey", datum: "lots")
 
       config.instances
     end
@@ -340,7 +340,7 @@ describe Kitchen::Config do
         .returns(name: "transey", datum: "lots")
       Kitchen::Transport.unstub(:for_plugin)
       Kitchen::Transport.expects(:for_plugin)
-        .with("transey", { name: "transey", datum: "lots" })
+        .with("transey", name: "transey", datum: "lots")
 
       config.instances
     end
@@ -350,7 +350,7 @@ describe Kitchen::Config do
         .returns(name: "vervey", datum: "lots")
       Kitchen::Verifier.unstub(:for_plugin)
       Kitchen::Verifier.expects(:for_plugin)
-        .with("vervey", { name: "vervey", datum: "lots" })
+        .with("vervey", name: "vervey", datum: "lots")
 
       config.instances
     end

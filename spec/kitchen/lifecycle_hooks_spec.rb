@@ -111,7 +111,7 @@ describe Kitchen::LifecycleHooks do
   it "runs finally even if stage fails" do
     local_command = "echo foo"
     config.update(finally_create: [local_command])
-    expect_local_hook_generated_and_run(:finally, { local: local_command }) # rubocop: disable Lint/UselessAssignment
+    hook = expect_local_hook_generated_and_run(:finally, { local: local_command }) # rubocop: disable Lint/UselessAssignment
     begin
       lifecycle_hooks.run_with_hooks(:create, state_file) {
         raise Error

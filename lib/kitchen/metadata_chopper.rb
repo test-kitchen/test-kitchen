@@ -39,7 +39,7 @@ module Kitchen
     #
     # @param metadata_file [String] path to a metadata.rb file
     def initialize(metadata_file)
-      instance_eval(File.read(metadata_file), metadata_file)
+      instance_eval(IO.read(metadata_file), metadata_file)
     end
 
     def method_missing(meth, *args, &_block)

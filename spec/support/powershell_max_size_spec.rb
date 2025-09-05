@@ -32,7 +32,7 @@ describe "PowerShell script max size" do
     base = File.basename(script)
 
     it "support/#{base} size must be less than #{MAX_POWERSHELL_SIZE} bytes" do
-      _((File.read(script).size < MAX_POWERSHELL_SIZE)).must_equal true
+      _((IO.read(script).size < MAX_POWERSHELL_SIZE)).must_equal true
     end
   end
 end

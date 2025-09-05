@@ -65,8 +65,7 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
     #   unset, for backwards compatibility)
     def bourne_shell?
-      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
-      ["bourne", nil].include?(shell_type)
+      ["bourne", nil].include?(instance.platform.shell_type)
     end
 
     # Find an appropriate path to a file or directory, based on graceful
@@ -142,8 +141,7 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
-      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
-      ["powershell"].include?(shell_type)
+      ["powershell"].include?(instance.platform.shell_type)
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -157,8 +155,7 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
     #   unset, for backwards compatibility)
     def unix_os?
-      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
-      ["unix", nil].include?(os_type)
+      ["unix", nil].include?(instance.platform.os_type)
     end
 
     # Performs whatever tests that may be required to ensure that this plugin
@@ -174,8 +171,7 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
-      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
-      ["windows"].include?(os_type)
+      ["windows"].include?(instance.platform.os_type)
     end
 
     private

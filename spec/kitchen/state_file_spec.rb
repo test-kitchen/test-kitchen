@@ -85,7 +85,7 @@ describe Kitchen::StateFile do
     it "writes a state file with stringified keys" do
       state_file.write(thekey: "thyself")
 
-      _(File.read(file_name).split("\n"))
+      _(IO.read(file_name).split("\n"))
         .must_include "thekey: thyself"
     end
   end

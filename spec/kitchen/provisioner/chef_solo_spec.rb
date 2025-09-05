@@ -93,11 +93,11 @@ describe Kitchen::Provisioner::ChefSolo do
 
     describe "solo.rb file" do
       let(:file) do
-        File.read(sandbox_path("solo.rb")).lines.map(&:chomp)
+        IO.read(sandbox_path("solo.rb")).lines.map(&:chomp)
       end
 
       let(:file_no_updated_resources) do
-        File.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
+        IO.read(sandbox_path("client_no_updated_resources.rb")).lines.map(&:chomp)
       end
 
       it "creates a solo.rb" do
