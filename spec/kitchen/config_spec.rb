@@ -320,7 +320,7 @@ describe Kitchen::Config do
         .returns(name: "drivey", datum: "lots")
       Kitchen::Driver.unstub(:for_plugin)
       Kitchen::Driver.expects(:for_plugin)
-        .with("drivey", { name: "drivey", datum: "lots" })
+        .with("drivey", name: "drivey", datum: "lots")
 
       config.instances
     end
