@@ -32,6 +32,7 @@ module Kitchen
       default_config :json_attributes, true
       default_config :chef_zero_host, nil
       default_config :chef_zero_port, 8889
+      default_config :chef_license_server, nil
 
       default_config :chef_client_path do |provisioner|
         provisioner
@@ -121,13 +122,15 @@ module Kitchen
         root = config[:root_path]
         gem_home = gem_path = remote_path_join(root, "chef-client-zero-gems")
         gem_cache = remote_path_join(gem_home, "cache")
-
-        [
-            shell_env_var("CHEF_REPO_PATH", root),
-            shell_env_var("GEM_HOME", gem_home),
-            shell_env_var("GEM_PATH", gem_path),
-            shell_env_var("GEM_CACHE", gem_cache),
-        ].join("\n").concat("\n")
+        env_vars = [
+          shell_env_var("CHEF_REPO_PATH", root),
+          shell_env_var("GEM_HOME", gem_home),
+          shell_env_var("GEM_PATH", gem_path),
+          shell_env_var("GEM_CACHE", gem_cache),
+        ]
+        env_vars << shell_env_var("CHEF_LICENSE_KEY", config[:chef_license_key]) if config[:chef_license_key] && !config[:chef_license_key].empty?
+        env_vars << shell_env_var("CHEF_LICENSE_SERVER", config[:chef_license_server]) if config[:chef_license_server] && !config[:chef_license_server].empty?
+        env_vars.join("\n").concat("\n")
       end
 
       # Writes a fake (but valid) validation.pem into the sandbox directory.
