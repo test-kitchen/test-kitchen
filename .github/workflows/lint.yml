@@ -62,7 +62,6 @@ jobs:
       - name: Kitchen Test
         run: |
           export LOGNAME=$USER
-          bundle install
           bundle exec kitchen test almalinux-9
 
   integration-windows:
