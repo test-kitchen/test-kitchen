@@ -17,7 +17,7 @@ end
 group :integration do
   gem "chef-cli"
   gem "kitchen-dokken"
-  # gem "kitchen-inspec" # Causing dependency conflicts
+  gem "kitchen-inspec" # Causing dependency conflicts
   gem "kitchen-vagrant"
 end
 
