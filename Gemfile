@@ -17,8 +17,9 @@ end
 group :integration do
   gem "chef-cli"
   gem "kitchen-dokken"
-  gem "kitchen-inspec", "~> 5.20" # Fix dependency conflicts for ruby < 3.4
+  gem "kitchen-inspec"
   gem "kitchen-vagrant"
+  gem "inspec", "~> 5.22" # Fix dependency conflicts for ruby < 3.4
   gem "train", "~> 3.10" # Fix dependency conflicts for ruby < 3.4
 end
 
