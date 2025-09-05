@@ -60,7 +60,7 @@ describe Kitchen::SSH do
           end
 
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
+            l =~ debug_line("[SSH] opening connection to me@foo:22<#{{ssh_retries: 3}.to_s}>")
           end).must_equal opts[:ssh_retries]
         end
 
