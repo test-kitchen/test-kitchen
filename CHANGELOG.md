@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.8.2](https://github.com/test-kitchen/test-kitchen/compare/v3.8.1...v3.8.2) (2025-09-05)
+
+
+### Bug Fixes
+
+* updates to fix tests ([#2022](https://github.com/test-kitchen/test-kitchen/issues/2022)) ([7552481](https://github.com/test-kitchen/test-kitchen/commit/7552481a5234fcf49f394ff848ce29a9a916940c))
+
 ## [3.8.1](https://github.com/test-kitchen/test-kitchen/compare/v3.8.0...v3.8.1) (2025-07-24)
 
 

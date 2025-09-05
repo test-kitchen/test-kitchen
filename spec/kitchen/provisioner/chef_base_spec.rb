@@ -1009,7 +1009,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     describe "json file" do
-      let(:json) { JSON.parse(IO.read(sandbox_path("dna.json"))) }
+      let(:json) { JSON.parse(File.read(sandbox_path("dna.json"))) }
 
       it "creates a json file with node attributes" do
         config[:attributes] = { "one" => { "two" => "three" } }
@@ -1042,7 +1042,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:run_list] = ["yo"]
         provisioner.create_sandbox
 
-        _(logged_output.string).must_match debug_line(%(Creating dna.json from {:run_list=>["yo"]}))
+        _(logged_output.string).must_match debug_line(%(Creating dna.json from #{{run_list: ["yo"]}.to_s}))
       end
     end
 
@@ -1070,10 +1070,10 @@ describe Kitchen::Provisioner::ChefBase do
           provisioner.create_sandbox
 
           _(sandbox_path("#{thing}/alpha.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
+          _(File.read(sandbox_path("#{thing}/alpha.txt"))).must_equal "stuff"
           _(sandbox_path("#{thing}/sub").directory?).must_equal true
           _(sandbox_path("#{thing}/sub/bravo.txt").file?).must_equal true
-          _(IO.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
+          _(File.read(sandbox_path("#{thing}/sub/bravo.txt"))).must_equal "junk"
         end
 
         it "logs a message on info" do
@@ -1112,7 +1112,7 @@ describe Kitchen::Provisioner::ChefBase do
         provisioner.create_sandbox
 
         _(sandbox_path("encrypted_data_bag_secret").file?).must_equal true
-        _(IO.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
+        _(File.read(sandbox_path("encrypted_data_bag_secret"))).must_equal "p@ss"
       end
 
       it "logs a message on info" do
@@ -1252,7 +1252,7 @@ describe Kitchen::Provisioner::ChefBase do
 
           _(sandbox_path("cookbooks/#{name}").directory?).must_equal true
           _(sandbox_path("cookbooks/#{name}/metadata.rb").file?).must_equal true
-          _(IO.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
+          _(File.read(sandbox_path("cookbooks/#{name}/metadata.rb"))).must_equal %{name "#{name}"\n}
         end
 
         it "logs a warning" do
@@ -1330,7 +1330,7 @@ describe Kitchen::Provisioner::ChefBase do
               provisioner.create_sandbox
 
               dna_json_file = File.join(provisioner.sandbox_path, "dna.json")
-              dna_json_data = JSON.parse(IO.read(dna_json_file))
+              dna_json_data = JSON.parse(File.read(dna_json_file))
 
               expected = {
                 "policy_name" => "wat",
@@ -1646,7 +1646,7 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "Chef config files" do
         let(:file) do
-          IO.read(sandbox_path("generic.rb")).lines.map(&:chomp)
+          File.read(sandbox_path("generic.rb")).lines.map(&:chomp)
         end
 
         it "#create_sanbox creates a generic.rb" do

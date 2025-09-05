@@ -253,7 +253,7 @@ module Kitchen
           if logger.debug?
             debug("Creating RDP document for #{instance_name} (#{rdp_doc_path})")
             debug("------------")
-            IO.read(rdp_doc_path).each_line { |l| debug(l.chomp.to_s) }
+            File.read(rdp_doc_path).each_line { |l| debug(l.chomp.to_s) }
             debug("------------")
           end
         end

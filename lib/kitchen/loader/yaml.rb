@@ -182,7 +182,7 @@ module Kitchen
       #   does not exist
       # @api private
       def read_file(file)
-        File.exist?(file.to_s) ? IO.read(file) : ""
+        File.exist?(file.to_s) ? File.read(file) : ""
       end
 
       # Determines the default absolute path to the Kitchen config YAML file,
@@ -277,7 +277,7 @@ module Kitchen
             backtrace: e.backtrace,
           },
         }
-        result[:error][:raw_file] = IO.read(file) unless file.nil?
+        result[:error][:raw_file] = File.read(file) unless file.nil?
         result
       end
 
