@@ -958,6 +958,40 @@ describe Kitchen::Provisioner::ChefBase do
     end
   end
 
+  describe "#omnitruck_base_url" do
+    describe "when product_name starts with 'chef'" do
+      before { config[:product_name] = "chef-workstation" }
+
+      it "returns the commercial Chef download URL" do
+        _(provisioner.omnitruck_base_url).must_equal "https://chefdownload-commercial.chef.io"
+      end
+    end
+
+    describe "when product_name starts with 'cinc'" do
+      before { config[:product_name] = "cinc-workstation" }
+
+      it "returns the CINC download URL" do
+        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.cinc.sh"
+      end
+    end
+
+    describe "when product_name is something else" do
+      before { config[:product_name] = "other-product" }
+
+      it "returns the default omnitruck URL" do
+        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.chef.io"
+      end
+    end
+
+    describe "when product_name is nil" do
+      before { config[:product_name] = nil }
+
+      it "returns the default omnitruck URL" do
+        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.chef.io"
+      end
+    end
+  end
+
   describe "#omnibus_download_url" do
     describe "when product_name starts with 'chef'" do
       before do
@@ -987,7 +1021,15 @@ describe Kitchen::Provisioner::ChefBase do
     describe "when product_name is something else" do
       before { config[:product_name] = "other-product" }
 
-      it "returns nil" do
+      it "returns the default omnitruck URL" do
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
+      end
+    end
+
+    describe "when product_name is nil" do
+      before { config[:product_name] = nil }
+
+      it "returns the default omnitruck URL" do
         _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
       end
     end

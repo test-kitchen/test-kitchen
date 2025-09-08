@@ -308,11 +308,9 @@ module Kitchen
 
       # Check Chef license key if needed
       def check_license_key
-        if config[:product_name]&.start_with?("chef")
-          if config[:chef_license_key].nil? || config[:chef_license_key].empty?
-            error("When specifying a chef product_name you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
-            raise
-          end
+        if config[:chef_license_key].nil? || config[:chef_license_key].empty?
+          error("When specifying a chef product_name you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
+          raise
         end
       end
 
