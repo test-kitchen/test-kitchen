@@ -314,7 +314,7 @@ module Kitchen
 
       def omnitruck_base_url
         if config[:product_name]&.start_with?("chef")
-          if config[:product_version] == :latest || config[:product_version].to_i >= 15
+          if config[:product_version] == "latest" || config[:product_version].to_s.to_i >= 15
             "https://chefdownload-commercial.chef.io"
           else
             "https://chefdownload-community.chef.io"
@@ -326,11 +326,11 @@ module Kitchen
 
       # Select the download URL based on the product name
       def omnibus_download_url
-        if config[:product_name]&.start_with?("chef") && (config[:product_version] == :latest || config[:product_version].to_i >= 15)
+        if config[:product_name]&.start_with?("chef") && (config[:product_version] == "latest" || config[:product_version].to_s.to_i >= 15)
           check_license_key
-          "#{omnitruck_base_url}/install.sh?license_id=#{config[:chef_license_key]}"
+          "#{omnitruck_base_url}/install#{windows_os? ? ".ps1" : ".sh"}?license_id=#{config[:chef_license_key]}"
         else
-          "#{omnitruck_base_url}/install.sh"
+          "#{omnitruck_base_url}/install#{windows_os? ? ".ps1" : ".sh"}"
         end
       end
 
@@ -528,8 +528,10 @@ module Kitchen
         # by default require_chef_omnibus is set to true. Check config[:product_name] first
         # so that we can use it if configured.
         if config[:product_name]&.start_with?("chef")
+          debug("Using download url: #{config[:download_url]}")
           script_for_product
         else
+          debug("Using Omnibus url: #{config[:chef_omnibus_url]}")
           script_for_omnibus_version
         end
       end
