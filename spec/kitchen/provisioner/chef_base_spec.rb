@@ -58,7 +58,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:os_type).returns("unix") }
 
       it ":chef_omnibus_url has a default" do
-        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.cinc.sh/install.sh"
       end
 
       it ":chef_metadata_url defaults to nil" do
@@ -70,7 +70,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":chef_omnibus_url has a default" do
-        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.cinc.sh/install.sh"
       end
     end
 
@@ -159,10 +159,6 @@ describe Kitchen::Provisioner::ChefBase do
       _(provisioner[:architecture]).must_be_nil
     end
 
-    it ":download_url default to nil" do
-      _(provisioner[:download_url]).must_be_nil
-    end
-
     it ":checksum default to nil" do
       _(provisioner[:checksum]).must_be_nil
     end
@@ -183,7 +179,7 @@ describe Kitchen::Provisioner::ChefBase do
     let(:cmd) { provisioner.install_command }
 
     let(:install_opts) do
-      { omnibus_url: "https://omnitruck.chef.io/install.sh",
+      { omnibus_url: "https://omnitruck.cinc.sh/install.sh",
         project: nil, install_flags: nil,
         sudo_command: "sudo -E", http_proxy: nil, https_proxy: nil
       }
@@ -199,7 +195,6 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "common behaviour" do
       before do
-        installer.expects(:root).at_least_once.returns("/opt/chef")
         installer.expects(:install_command)
       end
 
@@ -384,9 +379,9 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "for product" do
       before do
-        installer.expects(:root).at_least_once.returns("/opt/chef")
         installer.expects(:install_command)
-        config[:product_name] = "my_product"
+        config[:product_name] = "chef"
+        config[:chef_license_key] = "some-key"
       end
 
       it "will set the product name, version and channel" do
@@ -394,7 +389,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:channel] = "channel"
 
         Mixlib::Install.expects(:new).with do |opts|
-          _(opts[:product_name]).must_equal "my_product"
+          _(opts[:product_name]).must_equal "chef"
           _(opts[:product_version]).must_equal "version"
           _(opts[:channel]).must_equal :channel
         end.returns(installer)
@@ -515,7 +510,11 @@ describe Kitchen::Provisioner::ChefBase do
 
       describe "when driver implements the cache_directory" do
         describe "for windows" do
-          before { driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place') }
+          before do
+            driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+            config[:product_name] = "chef"
+            config[:chef_license_key] = "some-key"
+          end
 
           it "will have the set behavior on windows" do
             platform.stubs(:shell_type).returns("powershell")
@@ -555,7 +554,6 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "for bourne shells" do
       before do
-        installer.expects(:root).at_least_once.returns("/opt/chef")
         installer.expects(:install_command).returns("my_install_command")
       end
 
@@ -568,15 +566,6 @@ describe Kitchen::Provisioner::ChefBase do
         Mixlib::Install::ScriptGenerator.expects(:new)
           .with(default_version, false, install_opts_clone).returns(installer)
         _(cmd).must_equal "my_sudo_command my_install_command"
-      end
-
-      it "does not pass shell type for product based command" do
-        config[:product_name] = "product_name"
-
-        Mixlib::Install.expects(:new).with do |opts|
-          _(opts.key?(:shell_type)).must_equal false
-        end.returns(installer)
-        cmd
       end
 
       it "does not sudo for sh commands when :sudo is falsey" do
@@ -592,7 +581,6 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "for powershell shells on windows os types" do
       before do
-        installer.expects(:root).at_least_once.returns("/opt/chef")
         installer.expects(:install_command)
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
@@ -606,8 +594,9 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
-      it "passes ps1 shell type for product based command" do
-        config[:product_name] = "product_name"
+      it "passes ps1 shell type for chef product based command" do
+        config[:product_name] = "chef"
+        config[:chef_license_key] = "some-key"
 
         Mixlib::Install.expects(:new).with do |opts|
           _(opts[:shell_type]).must_equal :ps1
@@ -616,7 +605,9 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       describe "when driver implements the cache_directory" do
-        before { driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place') }
+        before do
+          driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+        end
 
         it "will have the same behavior on windows" do
           config[:chef_omnibus_install_options] = "-version 123"
@@ -927,33 +918,28 @@ describe Kitchen::Provisioner::ChefBase do
         config[:chef_license_key] = ""
         expect { provisioner.check_license_key }.must_raise(RuntimeError)
       end
-
-      it "returns the license key when present" do
-        config[:chef_license_key] = "test-license-key"
-        _(provisioner.check_license_key).must_equal "test-license-key"
-      end
     end
 
     describe "when product_name does not start with 'chef'" do
       before { config[:product_name] = "cinc-workstation" }
 
-      it "returns nil when chef_license_key is nil" do
+      it "does not raise an error when chef_license_key is nil" do
         config[:chef_license_key] = nil
-        _(provisioner.check_license_key).must_be_nil
+        expect { provisioner.omnibus_download_url }.must_be_silent
       end
 
-      it "returns the value when chef_license_key is set" do
-        config[:chef_license_key] = "some-key"
-        _(provisioner.check_license_key).must_equal "some-key"
+      it "does not raise an error when chef_license_key is empty" do
+        config[:chef_license_key] = ""
+        expect { provisioner.omnibus_download_url }.must_be_silent
       end
     end
 
     describe "when product_name is nil" do
       before { config[:product_name] = nil }
 
-      it "returns the value when chef_license_key is set" do
-        config[:chef_license_key] = "some-key"
-        _(provisioner.check_license_key).must_equal "some-key"
+      it "does not raise an error when chef_license_key is nil" do
+        config[:chef_license_key] = nil
+        expect { provisioner.omnibus_download_url }.must_be_silent
       end
     end
   end
@@ -979,7 +965,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { config[:product_name] = "other-product" }
 
       it "returns the default omnitruck URL" do
-        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.chef.io"
+        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.cinc.sh"
       end
     end
 
@@ -987,7 +973,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { config[:product_name] = nil }
 
       it "returns the default omnitruck URL" do
-        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.chef.io"
+        _(provisioner.omnitruck_base_url).must_equal "https://omnitruck.cinc.sh"
       end
     end
   end
@@ -1022,7 +1008,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { config[:product_name] = "other-product" }
 
       it "returns the default omnitruck URL" do
-        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.cinc.sh/install.sh"
       end
     end
 
@@ -1030,7 +1016,143 @@ describe Kitchen::Provisioner::ChefBase do
       before { config[:product_name] = nil }
 
       it "returns the default omnitruck URL" do
-        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.chef.io/install.sh"
+        _(provisioner.omnibus_download_url).must_equal "https://omnitruck.cinc.sh/install.sh"
+      end
+    end
+  end
+
+  describe "#doctor" do
+    let(:deprecated_config) { { some_attr: "deprecation message" } }
+
+    before do
+      instance.driver.stubs(:instance_variable_get)
+              .with(:@deprecated_config)
+              .returns(deprecated_config)
+    end
+
+    it "logs deprecation warnings for each deprecated config" do
+      provisioner.doctor({})
+
+      _(logged_output.string).must_include("**** some_attr deprecated")
+      _(logged_output.string).must_include("deprecation message")
+    end
+
+    it "handles empty deprecated config" do
+      instance.driver.stubs(:instance_variable_get)
+              .with(:@deprecated_config)
+              .returns({})
+
+      provisioner.doctor({})
+
+      _(logged_output.string).must_be_empty
+    end
+  end
+
+  describe "private methods" do
+    describe "#default_config_rb" do
+      before { config[:root_path] = "/tmp/kitchen" }
+
+      it "returns a hash with default Chef configuration" do
+        config_hash = provisioner.send(:default_config_rb)
+
+        _(config_hash[:node_name]).must_equal "coolbeans"
+        _(config_hash[:checksum_path]).must_equal "/tmp/kitchen/checksums"
+        _(config_hash[:file_cache_path]).must_equal "/tmp/kitchen/cache"
+        _(config_hash[:cookbook_path]).must_include "/tmp/kitchen/cookbooks"
+        _(config_hash[:cookbook_path]).must_include "/tmp/kitchen/site-cookbooks"
+      end
+
+      it "includes chef_license when set" do
+        config[:chef_license] = "accept"
+        config_hash = provisioner.send(:default_config_rb)
+
+        _(config_hash[:chef_license]).must_equal "accept"
+      end
+
+      it "excludes chef_license when nil" do
+        config[:chef_license] = nil
+        config_hash = provisioner.send(:default_config_rb)
+
+        _(config_hash.key?(:chef_license)).must_equal false
+      end
+    end
+
+    describe "#format_config_file" do
+      it "formats a hash into Chef config file format" do
+        data = { node_name: "test", file_cache_path: "/tmp/cache" }
+        result = provisioner.send(:format_config_file, data)
+
+        _(result).must_include 'node_name "test"'
+        _(result).must_include 'file_cache_path "/tmp/cache"'
+      end
+    end
+
+    describe "#format_value" do
+      it "formats strings with quotes" do
+        _(provisioner.send(:format_value, "test")).must_equal '"test"'
+      end
+
+      it "formats symbols without quotes" do
+        _(provisioner.send(:format_value, ":debug")).must_equal ":debug"
+      end
+
+      it "formats arrays" do
+        result = provisioner.send(:format_value, ["a", "b"])
+        _(result).must_equal '["a", "b"]'
+      end
+
+      it "escapes backslashes in strings" do
+        result = provisioner.send(:format_value, 'C:\path\to\file')
+        _(result).must_equal '"C:\\\\path\\\\to\\\\file"'
+      end
+
+      it "formats other objects with inspect" do
+        _(provisioner.send(:format_value, 123)).must_equal "123"
+        _(provisioner.send(:format_value, true)).must_equal "true"
+      end
+    end
+
+    describe "#policyfile" do
+      before do
+        @root = Dir.mktmpdir
+        config[:kitchen_root] = @root
+      end
+
+      after do
+        FileUtils.remove_entry(@root)
+      end
+
+      it "returns default Policyfile.rb path" do
+        expected = File.expand_path("Policyfile.rb", @root)
+        _(provisioner.send(:policyfile)).must_equal expected
+      end
+
+      it "uses policyfile_path when set" do
+        config[:policyfile_path] = "custom/Policyfile.rb"
+        expected = File.expand_path("custom/Policyfile.rb", @root)
+        _(provisioner.send(:policyfile)).must_equal expected
+      end
+    end
+
+    describe "#berksfile" do
+      before do
+        @root = Dir.mktmpdir
+        config[:kitchen_root] = @root
+      end
+
+      after do
+        FileUtils.remove_entry(@root)
+      end
+
+      it "returns default Berksfile path" do
+        expected = File.expand_path("Berksfile", @root)
+        _(provisioner.send(:berksfile)).must_equal expected
+      end
+
+      it "uses berksfile_path when set" do
+        config[:berksfile_path] = "custom/Berksfile"
+        expected = File.expand_path("custom/Berksfile", @root)
+        _(provisioner.send(:berksfile)).must_equal expected
       end
     end
   end

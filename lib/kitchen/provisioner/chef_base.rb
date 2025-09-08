@@ -125,8 +125,6 @@ module Kitchen
       # https://github.com/chef/chef-rfc/blob/master/rfc091-deprecate-kitchen-settings.md
       #
 
-      # Setting product_name to nil. It is currently the pivot point
-      # between the two install paths (Mixlib::Install::ScriptGenerator and Mixlib::Install)
       default_config :product_name
 
       default_config :product_version, :latest
@@ -309,27 +307,26 @@ module Kitchen
       # Check Chef license key if needed
       def check_license_key
         if config[:chef_license_key].nil? || config[:chef_license_key].empty?
-          error("When specifying a chef product_name you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
+          error("When specifying a chef product_name and product_version >= 15 you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
           raise
         end
       end
 
       def omnitruck_base_url
         if config[:product_name]&.start_with?("chef")
-          "https://chefdownload-commercial.chef.io"
-        elsif config[:product_name]&.start_with?("cinc")
-          "https://omnitruck.cinc.sh"
+          if config[:product_version] == :latest || config[:product_version].to_i >= 15
+            "https://chefdownload-commercial.chef.io"
+          else
+            "https://chefdownload-community.chef.io"
+          end
         else
-          # TODO: change to https://chefdownload-community.chef.io when omnitruck url is shutdown.
-          # Users will need to use either commercial api for chef-client v15+ with license agreement requirements or
-          # community api for chef-client v14 and earlier pre license agreement requirements.
-          "https://omnitruck.chef.io"
+          "https://omnitruck.cinc.sh"
         end
       end
 
       # Select the download URL based on the product name
       def omnibus_download_url
-        if config[:product_name]&.start_with?("chef")
+        if config[:product_name]&.start_with?("chef") && (config[:product_version] == :latest || config[:product_version].to_i >= 15)
           check_license_key
           "#{omnitruck_base_url}/install.sh?license_id=#{config[:chef_license_key]}"
         else

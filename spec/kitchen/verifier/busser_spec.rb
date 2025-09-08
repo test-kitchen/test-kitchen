@@ -102,6 +102,7 @@ describe Kitchen::Verifier::Busser do
       end
 
       it ":ruby_bindir defaults the an Omnibus Chef installation" do
+        config[:product_name] = "chef"
         _(verifier[:ruby_bindir]).must_equal "/opt/chef/embedded/bin"
       end
 
