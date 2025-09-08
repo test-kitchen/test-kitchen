@@ -44,6 +44,9 @@ module Kitchen
       default_config :require_chef_omnibus, true
       default_config :chef_omnibus_url, &:omnibus_download_url
       default_config :chef_omnibus_install_options, nil
+      default_config :chef_omnibus_root do |provisioner|
+        "/opt/#{provisioner[:product_name]}" if provisioner[:product_name]
+      end
       default_config :chef_license, nil
       default_config :chef_license_key, nil
       default_config :run_list, []
@@ -138,7 +141,7 @@ module Kitchen
 
       default_config :architecture
 
-      default_config :download_url
+      default_config :download_url, &:omnibus_download_url
 
       default_config :checksum
 
@@ -305,24 +308,34 @@ module Kitchen
 
       # Check Chef license key if needed
       def check_license_key
-        if config[:product_name].start_with?("chef")
+        if config[:product_name]&.start_with?("chef")
           if config[:chef_license_key].nil? || config[:chef_license_key].empty?
             error("When specifying a chef product_name you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
             raise
           end
         end
-        config[:chef_license_key]
+      end
+
+      def omnitruck_base_url
+        if config[:product_name]&.start_with?("chef")
+          "https://chefdownload-commercial.chef.io"
+        elsif config[:product_name]&.start_with?("cinc")
+          "https://omnitruck.cinc.sh"
+        else
+          # TODO: change to https://chefdownload-community.chef.io when omnitruck url is shutdown.
+          # Users will need to use either commercial api for chef-client v15+ with license agreement requirements or
+          # community api for chef-client v14 and earlier pre license agreement requirements.
+          "https://omnitruck.chef.io"
+        end
       end
 
       # Select the download URL based on the product name
       def omnibus_download_url
         if config[:product_name]&.start_with?("chef")
           check_license_key
-          "https://chefdownload-commercial.chef.io/install.sh?license_id=#{config[:chef_license_key]}"
-        elsif config[:product_name]&.start_with?("cinc")
-          "https://omnitruck.cinc.sh/install.sh"
+          "#{omnitruck_base_url}/install.sh?license_id=#{config[:chef_license_key]}"
         else
-          "https://omnitruck.chef.io/install.sh"
+          "#{omnitruck_base_url}/install.sh"
         end
       end
 
@@ -374,7 +387,7 @@ module Kitchen
           install_flags: config[:chef_omnibus_install_options],
           sudo_command:,
         }.tap do |opts|
-          opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
+          opts[:root] = config[:chef_omnibus_root] if config[:chef_omnibus_root]
           %i{install_msi_url http_proxy https_proxy}.each do |key|
             opts[key] = config[key] if config.key? key
           end
@@ -519,9 +532,9 @@ module Kitchen
       def install_script_contents
         # by default require_chef_omnibus is set to true. Check config[:product_name] first
         # so that we can use it if configured.
-        if config[:product_name]
+        if config[:product_name]&.start_with?("chef")
           script_for_product
-        elsif config[:require_chef_omnibus]
+        else
           script_for_omnibus_version
         end
       end
@@ -569,7 +582,6 @@ module Kitchen
           end
           opts[:install_command_options].merge!(proxies)
         end)
-        config[:chef_omnibus_root] = installer.root
         if powershell_shell?
           installer.install_command
         else
@@ -607,7 +619,6 @@ module Kitchen
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
-        config[:chef_omnibus_root] = installer.root
         sudo(installer.install_command)
       end
 

@@ -4,7 +4,7 @@ driver:
 
 provisioner:
   name: chef_infra
-  product_name: chef
+  product_name: cinc
   deprecations_as_errors: true
   chef_license: accept-no-persist
 

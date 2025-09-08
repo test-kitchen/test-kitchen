@@ -937,9 +937,23 @@ describe Kitchen::Provisioner::ChefBase do
     describe "when product_name does not start with 'chef'" do
       before { config[:product_name] = "cinc-workstation" }
 
-      it "returns the license key without validation" do
+      it "returns nil when chef_license_key is nil" do
         config[:chef_license_key] = nil
         _(provisioner.check_license_key).must_be_nil
+      end
+
+      it "returns the value when chef_license_key is set" do
+        config[:chef_license_key] = "some-key"
+        _(provisioner.check_license_key).must_equal "some-key"
+      end
+    end
+
+    describe "when product_name is nil" do
+      before { config[:product_name] = nil }
+
+      it "returns the value when chef_license_key is set" do
+        config[:chef_license_key] = "some-key"
+        _(provisioner.check_license_key).must_equal "some-key"
       end
     end
   end
