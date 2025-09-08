@@ -605,23 +605,23 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
-      describe "when driver implements the cache_directory" do
-        before do
-          driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
-        end
-
-        # TODO: fix this test
-        # it "will have the same behavior on windows" do
-        #   config[:chef_omnibus_install_options] = "-version 123"
-        #   install_opts_clone = install_opts.clone
-        #   install_opts_clone[:sudo_command] = ""
-        #   install_opts_clone[:install_flags] = "-version 123"
-        #   install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
-        #   Mixlib::Install::ScriptGenerator.expects(:new)
-        #     .with(default_version, true, install_opts_clone).returns(installer)
-        #   cmd
-        # end
-      end
+      # TODO: fix this test
+      # describe "when driver implements the cache_directory" do
+      #   before do
+      #     driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+      #   end
+      #
+      #   it "will have the same behavior on windows" do
+      #     config[:chef_omnibus_install_options] = "-version 123"
+      #     install_opts_clone = install_opts.clone
+      #     install_opts_clone[:sudo_command] = ""
+      #     install_opts_clone[:install_flags] = "-version 123"
+      #     install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
+      #     Mixlib::Install::ScriptGenerator.expects(:new)
+      #       .with(default_version, true, install_opts_clone).returns(installer)
+      #     cmd
+      #   end
+      # end
     end
   end
 

@@ -328,9 +328,9 @@ module Kitchen
       def omnibus_download_url
         if config[:product_name]&.start_with?("chef") && (config[:product_version] == "latest" || config[:product_version].to_s.to_i >= 15)
           check_license_key
-          "#{omnitruck_base_url}/install#{windows_os? ? ".ps1" : ".sh"}?license_id=#{config[:chef_license_key]}"
+          "#{omnitruck_base_url}/install.sh?license_id=#{config[:chef_license_key]}"
         else
-          "#{omnitruck_base_url}/install#{windows_os? ? ".ps1" : ".sh"}"
+          "#{omnitruck_base_url}/install.sh"
         end
       end
 

@@ -11,11 +11,13 @@ Test Kitchen includes three provisioners for Chef Infra, `chef_solo`, `chef_infr
 
 `chef_target` is for using Chef 19 Target Mode without remotely installing any agents and is based on `kitchen-transport-train` and the Train framework, which are not installed from Test Kitchen by default. For links to these two tools, look at the end of this page.
 
-If product_name is not set test-kitchen defaults to installing cinc-client. To install chef-client set product_name to `chef` or `chef-workstation`.
+If `product_name` is not set test-kitchen defaults to installing cinc-client. To install chef-client set `product_name` to `chef` or `chef-workstation`.
 
 Commercial Chef products requre a license key to download packages from Chef's servers. This can be set in the `chef_license_key` option.
 
 chef_licnense_key is not required for product_name starting with 'chef' and product_version <= 14.x.x.
+
+It is recommended to set `chef_license_key` to `<%= ENV['CHEF_LICENSE_KEY'] %>` for security reasons and set a shell environment variable to your licnese key from Chef.
 
 ```ruby
 ---
