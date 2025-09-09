@@ -2,6 +2,8 @@
 driver:
   name: dokken
   privileged: true
+  chef_image: cincproject/cinc
+  chef_version: latest
 
 provisioner:
   name: dokken
