@@ -8,6 +8,7 @@ driver:
 provisioner:
   name: dokken
   chef_license: accept-no-persist
+  chef_binary: /opt/cinc/bin/chef-client
 
 transport:
   name: dokken
