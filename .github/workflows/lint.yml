@@ -74,7 +74,7 @@ jobs:
       machine_port: 5985
       SPEC_OPTS: --format progress
       KITCHEN_LOCAL_YAML: kitchen.windows.yml
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 600
     strategy:
       fail-fast: false
