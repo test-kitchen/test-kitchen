@@ -70,7 +70,7 @@ describe Kitchen::Provisioner::ChefBase do
       before { platform.stubs(:os_type).returns("windows") }
 
       it ":chef_omnibus_url has a default" do
-        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.cinc.sh/install.sh"
+        _(provisioner[:chef_omnibus_url]).must_equal "https://omnitruck.cinc.sh/install.ps1"
       end
     end
 
