@@ -136,7 +136,7 @@ describe Kitchen::Provisioner::ChefBase do
     end
 
     it ":product_name default to cinc" do
-      _(provisioner[:product_name]).must_equal "cinc"
+      _(provisioner[:product_name]).must_be_nil
     end
 
     it ":product_version defaults to :latest" do
@@ -817,8 +817,8 @@ describe Kitchen::Provisioner::ChefBase do
   end
 
   describe "#license_acceptance_id" do
-    it "returns 'cinc' by default" do
-      assert_equal("cinc", provisioner.license_acceptance_id)
+    it "returns 'chef' by default" do
+      assert_equal("chef", provisioner.license_acceptance_id)
     end
 
     describe "when product_name is set" do
@@ -840,8 +840,8 @@ describe Kitchen::Provisioner::ChefBase do
         FileUtils.remove_entry(@root)
       end
 
-      it "returns 'cinc'" do
-        assert_equal("cinc", provisioner.license_acceptance_id)
+      it "returns 'chef-workstation'" do
+        assert_equal("chef-workstation", provisioner.license_acceptance_id)
       end
     end
 

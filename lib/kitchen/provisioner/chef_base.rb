@@ -125,7 +125,7 @@ module Kitchen
       # https://github.com/chef/chef-rfc/blob/master/rfc091-deprecate-kitchen-settings.md
       #
 
-      default_config :product_name, "cinc"
+      default_config :product_name
 
       default_config :product_version, :latest
 
@@ -275,7 +275,7 @@ module Kitchen
       # @return [String] license id to prompt for acceptance
       def license_acceptance_id
         case
-          when File.exist?(policyfile) && config[:product_name].start_with?("chef")
+          when File.exist?(policyfile) && (config[:product_name].nil? || config[:product_name].start_with?("chef"))
             "chef-workstation"
           when config[:product_name]
             config[:product_name]
