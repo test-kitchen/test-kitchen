@@ -528,8 +528,8 @@ module Kitchen
         # by default require_chef_omnibus is set to true. Check config[:product_name] first
         # so that we can use it if configured.
         # if config[:product_name]&.start_with?("chef")
-        #   debug("Using download url: #{config[:download_url]}")
-           script_for_product
+        # debug("Using download url: #{config[:download_url]}")
+        script_for_product
         # else
         #   debug("Using Omnibus url: #{config[:chef_omnibus_url]}")
         #   script_for_omnibus_version
