@@ -135,8 +135,8 @@ describe Kitchen::Provisioner::ChefBase do
       _(provisioner[:encrypted_data_bag_secret_key_path]).must_equal os_safe_root_path("/rooty/<calculated>/encrypted_data_bag_secret_key")
     end
 
-    it ":product_name default to nil" do
-      _(provisioner[:product_name]).must_be_nil
+    it ":product_name default to cinc" do
+      _(provisioner[:product_name]).must_equal "cinc"
     end
 
     it ":product_version defaults to :latest" do
@@ -587,13 +587,13 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       # TODO: fix this test
-      # it "sets the powershell flag for Mixlib::Install" do
-      #   install_opts_clone = install_opts.clone
-      #   install_opts_clone[:sudo_command] = ""
-      #   Mixlib::Install::ScriptGenerator.expects(:new)
-      #     .with(default_version, true, install_opts_clone).returns(installer)
-      #   cmd
-      # end
+      it "sets the powershell flag for Mixlib::Install" do
+        install_opts_clone = install_opts.clone
+        install_opts_clone[:sudo_command] = ""
+        Mixlib::Install::ScriptGenerator.expects(:new)
+          .with(default_version, true, install_opts_clone).returns(installer)
+        cmd
+      end
 
       it "passes ps1 shell type for chef product based command" do
         config[:product_name] = "chef"
@@ -606,22 +606,22 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       # TODO: fix this test
-      # describe "when driver implements the cache_directory" do
-      #   before do
-      #     driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
-      #   end
-      #
-      #   it "will have the same behavior on windows" do
-      #     config[:chef_omnibus_install_options] = "-version 123"
-      #     install_opts_clone = install_opts.clone
-      #     install_opts_clone[:sudo_command] = ""
-      #     install_opts_clone[:install_flags] = "-version 123"
-      #     install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
-      #     Mixlib::Install::ScriptGenerator.expects(:new)
-      #       .with(default_version, true, install_opts_clone).returns(installer)
-      #     cmd
-      #   end
-      # end
+      describe "when driver implements the cache_directory" do
+        before do
+          driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+        end
+
+        it "will have the same behavior on windows" do
+          config[:chef_omnibus_install_options] = "-version 123"
+          install_opts_clone = install_opts.clone
+          install_opts_clone[:sudo_command] = ""
+          install_opts_clone[:install_flags] = "-version 123"
+          install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
+          Mixlib::Install::ScriptGenerator.expects(:new)
+            .with(default_version, true, install_opts_clone).returns(installer)
+          cmd
+        end
+      end
     end
   end
 
@@ -817,8 +817,8 @@ describe Kitchen::Provisioner::ChefBase do
   end
 
   describe "#license_acceptance_id" do
-    it "returns 'chef' by default" do
-      assert_equal("chef", provisioner.license_acceptance_id)
+    it "returns 'cinc' by default" do
+      assert_equal("cinc", provisioner.license_acceptance_id)
     end
 
     describe "when product_name is set" do
@@ -840,8 +840,8 @@ describe Kitchen::Provisioner::ChefBase do
         FileUtils.remove_entry(@root)
       end
 
-      it "returns 'chef-workstation'" do
-        assert_equal("chef-workstation", provisioner.license_acceptance_id)
+      it "returns 'cinc'" do
+        assert_equal("cinc", provisioner.license_acceptance_id)
       end
     end
 

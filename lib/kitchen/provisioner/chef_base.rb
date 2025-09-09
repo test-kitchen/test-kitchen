@@ -125,7 +125,7 @@ module Kitchen
       # https://github.com/chef/chef-rfc/blob/master/rfc091-deprecate-kitchen-settings.md
       #
 
-      default_config :product_name
+      default_config :product_name, "cinc"
 
       default_config :product_version, :latest
 
@@ -275,7 +275,7 @@ module Kitchen
       # @return [String] license id to prompt for acceptance
       def license_acceptance_id
         case
-          when File.exist?(policyfile) && (config[:product_name].nil? || config[:product_name].start_with?("chef"))
+          when File.exist?(policyfile) && config[:product_name].start_with?("chef")
             "chef-workstation"
           when config[:product_name]
             config[:product_name]
@@ -380,7 +380,7 @@ module Kitchen
           omnibus_url: config[:chef_omnibus_url],
           project: project.nil? ? nil : project[1],
           install_flags: config[:chef_omnibus_install_options],
-          sudo_command:,
+          sudo_command: config[:sudo] ? config[:sudo_command] : "",
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config[:chef_omnibus_root]
           %i{install_msi_url http_proxy https_proxy}.each do |key|
@@ -527,13 +527,13 @@ module Kitchen
       def install_script_contents
         # by default require_chef_omnibus is set to true. Check config[:product_name] first
         # so that we can use it if configured.
-        # if config[:product_name]&.start_with?("chef")
-        # debug("Using download url: #{config[:download_url]}")
-        script_for_product
-        # else
-        #   debug("Using Omnibus url: #{config[:chef_omnibus_url]}")
-        #   script_for_omnibus_version
-        # end
+        if config[:product_name]&.start_with?("chef")
+          debug("Using download url: #{config[:download_url]}")
+          script_for_product
+        elsif config[:require_chef_omnibus]
+          debug("Using Omnibus url: #{config[:chef_omnibus_url]}")
+          script_for_omnibus_version
+        end
       end
 
       # @return [String] contents of product based install script
