@@ -581,45 +581,67 @@ describe Kitchen::Provisioner::ChefBase do
 
     describe "for powershell shells on windows os types" do
       before do
-        installer.expects(:install_command)
         platform.stubs(:shell_type).returns("powershell")
         platform.stubs(:os_type).returns("windows")
       end
 
-      # TODO: fix this test
-      it "sets the powershell flag for Mixlib::Install" do
-        install_opts_clone = install_opts.clone
-        install_opts_clone[:sudo_command] = ""
-        Mixlib::Install::ScriptGenerator.expects(:new)
-          .with(default_version, true, install_opts_clone).returns(installer)
-        cmd
-      end
-
-      it "passes ps1 shell type for chef product based command" do
-        config[:product_name] = "chef"
-        config[:chef_license_key] = "some-key"
-
-        Mixlib::Install.expects(:new).with do |opts|
-          _(opts[:shell_type]).must_equal :ps1
-        end.returns(installer)
-        cmd
-      end
-
-      # TODO: fix this test
-      describe "when driver implements the cache_directory" do
+      describe "for omnibus installs" do
         before do
-          driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+          config[:require_chef_omnibus] = true
+          config[:product_name] = "cinc"
+          installer.expects(:install_command).returns("powershell_install_command")
         end
 
-        it "will have the same behavior on windows" do
-          config[:chef_omnibus_install_options] = "-version 123"
+        it "sets the powershell flag for Mixlib::Install::ScriptGenerator" do
           install_opts_clone = install_opts.clone
           install_opts_clone[:sudo_command] = ""
-          install_opts_clone[:install_flags] = "-version 123"
-          install_opts_clone[:install_flags] << ' -download_directory $env:TEMP\\dummy\\place'
           Mixlib::Install::ScriptGenerator.expects(:new)
             .with(default_version, true, install_opts_clone).returns(installer)
           cmd
+        end
+
+        describe "when driver implements the cache_directory" do
+          before do
+            driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+          end
+
+          it "will use download_directory for omnibus installs on windows" do
+            config[:chef_omnibus_install_options] = "-version 123"
+            install_opts_clone = install_opts.clone
+            install_opts_clone[:sudo_command] = ""
+            install_opts_clone[:install_flags] = "-version 123 -download_directory $env:TEMP\\dummy\\place"
+            Mixlib::Install::ScriptGenerator.expects(:new)
+              .with(default_version, true, install_opts_clone).returns(installer)
+            cmd
+          end
+        end
+      end
+
+      describe "for product installs" do
+        before do
+          installer.expects(:install_command).returns("powershell_install_command")
+          config[:product_name] = "chef"
+          config[:chef_license_key] = "some-key"
+        end
+
+        it "passes ps1 shell type for chef product based command" do
+          Mixlib::Install.expects(:new).with do |opts|
+            _(opts[:shell_type]).must_equal :ps1
+          end.returns(installer)
+          cmd
+        end
+
+        describe "when driver implements the cache_directory" do
+          before do
+            driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place')
+          end
+
+          it "will use download_directory option on windows for product installs" do
+            Mixlib::Install.expects(:new).with do |opts|
+              _(opts[:install_command_options][:download_directory]).must_equal '$env:TEMP\\dummy\\place'
+            end.returns(installer)
+            cmd
+          end
         end
       end
     end
