@@ -223,11 +223,6 @@ module Kitchen
           download_url: http://direct-download-url
       MSG
 
-      deprecate_config_for :chef_metadata_url, Util.outdent!(<<-MSG)
-        The 'chef_metadata_url' will be removed. The Windows metadata URL will be
-        fully managed by using attribute settings.
-      MSG
-
       # Reads the local Chef::Config object (if present). We do this because
       # we want to start bring Chef config and Chef Workstation config closer
       # together. For example, we want to configure proxy settings in 1
@@ -380,9 +375,11 @@ module Kitchen
           omnibus_url: config[:chef_omnibus_url],
           project: project.nil? ? nil : project[1],
           install_flags: config[:chef_omnibus_install_options],
-          sudo_command: config[:sudo] ? config[:sudo_command] : "",
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config[:chef_omnibus_root]
+          opts[:endpoint] = "#{config[:channel]}/#{config[:product_name] ? config[:product_name] : "cinc"}/metadata" if powershell_shell?
+          opts[:use_sudo] = config[:sudo] ? true : false
+          opts[:sudo_command] = config[:sudo] ? config[:sudo_command] : ""
           %i{install_msi_url http_proxy https_proxy}.each do |key|
             opts[key] = config[key] if config.key? key
           end
@@ -528,10 +525,10 @@ module Kitchen
         # by default require_chef_omnibus is set to true. Check config[:product_name] first
         # so that we can use it if configured.
         if config[:product_name]&.start_with?("chef")
-          debug("Using download url: #{config[:download_url]}")
+          debug("[install_script_contents] Using download url: #{config[:download_url]}")
           script_for_product
         elsif config[:require_chef_omnibus]
-          debug("Using Omnibus url: #{config[:chef_omnibus_url]}")
+          debug("[install_script_contents] Using Omnibus url: #{config[:chef_omnibus_url]}")
           script_for_omnibus_version
         end
       end
@@ -616,7 +613,14 @@ module Kitchen
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, install_options
         )
-        sudo(installer.install_command)
+        debug("[script_for_omnibus_version] install_options = #{install_options.inspect}")
+        debug("[script_for_omnibus_version] powershell_shell? = #{powershell_shell?.inspect}")
+        debug("[script_for_omnibus_version] installer = #{installer.inspect}")
+        if powershell_shell?
+          installer.install_command
+        else
+          sudo(installer.install_command)
+        end
       end
 
       # Hook used in subclasses to indicate support for policyfiles.

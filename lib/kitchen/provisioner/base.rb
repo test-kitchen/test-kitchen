@@ -86,7 +86,8 @@ module Kitchen
             script_filename = windows_os? ? "install_script.ps1" : "install_script"
             remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
             if install_script_path
-              debug("Uploading install script to #{remote_script_path}")
+              debug("[install_command] Uploading install script to #{remote_script_path}")
+              debug("[install_command] Install script contents: ^^^^^ #{puts File.read(install_script_path)}\n")
               conn.upload(install_script_path, remote_script_path)
               # Make script executable on remote host
               conn.execute(make_executable_command(remote_script_path))
