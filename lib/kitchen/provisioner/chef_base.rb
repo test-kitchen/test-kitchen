@@ -301,6 +301,10 @@ module Kitchen
 
       # Check Chef license key if needed
       def check_license_key
+        # Only require license key for Chef products version 15 and above
+        return unless config[:product_name]&.start_with?("chef")
+        return unless config[:product_version] == "latest" || config[:product_version].to_s.to_i >= 15
+
         if config[:chef_license_key].nil? || config[:chef_license_key].empty?
           error("When specifying a chef product_name and product_version >= 15 you must also specify a chef_license_key for the commercial download url see: https://docs.chef.io/download/commercial/")
           raise

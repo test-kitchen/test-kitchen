@@ -23,7 +23,7 @@ jobs:
 
   integration-dokken:
     name: Linux Dokken Integration Tests
-#     needs: [lint-unit]
+    needs: [lint-unit]
     env:
       KITCHEN_LOCAL_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
 
   integration-linux:
     name: Linux Integration Tests
-#     needs: [lint-unit]
+    needs: [lint-unit]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -65,7 +65,7 @@ jobs:
 
   integration-macos:
     name: macOS Integration Tests
-#     needs: [lint-unit]
+    needs: [lint-unit]
     runs-on: macos-13
     strategy:
       fail-fast: false
@@ -90,7 +90,7 @@ jobs:
 
   integration-windows:
     name: Windows Integration Tests
-#     needs: [lint-unit]
+    needs: [lint-unit]
     env:
       BUNDLE_without: integration
       machine_user: test_user
@@ -110,10 +110,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-#       - name: Unit Tests
-#         run: bundle exec rake unit
-#       - name: Quality Tests
-#         run: bundle exec rake quality
+      - name: Unit Tests
+        run: bundle exec rake unit
+      - name: Quality Tests
+        run: bundle exec rake quality
       - name: Setup Machine
         run: |
           winrm.cmd quickconfig -q

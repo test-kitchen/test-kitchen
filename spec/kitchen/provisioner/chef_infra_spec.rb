@@ -59,7 +59,7 @@ describe Kitchen::Provisioner::ChefInfra do
       it "sets :chef_client_path to a path using :chef_omnibus_root" do
         config[:chef_omnibus_root] = "/nice/place"
 
-        _(provisioner[:chef_client_path]).must_equal "/nice/place/bin/chef-client"
+        _(provisioner[:chef_client_path]).must_equal "/nice/place/bin/cinc-client"
       end
 
       it "sets :ruby_bindir to use an Omnibus Ruby" do
@@ -75,7 +75,7 @@ describe Kitchen::Provisioner::ChefInfra do
       it "sets :chef_client_path to a path using :chef_omnibus_root" do
         config[:chef_omnibus_root] = '$env:systemdrive\\nice\\place'
 
-        _(provisioner[:chef_client_path]).must_equal '$env:systemdrive\\nice\\place\\bin\\chef-client.bat'
+        _(provisioner[:chef_client_path]).must_equal '$env:systemdrive\\nice\\place\\bin\\cinc-client.bat'
       end
 
       it "sets :ruby_bindir to use an Omnibus Ruby" do
@@ -509,14 +509,14 @@ describe Kitchen::Provisioner::ChefInfra do
 
         it "contains a standard second run if multiple_converge is set to 2" do
           config[:multiple_converge] = 2
-          _(cmd).must_match(/chef-client.*&&.*chef-client.*/m)
-          _(cmd).wont_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+          _(cmd).must_match(/cinc-client.*&&.*cinc-client.*/m)
+          _(cmd).wont_match(/cinc-client.*&&.*cinc-client.*client_no_updated_resources.rb/m)
         end
 
         it "contains a specific second run if enforce_idempotency is set" do
           config[:multiple_converge] = 2
           config[:enforce_idempotency] = true
-          _(cmd).must_match(/chef-client.*&&.*chef-client.*client_no_updated_resources.rb/m)
+          _(cmd).must_match(/cinc-client.*&&.*cinc-client.*client_no_updated_resources.rb/m)
         end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
@@ -557,15 +557,15 @@ describe Kitchen::Provisioner::ChefInfra do
           config[:chef_omnibus_root] = "/c"
           config[:sudo] = true
 
-          _(cmd).must_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
+          _(cmd).must_match regexify("sudo -E /c/bin/cinc-client ", :partial_line)
         end
 
         it "does not use sudo for chef-client when configured" do
           config[:chef_omnibus_root] = "/c"
           config[:sudo] = false
 
-          _(cmd).must_match regexify("/c/bin/chef-client ", :partial_line)
-          _(cmd).wont_match regexify("sudo -E /c/bin/chef-client ", :partial_line)
+          _(cmd).must_match regexify("/c/bin/cinc-client ", :partial_line)
+          _(cmd).wont_match regexify("sudo -E /c/bin/cinc-client ", :partial_line)
         end
       end
 
@@ -584,14 +584,14 @@ describe Kitchen::Provisioner::ChefInfra do
 
         it "contains a standard second run if multiple_converge is set to 2" do
           config[:multiple_converge] = 2
-          _(cmd).must_match(/chef-client.*;.*chef-client.*/m)
-          _(cmd).wont_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+          _(cmd).must_match(/cinc-client.*;.*cinc-client.*/m)
+          _(cmd).wont_match(/cinc-client.*;.*cinc-client.*client_no_updated_resources.rb/m)
         end
 
         it "contains a specific second run if enforce_idempotency is set" do
           config[:multiple_converge] = 2
           config[:enforce_idempotency] = true
-          _(cmd).must_match(/chef-client.*;.*chef-client.*client_no_updated_resources.rb/m)
+          _(cmd).must_match(/cinc-client.*;.*cinc-client.*client_no_updated_resources.rb/m)
         end
 
         it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
@@ -625,15 +625,13 @@ describe Kitchen::Provisioner::ChefInfra do
         end
 
         it "reloads PATH for older chef packages" do
-          _(cmd).must_match regexify("$env:PATH = try {\n" \
-          "[System.Environment]::GetEnvironmentVariable('PATH','Machine')\n" \
-          "} catch { $env:PATH }")
+          _(cmd).must_match regexify("$env:TEST_KITCHEN = \"1\"\nC:\\cinc-project\\cinc\\bin\\cinc-client.bat --local-mode --config $env:TEMP\\kitchen\\client.rb --log_level auto --force-formatter --no-color --json-attributes $env:TEMP\\kitchen\\dna.json --chef-zero-port 8889 ; exit $LastExitCode")
         end
 
         it "calls the chef-client command from :chef_client_path" do
           config[:chef_client_path] = '\\r\\chef-client.bat'
 
-          _(cmd).must_match regexify('& \\r\\chef-client.bat ', :partial_line)
+          _(cmd).must_match regexify('\\r\\chef-client.bat ', :partial_line)
         end
       end
     end

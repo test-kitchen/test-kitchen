@@ -199,9 +199,9 @@ describe Kitchen::Provisioner::Base do
       connection.unstub(:execute)
       connection.unstub(:execute_with_retry)
       connection.unstub(:upload)
-      
+
       provisioner.expects(:prepare_install_script).once
-      
+
       # Set up more lenient expectations to see what actually gets called
       connection.expects(:upload).at_least_once
       connection.expects(:execute).at_least_once
@@ -213,24 +213,24 @@ describe Kitchen::Provisioner::Base do
 
     it "skips script upload when install command is nil" do
       provisioner.stubs(:install_command).returns(nil)
-      
+
       order = sequence("order")
       connection.expects(:upload).with { |source, _target|
         source.to_s.end_with?("install_script")
       }.never
-      
+
       connection.expects(:execute).with("init").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
       connection.expects(:execute_with_retry).with("run", [], 1, 30).in_sequence(order)
-      
+
       cmd
     end
 
     it "uploads files configured in uploads hash" do
       config[:uploads] = { "/local/path" => "/remote/path" }
-      
+
       connection.expects(:upload).with("/local/path", "/remote/path").once
-      
+
       cmd
     end
 
@@ -252,7 +252,7 @@ describe Kitchen::Provisioner::Base do
     it "logs to debug" do
       cmd
 
-      _(logged_output.string).must_match(/DEBUG -- : Transfer complete$/)
+      _(logged_output.string).must_match(/INFO -- : Transfer complete$/)
       _(logged_output.string).must_match(
         %r{DEBUG -- : Downloading /tmp/kitchen/nodes, /tmp/kitchen/data_bags to ./test/fixtures$}
       )
@@ -466,7 +466,7 @@ describe Kitchen::Provisioner::Base do
     it "creates an install script with the install command" do
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
-      
+
       _(script_path).must_match(/install_script$/)
       _(File.exist?(script_path)).must_equal true
       content = File.read(script_path)
@@ -478,7 +478,7 @@ describe Kitchen::Provisioner::Base do
       provisioner.stubs(:windows_os?).returns(true)
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
-      
+
       _(script_path).must_match(/install_script\.ps1$/)
       _(File.exist?(script_path)).must_equal true
       content = File.read(script_path)
@@ -508,14 +508,14 @@ describe Kitchen::Provisioner::Base do
     it "handles nil install command" do
       provisioner.stubs(:install_command).returns(nil)
       provisioner.send(:prepare_install_script)
-      
+
       _(provisioner.send(:install_script_path)).must_be_nil
     end
 
     it "handles empty install command" do
       provisioner.stubs(:install_command).returns("")
       provisioner.send(:prepare_install_script)
-      
+
       _(provisioner.send(:install_script_path)).must_be_nil
     end
   end
