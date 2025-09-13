@@ -377,7 +377,7 @@ module Kitchen
           install_flags: config[:chef_omnibus_install_options],
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config[:chef_omnibus_root]
-          opts[:endpoint] = "#{config[:channel]}/#{config[:product_name] ? config[:product_name] : "cinc"}/metadata" if powershell_shell?
+          opts[:endpoint] = "#{config[:channel]}/#{config[:product_name] || "cinc"}/metadata" if powershell_shell?
           opts[:use_sudo] = config[:sudo] ? true : false
           opts[:sudo_command] = config[:sudo] ? config[:sudo_command] : ""
           %i{install_msi_url http_proxy https_proxy}.each do |key|
