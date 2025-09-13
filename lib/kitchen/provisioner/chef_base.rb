@@ -750,7 +750,6 @@ module Kitchen
         args << append
 
         shell_cmd = args.flatten.join(" ")
-        shell_cmd = shell_cmd.prepend(reload_ps1_path) if windows_os?
 
         prefix_command(wrap_shell_code(shell_cmd))
       end

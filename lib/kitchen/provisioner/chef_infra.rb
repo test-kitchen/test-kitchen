@@ -35,8 +35,14 @@ module Kitchen
       default_config :chef_license_server, nil
 
       default_config :chef_client_path do |provisioner|
+        project = provisioner[:product_name] == 'chef' ? 'opscode' : "cinc-project"
+        default_path = if provisioner.windows_os?
+                         provisioner.remote_path_join(%W{C: #{project} #{provisioner[:product_name] ? provisioner[:product_name] : "cinc"}})
+                       else
+                         provisioner.remote_path_join(%W{/opt #{provisioner[:product_name] ? provisioner[:product_name] : "cinc"}})
+                       end
         provisioner
-          .remote_path_join(%W{#{provisioner[:chef_omnibus_root]} bin chef-client})
+          .remote_path_join(%W{#{provisioner[:chef_omnibus_root] ? provisioner[:chef_omnibus_root] : default_path} bin #{provisioner[:product_name]&.start_with?("chef") ? provisioner[:product_name] : "cinc"}-client})
           .tap { |path| path.concat(".bat") if provisioner.windows_os? }
       end
 
@@ -53,7 +59,7 @@ module Kitchen
       end
 
       def run_command
-        cmd = "#{sudo(config[:chef_client_path])} --local-mode".tap { |str| str.insert(0, "& ") if powershell_shell? }
+        cmd = "#{sudo(config[:chef_client_path])} --local-mode"
 
         chef_cmd(cmd)
       end

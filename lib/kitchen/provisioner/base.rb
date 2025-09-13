@@ -87,21 +87,33 @@ module Kitchen
             remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
             if install_script_path
               debug("[install_command] Uploading install script to #{remote_script_path}")
-              debug("[install_command] Install script contents: ^^^^^ #{puts File.read(install_script_path)}\n")
+              debug("[install_command] Install script contents:\n#{File.read(install_script_path)}\n")
               conn.upload(install_script_path, remote_script_path)
               # Make script executable on remote host
               conn.execute(make_executable_command(remote_script_path))
               # Execute the uploaded script
-              conn.execute(run_script_command(remote_script_path))
+              if powershell_shell?
+                begin
+                  conn.execute(run_script_command(remote_script_path))
+                rescue StandardError => e
+                  info("[install_command] Installation had error: #{e}")
+                end
+              else
+                conn.execute(run_script_command(remote_script_path))
+              end
+              info("[install_command] Version: ^^^^^#{conn.execute("#{config[:chef_client_path]} -v")}")
             end
           end
 
           # The install script will remove the kitchen tmp directory, hence creating it again.
+          debug("Running init_command: #{init_command.inspect}")
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, resolve_remote_path(config[:root_path]))
-          debug("Transfer complete")
+          info("Transfer complete")
+          debug("Running prepare_command: #{prepare_command.inspect}")
           conn.execute(prepare_command)
+          debug("Running run_command: #{run_command.inspect}")
           conn.execute_with_retry(
             encode_for_powershell(run_command),
             config[:retry_on_exit_code],
