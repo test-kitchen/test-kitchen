@@ -512,7 +512,7 @@ describe Kitchen::Provisioner::ChefSolo do
       end
 
       it "reloads PATH for older chef packages" do
-        _(cmd).must_match regexify("$env:TEST_KITCHEN = \"1\"\n& \\bin\\chef-solo.bat --config $env:TEMP\\kitchen\\solo.rb --log_level auto --force-formatter --no-color --json-attributes $env:TEMP\\kitchen\\dna.json ; exit $LastExitCode")
+        _(cmd).must_match regexify("$env:TEST_KITCHEN = \"1\"\n$env:CI = \"true\"\n& \\bin\\chef-solo.bat --config $env:TEMP\\kitchen\\solo.rb --log_level auto --force-formatter --no-color --json-attributes $env:TEMP\\kitchen\\dna.json ; exit $LastExitCode")
       end
 
       it "calls the chef-solo command from :chef_solo_path" do

@@ -625,7 +625,7 @@ describe Kitchen::Provisioner::ChefInfra do
         end
 
         it "reloads PATH for older chef packages" do
-          _(cmd).must_match regexify("$env:TEST_KITCHEN = \"1\"\nC:\\cinc-project\\cinc\\bin\\cinc-client.bat --local-mode --config $env:TEMP\\kitchen\\client.rb --log_level auto --force-formatter --no-color --json-attributes $env:TEMP\\kitchen\\dna.json --chef-zero-port 8889 ; exit $LastExitCode")
+          _(cmd).must_match regexify("$env:TEST_KITCHEN = \"1\"\n$env:CI = \"true\"\nC:\\cinc-project\\cinc\\bin\\cinc-client.bat --local-mode --config $env:TEMP\\kitchen\\client.rb --log_level auto --force-formatter --no-color --json-attributes $env:TEMP\\kitchen\\dna.json --chef-zero-port 8889 ; exit $LastExitCode")
         end
 
         it "calls the chef-client command from :chef_client_path" do
