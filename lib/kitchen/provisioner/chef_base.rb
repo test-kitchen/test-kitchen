@@ -580,6 +580,7 @@ module Kitchen
           end
           opts[:install_command_options].merge!(proxies)
         end)
+        debug("[script_for_omnibus_version] installer = #{installer.inspect}")
         if powershell_shell?
           installer.install_command
         else

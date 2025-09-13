@@ -92,15 +92,19 @@ module Kitchen
               # Make script executable on remote host
               conn.execute(make_executable_command(remote_script_path))
               # Execute the uploaded script
+              # Windows clients give error when checking for omnibus cached version of installer but is ignored in powershell
+              # and continues to download and install correctly but then exits with error code.
               if powershell_shell?
                 begin
                   conn.execute(run_script_command(remote_script_path))
                 rescue StandardError => e
+                  # This catches the erorr code and displays it if running with debug logging and continues.
                   debug("[install_command] Installation had error: #{e}")
                 end
               else
                 conn.execute(run_script_command(remote_script_path))
               end
+              # The info log runs the client -v to check if it's installed and working and thus will throw an error if not installed.
               info("[install_command] Version: ^^^^^#{conn.execute("#{config[:chef_client_path]} -v")}")
             end
           end
