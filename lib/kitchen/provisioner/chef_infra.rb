@@ -35,9 +35,9 @@ module Kitchen
       default_config :chef_license_server, nil
 
       default_config :chef_client_path do |provisioner|
-        project = provisioner[:product_name] == 'chef' ? 'opscode' : "cinc-project"
+        win_project = provisioner[:product_name] == "chef" ? 'opscode' : "cinc-project"
         default_path = if provisioner.windows_os?
-                         provisioner.remote_path_join(%W{C: #{project} #{provisioner[:product_name] ? provisioner[:product_name] : "cinc"}})
+                         provisioner.remote_path_join(%W{C: #{win_project} #{provisioner[:product_name] ? provisioner[:product_name] : "cinc"}})
                        else
                          provisioner.remote_path_join(%W{/opt #{provisioner[:product_name] ? provisioner[:product_name] : "cinc"}})
                        end
