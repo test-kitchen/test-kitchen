@@ -1,11 +1,9 @@
 ---
 driver:
-  name: proxy
-  host: localhost
-  reset_command: "exit 0"
-  port: <%= ENV["machine_port"] %>
-  username: <%= ENV["machine_user"] %>
-  password: <%= ENV["machine_pass"] %>
+  name: exec
+
+transport:
+  name: exec
 
 platforms:
   - name: ubuntu-latest
