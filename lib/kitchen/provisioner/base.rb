@@ -96,7 +96,7 @@ module Kitchen
                 begin
                   conn.execute(run_script_command(remote_script_path))
                 rescue StandardError => e
-                  info("[install_command] Installation had error: #{e}")
+                  debug("[install_command] Installation had error: #{e}")
                 end
               else
                 conn.execute(run_script_command(remote_script_path))
@@ -386,13 +386,7 @@ module Kitchen
         if resolved_path.include?("$env:TEMP")
           # Try to get username from transport configuration
           # For Windows systems, fallback to "Administrator" if not found
-          username = begin
-            instance.transport[:username]
-                     rescue
-                       nil
-          end
-          username ||= "Administrator"
-
+          username = instance.transport.instance_variable_get(:@connection_options)[:user] || "Administrator"
           temp_path = "C:/Users/#{username}/AppData/Local/Temp"
           resolved_path = resolved_path.gsub("$env:TEMP", temp_path)
         end
