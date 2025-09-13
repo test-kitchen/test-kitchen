@@ -118,6 +118,9 @@ jobs:
         run: |
           choco install vagrant virtualbox
           winrm.cmd quickconfig -q
+          refreshenv
+          vagrant -version
+          virtualbox -version
 #           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
 #           net localgroup administrators ${{ env.machine_user }} /add
 #           bundle config set --local with 'integration'
