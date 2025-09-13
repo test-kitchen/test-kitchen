@@ -97,7 +97,7 @@ jobs:
       machine_pass: Pass@word1
       machine_port: 5985
       SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.windows.yml
+#       KITCHEN_LOCAL_YAML: kitchen.windows.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
@@ -116,10 +116,11 @@ jobs:
         run: bundle exec rake quality
       - name: Setup Machine
         run: |
+          choco install vagrant virtualbox
           winrm.cmd quickconfig -q
-          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
-          net localgroup administrators ${{ env.machine_user }} /add
-          bundle config set --local with 'integration'
-          bundle install
+#           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+#           net localgroup administrators ${{ env.machine_user }} /add
+#           bundle config set --local with 'integration'
+#           bundle install
       - name: Verify Windows
-        run: bundle exec kitchen verify windows-latest
+        run: bundle exec kitchen test windows-2022

@@ -15,9 +15,9 @@ If `product_name` is not set test-kitchen defaults to installing cinc-client. To
 
 Commercial Chef products requre a license key to download packages from Chef's servers. This can be set in the `chef_license_key` option.
 
-chef_licnense_key is not required for product_name starting with 'chef' and product_version <= 14.x.x.
+chef_licnense_key is not required for product_name starting with 'chef' and product_version <= 14.x.x. This is the last free and pre EULA license acceptance change.
 
-It is recommended to set `chef_license_key` to `<%= ENV['CHEF_LICENSE_KEY'] %>` for security reasons and set a shell environment variable to your licnese key from Chef.
+It is recommended to set `chef_license_key` to `<%= ENV['CHEF_LICENSE_KEY'] %>` for security reasons and set a shell environment variable to your licnese key from Chef to avoid checking it in to git repo with hardcoded key.
 
 ```ruby
 ---
@@ -37,7 +37,7 @@ provisioner:
     - deploy_resource # deprecation key name
     - chef-23 # deprecation numeric ID
     - recipes/install.rb:22 # specific line in a file
-  product_name: nil # default to installing cinc-client, to install chef-client package set to chef || chef-workstation
+  product_name: nil # defaults to installing cinc-client when set to cinc or nil, to install chef-client package set to chef || chef-workstation
   chef_license: nil # to accept the Chef Infra license automatically in Test Kitchen. Valid values: `accept`, `accept-no-persist`, or `accept-silent`
   chef_license_key: nil # License key for chef commercial api for downloading infra-client v15+ packages
   chef_license_server: [] # Array of license servers to verify license key with
