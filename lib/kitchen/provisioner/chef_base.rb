@@ -560,10 +560,12 @@ module Kitchen
             opts[:install_command_options]["TMPDIR"] = config[:root_path]
           end
 
-          if config[:download_url]
-            opts[:install_command_options][:download_url_override] = config[:download_url]
-            opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
-          end
+          opts[:install_command_options][:download_url_override] = if windows_os?
+                                                                     config[:download_url].sub(".sh", ".ps1")
+                                                                   else
+                                                                     config[:download_url]
+                                                                   end
+          opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
 
           if instance.driver.cache_directory
             download_dir_option = windows_os? ? :download_directory : :cmdline_dl_dir
@@ -580,7 +582,7 @@ module Kitchen
           end
           opts[:install_command_options].merge!(proxies)
         end)
-        debug("[script_for_omnibus_version] installer = #{installer.inspect}")
+        debug("[script_for_product] installer = #{installer.inspect}")
         if powershell_shell?
           installer.install_command
         else

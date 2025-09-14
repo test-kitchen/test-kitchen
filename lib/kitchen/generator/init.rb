@@ -39,7 +39,7 @@ module Kitchen
       class_option :provisioner,
         type: :string,
         aliases: "-P",
-        default: "chef_solo",
+        default: "chef-infra",
         desc: <<-D.gsub(/^\s+/, "").tr("\n", " ")
           The default Kitchen Provisioner to use
         D
