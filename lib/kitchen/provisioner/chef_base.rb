@@ -42,7 +42,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class ChefBase < Base
       default_config :require_chef_omnibus, true
-      default_config :chef_omnibus_url, "https://omnitruck.chef.io/install.sh"
+      default_config :chef_omnibus_url, &:omnitruck_download_url
       default_config :chef_omnibus_install_options, nil
       default_config :chef_license, nil
       default_config :run_list, []
@@ -137,7 +137,7 @@ module Kitchen
 
       default_config :architecture
 
-      default_config :download_url
+      default_config :download_url, &:omnitruck_download_url
 
       default_config :checksum
 
@@ -221,11 +221,6 @@ module Kitchen
           download_url: http://direct-download-url
       MSG
 
-      deprecate_config_for :chef_metadata_url, Util.outdent!(<<-MSG)
-        The 'chef_metadata_url' will be removed. The Windows metadata URL will be
-        fully managed by using attribute settings.
-      MSG
-
       # Reads the local Chef::Config object (if present). We do this because
       # we want to start bring Chef config and Chef Workstation config closer
       # together. For example, we want to configure proxy settings in 1
@@ -252,7 +247,7 @@ module Kitchen
 
       # gives us the product version from either require_chef_omnibus or product_version
       # If the non-default (true) value of require_chef_omnibus is present use that
-      # otherwise use config[:product_version] which defaults to :latest and is the actual
+      # otherwise use config[:product_version] which defaults to latest and is the actual
       # default for chef provisioners
       #
       # @return [String,Symbol,NilClass] version or nil if not applicable
@@ -282,7 +277,7 @@ module Kitchen
         end
       end
 
-      # (see Base#check_license)
+      # (see Base#check_license) Check Chef EULA license acceptance
       def check_license
         name = license_acceptance_id
         version = product_version
@@ -299,6 +294,23 @@ module Kitchen
             raise
           end
           config[:chef_license] ||= acceptor.acceptance_value
+        end
+      end
+
+      def omnitruck_base_url
+        if config[:product_version].to_s == "latest" || config[:product_version].to_s.to_i >= 15
+          "https://chefdownload-commercial.chef.io"
+        else
+          "https://chefdownload-community.chef.io"
+        end
+      end
+
+      # Select the download URL based on the product name
+      def omnitruck_download_url
+        if config[:product_version].to_s == "latest" || config[:product_version].to_s.to_i >= 15
+          "#{omnitruck_base_url}/install.#{powershell_shell? ? 'ps1' : 'sh'}?license_id=#{config[:chef_license_key]}"
+        else
+          "#{omnitruck_base_url}/install.#{powershell_shell? ? 'ps1' : 'sh'}"
         end
       end
 
@@ -345,12 +357,13 @@ module Kitchen
         add_omnibus_directory_option if instance.driver.cache_directory
         project = /\s*-P (\w+)\s*/.match(config[:chef_omnibus_install_options])
         {
-          omnibus_url: config[:install_sh_url] || config[:chef_omnibus_url],
+          omnibus_url: config[:install_script_url] || config[:chef_omnibus_url],
           project: project.nil? ? nil : project[1],
           install_flags: config[:chef_omnibus_install_options],
-          sudo_command:,
         }.tap do |opts|
           opts[:root] = config[:chef_omnibus_root] if config.key? :chef_omnibus_root
+          opts[:use_sudo] = config[:sudo] ? true : false
+          opts[:sudo_command] = config[:sudo] ? config[:sudo_command] : ""
           %i{install_msi_url http_proxy https_proxy}.each do |key|
             opts[key] = config[key] if config.key? key
           end
@@ -506,7 +519,8 @@ module Kitchen
       # @api private
       def script_for_product
         require "mixlib/install"
-        installer = Mixlib::Install.new({
+
+        opts = {
           product_name: config[:product_name],
           product_version: config[:product_version],
           channel: config[:channel].to_sym,
@@ -525,10 +539,8 @@ module Kitchen
             opts[:install_command_options]["TMPDIR"] = config[:root_path]
           end
 
-          if config[:download_url]
-            opts[:install_command_options][:download_url_override] = config[:download_url]
-            opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
-          end
+          opts[:install_command_options][:download_url_override] = config[:install_script_url] || config[:download_url]
+          opts[:install_command_options][:checksum] = config[:checksum] if config[:checksum]
 
           if instance.driver.cache_directory
             download_dir_option = windows_os? ? :download_directory : :cmdline_dl_dir
@@ -545,16 +557,13 @@ module Kitchen
           end
           opts[:install_command_options].merge!(proxies)
 
-          if config[:install_sh_url] || config[:install_ps1_url]
-            opts[:new_omnibus_download_url] = if powershell_shell?
-                                                config[:install_ps1_url]
-                                              else
-                                                config[:install_sh_url]
-                                              end
-
-          end
-        end)
+          opts[:new_omnibus_download_url] = config[:install_script_url] if config[:install_script_url]
+        end
+        debug("[script_for_product] opts = #{opts.inspect}")
+        installer = Mixlib::Install.new(opts)
         config[:chef_omnibus_root] = installer.root
+        debug("[script_for_product] installer = #{installer.inspect}")
+        debug("[script_for_product] config[:chef_omnibus_root] = #{config[:chef_omnibus_root].inspect}")
         if powershell_shell?
           installer.install_command
         else
@@ -589,13 +598,23 @@ module Kitchen
       # @api private
       def script_for_omnibus_version
         require "mixlib/install/script_generator"
-        opts = install_options
-        opts[:omnibus_url] = config[:install_sh_url] if config[:install_sh_url]
+        opts = install_options.tap do |opts|
+          opts[:omnibus_url] = opts[:omnibus_url].sub('.ps1', '.sh')
+          opts[:endpoint] = "#{config[:channel]}/#{config[:product_name] || "chef"}/metadata" if powershell_shell?
+        end
         installer = Mixlib::Install::ScriptGenerator.new(
           config[:require_chef_omnibus], powershell_shell?, opts
         )
         config[:chef_omnibus_root] = installer.root
-        sudo(installer.install_command)
+        debug("[script_for_omnibus_version] chef_omnibus_root = #{config[:chef_omnibus_root].inspect}")
+        debug("[script_for_omnibus_version] install_options = #{opts.inspect}")
+        debug("[script_for_omnibus_version] powershell_shell? = #{powershell_shell?.inspect}")
+        debug("[script_for_omnibus_version] installer = #{installer.inspect}")
+        if powershell_shell?
+          installer.install_command
+        else
+          sudo(installer.install_command)
+        end
       end
 
       # Hook used in subclasses to indicate support for policyfiles.

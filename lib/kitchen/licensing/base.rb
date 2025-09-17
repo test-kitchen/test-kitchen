@@ -37,14 +37,14 @@ module Kitchen
 
           client = get_license_client(keys)
 
-          [keys.last, client.license_type, install_sh_url(client.license_type, keys)]
+          [keys.last, client.license_type, install_script_url(client.license_type, keys)]
         end
 
         def get_license_client(keys)
           ChefLicensing::Api::Client.info(license_keys: keys)
         end
 
-        def install_sh_url(type, keys, ext = "sh")
+        def install_script_url(type, keys, ext = "sh")
           OMNITRUCK_URLS[type] + "/install.#{ext}?license_id=#{keys.join(",")}"
         end
       end

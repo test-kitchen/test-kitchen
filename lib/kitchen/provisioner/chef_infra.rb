@@ -65,24 +65,30 @@ module Kitchen
       def check_license
         super
 
+        return unless (config[:product_name].nil? || config[:product_name]&.start_with?("chef")) && (config[:product_version].to_s == "latest" || config[:product_version].to_s.to_i >= 15)
+
         info("Fetching the Chef license key")
+        debug("[check_license] Chef license server: #{config[:chef_license_server].inspect}")
+        debug("[check_license] Chef license key: #{config[:chef_license_key].inspect}")
         unless config[:chef_license_server].nil? || config[:chef_license_server].empty?
           ENV["CHEF_LICENSE_SERVER"] = config[:chef_license_server].join(",")
         end
 
-        key, type, install_sh_url = if config[:chef_license_key].nil?
+        key, type, install_script_url = if config[:chef_license_key].nil?
                                       Licensing::Base.get_license_keys
                                     else
                                       key = config[:chef_license_key]
                                       client = Licensing::Base.get_license_client([key])
 
-                                      [key, client.license_type, Licensing::Base.install_sh_url(client.license_type, [key])]
+                                      [key, client.license_type, Licensing::Base.install_script_url(client.license_type, [key], (powershell_shell? ? "ps1" : "sh"))]
                                     end
 
         info("Chef license key: #{key}")
         config[:chef_license_key] = key
-        config[:install_sh_url] = install_sh_url
+        config[:install_script_url] = install_script_url
         config[:chef_license_type] = type
+        debug("[check_license] install_script_url: #{install_script_url.inspect}")
+        debug("[check_license] chef_license_type: #{type.inspect}")
       end
 
       def chef_license_key

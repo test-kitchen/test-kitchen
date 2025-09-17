@@ -76,12 +76,17 @@ module Kitchen
             debug("Uploading #{Array(locals).join(", ")} to #{remote}")
             conn.upload(locals.to_s, remote)
           end
+          info("Running install_command")
           conn.execute(install_command)
+          info("Running init_command")
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, config[:root_path])
-          debug("Transfer complete")
+          info("Transfer complete")
+          info("Running prepare_command")
           conn.execute(prepare_command)
+          info("Running run_command")
+          debug("Config = #{config.inspect}")
           conn.execute_with_retry(
             run_command,
             config[:retry_on_exit_code],
