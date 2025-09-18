@@ -4,11 +4,8 @@ name: lint
 permissions:
   contents: read
 
-"on":
-  pull_request:
-  push:
-    branches:
-      - main
+on:
+  workflow_call:
 
 concurrency:
   group: lint-${{ github.ref }}

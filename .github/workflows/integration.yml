@@ -1,22 +1,16 @@
 ---
-name: integration
+on:
+  workflow_call:
 
 permissions:
   contents: read
-
-"on":
-  pull_request:
-  push:
-    branches:
-      - main
 
 concurrency:
   group: integration-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  integration-dokken:
-    name: Linux Dokken Integration Tests
+  dokken:
     env:
       KITCHEN_LOCAL_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
@@ -32,9 +26,7 @@ jobs:
           bundler-cache: true
       - run: bundle exec kitchen test
 
-# FIXME: Commented out until we fix the pipelines for the RC2 release
-  integration-macos:
-    name: MacOS Integration Tests
+  vagrant:
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -51,17 +43,52 @@ jobs:
       - name: Kitchen Test
         run: |
           export LOGNAME=$USER
+          bundle install
           bundle exec kitchen test almalinux-9
 
-  integration-windows:
-    name: Windows Integration Tests
+  macos:
+    env:
+      BUNDLE_without: integration
+      machine_user: test_user
+      machine_pass: Pass@word1
+      machine_port: 22
+      SPEC_OPTS: --format progress
+      KITCHEN_LOCAL_YAML: kitchen.proxy-ssh.yml
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.4"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Setup Machine
+        run: |
+          sudo dscl . -create /Users/${{ env.machine_user }}
+          sudo dscl . -create /Users/${{ env.machine_user }} UserShell /bin/bash
+          sudo dscl . -create /Users/${{ env.machine_user }} RealName "${{ env.machine_user }}"
+          sudo dscl . -create /Users/${{ env.machine_user }} UniqueID 1001
+          sudo dscl . -create /Users/${{ env.machine_user }} PrimaryGroupID 80
+          sudo dscl . -create /Users/${{ env.machine_user }} NFSHomeDirectory /Users/${{ env.machine_user }}
+          sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
+          sudo createhomedir -c -u ${{ env.machine_user }}
+          echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+          bundle config set --local with 'integration'
+          bundle install
+      - name: Verify Linux
+        run: bundle exec kitchen verify ubuntu-latest
+
+  windows:
     env:
       BUNDLE_without: integration
       machine_user: test_user
       machine_pass: Pass@word1
       machine_port: 5985
       SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.windows.yml
+      KITCHEN_LOCAL_YAML: kitchen.proxy-winrm.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
@@ -84,15 +111,14 @@ jobs:
       - name: Verify Windows
         run: bundle exec kitchen verify windows-latest
 
-  integration-linux:
-    name: Linux Integration Tests
+  linux:
     env:
       BUNDLE_without: integration
       machine_user: test_user
       machine_pass: Pass@word1
       machine_port: 22
       SPEC_OPTS: --format progress
-      KITCHEN_LOCAL_YAML: kitchen.linux.yml
+      KITCHEN_LOCAL_YAML: kitchen.proxy-ssh.yml
     runs-on: ubuntu-latest
     timeout-minutes: 600
     strategy:

@@ -1,0 +1,24 @@
+---
+name: ci
+
+permissions:
+  contents: read
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
+
+  integration:
+    uses: ./.github/workflows/integration.yml
+    secrets: inherit

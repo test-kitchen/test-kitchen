@@ -9,3 +9,4 @@ driver:
 
 platforms:
   - name: ubuntu-latest
+  - name: macos-latest
