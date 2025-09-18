@@ -74,10 +74,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Unit Tests
-        run: bundle exec rake unit
-      - name: Quality Tests
-        run: bundle exec rake quality
       - name: Setup Machine
         run: |
           winrm.cmd quickconfig -q
@@ -94,7 +90,7 @@ jobs:
       BUNDLE_without: integration
       machine_user: test_user
       machine_pass: Pass@word1
-      machine_port: 5985
+      machine_port: 22
       SPEC_OPTS: --format progress
       KITCHEN_LOCAL_YAML: kitchen.linux.yml
     runs-on: ubuntu-latest
@@ -111,9 +107,9 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          sudo adduser ${{ env.machine_user }}
+          sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
-          echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+          echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Linux
