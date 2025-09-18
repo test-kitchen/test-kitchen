@@ -81,32 +81,32 @@ jobs:
           base-branch: "main"
 
   test:
-      name: Unit Test with Ruby
-      runs-on: ubuntu-latest
-      needs: [yamllint, cookstyle]
-      env:
-        BUNDLE_WITHOUT: ${{ inputs.bundle_without }}
-      strategy:
-        fail-fast: false
-        matrix:
-          ruby: ["3.4"]
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v5
-        - name: Check for Gemfile
-          id: check
-          run: |
-            if [ -f Gemfile ]; then
-             echo "gemfile=true" >> $GITHUB_OUTPUT
-            else
-              echo "gemfile=false" >> $GITHUB_OUTPUT
-            fi
-        - name: Setup Ruby
-          if: steps.check.outputs.gemfile == 'true'
-          uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: ${{ matrix.ruby }}
-            bundler-cache: true
-        - name: Rake Test
-          if: steps.check.outputs.gemfile == 'true'
-          run: bundle exec rake test
+    name: Unit Test with Ruby
+    runs-on: ubuntu-latest
+    needs: [yamllint, cookstyle]
+    env:
+      BUNDLE_WITHOUT: ${{ inputs.bundle_without }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.4"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Check for Gemfile
+        id: check
+        run: |
+          if [ -f Gemfile ]; then
+           echo "gemfile=true" >> $GITHUB_OUTPUT
+          else
+            echo "gemfile=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup Ruby
+        if: steps.check.outputs.gemfile == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Rake Test
+        if: steps.check.outputs.gemfile == 'true'
+        run: bundle exec rake test
