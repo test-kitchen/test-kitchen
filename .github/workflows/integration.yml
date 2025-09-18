@@ -31,7 +31,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec kitchen test
+      - run: bundle exec kitchen verify
 
   vagrant:
     runs-on: macos-latest
@@ -49,7 +49,7 @@ jobs:
           bundler-cache: true
       - name: Kitchen Test
         run: |
-          bundle exec kitchen test almalinux-9
+          bundle exec kitchen verify almalinux-9
 
   macos:
     env:
