@@ -46,10 +46,7 @@ module Kitchen
         credentials_file = File.join(kitchen_basepath, ".kitchen", instance_name + ".ini")
         File.write(credentials_file, connection.credentials_file)
 
-        super.concat([
-          "--target #{instance_name}",
-          "--credentials #{credentials_file}",
-        ])
+        super.push("--target #{instance_name}", "--credentials #{credentials_file}")
       end
 
       def check_transport(connection)

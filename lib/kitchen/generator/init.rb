@@ -124,7 +124,7 @@ module Kitchen
       #   initialized
       # @api private
       def init_test_dir?
-        Util.list_directory("test/integration/").select { |d| File.directory?(d) }.empty?
+        Util.list_directory("test/integration/").none? { |d| File.directory?(d) }
       end
 
       # @return [true,false] whether or not a `.gitignore` file needs to be
