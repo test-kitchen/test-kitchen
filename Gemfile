@@ -2,6 +2,11 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "chef-cli"
+gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "main"
+gem "kitchen-vagrant", git: "https://github.com/test-kitchen/kitchen-vagrant", branch: "Stromweld-patch-1"
+gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent_a"
+
 group :test do
   gem "rake"
   gem "rb-readline"
@@ -14,12 +19,12 @@ group :test do
   gem "mocha",     "~> 2.0"
 end
 
-group :integration do
-  gem "chef-cli"
-  gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "main"
-  gem "kitchen-vagrant", git: "https://github.com/test-kitchen/kitchen-vagrant", branch: "Stromweld-patch-1"
-  gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent_a"
-end
+# group :integration do
+#   gem "chef-cli"
+#   gem "kitchen-dokken", git: "https://github.com/chef/kitchen-dokken", branch: "main"
+#   gem "kitchen-vagrant", git: "https://github.com/test-kitchen/kitchen-vagrant", branch: "Stromweld-patch-1"
+#   gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent_a"
+# end
 
 group :cookstyle do
   gem "cookstyle"
