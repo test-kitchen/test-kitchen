@@ -1088,7 +1088,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       # rubocop:disable Metrics/MethodLength
-      def self.common_failed_command_specs
+      def self.common_failed_command_specs # rubocop:disable Metrics/AbcSize
         it "logger displays command on debug" do
           begin
             connection.execute("doit")
@@ -1379,7 +1379,7 @@ describe Kitchen::Transport::Winrm::Connection do
       transporter.stubs(:upload)
     end
 
-    def self.common_specs_for_upload
+    def self.common_specs_for_upload # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       it "builds a Winrm::FileTransporter" do
         WinRM::FS::Core::FileTransporter.unstub(:new)
 

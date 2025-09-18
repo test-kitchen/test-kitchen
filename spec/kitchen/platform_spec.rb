@@ -21,7 +21,7 @@ require "kitchen/errors"
 require "kitchen/platform"
 
 describe Kitchen::Platform do
-  let(:opts) { ; { name: "plata" }; }
+  let(:opts) { ; { name: "plata" } }
   let(:klass) { Kitchen::Platform }
 
   it "raises an ArgumentError if name is missing" do

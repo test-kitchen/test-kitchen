@@ -726,7 +726,7 @@ describe Kitchen::Transport::Ssh::Connection do
           rescue # rubocop:disable Lint/HandleExceptions
             # the raise is not what is being tested here, rather its side-effect
           end
-          pattern  = /\[SSH\] opening connection to me@foo/
+          pattern = /\[SSH\] opening connection to me@foo/
           output_count = logged_output.string.scan(pattern).size
           _(output_count).must_be :>=, 1
         end

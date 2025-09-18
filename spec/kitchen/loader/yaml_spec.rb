@@ -147,7 +147,7 @@ describe Kitchen::Loader::YAML do
 
     it "deep merges in kitchen.local.yml configuration with kitchen.yml" do
       stub_yaml!("common" => { "xx" => 1 },
-                 "a" => "b")
+        "a" => "b")
       stub_yaml!(
         {
           "common" => { "yy" => 2 },
@@ -165,7 +165,7 @@ describe Kitchen::Loader::YAML do
 
     it "deep merges in a global config file with all other configs" do
       stub_yaml!("common" => { "xx" => 1 },
-                 "a" => "b")
+        "a" => "b")
       stub_yaml!(
         {
           "common" => { "yy" => 2 },
@@ -602,7 +602,7 @@ describe Kitchen::Loader::YAML do
     describe "for yaml files" do
       before do
         stub_yaml!("from_project" => "project",
-                   "common" => { "p" => "pretty" })
+          "common" => { "p" => "pretty" })
         stub_yaml!({
             "from_local" => "local",
             "common" => { "l" => "looky" },

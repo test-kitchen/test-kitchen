@@ -706,11 +706,11 @@ describe Kitchen::Configurable do
 
     before do
       @original_env = ENV.to_hash
-      ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
-                  "https_proxy" => nil, "HTTPS_PROXY" => nil,
-                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
-                  "no_proxy"    => nil, "NO_PROXY"    => nil,
-                  "CI"          => nil)
+      ENV.replace("http_proxy" => nil, "HTTP_PROXY" => nil,
+        "https_proxy" => nil, "HTTPS_PROXY" => nil,
+        "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
+        "no_proxy"    => nil, "NO_PROXY"    => nil,
+        "CI"          => nil)
     end
 
     after do
