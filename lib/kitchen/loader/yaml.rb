@@ -277,7 +277,7 @@ module Kitchen
             backtrace: e.backtrace,
           },
         }
-        result[:error][:raw_file] = File.read(file) if file && !File.exist?(file)
+        result[:error][:raw_file] = File.read(file) if file && File.exist?(file)
         result
       end
 

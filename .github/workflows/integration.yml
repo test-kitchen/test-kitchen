@@ -30,7 +30,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+#           bundler-cache: true
       - run: bundle exec kitchen test
 
   vagrant:
@@ -46,11 +46,9 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+#           bundler-cache: true
       - name: Kitchen Test
         run: |
-          export LOGNAME=$USER
-          bundle install
           bundle exec kitchen test almalinux-9
 
   macos:
@@ -66,7 +64,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+#           bundler-cache: true
       - name: Setup Machine
         run: |
           sudo dscl . -create /Users/${{ env.machine_user }}
@@ -97,7 +95,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+#           bundler-cache: true
       - name: Setup Machine
         run: |
           winrm.cmd quickconfig -q
@@ -122,7 +120,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+#           bundler-cache: true
       - name: Setup Machine
         run: |
           sudo useradd -m ${{ env.machine_user }}
