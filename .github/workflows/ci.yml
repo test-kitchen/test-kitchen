@@ -1,14 +1,12 @@
 ---
-name: ci
-
-permissions:
-  contents: read
-
-"on":
+on:
   pull_request:
   push:
     branches:
       - main
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -21,4 +19,5 @@ jobs:
 
   integration:
     uses: ./.github/workflows/integration.yml
+    needs: lint
     secrets: inherit

@@ -9,6 +9,13 @@ concurrency:
   group: integration-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CHEF_TEST_KITCHEN_ENTERPRISE: true
+  machine_user: test_user
+  machine_pass: Pass@word1
+  machine_port: 22
+  SPEC_OPTS: --format progress
+
 jobs:
   dokken:
     env:
@@ -48,11 +55,6 @@ jobs:
 
   macos:
     env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 22
-      SPEC_OPTS: --format progress
       KITCHEN_LOCAL_YAML: kitchen.proxy-ssh.yml
     runs-on: macos-latest
     strategy:
@@ -83,11 +85,6 @@ jobs:
 
   windows:
     env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 5985
-      SPEC_OPTS: --format progress
       KITCHEN_LOCAL_YAML: kitchen.proxy-winrm.yml
     runs-on: windows-latest
     timeout-minutes: 600
@@ -113,11 +110,6 @@ jobs:
 
   linux:
     env:
-      BUNDLE_without: integration
-      machine_user: test_user
-      machine_pass: Pass@word1
-      machine_port: 22
-      SPEC_OPTS: --format progress
       KITCHEN_LOCAL_YAML: kitchen.proxy-ssh.yml
     runs-on: ubuntu-latest
     timeout-minutes: 600
