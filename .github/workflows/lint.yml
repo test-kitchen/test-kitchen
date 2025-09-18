@@ -1,6 +1,9 @@
 ---
 name: lint
 
+permissions:
+  contents: read
+
 "on":
   pull_request:
   push:
@@ -12,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  chefstyle:
+  cookstyle:
     env:
       BUNDLE_WITH: ${{ inputs.bundle_with }}
     runs-on: ubuntu-latest
@@ -20,10 +23,10 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ["3.4"]
-    name: Chefstyle on Ruby
+    name: Cookstyle on Ruby
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Check for Gemfile
         id: check
         run: |
@@ -40,15 +43,15 @@ jobs:
           bundler-cache: true
       - uses: r7kamura/rubocop-problem-matchers-action@v1
         if: steps.check.outputs.gemfile == 'true'
-      - name: Chef Style
+      - name: Cook Style
         if: steps.check.outputs.gemfile == 'true'
-        run: bundle exec chefstyle
+        run: bundle exec cookstyle --chefstyle
 
   yamllint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run yaml Lint
         uses: actionshub/yamllint@main
@@ -57,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v16
@@ -69,7 +72,7 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
         with:
           use-quiet-mode: "yes"

@@ -8,7 +8,4 @@ driver:
   password: <%= ENV["machine_pass"] %>
 
 platforms:
-  - name: windows-latest
-    transport:
-      name: winrm
-      elevated: true
+  - name: ubuntu-latest
