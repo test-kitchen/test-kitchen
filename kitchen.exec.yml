@@ -1,0 +1,11 @@
+---
+driver:
+  name: exec
+
+transport:
+  name: exec
+
+platform:
+  - name: ubuntu-latest
+  - name: macos-latest
+  - name: windows-latest
