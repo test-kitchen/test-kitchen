@@ -11,6 +11,6 @@ platforms:
   - name: ubuntu-latest
   - name: macos-latest
   - name: windows-latest
-    transport:
-      username: ${{ env.machine_user }}
-      password: ${{ env.machine_pass }}
+#     transport:
+#       username: ${{ env.machine_user }}
+#       password: ${{ env.machine_pass }}
