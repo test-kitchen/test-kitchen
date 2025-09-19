@@ -56,10 +56,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Verify Vagrant
-        run: |
-          bundle config set --local with 'integration'
-          bundle install
-          bundle exec kitchen verify almalinux-9
+        run: bundle exec kitchen verify almalinux-9
 
   macos:
     env:
