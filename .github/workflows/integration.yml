@@ -11,6 +11,9 @@ concurrency:
 
 env:
   CHEF_TEST_KITCHEN_ENTERPRISE: true
+  machine_user: test_user
+  machine_pass: Pass@word1
+  SPEC_OPTS: --format progress
 
 jobs:
   dokken:
@@ -61,7 +64,8 @@ jobs:
 
   macos:
     env:
-      KITCHEN_LOCAL_YAML: kitchen.exec.yml
+      machine_port: 22
+      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -75,6 +79,15 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
+          sudo dscl . -create /Users/${{ env.machine_user }}
+          sudo dscl . -create /Users/${{ env.machine_user }} UserShell /bin/bash
+          sudo dscl . -create /Users/${{ env.machine_user }} RealName "${{ env.machine_user }}"
+          sudo dscl . -create /Users/${{ env.machine_user }} UniqueID 1001
+          sudo dscl . -create /Users/${{ env.machine_user }} PrimaryGroupID 80
+          sudo dscl . -create /Users/${{ env.machine_user }} NFSHomeDirectory /Users/${{ env.machine_user }}
+          sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
+          sudo createhomedir -c -u ${{ env.machine_user }}
+          echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
       - name: Verify macOS
@@ -82,7 +95,8 @@ jobs:
 
   windows:
     env:
-      KITCHEN_LOCAL_YAML: kitchen.exec.yml
+      machine_port: 5985
+      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
@@ -97,6 +111,9 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
+          winrm.cmd quickconfig -q
+          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+          net localgroup administrators ${{ env.machine_user }} /add
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Windows
@@ -104,7 +121,8 @@ jobs:
 
   linux:
     env:
-      KITCHEN_LOCAL_YAML: kitchen.exec.yml
+      machine_port: 22
+      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
     runs-on: ubuntu-latest
     timeout-minutes: 600
     strategy:
@@ -119,6 +137,9 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
+          sudo useradd -m ${{ env.machine_user }}
+          echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
+          echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Linux
