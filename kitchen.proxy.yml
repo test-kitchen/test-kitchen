@@ -9,3 +9,4 @@ driver:
 
 platforms:
   - name: localhost
+  - name: windows
