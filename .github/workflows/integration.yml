@@ -31,7 +31,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec kitchen verify
+      - name: Verify Dokken
+        run: bundle exec kitchen verify
 
   vagrant:
     runs-on: macos-latest
@@ -47,9 +48,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Kitchen Test
-        run: |
-          bundle exec kitchen verify almalinux-9
+      - name: Verify Vagrant
+        run: bundle exec kitchen verify almalinux-9
 
   macos:
     env:
@@ -78,7 +78,7 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
-      - name: Verify Linux
+      - name: Verify macOS
         run: bundle exec kitchen verify ubuntu-latest
 
   windows:
