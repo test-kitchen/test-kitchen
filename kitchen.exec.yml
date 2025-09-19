@@ -5,7 +5,7 @@ driver:
 transport:
   name: exec
 
-platform:
+platforms:
   - name: ubuntu-latest
   - name: macos-latest
   - name: windows-latest
