@@ -90,7 +90,7 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify macOS
-        run: bundle exec kitchen verify macos-latest
+        run: bundle exec kitchen verify
 
   windows:
     env:
@@ -116,7 +116,7 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Windows
-        run: bundle exec kitchen verify windows-latest
+        run: bundle exec kitchen verify
 
   linux:
     env:
@@ -142,4 +142,4 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Linux
-        run: bundle exec kitchen verify ubuntu-latest
+        run: bundle exec kitchen verify

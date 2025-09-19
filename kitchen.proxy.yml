@@ -8,9 +8,4 @@ driver:
   password: <%= ENV["machine_pass"] %>
 
 platforms:
-  - name: ubuntu-latest
-  - name: macos-latest
-  - name: windows-latest
-#     transport:
-#       username: ${{ env.machine_user }}
-#       password: ${{ env.machine_pass }}
+  - name: localhost
