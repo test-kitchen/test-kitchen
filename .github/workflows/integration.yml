@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_without: vagrant
+  BUNDLE_WITHOUT: vagrant
   CHEF_TEST_KITCHEN_ENTERPRISE: true
   machine_user: test_user
   machine_pass: Pass@word1
