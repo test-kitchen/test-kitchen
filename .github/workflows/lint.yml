@@ -78,6 +78,8 @@ jobs:
     name: Unit Test with Ruby
     runs-on: ubuntu-latest
     needs: [yamllint, cookstyle]
+    env:
+      BUNDLE_WITHOUT: vagrant
     strategy:
       fail-fast: false
       matrix:
