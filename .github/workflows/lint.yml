@@ -9,6 +9,9 @@ concurrency:
   group: lint-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  BUNDLE_without: vagrant
+
 jobs:
   cookstyle:
     env:
