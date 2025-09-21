@@ -55,6 +55,7 @@ jobs:
           bundler-cache: true
       - name: Install Vagrant
         run: |
+          bundle config set --local with 'integration'
           bundle add vagrant --version ">= 2.4.4"
           bundle binstubs vagrant
           export PATH="$(pwd)/bin:$PATH"
