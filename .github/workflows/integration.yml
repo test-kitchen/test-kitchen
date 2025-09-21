@@ -56,8 +56,9 @@ jobs:
       - name: Install Vagrant
         run: |
           bundle config set --local with 'integration'
-          bundle install --binstubs
-          export PATH="$(pwd)/bin:$PATH"
+          bundle install # --binstubs
+          gem install vagrant
+          # export PATH="$(pwd)/bin:$PATH"
           vagrant -v
       - name: Verify Vagrant
         run: |
