@@ -10,7 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: vagrant
   CHEF_TEST_KITCHEN_ENTERPRISE: true
   machine_user: test_user
   machine_pass: Pass@word1
@@ -56,8 +55,8 @@ jobs:
           bundler-cache: true
       - name: Install Vagrant
         run: |
-          bundle config set --local with 'vagrant'
-          bundle install --binstubs
+          bundle add vagrant --version ">= 2.4.4"
+          bundle binstubs vagrant
           export PATH="$(pwd)/bin:$PATH"
           vagrant -v
       - name: Verify Vagrant

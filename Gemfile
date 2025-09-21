@@ -21,10 +21,6 @@ group :integration do
   gem "kitchen-inspec", git: "https://github.com/inspec/kitchen-inspec", branch: "temp-point-to-chef-test-kitchen-ent_a"
 end
 
-group :vagrant do
-  gem "vagrant"
-end
-
 group :cookstyle do
   gem "cookstyle"
 end
