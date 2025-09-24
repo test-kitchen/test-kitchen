@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.1.4 -->
-## [v1.1.4](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.4) (2025-09-04)
+<!-- latest_release 1.1.5 -->
+## [v1.1.5](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.5) (2025-09-24)
 
 #### Merged Pull Requests
-- Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps))
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -25,6 +26,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -40,6 +42,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -57,6 +60,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -72,6 +76,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -91,6 +96,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -106,6 +112,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -123,6 +130,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -138,6 +146,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -159,6 +168,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -174,6 +184,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -191,6 +202,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -206,6 +218,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -225,6 +238,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -240,6 +254,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -257,6 +272,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -272,6 +288,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -295,6 +312,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -310,6 +328,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -327,6 +346,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -342,6 +362,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -361,6 +382,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -376,6 +398,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -393,6 +416,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -408,6 +432,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -429,6 +454,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -444,6 +470,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -461,6 +488,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -476,6 +504,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -495,6 +524,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -510,6 +540,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -527,6 +558,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -542,6 +574,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -567,6 +600,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -582,6 +616,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -599,6 +634,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -614,6 +650,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -633,6 +670,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -648,6 +686,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -665,6 +704,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -680,6 +720,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -701,6 +742,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -716,6 +758,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -733,6 +776,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -748,6 +792,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -767,6 +812,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -782,6 +828,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -799,6 +846,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -814,6 +862,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -837,6 +886,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -852,6 +902,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -869,6 +920,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -884,6 +936,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -903,6 +956,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -918,6 +972,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -935,6 +990,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -950,6 +1006,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -971,6 +1028,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -986,6 +1044,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1003,6 +1062,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1018,6 +1078,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1037,6 +1098,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1052,6 +1114,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1069,6 +1132,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1084,6 +1148,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1119,6 +1184,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1134,6 +1200,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1151,6 +1218,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1166,6 +1234,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1185,6 +1254,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1200,6 +1270,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1217,6 +1288,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1232,6 +1304,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1253,6 +1326,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1268,6 +1342,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1285,6 +1360,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1300,6 +1376,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1319,6 +1396,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1334,6 +1412,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1351,6 +1430,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1366,6 +1446,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1389,6 +1470,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1404,6 +1486,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1421,6 +1504,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1436,6 +1520,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1455,6 +1540,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1470,6 +1556,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1487,6 +1574,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1502,6 +1590,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1523,6 +1612,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1538,6 +1628,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1555,6 +1646,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1570,6 +1662,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1589,6 +1682,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1604,6 +1698,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1621,6 +1716,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
@@ -1636,6 +1732,7 @@
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
 - Updating windows hab pkg to ruby 3.4 and fixing test pipeline [#47](https://github.com/chef/chef-test-kitchen-enterprise/pull/47) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.3 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#48](https://github.com/chef/chef-test-kitchen-enterprise/pull/48) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.2 -->
