@@ -392,7 +392,7 @@ module Kitchen
       # @return [Hash] a configuration hash
       # @api private
       def default_config_rb # rubocop:disable Metrics/MethodLength
-        root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']\}")
+        root = config[:root_path].gsub("$env:TEMP", "\#{ENV['TEMP']}")
 
         config_rb = {
           node_name: instance.name,
@@ -443,7 +443,7 @@ module Kitchen
         if obj.is_a?(String) && obj =~ /^:/
           obj
         elsif obj.is_a?(String)
-          %{"#{obj.gsub(/\\/, "\\\\\\\\")}"}
+          %{"#{obj.gsub("\\", "\\\\\\\\")}"}
         elsif obj.is_a?(Array)
           %{[#{obj.map { |i| format_value(i) }.join(", ")}]}
         else
@@ -612,12 +612,12 @@ module Kitchen
       # @api private
       def sanity_check_sandbox_options!
         if (config[:policyfile_path] || config[:policyfile]) && !File.exist?(policyfile)
-          raise UserError, "policyfile_path set in config "\
+          raise UserError, "policyfile_path set in config " \
             "(#{config[:policyfile_path]} could not be found. " \
             "Expected to find it at full path #{policyfile}."
         end
         if config[:berksfile_path] && !File.exist?(berksfile)
-          raise UserError, "berksfile_path set in config "\
+          raise UserError, "berksfile_path set in config " \
             "(#{config[:berksfile_path]} could not be found. " \
             "Expected to find it at full path #{berksfile}."
         end

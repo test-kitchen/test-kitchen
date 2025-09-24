@@ -59,7 +59,7 @@ module Kitchen
         # @see Base#upload
         def upload(locals, remote)
           # evaluate $env:temp on Windows
-          real_remote = remote.to_s == "\$env:TEMP\\kitchen" ? kitchen_temp : remote
+          real_remote = remote.to_s == "$env:TEMP\\kitchen" ? kitchen_temp : remote
           FileUtils.mkdir_p(real_remote)
           Array(locals).each do |local|
             FileUtils.cp_r(local, real_remote)

@@ -255,10 +255,10 @@ module Kitchen
         return if file && !File.exist?(file)
 
         hash = begin
-          send(component)
+                 send(component)
                rescue => e
                  failure_hash(e, file)
-        end
+               end
 
         { filename: file, raw_data: hash }
       end
@@ -277,7 +277,7 @@ module Kitchen
             backtrace: e.backtrace,
           },
         }
-        result[:error][:raw_file] = IO.read(file) unless file.nil?
+        result[:error][:raw_file] = File.read(file) if file && File.exist?(file)
         result
       end
 

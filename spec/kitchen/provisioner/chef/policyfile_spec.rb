@@ -24,7 +24,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
   let(:license) { "" }
   let(:null_logger) do
     stub(fatal: nil, error: nil, warn: nil, info: nil,
-         debug: nil, banner: nil)
+      debug: nil, banner: nil)
   end
   let(:described_object) do
     Kitchen::Provisioner::Chef::Policyfile.new(policyfile, path, license: license, logger: null_logger)

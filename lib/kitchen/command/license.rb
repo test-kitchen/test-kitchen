@@ -9,15 +9,15 @@ module Kitchen
     class License < Kitchen::Command::Base
       BANNER = <<~MSG
 
-      Usage:
-        kitchen license            # Add new license or list the activated license(s)
-        kitchen license add        # Add a new license
-        kitchen license list       # List details of the activated license(s)
+        Usage:
+          kitchen license            # Add new license or list the activated license(s)
+          kitchen license add        # Add a new license
+          kitchen license list       # List details of the activated license(s)
 
-      Options:
-        [-h/--help]                # Shows the help message
-        [--chef-license-key=<KEY>] # License key can be passed as this optional argument as well
-                                   # eg: kitchen license --chef-license-key=KEY123
+        Options:
+          [-h/--help]                # Shows the help message
+          [--chef-license-key=<KEY>] # License key can be passed as this optional argument as well
+                                     # eg: kitchen license --chef-license-key=KEY123
       MSG
 
       SUB_COMMANDS = %w{add list}.freeze

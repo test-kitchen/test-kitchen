@@ -283,10 +283,10 @@ describe Kitchen::Driver::SSHBase do
       FakeFS.activate!
       FileUtils.mkdir_p("/tmp")
       @original_env = ENV.to_hash
-      ENV.replace("http_proxy"  => nil, "HTTP_PROXY"  => nil,
-                  "https_proxy" => nil, "HTTPS_PROXY" => nil,
-                  "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
-                  "no_proxy"    => nil, "NO_PROXY"    => nil)
+      ENV.replace("http_proxy" => nil, "HTTP_PROXY" => nil,
+        "https_proxy" => nil, "HTTPS_PROXY" => nil,
+        "ftp_proxy"   => nil, "FTP_PROXY"   => nil,
+        "no_proxy"    => nil, "NO_PROXY"    => nil)
     end
 
     after do

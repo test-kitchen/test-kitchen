@@ -26,7 +26,7 @@ describe Kitchen::LazyHash do
 
   let(:hash_obj) do
     {
-      shed_color: ->(c) { c.color },
+      shed_color: ->(c) { c.color }, # rubocop:disable Style/SymbolProc
       barn: "locked",
       genre: proc { |c| "#{c.metal} metal" },
     }
@@ -106,7 +106,7 @@ describe Kitchen::LazyHash do
 
     it "yields each item to the block if a block is given to each()" do
       items = []
-      Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i }
+      Kitchen::LazyHash.new(hash_obj, context).each { |i| items << i } # rubocop:disable Style/MapIntoArray
       _(items).must_equal [[:shed_color, "blue"], [:barn, "locked"], [:genre, "heavy metal"]]
     end
   end

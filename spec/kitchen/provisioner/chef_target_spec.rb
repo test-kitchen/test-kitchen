@@ -77,7 +77,7 @@ describe Kitchen::Provisioner::ChefTarget do
 
   describe "check_transport" do
     describe "with train transport" do
-      let(:connection)  { stub(respond_to?: true) }
+      let(:connection) { stub(respond_to?: true) }
 
       it "accepts the transport" do
         _(provisioner.check_transport(connection)).must_equal true
@@ -85,7 +85,7 @@ describe Kitchen::Provisioner::ChefTarget do
     end
 
     describe "with non-train transport" do
-      let(:connection)  { stub(respond_to?: false) }
+      let(:connection) { stub(respond_to?: false) }
 
       it "rejects the transport" do
         _ { provisioner.check_transport(connection) }.must_raise Kitchen::Provisioner::ChefTarget::RequireTrainTransport

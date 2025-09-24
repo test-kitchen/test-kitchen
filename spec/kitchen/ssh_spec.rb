@@ -59,7 +59,7 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          pattern  = /\[SSH\] opening connection to me@foo/
+          pattern = /\[SSH\] opening connection to me@foo/
           output_count = logged_output.string.scan(pattern).size
           _(output_count).must_be :>=, 1
         end

@@ -28,7 +28,7 @@ module Kitchen
       attr_reader :saved_command, :remote_path, :local_path
 
       def upload(locals, remote)
-        @saved_command = IO.read(locals)
+        @saved_command = File.read(locals)
         @local_path = locals
         @remote_path = remote
       end
@@ -1088,7 +1088,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
 
       # rubocop:disable Metrics/MethodLength
-      def self.common_failed_command_specs
+      def self.common_failed_command_specs # rubocop:disable Metrics/AbcSize
         it "logger displays command on debug" do
           begin
             connection.execute("doit")
@@ -1220,7 +1220,7 @@ describe Kitchen::Transport::Winrm::Connection do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
           login_command
-          actual = IO.read(rdp_doc)
+          actual = File.read(rdp_doc)
         end
 
         _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
@@ -1277,7 +1277,7 @@ describe Kitchen::Transport::Winrm::Connection do
         with_fake_fs do
           FileUtils.mkdir_p(File.dirname(rdp_doc))
           login_command
-          actual = IO.read(rdp_doc)
+          actual = File.read(rdp_doc)
         end
 
         _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
@@ -1379,7 +1379,7 @@ describe Kitchen::Transport::Winrm::Connection do
       transporter.stubs(:upload)
     end
 
-    def self.common_specs_for_upload
+    def self.common_specs_for_upload # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       it "builds a Winrm::FileTransporter" do
         WinRM::FS::Core::FileTransporter.unstub(:new)
 
