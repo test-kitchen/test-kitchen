@@ -7,3 +7,4 @@ transport:
 
 platforms:
   - name: localhost
+  - name: windows

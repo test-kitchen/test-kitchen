@@ -80,21 +80,27 @@ module Kitchen
           # Run the init command to create the kitchen tmp directory
           conn.execute(encode_for_powershell(init_command))
 
-          # Upload the install script instead of directly executing the command
-          if windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+          # Prepare and upload install script if there's an install command
+          if install_command && !install_command.empty?
             prepare_install_script
             script_filename = windows_os? ? "install_script.ps1" : "install_script"
-            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
-            if install_script_path
-              debug("Uploading install script to #{remote_script_path}")
-              conn.upload(install_script_path, remote_script_path)
-              # Make script executable on remote host
-              conn.execute(make_executable_command(remote_script_path))
-              # Execute the uploaded script
-              conn.execute(run_script_command(remote_script_path))
+
+            # Check if we need to upload script (for Windows SSH or other scenarios requiring script upload)
+            transport_config = instance.transport.instance_variable_get(:@config)
+            if windows_os? && transport_config && transport_config[:name] == "ssh"
+              remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
+              if install_script_path
+                debug("Uploading install script to #{remote_script_path}")
+                conn.upload(install_script_path, remote_script_path)
+                # Make script executable on remote host
+                conn.execute(make_executable_command(remote_script_path))
+                # Execute the uploaded script
+                conn.execute(run_script_command(remote_script_path))
+              end
+            else
+              # For non-Windows or non-SSH scenarios, execute install command directly
+              conn.execute(install_command)
             end
-          else
-            conn.execute(install_command)
           end
 
           # The install script will remove the kitchen tmp directory, hence creating it again.
@@ -294,7 +300,7 @@ module Kitchen
       end
 
       def encode_for_powershell(script)
-        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+        return script unless windows_os?
         return script if script.nil? || script.empty?
 
         utf16le = script.encode(Encoding::UTF_16LE)
@@ -312,12 +318,16 @@ module Kitchen
         return if command.nil? || command.empty?
 
         info("Preparing install script")
-        script_filename = "install_script.ps1"
+        script_filename = windows_os? ? "install_script.ps1" : "install_script"
         @install_script_path = File.join(sandbox_path, script_filename)
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
-          file.write(command)
+          if windows_os?
+            file.write(command)
+          else
+            file.write("#!/bin/sh\n#{command}")
+          end
         end
 
         # Make script executable locally
@@ -346,7 +356,7 @@ module Kitchen
       # @return [String] command to execute the script
       # @api private
       def run_script_command(script_path)
-        if windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+        if windows_os?
           # Use parameters to suppress PowerShell formatting and control characters
           # that can interfere with console output over SSH
           "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
@@ -363,7 +373,7 @@ module Kitchen
       # @return [String] the resolved path
       # @api private
       def resolve_remote_path(path)
-        return path unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+        return path unless windows_os?
 
         # For Windows, resolve common PowerShell environment variables
         resolved_path = path.dup
