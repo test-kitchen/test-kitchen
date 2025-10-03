@@ -70,7 +70,6 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
-        prepare_install_script
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
@@ -82,7 +81,8 @@ module Kitchen
           conn.execute(encode_for_powershell(init_command))
 
           # Upload the install script instead of directly executing the command
-          if install_command
+          if windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+            prepare_install_script
             script_filename = windows_os? ? "install_script.ps1" : "install_script"
             remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
             if install_script_path
@@ -93,6 +93,8 @@ module Kitchen
               # Execute the uploaded script
               conn.execute(run_script_command(remote_script_path))
             end
+          else
+            conn.execute(install_command)
           end
 
           # The install script will remove the kitchen tmp directory, hence creating it again.
@@ -292,7 +294,7 @@ module Kitchen
       end
 
       def encode_for_powershell(script)
-        return script unless windows_os?
+        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
         return script if script.nil? || script.empty?
 
         utf16le = script.encode(Encoding::UTF_16LE)
@@ -310,14 +312,11 @@ module Kitchen
         return if command.nil? || command.empty?
 
         info("Preparing install script")
-        script_filename = windows_os? ? "install_script.ps1" : "install_script"
+        script_filename = "install_script.ps1"
         @install_script_path = File.join(sandbox_path, script_filename)
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
-          unless windows_os?
-            file.write("#!/bin/sh\n")
-          end
           file.write(command)
         end
 
@@ -347,7 +346,7 @@ module Kitchen
       # @return [String] command to execute the script
       # @api private
       def run_script_command(script_path)
-        if windows_os?
+        if windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
           # Use parameters to suppress PowerShell formatting and control characters
           # that can interfere with console output over SSH
           "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
@@ -364,7 +363,7 @@ module Kitchen
       # @return [String] the resolved path
       # @api private
       def resolve_remote_path(path)
-        return path unless windows_os?
+        return path unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
 
         # For Windows, resolve common PowerShell environment variables
         resolved_path = path.dup

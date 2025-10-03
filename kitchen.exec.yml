@@ -1,0 +1,9 @@
+---
+driver:
+  name: exec
+
+transport:
+  name: exec
+
+platforms:
+  - name: localhost
