@@ -307,6 +307,7 @@ module Kitchen
       # @api private
       def prepare_install_script
         return unless windows_os?
+
         command = install_command
         return if command.nil? || command.empty?
 
