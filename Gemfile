@@ -19,8 +19,6 @@ group :integration do
   gem "kitchen-dokken"
   gem "kitchen-inspec"
   gem "kitchen-vagrant"
-  # gem "inspec", "~> 5.22" # Fix dependency conflicts for ruby < 3.4
-  # gem "train", "~> 3.10" # Fix dependency conflicts for ruby < 3.4
 end
 
 group :linting do
