@@ -57,13 +57,13 @@ jobs:
       - name: Setup Machine
         run: |
           bundle config set --local with 'integration'
-          bundle install --binstubs
+          bundle install
+          bundle binstubs kitchen
           export PATH="$(pwd)/bin:$PATH"
-          ls -alh ./bin/
       - name: Verify Vagrant
         run: |
           export PATH="$(pwd)/bin:$PATH"
-          bundle exec kitchen verify almalinux-9
+          kitchen verify almalinux-9
 
   macos:
     env:
