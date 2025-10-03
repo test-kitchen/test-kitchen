@@ -136,6 +136,7 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
+          sudo apt-get update && sudo apt-get install -y openssl
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
