@@ -58,7 +58,7 @@ jobs:
         run: |
           bundle config set --local with 'integration'
           bundle install
-          bundle binstubs kitchen
+          bundle binstubs test-kitchen
           export PATH="$(pwd)/bin:$PATH"
       - name: Verify Vagrant
         run: |
@@ -94,8 +94,12 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
+          bundle binstubs test-kitchen
+          export PATH="$(pwd)/bin:$PATH"
       - name: Verify macOS
-        run: bundle exec kitchen verify localhost
+        run: |
+          export PATH="$(pwd)/bin:$PATH"
+          kitchen verify localhost
 
   windows:
     env:
@@ -121,8 +125,12 @@ jobs:
           net localgroup administrators ${{ env.machine_user }} /add
           bundle config set --local with 'integration'
           bundle install
+          bundle binstubs test-kitchen
+          export PATH="$(pwd)/bin:$PATH"
       - name: Verify Windows
-        run: bundle exec kitchen verify windows
+        run: |
+          export PATH="$(pwd)/bin:$PATH"
+          kitchen verify windows
 
   linux:
     env:
@@ -148,5 +156,9 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
           bundle config set --local with 'integration'
           bundle install
+          bundle binstubs test-kitchen
+          export PATH="$(pwd)/bin:$PATH"
       - name: Verify Linux
-        run: bundle exec kitchen verify localhost
+        run: |
+          export PATH="$(pwd)/bin:$PATH"
+          kitchen verify localhost
