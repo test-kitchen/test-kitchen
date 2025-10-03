@@ -54,8 +54,15 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Setup Machine
+        run: |
+          bundle config set --local with 'integration'
+          bundle install --binstubs
+          export PATH="$(pwd)/bin:$PATH"
+          vagrant -v
       - name: Verify Vagrant
         run: |
+          export PATH="$(pwd)/bin:$PATH"
           bundle exec kitchen verify almalinux-9
 
   macos:
