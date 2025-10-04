@@ -16,13 +16,9 @@ group :test do
   gem "mocha",     "~> 2.0"
 end
 
-group :integration_dokken do
+group :integration do
   gem "kitchen-dokken"
-end
-
-group :integration_vagrant do
   gem "kitchen-vagrant"
-  gem "vagrant", ">= 2.4.4"
 end
 
 group :linting do

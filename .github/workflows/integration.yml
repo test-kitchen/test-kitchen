@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: 'integration_dokken:integration_vagrant'
+  BUNDLE_WITHOUT: integration
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
@@ -32,7 +32,7 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration_dokken'
+          bundle add kitchen-dokken
       - name: Verify Dokken
         run: bundle exec kitchen verify
 
@@ -58,7 +58,8 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration_vagrant'
+          bundle add kitchen-vagrant
+          bundle add vagrant --version ">= 2.4.4"
           bundle binstubs vagrant
           export PATH="$(pwd)/bin:$PATH"
           vagrant -v
@@ -97,7 +98,7 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify macOS
         run: |
-          gem env
+          # gem env # uncomment for testing
           bundle exec kitchen verify localhost
 
   windows:
@@ -122,9 +123,10 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
+          bundle add chef-bin
       - name: Verify Windows
         run: |
-          gem env
+          gem env # uncomment for testing
           bundle exec kitchen verify windows
 
   linux:
@@ -151,5 +153,5 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify Linux
         run: |
-          gem env
+          gem env # uncomment for testing
           bundle exec kitchen verify localhost
