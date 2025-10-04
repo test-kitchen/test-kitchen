@@ -125,12 +125,11 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
-          bundle add chef-bin
           bundle install
       - name: Verify Windows
         run: |
           gem env # uncomment for testing
-          bundle exec kitchen verify windows
+          bundle exec kitchen verify windows-winrm
 
   linux:
     env:
@@ -156,12 +155,13 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify Linux
         run: |
+          cat ./Gemfile.lock
           gem env # uncomment for testing
           bundle exec kitchen verify localhost
 
   windows-fips-ssh:
     env:
-      machine_port: 5985
+      machine_port: 22
       KITCHEN_LOCAL_YAML: kitchen.proxy.yml
     runs-on: windows-latest
     timeout-minutes: 600
@@ -175,16 +175,16 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-#       name: 'Install Chef/Ohai from Omnitruck'
-#         id: install_chef
-#         run: |
-#           . { Invoke-WebRequest -useb https://omnitruck.chef.io/install.ps1 } | Invoke-Expression; Install-Project -project chef
-#           $env:PATH = "C:\opscode\chef\bin;C:\opscode\chef\embedded\bin;" + $env:PATH
-#           chef-client -v
-#           ohai -v
-#           rake --version
-#           bundle -v
-      - name: 'Enable FIPS via windows registry' #FIPS needs to be enabled after installation of Chef, otherwise it fails due to Cryptography error
+      # - name: 'Install Chef/Ohai from Omnitruck'
+      #   id: install_chef
+      #   run: |
+      #     . { Invoke-WebRequest -useb https://omnitruck.chef.io/install.ps1 } | Invoke-Expression; Install-Project -project chef
+      #     $env:PATH = "C:\opscode\chef\bin;C:\opscode\chef\embedded\bin;" + $env:PATH
+      #     chef-client -v
+      #     ohai -v
+      #     rake --version
+      #     bundle -v
+      - name: 'Enable FIPS via windows registry'  # FIPS needs to be enabled after installation of Chef, otherwise it fails due to Cryptography error
         run: |
           $OldErrorActionPreference = $ErrorActionPreference
           $ErrorActionPreference = "stop"
@@ -212,7 +212,15 @@ jobs:
         run: |
           Add-WindowsCapability -Online -Name OpenSSH.Server
           Start-Service -Name "sshd"
-          New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow
+          # Ensure the firewall rule for OpenSSH Server is enabled (it should be created automatically during installation)
+          if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue)) {
+              Write-Host "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
+              New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow
+          } else {
+              Write-Host "Firewall Rule 'OpenSSH-Server-In-TCP' already exists."
+              # Optionally, ensure it's enabled
+              Set-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -Enabled True
+          }
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows FIPS SSH
