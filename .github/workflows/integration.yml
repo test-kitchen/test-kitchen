@@ -32,7 +32,8 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle add kitchen-dokken
+          bundle config set --local with 'integration'
+          bundle install
       - name: Verify Dokken
         run: bundle exec kitchen verify
 
@@ -58,8 +59,9 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle add kitchen-vagrant
+          bundle config set --local with 'integration'
           bundle add vagrant --version ">= 2.4.4"
+          bundle install
           bundle binstubs vagrant
           export PATH="$(pwd)/bin:$PATH"
           vagrant -v
@@ -124,6 +126,7 @@ jobs:
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
           bundle add chef-bin
+          bundle install
       - name: Verify Windows
         run: |
           gem env # uncomment for testing
