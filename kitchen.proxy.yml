@@ -9,8 +9,8 @@ driver:
 
 platforms:
   - name: localhost
-  - name: windows-winrm
-  - name: windows-2025-fips-ssh
+  - name: windows
+  - name: win-fips-ssh
     transport:
       name: ssh
       username: <%= ENV['machine_user'] %>
