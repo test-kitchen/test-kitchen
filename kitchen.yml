@@ -15,11 +15,53 @@ verifier:
 platforms:
   - name: almalinux-9
   - name: ubuntu-24.04
-  - name: windows-2022
+  - name: windows-2025
     driver:
-      box: stromweld/windows-2022
+      box: stromweld/windows-2025
       customize:
         memory: 4096
+#   - name: windows-2025-fips-ssh
+#     driver:
+#       box: stromweld/windows-2025
+#       customize:
+#         memory: 4096
+#     transport:
+#       name: ssh
+#       username: <%= ENV['machine_user'] %>
+#       password: <%= ENV['machine_pass'] %>
+#     lifecycle:
+#       pre_converge:
+#         # Enable Fips
+#         - remote: |
+#           $OldErrorActionPreference = $ErrorActionPreference
+#           $ErrorActionPreference = "stop"
+#           $KeyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy"
+#           $ValueName = "Enabled"
+#           $ValueData = "1"
+#           try{
+#               Get-ItemProperty -Path $KeyPath -Name $valueName -ErrorAction Stop
+#               New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+#           }
+#           catch [System.Management.Automation.PSArgumentException] {
+#               New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+#           }
+#           catch [System.Management.Automation.ItemNotFoundException]
+#           {
+#               New-Item -Path $KeyPath -Force
+#               New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+#           }
+#           Finally
+#           {
+#               $ErrorActionPreference = $OldErrorActionPreference
+#           }
+#           if (-not $?) { throw "Failed to enable FIPS mode." }
+#         # Enable SSH Server
+#         - remote: |
+#           Add-WindowsCapability -Online -Name OpenSSH.Server
+#           Start-Service -Name "sshd"
+#           New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow
+#           net user /add $env:machine_user "$env:machine_pass"
+#           net localgroup administrators $env:machine_user /add
 
 suites:
   - name: default
