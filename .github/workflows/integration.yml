@@ -61,6 +61,7 @@ jobs:
       - name: Setup Machine
         run: |
           bundle config set --local with 'integration'
+          bundle add vagrant --version ">= 2.4.4"
           bundle install
       - name: Verify Vagrant
         run: bundle exec kitchen verify almalinux-9

@@ -3,7 +3,7 @@ require:
   - cookstyle/chefstyle
 
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.4
   Include:
     - "**/*.rb"
   Exclude:
