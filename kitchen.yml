@@ -1,6 +1,7 @@
 ---
 driver:
   name: vagrant
+  linked_clone: false
 
 provisioner:
   name: chef_infra
