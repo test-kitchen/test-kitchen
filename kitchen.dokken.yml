@@ -3,7 +3,6 @@ driver:
   name: dokken
   privileged: true
   chef_image: chef/chef
-  chef_version: unstable
 
 provisioner:
   name: dokken

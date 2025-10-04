@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: integration
+  BUNDLE_WITHOUT: 'integration_dokken:integration_vagrant'
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
@@ -32,8 +32,7 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration'
-          bundle add kitchen-dokken
+          bundle config set --local with 'integration_dokken'
       - name: Verify Dokken
         run: bundle exec kitchen verify
 
@@ -59,15 +58,14 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration'
-          bundle add kitchen-vagrant
-          bundle add vagrant --version ">= 2.4.4"
+          bundle config set --local with 'integration_vagrant'
           bundle binstubs vagrant
           export PATH="$(pwd)/bin:$PATH"
           vagrant -v
       - name: Verify Vagrant
         run: |
           export PATH="$(pwd)/bin:$PATH"
+          gem env
           bundle exec kitchen verify almalinux-9
 
   macos:
@@ -97,9 +95,10 @@ jobs:
           sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-          bundle add kitchen-inspec
       - name: Verify macOS
-        run: bundle exec kitchen verify localhost
+        run: |
+          gem env
+          bundle exec kitchen verify localhost
 
   windows:
     env:
@@ -123,9 +122,10 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
-          bundle add kitchen-inspec
       - name: Verify Windows
-        run: bundle exec kitchen verify windows
+        run: |
+          gem env
+          bundle exec kitchen verify windows
 
   linux:
     env:
@@ -149,6 +149,7 @@ jobs:
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-          bundle add kitchen-inspec
       - name: Verify Linux
-        run: bundle exec kitchen verify localhost
+        run: |
+          gem env
+          bundle exec kitchen verify localhost
