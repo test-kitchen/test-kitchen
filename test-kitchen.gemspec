@@ -23,9 +23,11 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 3.1"
 
   gem.add_dependency "bcrypt_pbkdf",       "~> 1.0" # ed25519 ssh key support
+  gem.add_dependency "chef-bin",           "~> 16.4.35"
   gem.add_dependency "chef-utils",         ">= 16.4.35"
   gem.add_dependency "csv",                "~> 3.3"
   gem.add_dependency "ed25519",            "~> 1.3" # ed25519 ssh key support
+  gem.add_dependency "fiddle",             ">= 1.1"
   gem.add_dependency "irb",                "~> 1.15"
   gem.add_dependency "mixlib-install",     "~> 3.6"
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 4.0"
