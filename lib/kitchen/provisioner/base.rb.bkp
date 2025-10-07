@@ -70,7 +70,6 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
-        prepare_install_script
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
@@ -78,21 +77,22 @@ module Kitchen
             conn.upload(locals.to_s, remote)
           end
 
-          # Run the init command to create the kitchen tmp directory
-          conn.execute(encode_for_powershell(init_command))
-
-          # Upload the install script instead of directly executing the command
-          if install_command
-            script_filename = windows_os? ? "install_script.ps1" : "install_script"
-            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
+          # Check if we need to upload script (for Windows SSH or other scenarios requiring script upload)
+          transport_config = instance.transport.instance_variable_get(:@config)
+          if windows_os? && transport_config && transport_config[:name] == "ssh"
+            prepare_install_script
+            # Run the init command to create the kitchen tmp directory
+            conn.execute(encode_for_powershell(init_command))
+            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), "install_script.ps1")
             if install_script_path
               debug("Uploading install script to #{remote_script_path}")
               conn.upload(install_script_path, remote_script_path)
-              # Make script executable on remote host
-              conn.execute(make_executable_command(remote_script_path))
               # Execute the uploaded script
               conn.execute(run_script_command(remote_script_path))
             end
+          else
+            # For non-Windows or non-SSH scenarios, execute install command directly
+            conn.execute(install_command)
           end
 
           # The install script will remove the kitchen tmp directory, hence creating it again.
@@ -306,18 +306,16 @@ module Kitchen
       #
       # @api private
       def prepare_install_script
+        return unless windows_os?
+
         command = install_command
         return if command.nil? || command.empty?
 
         info("Preparing install script")
-        script_filename = windows_os? ? "install_script.ps1" : "install_script"
-        @install_script_path = File.join(sandbox_path, script_filename)
+        @install_script_path = File.join(sandbox_path, "install_script.ps1")
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
-          unless windows_os?
-            file.write("#!/bin/sh\n")
-          end
           file.write(command)
         end
 
@@ -329,31 +327,15 @@ module Kitchen
         @install_script_path
       end
 
-      # Returns a command to make a script executable on the remote host.
-      #
-      # @param script_path [String] path to the script on the remote host
-      # @return [String] command to make the script executable
-      # @api private
-      def make_executable_command(script_path)
-        debug "echo Making script executable"
-        return if windows_os?
-
-        prefix_command(wrap_shell_code(sudo("chmod +x #{script_path}")))
-      end
-
       # Returns a command to execute a script on the remote host.
       #
       # @param script_path [String] path to the script on the remote host
       # @return [String] command to execute the script
       # @api private
       def run_script_command(script_path)
-        if windows_os?
-          # Use parameters to suppress PowerShell formatting and control characters
-          # that can interfere with console output over SSH
-          "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
-        else
-          prefix_command(wrap_shell_code(sudo(script_path)))
-        end
+        # Use parameters to suppress PowerShell formatting and control characters
+        # that can interfere with console output over SSH
+        "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
       end
 
       # Resolves PowerShell environment variables in remote paths to actual paths

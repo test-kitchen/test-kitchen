@@ -8,6 +8,9 @@ transport:
 platforms:
   - name: localhost
   - name: windows
+  transport:
+    name: winrm
+    elevated: true
   - name: win-fips-ssh
     transport:
       name: ssh
