@@ -10,7 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: integration
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
@@ -32,7 +31,6 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration'
           bundle install
       - name: Verify Dokken
         run: bundle exec kitchen verify
@@ -57,7 +55,6 @@ jobs:
           bundler-cache: true
       - name: Setup Machine
         run: |
-          bundle config set --local with 'integration'
           bundle add vagrant --version ">= 2.4.4"
           bundle install
           bundle binstubs vagrant
@@ -124,8 +121,6 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
-          bundle add chef-bin
-          bundle install
       - name: Verify Windows
         run: |
           # gem env # uncomment for testing
@@ -153,8 +148,6 @@ jobs:
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-          bundle add chef-bin
-          bundle install
       - name: Verify Linux
         run: |
           # gem env # uncomment for testing
