@@ -124,8 +124,8 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
-          bundle add chef-bin
-          bundle install
+          # bundle add chef-bin
+          # bundle install
       - name: Verify Windows
         run: |
           # gem env # uncomment for testing
