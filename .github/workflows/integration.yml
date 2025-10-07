@@ -161,8 +161,8 @@ jobs:
 
   windows-fips-ssh:
     env:
-      machine_port: 22
-      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
+      machine_port: 5985
+      KITCHEN_LOCAL_YAML: kitchen.exec.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
