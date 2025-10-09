@@ -73,8 +73,6 @@ jobs:
     env:
       machine_port: 22
       KITCHEN_LOCAL_YAML: kitchen.${{ matrix.driver }}.yml
-      BUNDLE_GEMFILE: ""
-      RUBYOPT: ""
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -105,8 +103,6 @@ jobs:
     env:
       machine_port: 5985
       KITCHEN_LOCAL_YAML: kitchen.${{ matrix.driver }}.yml
-      BUNDLE_GEMFILE: ""
-      RUBYOPT: ""
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
@@ -132,8 +128,6 @@ jobs:
     env:
       machine_port: 22
       KITCHEN_LOCAL_YAML: kitchen.${{ matrix.driver }}.yml
-      BUNDLE_GEMFILE: ""
-      RUBYOPT: ""
     runs-on: ubuntu-latest
     timeout-minutes: 600
     strategy:
