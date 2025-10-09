@@ -126,8 +126,8 @@ jobs:
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows
         run: |
-          # gem env # uncomment for testing
-          bundle exec --keep-file-descriptors kitchen verify windows
+          gem env # uncomment for testing
+          BUNDLE_GEMFILE="" bundle exec kitchen verify windows
 
   linux:
     env:
@@ -153,8 +153,9 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify Linux
         run: |
-          # gem env # uncomment for testing
-          bundle exec --keep-file-descriptors kitchen verify localhost
+          which gem
+          gem env # uncomment for testing
+          BUNDLE_GEMFILE="" bundle exec kitchen verify localhost
 
   windows-fips-ssh:
     env:
@@ -223,4 +224,4 @@ jobs:
       - name: Verify Windows FIPS SSH
         run: |
           # gem env # uncomment for testing
-          bundle exec --keep-file-descriptors kitchen verify win-fips-ssh
+          BUNDLE_GEMFILE="" bundle exec kitchen verify win-fips-ssh
