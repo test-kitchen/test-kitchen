@@ -126,8 +126,10 @@ jobs:
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows
         run: |
+          Get-ChildItem Env:
           gem env # uncomment for testing
-          BUNDLE_GEMFILE="" bundle exec kitchen verify windows
+          $env:BUNDLE_GEMFILE=""
+          bundle exec kitchen verify windows
 
   linux:
     env:
@@ -155,6 +157,7 @@ jobs:
         run: |
           which gem
           gem env # uncomment for testing
+          env
           BUNDLE_GEMFILE="" bundle exec kitchen verify localhost
 
   windows-fips-ssh:
