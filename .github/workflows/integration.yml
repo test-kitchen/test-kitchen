@@ -97,6 +97,8 @@ jobs:
           sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+          BUNDLE_WITHOUT="" bundle add chef-bin
+          BUNDLE_WITHOUT="" bundle install
       - name: Verify macOS
         run: |
           # gem env # uncomment for testing
@@ -124,6 +126,7 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
+          $env:BUNDLE_WITHOUT=""
           bundle add chef-bin
           bundle install
       - name: Verify Windows
@@ -153,6 +156,8 @@ jobs:
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+          BUNDLE_WITHOUT="" bundle add chef-bin
+          BUNDLE_WITHOUT="" bundle install
       - name: Verify Linux
         run: |
           # gem env # uncomment for testing
@@ -222,6 +227,9 @@ jobs:
           }
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
+          $env:BUNDLE_WITHOUT=""
+          bundle add chef-bin
+          bundle install
       - name: Verify Windows FIPS SSH
         run: |
           # gem env # uncomment for testing
