@@ -26,7 +26,7 @@ describe Kitchen::Driver::Exec do
   end
 
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance", "transport=": nil)
+    stub(name: "coolbeans", logger: logger, to_str: "instance", "transport=": nil, transport: nil)
   end
 
   let(:driver) do
@@ -37,8 +37,16 @@ describe Kitchen::Driver::Exec do
     _(driver.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
-  it "sets the transport to exec" do
+  it "sets the transport to exec when transport is not already exec" do
+    instance.expects(:transport).returns(stub(is_a?: false))
     instance.expects(:"transport=").with { |v| v.is_a?(Kitchen::Transport::Exec) }
+    driver
+  end
+
+  it "does not replace transport when it is already exec" do
+    exec_transport = Kitchen::Transport::Exec.new
+    instance.expects(:transport).returns(exec_transport)
+    instance.expects(:"transport=").never
     driver
   end
 
