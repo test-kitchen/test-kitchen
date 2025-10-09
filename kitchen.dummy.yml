@@ -13,4 +13,4 @@ verifier:
 
 platforms:
   - name: localhost
-  - name: windows
+  - name: windows-winrm

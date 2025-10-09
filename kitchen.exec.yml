@@ -7,8 +7,8 @@ transport:
 
 platforms:
   - name: localhost
-  - name: windows
-  - name: win-fips-ssh
+  - name: windows-winrm
+  - name: windows-fips-ssh
     transport:
       name: ssh
       username: <%= ENV['machine_user'] %>

@@ -9,11 +9,11 @@ driver:
 
 platforms:
   - name: localhost
-  - name: windows
+  - name: windows-winrm
     transport:
       name: winrm
       elevated: true
-  - name: win-fips-ssh
+  - name: windows-fips-ssh
     transport:
       name: ssh
       username: <%= ENV['machine_user'] %>

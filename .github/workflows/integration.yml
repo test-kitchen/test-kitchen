@@ -67,7 +67,6 @@ jobs:
       - name: Verify Vagrant
         run: |
           export PATH="$(pwd)/bin:$PATH"
-          gem env
           bundle exec kitchen verify almalinux-9
 
   macos:
@@ -98,9 +97,7 @@ jobs:
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify macOS
-        run: |
-          # gem env # uncomment for testing
-          bundle exec kitchen verify localhost
+        run: bundle exec kitchen verify localhost
 
   windows:
     env:
@@ -125,11 +122,7 @@ jobs:
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows
-        run: |
-          Get-ChildItem Env: # uncomment for debugging
-          gem env # uncomment for testing
-          $env:BUNDLE_GEMFILE="" # uncomment for debugging
-          bundle exec kitchen verify windows
+        run: bundle exec kitchen verify windows-winrm
 
   linux:
     env:
@@ -158,11 +151,13 @@ jobs:
           which gem # uncomment for debugging
           gem env # uncomment for debugging
           env # uncomment for debugging
-          BUNDLE_GEMFILE="" bundle exec kitchen verify localhost
+          bundle config # uncomment for debugging
+          bundle exec env # uncomment for debugging
+          bundle exec kitchen verify localhost
 
   windows-fips-ssh:
     env:
-      machine_port: 5985
+      machine_port: 22
       KITCHEN_LOCAL_YAML: kitchen.exec.yml
     runs-on: windows-latest
     timeout-minutes: 600
@@ -225,6 +220,4 @@ jobs:
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows FIPS SSH
-        run: |
-          # gem env # uncomment for debugging
-          BUNDLE_GEMFILE="" bundle exec kitchen verify win-fips-ssh
+        run: bundle exec kitchen verify windows-fips-ssh
