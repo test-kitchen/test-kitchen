@@ -2,6 +2,8 @@
 driver:
   name: vagrant
   linked_clone: false
+  customize:
+    cableconnected1: "on"
 
 provisioner:
   name: chef_infra

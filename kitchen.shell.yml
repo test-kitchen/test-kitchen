@@ -9,7 +9,6 @@ driver:
 
 provisioner:
   name: shell
-  command: echo "hello world!!"
 
 platforms:
   - name: localhost
