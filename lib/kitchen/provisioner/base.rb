@@ -91,7 +91,7 @@ module Kitchen
               conn.execute(run_script_command(remote_script_path))
             end
           else
-            # For non-Windows or non-SSH scenarios, execute install command directly
+            # For all other scenarios, execute install command directly
             debug("Executing install command: #{install_command}")
             conn.execute(install_command)
           end

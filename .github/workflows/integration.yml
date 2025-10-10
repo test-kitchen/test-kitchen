@@ -167,7 +167,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: 'Enable FIPS via windows registry'  # FIPS needs to be enabled after installation of Chef, otherwise it fails due to Cryptography error
+      - name: 'Enable FIPS via windows registry'
         run: |
           $OldErrorActionPreference = $ErrorActionPreference
           $ErrorActionPreference = "stop"
@@ -207,4 +207,4 @@ jobs:
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows FIPS SSH
-        run: bundle exec kitchen verify windows-fips-ssh
+        run: bundle exec kitchen verify windows-fips-ssh -l debug
