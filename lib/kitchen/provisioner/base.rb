@@ -295,8 +295,8 @@ module Kitchen
       end
 
       def encode_for_powershell(script)
-        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
         return script if script.nil? || script.empty?
+        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
 
         utf16le = script.encode(Encoding::UTF_16LE)
         encoded = [utf16le].pack("m0")

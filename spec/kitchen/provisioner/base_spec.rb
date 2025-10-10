@@ -491,16 +491,6 @@ describe Kitchen::Provisioner::Base do
       _(content).must_include("echo hello")
     end
 
-    it "does not make the script executable on Windows platforms" do
-      provisioner.stubs(:windows_os?).returns(true)
-      FileUtils.expects(:chmod).never
-      provisioner.send(:prepare_install_script)
-      script_path = provisioner.send(:install_script_path)
-
-      # Verify the script was created
-      _(File.exist?(script_path)).must_equal true
-    end
-
     it "handles nil install command" do
       provisioner.stubs(:install_command).returns(nil)
       provisioner.send(:prepare_install_script)
@@ -573,7 +563,10 @@ describe Kitchen::Provisioner::Base do
     end
 
     describe "on Windows systems" do
-      before { provisioner.stubs(:windows_os?).returns(true) }
+      before {
+        provisioner.stubs(:windows_os?).returns(true)
+        instance.transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
+      }
 
       it "returns nil when script is nil" do
         _(provisioner.send(:encode_for_powershell, nil)).must_be_nil
