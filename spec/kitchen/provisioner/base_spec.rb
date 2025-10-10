@@ -200,19 +200,14 @@ describe Kitchen::Provisioner::Base do
       connection.unstub(:execute_with_retry)
       connection.unstub(:upload)
 
-      provisioner.stubs(:windows_os?).returns(true)
-      transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
-      transport.stubs(:[]).with(:username).returns("testuser")
-
       provisioner.expects(:prepare_install_script).once
+
       # Set up more lenient expectations to see what actually gets called
       connection.expects(:upload).at_least_once
       connection.expects(:execute).at_least_once
       connection.expects(:execute).with("prepare").once
+      connection.expects(:execute_with_retry).with("run", [], 1, 30).once
 
-      # For Windows, the run command gets encoded, so we need to expect the encoded version
-      encoded_run_command = provisioner.send(:encode_for_powershell, "run")
-      connection.expects(:execute_with_retry).with(encoded_run_command, [], 1, 30).once
       cmd
     end
 
@@ -469,14 +464,13 @@ describe Kitchen::Provisioner::Base do
     end
 
     it "creates an install script with the install command" do
-      provisioner.stubs(:windows_os?).returns(true)
-      transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
       provisioner.send(:prepare_install_script)
       script_path = provisioner.send(:install_script_path)
 
-      _(script_path).must_match(/install_script\.ps1/)
+      _(script_path).must_match(/install_script$/)
       _(File.exist?(script_path)).must_equal true
       content = File.read(script_path)
+      _(content).must_include("#!/bin/sh")
       _(content).must_include("echo hello")
     end
 
@@ -489,6 +483,16 @@ describe Kitchen::Provisioner::Base do
       _(File.exist?(script_path)).must_equal true
       content = File.read(script_path)
       _(content).must_include("echo hello")
+    end
+
+    it "makes the script executable on non-Windows platforms" do
+      provisioner.stubs(:windows_os?).returns(false)
+      FileUtils.expects(:chmod).with(0755, anything)
+      provisioner.send(:prepare_install_script)
+      script_path = provisioner.send(:install_script_path)
+
+      # Verify the script was created
+      _(File.exist?(script_path)).must_equal true
     end
 
     it "does not make the script executable on Windows platforms" do
@@ -513,6 +517,24 @@ describe Kitchen::Provisioner::Base do
       provisioner.send(:prepare_install_script)
 
       _(provisioner.send(:install_script_path)).must_be_nil
+    end
+  end
+
+  describe "#make_executable_command" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    it "returns chmod command on non-Windows" do
+      provisioner.stubs(:windows_os?).returns(false)
+      provisioner.stubs(:sudo).with("chmod +x /path/to/script").returns("sudo -E chmod +x /path/to/script")
+      _(provisioner.send(:make_executable_command, "/path/to/script")).must_match(/chmod \+x/)
+    end
+
+    it "returns nil on Windows" do
+      provisioner.stubs(:windows_os?).returns(true)
+      result = provisioner.send(:make_executable_command, "C:\\path\\to\\script")
+      _(result).must_be_nil
     end
   end
 

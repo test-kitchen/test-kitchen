@@ -70,6 +70,7 @@ module Kitchen
       # rubocop:disable Metrics/AbcSize
       def call(state)
         create_sandbox
+        prepare_install_script
 
         instance.transport.connection(state) do |conn|
           config[:uploads].to_h.each do |locals, remote|
@@ -77,23 +78,22 @@ module Kitchen
             conn.upload(locals.to_s, remote)
           end
 
-          # Check if we need to upload script (for Windows SSH or other scenarios requiring script upload)
-          transport_config = instance.transport.instance_variable_get(:@config)
-          if windows_os? && transport_config && transport_config[:name] == "ssh"
-            prepare_install_script
-            # Run the init command to create the kitchen tmp directory
-            conn.execute(encode_for_powershell(init_command))
-            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), "install_script.ps1")
+          # Run the init command to create the kitchen tmp directory
+          conn.execute(encode_for_powershell(init_command))
+
+          # Upload the install script instead of directly executing the command
+          if install_command
+            script_filename = windows_os? ? "install_script.ps1" : "install_script"
+            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), script_filename)
             if install_script_path
               debug("Uploading install script to #{remote_script_path}")
               conn.upload(install_script_path, remote_script_path)
+              # Make script executable on remote host
+              conn.execute(make_executable_command(remote_script_path))
+              # Execute the uploaded script
               debug("Executing install script with #{run_script_command(remote_script_path)}")
               conn.execute(run_script_command(remote_script_path))
             end
-          else
-            # For non-Windows or non-SSH scenarios, execute install command directly
-            debug("Executing install command: #{install_command}")
-            conn.execute(install_command)
           end
 
           # The install script will remove the kitchen tmp directory, hence creating it again.
@@ -103,7 +103,7 @@ module Kitchen
           debug("Transfer complete")
           debug("Executing prepare command: #{prepare_command}")
           conn.execute(prepare_command)
-          debug("Executing run command: #{encode_for_powershell(run_command)}")
+          debug("Executing run command: #{run_command}")
           conn.execute_with_retry(
             encode_for_powershell(run_command),
             config[:retry_on_exit_code],
@@ -295,7 +295,7 @@ module Kitchen
       end
 
       def encode_for_powershell(script)
-        return script unless windows_os?
+        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
         return script if script.nil? || script.empty?
 
         utf16le = script.encode(Encoding::UTF_16LE)
@@ -309,16 +309,18 @@ module Kitchen
       #
       # @api private
       def prepare_install_script
-        return unless windows_os?
-
         command = install_command
         return if command.nil? || command.empty?
 
         info("Preparing install script")
-        @install_script_path = File.join(sandbox_path, "install_script.ps1")
+        script_filename = windows_os? ? "install_script.ps1" : "install_script"
+        @install_script_path = File.join(sandbox_path, script_filename)
 
         debug("Creating install script at #{@install_script_path}")
         File.open(@install_script_path, "wb") do |file|
+          unless windows_os?
+            file.write("#!/bin/sh\n")
+          end
           file.write(command)
         end
 
@@ -330,15 +332,31 @@ module Kitchen
         @install_script_path
       end
 
+      # Returns a command to make a script executable on the remote host.
+      #
+      # @param script_path [String] path to the script on the remote host
+      # @return [String] command to make the script executable
+      # @api private
+      def make_executable_command(script_path)
+        debug "echo Making script executable"
+        return if windows_os?
+
+        prefix_command(wrap_shell_code(sudo("chmod +x #{script_path}")))
+      end
+
       # Returns a command to execute a script on the remote host.
       #
       # @param script_path [String] path to the script on the remote host
       # @return [String] command to execute the script
       # @api private
       def run_script_command(script_path)
-        # Use parameters to suppress PowerShell formatting and control characters
-        # that can interfere with console output over SSH
-        "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
+        if windows_os?
+          # Use parameters to suppress PowerShell formatting and control characters
+          # that can interfere with console output over SSH
+          "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
+        else
+          prefix_command(wrap_shell_code(sudo(script_path)))
+        end
       end
 
       # Resolves PowerShell environment variables in remote paths to actual paths
