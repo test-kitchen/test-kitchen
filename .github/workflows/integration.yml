@@ -176,30 +176,30 @@ jobs:
       #     ohai -v
       #     rake --version
       #     bundle -v
-      # - name: 'Enable FIPS via windows registry'  # FIPS needs to be enabled after installation of Chef, otherwise it fails due to Cryptography error
-      #   run: |
-      #     $OldErrorActionPreference = $ErrorActionPreference
-      #     $ErrorActionPreference = "stop"
-      #     $KeyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy"
-      #     $ValueName = "Enabled"
-      #     $ValueData = "1"
-      #     try{
-      #         Get-ItemProperty -Path $KeyPath -Name $valueName -ErrorAction Stop
-      #         New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
-      #     }
-      #     catch [System.Management.Automation.PSArgumentException] {
-      #         New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
-      #     }
-      #     catch [System.Management.Automation.ItemNotFoundException]
-      #     {
-      #         New-Item -Path $KeyPath -Force
-      #         New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
-      #     }
-      #     Finally
-      #     {
-      #         $ErrorActionPreference = $OldErrorActionPreference
-      #     }
-      #     if (-not $?) { throw "Failed to enable FIPS mode." }
+      - name: 'Enable FIPS via windows registry'  # FIPS needs to be enabled after installation of Chef, otherwise it fails due to Cryptography error
+        run: |
+          $OldErrorActionPreference = $ErrorActionPreference
+          $ErrorActionPreference = "stop"
+          $KeyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy"
+          $ValueName = "Enabled"
+          $ValueData = "1"
+          try{
+              Get-ItemProperty -Path $KeyPath -Name $valueName -ErrorAction Stop
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          catch [System.Management.Automation.PSArgumentException] {
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          catch [System.Management.Automation.ItemNotFoundException]
+          {
+              New-Item -Path $KeyPath -Force
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          Finally
+          {
+              $ErrorActionPreference = $OldErrorActionPreference
+          }
+          if (-not $?) { throw "Failed to enable FIPS mode." }
       - name: Setup Machine
         run: |
           Add-WindowsCapability -Online -Name OpenSSH.Server

@@ -13,11 +13,17 @@ provisioner:
 
 platforms:
   - name: localhost
+    provisioner:
+      command: mkdir /tmp/tk_test_directory
   - name: windows-winrm
+    provisioner:
+      command: New-Item -Path "c:\tk_test_directory" -ItemType Directory
     transport:
       name: winrm
       elevated: true
   - name: windows-fips-ssh
+    provisioner:
+      command: New-Item -Path "c:\tk_test_directory" -ItemType Directory
     transport:
       name: ssh
       username: <%= ENV['machine_user'] %>
