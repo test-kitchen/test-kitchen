@@ -36,9 +36,7 @@ module Kitchen
       # @api private
       def finalize_config!(instance)
         super.tap do
-          unless instance.transport.is_a?(Kitchen::Transport::Exec)
-            instance.transport = Kitchen::Transport::Exec.new
-          end
+          instance.transport = Kitchen::Transport::Exec.new
         end
       end
 

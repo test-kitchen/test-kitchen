@@ -87,11 +87,12 @@ module Kitchen
             if install_script_path
               debug("Uploading install script to #{remote_script_path}")
               conn.upload(install_script_path, remote_script_path)
-              # Execute the uploaded script
+              debug("Executing install script with #{run_script_command(remote_script_path)}")
               conn.execute(run_script_command(remote_script_path))
             end
           else
             # For non-Windows or non-SSH scenarios, execute install command directly
+            debug("Executing install command: #{install_command}")
             conn.execute(install_command)
           end
 
@@ -100,7 +101,9 @@ module Kitchen
           info("Transferring files to #{instance.to_str}")
           conn.upload(sandbox_dirs, resolve_remote_path(config[:root_path]))
           debug("Transfer complete")
+          debug("Executing prepare command: #{prepare_command}")
           conn.execute(prepare_command)
+          debug("Executing run command: #{encode_for_powershell(run_command)}")
           conn.execute_with_retry(
             encode_for_powershell(run_command),
             config[:retry_on_exit_code],
