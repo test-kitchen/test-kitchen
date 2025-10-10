@@ -1,0 +1,24 @@
+---
+driver:
+  name: proxy
+  host: localhost
+  reset_command: "exit 0"
+  port: <%= ENV["machine_port"] %>
+  username: <%= ENV["machine_user"] %>
+  password: <%= ENV["machine_pass"] %>
+
+provisioner:
+  name: shell
+  command: echo "hello world!!"
+
+platforms:
+  - name: localhost
+  - name: windows-winrm
+    transport:
+      name: winrm
+      elevated: true
+  - name: windows-fips-ssh
+    transport:
+      name: ssh
+      username: <%= ENV['machine_user'] %>
+      password: <%= ENV['machine_pass'] %>
