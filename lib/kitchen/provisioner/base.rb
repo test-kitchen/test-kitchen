@@ -79,6 +79,7 @@ module Kitchen
 
           # Check if we need to upload script (for Windows SSH or other scenarios requiring script upload)
           transport_config = instance.transport.instance_variable_get(:@config)
+          debug("Windows OS: #{windows_os?} and Transport config: #{transport_config.inspect}")
           if windows_os? && transport_config && transport_config[:name] == "ssh"
             prepare_install_script
             # Run the init command to create the kitchen tmp directory
