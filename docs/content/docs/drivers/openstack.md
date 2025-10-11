@@ -314,7 +314,7 @@ In some complex network scenarios you can have several IP addresses designated
 as public or private. Use `public_ip_order` or `private_ip_order` to control
 which one to use for further SSH connection. Default is 0 (first one)
 
-For example if you have openstack istance that has network with several IPs assigned like
+For example if you have openstack instance that has network with several IPs assigned like
 
 ```text
 +--------------------------------------+------------+--------+------------+-------------+----------------------------------+

@@ -208,7 +208,7 @@ describe Kitchen::Verifier::Busser do
           create_test_files
         end
 
-        it "prefixs the whole command with the command_prefix if set" do
+        it "prefixes the whole command with the command_prefix if set" do
           config[:command_prefix] = "my_prefix"
 
           _(cmd).must_match(/\Amy_prefix /)
@@ -345,7 +345,7 @@ describe Kitchen::Verifier::Busser do
           create_test_files
         end
 
-        it "prefixs the whole command with the command_prefix if set" do
+        it "prefixes the whole command with the command_prefix if set" do
           config[:command_prefix] = "my_prefix"
 
           _(cmd).must_match(/\Amy_prefix /)
@@ -435,7 +435,7 @@ describe Kitchen::Verifier::Busser do
           create_test_files
         end
 
-        it "prefixs the whole command with the command_prefix if set" do
+        it "prefixes the whole command with the command_prefix if set" do
           config[:command_prefix] = "my_prefix"
 
           _(cmd).must_match(/\Amy_prefix /)

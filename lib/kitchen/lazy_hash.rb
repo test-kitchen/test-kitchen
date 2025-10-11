@@ -18,7 +18,7 @@
 require "delegate"
 
 module Kitchen
-  # A modifed Hash object that may contain callables as a value which must be
+  # A modified Hash object that may contain callables as a value which must be
   # executed in the context of another object. This allows for delayed
   # evaluation of a hash value while still looking and largely feeling like a
   # normal Ruby Hash.

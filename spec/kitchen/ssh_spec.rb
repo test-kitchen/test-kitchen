@@ -416,7 +416,7 @@ describe Kitchen::SSH do
       _(args).wont_match regexify(" -o IdentitiesOnly=")
     end
 
-    it "sets the IdentiesOnly option if :keys option is given" do
+    it "sets the IdentitiesOnly option if :keys option is given" do
       opts[:keys] = ["yep"]
 
       _(args).must_match regexify(" -o IdentitiesOnly=yes ")

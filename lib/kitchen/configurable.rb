@@ -180,7 +180,7 @@ module Kitchen
 
     private
 
-    # @return [LzayHash] a configuration hash
+    # @return [LazyHash] a configuration hash
     # @api private
     attr_reader :config
 
@@ -472,7 +472,7 @@ module Kitchen
       # easier to debug and diagnose.
       #
       # Note that the file path expansion is only intended for paths on the
-      # local workstation invking the Test Kitchen code.
+      # local workstation invoking the Test Kitchen code.
       #
       # @example the default usage
       #
@@ -598,8 +598,8 @@ module Kitchen
         end
       end
 
-      # @return [Hash] a hash of attribute keys and valudation callable blocks
-      #   which has been merged with any superclass valudations
+      # @return [Hash] a hash of attribute keys and validation callable blocks
+      #   which has been merged with any superclass validations
       # @api private
       def validations
         @validations ||= {}.merge(super_validations)

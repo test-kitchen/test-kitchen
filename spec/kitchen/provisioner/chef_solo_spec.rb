@@ -298,7 +298,7 @@ describe Kitchen::Provisioner::ChefSolo do
     describe "common behavior" do
       before { platform.stubs(:shell_type).returns("fake") }
 
-      it "prefixs the whole command with the command_prefix if set" do
+      it "prefixes the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 
         _(cmd).must_match(/\Amy_prefix /)
@@ -400,7 +400,7 @@ describe Kitchen::Provisioner::ChefSolo do
         )
       end
 
-      it "sets json attribtes flag for custom root_path" do
+      it "sets json attributes flag for custom root_path" do
         config[:root_path] = "/booyah"
 
         _(cmd).must_match regexify(
@@ -543,7 +543,7 @@ describe Kitchen::Provisioner::ChefSolo do
         )
       end
 
-      it "sets json attribtes flag for custom root_path" do
+      it "sets json attributes flag for custom root_path" do
         config[:root_path] = '\\booyah'
 
         _(cmd).must_match regexify(

@@ -231,7 +231,7 @@ module Kitchen
     # platforms, or the like, just a vanilla hash.
     #
     # @param root [Hash] a hash to use as the root of the conversion
-    # @deprecated The following configuration hashses should no longer be
+    # @deprecated The following configuration hashes should no longer be
     #   created in a Test Kitchen hash: `:busser`. Use a `:verifier` hash
     #   block in their place.
     # @api private
@@ -378,7 +378,7 @@ module Kitchen
     #
     # @param root [Hash] a hash to use as the root of the conversion
     # @deprecated The following configuration hashes should no longer be
-    #   created in a Test Kitche hash: [`:driver_plugin`, `:driver_config`].
+    #   created in a Test Kitchen hash: [`:driver_plugin`, `:driver_config`].
     #   Use a `:driver` hash block in their place.
     # @api private
     def convert_legacy_driver_format_at!(root)
@@ -589,9 +589,9 @@ module Kitchen
     end
 
     # Destructively moves a `:require_chef_omnibus` key/value pair from a
-    # `:driver` hash block to a `:provisioner` hash block in the first leve
+    # `:driver` hash block to a `:provisioner` hash block in the first level
     # depth of a hash. This method has no knowledge of suites, platforms, or
-    # the like, just a vanilla haash.
+    # the like, just a vanilla hash.
     #
     # @param root [Hash] a hash to use as the root of the conversion
     # @deprecated The `:require_chef_omnibus` key/value pair should no longer
@@ -753,9 +753,9 @@ module Kitchen
     # takes an array value and transforms it into a hash with a bucket name
     # containing the original Array. This way semantic Hash merging will do
     # its thing and another process can collapse the hash into a flat array
-    # afterwards, given a strategy (like use the array segmenet from one
+    # afterwards, given a strategy (like use the array segment from one
     # bucket first, then another one second). To anyone who made it this far,
-    # Fletcher appologizes.
+    # Fletcher apologizes.
     #
     # @param root [Hash] a hash to use as the root of the conversion
     # @param key [Symbol] a key in the root hash that, if exists, has its

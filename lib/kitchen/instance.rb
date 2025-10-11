@@ -488,7 +488,7 @@ module Kitchen
     # @param verb [Symbol] the action to be performed
     # @param output_verb [String] a verb representing the action, suitable for
     #   use in output logging
-    # @yield perform optional work just after action has complted
+    # @yield perform optional work just after action has completed
     # @return [self] this instance, used to chain actions
     # @api private
     def perform_action(verb, output_verb)
@@ -689,7 +689,7 @@ module Kitchen
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class FSM
       # Returns an Array of all transitions to bring an Instance from its last
-      # reported transistioned state into the desired transitioned state.
+      # reported transitioned state into the desired transitioned state.
       #
       # @param last [String,Symbol,nil] the last known transitioned state of
       #   the Instance, defaulting to `nil` (for unknown or no history)

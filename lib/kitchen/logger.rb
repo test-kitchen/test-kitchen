@@ -285,7 +285,7 @@ module Kitchen
     # Construct a new standard out logger.
     #
     # @param stdout [IO] the IO object that represents stdout (or similar)
-    # @param color [Symbol] color to use when outputing messages
+    # @param color [Symbol] color to use when outputting messages
     # @param colorize [Boolean] whether to enable color
     # @return [StdoutLogger] a new logger
     # @api private
