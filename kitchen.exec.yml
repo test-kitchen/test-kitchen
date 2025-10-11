@@ -1,0 +1,21 @@
+---
+driver:
+  name: exec
+
+transport:
+  name: exec
+
+platforms:
+  - name: localhost
+    provisioner:
+      command_prefix: "unset BUNDLE_GEMFILE BUNDLE_PATH BUNDLE_BIN_bundle_BIN BUNDLE_WITHOUT RUBYOPT RUBYLIB GEM_PATH GEM_HOME;"
+  - name: windows-winrm
+    provisioner:
+      command_prefix: "$env:BUNDLE_GEMFILE=$null; $env:BUNDLE_PATH=$null; $env:BUNDLE_BIN=$null; $env:BUNDLE_WITHOUT=$null; $env:RUBYOPT=$null; $env:RUBYLIB=$null; $env:GEM_PATH=$null; $env:GEM_HOME=$null;"
+  - name: windows-fips-ssh
+    transport:
+      name: ssh
+      username: <%= ENV['machine_user'] %>
+      password: <%= ENV['machine_pass'] %>
+    provisioner:
+      command_prefix: "$env:BUNDLE_GEMFILE=$null; $env:BUNDLE_PATH=$null; $env:BUNDLE_BIN=$null; $env:BUNDLE_WITHOUT=$null; $env:RUBYOPT=$null; $env:RUBYLIB=$null; $env:GEM_PATH=$null; $env:GEM_HOME=$null;"

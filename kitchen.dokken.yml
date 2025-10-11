@@ -2,9 +2,11 @@
 driver:
   name: dokken
   privileged: true
+  chef_image: chef/chef
 
 provisioner:
   name: dokken
+  deprecations_as_errors: true
   chef_license: accept-no-persist
 
 transport:

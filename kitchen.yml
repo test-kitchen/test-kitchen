@@ -1,6 +1,9 @@
 ---
 driver:
   name: vagrant
+  linked_clone: false
+  customize:
+    cableconnected1: "on"  # helps with vagrant up taking too long to connect to system and timing out
 
 provisioner:
   name: chef_infra
@@ -14,9 +17,9 @@ verifier:
 platforms:
   - name: almalinux-9
   - name: ubuntu-24.04
-  - name: windows-2022
+  - name: windows-2025
     driver:
-      box: stromweld/windows-2022
+      box: stromweld/windows-2025
       customize:
         memory: 4096
 

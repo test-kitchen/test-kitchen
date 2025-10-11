@@ -53,8 +53,8 @@ module Kitchen
 
       private
 
-      # Resets the non-Kitchen managed instance using by issuing a command
-      # over SSH.
+      # Resets the non-Kitchen managed instance by issuing a command
+      # locally.
       #
       # @param state [Hash] the state hash
       # @api private

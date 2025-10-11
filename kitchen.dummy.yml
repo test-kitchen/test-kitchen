@@ -1,0 +1,16 @@
+---
+driver:
+  name: dummy
+
+transport:
+  name: dummy
+
+provisioner:
+  name: dummy
+
+verifier:
+  name: dummy
+
+platforms:
+  - name: localhost
+  - name: windows-winrm
