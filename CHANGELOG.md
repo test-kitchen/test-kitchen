@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [3.9.1](https://github.com/test-kitchen/test-kitchen/compare/v3.9.0...v3.9.1) (2025-10-11)
+
+
+### Bug Fixes
+
+* fix for exec driver ([#2031](https://github.com/test-kitchen/test-kitchen/issues/2031)) ([1029e95](https://github.com/test-kitchen/test-kitchen/commit/1029e95be7c8b1f8592b5aef74c1d070cd7aa831))
+
 ## [3.9.0](https://github.com/test-kitchen/test-kitchen/compare/v3.8.2...v3.9.0) (2025-09-05)
 
 
