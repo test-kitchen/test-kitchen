@@ -1,6 +1,6 @@
 # Test Kitchen
 
-[![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](http://badge.fury.io/rb/test-kitchen)
+[![Gem Version](https://badge.fury.io/rb/test-kitchen.svg)](https://badge.fury.io/rb/test-kitchen)
 [![Build Status](https://dev.azure.com/test-kitchen/test-kitchen/_apis/build/status/test-kitchen.test-kitchen?branchName=main)](https://dev.azure.com/test-kitchen/test-kitchen/_build/latest?definitionId=6&branchName=main)
 
 |             |                                                                                 |

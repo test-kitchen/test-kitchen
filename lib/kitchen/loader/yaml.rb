@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ require "yaml" unless defined?(YAML)
 module Kitchen
   module Loader
     # YAML file loader for Test Kitchen configuration. This class is
-    # responisble for parsing the main YAML file and the local YAML if it
+    # responsible for parsing the main YAML file and the local YAML if it
     # exists. Local file configuration will win over the default configuration.
     # The client of this class should not require any YAML loading or parsing
     # logic.
@@ -156,7 +156,7 @@ module Kitchen
         @process_erb ? process_erb(string, file) : string
       end
 
-      # Passes a string through ERb to evaulate any ERb blocks.
+      # Passes a string through ERb to evaluate any ERb blocks.
       #
       # @param string [String] the string to process
       # @param file [String] an absolute path to the file represented as the
@@ -242,7 +242,7 @@ module Kitchen
         File.join(File.expand_path(ENV["HOME"]), ".kitchen", "config.yml")
       end
 
-      # Generate a diganose Hash for a particular YAML file Hash. If an error
+      # Generate a diagnose Hash for a particular YAML file Hash. If an error
       # occurs when loading the data, then a failure hash will be inserted
       # into the `:raw_data` sub-hash.
       #
@@ -263,7 +263,7 @@ module Kitchen
         { filename: file, raw_data: hash }
       end
 
-      # Generates a Hash respresenting a failure, given an Exception object.
+      # Generates a Hash representing a failure, given an Exception object.
       #
       # @param e [Exception] an exception
       # @param file [String] the absolute path to a file (default: `nil`)

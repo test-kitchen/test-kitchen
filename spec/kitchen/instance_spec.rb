@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -340,7 +340,7 @@ describe Kitchen::Instance do
       _(instance.diagnose[:platform]).must_equal :unknown
     end
 
-    it "sets :state_file key to state_file's diganose info" do
+    it "sets :state_file key to state_file's diagnose info" do
       state_file.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose[:state_file]).must_equal(a: "b")
@@ -354,7 +354,7 @@ describe Kitchen::Instance do
       _(instance.diagnose[:state_file]).must_equal :unknown
     end
 
-    it "sets :provisioner key to provisioner's diganose info" do
+    it "sets :provisioner key to provisioner's diagnose info" do
       provisioner.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose[:provisioner]).must_equal(a: "b")
@@ -368,7 +368,7 @@ describe Kitchen::Instance do
       _(instance.diagnose[:provisioner]).must_equal :unknown
     end
 
-    it "sets :verifier key to verifier's diganose info" do
+    it "sets :verifier key to verifier's diagnose info" do
       verifier.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose[:verifier]).must_equal(a: "b")
@@ -382,7 +382,7 @@ describe Kitchen::Instance do
       _(instance.diagnose[:verifier]).must_equal :unknown
     end
 
-    it "sets :transport key to transport's diganose info" do
+    it "sets :transport key to transport's diagnose info" do
       transport.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose[:transport]).must_equal(a: "b")

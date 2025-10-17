@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ module Kitchen
     def __config
       # this would need to be some kind of Chef::Config looking thing, which probably requires
       # a translation object from t-k config to Chef::Config layout if that ever becomes necessary.
-      # this ISNT the t-k config.
+      # this ISN'T the t-k config.
       {}
     end
 

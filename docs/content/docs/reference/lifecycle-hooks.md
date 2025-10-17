@@ -25,7 +25,7 @@ You can also configure hooks on a single platform or suite:
 
 ```yaml
 platforms:
-- name: ubuntu-20.04
+- name: ubuntu-24.04
   lifecycle:
     pre_converge:
     - remote: apt update

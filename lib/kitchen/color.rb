@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 # limitations under the License.
 
 module Kitchen
-  # Utility methods to help ouput colorized text in a terminal. The
+  # Utility methods to help output colorized text in a terminal. The
   # implementation is a compressed mashup of code from the Thor and Foreman
   # projects.
   #

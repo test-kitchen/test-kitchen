@@ -122,13 +122,13 @@ Feature: Add Test Kitchen support to an existing project
     """
 
   Scenario: Running init without a provisioner sets the default provisioner
-    to dokken in kitchen.yml
+    to chef_infra in kitchen.yml
     Given an empty file named "Gemfile"
     When I successfully run `kitchen init --no-driver`
     Then the file "kitchen.yml" should contain:
     """
     provisioner:
-      name: dokken
+      name: chef_infra
     """
 
   Scenario: Running init with a provisioner sets the provisioner in kitchen.yml
@@ -193,14 +193,11 @@ Feature: Add Test Kitchen support to an existing project
       name: dokken
 
     provisioner:
-      name: dokken
-
-    transport:
-      name: dokken
+      name: chef_infra
 
     platforms:
-      - name: ubuntu-20.04
-      - name: centos-8
+      - name: ubuntu-24.04
+      - name: almalinux-10
 
     suites:
       - name: default
@@ -220,14 +217,11 @@ Feature: Add Test Kitchen support to an existing project
       name: dokken
 
     provisioner:
-      name: dokken
-
-    transport:
-      name: dokken
+      name: chef_infra
 
     platforms:
-      - name: ubuntu-20.04
-      - name: centos-8
+      - name: ubuntu-24.04
+      - name: almalinux-10
 
     suites:
       - name: default
@@ -246,14 +240,11 @@ Feature: Add Test Kitchen support to an existing project
       name: dokken
 
     provisioner:
-      name: dokken
-
-    transport:
-      name: dokken
+      name: chef_infra
 
     platforms:
-      - name: ubuntu-20.04
-      - name: centos-8
+      - name: ubuntu-24.04
+      - name: almalinux-10
 
     suites:
       - name: default

@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module ShellOut
-    # Wrapped exception for any interally raised shell out commands.
+    # Wrapped exception for any internally raised shell out commands.
     class ShellCommandFailed < TransientFailure; end
 
     # Executes a command in a subshell on the local running system.
@@ -78,7 +78,7 @@ module Kitchen
     # Returns a hash of MixLib::ShellOut options for the command.
     #
     # @param options [Hash] a Hash of options
-    # @return [Hash] a new Hash of options, filterd and merged with defaults
+    # @return [Hash] a new Hash of options, filtered and merged with defaults
     # @api private
     def shell_opts(options)
       filtered_opts = options.reject do |key, _value|

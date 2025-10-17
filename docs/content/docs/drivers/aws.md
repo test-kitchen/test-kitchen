@@ -79,6 +79,26 @@ The `aws_ssh_key_type` value is the type of SSH key pair to be automatically cre
 
 The default value is `rsa`.  The value must be a valid KeyType as per the [AWS EC2 CreateKeyPair API documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateKeyPair.html).
 
+#### AWS EC2 Instance Connect
+
+To enable, set `use_instance_connect` to `true` and optionally configure the instance connect endpoint ID and max tunnel duration.
+
+Ensure that you have configured the prerequisites needed to use AWS EC2 Instance Connect in accordance with AWS documentation. Generally this means that your role should be able to perform the `ec2-instance-connect:SendSSHPublicKey` on the instance, but refer to AWS documentation for specific requirements.
+
+The AWS EC2 Instance Connect service operates by pushing a temporary SSH public key to the instance and then connecting directly or via a tunnel (Instance Connect Endpoint) facilitated by the AWS CLI. You must have the AWS CLI installed for the Instance Connect Endpoint connection method to work, as the tunnel functionality is not part of the AWS SDKs.
+
+The public key used for this purpose is chosen using the same configuration logic as the standard EC2 driver SSH configuration.
+
+Example configuration:
+
+```yaml
+driver:
+  name: ec2
+  use_instance_connect: true
+  instance_connect_endpoint_id: eice-abcdefg1234567 # Optional
+  instance_connect_max_tunnel_duration: 3600 # Optional
+```
+
 #### WinRM
 
 For Windows instances the generated Administrator password is fetched automatically from Amazon EC2 with the same private key as we use for SSH.
@@ -106,7 +126,7 @@ image_id's have a format like ami-748e2903. The image_id values appear next to t
 
 ##### *image_search*
 
-`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the AWS CLI doc under `--filters` [here](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
+`image_search` lets you specify a series of key/value pairs to search for the image. If a value is set to an array, then *any* of those values will match. You can learn more about the available filters in the [AWS CLI documentation for ec2 describe-images](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html).
 
 ```yaml
 platforms:
@@ -326,7 +346,7 @@ The default is `nil`.
 
 #### block_duration_minutes
 
-The [specified duration](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#fixed-duration-spot-instances) for a spot instance, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
+The [specified duration](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#fixed-duration-spot-instances) for a spot instance, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360).
 If no duration is set, the spot instance will remain active until it is terminated.
 
 The default is `nil`.
@@ -337,7 +357,7 @@ Specify a proxy to send AWS requests through.  Should be of the format `http://<
 
 The default is `ENV["HTTPS_PROXY"] || ENV["HTTP_PROXY"]`.  If you have these environment variables set and do not want to use a proxy when contacting aws set `http_proxy: nil`.
 
-**Note** - The AWS command line utility allow you to specify [two proxies](http://docs.aws.amazon.com/cli/latest/userguide/cli-http-proxy.html), one for HTTP and one for HTTPS.  The AWS Ruby SDK only allows you to specify 1 proxy and because all requests are `https://` this proxy needs to support HTTPS.
+**Note** - The AWS command line utility allow you to specify [two proxies](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-proxy.html), one for HTTP and one for HTTPS.  The AWS Ruby SDK only allows you to specify 1 proxy and because all requests are `https://` this proxy needs to support HTTPS.
 
 #### ssl_verify_peer
 
@@ -345,21 +365,21 @@ If you need to turn off ssl certificate verification for HTTP calls made to AWS,
 
 #### retryable_tries
 
-The `retryable_tries` propery allows you to set the number of retries to try when creating a new instance.
+The `retryable_tries` property allows you to set the number of retries to try when creating a new instance.
 Combines with `retryable_sleep`.
 
 The default is `60`.
 
 #### retryable_sleep
 
-The `retryable_sleep` propery sets how long to wait between tries when creating a new instance.
+The `retryable_sleep` property sets how long to wait between tries when creating a new instance.
 Combines with `retryable_tries`.
 
 The default is `5`.
 
 #### skip_cost_warning
 
-The `skip_cost_warning` property allows for supressing the message that the instance will not be covered within the AWS free-tier.
+The `skip_cost_warning` property allows for suppressing the message that the instance will not be covered within the AWS free-tier.
 
 The default is `false`.
 
@@ -402,7 +422,7 @@ block_device_mappings:
       iops: 100
 ```
 
-See [Amazon EBS Volume Types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html) to find out more about volume types.
+See [Amazon EBS Volume Types](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html) to find out more about volume types.
 
 If you have a block device mapping with a `device_name` equal to the root storage device name on your image then the provided mapping will replace the settings in the image.
 
@@ -410,7 +430,7 @@ If this is not provided it will use the default block_device_mappings from the A
 
 #### ebs_optimized
 
-Option to launch EC2 instance with optimized EBS volume. See [Amazon EC2 Instance Types](http://aws.amazon.com/ec2/instance-types/) to find out more about instance types that can be launched as EBS-optimized instances.
+Option to launch EC2 instance with optimized EBS volume. See [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/) to find out more about instance types that can be launched as EBS-optimized instances.
 
 The default is `false`.
 

@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -349,7 +349,7 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
-      it "sets elevated_username from overriden elevated_username" do
+      it "sets elevated_username from overridden elevated_username" do
         config[:username] = "user"
         config[:elevated_username] = "elevated_user"
 
@@ -370,7 +370,7 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
-      it "sets elevated_password from overriden elevated_password" do
+      it "sets elevated_password from overridden elevated_password" do
         config[:password] = "pass"
         config[:elevated_password] = "elevated_pass"
 
@@ -381,7 +381,7 @@ describe Kitchen::Transport::Winrm do
         make_connection
       end
 
-      it "sets elevated_password to nil if overriden elevated_password is nil" do
+      it "sets elevated_password to nil if overridden elevated_password is nil" do
         config[:password] = "pass"
         config[:elevated_password] = nil
 
@@ -1443,7 +1443,7 @@ describe Kitchen::Transport::Winrm::Connection do
       end
     end
 
-    describe "when connection suceeds but command fails, sad panda" do
+    describe "when connection succeeds but command fails, sad panda" do
       let(:response) do
         o = WinRM::Output.new
         o.exitcode = 42

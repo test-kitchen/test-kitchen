@@ -78,24 +78,24 @@ Example configuration using Bento images:
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-7
-  - name: freebsd-12
+  - name: ubuntu-24.04
+  - name: almalinux-10
+  - name: freebsd-14
 ```
 
 This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
-      box: bento/ubuntu-20.04
-  - name: centos-7
+      box: bento/ubuntu-24.04
+  - name: almalinux-10
     driver:
-      box: bento/centos-7
-  - name: freebsd-12
+      box: bento/almalinux-10
+  - name: freebsd-14
     driver:
-      box: bento/freebsd-12
+      box: bento/freebsd-14
 ```
 
 ### Supported Bento Platforms
@@ -124,16 +124,16 @@ If a platform name is specified that is not published by the Bento project, it w
 
 ```yaml
 platforms:
-  - name: my_vagrant_account/redhat-8
+  - name: my_vagrant_account/redhat-10
 ```
 
 This short-hand configuration is the same as the following configuration explicitly specifying box names:
 
 ```yaml
 platforms:
-  - name: my_vagrant_account/redhat-8
+  - name: my_vagrant_account/redhat-10
     driver:
-      box: my_vagrant_account/redhat-8
+      box: my_vagrant_account/redhat-10
 ```
 
 Vagrant boxes can also be fetched from non-Vagrant Cloud location by specifying the `box_url`:
@@ -177,8 +177,8 @@ The default will be computed from the platform name of the instance. However,
 for a number of common platforms in the [Bento][bento] project, the default will
 prefix the name with `bento/` in accordance with Vagrant Cloud naming standards.
 
-For example, a platform with name `ubuntu-20.04` will produce a
-default `box` value of `bento/ubuntu-20.04`. Alternatively, a box called
+For example, a platform with name `ubuntu-24.04` will produce a
+default `box` value of `bento/ubuntu-24.04`. Alternatively, a box called
 `slackware-14.1` will produce a default `box` value of `slackware-14.1`.
 
 ### box_check_update
@@ -196,7 +196,7 @@ Whether to prune older versions of the box and only keep the newest version
 ### box_url
 
 A box_url is not required when using the Vagrant Cloud format of
-`bento/ubuntu-20.04` assuming the organization and box referenced
+`bento/ubuntu-24.04` assuming the organization and box referenced
 exist. If using a custom box this can be an `https://` or `file://`
 URL.
 
@@ -382,7 +382,7 @@ providers.
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       gui: true
 ```
@@ -407,7 +407,7 @@ Allows to use linked clones to import boxes for VirtualBox, VMware, Parallels De
 
 ```yaml
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       linked_clone: true
 ```
@@ -648,7 +648,7 @@ to save on boot time and potential rebooting.
 ```yaml
 ---
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
     driver:
       vm_hostname: server1.example.com
 ```
@@ -663,7 +663,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-For more details on this setting please read the [config.vm.hostname](http://docs.vagrantup.com/v2/vagrantfile/machine_settings.html) section of the Vagrant documentation.
+For more details on this setting please read the [config.vm.hostname](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings) section of the Vagrant documentation.
 
 ## Example **kitchen.yml**
 
@@ -679,8 +679,8 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
   - name: windows-2022
     driver:
       box: my-custom-box
@@ -696,21 +696,21 @@ suites:
 ```
 
 [bento]:                    https://github.com/chef/bento
-[bento_org]:                https://app.vagrantup.com/bento
-[fusion_dl]:                https://www.vmware.com/products/fusion.html
-[hyperv_about]:             https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/about/
+[bento_org]:                https://portal.cloud.hashicorp.com/vagrant/discover/bento
+[fusion_dl]:                https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
+[hyperv_about]:             https://learn.microsoft.com/virtualization/hyper-v-on-windows/about/
 [parallels_dl]:             https://www.parallels.com/products/desktop/download/
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
 [vagrant_cloud]:            https://app.vagrantup.com/boxes/search
-[vagrant_config_vbox]:      https://www.vagrantup.com/docs/providers/virtualbox/configuration
-[vagrant_config_vmware]:    https://www.vagrantup.com/docs/providers/vmware/configuration
-[vagrant_default_provider]: https://www.vagrantup.com/docs/providers/default
-[vagrant_machine_settings]: https://www.vagrantup.com/docs/vagrantfile/machine_settings
-[vagrant_networking]:       https://www.vagrantup.com/docs/networking/basic_usage
-[vagrant_providers]:        https://www.vagrantup.com/docs/providers
-[vagrant_versioning]:       https://docs.vagrantup.com/v2/boxes/versioning.html
+[vagrant_config_vbox]:      https://developer.hashicorp.com/vagrant/docs/providers/virtualbox/configuration
+[vagrant_config_vmware]:    https://developer.hashicorp.com/vagrant/docs/providers/vmware/configuration
+[vagrant_default_provider]: https://developer.hashicorp.com/vagrant/docs/providers/default
+[vagrant_machine_settings]: https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings
+[vagrant_networking]:       https://developer.hashicorp.com/vagrant/docs/networking/basic_usage
+[vagrant_providers]:        https://developer.hashicorp.com/vagrant/docs/providers
+[vagrant_versioning]:       https://developer.hashicorp.com/vagrant/docs/boxes/versioning
 [vbox_ide_boot]:            https://www.virtualbox.org/ticket/6979
 [virtualbox_dl]:            https://www.virtualbox.org/wiki/Downloads
-[vmware_plugin]:            https://www.vagrantup.com/docs/providers/vmware
-[ws_dl]:                    https://www.vmware.com/products/workstation-pro.html
+[vmware_plugin]:            https://developer.hashicorp.com/vagrant/docs/providers/vmware
+[ws_dl]:                    https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion

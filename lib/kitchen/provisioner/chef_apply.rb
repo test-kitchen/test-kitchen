@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +29,8 @@
 #   name: chef_apply
 #
 # platforms:
-#   - name: ubuntu-20.04
-#   - name: centos-8
+#   - name: ubuntu-24.04
+#   - name: almalinux-10
 #
 # suites:
 #   - name: default

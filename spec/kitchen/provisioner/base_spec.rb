@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@
 require_relative "../../spec_helper"
 require "logger"
 require "stringio"
+require "base64"
 
 require "kitchen"
 
@@ -193,12 +194,47 @@ describe Kitchen::Provisioner::Base do
       cmd
     end
 
-    it "invokes the provisioner commands over the transport" do
+    it "prepares the install script and uploads it before executing commands" do
+      # Remove the general stubs for methods we want to have specific expectations on
+      connection.unstub(:execute)
+      connection.unstub(:execute_with_retry)
+      connection.unstub(:upload)
+
+      provisioner.stubs(:windows_os?).returns(true)
+      transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
+      transport.stubs(:[]).with(:username).returns("testuser")
+
+      provisioner.expects(:prepare_install_script).once
+      # Set up more lenient expectations to see what actually gets called
+      connection.expects(:upload).at_least_once
+      connection.expects(:execute).at_least_once
+      connection.expects(:execute).with("prepare").once
+
+      # For Windows, the run command gets encoded, so we need to expect the encoded version
+      encoded_run_command = provisioner.send(:encode_for_powershell, "run")
+      connection.expects(:execute_with_retry).with(encoded_run_command, [], 1, 30).once
+      cmd
+    end
+
+    it "skips script upload when install command is nil" do
+      provisioner.stubs(:install_command).returns(nil)
+
       order = sequence("order")
-      connection.expects(:execute).with("install").in_sequence(order)
+      connection.expects(:upload).with { |source, _target|
+        source.to_s.end_with?("install_script")
+      }.never
+
       connection.expects(:execute).with("init").in_sequence(order)
       connection.expects(:execute).with("prepare").in_sequence(order)
       connection.expects(:execute_with_retry).with("run", [], 1, 30).in_sequence(order)
+
+      cmd
+    end
+
+    it "uploads files configured in uploads hash" do
+      config[:uploads] = { "/local/path" => "/remote/path" }
+
+      connection.expects(:upload).with("/local/path", "/remote/path").once
 
       cmd
     end
@@ -409,6 +445,172 @@ describe Kitchen::Provisioner::Base do
       _(proc do
         Class.new(Kitchen::Provisioner::Base) { no_parallel_for :telling_stories }
       end).must_raise Kitchen::ClientError
+    end
+  end
+
+  describe "#prepare_install_script" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    before do
+      @root = Dir.mktmpdir
+      config[:kitchen_root] = @root
+      provisioner.create_sandbox
+      provisioner.stubs(:install_command).returns("echo hello")
+    end
+
+    after do
+      FileUtils.remove_entry(@root)
+      begin
+        provisioner.cleanup_sandbox
+      rescue # rubocop:disable Lint/HandleExceptions
+      end
+    end
+
+    it "creates an install script with the install command" do
+      provisioner.stubs(:windows_os?).returns(true)
+      transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
+      provisioner.send(:prepare_install_script)
+      script_path = provisioner.send(:install_script_path)
+
+      _(script_path).must_match(/install_script\.ps1/)
+      _(File.exist?(script_path)).must_equal true
+      content = File.read(script_path)
+      _(content).must_include("echo hello")
+    end
+
+    it "for Windows, creates a PowerShell script with the install command" do
+      provisioner.stubs(:windows_os?).returns(true)
+      provisioner.send(:prepare_install_script)
+      script_path = provisioner.send(:install_script_path)
+
+      _(script_path).must_match(/install_script\.ps1$/)
+      _(File.exist?(script_path)).must_equal true
+      content = File.read(script_path)
+      _(content).must_include("echo hello")
+    end
+
+    it "handles nil install command" do
+      provisioner.stubs(:install_command).returns(nil)
+      provisioner.send(:prepare_install_script)
+
+      _(provisioner.send(:install_script_path)).must_be_nil
+    end
+
+    it "handles empty install command" do
+      provisioner.stubs(:install_command).returns("")
+      provisioner.send(:prepare_install_script)
+
+      _(provisioner.send(:install_script_path)).must_be_nil
+    end
+  end
+
+  describe "#run_script_command" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    it "returns sudo command on non-Windows" do
+      provisioner.stubs(:windows_os?).returns(false)
+      provisioner.stubs(:sudo).with("/path/to/script").returns("sudo -E /path/to/script")
+      _(provisioner.send(:run_script_command, "/path/to/script")).must_include("/path/to/script")
+    end
+
+    it "returns PowerShell command on Windows" do
+      provisioner.stubs(:windows_os?).returns(true)
+      result = provisioner.send(:run_script_command, "C:\\path\\to\\script")
+      _(result).must_equal("powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File C:\\path\\to\\script")
+    end
+  end
+
+  describe "#remote_path_join" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    it "joins paths with forward slash on non-Windows" do
+      provisioner.stubs(:windows_os?).returns(false)
+      _(provisioner.send(:remote_path_join, "/tmp", "kitchen", "script")).must_equal("/tmp/kitchen/script")
+    end
+
+    it "joins paths with backslash on Windows" do
+      provisioner.stubs(:windows_os?).returns(true)
+      _(provisioner.send(:remote_path_join, "C:", "kitchen", "script")).must_equal("C:\\kitchen\\script")
+    end
+  end
+
+  describe "#encode_for_powershell" do
+    let(:provisioner) do
+      Kitchen::Provisioner::Base.new(config).finalize_config!(instance)
+    end
+
+    describe "on non-Windows systems" do
+      before { provisioner.stubs(:windows_os?).returns(false) }
+
+      it "returns the script unchanged when script is a string" do
+        script = "echo 'hello world'"
+        _(provisioner.send(:encode_for_powershell, script)).must_equal(script)
+      end
+
+      it "returns nil when script is nil" do
+        _(provisioner.send(:encode_for_powershell, nil)).must_be_nil
+      end
+
+      it "returns empty string when script is empty" do
+        _(provisioner.send(:encode_for_powershell, "")).must_equal("")
+      end
+    end
+
+    describe "on Windows systems" do
+      before {
+        provisioner.stubs(:windows_os?).returns(true)
+        instance.transport.stubs(:instance_variable_get).with(:@config).returns({ name: "ssh" })
+      }
+
+      it "returns nil when script is nil" do
+        _(provisioner.send(:encode_for_powershell, nil)).must_be_nil
+      end
+
+      it "returns empty string when script is empty" do
+        _(provisioner.send(:encode_for_powershell, "")).must_equal("")
+      end
+
+      it "encodes a simple PowerShell command" do
+        script = "Write-Host 'Hello World'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
+
+      it "encodes a multi-line PowerShell script" do
+        script = "Write-Host 'Line 1'\nWrite-Host 'Line 2'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
+
+      it "handles scripts with special characters" do
+        script = "Write-Host 'Special chars: äöü €'"
+        result = provisioner.send(:encode_for_powershell, script)
+
+        _(result).must_match(/^powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand /)
+
+        # Extract the encoded part and verify it decodes back to the original script
+        encoded_part = result.split("EncodedCommand ").last
+        decoded = Base64.decode64(encoded_part).force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+        _(decoded).must_equal(script)
+      end
     end
   end
 end

@@ -108,7 +108,7 @@ platforms:
 
 #### image_urn
 
-* *string* : Image URN to use for vm creation. List can be found using `az` cli - [https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#list-popular-images]
+* *string* : Image URN to use for vm creation. List can be found using `az` cli - [https://learn.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#list-popular-images]
   * Default Value: `"Canonical:UbuntuServer:14.04.3-LTS:latest"`
 
 #### image_url
@@ -122,7 +122,7 @@ platforms:
 
 #### use_ephemeral_osdisk
 
-* *boolean* : Optional flag to use ephermeal disk for instances.
+* *boolean* : Optional flag to use ephemeral disk for instances.
   * Default Value: `false`
 
 #### os_disk_size_gb
@@ -136,7 +136,7 @@ platforms:
 
 #### custom_data
 
-* *string* : Optional custom data which may be specified for instances [https://docs.microsoft.com/en-us/azure/virtual-machines/custom-data].
+* *string* : Optional custom data which may be specified for instances [https://learn.microsoft.com/azure/virtual-machines/custom-data].
   * Value can be a file or the data itself, this module handles base64 encoding for you.
 
 #### username
@@ -230,7 +230,7 @@ platforms:
 
 #### plan
 
-* *hash* : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
+* *hash* : Optional JSON object which allows you to define plan information when creating VMs from Marketplace images. Please refer to [Deploy an image with Marketplace terms](https://learn.microsoft.com/azure/virtual-machines/linux/cli-ps-findimage#deploy-an-image-with-marketplace-terms) for more details. Not all Marketplace images support programmatic deployment, and support is controlled by the image publisher.
 
 #### vm_tags
 

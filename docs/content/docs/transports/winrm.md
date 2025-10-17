@@ -26,11 +26,11 @@ The password used for authenticating to the test instance.
 
 #### client_cert
 
-The path to a local client certificate used as the CA for authentication in lieue of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When `client_cert` and `client_key` are provided the username and password will be ignored.
+The path to a local client certificate used as the CA for authentication in lieu of a username and password. Client certs only work with local accounts on the remote host per WinRM documentation. The client cert (when created with OpenSSL) and if applicable the CA cert need to be pre-installed on the remote server in order for certificate authentication to work. Requires the client_key option. When `client_cert` and `client_key` are provided the username and password will be ignored.
 
 #### client_key
 
-The path to a local client key used for authentication in lieue of a username and password.
+The path to a local client key used for authentication in lieu of a username and password.
 
 #### elevated
 
@@ -50,7 +50,7 @@ Port used making rdp connections for kitchen login commands. This defaults to `3
 
 #### winrm_transport
 
-The transport type used by winrm as explained here. This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
+The transport type used by winrm as [explained here](https://learn.microsoft.com/en-us/windows/win32/winrm/authentication-for-remote-connections). This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
 
 ### Retry Settings
 

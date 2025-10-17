@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -514,7 +514,6 @@ describe Kitchen::Provisioner::ChefBase do
       end
 
       describe "when driver implements the cache_directory" do
-
         describe "for windows" do
           before { driver.stubs(:cache_directory).returns('$env:TEMP\\dummy\\place') }
 
@@ -729,10 +728,22 @@ describe Kitchen::Provisioner::ChefBase do
         platform.stubs(:os_type).returns("windows")
       end
 
+      def decode_powershell_command(cmd)
+        # Extract the base64 encoded command
+        if cmd.match(/powershell.*-EncodedCommand\s+(.+)$/)
+          encoded = $1.strip
+          utf16le = encoded.unpack("m0").first
+          utf16le.encode(Encoding::UTF_8, Encoding::UTF_16LE)
+        else
+          cmd
+        end
+      end
+
       it "exports http_proxy & HTTP_PROXY when :http_proxy is set" do
         config[:http_proxy] = "http://proxy"
 
-        _(cmd.lines.to_a[0..1]).must_equal([
+        decoded = decode_powershell_command(cmd)
+        _(decoded.lines.to_a[0..1]).must_equal([
                                           %{$env:http_proxy = "http://proxy"\n},
                                           %{$env:HTTP_PROXY = "http://proxy"\n},
                                         ])
@@ -741,7 +752,8 @@ describe Kitchen::Provisioner::ChefBase do
       it "exports https_proxy & HTTPS_PROXY when :https_proxy is set" do
         config[:https_proxy] = "https://proxy"
 
-        _(cmd.lines.to_a[0..1]).must_equal([
+        decoded = decode_powershell_command(cmd)
+        _(decoded.lines.to_a[0..1]).must_equal([
                                           %{$env:https_proxy = "https://proxy"\n},
                                           %{$env:HTTPS_PROXY = "https://proxy"\n},
                                         ])
@@ -751,7 +763,8 @@ describe Kitchen::Provisioner::ChefBase do
         config[:http_proxy] = "http://proxy"
         config[:https_proxy] = "https://proxy"
 
-        _(cmd.lines.to_a[0..3]).must_equal([
+        decoded = decode_powershell_command(cmd)
+        _(decoded.lines.to_a[0..3]).must_equal([
                                           %{$env:http_proxy = "http://proxy"\n},
                                           %{$env:HTTP_PROXY = "http://proxy"\n},
                                           %{$env:https_proxy = "https://proxy"\n},
@@ -773,7 +786,8 @@ describe Kitchen::Provisioner::ChefBase do
       it "sets the root_path from :root_path" do
         config[:root_path] = "RIGHT_HERE"
 
-        _(cmd).must_match regexify(%{$root_path = "RIGHT_HERE"})
+        decoded = decode_powershell_command(cmd)
+        _(decoded).must_match regexify(%{$root_path = "RIGHT_HERE"})
       end
     end
   end
@@ -835,6 +849,24 @@ describe Kitchen::Provisioner::ChefBase do
 
       it "returns 'chef-workstation'" do
         assert_equal("chef-workstation", provisioner.license_acceptance_id)
+      end
+    end
+
+    describe "when a policyfile exists and an alternative distribution is used" do
+      before do
+        @root = Dir.mktmpdir
+        config[:kitchen_root] = @root
+        config[:product_name] = "foobar"
+        FileUtils.touch("#{config[:kitchen_root]}/Policyfile.rb")
+        Kitchen::Provisioner::Chef::Policyfile.stubs(:load!)
+      end
+
+      after do
+        FileUtils.remove_entry(@root)
+      end
+
+      it "returns 'foobar'" do
+        assert_equal("foobar", provisioner.license_acceptance_id)
       end
     end
   end
@@ -945,8 +977,7 @@ describe Kitchen::Provisioner::ChefBase do
         config[:run_list] = ["yo"]
         provisioner.create_sandbox
 
-        _(logged_output.string).must_match(/D, .* : Creating dna.json from/)
-        _(logged_output.string).must_match(/run_list.*\["yo"\]/)
+        _(logged_output.string).must_match debug_line(%(Creating dna.json from #{{run_list: ["yo"]}.to_s}))
       end
     end
 

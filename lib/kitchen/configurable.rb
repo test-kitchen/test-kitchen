@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,16 +63,17 @@ module Kitchen
     end
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"bourne"` (or
-    #   unset, for backwards compatability)
+    #   unset, for backwards compatibility)
     def bourne_shell?
-      ["bourne", nil].include?(instance.platform.shell_type)
+      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
+      ["bourne", nil].include?(shell_type)
     end
 
     # Find an appropriate path to a file or directory, based on graceful
     # fallback rules or returns nil if path cannot be determined.
     #
     # Given an instance with suite named `"server"`, a `test_base_path` of
-    # `"/a/b"`, and a path segement of `"roles"` then following will be tried
+    # `"/a/b"`, and a path segment of `"roles"` then following will be tried
     # in order (first match that exists wins):
     #
     # 1. /a/b/server/roles
@@ -141,7 +142,8 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
-      ["powershell"].include?(instance.platform.shell_type)
+      shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
+      ["powershell"].include?(shell_type)
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -155,7 +157,8 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"unix"` (or
     #   unset, for backwards compatibility)
     def unix_os?
-      ["unix", nil].include?(instance.platform.os_type)
+      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
+      ["unix", nil].include?(os_type)
     end
 
     # Performs whatever tests that may be required to ensure that this plugin
@@ -171,7 +174,8 @@ module Kitchen
 
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
-      ["windows"].include?(instance.platform.os_type)
+      os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
+      ["windows"].include?(os_type)
     end
 
     private
@@ -485,7 +489,7 @@ module Kitchen
       #   end
       #
       # @param attr [String] configuration attribute name
-      # @param value [Object, nil] whether or not to exand the file path
+      # @param value [Object, nil] whether or not to expand the file path
       # @yieldparam object [Object] a reference to the instantiated object
       # @yieldreturn [Object, nil] dynamically compute whether or not to
       #   perform the file expansion

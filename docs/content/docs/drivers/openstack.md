@@ -96,7 +96,7 @@ Your OpenStack region id.
 
 ### availability_zone
 
-Your OpenStack availablity zone.
+Your OpenStack availability zone.
 
 ### openstack_service_name
 
@@ -402,11 +402,10 @@ transport:
   password: mysecreatpassword
 
 platforms:
-  - name: ubuntu-18.04
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
     transport:
-      username: centos
+      username: almauser
   - name: windows-2022
     transport:
       password: myadministratorpassword

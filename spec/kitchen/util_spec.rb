@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -203,7 +203,7 @@ describe Kitchen::Util do
       _((expected - listed)).must_equal []
     end
 
-    it "recusivly lists only when recurse" do
+    it "recursively lists only when recurse" do
       listed = Kitchen::Util.list_directory(@root, recurse: true)
       expected = [
         "foo",
@@ -214,7 +214,7 @@ describe Kitchen::Util do
       _((expected - listed)).must_equal []
     end
 
-    it "recusivly lists and provides dots when recurse and include_dot" do
+    it "recursively lists and provides dots when recurse and include_dot" do
       listed = Kitchen::Util.list_directory(@root, recurse: true, include_dot: true)
       expected = [
         "foo",

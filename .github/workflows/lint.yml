@@ -1,5 +1,5 @@
 ---
-on:
+"on":
   workflow_call:
 
 permissions:
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Markdown lint
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@v20
         with:
           globs: |
             *.md
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         with:
           use-quiet-mode: "yes"
           use-verbose-mode: "yes"
