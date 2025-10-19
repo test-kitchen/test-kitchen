@@ -59,9 +59,13 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
+          # The current logic logs retries times on initial attempt
+          # plus retries times on each retry attempt
+          expected_logs = opts[:ssh_retries] * 2
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo:22<{:ssh_retries=>3}>")
-          end).must_equal opts[:ssh_retries]
+            l =~ debug_line_with("[SSH] opening connection to me@foo:22<") &&
+            l.include?(":ssh_retries=>#{opts[:ssh_retries]}")
+          end).must_equal expected_logs
         end
 
         it "sleeps for 1 second between retries" do

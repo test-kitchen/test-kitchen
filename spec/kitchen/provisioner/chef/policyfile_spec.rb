@@ -91,7 +91,7 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:path) { "/tmp/kitchen/cookbooks" }
         let(:license) { nil }
         it do
-          described_object.expects(:run_command).with("chef export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force ")
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force ")
           subject
         end
       end

@@ -195,6 +195,9 @@ Feature: Add Test Kitchen support to an existing project
     provisioner:
       name: chef_infra
 
+    transport:
+      name: dokken
+
     platforms:
       - name: ubuntu-24.04
       - name: almalinux-10
@@ -219,6 +222,9 @@ Feature: Add Test Kitchen support to an existing project
     provisioner:
       name: chef_infra
 
+    transport:
+      name: dokken
+
     platforms:
       - name: ubuntu-24.04
       - name: almalinux-10
@@ -241,6 +247,9 @@ Feature: Add Test Kitchen support to an existing project
 
     provisioner:
       name: chef_infra
+
+    transport:
+      name: dokken
 
     platforms:
       - name: ubuntu-24.04

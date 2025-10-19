@@ -66,6 +66,6 @@ default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        Created        
 Ok, we have an instance created and ready for some Chef Infra code. Onward!
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/writing-recipe">Next - Writing a Recipe</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/kitchen-yml">Back to previous step</a>
+<a class="button primary-cta" href="06-writing-recipe.md">Next - Writing a Recipe</a>
+<a class="sidebar--footer--back" href="04-kitchen-yml.md">Back to previous step</a>
 </div>

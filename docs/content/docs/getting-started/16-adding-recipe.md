@@ -70,6 +70,6 @@ end
 Before we give our new recipe a go, a quick detour to cover how we might exclude a particular platform from a suite's tests.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/excluding-platforms">Next - Excluding Platforms</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-test">Back to previous step</a>
+<a class="button primary-cta" href="00-introduction.mdexcluding-platforms">Next - Excluding Platforms</a>
+<a class="sidebar--footer--back" href="15-adding-test.md">Back to previous step</a>
 </div>

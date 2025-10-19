@@ -171,6 +171,6 @@ default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  
 Back to square one.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/adding-platform">Next - Adding a Platform</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/running-verify">Back to previous step</a>
+<a class="button primary-cta" href="12-adding-platform.md">Next - Adding a Platform</a>
+<a class="sidebar--footer--back" href="10-running-verify.md">Back to previous step</a>
 </div>

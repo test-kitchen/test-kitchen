@@ -59,6 +59,6 @@ Yes, you can specify one or more instances with the same Ruby regular expression
 Test Kitchen fails because we've set up our `server` suite to run a Policyfile named run list of `server`, but no named run list exists in our Policyfile and we haven't created the `server` recipe in our Git cookbook. Let's go fix our Policyfile and create our recipe.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/adding-recipe">Next - Adding a Recipe</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-suite">Back to previous step</a>
+<a class="button primary-cta" href="16-adding-recipe.md">Next - Adding a Recipe</a>
+<a class="sidebar--footer--back" href="14-adding-suite.md">Back to previous step</a>
 </div>

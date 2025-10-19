@@ -93,6 +93,6 @@ be improved upon further. Before you leave, check out some further resources to
 help you along your testing journey.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/next-steps">Next Steps</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-recipe">Back to previous step</a>
+<a class="button primary-cta" href="18-next-steps.md">Next Steps</a>
+<a class="sidebar--footer--back" href="16-adding-recipe.md">Back to previous step</a>
 </div>

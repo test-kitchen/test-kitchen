@@ -47,7 +47,7 @@ $ VBoxManage --version
 
 ##### Vagrant
 
-Vagrant acts as a wrapper for hypervisors like VirtualBox, simplifying the process of creating, configuring, and sharing reproducible development environments. It uses pre-built virtual machine images called "boxes" to quickly spin up environments. To get started, download and install the correct Vagrant package for your operating system from the [Vagrant Downloads page](https://www.vagrantup.com/downloads).
+Vagrant acts as a wrapper for hypervisors like VirtualBox, simplifying the process of creating, configuring, and sharing reproducible development environments. It uses pre-built virtual machine images called "boxes" to quickly spin up environments. To get started, download and install the correct Vagrant package for your operating system from the Vagrant Downloads page.
 
 ```bash
 $ vagrant --version
@@ -59,6 +59,6 @@ With Chef Workstation, VirtualBox, and Vagrant installed, you're ready to use Te
 Test Kitchen is highly modular, allowing you to mix and match different drivers (such as Vagrant, VMware, Azure, EC2, or Docker), provisioners (like Chef Infra, Ansible, Puppet, Salt, or DSC), and verifiers (including InSpec, Serverspec, or BATS). In this quick start, we'll focus on the most common workflow: Vagrant with VirtualBox for virtualization, Chef Infra for provisioning, and InSpec for testing.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/getting-help">Next - Getting Help</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/">Back to previous step</a>
+<a class="button primary-cta" href="02-getting-help.md">Next - Getting Help</a>
+<a class="sidebar--footer--back" href="00-introduction.md">Back to previous step</a>
 </div>

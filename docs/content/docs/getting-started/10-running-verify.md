@@ -114,6 +114,6 @@ Test Summary: 1 successful, 0 failures, 0 skipped
 One of the advantages of `kitchen-inspec` is that the Chef InSpec tests are executed from the host over the transport (SSH or WinRM) to the instance. No tests need to be uploaded to the instance itself.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/running-test">Next - kitchen test</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/writing-test">Back to previous step</a>
+<a class="button primary-cta" href="11-running-test.md">Next - kitchen test</a>
+<a class="sidebar--footer--back" href="09-writing-test.md">Back to previous step</a>
 </div>

@@ -65,6 +65,6 @@ Connection to 127.0.0.1 closed.
 Feel free to use the **login** subcommand any time you have the urge to poke around, uninstall packages, turn off services, grep logs, etc. Go to town, this is a sandbox and isn't production after all.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/writing-test">Next - Writing a Test</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/running-converge">Back to previous step</a>
+<a class="button primary-cta" href="09-writing-test.md">Next - Writing a Test</a>
+<a class="sidebar--footer--back" href="07-running-converge.md">Back to previous step</a>
 </div>

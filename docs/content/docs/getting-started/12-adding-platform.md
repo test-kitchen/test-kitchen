@@ -206,6 +206,6 @@ default-almalinux-10     Vagrant  ChefInfra     Inspec    Ssh        <Not Create
 ```
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/adding-feature">Next - Adding a Feature</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/running-test">Back to previous step</a>
+<a class="button primary-cta" href="13-adding-feature.md">Next - Adding a Feature</a>
+<a class="sidebar--footer--back" href="11-running-test.md">Back to previous step</a>
 </div>

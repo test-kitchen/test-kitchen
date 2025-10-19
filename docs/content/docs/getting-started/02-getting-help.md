@@ -54,6 +54,6 @@ Show computed diagnostic configuration
 Remember, you can also ask for assistance in the [Chef Community Slack](https://community.chef.io/slack) `#test-kitchen` channel where community members can help answer questions.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/creating-cookbook">Next - Creating a Cookbook</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/installing">Back to previous step</a>
+<a class="button primary-cta" href="03-creating-cookbook.md">Next - Creating a Cookbook</a>
+<a class="sidebar--footer--back" href="01-installing.md">Back to previous step</a>
 </div>

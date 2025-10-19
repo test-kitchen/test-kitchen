@@ -44,6 +44,6 @@ default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  
 Let's talk about what an **instance** is and how kitchen interacts with these.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/instances">Next - Instances</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/creating-cookbook">Back to previous step</a>
+<a class="button primary-cta" href="05-instances.md">Next - Instances</a>
+<a class="sidebar--footer--back" href="03-creating-cookbook.md">Back to previous step</a>
 </div>

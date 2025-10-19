@@ -114,6 +114,6 @@ Test Kitchen is designed to provide clear and reliable exit codes, which is crit
 Consistent exit codes enable CI tools to accurately detect failures and successes, making automated testing and deployment more robust.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/manually-verifying">Next - Manually Verifying</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/writing-recipe">Back to previous step</a>
+<a class="button primary-cta" href="08-manually-verifying.md">Next - Manually Verifying</a>
+<a class="sidebar--footer--back" href="06-writing-recipe.md">Back to previous step</a>
 </div>

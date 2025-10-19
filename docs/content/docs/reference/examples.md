@@ -67,7 +67,7 @@ you'll need it.
     memory: 4096
 ```
 
-The driver tries to closely mirror the upstream, as illustrated by [forwarded_port](https://www.vagrantup.com/docs/networking/forwarded_ports) and [private_network](https://www.vagrantup.com/docs/networking/private_network).
+The driver tries to closely mirror the upstream Vagrant configuration options for `forwarded_port` and `private_network`.
 
 If you would like more information, the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) GitHub page has more.
 
