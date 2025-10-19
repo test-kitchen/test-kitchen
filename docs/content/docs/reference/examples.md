@@ -71,8 +71,6 @@ The driver tries to closely mirror the upstream, as illustrated by [forwarded_po
 
 If you would like more information, the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) GitHub page has more.
 
-[hangops-jobbot/.kitchen.yml](https://github.com/rrxtns/hangops-jobbot/blob/master/cookbooks/hangops-jobbot/.kitchen.yml)
-
 ```yaml
 ---
 driver:

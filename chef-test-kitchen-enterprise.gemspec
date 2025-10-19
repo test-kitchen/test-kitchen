@@ -32,7 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "net-scp",            ">= 1.1", "< 5.0" # pinning until we can confirm 4+ works
   gem.add_dependency "net-ssh",            ">= 2.9", "< 8.0" # pinning until we can confirm 8+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "ostruct",            "~> 0.6"
+  gem.add_dependency "ostruct",            "~> 0.1.0"
   gem.add_dependency "syslog",             "~> 0.3"
   gem.add_dependency "thor",               ">= 0.19", "< 2.0"
   gem.add_dependency "winrm",              "~> 2.0"

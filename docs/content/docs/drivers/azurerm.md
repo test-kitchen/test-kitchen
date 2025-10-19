@@ -136,7 +136,7 @@ platforms:
 
 #### custom_data
 
-* *string* : Optional custom data which may be specified for instances [https://learn.microsoft.com/azure/virtual-machines/custom-data].
+* *string* : Optional custom data which may be specified for instances [https://learn.microsoft.com/en-us/azure/virtual-machines/custom-data].
   * Value can be a file or the data itself, this module handles base64 encoding for you.
 
 #### username

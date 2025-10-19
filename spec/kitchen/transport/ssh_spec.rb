@@ -741,7 +741,7 @@ describe Kitchen::Transport::Ssh::Connection do
 
     it "stores ssh_proxy_command in connection options for proxy creation" do
       proxy_conn = Kitchen::Transport::Ssh::Connection.new(proxy_command_options)
-      
+
       _(proxy_conn.send(:options)[:ssh_proxy_command_string]).must_equal "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
     end
   end
@@ -776,7 +776,7 @@ describe Kitchen::Transport::Ssh::Connection do
           end
 
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo<#{{port: 22}.to_s}>")
+            l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
           end).must_equal 3
         end
 
@@ -842,7 +842,7 @@ describe Kitchen::Transport::Ssh::Connection do
       end
 
       _(logged_output.string).must_match debug_line(
-        "[SSH] closing connection to me@foo<#{{port: 22}.to_s}>"
+        "[SSH] closing connection to me@foo<{:port=>22}>"
       )
     end
 
@@ -877,7 +877,7 @@ describe Kitchen::Transport::Ssh::Connection do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<#{{port: 22}.to_s}> (doit)"
+          "[SSH] me@foo<{:port=>22}> (doit)"
         )
       end
 
@@ -885,7 +885,7 @@ describe Kitchen::Transport::Ssh::Connection do
         assert_scripted { connection.execute("doit") }
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<#{{port: 22}.to_s}>"
+          "[SSH] opening connection to me@foo<{:port=>22}>"
         )
       end
 
@@ -924,7 +924,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<#{{port: 22}.to_s}> (doit)"
+          "[SSH] me@foo<{:port=>22}> (doit)"
         )
       end
 
@@ -936,7 +936,7 @@ describe Kitchen::Transport::Ssh::Connection do
         end
 
         _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<#{{port: 22}.to_s}>"
+          "[SSH] opening connection to me@foo<{:port=>22}>"
         )
       end
 
@@ -1087,23 +1087,23 @@ describe Kitchen::Transport::Ssh::Connection do
       options[:ssh_gateway_username] = "gateway_user"
       options[:ssh_gateway_port] = 22
 
-      _(args).must_match regexify(' -o ProxyCommand=ssh -q gateway_user@gateway.example.com nc foo 22 ')
+      _(args).must_match regexify(" -o ProxyCommand=ssh -q gateway_user@gateway.example.com nc foo 22 ")
     end
 
     it "sets the ProxyCommand option for ssh_proxy_command" do
       options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
 
-      _(args).must_match regexify(' -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ')
+      _(args).must_match regexify(" -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ")
     end
 
     it "prefers ssh_proxy_command over ssh_gateway when both are set" do
       options[:ssh_gateway] = "gateway.example.com"
-      options[:ssh_gateway_username] = "gateway_user" 
+      options[:ssh_gateway_username] = "gateway_user"
       options[:ssh_gateway_port] = 22
       options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
 
-      _(args).must_match regexify(' -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ')
-      _(args).wont_match regexify('gateway.example.com')
+      _(args).must_match regexify(" -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ")
+      _(args).wont_match regexify("gateway.example.com")
     end
   end
 
