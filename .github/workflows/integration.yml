@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: integration
+  CHEF_TEST_KITCHEN_ENTERPRISE: true
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.4"]
+        ruby: ["3.1", "3.4"]
     steps:
       - name: Install VirtualBox
         run: |
