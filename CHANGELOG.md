@@ -33,7 +33,7 @@
 
 ### Features
 
-* Support for SSH transport for windows platfoms ([#2007](https://github.com/test-kitchen/test-kitchen/issues/2007)) ([1c79066](https://github.com/test-kitchen/test-kitchen/commit/1c790661c7b81c917a4ea1eb0276296ade4b1f39))
+* Support for SSH transport for windows platforms ([#2007](https://github.com/test-kitchen/test-kitchen/issues/2007)) ([1c79066](https://github.com/test-kitchen/test-kitchen/commit/1c790661c7b81c917a4ea1eb0276296ade4b1f39))
 
 ## [3.7.2](https://github.com/test-kitchen/test-kitchen/compare/v3.7.1...v3.7.2) (2025-07-03)
 
@@ -116,7 +116,7 @@
 - Fixed failing azure pipelines [#1880](https://github.com/test-kitchen/test-kitchen/pull/1880)([@kasif-adnan](https://github.com/kasif-adnan))
 - Fixed the chef provisioner spec deprecations [#1878](https://github.com/test-kitchen/test-kitchen/pull/1878)([@damacus](https://github.com/damacus))
 - Fixed the minitest deprecation errors [#1887](https://github.com/test-kitchen/test-kitchen/pull/1887), [#1885](https://github.com/test-kitchen/test-kitchen/pull/1885)([@damacus](https://github.com/damacus))
-- Fixed the issue with chef liscense when Policyfiles are used [#1859](https://github.com/test-kitchen/test-kitchen/pull/1859)([@sanjain-progress](https://github.com/sanjain-progress))
+- Fixed the issue with chef license when Policyfiles are used [#1859](https://github.com/test-kitchen/test-kitchen/pull/1859)([@sanjain-progress](https://github.com/sanjain-progress))
 - Fixed the unit test failures [#1840](https://github.com/test-kitchen/test-kitchen/pull/1840)([@ashiqueps](https://github.com/ashiqueps))
 - Github workflow updates
 - Documentation updates
@@ -473,7 +473,7 @@
 
 **Closed issues:**
 
-- .kitchen.yml chef version is not honoerd for windows provisioner [\#1414](https://github.com/test-kitchen/test-kitchen/issues/1414)
+- .kitchen.yml chef version is not honored for windows provisioner [\#1414](https://github.com/test-kitchen/test-kitchen/issues/1414)
 
 **Merged pull requests:**
 
@@ -532,7 +532,7 @@
 - kitchen vagrant won't work with a vagrant plugin [\#1422](https://github.com/test-kitchen/test-kitchen/issues/1422)
 - Runtime arguments [\#1420](https://github.com/test-kitchen/test-kitchen/issues/1420)
 - kitchen converge fails on Windows with Failed to complete \#converge action: \[invalid byte sequence in UTF-8\] on default-ubuntu-1604 [\#1415](https://github.com/test-kitchen/test-kitchen/issues/1415)
-- Shell Provisoner Fails on Windows due to execute bit [\#1413](https://github.com/test-kitchen/test-kitchen/issues/1413)
+- Shell Provisioner Fails on Windows due to execute bit [\#1413](https://github.com/test-kitchen/test-kitchen/issues/1413)
 - test-kitchen is incompatible with latest inspec [\#1409](https://github.com/test-kitchen/test-kitchen/issues/1409)
 
 **Merged pull requests:**
@@ -653,7 +653,7 @@
 - Support reverse port forwarding when connecting via SSH transport [\#1322](https://github.com/test-kitchen/test-kitchen/issues/1322)
 - upload of sandbox directory fails with symlink in repo [\#1319](https://github.com/test-kitchen/test-kitchen/issues/1319)
 - Rakefile is missing berkshelf gem [\#1316](https://github.com/test-kitchen/test-kitchen/issues/1316)
-- Chef 13, CHefDK 2.3.4, Test-Kitchen 1.17.0 - Windows converge error with policyfile\_zero provisioner [\#1305](https://github.com/test-kitchen/test-kitchen/issues/1305)
+- Chef 13, ChefDK 2.3.4, Test-Kitchen 1.17.0 - Windows converge error with policyfile\_zero provisioner [\#1305](https://github.com/test-kitchen/test-kitchen/issues/1305)
 - Retry chef run after receiving WSMAN ERROR CODE: 995 in test-kitchen [\#1272](https://github.com/test-kitchen/test-kitchen/issues/1272)
 - kitchen has wrong exit code for chef-solo failure on windows \(winrm\) [\#1134](https://github.com/test-kitchen/test-kitchen/issues/1134)
 - `chef-long\_script.ps1` giving error when trying to spin up windows box [\#1013](https://github.com/test-kitchen/test-kitchen/issues/1013)
@@ -750,7 +750,7 @@
 
 **Closed issues:**
 
-- Support for ENV varialbles in .kitchen.yml [\#1278](https://github.com/test-kitchen/test-kitchen/issues/1278)
+- Support for ENV variables in .kitchen.yml [\#1278](https://github.com/test-kitchen/test-kitchen/issues/1278)
 - :paranoid is deprecated, please use :verify\_host\_key. Supported values are exactly the same, only the name of the option has changed. [\#1277](https://github.com/test-kitchen/test-kitchen/issues/1277)
 - Kitchen fails to converge - disk space issue - centos 6.x \(verified against chef-provided centos 6.8, 6.9, etc\) [\#1271](https://github.com/test-kitchen/test-kitchen/issues/1271)
 - kitchen destroy targets wrong vm [\#1264](https://github.com/test-kitchen/test-kitchen/issues/1264)
@@ -771,7 +771,7 @@
 - Continue to support older net-ssh while fixing 4.2 deprecation [\#1285](https://github.com/test-kitchen/test-kitchen/pull/1285) ([cheeseplus](https://github.com/cheeseplus))
 - Update winrm-fs and make winrm\* gems proper deps [\#1284](https://github.com/test-kitchen/test-kitchen/pull/1284) ([cheeseplus](https://github.com/cheeseplus))
 - Pin to net-ssh 4.1.0 for now [\#1283](https://github.com/test-kitchen/test-kitchen/pull/1283) ([cheeseplus](https://github.com/cheeseplus))
-- idempotent\_check: Allow specificaton of enforce\_idempotency [\#1282](https://github.com/test-kitchen/test-kitchen/pull/1282) ([MarkGibbons](https://github.com/MarkGibbons))
+- idempotent\_check: Allow specification of enforce\_idempotency [\#1282](https://github.com/test-kitchen/test-kitchen/pull/1282) ([MarkGibbons](https://github.com/MarkGibbons))
 - Support renamed net-ssh option `verify\_host\_key` [\#1281](https://github.com/test-kitchen/test-kitchen/pull/1281) ([cheeseplus](https://github.com/cheeseplus))
 - Reorganized a section and added kitchen-vcenter [\#1279](https://github.com/test-kitchen/test-kitchen/pull/1279) ([jjasghar](https://github.com/jjasghar))
 - Add proxy support when using product\_name [\#1276](https://github.com/test-kitchen/test-kitchen/pull/1276) ([wrightp](https://github.com/wrightp))
@@ -792,7 +792,7 @@
 **Fixed bugs:**
 
 - SSH Transport with Windows doesn't appear to work [\#868](https://github.com/test-kitchen/test-kitchen/issues/868)
-- Windows: cannot run kitchen test and kitchen login due to a forwading port problem. [\#708](https://github.com/test-kitchen/test-kitchen/issues/708)
+- Windows: cannot run kitchen test and kitchen login due to a forwarding port problem. [\#708](https://github.com/test-kitchen/test-kitchen/issues/708)
 - Can't disable ohai plugins using chef-zero provisioner [\#415](https://github.com/test-kitchen/test-kitchen/issues/415)
 - Fix Dir.glob usage [\#1258](https://github.com/test-kitchen/test-kitchen/pull/1258) ([jaym](https://github.com/jaym))
 
@@ -814,12 +814,12 @@
 - Message: Could not load the 'propeller' driver from the load path.  [\#1219](https://github.com/test-kitchen/test-kitchen/issues/1219)
 - \[QUESTION\] Verifier Retry Options [\#1217](https://github.com/test-kitchen/test-kitchen/issues/1217)
 - kitchen converge ssl error on windows [\#1216](https://github.com/test-kitchen/test-kitchen/issues/1216)
-- Syncronzing Cookbooks fails to sync root files [\#1213](https://github.com/test-kitchen/test-kitchen/issues/1213)
+- Synchronizing Cookbooks fails to sync root files [\#1213](https://github.com/test-kitchen/test-kitchen/issues/1213)
 - Kitchen converge fails on second converge [\#1212](https://github.com/test-kitchen/test-kitchen/issues/1212)
 - Message: Failed to complete \#converge action: \[\[WinRM::FS::Core::FileTransporter\] Upload failed \(exitcode: 1\) [\#1211](https://github.com/test-kitchen/test-kitchen/issues/1211)
 - "file is of unknown type" error message should be "file not found" [\#1210](https://github.com/test-kitchen/test-kitchen/issues/1210)
 - concurrency between multiple KITCHEN\_YAML [\#1207](https://github.com/test-kitchen/test-kitchen/issues/1207)
-- serverspec `process` not working corretly [\#1206](https://github.com/test-kitchen/test-kitchen/issues/1206)
+- serverspec `process` not working correctly [\#1206](https://github.com/test-kitchen/test-kitchen/issues/1206)
 - Not possible to converge the machine.  [\#1204](https://github.com/test-kitchen/test-kitchen/issues/1204)
 - Gems from metadata.rb are not installed when running via test kitchen. [\#1203](https://github.com/test-kitchen/test-kitchen/issues/1203)
 - New release [\#1194](https://github.com/test-kitchen/test-kitchen/issues/1194)
@@ -1416,7 +1416,7 @@
 - Errno::ETIMEDOUT needed in winrm transport [\#855](https://github.com/test-kitchen/test-kitchen/issues/855)
 - Appears to freeze on second converge. [\#850](https://github.com/test-kitchen/test-kitchen/issues/850)
 - How to specify RubyGem source in .kitchen.yml for serverspec gems? [\#844](https://github.com/test-kitchen/test-kitchen/issues/844)
-- f using serch to find self node [\#842](https://github.com/test-kitchen/test-kitchen/issues/842)
+- f using search to find self node [\#842](https://github.com/test-kitchen/test-kitchen/issues/842)
 - Kitchen : reconverge with another user [\#840](https://github.com/test-kitchen/test-kitchen/issues/840)
 - Can't transfer cookbook to Windows node using Chef Kitchen [\#818](https://github.com/test-kitchen/test-kitchen/issues/818)
 - ability to change location of test/integration/default/ [\#814](https://github.com/test-kitchen/test-kitchen/issues/814)
@@ -1524,7 +1524,7 @@
 
 - kitchen exec -c "ipconfig" fails on winrm \(any other command too\) with Winrm authorization error.  [\#795](https://github.com/test-kitchen/test-kitchen/issues/795)
 - Specifying Config File on CLI [\#792](https://github.com/test-kitchen/test-kitchen/issues/792)
-- Converge fails on "Configuring netowrk adapters within the VM..." [\#789](https://github.com/test-kitchen/test-kitchen/issues/789)
+- Converge fails on "Configuring network adapters within the VM..." [\#789](https://github.com/test-kitchen/test-kitchen/issues/789)
 - Converge only works on second try [\#785](https://github.com/test-kitchen/test-kitchen/issues/785)
 - is\_running shows failing upstart process on Redhat [\#784](https://github.com/test-kitchen/test-kitchen/issues/784)
 - Uninitialized constant Kitchen::Transport::Ssh::Connection::Timeout [\#775](https://github.com/test-kitchen/test-kitchen/issues/775)
@@ -1554,7 +1554,7 @@
 - Discovering more than 50 drivers fails a Cucumber scenario [\#733](https://github.com/test-kitchen/test-kitchen/issues/733)
 - Transport defaults windows username to ./administrator [\#688](https://github.com/test-kitchen/test-kitchen/issues/688)
 - Fixing issues to support windows in kitchen-ec2, fixes \#688, fixes \#733 [\#736](https://github.com/test-kitchen/test-kitchen/pull/736) ([tyler-ball](https://github.com/tyler-ball))
-- Fix failing feature in `kitchen drvier discover` due to too many gems. [\#734](https://github.com/test-kitchen/test-kitchen/pull/734) ([fnichol](https://github.com/fnichol))
+- Fix failing feature in `kitchen driver discover` due to too many gems. [\#734](https://github.com/test-kitchen/test-kitchen/pull/734) ([fnichol](https://github.com/fnichol))
 
 **Closed issues:**
 
@@ -1678,7 +1678,7 @@
 **Closed issues:**
 
 - RubyZip is corrupting zip files on windows hosts [\#643](https://github.com/test-kitchen/test-kitchen/issues/643)
-- windows guest support broke recntly  [\#641](https://github.com/test-kitchen/test-kitchen/issues/641)
+- windows guest support broke recently  [\#641](https://github.com/test-kitchen/test-kitchen/issues/641)
 - Unable to parse WinRM response, missing attribute quote [\#635](https://github.com/test-kitchen/test-kitchen/issues/635)
 - Chef DownloadFile fails on PowerShell 2.0/win 2003 [\#631](https://github.com/test-kitchen/test-kitchen/issues/631)
 - how can i pull the data from chef server policy environment override attributes [\#630](https://github.com/test-kitchen/test-kitchen/issues/630)

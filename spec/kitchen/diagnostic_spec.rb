@@ -71,7 +71,7 @@ describe Kitchen::Diagnostic do
       .must_equal false
   end
 
-  it "#read returns the loader's diganose hash if a loader is present" do
+  it "#read returns the loader's diagnose hash if a loader is present" do
     _(Kitchen::Diagnostic.new(loader: loader).read["loader"])
       .must_equal("who" => "loader")
   end
@@ -118,7 +118,7 @@ describe Kitchen::Diagnostic do
       .must_equal("error" => "shoot")
   end
 
-  it "#read returns the instances' diganose hashes if instances are present" do
+  it "#read returns the instances' diagnose hashes if instances are present" do
     _(Kitchen::Diagnostic.new(instances: instances).read["instances"])
       .must_equal("i1" => { "stuff" => "sup" }, "i2" => { "stuff" => "yo" })
   end

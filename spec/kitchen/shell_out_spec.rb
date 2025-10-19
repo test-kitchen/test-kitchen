@@ -92,7 +92,7 @@ describe Kitchen::ShellOut do
       _(err.message).must_equal "boom bad"
     end
 
-    it "raises a Kitchen::Errror tagged exception for unknown exceptions" do
+    it "raises a Kitchen::Error tagged exception for unknown exceptions" do
       command.stubs(:error!).raises(IOError, "boom bad")
 
       err = _ { subject.run_command("boom") }.must_raise IOError

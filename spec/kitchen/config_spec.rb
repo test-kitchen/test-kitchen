@@ -248,7 +248,7 @@ describe Kitchen::Config do
       config.suites
     end
 
-    it "constucts a munger with loader data and defaults" do
+    it "constructs a munger with loader data and defaults" do
       loader.stubs(:read).returns("datum")
 
       Kitchen::DataMunger.expects(:new).with do |data, kitchen_config|

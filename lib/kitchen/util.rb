@@ -128,7 +128,7 @@ module Kitchen
       "sh -c '\n#{cmd}\n'"
     end
 
-    # Modifes the given string to strip leading whitespace on each line, the
+    # Modifies the given string to strip leading whitespace on each line, the
     # amount which is calculated by using the first line of text.
     #
     # @example

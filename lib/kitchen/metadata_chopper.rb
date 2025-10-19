@@ -33,7 +33,7 @@ module Kitchen
       [mc[:name], mc[:version]]
     end
 
-    # Creates a new instances and loads in the contents of the metdata.rb
+    # Creates a new instances and loads in the contents of the metadata.rb
     # file. If you value your life, you may want to avoid reading the
     # implementation.
     #

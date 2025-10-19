@@ -337,7 +337,7 @@ describe Kitchen::Provisioner::ChefBase do
         cmd
       end
 
-      it "prefixs the whole command with the command_prefix if set" do
+      it "prefixes the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 
         _(cmd).must_match(/\Amy_prefix /)
@@ -638,7 +638,7 @@ describe Kitchen::Provisioner::ChefBase do
     describe "common behavior" do
       before { platform.stubs(:shell_type).returns("fake") }
 
-      it "prefixs the whole command with the command_prefix if set" do
+      it "prefixes the whole command with the command_prefix if set" do
         config[:command_prefix] = "my_prefix"
 
         _(cmd).must_match(/\Amy_prefix /)
@@ -1111,7 +1111,7 @@ describe Kitchen::Provisioner::ChefBase do
           )
         end
 
-        it "logs a meesage on debug for cookbooks/ directory" do
+        it "logs a message on debug for cookbooks/ directory" do
           create_cookbook("#{kitchen_root}/cookbooks/epache")
           provisioner.create_sandbox
 
@@ -1130,7 +1130,7 @@ describe Kitchen::Provisioner::ChefBase do
           )
         end
 
-        it "logs a meesage on debug for site-cookbooks/ directory" do
+        it "logs a message on debug for site-cookbooks/ directory" do
           create_cookbook("#{kitchen_root}/cookbooks/epache")
           create_cookbook("#{kitchen_root}/site-cookbooks/mine")
           provisioner.create_sandbox
@@ -1163,7 +1163,7 @@ describe Kitchen::Provisioner::ChefBase do
           )
         end
 
-        it "logs a meesage on debug" do
+        it "logs a message on debug" do
           provisioner.create_sandbox
 
           _(logged_output.string).must_match debug_line(
@@ -1226,7 +1226,7 @@ describe Kitchen::Provisioner::ChefBase do
             Kitchen::Provisioner::Chef::Policyfile.stubs(:new).returns(resolver)
           end
 
-          describe "when using a provisoner that doesn't support policyfiles" do
+          describe "when using a provisioner that doesn't support policyfiles" do
             # This is be the default, provisioners must opt-in.
             it "raises a UserError" do
               _ { provisioner.create_sandbox }.must_raise Kitchen::UserError
@@ -1584,7 +1584,7 @@ describe Kitchen::Provisioner::ChefBase do
           File.read(sandbox_path("generic.rb")).lines.map(&:chomp)
         end
 
-        it "#create_sanbox creates a generic.rb" do
+        it "#create_sandbox creates a generic.rb" do
           provisioner.create_sandbox
 
           _(sandbox_path("generic.rb").file?).must_equal true
