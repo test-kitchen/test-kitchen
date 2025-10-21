@@ -64,7 +64,7 @@ describe Kitchen::SSH do
           expected_logs = opts[:ssh_retries] * 2
           _(logged_output.string.lines.count do |l|
             l =~ debug_line_with("[SSH] opening connection to me@foo:22<") &&
-            l.include?(":ssh_retries=>#{opts[:ssh_retries]}")
+            (l.include?(":ssh_retries=>#{opts[:ssh_retries]}") || l.include?("ssh_retries: #{opts[:ssh_retries]}"))
           end).must_equal expected_logs
         end
 

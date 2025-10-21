@@ -776,7 +776,7 @@ describe Kitchen::Transport::Ssh::Connection do
           end
 
           _(logged_output.string.lines.count do |l|
-            l =~ debug_line("[SSH] opening connection to me@foo<{:port=>22}>")
+            l =~ /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
           end).must_equal 3
         end
 
@@ -841,8 +841,8 @@ describe Kitchen::Transport::Ssh::Connection do
         connection.close
       end
 
-      _(logged_output.string).must_match debug_line(
-        "[SSH] closing connection to me@foo<{:port=>22}>"
+      _(logged_output.string).must_match(
+        /\[SSH\] closing connection to me@foo<\{(:?port=>22|port: 22)\}>/
       )
     end
 
@@ -876,16 +876,16 @@ describe Kitchen::Transport::Ssh::Connection do
       it "logger displays command on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
+        _(logged_output.string).must_match(
+          /\[SSH\] me@foo<\{(:?port=>22|port: 22)\}> \(doit\)/
         )
       end
 
       it "logger displays establishing connection on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
+        _(logged_output.string).must_match(
+          /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
         )
       end
 
@@ -923,8 +923,8 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] me@foo<{:port=>22}> (doit)"
+        _(logged_output.string).must_match(
+          /\[SSH\] me@foo<\{(:?port=>22|port: 22)\}> \(doit\)/
         )
       end
 
@@ -935,8 +935,8 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match debug_line(
-          "[SSH] opening connection to me@foo<{:port=>22}>"
+        _(logged_output.string).must_match(
+          /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
         )
       end
 
