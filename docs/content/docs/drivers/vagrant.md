@@ -663,7 +663,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-For more details on this setting please read the [config.vm.hostname](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings) section of the Vagrant documentation.
+For more details on this setting please read the [config.vm.hostname][vagrant_machine_settings] section of the Vagrant documentation.
 
 ## Example **kitchen.yml**
 
@@ -703,14 +703,14 @@ suites:
 [parallels_plugin]:         https://parallels.github.io/vagrant-parallels/docs/installation/
 [vagrant_cachier]:          https://github.com/fgrehm/vagrant-cachier
 [vagrant_cloud]:            https://app.vagrantup.com/boxes/search
-[vagrant_config_vbox]:      https://developer.hashicorp.com/vagrant/docs/providers/virtualbox/configuration
-[vagrant_config_vmware]:    https://developer.hashicorp.com/vagrant/docs/providers/vmware/configuration
-[vagrant_default_provider]: https://developer.hashicorp.com/vagrant/docs/providers/default
-[vagrant_machine_settings]: https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings
-[vagrant_networking]:       https://developer.hashicorp.com/vagrant/docs/networking/basic_usage
-[vagrant_providers]:        https://developer.hashicorp.com/vagrant/docs/providers
-[vagrant_versioning]:       https://developer.hashicorp.com/vagrant/docs/boxes/versioning
+[vagrant_config_vbox]:      https://github.com/hashicorp/vagrant/blob/main/website/content/docs/providers/virtualbox/configuration.mdx
+[vagrant_config_vmware]:    https://github.com/hashicorp/vagrant/blob/main/website/content/docs/providers/vmware/configuration.mdx
+[vagrant_default_provider]: https://github.com/hashicorp/vagrant/blob/main/website/content/docs/providers/default.mdx
+[vagrant_machine_settings]: https://github.com/hashicorp/vagrant/blob/main/website/content/docs/vagrantfile/machine_settings.mdx
+[vagrant_networking]:       https://github.com/hashicorp/vagrant/blob/main/website/content/docs/networking/basic_usage.mdx
+[vagrant_providers]:        https://github.com/hashicorp/vagrant/blob/main/website/content/docs/providers/index.mdx
+[vagrant_versioning]:       https://github.com/hashicorp/vagrant/blob/main/website/content/docs/boxes/versioning.mdx
 [vbox_ide_boot]:            https://www.virtualbox.org/ticket/6979
 [virtualbox_dl]:            https://www.virtualbox.org/wiki/Downloads
-[vmware_plugin]:            https://developer.hashicorp.com/vagrant/docs/providers/vmware
+[vmware_plugin]:            https://github.com/hashicorp/vagrant/blob/main/website/content/docs/providers/vmware/index.mdx
 [ws_dl]:                    https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
