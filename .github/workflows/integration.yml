@@ -14,6 +14,8 @@ env:
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
+  CHEF_LICENSE: accept-no-persist
+  CHEF_LICENSE_SERVER: http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
 
 jobs:
   dokken:
