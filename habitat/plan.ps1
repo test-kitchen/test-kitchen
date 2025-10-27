@@ -39,24 +39,29 @@ function Invoke-Build {
         $env:GEM_HOME = "$HAB_CACHE_SRC_PATH/$pkg_dirname/vendor"
 
         Write-BuildLine " ** Configuring bundler for this build environment"
-        bundle config --local without integration deploy maintenance
+        bundle config --local without deploy maintenance
         bundle config --local jobs 4
         bundle config --local retry 5
         bundle config --local silence_root_warning 1
         Write-BuildLine " ** Using bundler to retrieve the Ruby dependencies"
         bundle install
-	bundle lock --local
+	    bundle lock --local
         gem build chef-test-kitchen-enterprise.gemspec
 	    Write-BuildLine " ** Using gem to  install"
 	    gem install chef-test-kitchen-enterprise*.gem --no-document
 
-	ruby ./post-bundle-install.rb
+        ruby ./post-bundle-install.rb
         If ($lastexitcode -ne 0) { Exit $lastexitcode }
+
+        # Install chef-official-distribution AFTER post-bundle-install
+        Install-ChefOfficialDistribution
+
+        Write-BuildLine " ** Build complete"
     } finally {
         Pop-Location
     }
-}
 
+}
 function Invoke-Install {
     Write-BuildLine "** Copy built & cached gems to install directory"
     Copy-Item -Path "$HAB_CACHE_SRC_PATH/$pkg_dirname/*" -Destination $pkg_prefix -Recurse -Force -Exclude @("gem_make.out", "mkmf.log", "Makefile",
@@ -91,4 +96,38 @@ function Invoke-After {
     # Remove the byproducts of compiling gems with extensions
     Get-ChildItem $pkg_prefix/vendor/gems -Include @("gem_make.out", "mkmf.log", "Makefile") -File -Recurse `
         | Remove-Item -Force
+}
+
+function Install-ChefOfficialDistribution {
+    Write-BuildLine "Installing chef-official-distribution gem from Artifactory"
+
+    $artifactorySource = "https://artifactory-internal.ps.chef.co/artifactory/omnibus-gems-local/"
+
+    try {
+        # Add Artifactory as gem source
+        gem sources --add $artifactorySource
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to add Artifactory gem source"
+        }
+
+        # Install the gem
+        gem install chef-official-distribution --no-document
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to install chef-official-distribution gem"
+        }
+
+        Write-BuildLine "Successfully installed chef-official-distribution"
+    }
+    catch {
+        Write-Error "Error installing chef-official-distribution: $_"
+        exit 1
+    }
+    finally {
+        # Always clean up gem sources
+        try {
+            gem sources --remove $artifactorySource
+        } catch {
+            # Ignore errors during cleanup
+        }
+    }
 }

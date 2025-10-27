@@ -34,8 +34,12 @@ module Kitchen
         when "help"
           print_help
         else
-          ChefLicensing.fetch_and_persist.each do |key|
-            puts "License_key: #{key}"
+          # The license command needs to run with require_license, otherwise
+          # license activation will be skipped
+          ChefLicensing::Config.require_license_for do
+            ChefLicensing.fetch_and_persist.each do |key|
+              puts "License_key: #{key}"
+            end
           end
         end
       rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError

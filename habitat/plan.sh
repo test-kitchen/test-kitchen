@@ -47,7 +47,7 @@ do_build() {
 
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"
-  bundle config --local without integration deploy maintenance
+  bundle config --local without deploy maintenance
   bundle config --local jobs 4
   bundle config --local retry 5
   bundle config --local silence_root_warning 1
@@ -62,6 +62,9 @@ do_install() {
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"
   gem install chef-test-kitchen-enterprise-*.gem --no-document
+
+  make_pkg_official_distrib
+
   wrap_ruby_kitchen
   set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor"
 }
@@ -90,6 +93,13 @@ export GEM_PATH="\$GEM_HOME"
 exec $(pkg_path_for $_chef_client_ruby)/bin/ruby $real_bin \$@
 EOF
   chmod -v 755 "$bin"
+}
+
+make_pkg_official_distrib() {
+  build_line "Installing chef-official-distribution gem"
+  gem source --add "https://artifactory-internal.ps.chef.co/artifactory/omnibus-gems-local/"
+  gem install chef-official-distribution --no-document --install-dir "$GEM_HOME"
+  gem sources -r "https://artifactory-internal.ps.chef.co/artifactory/omnibus-gems-local/"
 }
 
 do_strip() {
