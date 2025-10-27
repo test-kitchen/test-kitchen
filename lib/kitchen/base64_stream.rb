@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,9 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Base64Stream
-    # Encodes an input stream into a Base64 output stream. The input and ouput
+    # Encodes an input stream into a Base64 output stream. The input and output
     # objects must be opened IO resources. In other words, opening and closing
-    # the resources are not the responsibilty of this method.
+    # the resources are not the responsibility of this method.
     #
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream
@@ -33,9 +33,9 @@ module Kitchen
       buffer = nil # rubocop:disable Lint/UselessAssignment
     end
 
-    # Decodes a Base64 input stream into an output stream. The input and ouput
+    # Decodes a Base64 input stream into an output stream. The input and output
     # objects must be opened IO resources. In other words, opening and closing
-    # the resources are not the responsibilty of this method.
+    # the resources are not the responsibility of this method.
     #
     # @param io_in [#read] input stream
     # @param io_out [#write] output stream

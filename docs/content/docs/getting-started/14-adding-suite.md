@@ -21,8 +21,8 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
 
 suites:
   - name: default
@@ -41,15 +41,15 @@ Now run `kitchen list` to see our new suite in action:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
-default-centos-8     Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
-server-ubuntu-2004   Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
-server-centos-8      Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-almalinux-10 Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-ubuntu-2404   Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+server-almalinux-10  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 Woah, we've doubled our number of instances! Yes, that is going to happen. This explosion of test cases is just one reason why testing is hard.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/adding-test">Next - Adding a Test</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/adding-feature">Back to previous step</a>
+<a class="button primary-cta" href="15-adding-test.md">Next - Adding a Test</a>
+<a class="sidebar--footer--back" href="13-adding-feature.md">Back to previous step</a>
 </div>

@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,7 @@ module Kitchen
       # Format and color the given last action.
       #
       # @param last_action [String] the last action
-      # @return [String] formated last action
+      # @return [String] formatted last action
       # @api private
       def format_last_action(last_action)
         case last_action
@@ -87,7 +87,7 @@ module Kitchen
       # Format and color the given last error.
       #
       # @param last_error [String] the last error
-      # @return [String] formated last error
+      # @return [String] formatted last error
       # @api private
       def format_last_error(last_error)
         case last_error

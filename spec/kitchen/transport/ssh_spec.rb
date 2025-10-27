@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -150,6 +150,10 @@ describe Kitchen::Transport::Ssh do
 
     it "sets :ssh_gateway_port to 22 by default" do
       _(transport[:ssh_gateway_port]).must_equal 22
+    end
+
+    it "sets :ssh_proxy_command to nil by default" do
+      _(transport[:ssh_proxy_command]).must_be_nil
     end
   end
 
@@ -472,6 +476,27 @@ describe Kitchen::Transport::Ssh do
         make_connection
       end
 
+      it "sets :ssh_proxy_command from config" do
+        config[:ssh_proxy_command] = "proxy command from config"
+
+        klass.expects(:new).with do |hash|
+          hash[:ssh_proxy_command] == "proxy command from config"
+        end
+
+        make_connection
+      end
+
+      it "sets :ssh_proxy_command from state over config data" do
+        state[:ssh_proxy_command] = "proxy command from state"
+        config[:ssh_proxy_command] = "proxy command from config"
+
+        klass.expects(:new).with do |hash|
+          hash[:ssh_proxy_command] == "proxy command from state"
+        end
+
+        make_connection
+      end
+
       it "sets :keys to an array if :ssh_key is set in config" do
         config[:kitchen_root] = "/r"
         config[:ssh_key] = "ssh_key_from_config"
@@ -698,6 +723,29 @@ describe Kitchen::Transport::Ssh::Connection do
     Net::SSH.stubs(:start).returns(conn)
   end
 
+  describe "establishing a connection with ssh_proxy_command" do
+    let(:proxy_command_options) do
+      options.merge(ssh_proxy_command_string: "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0")
+    end
+
+    let(:proxy_command_connection) do
+      Kitchen::Transport::Ssh::Connection.new(proxy_command_options)
+    end
+
+    it "creates a proxy connection when ssh_proxy_command is provided" do
+      # Just verify that the connection has the ssh_proxy_command_string available
+      # (proxy object is created during connection establishment, not at initialization)
+      connection_options = proxy_command_connection.send(:options)
+      _(connection_options[:ssh_proxy_command_string]).must_equal "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+    end
+
+    it "stores ssh_proxy_command in connection options for proxy creation" do
+      proxy_conn = Kitchen::Transport::Ssh::Connection.new(proxy_command_options)
+
+      _(proxy_conn.send(:options)[:ssh_proxy_command_string]).must_equal "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+    end
+  end
+
   describe "establishing a connection" do
     [
       Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
@@ -726,9 +774,10 @@ describe Kitchen::Transport::Ssh::Connection do
           rescue # rubocop:disable Lint/HandleExceptions
             # the raise is not what is being tested here, rather its side-effect
           end
-          pattern = /\[SSH\] opening connection to me@foo/
-          output_count = logged_output.string.scan(pattern).size
-          _(output_count).must_be :>=, 1
+
+          _(logged_output.string.lines.count do |l|
+            l =~ /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
+          end).must_equal 3
         end
 
         it "sleeps for :connection_retry_sleep seconds between retries" do
@@ -792,8 +841,9 @@ describe Kitchen::Transport::Ssh::Connection do
         connection.close
       end
 
-      _(logged_output.string).must_match(/D,.* : \[SSH\] closing connection to me@foo</)
-      _(logged_output.string).must_match(/port.*22}/)
+      _(logged_output.string).must_match(
+        /\[SSH\] closing connection to me@foo<\{(:?port=>22|port: 22)\}>/
+      )
     end
 
     it "only closes the connection once for multiple calls" do
@@ -826,15 +876,17 @@ describe Kitchen::Transport::Ssh::Connection do
       it "logger displays command on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
+        _(logged_output.string).must_match(
+          /\[SSH\] me@foo<\{(:?port=>22|port: 22)\}> \(doit\)/
+        )
       end
 
       it "logger displays establishing connection on debug" do
         assert_scripted { connection.execute("doit") }
 
-        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
+        _(logged_output.string).must_match(
+          /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
+        )
       end
 
       it "logger captures stdout" do
@@ -871,8 +923,9 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port.*22.*\(doit\)/)
+        _(logged_output.string).must_match(
+          /\[SSH\] me@foo<\{(:?port=>22|port: 22)\}> \(doit\)/
+        )
       end
 
       it "logger displays establishing connection on debug" do
@@ -882,8 +935,9 @@ describe Kitchen::Transport::Ssh::Connection do
           # the raise is not what is being tested here, rather its side-effect
         end
 
-        _(logged_output.string).must_match(/D, .* : \[SSH\] me@foo</)
-        _(logged_output.string).must_match(/port.*22/)
+        _(logged_output.string).must_match(
+          /\[SSH\] opening connection to me@foo<\{(:?port=>22|port: 22)\}>/
+        )
       end
 
       it "logger captures stdout" do
@@ -971,7 +1025,7 @@ describe Kitchen::Transport::Ssh::Connection do
       _(args).wont_match regexify(" -o IdentitiesOnly=")
     end
 
-    it "sets the IdentiesOnly option if :keys option is given" do
+    it "sets the IdentitiesOnly option if :keys option is given" do
       options[:keys] = ["yep"]
 
       _(args).must_match regexify(" -o IdentitiesOnly=yes ")
@@ -1026,6 +1080,30 @@ describe Kitchen::Transport::Ssh::Connection do
       options[:port] = 1234
 
       _(args).must_match regexify(" -p 1234 ")
+    end
+
+    it "sets the ProxyCommand option for ssh_gateway" do
+      options[:ssh_gateway] = "gateway.example.com"
+      options[:ssh_gateway_username] = "gateway_user"
+      options[:ssh_gateway_port] = 22
+
+      _(args).must_match regexify(" -o ProxyCommand=ssh -q gateway_user@gateway.example.com nc foo 22 ")
+    end
+
+    it "sets the ProxyCommand option for ssh_proxy_command" do
+      options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+
+      _(args).must_match regexify(" -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ")
+    end
+
+    it "prefers ssh_proxy_command over ssh_gateway when both are set" do
+      options[:ssh_gateway] = "gateway.example.com"
+      options[:ssh_gateway_username] = "gateway_user"
+      options[:ssh_gateway_port] = 22
+      options[:ssh_proxy_command] = "aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0"
+
+      _(args).must_match regexify(" -o ProxyCommand=aws ec2-instance-connect open-tunnel --instance-id i-1234567890abcdef0 ")
+      _(args).wont_match regexify("gateway.example.com")
     end
   end
 
@@ -1264,7 +1342,6 @@ describe Kitchen::Transport::Ssh::Connection do
         _(logged_output.string.lines.count do |l|
           l =~ warn_line_with("[SSH] connection failed, terminating ")
         end).must_equal 1
-
       end
 
       it "sleeps for 3 seconds between retries" do

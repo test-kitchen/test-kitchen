@@ -1,5 +1,5 @@
 ---
-on:
+"on":
   workflow_call:
 
 permissions:
@@ -14,6 +14,8 @@ env:
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
+  CHEF_LICENSE: accept-no-persist
+  CHEF_LICENSE_SERVER: http://hosted-license-service-lb-8000-606952349.us-west-2.elb.amazonaws.com:8000/
 
 jobs:
   dokken:
@@ -62,12 +64,13 @@ jobs:
   macos:
     env:
       machine_port: 22
-      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
+      KITCHEN_LOCAL_YAML: kitchen.${{ matrix.kitchen_yaml }}.yml
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.1", "3.4"]
+        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -85,21 +88,20 @@ jobs:
           sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-          bundle config set --local with 'integration'
-          bundle install
       - name: Verify macOS
         run: bundle exec kitchen verify localhost
 
   windows:
     env:
       machine_port: 5985
-      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
+      KITCHEN_LOCAL_YAML: kitchen.${{ matrix.kitchen_yaml }}.yml
     runs-on: windows-latest
     timeout-minutes: 600
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.1", "3.4"]
+        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -111,21 +113,20 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
-          bundle config set --local with 'integration'
-          bundle install
       - name: Verify Windows
-        run: bundle exec kitchen verify windows
+        run: bundle exec kitchen verify windows-winrm
 
   linux:
     env:
       machine_port: 22
-      KITCHEN_LOCAL_YAML: kitchen.proxy.yml
+      KITCHEN_LOCAL_YAML: kitchen.${{ matrix.kitchen_yaml }}.yml
     runs-on: ubuntu-latest
     timeout-minutes: 600
     strategy:
       fail-fast: false
       matrix:
         ruby: ["3.1", "3.4"]
+        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
       - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
@@ -137,7 +138,65 @@ jobs:
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-          bundle config set --local with 'integration'
-          bundle install
       - name: Verify Linux
-        run: bundle exec kitchen verify localhost
+        run: |
+          bundle exec kitchen verify localhost
+
+  windows-fips-ssh:
+    env:
+      machine_port: 22
+      KITCHEN_LOCAL_YAML: kitchen.exec.yml
+    runs-on: windows-latest
+    timeout-minutes: 600
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.1", "3.4"]
+        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: 'Enable FIPS via windows registry'
+        run: |
+          $OldErrorActionPreference = $ErrorActionPreference
+          $ErrorActionPreference = "stop"
+          $KeyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy"
+          $ValueName = "Enabled"
+          $ValueData = "1"
+          try{
+              Get-ItemProperty -Path $KeyPath -Name $valueName -ErrorAction Stop
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          catch [System.Management.Automation.PSArgumentException] {
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          catch [System.Management.Automation.ItemNotFoundException]
+          {
+              New-Item -Path $KeyPath -Force
+              New-ItemProperty -Path $KeyPath -Name $ValueName -Value $ValueData -PropertyType DWord -Force
+          }
+          Finally
+          {
+              $ErrorActionPreference = $OldErrorActionPreference
+          }
+          if (-not $?) { throw "Failed to enable FIPS mode." }
+      - name: Setup Machine
+        run: |
+          Add-WindowsCapability -Online -Name OpenSSH.Server
+          Start-Service -Name "sshd"
+          # Ensure the firewall rule for OpenSSH Server is enabled (it should be created automatically during installation)
+          if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue)) {
+              Write-Host "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
+              New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow
+          } else {
+              Write-Host "Firewall Rule 'OpenSSH-Server-In-TCP' already exists."
+              # Optionally, ensure it's enabled
+              Set-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -Enabled True
+          }
+          net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
+          net localgroup administrators ${{ env.machine_user }} /add
+      - name: Verify Windows FIPS SSH
+        run: bundle exec kitchen verify windows-fips-ssh -l debug

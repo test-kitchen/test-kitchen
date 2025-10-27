@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,7 +50,9 @@ module Kitchen
     #
     # @param [Regexp,String] value of the filter
     def initialize(value)
-      raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp" unless value.is_a?(::Regexp) || value.is_a?(::String)
+      unless value.is_a?(::Regexp) || value.is_a?(::String)
+        raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp"
+      end
 
       @value = value
     end

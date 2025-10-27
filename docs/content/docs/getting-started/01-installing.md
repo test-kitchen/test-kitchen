@@ -7,14 +7,14 @@ menu:
     weight: 10
 ---
 
-As this is a quick start guide, it doesn't assume any great familiarity with Chef Infra or Ruby and takes you through the process of writing a Chef Infra cookbook with automated testing as standard. In order to follow this guide, we'll need a few tools first.
+This quick start guide is designed for users with little or no experience with Chef Infra or Ruby. It will walk you through creating a Chef Infra cookbook and introduce automated testing as a standard practice. Before we begin, let's make sure you have the necessary tools installed.
 
 ##### Pre-requisites
 
 - 64 bit operating system
 - CPU Virtualization enabled
 
-In order to virtualize a 64 bit operating system, one must also be running a 64 bit operating system. Most importantly, the CPU itself must support hardware virtualization extensions and this must be enabled in the BIOS/EFI. Most modern processors support virtualization extensions in the form of VT-x (Intel) or AMD-V (AMD).
+To run 64-bit virtual machines, your computer must have a 64-bit operating system and a processor that supports hardware virtualization. These virtualization features—Intel VT-x for Intel CPUs or AMD-V for AMD CPUs—must be enabled in your system's BIOS or EFI settings. Most modern processors include these extensions, but they may be disabled by default, so check your system documentation if you're unsure.
 
 <div class="callout">
 <h3 class="callout--title">Windows and Hyper-V</h3>
@@ -23,42 +23,42 @@ Unfortunately Hyper-V doesn't like other hypervisors running at the same time an
 
 ##### Chef Workstation
 
-First, install the [Chef Workstation](https://www.chef.io/downloads/tools/workstation). This package includes Chef Infra Client, Chef InSpec, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
+First, install the [Chef Workstation](https://www.chef.io/downloads). This package includes Chef Infra Client, Chef InSpec, Test Kitchen, Cookstyle, and a variety of useful tools for the Chef ecosystem.
 
 ```ruby
 $ chef --version
-Chef Workstation version: 22.1.774
-Chef Habitat version: 1.6.420
-Test Kitchen version: 3.2.2
-Cookstyle version: 7.30.4
-Chef Infra Client version: 17.9.26
-Chef InSpec version: 4.52.9
-Chef CLI version: 5.5.6
+Chef Workstation version: 25.5.1084
+Chef CLI version: 5.6.21
+Chef Habitat version: 1.6.1243
+Test Kitchen version: 3.7.0
+Cookstyle version: 7.32.8
+Chef Infra Client version: 18.7.10
+Chef InSpec version: 5.22.80
 ```
 
 ##### VirtualBox
 
-VirtualBox is a hypervisor that lets you run virtual machines on your local workstation. Obtain the correct installer for your platform [here](https://www.virtualbox.org/wiki/Downloads). Verify that the command is accessible and in the $PATH with the following:
+VirtualBox is a popular open-source hypervisor that enables you to run multiple virtual machines on your local system. To get started, download and install the correct version for your operating system from the [VirtualBox Downloads page](https://www.virtualbox.org/wiki/Downloads). After installation, confirm that VirtualBox is correctly set up and its command-line tools are available in your `$PATH` by running:
 
 ```bash
 $ VBoxManage --version
-6.1.32r149290
+7.1.8r168469
 ```
 
 ##### Vagrant
 
-Vagrant manages hypervisors such as VirtualBox and makes it easy to distribute pre-packaged virtual machines, known as "boxes". Obtain the correct installer for your platform [here](https://www.vagrantup.com/downloads).
+Vagrant acts as a wrapper for hypervisors like VirtualBox, simplifying the process of creating, configuring, and sharing reproducible development environments. It uses pre-built virtual machine images called "boxes" to quickly spin up environments. To get started, download and install the correct Vagrant package for your operating system from the Vagrant Downloads page.
 
 ```bash
 $ vagrant --version
-Vagrant 2.2.18
+Vagrant 2.4.7
 ```
 
-We've just installed Chef Workstation, VirtualBox, and Vagrant. The reason we have done so is that the default `driver` for Test Kitchen is `kitchen-vagrant` which uses Vagrant to create, manage, and destroy local virtual machines. Vagrant itself supports many different hypervisors and clouds but for the purposes of this exercise we are interested in the default local virtualization provided by VirtualBox.
+With Chef Workstation, VirtualBox, and Vagrant installed, you're ready to use Test Kitchen's default setup. By default, Test Kitchen uses the `kitchen-vagrant` driver, which leverages Vagrant to create, manage, and destroy local virtual machines. Vagrant supports a variety of hypervisors and cloud providers, but for this guide, we'll use VirtualBox for local virtualization.
 
-Kitchen is modular so that one may use a variety of different drivers (Vagrant, VMware, Azure, EC2, Docker), provisioners (Chef Infra, Ansible, Puppet, Salt, DSC), or verifiers (InSpec, Serverspec, BATS) but for the purposes of the guide we're focusing on the default "happy path" of Vagrant with VirtualBox, Chef Infra, and InSpec.
+Test Kitchen is highly modular, allowing you to mix and match different drivers (such as Vagrant, VMware, Azure, EC2, or Docker), provisioners (like Chef Infra, Ansible, Puppet, Salt, or DSC), and verifiers (including InSpec, Serverspec, or BATS). In this quick start, we'll focus on the most common workflow: Vagrant with VirtualBox for virtualization, Chef Infra for provisioning, and InSpec for testing.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/getting-help">Next - Getting Help</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/">Back to previous step</a>
+<a class="button primary-cta" href="02-getting-help.md">Next - Getting Help</a>
+<a class="sidebar--footer--back" href="00-introduction.md">Back to previous step</a>
 </div>

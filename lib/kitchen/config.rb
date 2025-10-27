@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ module Kitchen
   # as the location of the Kitchen config file, instances, log_levels, etc.
   # This object is a factory object, meaning that it is responsible for
   # consuming the desired testing configuration in and returning Ruby objects
-  # which are used to perfom the work.
+  # which are used to perform the work.
   #
   # Most internal objects are created with the expectation of being
   # *immutable*, meaning that internal state cannot be modified after creation.
@@ -98,7 +98,7 @@ module Kitchen
     #   directory containing test suites and other testing-related files and
     #   directories (default: `"#{kitchen_root}/test/integration"`)
     # @option options [Symbol] :log_level the log level verbosity that the
-    #   loggers will use when outputing information (default: `:info`)
+    #   loggers will use when outputting information (default: `:info`)
     def initialize(options = {})
       @loader         = options.fetch(:loader) { Kitchen::Loader::YAML.new }
       @kitchen_root   = options.fetch(:kitchen_root) { Dir.pwd }

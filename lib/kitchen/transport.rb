@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ require_relative "plugin"
 
 module Kitchen
   # A transport is responsible for the communication with an instance,
-  # that is remote comands and other actions such as file transfer,
+  # that is remote commands and other actions such as file transfer,
   # login, etc.
   #
   # @author Salim Afiune <salim@afiunemaya.com.mx>

@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,14 +76,37 @@ module Kitchen
             debug("Uploading #{Array(locals).join(", ")} to #{remote}")
             conn.upload(locals.to_s, remote)
           end
-          conn.execute(install_command)
+
+          # Check if we need to upload script (for Windows SSH or other scenarios requiring script upload)
+          transport_config = instance.transport.instance_variable_get(:@config)
+          debug("Windows OS: #{windows_os?} and Transport config: #{transport_config.inspect}")
+          if windows_os? && transport_config && transport_config[:name] == "ssh"
+            prepare_install_script
+            # Run the init command to create the kitchen tmp directory
+            conn.execute(encode_for_powershell(init_command))
+            remote_script_path = remote_path_join(resolve_remote_path(config[:root_path]), "install_script.ps1")
+            if install_script_path
+              debug("Uploading install script to #{remote_script_path}")
+              conn.upload(install_script_path, remote_script_path)
+              debug("Executing install script with #{run_script_command(remote_script_path)}")
+              conn.execute(run_script_command(remote_script_path))
+            end
+          else
+            # For all other scenarios, execute install command directly
+            debug("Executing install command: #{install_command}")
+            conn.execute(install_command)
+          end
+
+          # The install script will remove the kitchen tmp directory, hence creating it again.
           conn.execute(init_command)
           info("Transferring files to #{instance.to_str}")
-          conn.upload(sandbox_dirs, config[:root_path])
+          conn.upload(sandbox_dirs, resolve_remote_path(config[:root_path]))
           debug("Transfer complete")
+          debug("Executing prepare command: #{prepare_command}")
           conn.execute(prepare_command)
+          debug("Executing run command: #{run_command}")
           conn.execute_with_retry(
-            run_command,
+            encode_for_powershell(run_command),
             config[:retry_on_exit_code],
             config[:max_retries],
             config[:wait_for_retry]
@@ -195,6 +218,7 @@ module Kitchen
         return if @sandbox_path.nil?
 
         debug("Cleaning up local sandbox in #{sandbox_path}")
+        @install_script_path = nil
         FileUtils.rmtree(sandbox_path)
       end
 
@@ -269,6 +293,85 @@ module Kitchen
       # @api private
       def prefix_command(script)
         config[:command_prefix] ? "#{config[:command_prefix]} #{script}" : script
+      end
+
+      def encode_for_powershell(script)
+        return script if script.nil? || script.empty?
+        return script unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+
+        utf16le = script.encode(Encoding::UTF_16LE)
+        encoded = [utf16le].pack("m0")
+
+        "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -EncodedCommand #{encoded}"
+      end
+
+      # Writes the install command to a file that will be uploaded to the instance
+      # and executed.
+      #
+      # @api private
+      def prepare_install_script
+        return unless windows_os?
+
+        command = install_command
+        return if command.nil? || command.empty?
+
+        info("Preparing install script")
+        @install_script_path = File.join(sandbox_path, "install_script.ps1")
+
+        debug("Creating install script at #{@install_script_path}")
+        File.open(@install_script_path, "wb") do |file|
+          file.write(command)
+        end
+
+        # Make script executable locally
+        FileUtils.chmod(0755, @install_script_path) unless windows_os?
+      end
+
+      def install_script_path
+        @install_script_path
+      end
+
+      # Returns a command to execute a script on the remote host.
+      #
+      # @param script_path [String] path to the script on the remote host
+      # @return [String] command to execute the script
+      # @api private
+      def run_script_command(script_path)
+        # Use parameters to suppress PowerShell formatting and control characters
+        # that can interfere with console output over SSH
+        "powershell -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File #{script_path}"
+      end
+
+      # Resolves PowerShell environment variables in remote paths to actual paths
+      # for use with net/scp and other transport operations that can't handle
+      # PowerShell variables like $env:TEMP.
+      #
+      # @param path [String] the remote path that may contain PowerShell env vars
+      # @return [String] the resolved path
+      # @api private
+      def resolve_remote_path(path)
+        return path unless windows_os? && instance.transport.instance_variable_get(:@config)[:name] == "ssh"
+
+        # For Windows, resolve common PowerShell environment variables
+        resolved_path = path.dup
+
+        # Replace $env:TEMP with the actual Windows temp directory based on the transport username
+        if resolved_path.include?("$env:TEMP")
+          # Try to get username from transport configuration
+          # For Windows systems, fallback to "Administrator" if not found
+          username = begin
+            instance.transport[:username]
+                     rescue
+                       nil
+          end
+          username ||= "Administrator"
+
+          temp_path = "C:/Users/#{username}/AppData/Local/Temp"
+          resolved_path = resolved_path.gsub("$env:TEMP", temp_path)
+        end
+
+        # Convert backslashes to forward slashes for cross-platform compatibility
+        resolved_path.tr("\\", "/")
       end
     end
   end

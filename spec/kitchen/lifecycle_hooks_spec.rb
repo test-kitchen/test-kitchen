@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -111,7 +111,7 @@ describe Kitchen::LifecycleHooks do
   it "runs finally even if stage fails" do
     local_command = "echo foo"
     config.update(finally_create: [local_command])
-    hook = expect_local_hook_generated_and_run(:finally, { local: local_command }) # rubocop: disable Lint/UselessAssignment
+    expect_local_hook_generated_and_run(:finally, { local: local_command }) # rubocop: disable Lint/UselessAssignment
     begin
       lifecycle_hooks.run_with_hooks(:create, state_file) {
         raise Error

@@ -1,13 +1,8 @@
-#
-# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
-#
-# Copyright (C) 2012, Fletcher Nichol
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +20,6 @@ require_relative "../shell_out"
 module Kitchen
   module Driver
     # Base class for a driver.
-    #
-    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base < Kitchen::Plugin::Base
       include Configurable
       include Logging

@@ -22,6 +22,51 @@
 - Rename the chef-dke to chef workstation [#40](https://github.com/chef/chef-test-kitchen-enterprise/pull/40) ([sanghinitin](https://github.com/sanghinitin)) <!-- 1.0.17 -->
 - [CHEF-18897] Add the berkshelf gem and use the chef-cli from the Chef-DKE [#36](https://github.com/chef/chef-test-kitchen-enterprise/pull/36) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.16 -->
 - Fixed the issue with loading the license config [#34](https://github.com/chef/chef-test-kitchen-enterprise/pull/34) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.15 -->
+<!-- release_rollup -->
+
+---
+
+## Upstream Test Kitchen Changes Merged
+
+The following changes have been merged from upstream Test Kitchen (https://github.com/test-kitchen/test-kitchen):
+
+## [3.9.0](https://github.com/test-kitchen/test-kitchen/compare/v3.8.2...v3.9.0) (2025-09-05)
+
+### Features
+
+* Added custom proxy command support for AWS EC2 Instance Connect EC2 driver support ([#2019](https://github.com/test-kitchen/test-kitchen/issues/2019)) ([0529e66](https://github.com/test-kitchen/test-kitchen/commit/0529e66447e68b495ef710116420154008fa2238))
+
+## [3.8.2](https://github.com/test-kitchen/test-kitchen/compare/v3.8.1...v3.8.2) (2025-09-05)
+
+### Bug Fixes
+
+* updates to fix tests ([#2022](https://github.com/test-kitchen/test-kitchen/issues/2022)) ([7552481](https://github.com/test-kitchen/test-kitchen/commit/7552481a5234fcf49f394ff848ce29a9a916940c))
+
+## [3.8.1](https://github.com/test-kitchen/test-kitchen/compare/v3.8.0...v3.8.1) (2025-07-24)
+
+### Bug Fixes
+
+* Remove expired copyright ([#2017](https://github.com/test-kitchen/test-kitchen/issues/2017)) ([27ad560](https://github.com/test-kitchen/test-kitchen/commit/27ad560079ce2f21d384d207d6161c562ef3eda2))
+
+## [3.8.0](https://github.com/test-kitchen/test-kitchen/compare/v3.7.2...v3.8.0) (2025-07-12)
+
+### Features
+
+* Support for SSH transport for windows platfoms ([#2007](https://github.com/test-kitchen/test-kitchen/issues/2007)) ([1c79066](https://github.com/test-kitchen/test-kitchen/commit/1c790661c7b81c917a4ea1eb0276296ade4b1f39))
+
+## [3.7.2](https://github.com/test-kitchen/test-kitchen/compare/v3.7.1...v3.7.2) (2025-07-03)
+
+### Bug Fixes
+
+* Update the docs + init for modern platforms ([#2009](https://github.com/test-kitchen/test-kitchen/issues/2009)) ([2c8cca1](https://github.com/test-kitchen/test-kitchen/commit/2c8cca1f77d2b589ae0ed7a6e5cc971de7141f5c))
+
+## [3.7.1](https://github.com/test-kitchen/test-kitchen/compare/v3.7.0...v3.7.1) (2024-12-02)
+
+### Bug Fixes
+
+* Prevent Test Kitchen from requiring Chef license acceptance when an alternative distribution (such as cinc) is used with a Policyfile. ([#1984](https://github.com/test-kitchen/test-kitchen/issues/1984)) ([332294e](https://github.com/test-kitchen/test-kitchen/commit/332294efc3ce27309afd49fa944448713b102070))
+
+---
 
 ### Merged Pull Requests
 

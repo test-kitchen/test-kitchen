@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ require "fileutils" unless defined?(FileUtils)
 require "net/ssh" unless defined?(Net::SSH)
 require "net/ssh/gateway"
 require "net/ssh/proxy/http"
+require "net/ssh/proxy/command"
 require "net/scp"
 require "timeout" unless defined?(Timeout)
 require "benchmark" unless defined?(Benchmark)
@@ -63,6 +64,8 @@ module Kitchen
       default_config :ssh_http_proxy_user, nil
       default_config :ssh_http_proxy_password, nil
 
+      default_config :ssh_proxy_command, nil
+
       default_config :ssh_key, nil
       expand_path_for :ssh_key
 
@@ -78,7 +81,7 @@ module Kitchen
         super
 
         # zlib was never a valid value and breaks in net-ssh >= 2.10
-        # TODO: remove these backwards compatiable casts in 2.0
+        # TODO: remove these backwards compatible casts in 2.0
         case config[:compression]
         when "zlib"
           config[:compression] = "zlib@openssh.com"
@@ -164,7 +167,9 @@ module Kitchen
           if options.key?(:forward_agent)
             args += %W{ -o ForwardAgent=#{options[:forward_agent] ? "yes" : "no"} }
           end
-          if ssh_gateway
+          if ssh_proxy_command
+            args += %W{ -o ProxyCommand=#{ssh_proxy_command} }
+          elsif ssh_gateway
             gateway_command = "ssh -q #{ssh_gateway_username}@#{ssh_gateway} nc #{hostname} #{port}"
             args += %W{ -o ProxyCommand=#{gateway_command} -p #{ssh_gateway_port} }
           end
@@ -309,6 +314,11 @@ module Kitchen
         # @api private
         attr_reader :ssh_http_proxy_password
 
+        # @return [String] The ProxyCommand to use when connecting to the
+        #   remote SSH host
+        # @api private
+        attr_reader :ssh_proxy_command
+
         # Establish an SSH session on the remote host using a gateway host.
         #
         # @param opts [Hash] retry options
@@ -341,7 +351,13 @@ module Kitchen
         # @api private
         def establish_connection(opts)
           retry_connection(opts) do
-            Net::SSH.start(hostname, username, options)
+            # Handle proxy command creation at connection time
+            connection_options = options.dup
+            if connection_options[:ssh_proxy_command_string]
+              proxy_command = connection_options.delete(:ssh_proxy_command_string)
+              connection_options[:proxy] = Net::SSH::Proxy::Command.new(proxy_command)
+            end
+            Net::SSH.start(hostname, username, connection_options)
           end
         end
 
@@ -360,28 +376,26 @@ module Kitchen
           log_msg = "[SSH] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
-          retries = opts[:retries]
-          retries.times do
-            logger.debug(masked_string)
-          end
-          begin
-            yield
-          rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
-            if (opts[:retries] -= 1) > 0
-              message = if opts[:message]
-                          logger.debug("[SSH] connection failed (#{e.inspect})")
-                          opts[:message]
-                        else
-                          "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
-                            "(#{e.inspect})"
-                        end
-              logger.info(message)
-              sleep(opts[:delay])
-              retry
-            else
-              logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
-              raise SshFailed, "SSH session could not be established"
-            end
+
+          logger.debug(masked_string)
+          yield
+        rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
+          retries_left = opts[:retries] - 1
+          if retries_left > 0
+            opts[:retries] = retries_left
+            message = if opts[:message]
+                        logger.debug("[SSH] connection failed (#{e.inspect})")
+                        opts[:message]
+                      else
+                        "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                          "(#{e.inspect})"
+                      end
+            logger.info(message)
+            sleep(opts[:delay])
+            retry
+          else
+            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+            raise SshFailed, "SSH session could not be established"
           end
         end
 
@@ -430,6 +444,7 @@ module Kitchen
           @ssh_http_proxy_user     = @options.delete(:ssh_http_proxy_user)
           @ssh_http_proxy_password = @options.delete(:ssh_http_proxy_password)
           @ssh_http_proxy_port     = @options.delete(:ssh_http_proxy_port)
+          @ssh_proxy_command       = @options.delete(:ssh_proxy_command)
         end
 
         # Returns a connection session, or establishes one when invoked the
@@ -490,6 +505,7 @@ module Kitchen
           ssh_gateway: data[:ssh_gateway],
           ssh_gateway_username: data[:ssh_gateway_username],
           ssh_gateway_port: data[:ssh_gateway_port],
+          ssh_proxy_command: data[:ssh_proxy_command],
         }
 
         if data[:ssh_key] && !data[:password]
@@ -503,6 +519,9 @@ module Kitchen
           options_http_proxy[:user] = data[:ssh_http_proxy_user]
           options_http_proxy[:password] = data[:ssh_http_proxy_password]
           opts[:proxy] = Net::SSH::Proxy::HTTP.new(data[:ssh_http_proxy], data[:ssh_http_proxy_port], options_http_proxy)
+        elsif data[:ssh_proxy_command]
+          # Store the command string, create proxy object during connection
+          opts[:ssh_proxy_command_string] = data[:ssh_proxy_command]
         end
 
         if data[:ssh_key_only]

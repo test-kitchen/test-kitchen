@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,9 +59,13 @@ describe Kitchen::SSH do
           rescue # rubocop:disable Lint/HandleExceptions
           end
 
-          pattern = /\[SSH\] opening connection to me@foo/
-          output_count = logged_output.string.scan(pattern).size
-          _(output_count).must_be :>=, 1
+          # The current logic logs retries times on initial attempt
+          # plus retries times on each retry attempt
+          expected_logs = opts[:ssh_retries] * 2
+          _(logged_output.string.lines.count do |l|
+            l =~ debug_line_with("[SSH] opening connection to me@foo:22<") &&
+            (l.include?(":ssh_retries=>#{opts[:ssh_retries]}") || l.include?("ssh_retries: #{opts[:ssh_retries]}"))
+          end).must_equal expected_logs
         end
 
         it "sleeps for 1 second between retries" do

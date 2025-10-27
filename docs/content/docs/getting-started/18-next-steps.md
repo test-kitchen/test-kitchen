@@ -18,5 +18,5 @@ From here, there are a few resources that can help you along your infrastructure
 Everyone can contribute to making Test Kitchen better, including the documentation. If you've learned something and want to contribute, please [fork the docs](https://github.com/test-kitchen/test-kitchen/tree/main/docs) and open a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)!
 
 <div class="sidebar--footer">
-<a class="sidebar--footer--back" href="/docs/getting-started/excluding-platforms">Back to previous step</a>
+<a class="sidebar--footer--back" href="17-excluding-platforms.md">Back to previous step</a>
 </div>

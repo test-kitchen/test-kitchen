@@ -32,7 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "net-scp",            ">= 1.1", "< 5.0" # pinning until we can confirm 4+ works
   gem.add_dependency "net-ssh",            ">= 2.9", "< 8.0" # pinning until we can confirm 8+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works
-  gem.add_dependency "ostruct",            "~> 0.6"
+  gem.add_dependency "ostruct",            "~> 0.1.0"
   gem.add_dependency "syslog",             "~> 0.3"
   gem.add_dependency "thor",               ">= 0.19", "< 2.0"
   gem.add_dependency "winrm",              "~> 2.0"
@@ -42,5 +42,6 @@ Gem::Specification.new do |gem|
   # TK is not under Chef EULA
   gem.add_dependency "license-acceptance", ">= 1.0.11", "< 3.0" # pinning until we can confirm 3+ works
   gem.add_dependency "chef-licensing",     "~> 1.0"
+  gem.add_dependency "faraday_middleware", "~> 1.0" # required for licensing functionality
   gem.add_dependency "berkshelf",          "~> 8.0" # for managing berks cookbooks
 end

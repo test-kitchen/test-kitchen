@@ -44,12 +44,23 @@ The `digitalocean_access_token` configuration option is used to communicate with
 
 #### ssh_key_ids
 
-The `ssh_key_ids` configuration option is used to control the ssh key pair to assign to the Droplets when they are created. You can also set this with the `DIGITALOCEAN_SSH_KEY_IDS` environmental variable before running Test Kitchen to avoid storing secres in your `kitchen.yml` config.
+The `ssh_key_ids` configuration option is used to control the ssh key pair to assign to the Droplets when they are created. You can also set this with the `DIGITALOCEAN_SSH_KEY_IDS` environmental variable before running Test Kitchen to avoid storing secrets in your `kitchen.yml` config.
 
 Note that your `SSH_KEY_ID` must be the numeric id of your ssh key, not the symbolic name. To get the numeric ID of your keys, use something like the following command to get them from the digital ocean API:
 
 ```bash
 curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
+```
+
+#### server_name
+
+The `server_name` configuration option allows you to specify the hostname of the Droplet. By default, the hostname is set to the combination of base name, username, hostname, random string as well as separators.
+
+For example to set the hostname provide the server_name attribute
+
+```yaml
+driver:
+  server_name: my_server
 ```
 
 #### image

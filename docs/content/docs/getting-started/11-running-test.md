@@ -11,20 +11,20 @@ Now it's time to introduce to the **test** meta-action which helps you automate 
 
 ```ruby
 $ kitchen test
------> Starting Test Kitchen (v3.2.2)
------> Cleaning up any prior instances of <default-ubuntu-2004>
------> Destroying <default-ubuntu-2004>...
+-----> Starting Test Kitchen (v3.7.1)
+-----> Cleaning up any prior instances of <default-ubuntu-2404>
+-----> Destroying <default-ubuntu-2404>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-2004> destroyed.
-       Finished destroying <default-ubuntu-2004> (0m8.27s).
------> Testing <default-ubuntu-2004>
------> Creating <default-ubuntu-2004>...
+       Vagrant instance <default-ubuntu-2404> destroyed.
+       Finished destroying <default-ubuntu-2404> (0m8.27s).
+-----> Testing <default-ubuntu-2404>
+-----> Creating <default-ubuntu-2404>...
        Bringing machine 'default' up with 'virtualbox' provider...
-       ==> default: Importing base box 'bento/ubuntu-20.04'...
+       ==> default: Importing base box 'bento/ubuntu-24.04'...
        ==> default: Matching MAC address for NAT networking...
-       ==> default: Checking if box 'bento/ubuntu-20.04' version '202112.19.0' is up to date...
-       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-ubuntu-2004-c269d77f-86f8-4bf9-aafe-884177e193fe
+       ==> default: Checking if box 'bento/ubuntu-24.04' version '202112.19.0' is up to date...
+       ==> default: Setting the name of the VM: kitchen-git_cookbook-default-ubuntu-2404-c269d77f-86f8-4bf9-aafe-884177e193fe
        ==> default: Clearing any previously set network interfaces...
        ==> default: Preparing network interfaces based on configuration...
            default: Adapter 1: nat
@@ -50,19 +50,19 @@ $ kitchen test
            default: /tmp/omnibus/cache => /Users/tsmith/.kitchen/cache
        ==> default: Machine not provisioned because `--no-provision` is specified.
        [SSH] Established
-       Vagrant instance <default-ubuntu-2004> created.
-       Finished creating <default-ubuntu-2004> (0m35.86s).
------> Converging <default-ubuntu-2004>...
+       Vagrant instance <default-ubuntu-2404> created.
+       Finished creating <default-ubuntu-2404> (0m35.86s).
+-----> Converging <default-ubuntu-2404>...
        Preparing files for transfer
        Installing cookbooks for Policyfile /Users/tsmith/git_cookbook/Policyfile.rb using `chef install`
        Installing cookbooks from lock
        Installing git_cookbook 0.1.0
        Preparing dna.json
-       Exporting cookbook dependencies from Policyfile /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2004-sandbox-20200610-80493-1jydajx...
-       Exported policy 'git_cookbook' to /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2004-sandbox-20200610-80493-1jydajx
+       Exporting cookbook dependencies from Policyfile /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2404-sandbox-20200610-80493-1jydajx...
+       Exported policy 'git_cookbook' to /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2404-sandbox-20200610-80493-1jydajx
 
        To converge this system with the exported policy, run:
-         cd /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2004-sandbox-20200610-80493-1jydajx
+         cd /var/folders/99/1b6ms59j59sbl9t85sm75y8h0000gp/T/default-ubuntu-2404-sandbox-20200610-80493-1jydajx
          chef-client -z
        Removing non-cookbook files before transfer
        Preparing validation.pem
@@ -71,14 +71,14 @@ $ kitchen test
        Downloading https://omnitruck.chef.io/install.sh to file /tmp/install.sh
        Trying wget...
        Download complete.
-       ubuntu 20.04 x86_64
+       ubuntu 24.04 x86_64
        Getting information for chef stable  for ubuntu...
-       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=20.04&m=x86_64
+       downloading https://omnitruck.chef.io/stable/chef/metadata?v=&p=ubuntu&pv=24.04&m=x86_64
          to file /tmp/install.sh.1399/metadata.txt
        trying wget...
        sha1 1466b9dbfcce80987e145d58e12c076216f9a5b5
        sha256 f1f1cc5787bb56d5d3cb37339bb458f8d715e0be9a58abaad7e52ade90a2bfec
-       url https://packages.chef.io/files/stable/chef/17.9.42/ubuntu/20.04/chef_17.9.42-1_amd64.deb
+       url https://packages.chef.io/files/stable/chef/17.9.42/ubuntu/24.04/chef_17.9.42-1_amd64.deb
        version 17.9.42
        downloaded metadata file looks valid...
        /tmp/omnibus/cache/chef_17.9.42-1_amd64.deb exists
@@ -102,12 +102,12 @@ $ kitchen test
        Unpacking chef (17.9.42-1) ...
        Setting up chef (17.9.42-1) ...
        Thank you for installing Chef Infra Client! For help getting started visit https://learn.chef.io
-       Transferring files to <default-ubuntu-2004>
+       Transferring files to <default-ubuntu-2404>
        +---------------------------------------------+
        ✔ 2 product licenses accepted.
        +---------------------------------------------+
        Starting Chef Infra Client, version 17.9.42
-       Creating a new client identity for default-ubuntu-2004 using the validator key.
+       Creating a new client identity for default-ubuntu-2404 using the validator key.
        Using policy 'git_cookbook' at revision 'f9aaaeaa7a929e3370d5224a3c7f07c605721933b9a893d383d0dc478aa48ce8'
        resolving cookbooks for run list: ["git_cookbook::default@0.1.0 (4def6b4)"]
        Synchronizing Cookbooks:
@@ -121,11 +121,11 @@ $ kitchen test
        Running handlers:
        Running handlers complete
        Chef Infra Client finished, 0/1 resources updated in 01 seconds
-       Downloading files from <default-ubuntu-2004>
-       Finished converging <default-ubuntu-2004> (0m10.98s).
------> Setting up <default-ubuntu-2004>...
-       Finished setting up <default-ubuntu-2004> (0m0.00s).
------> Verifying <default-ubuntu-2004>...
+       Downloading files from <default-ubuntu-2404>
+       Finished converging <default-ubuntu-2404> (0m10.98s).
+-----> Setting up <default-ubuntu-2404>...
+       Finished setting up <default-ubuntu-2404> (0m0.00s).
+-----> Verifying <default-ubuntu-2404>...
        Loaded tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"}
 
 Profile: tests from {:path=>"/Users/tsmith/git_cookbook/test/integration/default"} (tests from {:path=>".Users.tsmith.git_cookbook.test.integration.default"})
@@ -136,13 +136,13 @@ Target:  ssh://vagrant@127.0.0.1:2222
      ✔  is expected to be installed
 
 Test Summary: 1 successful, 0 failures, 0 skipped
-       Finished verifying <default-ubuntu-2004> (0m0.65s).
------> Destroying <default-ubuntu-2004>...
+       Finished verifying <default-ubuntu-2404> (0m0.65s).
+-----> Destroying <default-ubuntu-2404>...
        ==> default: Forcing shutdown of VM...
        ==> default: Destroying VM and associated drives...
-       Vagrant instance <default-ubuntu-2004> destroyed.
-       Finished destroying <default-ubuntu-2004> (0m7.03s).
-       Finished testing <default-ubuntu-2004> (1m2.79s).
+       Vagrant instance <default-ubuntu-2404> destroyed.
+       Finished destroying <default-ubuntu-2404> (0m7.03s).
+       Finished testing <default-ubuntu-2404> (1m2.79s).
 -----> Test Kitchen is finished. (1m4.19s)
 ```
 
@@ -165,12 +165,12 @@ Finally, let's check the status of the instance:
 ```ruby
 $ kitchen list
 Instance             Driver   Provisioner  Verifier  Transport  Last Action    Last Error
-default-ubuntu-2004  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
+default-ubuntu-2404  Vagrant  ChefInfra     Inspec    Ssh        <Not Created>  <None>
 ```
 
 Back to square one.
 
 <div class="sidebar--footer">
-<a class="button primary-cta" href="/docs/getting-started/adding-platform">Next - Adding a Platform</a>
-<a class="sidebar--footer--back" href="/docs/getting-started/running-verify">Back to previous step</a>
+<a class="button primary-cta" href="12-adding-platform.md">Next - Adding a Platform</a>
+<a class="sidebar--footer--back" href="10-running-verify.md">Back to previous step</a>
 </div>

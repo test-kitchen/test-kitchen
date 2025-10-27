@@ -7,7 +7,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#    https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -82,6 +82,16 @@ describe Kitchen::Provisioner::Chef::Policyfile do
         let(:license) { "accept-no-persist" }
         it do
           described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force --chef-license accept-no-persist")
+          subject
+        end
+      end
+
+      describe "with simple paths and product_name is not chef " do
+        let(:policyfile) { "/home/user/cookbook/Policyfile.rb" }
+        let(:path) { "/tmp/kitchen/cookbooks" }
+        let(:license) { nil }
+        it do
+          described_object.expects(:run_command).with("hab pkg exec chef/chef-cli chef-cli export /home/user/cookbook/Policyfile.rb /tmp/kitchen/cookbooks --force ")
           subject
         end
       end

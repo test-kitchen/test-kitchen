@@ -34,8 +34,8 @@ verifier:
 platforms:
   # Drivers may support defaults that automatically
   # map certain names to an image for the given driver
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-24.04
+  - name: almalinux-10
 
 # Enumerate suites
 # At least 1 suite is **required**
@@ -67,11 +67,9 @@ you'll need it.
     memory: 4096
 ```
 
-The driver tries to closely mirror the upstream, as illustrated by [forwarded_port](https://www.vagrantup.com/docs/networking/forwarded_ports) and [private_network](https://www.vagrantup.com/docs/networking/private_network).
+The driver tries to closely mirror the upstream Vagrant configuration options for `forwarded_port` and `private_network`.
 
 If you would like more information, the [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) GitHub page has more.
-
-[hangops-jobbot/.kitchen.yml](https://github.com/rrxtns/hangops-jobbot/blob/master/cookbooks/hangops-jobbot/.kitchen.yml)
 
 ```yaml
 ---
@@ -87,7 +85,7 @@ provisioner:
     environment: test
 
 platforms:
-  - name: ubuntu-20.04
+  - name: ubuntu-24.04
 
 suites:
   - name: default

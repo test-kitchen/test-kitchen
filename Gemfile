@@ -9,7 +9,7 @@ group :test do
   gem "countloc",  "~> 0.4"
   gem "cucumber",  ">= 9.2", "< 11"
   gem "fakefs",    "~> 3.0"
-  gem "maruku",    "~> 0.6"
+  gem "maruku",    "~> 0.7"
   gem "minitest",  "~> 5.3", "< 6.0"
   gem "mocha",     "~> 2.0"
 end
@@ -22,5 +22,9 @@ group :integration do
 end
 
 group :cookstyle do
-  gem "cookstyle"
+  gem "cookstyle", "~> 8.2"
+end
+
+group :build do
+  gem "appbundler"
 end

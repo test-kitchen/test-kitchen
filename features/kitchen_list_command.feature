@@ -81,7 +81,7 @@ Feature: Listing Test Kitchen instances
     """
 
   Scenario: Listing instances with a Ruby regular expression glob, requiring
-    signle quoting on the command line
+    single quoting on the command line
     When I successfully run `kitchen list '^foo.*\-(10|13)04$' --bare`
     Then the output should contain exactly:
     """
