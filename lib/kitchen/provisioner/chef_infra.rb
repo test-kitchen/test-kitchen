@@ -65,6 +65,25 @@ module Kitchen
       def check_license
         super
 
+        # Check for driver-specific license bypass conditions
+        return true if bypass_chef_licensing?
+
+        check_chef_license_key
+      end
+
+      # Hook method that can be overridden by driver-specific provisioner implementations
+      # to provide custom licensing bypass logic based on their specific scenarios.
+      #
+      # @return [Boolean] true if Chef licensing should be bypassed, false otherwise
+      def bypass_chef_licensing?
+        false
+      end
+
+      # Handles Chef license key validation and configuration.
+      # This method contains the core licensing logic that can be reused
+      # by driver-specific implementations.
+      def check_chef_license_key
+        debug("Proceeding with Chef license check")
         # Use require_license_for to enforce licensing for kitchen converge operations
         ChefLicensing::Config.require_license_for do
           info("Fetching the Chef license key")
