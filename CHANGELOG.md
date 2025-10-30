@@ -1,17 +1,18 @@
 # Test Kitchen Change Log
 
 <!-- usage documentation: https://expeditor.chef.io/docs/reference/changelog/#common-changelog -->
-<!-- latest_release 1.1.6 -->
-## [v1.1.6](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.6) (2025-10-27)
+<!-- latest_release 1.1.7 -->
+## [v1.1.7](https://github.com/chef/chef-test-kitchen-enterprise/tree/v1.1.7) (2025-10-30)
 
 #### Merged Pull Requests
-- [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611))
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -72,6 +73,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -89,6 +91,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -108,6 +111,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -125,6 +129,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -146,6 +151,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -163,6 +169,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -182,6 +189,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -199,6 +207,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -222,6 +231,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -239,6 +249,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -258,6 +269,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -275,6 +287,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -296,6 +309,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -313,6 +327,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -332,6 +347,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -349,6 +365,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -374,6 +391,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -391,6 +409,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -410,6 +429,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -427,6 +447,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -448,6 +469,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -465,6 +487,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -484,6 +507,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -501,6 +525,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -524,6 +549,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -541,6 +567,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -560,6 +587,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -577,6 +605,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -598,6 +627,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -615,6 +645,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -634,6 +665,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -651,6 +683,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -678,6 +711,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -695,6 +729,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -714,6 +749,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -731,6 +767,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -752,6 +789,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -769,6 +807,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -788,6 +827,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -805,6 +845,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -828,6 +869,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -845,6 +887,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -864,6 +907,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -881,6 +925,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -902,6 +947,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -919,6 +965,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -938,6 +985,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -955,6 +1003,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -980,6 +1029,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -997,6 +1047,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1016,6 +1067,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1033,6 +1085,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1054,6 +1107,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1071,6 +1125,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1090,6 +1145,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1107,6 +1163,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1130,6 +1187,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1147,6 +1205,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1166,6 +1225,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1183,6 +1243,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1204,6 +1265,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1221,6 +1283,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1240,6 +1303,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1257,6 +1321,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1294,6 +1359,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1311,6 +1377,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1330,6 +1397,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1347,6 +1415,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1368,6 +1437,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1385,6 +1455,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1404,6 +1475,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1421,6 +1493,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1444,6 +1517,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1461,6 +1535,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1480,6 +1555,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1497,6 +1573,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1518,6 +1595,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1535,6 +1613,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1554,6 +1633,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1571,6 +1651,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1596,6 +1677,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1613,6 +1695,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1632,6 +1715,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1649,6 +1733,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1670,6 +1755,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1687,6 +1773,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1706,6 +1793,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1723,6 +1811,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1746,6 +1835,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1763,6 +1853,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1782,6 +1873,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1799,6 +1891,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1820,6 +1913,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1837,6 +1931,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1856,6 +1951,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
@@ -1873,6 +1969,7 @@ The following changes have been merged from upstream Test Kitchen (https://githu
 ### Merged Pull Requests
 
 #### Merged Pull Requests
+- [CHEF-27321] - Skip license check when using internal/private registry [#59](https://github.com/chef/chef-test-kitchen-enterprise/pull/59) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.7 -->
 - [CHEF-23440] - Mandatory License enforcemnt on kitchen converge command [#55](https://github.com/chef/chef-test-kitchen-enterprise/pull/55) ([nikhil2611](https://github.com/nikhil2611)) <!-- 1.1.6 -->
 - Cookstyle and testing fixes [#54](https://github.com/chef/chef-test-kitchen-enterprise/pull/54) ([Stromweld](https://github.com/Stromweld)) <!-- 1.1.5 -->
 - Replaced the usage of blank? with empty? [#50](https://github.com/chef/chef-test-kitchen-enterprise/pull/50) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.1.4 -->
