@@ -17,6 +17,7 @@ group :test do
 end
 
 group :integration do
+  gem "kitchen-omnibus-chef", git: "https://github.com/test-kitchen/kitchen-omnibus-chef", branch: "initial"
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
 end
