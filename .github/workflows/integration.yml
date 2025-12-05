@@ -25,7 +25,7 @@ jobs:
       matrix:
         ruby: ["3.4"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -52,7 +52,7 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
           sudo apt-get update
           sudo apt-get install -y software-properties-common libarchive-tools virtualbox-7.2
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -82,7 +82,7 @@ jobs:
         ruby: ["3.4"]
         kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -98,6 +98,8 @@ jobs:
           sudo dscl . -passwd /Users/${{ env.machine_user }} ${{ env.machine_pass }}
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+          bundle config set --local with 'integration'
+          bundle install
       - name: Verify macOS
         run: bundle exec kitchen verify localhost
 
@@ -113,7 +115,7 @@ jobs:
         ruby: ["3.4"]
         kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -123,6 +125,8 @@ jobs:
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
+          bundle config set --local with 'integration'
+          bundle install
       - name: Verify Windows
         run: bundle exec kitchen verify windows-winrm
 
@@ -138,7 +142,7 @@ jobs:
         ruby: ["3.4"]
         kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -148,6 +152,8 @@ jobs:
           sudo useradd -m ${{ env.machine_user }}
           echo "${{ env.machine_user }}:${{ env.machine_pass }}" | sudo chpasswd
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+          bundle config set --local with 'integration'
+          bundle install
       - name: Verify Linux
         run: |
           bundle exec kitchen verify localhost
@@ -164,7 +170,7 @@ jobs:
         ruby: ["3.4"]
         kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -208,5 +214,7 @@ jobs:
           }
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
+          bundle config set --local with 'integration'
+          bundle install
       - name: Verify Windows FIPS SSH
         run: bundle exec kitchen verify windows-fips-ssh -l debug
