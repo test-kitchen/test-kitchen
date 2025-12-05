@@ -19,7 +19,6 @@ end
 group :integration do
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
-  gem "kitchen-inspec"
   gem "kitchen-omnibus-chef", git: "https://github.com/test-kitchen/kitchen-omnibus-chef", branch: "initial" # TODO: remove git refrence once https://github.com/test-kitchen/test-kitchen/pull/1 is merged
 end
 
