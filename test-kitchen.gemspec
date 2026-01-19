@@ -35,7 +35,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency "ostruct",            "~> 0.6"
   gem.add_dependency "syslog",             "~> 0.3"
   gem.add_dependency "thor",               ">= 0.19", "< 2.0"
-  gem.add_dependency "winrm",              "~> 2.0"
-  gem.add_dependency "winrm-elevated",     "~> 1.0"
-  gem.add_dependency "winrm-fs",           "~> 1.1"
+  # Chef Forked versions with additional fixes since no one is maintining them upstream
+  gem.add_dependency "chef-winrm",         ">= 2.5.0", "< 3.0"
+  gem.add_dependency "chef-winrm-elevated", ">= 1.0", "< 2.0"
+  gem.add_dependency "chef-winrm-fs",      ">= 1.0", "< 2.0"
 end

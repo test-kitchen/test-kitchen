@@ -11,8 +11,6 @@ concurrency:
 
 jobs:
   cookstyle:
-    env:
-      BUNDLE_WITH: ${{ inputs.bundle_with }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
