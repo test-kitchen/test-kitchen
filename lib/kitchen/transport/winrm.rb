@@ -21,8 +21,8 @@ require "rbconfig" unless defined?(RbConfig)
 require "uri" unless defined?(URI)
 require_relative "../../kitchen"
 require_relative "../util"
-require "winrm" unless defined?(WinRM::Connection)
-require "winrm/exceptions" unless defined?(WinRM::WinRMHTTPTransportError)
+require "chef-winrm" unless defined?(WinRM::Connection)
+require "chef-winrm/exceptions" unless defined?(WinRM::WinRMHTTPTransportError)
 
 module Kitchen
   module Transport
@@ -420,9 +420,9 @@ module Kitchen
 
       private
 
-      WINRM_SPEC_VERSION = ["~> 2.0"].freeze
-      WINRM_FS_SPEC_VERSION = ["~> 1.0"].freeze
-      WINRM_ELEVATED_SPEC_VERSION = ["~> 1.0"].freeze
+      CHEF_WINRM_SPEC_VERSION = ["~> 2.0"].freeze
+      CHEF_WINRM_FS_SPEC_VERSION = ["~> 1.0"].freeze
+      CHEF_WINRM_ELEVATED_SPEC_VERSION = ["~> 1.0"].freeze
 
       # Builds the hash of options needed by the Connection object on
       # construction.
@@ -515,9 +515,9 @@ module Kitchen
       # (see Base#load_needed_dependencies!)
       def load_needed_dependencies!
         super
-        load_with_rescue!("winrm", WINRM_SPEC_VERSION.dup)
-        load_with_rescue!("winrm-fs", WINRM_FS_SPEC_VERSION.dup)
-        load_with_rescue!("winrm-elevated", WINRM_ELEVATED_SPEC_VERSION.dup) if config[:elevated]
+        load_with_rescue!("chef-winrm", CHEF_WINRM_SPEC_VERSION.dup)
+        load_with_rescue!("chef-winrm-fs", CHEF_WINRM_FS_SPEC_VERSION.dup)
+        load_with_rescue!("chef-winrm-elevated", CHEF_WINRM_ELEVATED_SPEC_VERSION.dup) if config[:elevated]
       end
 
       def load_with_rescue!(gem_name, spec_version)

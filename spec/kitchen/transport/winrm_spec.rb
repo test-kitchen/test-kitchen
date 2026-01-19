@@ -18,9 +18,9 @@
 require_relative "../../spec_helper"
 
 require "kitchen/transport/winrm"
-require "winrm"
-require "winrm-fs"
-require "winrm-elevated"
+require "chef-winrm"
+require "chef-winrm-fs"
+require "chef-winrm-elevated"
 
 module Kitchen
   module Transport
@@ -668,13 +668,13 @@ describe Kitchen::Transport::Winrm do
       let(:transport) { Kitchen::Transport::Winrm.new(config) }
 
       before do
-        transport.stubs(:require).with("winrm")
-        transport.stubs(:require).with("winrm-fs")
+        transport.stubs(:require).with("chef-winrm")
+        transport.stubs(:require).with("chef-winrm-fs")
       end
 
       describe "elevated is false" do
-        it "does not require winrm-elevated" do
-          transport.expects(:require).with("winrm-elevated").never
+        it "does not require chef-winrm-elevated" do
+          transport.expects(:require).with("chef-winrm-elevated").never
           transport.finalize_config!(instance)
         end
       end
@@ -682,8 +682,8 @@ describe Kitchen::Transport::Winrm do
       describe "elevated is true" do
         before { config[:elevated] = true }
 
-        it "does requires winrm-elevated" do
-          transport.expects(:require).with("winrm-elevated")
+        it "does requires chef-winrm-elevated" do
+          transport.expects(:require).with("chef-winrm-elevated")
           transport.finalize_config!(instance)
         end
       end
@@ -692,43 +692,43 @@ describe Kitchen::Transport::Winrm do
     describe "winrm-fs" do
       before do
         # force loading of winrm-fs to get the version constant
-        require "winrm-fs"
+        require "chef-winrm-fs"
       end
 
       it "logs a message to debug that code will be loaded" do
         transport
 
         _(logged_output.string).must_match debug_line_with(
-          "winrm-fs requested, loading winrm-fs gem"
+          "chef-winrm-fs requested, loading chef-winrm-fs gem"
         )
       end
 
       it "logs a message to debug when library is initially loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs").returns(true)
+        transport.stubs(:require).with("chef-winrm", anything)
+        transport.stubs(:require).with("chef-winrm-fs").returns(true)
         transport.finalize_config!(instance)
 
         _(logged_output.string).must_match(
-          /winrm-fs is loaded/
+          /chef-winrm-fs is loaded/
         )
       end
 
       it "logs a message to debug when library is previously loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs").returns(false)
+        transport.stubs(:require).with("chef-winrm", anything)
+        transport.stubs(:require).with("chef-winrm-fs").returns(false)
         transport.finalize_config!(instance)
 
         _(logged_output.string).must_match(
-          /winrm-fs was already loaded/
+          /chef-winrm-fs was already loaded/
         )
       end
 
       it "logs a message to fatal when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs")
+        transport.stubs(:require).with("chef-winrm", anything)
+        transport.stubs(:require).with("chef-winrm-fs")
           .raises(LoadError, "uh oh")
         begin
           transport.finalize_config!(instance)
@@ -737,56 +737,56 @@ describe Kitchen::Transport::Winrm do
         end
 
         _(logged_output.string).must_match fatal_line_with(
-          "The `winrm-fs` gem is missing and must be installed"
+          "The `chef-winrm-fs` gem is missing and must be installed"
         )
       end
 
       it "raises a UserError when libraries cannot be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm", anything)
-        transport.stubs(:require).with("winrm-fs")
+        transport.stubs(:require).with("chef-winrm", anything)
+        transport.stubs(:require).with("chef-winrm-fs")
           .raises(LoadError, "uh oh")
 
         err = _ { transport.finalize_config!(instance) }
           .must_raise Kitchen::UserError
 
-        _(err.message).must_match(/^Could not load or activate winrm-fs\. /)
+        _(err.message).must_match(/^Could not load or activate chef-winrm-fs\. /)
       end
     end
 
     describe "winrm" do
       it "logs a message to debug that code will be loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).with("chef-winrm-fs", anything)
         transport.stubs(:require)
         transport.finalize_config!(instance)
 
         _(logged_output.string).must_match debug_line_with(
-          "winrm requested, loading winrm gem"
+          "chef-winrm requested, loading chef-winrm gem"
         )
       end
 
       it "logs a message to debug when library is initially loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).with("chef-winrm-fs", anything)
         transport.stubs(:require).returns(true)
 
         transport.finalize_config!(instance)
 
         _(logged_output.string).must_match(
-          /winrm is loaded/
+          /chef-winrm is loaded/
         )
       end
 
       it "logs a message to debug when library is previously loaded" do
         transport = Kitchen::Transport::Winrm.new(config)
-        transport.stubs(:require).with("winrm-fs", anything)
+        transport.stubs(:require).with("chef-winrm-fs", anything)
         transport.stubs(:require).returns(false)
 
         transport.finalize_config!(instance)
 
         _(logged_output.string).must_match(
-          /winrm was already loaded/
+          /chef-winrm was already loaded/
         )
       end
 
@@ -801,7 +801,7 @@ describe Kitchen::Transport::Winrm do
         end
 
         _(logged_output.string).must_match fatal_line_with(
-          "The `winrm` gem is missing and must be installed"
+          "The `chef-winrm` gem is missing and must be installed"
         )
       end
 
@@ -813,7 +813,7 @@ describe Kitchen::Transport::Winrm do
         err = _ { transport.finalize_config!(instance) }
           .must_raise Kitchen::UserError
 
-        _(err.message).must_match(/^Could not load or activate winrm\. /)
+        _(err.message).must_match(/^Could not load or activate chef-winrm\. /)
       end
     end
   end

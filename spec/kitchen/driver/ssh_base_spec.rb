@@ -695,18 +695,18 @@ describe Kitchen::Driver::SSHBase do
 
     it "creates an SSH connection" do
       connection.stubs(:execute)
-      transport.expects(:connection).with(
+      transport.expects(:connection).with(has_entries(
         hostname: "host",
         username: "user",
         port: 22,
         one: "two"
-      ).yields(connection)
+      )).yields(connection).returns(nil)
 
       cmd
     end
 
     it "invokes the command over ssh" do
-      transport.expects(:connection).yields(connection)
+      transport.expects(:connection).yields(connection).returns(nil)
       connection.expects(:execute).with("go")
 
       cmd
@@ -723,17 +723,18 @@ describe Kitchen::Driver::SSHBase do
     end
 
     it "creates an SSH connection" do
-      transport.expects(:connection).with(
+      connection.stubs(:execute)
+      transport.expects(:connection).with(has_entries(
         hostname: "fizzy",
         username: "bork",
         port: 22
-      )
+      )).yields(connection).returns(nil)
 
       cmd
     end
 
     it "invokes the command over ssh" do
-      transport.expects(:connection).yields(connection)
+      transport.expects(:connection).yields(connection).returns(nil)
       connection.expects(:execute).with("shipit")
 
       cmd
