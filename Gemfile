@@ -12,8 +12,8 @@ group :test do
   gem "fakefs",    "~> 3.0"
   gem "kitchen-inspec"
   gem "maruku",    "~> 0.7"
-  gem "minitest",  "~> 5.3", "< 6.0"
-  gem "mocha",     "~> 2.0"
+  gem "minitest",  "~> 6.0", "< 6.1"
+  gem "mocha",     "~> 3.0"
 end
 
 group :integration do
