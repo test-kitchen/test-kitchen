@@ -171,10 +171,12 @@ suites:
 The following environment variables are supported:
 
 - **`CHEF_LICENSE_KEY`**: License key for commercial/trial API downloads. **RECOMMENDED** over setting `license_key` in kitchen.yml to avoid exposing sensitive license keys in plain text configuration files that may be committed to version control.
+
   ```bash
   export CHEF_LICENSE_KEY=your-license-key-here
   kitchen test
   ```
+
 - **`HTTP_PROXY`**, **`HTTPS_PROXY`**, **`FTP_PROXY`**, **`NO_PROXY`**: Standard proxy environment variables (can also be set in config)
 
 ## Path Resolution
