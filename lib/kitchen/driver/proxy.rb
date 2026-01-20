@@ -35,6 +35,9 @@ module Kitchen
       def create(state)
         super
         state[:hostname] = config[:host]
+        state[:port] = config[:port] if config[:port]
+        state[:username] = config[:username] if config[:username]
+        state[:password] = config[:password] if config[:password]
         reset_instance(state)
       end
 
