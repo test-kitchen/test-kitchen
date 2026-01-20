@@ -396,9 +396,7 @@ module Kitchen
     end
 
     # Copies `:http_proxy` and `:https_proxy` values in a driver hash into the
-    # provisioner and verifier hashes. For backwards compatibility with legacy
-    # Drivers (those inheriting directly from `SSHBase`), the original
-    # values are maintained in the driver hash.
+    # provisioner and verifier hashes.
     #
     # This method converts the following:
     #

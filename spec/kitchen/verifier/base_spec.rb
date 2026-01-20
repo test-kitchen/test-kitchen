@@ -16,7 +16,6 @@
 # limitations under the License.
 
 require_relative "../../spec_helper"
-require_relative "../ssh_spec"
 
 require "logger"
 require "stringio"

@@ -19,7 +19,7 @@ group :integration do
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
   gem "kitchen-inspec"
-  gem "kitchen-omnibus-chef"
+  gem "kitchen-omnibus-chef", ">= 1.0"
 end
 
 group :linting do

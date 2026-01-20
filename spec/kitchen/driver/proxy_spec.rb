@@ -17,6 +17,7 @@
 
 require_relative "../../spec_helper"
 
+require "logger"
 require "kitchen/driver/proxy"
 
 describe Kitchen::Driver::Proxy do
@@ -28,8 +29,19 @@ describe Kitchen::Driver::Proxy do
     { host: "foobnoobs.com", reset_command: "mulligan" }
   end
 
+  let(:transport) do
+    t = mock("transport")
+    t.stubs(:name).returns("Dummy")
+    t
+  end
+
   let(:instance) do
-    stub(name: "coolbeans", logger: logger, to_str: "instance")
+    stub(
+      name: "coolbeans",
+      logger: logger,
+      to_str: "instance",
+      transport: transport
+    )
   end
 
   let(:driver) do
@@ -65,24 +77,25 @@ describe Kitchen::Driver::Proxy do
 
   describe "#create" do
     it "sets :hostname in state config" do
-      driver.stubs(:ssh)
+      conn = mock("connection")
+      conn.stubs(:execute)
+      transport.stubs(:connection).yields(conn)
       driver.create(state)
 
       _(state[:hostname]).must_equal "foobnoobs.com"
     end
 
-    it "calls the reset command over ssh" do
-      driver.expects(:ssh).with do |ssh_args, cmd|
-        _(ssh_args[0]).must_equal "foobnoobs.com"
-        _(cmd).must_equal "mulligan"
-      end
+    it "calls the reset command over transport" do
+      conn = mock("connection")
+      conn.expects(:execute).with("mulligan")
+      transport.expects(:connection).with(state).yields(conn)
 
       driver.create(state)
     end
 
-    it "skips ssh call if :reset_command is falsey" do
+    it "skips transport call if :reset_command is falsey" do
       config[:reset_command] = false
-      driver.expects(:ssh).never
+      transport.expects(:connection).never
 
       driver.create(state)
     end
@@ -94,31 +107,32 @@ describe Kitchen::Driver::Proxy do
     end
 
     it "deletes :hostname in state config" do
-      driver.stubs(:ssh)
+      conn = mock("connection")
+      conn.stubs(:execute)
+      transport.stubs(:connection).yields(conn)
       driver.destroy(state)
 
       _(state[:hostname]).must_be_nil
     end
 
-    it "calls the reset command over ssh" do
-      driver.expects(:ssh).with do |ssh_args, cmd|
-        _(ssh_args[0]).must_equal "beep"
-        _(cmd).must_equal "mulligan"
-      end
+    it "calls the reset command over transport" do
+      conn = mock("connection")
+      conn.expects(:execute).with("mulligan")
+      transport.expects(:connection).with(state).yields(conn)
 
       driver.destroy(state)
     end
 
-    it "skips ssh call if :hostname is not in state config" do
+    it "skips transport call if :hostname is not in state config" do
       state.delete(:hostname)
-      driver.expects(:ssh).never
+      transport.expects(:connection).never
 
       driver.destroy(state)
     end
 
-    it "skips ssh call if :reset_command is falsey" do
+    it "skips transport call if :reset_command is falsey" do
       config[:reset_command] = false
-      driver.expects(:ssh).never
+      transport.expects(:connection).never
 
       driver.destroy(state)
     end
