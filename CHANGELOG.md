@@ -1,5 +1,16 @@
 # Test Kitchen Change Log
 
+## [4.0.0](https://github.com/test-kitchen/test-kitchen/compare/v3.9.1...v4.0.0) (2026-01-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove Chef provisioners and default to shell ([#2041](https://github.com/test-kitchen/test-kitchen/issues/2041))
+
+### Features
+
+* Remove Chef provisioners and default to shell ([#2041](https://github.com/test-kitchen/test-kitchen/issues/2041)) ([d4d7df8](https://github.com/test-kitchen/test-kitchen/commit/d4d7df81697d121ac27787084867dab128e87a1a))
+
 ## [3.9.1](https://github.com/test-kitchen/test-kitchen/compare/v3.9.0...v3.9.1) (2025-10-11)
 
 
