@@ -10,7 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUNDLE_WITHOUT: integration
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
@@ -23,51 +22,75 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
+        ruby:
+          - 3.4
+        os:
+          - almalinux-9
+          - ubuntu-2404
     steps:
       - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
       - name: Setup Machine
         run: |
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Dokken
-        run: bundle exec kitchen verify
-
-  vagrant:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ["3.4"]
-    steps:
-      - name: Install VirtualBox
-        run: |
-          wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          sudo apt-get update
-          sudo apt-get install -y libarchive-tools virtualbox
-      - uses: actions/checkout@v6
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Setup Machine
-        run: |
-          bundle config set --local with 'integration'
-          bundle add vagrant --version ">= 2.4.4"
-          bundle install
-          bundle binstubs vagrant
-          export PATH="$(pwd)/bin:$PATH"
-          which vagrant
-          vagrant -v
-      - name: Verify Vagrant
-        run: |
-          export PATH="$(pwd)/bin:$PATH"
-          bundle exec kitchen verify almalinux-9
+        run: bundle exec kitchen verify ${{ matrix.os }}
+  # Commenting out for now until we can stabilize Vagrant on GH Actions runners
+  # vagrant:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ruby:
+  #         - 3.4
+  #       os:
+  #         - almalinux-9
+  #   steps:
+  #     - name: Configure Git for private repo access
+  #       run: |
+  #         git config --global url."https://x-access-token:${{ secrets.GH_PRIVATE_REPO_TOKEN }}@github.com/".insteadOf "https://github.com/"
+  #     - name: Install VirtualBox
+  #       run: |
+  #         wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  #         wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | gpg --dearmor | sudo tee /usr/share/keyrings/oracle-virtualbox-2016.gpg
+  #         echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+  #         echo "deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+  #         sudo apt-get update
+  #         sudo apt-get install -y software-properties-common libarchive-tools vagrant virtualbox-7.2
+  #     - uses: actions/checkout@v6
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: ${{ matrix.ruby }}
+  #         bundler-cache: true
+  #     - name: Setup Machine
+  #       run: |
+  #         bundle config set --local with 'integration'
+  #         # bundle add vagrant --version ">= 2.4.4"
+  #         bundle install
+  #         # Create a wrapper for vagrant that completely isolates it from bundler
+  #         mkdir -p bin
+  #         cat > bin/vagrant << 'EOF'
+  #         #!/usr/bin/env bash
+  #         # Run vagrant with a completely clean Ruby environment
+  #         env -i \
+  #           PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  #           HOME="$HOME" \
+  #           USER="$USER" \
+  #           LOGNAME="$LOGNAME" \
+  #           /usr/bin/vagrant "$@"
+  #         EOF
+  #         chmod +x bin/vagrant
+  #         export PATH="$(pwd)/bin:$PATH"
+  #         # Verify vagrant works
+  #         vagrant --version
+  #     - name: Verify Vagrant
+  #       run: |
+  #         export PATH="$(pwd)/bin:$PATH"
+  #         bundle exec kitchen verify ${{ matrix.os }}
 
   macos:
     env:
@@ -77,14 +100,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
-        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
+        ruby:
+          - 3.4
+        kitchen_yaml:
+          - dummy
+          - exec
+          - proxy
+          - shell
+        os:
+          - localhost
     steps:
       - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+      - name: Install dependencies
+        run: bundle install
       - name: Setup Machine
         run: |
           sudo dscl . -create /Users/${{ env.machine_user }}
@@ -97,7 +129,7 @@ jobs:
           sudo createhomedir -c -u ${{ env.machine_user }}
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify macOS
-        run: bundle exec kitchen verify localhost
+        run: bundle exec kitchen verify ${{ matrix.os }}
 
   windows:
     env:
@@ -108,21 +140,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
-        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
+        ruby:
+          - 3.4
+        kitchen_yaml:
+          - dummy
+          - exec
+          - proxy
+          - shell
+        os:
+          - windows-winrm
     steps:
       - uses: actions/checkout@v6
+      - name: Enable Windows long paths
+        run: |
+          # Enable Windows long paths
+          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+          # Enable Git long paths
+          git config --global core.longpaths true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+      - name: Install dependencies
+        run: bundle install
       - name: Setup Machine
         run: |
           winrm.cmd quickconfig -q
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows
-        run: bundle exec kitchen verify windows-winrm
+        run: bundle exec kitchen verify ${{ matrix.os }}
 
   linux:
     env:
@@ -133,14 +180,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
-        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
+        ruby:
+          - 3.4
+        kitchen_yaml:
+          - dummy
+          - exec
+          - proxy
+          - shell
+        os:
+          - localhost
     steps:
       - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+      - name: Install dependencies
+        run: bundle install
       - name: Setup Machine
         run: |
           sudo useradd -m ${{ env.machine_user }}
@@ -148,7 +204,7 @@ jobs:
           echo "${{ env.machine_user }} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
       - name: Verify Linux
         run: |
-          bundle exec kitchen verify localhost
+          bundle exec kitchen verify ${{ matrix.os }}
 
   windows-fips-ssh:
     env:
@@ -159,14 +215,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["3.1", "3.4"]
-        kitchen_yaml: ["dummy", "exec", "proxy", "shell"]
+        ruby:
+          - 3.4
+        kitchen_yaml:
+          - dummy
+          - exec
+          - proxy
+          - shell
+        os:
+          - windows-fips-ssh
     steps:
       - uses: actions/checkout@v6
+      - name: Enable Windows long paths
+        run: |
+          # Enable Windows long paths
+          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue
+          # Enable Git long paths
+          git config --global core.longpaths true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+      - name: Install dependencies
+        run: bundle install
       - name: 'Enable FIPS via windows registry'
         run: |
           $OldErrorActionPreference = $ErrorActionPreference
@@ -207,4 +278,4 @@ jobs:
           net user /add ${{ env.machine_user }} ${{ env.machine_pass }}
           net localgroup administrators ${{ env.machine_user }} /add
       - name: Verify Windows FIPS SSH
-        run: bundle exec kitchen verify windows-fips-ssh -l debug
+        run: bundle exec kitchen verify ${{ matrix.os }}

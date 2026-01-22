@@ -274,9 +274,9 @@ describe Kitchen::Config do
 
     it "returns a Collection of suites" do
       Kitchen::Suite.stubs(:new)
-        .with(**{ one: "a" }).returns(stub(name: "one"))
+        .with({ one: "a" }).returns(stub(name: "one"))
       Kitchen::Suite.stubs(:new)
-        .with(**{ two: "b" }).returns(stub(name: "two"))
+        .with({ two: "b" }).returns(stub(name: "two"))
       _(config.suites.as_names).must_equal %w{one two}
     end
   end

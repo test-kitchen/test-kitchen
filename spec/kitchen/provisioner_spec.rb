@@ -48,24 +48,6 @@ describe Kitchen::Provisioner do
       _(provisioner).must_be_kind_of Kitchen::Provisioner::Coolbeans
     end
 
-    it "returns a provisioner object of the chef infra for chef zero" do
-      provisioner = Kitchen::Provisioner.for_plugin("chef_zero", {})
-
-      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefInfra
-    end
-
-    it "returns a provisioner object of the chef infra for chef_infra" do
-      provisioner = Kitchen::Provisioner.for_plugin("chef_infra", {})
-
-      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefInfra
-    end
-
-    it "returns a provisioner object of the chef solo for provisioner chef solo" do
-      provisioner = Kitchen::Provisioner.for_plugin("chef_solo", {})
-
-      _(provisioner).must_be_kind_of Kitchen::Provisioner::ChefSolo
-    end
-
     it "returns a provisioner initialized with its config" do
       provisioner = Kitchen::Provisioner.for_plugin("coolbeans", foo: "bar")
 

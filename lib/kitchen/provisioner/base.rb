@@ -247,24 +247,6 @@ module Kitchen
 
       private
 
-      # Builds a complete command given a variables String preamble and a file
-      # containing shell code.
-      #
-      # @param vars [String] shell variables, as a String
-      # @param file [String] file basename (without extension) containing
-      #   shell code
-      # @return [String] command
-      # @api private
-      def shell_code_from_file(vars, file)
-        src_file = File.join(
-          File.dirname(__FILE__),
-          %w{.. .. .. support},
-          file + (powershell_shell? ? ".ps1" : ".sh")
-        )
-
-        wrap_shell_code([vars, "", File.read(src_file)].join("\n"))
-      end
-
       # Conditionally prefixes a command with a sudo command.
       #
       # @param command [String] command to be prefixed

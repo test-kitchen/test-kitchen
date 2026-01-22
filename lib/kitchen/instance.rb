@@ -210,11 +210,7 @@ module Kitchen
         raise UserError, "Instance #{to_str} has not yet been created"
       end
 
-      lc = if legacy_ssh_base_driver?
-             legacy_ssh_base_login(state)
-           else
-             transport.connection(state).login_command
-           end
+      lc = transport.connection(state).login_command
 
       debug(%{Login command: #{lc.command} #{lc.arguments.join(" ")} } \
         "(Options: #{lc.options})")
@@ -412,13 +408,8 @@ module Kitchen
     def converge_action
       banner "Converging #{to_str}..."
       elapsed = action(:converge) do |state|
-        if legacy_ssh_base_driver?
-          provisioner.check_license
-          legacy_ssh_base_converge(state)
-        else
-          provisioner.check_license
-          provisioner.call(state)
-        end
+        provisioner.check_license
+        provisioner.call(state)
       end
       info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
       self
@@ -432,24 +423,9 @@ module Kitchen
     def setup_action
       banner "Setting up #{to_str}..."
       elapsed = action(:setup) do |state|
-        legacy_ssh_base_setup(state) if legacy_ssh_base_driver?
       end
       info("Finished setting up #{to_str} #{Util.duration(elapsed.real)}.")
       self
-    end
-
-    # returns true, if the verifier is busser
-    def verifier_busser?(verifier)
-      !defined?(Kitchen::Verifier::Busser).nil? && verifier.is_a?(Kitchen::Verifier::Busser)
-    end
-
-    # returns true, if the verifier is dummy
-    def verifier_dummy?(verifier)
-      !defined?(Kitchen::Verifier::Dummy).nil? && verifier.is_a?(Kitchen::Verifier::Dummy)
-    end
-
-    def use_legacy_ssh_verifier?(verifier)
-      verifier_busser?(verifier) || verifier_dummy?(verifier)
     end
 
     # Perform the verify action.
@@ -460,15 +436,7 @@ module Kitchen
     def verify_action
       banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
-        # use special handling for legacy driver
-        if legacy_ssh_base_driver? && use_legacy_ssh_verifier?(verifier)
-          legacy_ssh_base_verify(state)
-        elsif legacy_ssh_base_driver?
-          # read ssh options from legacy driver
-          verifier.call(driver.legacy_state(state))
-        else
-          verifier.call(state)
-        end
+        verifier.call(state)
       end
       info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
       self
@@ -615,71 +583,6 @@ module Kitchen
     # @api private
     def failure_message(what)
       "#{what.capitalize} failed on instance #{to_str}."
-    end
-
-    # Invokes `Driver#converge` on a legacy Driver, which inherits from
-    # `Kitchen::Driver::SSHBase`.
-    #
-    # @param state [Hash] mutable instance state
-    # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#converge` method will no longer be called on the Driver.
-    # @api private
-    def legacy_ssh_base_converge(state)
-      warn("Running legacy converge for '#{driver.name}' Driver")
-      # TODO: Document upgrade path and provide link
-      # warn("Driver authors: please read http://example.com for more details.")
-      driver.converge(state)
-    end
-
-    # @return [TrueClass,FalseClass] whether or not the Driver inherits from
-    #   `Kitchen::Driver::SSHBase`
-    # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#converge` method will no longer be called on the Driver.
-    # @api private
-    def legacy_ssh_base_driver?
-      driver.class < Kitchen::Driver::SSHBase
-    end
-
-    # Invokes `Driver#login_command` on a legacy Driver, which inherits from
-    # `Kitchen::Driver::SSHBase`.
-    #
-    # @param state [Hash] mutable instance state
-    # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#login_command` method will no longer be called on the Driver.
-    # @api private
-    def legacy_ssh_base_login(state)
-      warn("Running legacy login for '#{driver.name}' Driver")
-      # TODO: Document upgrade path and provide link
-      # warn("Driver authors: please read http://example.com for more details.")
-      driver.login_command(state)
-    end
-
-    # Invokes `Driver#setup` on a legacy Driver, which inherits from
-    # `Kitchen::Driver::SSHBase`.
-    #
-    # @param state [Hash] mutable instance state
-    # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#setup` method will no longer be called on the Driver.
-    # @api private
-    def legacy_ssh_base_setup(state)
-      warn("Running legacy setup for '#{driver.name}' Driver")
-      # TODO: Document upgrade path and provide link
-      # warn("Driver authors: please read http://example.com for more details.")
-      driver.setup(state)
-    end
-
-    # Invokes `Driver#verify` on a legacy Driver, which inherits from
-    # `Kitchen::Driver::SSHBase`.
-    #
-    # @param state [Hash] mutable instance state
-    # @deprecated When legacy Driver::SSHBase support is removed, the
-    #   `#verify` method will no longer be called on the Driver.
-    # @api private
-    def legacy_ssh_base_verify(state)
-      warn("Running legacy verify for '#{driver.name}' Driver")
-      # TODO: Document upgrade path and provide link
-      # warn("Driver authors: please read http://example.com for more details.")
-      driver.verify(state)
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

@@ -169,7 +169,7 @@ describe Kitchen do
       it "exits with 10" do
         go_boom
       rescue SystemExit => e
-        e.status.must_equal 10
+        _(e.status).must_equal 10
       end
 
       it "prints a message on STDERR" do
@@ -208,7 +208,7 @@ describe Kitchen do
       it "logs the exception message on the common logger's error severity" do
         go_boom
       rescue SystemExit
-        logger_io.string.must_match(/ERROR -- Kitchen: cannot do that$/)
+        _(logger_io.string).must_match(/ERROR -- Kitchen: cannot do that$/)
       end
 
       it "logs the exception message on debug, if set" do
@@ -217,7 +217,7 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string.must_match(/DEBUG -- Kitchen: cannot do that$/)
+          _(logger_io.string).must_match(/DEBUG -- Kitchen: cannot do that$/)
         end
       end
     end
@@ -234,7 +234,7 @@ describe Kitchen do
       it "exits with 20" do
         go_boom
       rescue SystemExit => e
-        e.status.must_equal 20
+        _(e.status).must_equal 20
       end
 
       it "prints a message on STDERR" do
@@ -275,11 +275,11 @@ describe Kitchen do
       it "logs the exception message on the common logger's error severity" do
         go_boom
       rescue SystemExit
-        logger_io.string
+        _(logger_io.string)
           .must_match(/ERROR -- Kitchen: ------Exception-------$/)
-        logger_io.string
+        _(logger_io.string)
           .must_match(/ERROR -- Kitchen: Class: Kitchen::StandardError$/)
-        logger_io.string
+        _(logger_io.string)
           .must_match(/ERROR -- Kitchen: ------Backtrace-------$/)
       end
 
@@ -289,12 +289,12 @@ describe Kitchen do
         begin
           go_boom
         rescue SystemExit
-          logger_io.string
+          _(logger_io.string)
             .must_match(/DEBUG -- Kitchen: ------Exception-------$/)
-          logger_io.string
+          _(logger_io.string)
             .must_match(/DEBUG -- Kitchen: Class: Kitchen::StandardError$/)
-          logger_io.string
-            .must_match(/DEBUG -- Kitchen: ------Backtrace-------$/)
+          _(logger_io.string)
+            .must_match(/DEBUG -- Kitchen: Message: ah crap$/)
         end
       end
     end

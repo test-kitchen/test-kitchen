@@ -6,19 +6,20 @@ group :test do
   gem "rake"
   gem "rb-readline"
   gem "aruba",     ">= 0.11", "< 3.0"
-  gem "chef-cli"
   gem "countloc",  "~> 0.4"
   gem "cucumber",  ">= 9.2", "< 11"
   gem "fakefs",    "~> 3.0"
-  gem "kitchen-inspec"
   gem "maruku",    "~> 0.7"
   gem "minitest",  "~> 6.0", "< 6.1"
   gem "mocha",     "~> 3.0"
 end
 
 group :integration do
+  gem "chef-cli"
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
+  gem "kitchen-inspec"
+  gem "kitchen-omnibus-chef", ">= 1.0"
 end
 
 group :linting do

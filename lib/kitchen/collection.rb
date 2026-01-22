@@ -46,7 +46,7 @@ module Kitchen
     #
     # @return [Array<String>] array of name strings
     def as_names
-      __getobj__.map(&:name)
+      __getobj__.map { |item| item.respond_to?(:name) ? item.name : item.to_s }
     end
   end
 end
