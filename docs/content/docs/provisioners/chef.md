@@ -61,7 +61,7 @@ provisioner:
 
   # License Configuration
   chef_license: accept # Accept Chef license: 'accept', 'accept-no-persist', or 'accept-silent'
-  license_key: nil # License key for commercial/trial downloads (RECOMMENDED: use CHEF_LICENSE_KEY env var instead for security)
+  chef_license_key: nil # License key for commercial/trial downloads (RECOMMENDED: use CHEF_LICENSE_KEY env var instead for security)
 
   # Custom Installation
   download_url: nil # Direct download URL for specific package
@@ -145,9 +145,9 @@ provisioner:
   channel: stable
   install_strategy: once
 
-  # License key for commercial/trial downloads
+  # Chef license key for commercial/trial downloads
   # RECOMMENDED: Set via CHEF_LICENSE_KEY environment variable instead of plain text config
-  # license_key: your-license-key-here
+  # chef_license_key: your-license-key-here
 
 platforms:
   - name: ubuntu-24.04
@@ -170,7 +170,7 @@ suites:
 
 The following environment variables are supported:
 
-- **`CHEF_LICENSE_KEY`**: License key for commercial/trial API downloads. **RECOMMENDED** over setting `license_key` in kitchen.yml to avoid exposing sensitive license keys in plain text configuration files that may be committed to version control.
+- **`CHEF_LICENSE_KEY`**: License key for commercial/trial API downloads. **RECOMMENDED** over setting `chef_license_key` in kitchen.yml to avoid exposing sensitive license keys in plain text configuration files that may be committed to version control.
 
   ```bash
   export CHEF_LICENSE_KEY=your-license-key-here
