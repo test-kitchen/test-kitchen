@@ -62,7 +62,7 @@ driver:
 * disable_secureboot
   * Boolean.  If true, will disable secure boot for the VM.  Only applies if `vm_generation=2`.  Defaults to false.
 * enable_guest_services
-  * Enable the Hyper-V Integration Guest services for the VM before starting it. Hyper-V defauls is false (true|false)
+  * Enable the Hyper-V Integration Guest services for the VM before starting it. Hyper-V defaults is false (true|false)
 * disk_type
   * The type of virtual disk to create, .VHD or .VHDX.  Defaults to the file extension of the parent virtual hard drive.
 * resize_vhd
@@ -113,7 +113,7 @@ driver:
 
 ## Image Configuration
 
- The following changes need to be made to a Windows image that is going to be used for testing.  This is not an exhaustive list and, your milage may vary.
+ The following changes need to be made to a Windows image that is going to be used for testing.  This is not an exhaustive list and, your mileage may vary.
 
 * Guest VMs should have the latest Integration Components installed.  See <https://support.microsoft.com/en-us/help/3063109/hyper-v-integration-components-update-for-windows-virtual-machines-that-are-running-on-a-windows-10-based-host>
 
@@ -161,14 +161,6 @@ verifier:
 
 platforms:
   - name: windows-kitchen
-
-suites:
-  - name: default
-    run_list:
-      - recipe[learn_chef_iis::default]
-    verifier:
-      inspec_tests:
-        - test/smoke/default
 
 suites:
   - name: default

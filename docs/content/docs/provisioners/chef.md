@@ -181,8 +181,6 @@ The following environment variables are supported:
 
 ## Path Resolution
 
-## Path Resolution
-
 If not explicitly set, the following keys:
 
 - data_path
