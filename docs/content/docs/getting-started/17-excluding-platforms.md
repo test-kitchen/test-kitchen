@@ -7,7 +7,7 @@ menu:
     weight: 170
 ---
 
-Perhaps our enterprise has standardized on Ubuntu 24.04 for server tasks so we really only care about testing that our `server` recipe works on that platform. That said we still want to be able to test our default recipe against CentOS.
+Perhaps our enterprise has standardized on Ubuntu 24.04 for server tasks so we really only care about testing that our `server` recipe works on that platform. That said we still want to be able to test our default recipe against AlmaLinux.
 
 Let's give `kitchen list` a look:
 
