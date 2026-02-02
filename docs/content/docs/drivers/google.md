@@ -284,14 +284,14 @@ In the above example the `disk0` would be automatically be used as the bootdisk 
 
 #### `boot`
 
-Specifies wether or not a disk should be used as the boot disk for the instance. By default the first disk will be used as boot disk.
+Specifies whether or not a disk should be used as the boot disk for the instance. By default the first disk will be used as boot disk.
 
 #### `autodelete_disk` - deprecated as standalone option
 
 Boolean specifying whether or not to automatically delete boot disk
 for test instance.  Default: `true`
 
-*This option is deprecated as a standlone configuration, but can be applied on a per disk level.*
+*This option is deprecated as a standalone configuration, but can be applied on a per disk level.*
 
 NOTE: If you set this to false, once Test Kitchen destroys your instance,
 the boot disk used will remain in your project. You will need to manually delete it to
@@ -303,7 +303,7 @@ command in the GCP SDK or by using `knife google disk delete` from
 
 Size, in gigabytes, of boot disk.  Default: `10`.
 
-*This option is deprecated as a standlone configuration, but can be applied on a per disk level.*
+*This option is deprecated as a standalone configuration, but can be applied on a per disk level.*
 
 Some images, such as windows images, have a larger source image size
 and require the disk_size to be the same size or larger than the source.
@@ -314,7 +314,7 @@ if necessary.
 
 Type of the disk. Default: `pd-standard`.
 
-*This option is deprecated as a standlone configuration, but can be applied on a per disk level.*
+*This option is deprecated as a standalone configuration, but can be applied on a per disk level.*
 
 Valid disk types:
 

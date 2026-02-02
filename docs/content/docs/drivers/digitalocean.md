@@ -18,7 +18,7 @@ This configuration sets the driver to `digitalocean` and then sets the `some_con
 
 ```yaml
 driver:
-  name: digitaloean
+  name: digitalocean
   some_config: true
 ```
 
@@ -28,7 +28,7 @@ This configuration sets the driver to `digitalocean` globally and then sets the 
 
 ```yaml
 driver:
-  name: digitaloean
+  name: digitalocean
 
 platforms:
   - name: ubuntu-20
@@ -101,7 +101,7 @@ The `size` configuration option allows you to specify the Droplet size. By defau
 
 #### region
 
-The `size` configuration option allows you to control the region where the Droplet is configured. By default your droplets will be built in the `nyc1` region. This configuration option can be set with the configuration option or by setting the `DIGITALOCEAN_REGION` env var. The env var is useful to allow teams with developers across different regions to test within their own geographic region without hard coding configs.
+The `region` configuration option allows you to control the region where the Droplet is configured. By default your droplets will be built in the `nyc1` region. This configuration option can be set with the configuration option or by setting the `DIGITALOCEAN_REGION` env var. The env var is useful to allow teams with developers across different regions to test within their own geographic region without hard coding configs.
 
 ```bash
 export DIGITALOCEAN_REGION="tor1"
@@ -147,7 +147,7 @@ The above configuration when fully tested would create the following images in t
 - `nyc3`: New York 3
 - `sfo1`: San Francisco 1
 - `sfo2`: San Francisco 2
-- `sfo3`: San Francisco 2
+- `sfo3`: San Francisco 3
 - `sgp1`: Singapore 1
 - `tor1`: Toronto 1
 

@@ -7,7 +7,7 @@ menu:
     weight: 150
 ---
 
-Our first test was created for us automatically for us by our cookbook generator so here we will create the folders and files manually.
+Our first test was created for us automatically by our cookbook generator so here we will create the folders and files manually.
 
 First we're going to create a directory for our test file:
 

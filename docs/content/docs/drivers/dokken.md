@@ -67,7 +67,7 @@ The `cap_drop` configuration option allows you to specify additional system capa
 ```yaml
 driver:
   name: dokken
-  cap_dop:
+  cap_drop:
     - AUDIT_WRITE
 ```
 

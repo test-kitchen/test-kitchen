@@ -19,7 +19,7 @@ regular expression
 : a "a sequence of characters that define a search pattern", in the context of Test Kitchen we allow a user to specify instances with regular expressions like `^default-ubuntu`
 
 Vagrant
-: a piece of software that makes abstracts away hypervisor details to provide a consistent experience and interface to virtual machines
+: a piece of software that abstracts away hypervisor details to provide a consistent experience and interface to virtual machines
 
 virtual machine
 : a machine that is virtualized, i.e. running on a hypervisor

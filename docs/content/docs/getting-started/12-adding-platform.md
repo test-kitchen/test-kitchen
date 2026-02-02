@@ -7,7 +7,7 @@ menu:
     weight: 120
 ---
 
-Now that we have Ubuntu working, let's add support for AlmaLinux to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and the `almalinux-10` line to your platforms list so that it resembles:
+Now that we have Ubuntu working, let's add support for AlmaLinux to our cookbook. This shouldn't be too bad. Open `kitchen.yml` in your editor and add the `almalinux-10` line to your platforms list so that it resembles:
 
 ```yaml
 ---
@@ -177,7 +177,7 @@ Test Summary: 1 successful, 0 failures, 0 skipped
 -----> Test Kitchen is finished. (1m54.59s)
 ```
 
-Nice! We've verified that our cookbook works on Ubuntu 24.04 and CentOS 8. Since the CentOS instance is no longer needed, let's destroy it for now:
+Nice! We've verified that our cookbook works on Ubuntu 24.04 and AlmaLinux 10. Since the AlmaLinux instance is no longer needed, let's destroy it for now:
 
 ```ruby
 $ kitchen destroy

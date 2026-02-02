@@ -36,7 +36,7 @@ A few things of note from the output above:
 
 <div class="callout">
 <h3 class="callout--title">Pro Tip</h3>
-If using a Bash-like shell, <code>echo $?</code> is will print the exit code of the last run shell command. This would show that the <code>kitchen verify</code> command exited cleanly with <code>0</code>.
+If using a Bash-like shell, <code>echo $?</code> will print the exit code of the last run shell command. This would show that the <code>kitchen verify</code> command exited cleanly with <code>0</code>.
 </div>
 
 Let's check the status of our instance again:
