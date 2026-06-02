@@ -488,64 +488,7 @@ module Kitchen
     #   occurred, etc.
     # @api private
     def action(what, &block)
-      state = state_file.read
-      elapsed = Benchmark.measure do
-        synchronize_or_call(what, state, &block)
-      end
-      state[:last_action] = what.to_s
-      state[:last_error] = nil
-      elapsed
-    rescue ActionFailed => e
-      log_failure(what, e)
-      state[:last_error] = e.class.name
-      raise(InstanceFailure, failure_message(what) +
-        "  Please see .kitchen/logs/#{name}.log for more details",
-        e.backtrace)
-    rescue Exception => e # rubocop:disable Lint/RescueException
-      log_failure(what, e)
-      state[:last_error] = e.class.name
-      raise ActionFailed,
-        "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
-    ensure
-      state_file.write(state)
-    end
-
-    # Runs a given action block through a common driver mutex if required or
-    # runs it directly otherwise. If a driver class' `.serial_actions` array
-    # includes the desired action, then the action must be run with a muxtex
-    # lock. Otherwise, it is assumed that the action can happen concurrently,
-    # or fully in parallel.
-    #
-    # @param what [Symbol] the action to be performed
-    # @param state [Hash] a mutable state hash for this instance
-    # @param block [Proc] a block to be called
-    # @api private
-    def synchronize_or_call(what, state)
-      plugin_class = plugin_class_for_action(what)
-      if Array(plugin_class.serial_actions).include?(what)
-        debug("#{to_str} is synchronizing on #{plugin_class}##{what}")
-        self.class.mutexes[plugin_class].synchronize do
-          debug("#{to_str} is messaging #{plugin_class}##{what}")
-          yield(state)
-        end
-      else
-        yield(state)
-      end
-    end
-
-    # Maps the given action to the plugin class associated with the action
-    #
-    # @param what[Symbol] action
-    # @return [Class] Kitchen::Plugin::Base
-    # @api private
-    def plugin_class_for_action(what)
-      {
-        create: driver,
-        setup: transport,
-        converge: provisioner,
-        verify: verifier,
-        destroy: driver,
-      }[what].class
+      action_runner.call(what, &block)
     end
 
     # Writes a high level message for logging and/or output.
@@ -560,29 +503,78 @@ module Kitchen
       super
     end
 
-    # Logs a failure (message and backtrace) to the instance's file logger
-    # to help with debugging and diagnosing issues without overwhelming the
-    # console output in the default case (i.e. running kitchen with :info
-    # level debugging).
-    #
-    # @param what [String] an action
-    # @param e [Exception] an exception
-    # @api private
-    def log_failure(what, e)
-      return if logger.logdev.nil?
-
-      logger.logdev.error(failure_message(what))
-      Error.formatted_trace(e).each { |line| logger.logdev.error(line) }
+    def action_runner
+      @action_runner ||= ActionRunner.new(self, state_file)
     end
 
-    # Returns a string explaining what action failed, at a high level. Used
-    # for displaying to end user.
-    #
-    # @param what [String] an action
-    # @return [String] a failure message
-    # @api private
-    def failure_message(what)
-      "#{what.capitalize} failed on instance #{to_str}."
+    # Coordinates one instance action, including state persistence, plugin
+    # serialization, and failure wrapping.
+    class ActionRunner
+      def initialize(instance, state_file)
+        @instance = instance
+        @state_file = state_file
+      end
+
+      def call(what, &block)
+        state = state_file.read
+        elapsed = Benchmark.measure do
+          synchronize_or_call(what, state, &block)
+        end
+        state[:last_action] = what.to_s
+        state[:last_error] = nil
+        elapsed
+      rescue ActionFailed => e
+        log_failure(what, e)
+        state[:last_error] = e.class.name
+        raise(InstanceFailure, failure_message(what) +
+          "  Please see .kitchen/logs/#{instance.name}.log for more details",
+          e.backtrace)
+      rescue Exception => e # rubocop:disable Lint/RescueException
+        log_failure(what, e)
+        state[:last_error] = e.class.name
+        raise ActionFailed,
+          "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+      ensure
+        state_file.write(state)
+      end
+
+      private
+
+      attr_reader :instance, :state_file
+
+      def synchronize_or_call(what, state)
+        plugin_class = plugin_class_for_action(what)
+        if Array(plugin_class.serial_actions).include?(what)
+          instance.debug("#{instance.to_str} is synchronizing on #{plugin_class}##{what}")
+          instance.class.mutexes[plugin_class].synchronize do
+            instance.debug("#{instance.to_str} is messaging #{plugin_class}##{what}")
+            yield(state)
+          end
+        else
+          yield(state)
+        end
+      end
+
+      def plugin_class_for_action(what)
+        {
+          create: instance.driver,
+          setup: instance.transport,
+          converge: instance.provisioner,
+          verify: instance.verifier,
+          destroy: instance.driver,
+        }[what].class
+      end
+
+      def log_failure(what, e)
+        return if instance.logger.logdev.nil?
+
+        instance.logger.logdev.error(failure_message(what))
+        Error.formatted_trace(e).each { |line| instance.logger.logdev.error(line) }
+      end
+
+      def failure_message(what)
+        "#{what.capitalize} failed on instance #{instance.to_str}."
+      end
     end
 
     # The simplest finite state machine pseudo-implementation needed to manage

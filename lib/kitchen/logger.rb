@@ -61,7 +61,7 @@ module Kitchen
                          options[:log_overwrite]
                        end
 
-      @logdev = logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
+      @logdev = device_factory.logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
 
       populate_loggers(options)
 
@@ -77,10 +77,11 @@ module Kitchen
     def populate_loggers(options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
-      @loggers << stdout_logger(options[:stdout], options[:color], options[:colorize]) if
+      @loggers << device_factory.stdout_logger(options[:stdout], options[:color], options[:colorize]) if
         options[:stdout]
-      @loggers << stdout_logger($stdout, options[:color], options[:colorize]) if
+      @loggers << device_factory.stdout_logger($stdout, options[:color], options[:colorize]) if
         @loggers.empty?
+      @sink_set = SinkSet.new(@loggers)
     end
     private :populate_loggers
 
@@ -91,18 +92,14 @@ module Kitchen
       # @!macro delegate_to_first_logger
       #   @method $1()
       def delegate_to_first_logger(meth)
-        define_method(meth) { |*args| @loggers.first.public_send(meth, *args) }
+        define_method(meth) { |*args, &block| @sink_set.first(meth, *args, &block) }
       end
 
       # @api private
       # @!macro delegate_to_all_loggers
       #   @method $1()
       def delegate_to_all_loggers(meth)
-        define_method(meth) do |*args|
-          result = nil
-          @loggers.each { |l| result = l.public_send(meth, *args) }
-          result
-        end
+        define_method(meth) { |*args, &block| @sink_set.all(meth, *args, &block) }
       end
     end
 
@@ -282,54 +279,138 @@ module Kitchen
       Kitchen::DEFAULT_LOG_OVERWRITE
     end
 
-    # Construct a new standard out logger.
-    #
-    # @param stdout [IO] the IO object that represents stdout (or similar)
-    # @param color [Symbol] color to use when outputting messages
-    # @param colorize [Boolean] whether to enable color
-    # @return [StdoutLogger] a new logger
-    # @api private
-    def stdout_logger(stdout, color, colorize)
-      logger = StdoutLogger.new(stdout)
-      if colorize
-        logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          Color.colorize(msg.dup.to_s, color).concat("\n")
-        end
-      else
-        logger.formatter = proc do |_severity, _datetime, _progname, msg|
-          msg.dup.concat("\n")
+    def device_factory
+      @device_factory ||= DeviceFactory.new
+    end
+
+    # Internal composite for forwarding stdlib Logger-compatible calls to all
+    # configured logging sinks.
+    class SinkSet
+      def initialize(loggers)
+        @loggers = loggers
+      end
+
+      def first(meth, *args, &block)
+        @loggers.first.public_send(meth, *args, &block)
+      end
+
+      def all(meth, *args, &block)
+        result = nil
+        block = memoized_block(block) if block
+        @loggers.each { |logger| result = logger.public_send(meth, *args, &block) }
+        result
+      end
+
+      private
+
+      def memoized_block(block)
+        evaluated = false
+        value = nil
+        proc do
+          unless evaluated
+            value = block.call
+            evaluated = true
+          end
+          value
         end
       end
-      logger
     end
 
-    # Construct a new logdev logger.
-    #
-    # @param filepath_or_logdev [String,IO] a filepath String or IO object
-    # @param log_overwrite [Boolean] apply log overwriting
-    #   if filepath_or_logdev is a file path
-    # @return [LogdevLogger] a new logger
-    # @api private
-    def logdev_logger(filepath_or_logdev, log_overwrite)
-      LogdevLogger.new(resolve_logdev(filepath_or_logdev, log_overwrite))
+    # Internal factory for building the concrete logger devices.
+    class DeviceFactory
+      # Construct a new standard out logger.
+      #
+      # @param stdout [IO] the IO object that represents stdout (or similar)
+      # @param color [Symbol] color to use when outputting messages
+      # @param colorize [Boolean] whether to enable color
+      # @return [StdoutLogger] a new logger
+      # @api private
+      def stdout_logger(stdout, color, colorize)
+        logger = StdoutLogger.new(stdout)
+        logger.formatter = stdout_formatter(color, colorize)
+        logger
+      end
+
+      # Construct a new logdev logger.
+      #
+      # @param filepath_or_logdev [String,IO] a filepath String or IO object
+      # @param log_overwrite [Boolean] apply log overwriting
+      #   if filepath_or_logdev is a file path
+      # @return [LogdevLogger] a new logger
+      # @api private
+      def logdev_logger(filepath_or_logdev, log_overwrite)
+        LogdevLogger.new(resolve_logdev(filepath_or_logdev, log_overwrite))
+      end
+
+      private
+
+      def stdout_formatter(color, colorize)
+        if colorize
+          proc do |_severity, _datetime, _progname, msg|
+            Color.colorize(msg.dup.to_s, color).concat("\n")
+          end
+        else
+          proc do |_severity, _datetime, _progname, msg|
+            msg.dup.concat("\n")
+          end
+        end
+      end
+
+      # Return an IO object from a filepath String or the IO object itself.
+      #
+      # @param filepath_or_logdev [String,IO] a filepath String or IO object
+      # @param log_overwrite [Boolean] apply log overwriting
+      #   if filepath_or_logdev is a file path
+      # @return [IO] an IO object
+      # @api private
+      def resolve_logdev(filepath_or_logdev, log_overwrite)
+        if filepath_or_logdev.is_a? String
+          mode = log_overwrite ? "wb" : "ab"
+          FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
+          file = File.open(File.expand_path(filepath_or_logdev), mode)
+          file.sync = true
+          file
+        else
+          filepath_or_logdev
+        end
+      end
     end
 
-    # Return an IO object from a filepath String or the IO object itself.
-    #
-    # @param filepath_or_logdev [String,IO] a filepath String or IO object
-    # @param log_overwrite [Boolean] apply log overwriting
-    #   if filepath_or_logdev is a file path
-    # @return [IO] an IO object
-    # @api private
-    def resolve_logdev(filepath_or_logdev, log_overwrite)
-      if filepath_or_logdev.is_a? String
-        mode = log_overwrite ? "wb" : "ab"
-        FileUtils.mkdir_p(File.dirname(filepath_or_logdev))
-        file = File.open(File.expand_path(filepath_or_logdev), mode)
-        file.sync = true
-        file
-      else
-        filepath_or_logdev
+    # Buffers streamed output until a complete line is available for logging.
+    class LineBuffer
+      def initialize(&line_handler)
+        @buffer = +""
+        @line_handler = line_handler
+      end
+
+      def <<(msg)
+        @buffer += msg
+        flush_lines
+      end
+
+      private
+
+      def flush_lines
+        while (i = @buffer.index("\n"))
+          @line_handler.call(@buffer[0, i].chomp)
+          @buffer[0, i + 1] = ""
+        end
+      end
+    end
+
+    # Rewrites already-prefixed stream lines into the matching logger call.
+    class StreamLineFormatter
+      def initialize(logger)
+        @logger = logger
+      end
+
+      def format(line)
+        case line
+        when /^-----> / then @logger.banner(line.gsub(/^[ >-]{6} /, ""))
+        when /^>>>>>> / then @logger.error(line.gsub(/^[ >-]{6} /, ""))
+        when /^       / then @logger.info(line.gsub(/^[ >-]{6} /, ""))
+        else @logger.info(line)
+        end
       end
     end
 
@@ -342,33 +423,25 @@ module Kitchen
       #
       # @param msg [String] a message
       def <<(msg)
-        @buffer ||= ""
-        @buffer += msg
-        while (i = @buffer.index("\n"))
-          format_line(@buffer[0, i].chomp)
-          @buffer[0, i + 1] = ""
-        end
+        line_buffer << msg
       end
 
       # Log a banner message.
       #
       # @param msg [String] a message
       def banner(msg = nil, &block)
-        super_info("-----> #{msg}", &block)
+        if block
+          super_info(nil) { "-----> #{block.call}" }
+        else
+          super_info("-----> #{msg}")
+        end
       end
 
       private
 
-      # Reformat a line if it already contains log formatting.
-      #
-      # @param line [String] a message line
-      # @api private
-      def format_line(line)
-        case line
-        when /^-----> / then banner(line.gsub(/^[ >-]{6} /, ""))
-        when /^>>>>>> / then error(line.gsub(/^[ >-]{6} /, ""))
-        when /^       / then info(line.gsub(/^[ >-]{6} /, ""))
-        else info(line)
+      def line_buffer
+        @line_buffer ||= LineBuffer.new do |line|
+          StreamLineFormatter.new(self).format(line)
         end
       end
     end
@@ -380,42 +453,66 @@ module Kitchen
       #
       # @param msg [String] a message
       def debug(msg = nil, &block)
-        super("D      #{msg}", &block)
+        if block
+          super(nil) { "D      #{block.call}" }
+        else
+          super("D      #{msg}")
+        end
       end
 
       # Log an info message
       #
       # @param msg [String] a message
       def info(msg = nil, &block)
-        super("       #{msg}", &block)
+        if block
+          super(nil) { "       #{block.call}" }
+        else
+          super("       #{msg}")
+        end
       end
 
       # Log a warn message
       #
       # @param msg [String] a message
       def warn(msg = nil, &block)
-        super("$$$$$$ #{msg}", &block)
+        if block
+          super(nil) { "$$$$$$ #{block.call}" }
+        else
+          super("$$$$$$ #{msg}")
+        end
       end
 
       # Log an error message
       #
       # @param msg [String] a message
       def error(msg = nil, &block)
-        super(">>>>>> #{msg}", &block)
+        if block
+          super(nil) { ">>>>>> #{block.call}" }
+        else
+          super(">>>>>> #{msg}")
+        end
       end
 
       # Log a fatal message
       #
       # @param msg [String] a message
       def fatal(msg = nil, &block)
-        super("!!!!!! #{msg}", &block)
+        if block
+          super(nil) { "!!!!!! #{block.call}" }
+        else
+          super("!!!!!! #{msg}")
+        end
       end
 
       # Log an unknown message
       #
       # @param msg [String] a message
       def unknown(msg = nil, &block)
-        super("?????? #{msg}", &block)
+        if block
+          super(nil) { "?????? #{block.call}" }
+        else
+          super("?????? #{msg}")
+        end
       end
     end
   end
