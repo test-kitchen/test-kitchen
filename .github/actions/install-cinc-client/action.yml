@@ -1,0 +1,78 @@
+---
+name: Install Cinc Client
+author: Test Kitchen
+description: >
+  Installs Cinc Client on the GitHub Actions runner and exports Test Kitchen
+  environment overrides so host-targeted integration suites use the installed
+  client instead of installing Chef through omnibus.
+
+inputs:
+  version:
+    description: >
+      Cinc Client version to install. Use a major version for the latest in
+      that series, or latest for the newest stable release.
+    required: false
+    default: latest
+  channel:
+    description: "Release channel: stable or current"
+    required: false
+    default: stable
+
+runs:
+  using: composite
+  steps:
+    - name: Install Cinc Client (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        echo "::group::Installing Cinc Client v${{ inputs.version }}"
+        curl -fsSL https://omnitruck.cinc.sh/install.sh \
+          | sudo bash -s -- -P cinc -c ${{ inputs.channel }} -v ${{ inputs.version }}
+        echo "::endgroup::"
+
+        client_path="$(command -v chef-client || command -v cinc-client)"
+        client_root="$(dirname "$(dirname "${client_path}")")"
+
+        {
+          echo "KITCHEN_PRODUCT_NAME=cinc"
+          echo "KITCHEN_INSTALL_STRATEGY=skip"
+          echo "KITCHEN_CHEF_CLIENT_PATH=${client_path}"
+          echo "KITCHEN_CHEF_RUBY_BINDIR=${client_root}/embedded/bin"
+        } >> "$GITHUB_ENV"
+
+        "$client_path" --version
+
+    - name: Install Cinc Client (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Write-Host "::group::Installing Cinc Client v${{ inputs.version }}"
+        . { iwr -useb https://omnitruck.cinc.sh/install.ps1 } | iex
+        install -project cinc -channel ${{ inputs.channel }} -version ${{ inputs.version }}
+        Write-Host "::endgroup::"
+
+        $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+        $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+        $env:PATH = "$machinePath;$userPath"
+
+        $client = Get-Command chef-client -ErrorAction SilentlyContinue
+        if (-not $client) {
+          $client = Get-Command cinc-client -ErrorAction Stop
+        }
+
+        $clientBin = Split-Path -Parent $client.Source
+        $clientRoot = Split-Path -Parent $clientBin
+
+        "$clientBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        "KITCHEN_PRODUCT_NAME=cinc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "KITCHEN_INSTALL_STRATEGY=skip" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "KITCHEN_CHEF_CLIENT_PATH=$($client.Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "KITCHEN_CHEF_RUBY_BINDIR=$(Join-Path $clientRoot 'embedded\bin')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+        & $client.Source --version
+
+branding:
+  icon: download
+  color: orange
