@@ -32,8 +32,18 @@ runs:
           | sudo bash -s -- -P cinc -c "${{ inputs.channel }}" -v "${{ inputs.version }}"
         echo "::endgroup::"
 
-        client_path="$(command -v chef-client || command -v cinc-client)"
+        if [ -x /opt/cinc/bin/cinc-client ]; then
+          client_path="/opt/cinc/bin/cinc-client"
+        elif [ -x /opt/cinc/bin/chef-client ]; then
+          client_path="/opt/cinc/bin/chef-client"
+        else
+          client_path="$(command -v cinc-client || command -v chef-client)"
+        fi
+        client_path="$(ruby -e 'puts File.realpath(ARGV.fetch(0))' "${client_path}")"
+        client_bin="$(dirname "${client_path}")"
         client_root="$(dirname "$(dirname "${client_path}")")"
+
+        echo "${client_bin}" >> "$GITHUB_PATH"
 
         {
           echo "KITCHEN_PRODUCT_NAME=cinc"
@@ -57,21 +67,32 @@ runs:
         $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
         $env:PATH = "$machinePath;$userPath"
 
-        $client = Get-Command chef-client -ErrorAction SilentlyContinue
-        if (-not $client) {
-          $client = Get-Command cinc-client -ErrorAction Stop
+        $clientCandidates = @(
+          "$env:SystemDrive\opscode\cinc\bin\cinc-client.bat",
+          "$env:SystemDrive\opscode\cinc\bin\chef-client.bat",
+          "$env:SystemDrive\opscode\cinc\bin\cinc-client.exe",
+          "$env:SystemDrive\opscode\cinc\bin\chef-client.exe"
+        )
+        $clientPath = $clientCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if (-not $clientPath) {
+          $client = Get-Command cinc-client -ErrorAction SilentlyContinue
+          if (-not $client) {
+            $client = Get-Command chef-client -ErrorAction Stop
+          }
+          $clientPath = $client.Source
         }
+        $clientPath = [System.IO.Path]::GetFullPath($clientPath)
 
-        $clientBin = Split-Path -Parent $client.Source
+        $clientBin = Split-Path -Parent $clientPath
         $clientRoot = Split-Path -Parent $clientBin
 
         "$clientBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         "KITCHEN_PRODUCT_NAME=cinc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "KITCHEN_INSTALL_STRATEGY=skip" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        "KITCHEN_CHEF_CLIENT_PATH=$($client.Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "KITCHEN_CHEF_CLIENT_PATH=$clientPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "KITCHEN_CHEF_RUBY_BINDIR=$(Join-Path $clientRoot 'embedded\bin')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-        & $client.Source --version
+        & $clientPath --version
 
 branding:
   icon: download
