@@ -22,7 +22,10 @@ module Kitchen
           conn = instance.transport.connection(state_file.read)
           conn.execute(command)
         rescue Kitchen::Transport::TransportFailed => e
-          return if hook[:skippable] && e.message.match(/^SSH exited \(\d{1,3}\) for command: \[.+\]$/)
+          if hook[:skippable] && e.message.match(/^SSH exited \(\d{1,3}\) for command: \[.+\]$/)
+            logger.debug("Skipping remote lifecycle hook #{command.inspect}: #{e.message}")
+            return
+          end
 
           raise
         end

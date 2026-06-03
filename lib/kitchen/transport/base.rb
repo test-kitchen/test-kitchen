@@ -128,7 +128,7 @@ module Kitchen
             tries += 1
             debug("Attempting to execute command - try #{tries} of #{max_retries}.")
             execute(command)
-          rescue Exception => e
+          rescue ::StandardError => e
             if retry?(tries, max_retries, retryable_exit_codes, e)
               close
               sleep wait_time

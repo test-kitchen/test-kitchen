@@ -100,6 +100,12 @@ describe Kitchen::ShellOut do
       _(err.message).must_equal "boom bad"
     end
 
+    it "does not catch fatal exceptions" do
+      command.stubs(:error!).raises(SystemExit.new(42))
+
+      _ { subject.run_command("boom") }.must_raise SystemExit
+    end
+
     it "prepends with sudo if :use_sudo is truthy" do
       Mixlib::ShellOut.unstub(:new)
       Mixlib::ShellOut.expects(:new).with("sudo -E yo", opts).returns(command)

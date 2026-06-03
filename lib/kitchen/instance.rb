@@ -654,7 +654,15 @@ module Kitchen
       end
 
       def call(what, &block)
-        state = state_file.read
+        state = nil
+        begin
+          state = state_file.read
+        rescue ::StandardError => e
+          log_failure(what, e)
+          raise ActionFailed,
+            "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+        end
+
         action_id = new_id
         session_id = state[:instance_session_id] || new_id
         instance.logger.with_metadata(
@@ -672,19 +680,19 @@ module Kitchen
           elapsed
         rescue ActionFailed => e
           log_failure(what, e)
-          record_attempt(state, what, action_id, session_id) if state
-          state[:last_error] = e.class.name if state
+          record_attempt(state, what, action_id, session_id)
+          state[:last_error] = e.class.name
           raise(InstanceFailure, failure_message(what) +
             "  Please see .kitchen/logs/#{instance.name}.log for more details",
             e.backtrace)
-        rescue Exception => e # rubocop:disable Lint/RescueException
+        rescue ::StandardError => e
           log_failure(what, e)
-          record_attempt(state, what, action_id, session_id) if state
-          state[:last_error] = e.class.name if state
+          record_attempt(state, what, action_id, session_id)
+          state[:last_error] = e.class.name
           raise ActionFailed,
             "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
         ensure
-          state_file.write(state) if state
+          state_file.write(state)
         end
       end
 
