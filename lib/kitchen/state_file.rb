@@ -95,8 +95,11 @@ module Kitchen
     # @raise [StateFileLoadError] if the string document cannot be parsed
     # @api private
     def deserialize_string(string)
-      YAML.safe_load(string)
-    rescue SyntaxError, Psych::SyntaxError, Psych::DisallowedClass => ex
+      result = YAML.safe_load(string)
+      return result if result.is_a?(Hash)
+
+      raise StateFileLoadError, "Error parsing #{file_name} (expected a Hash)"
+    rescue SyntaxError, Psych::Exception => ex
       raise StateFileLoadError, "Error parsing #{file_name} (#{ex.message})"
     end
 

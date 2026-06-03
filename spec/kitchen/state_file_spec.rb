@@ -73,6 +73,23 @@ describe Kitchen::StateFile do
 
       _ { state_file.read }.must_raise Kitchen::StateFileLoadError
     end
+
+    it "raises a StateFileLoadError if the state file uses yaml aliases" do
+      stub_state_file! <<-'YAML'.gsub(/^ {8}/, "")
+        ---
+        first: &first
+          value: 1
+        second: *first
+      YAML
+
+      _ { state_file.read }.must_raise Kitchen::StateFileLoadError
+    end
+
+    it "raises a StateFileLoadError if the state file is not a hash" do
+      stub_state_file!("--- nope")
+
+      _ { state_file.read }.must_raise Kitchen::StateFileLoadError
+    end
   end
 
   describe "#write" do
