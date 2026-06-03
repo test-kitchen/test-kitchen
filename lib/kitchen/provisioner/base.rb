@@ -339,13 +339,8 @@ module Kitchen
 
         # Replace $env:TEMP with the actual Windows temp directory based on the transport username
         if resolved_path.include?("$env:TEMP")
-          # Try to get username from transport configuration
           # For Windows systems, fallback to "Administrator" if not found
-          username = begin
-            instance.transport[:username]
-                     rescue
-                       nil
-          end
+          username = instance.transport[:username] if instance.transport.respond_to?(:[])
           username ||= "Administrator"
 
           temp_path = "C:/Users/#{username}/AppData/Local/Temp"

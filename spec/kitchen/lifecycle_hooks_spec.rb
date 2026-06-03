@@ -28,8 +28,9 @@ describe Kitchen::LifecycleHooks do
   let(:state_file) { mock("state_file").tap { |s| s.stubs(read: { hostname: "localhost" }) } }
   let(:connection) { mock("connection") }
   let(:transport) { mock("transport").tap { |t| t.stubs(:connection).with({ hostname: "localhost" }).returns(connection) } }
+  let(:logger) { mock("logger").tap { |l| l.stubs(:debug) } }
   let(:last_action) { :create }
-  let(:instance) { mock("instance").tap { |i| i.stubs(name: "default-toaster-10", transport: transport, last_action: last_action, suite: suite, platform: platform, state_file: state_file) } }
+  let(:instance) { mock("instance").tap { |i| i.stubs(name: "default-toaster-10", transport: transport, last_action: last_action, suite: suite, platform: platform, state_file: state_file, logger: logger) } }
   let(:kitchen_root) do
     if RUBY_PLATFORM =~ /mswin|mingw|windows/
       "#{ENV["SYSTEMDRIVE"]}/kitchen"
@@ -236,6 +237,8 @@ describe Kitchen::LifecycleHooks do
       config.update(post_create: [hook])
       error = Kitchen::Transport::TransportFailed.new("SSH exited (1) for command: [echo foo]")
       connection.expects(:execute).with(hook[:remote]).raises(error)
+      logger.expects(:debug)
+        .with("Skipping remote lifecycle hook \"echo foo\": SSH exited (1) for command: [echo foo]")
       run_lifecycle_hooks
     end
 
