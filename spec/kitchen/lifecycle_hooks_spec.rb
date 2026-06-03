@@ -19,6 +19,7 @@ require_relative "../spec_helper"
 
 require "kitchen/errors"
 require "kitchen/lifecycle_hooks"
+require "kitchen/transport/base"
 
 describe Kitchen::LifecycleHooks do
   let(:suite) { mock("suite").tap { |i| i.stubs(name: "default") } }
@@ -219,6 +220,32 @@ describe Kitchen::LifecycleHooks do
     expect_remote_hook_generated_and_not_run(:create, remote_hook)
 
     run_lifecycle_hooks
+  end
+
+  describe "remote hook with transport failure" do
+    it "re-raises a transport failure for a non-skippable hook" do
+      hook = { remote: "echo foo" }
+      config.update(post_create: [hook])
+      error = Kitchen::Transport::TransportFailed.new("SSH exited (1) for command: [echo foo]")
+      connection.expects(:execute).with(hook[:remote]).raises(error)
+      _ { run_lifecycle_hooks }.must_raise Kitchen::Transport::TransportFailed
+    end
+
+    it "skips a skippable hook when SSH exits with a non-zero status" do
+      hook = { remote: "echo foo", skippable: true }
+      config.update(post_create: [hook])
+      error = Kitchen::Transport::TransportFailed.new("SSH exited (1) for command: [echo foo]")
+      connection.expects(:execute).with(hook[:remote]).raises(error)
+      run_lifecycle_hooks
+    end
+
+    it "re-raises a non-SSH transport failure even for a skippable hook" do
+      hook = { remote: "echo foo", skippable: true }
+      config.update(post_create: [hook])
+      error = Kitchen::Transport::TransportFailed.new("connection timed out")
+      connection.expects(:execute).with(hook[:remote]).raises(error)
+      _ { run_lifecycle_hooks }.must_raise Kitchen::Transport::TransportFailed
+    end
   end
 
   describe "with no last_action" do

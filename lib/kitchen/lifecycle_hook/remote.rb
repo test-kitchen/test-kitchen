@@ -21,7 +21,7 @@ module Kitchen
         begin
           conn = instance.transport.connection(state_file.read)
           conn.execute(command)
-        rescue Kitchen::Transport::SshFailed => e
+        rescue Kitchen::Transport::TransportFailed => e
           return if hook[:skippable] && e.message.match(/^SSH exited \(\d{1,3}\) for command: \[.+\]$/)
 
           raise
