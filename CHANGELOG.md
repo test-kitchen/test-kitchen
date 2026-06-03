@@ -1,5 +1,13 @@
 # Test Kitchen Change Log
 
+## [4.0.1](https://github.com/test-kitchen/test-kitchen/compare/v4.0.0...v4.0.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* reject invalid state files ([#2066](https://github.com/test-kitchen/test-kitchen/issues/2066)) ([e2ccf51](https://github.com/test-kitchen/test-kitchen/commit/e2ccf51c8779dd52929adc76e6bd05d1d6b9ddd9))
+* rescue TransportFailed instead of SshFailed in remote lifecycle hook ([#2050](https://github.com/test-kitchen/test-kitchen/issues/2050)) ([4e2f65a](https://github.com/test-kitchen/test-kitchen/commit/4e2f65a0355b866ae3f706f9cff408e99e22eee1)), closes [#2049](https://github.com/test-kitchen/test-kitchen/issues/2049)
+
 ## [4.0.0](https://github.com/test-kitchen/test-kitchen/compare/v3.9.1...v4.0.0) (2026-01-22)
 
 
