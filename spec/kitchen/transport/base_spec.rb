@@ -149,6 +149,13 @@ describe Kitchen::Transport::Base::Connection do
 
       _(connection.execute_with_retry("Hi", [123], 3, 1)).must_equal "Hello"
     end
+
+    it "does not catch fatal exceptions" do
+      connection.stubs(:execute).raises(SystemExit.new(42))
+
+      _ { connection.execute_with_retry("Hi", [123], 3, 1) }
+        .must_raise SystemExit
+    end
   end
 
   describe "#retry?" do

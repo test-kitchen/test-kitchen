@@ -211,14 +211,14 @@ module Kitchen
           Array(remotes).each do |file|
             logger.debug("Attempting to download '#{file}' as file")
             session.scp.download!(file, local)
-          rescue Net::SCP::Error
+          rescue Net::SCP::Error => file_error
             begin
               logger.debug("Attempting to download '#{file}' as directory")
               session.scp.download!(file, local, recursive: true)
-            rescue Net::SCP::Error
-              logger.warn(
-                "SCP download failed for file or directory '#{file}', perhaps it does not exist?"
-              )
+            rescue Net::SCP::Error => directory_error
+              raise SshFailed,
+                "SCP download failed for file or directory '#{file}' " \
+                "(file: #{file_error.message}; directory: #{directory_error.message})"
             end
           end
         rescue Net::SSH::Exception => ex

@@ -488,7 +488,9 @@ module Kitchen
     #   occurred, etc.
     # @api private
     def action(what, &block)
+      state_loaded = false
       state = state_file.read
+      state_loaded = true
       elapsed = Benchmark.measure do
         synchronize_or_call(what, state, &block)
       end
@@ -497,17 +499,17 @@ module Kitchen
       elapsed
     rescue ActionFailed => e
       log_failure(what, e)
-      state[:last_error] = e.class.name
+      state[:last_error] = e.class.name if state_loaded
       raise(InstanceFailure, failure_message(what) +
         "  Please see .kitchen/logs/#{name}.log for more details",
         e.backtrace)
-    rescue Exception => e # rubocop:disable Lint/RescueException
+    rescue ::StandardError => e
       log_failure(what, e)
-      state[:last_error] = e.class.name
+      state[:last_error] = e.class.name if state_loaded
       raise ActionFailed,
         "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
     ensure
-      state_file.write(state)
+      state_file.write(state) if state_loaded
     end
 
     # Runs a given action block through a common driver mutex if required or
