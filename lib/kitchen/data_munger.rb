@@ -38,13 +38,7 @@ module Kitchen
     def initialize(data, kitchen_config = {})
       @data = data
       @kitchen_config = kitchen_config
-      convert_legacy_driver_format!
-      convert_legacy_chef_paths_format!
-      convert_legacy_require_chef_omnibus_format!
-      convert_legacy_busser_format!
-      convert_legacy_driver_http_proxy_format!
-      move_chef_data_to_provisioner!
-      convert_legacy_pre_create_command!
+      LegacyConfigNormalizer.new(self).normalize!
     end
 
     # Generate a new Hash of configuration data that can be used to construct
@@ -651,12 +645,53 @@ module Kitchen
     # @return [Hash] a new merged Hash
     # @api private
     def merged_data_for(key, suite, platform, default_key = :name)
-      ddata = normalized_default_data(key, default_key, suite, platform)
-      cdata = normalized_common_data(key, default_key)
-      pdata = normalized_platform_data(key, default_key, platform)
-      sdata = normalized_suite_data(key, default_key, suite)
+      MergeResolver.new(self).merged_data_for(key, suite, platform, default_key)
+    end
 
-      ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
+    # Runs all legacy configuration conversions while keeping DataMunger as the
+    # public facade for destructive normalization.
+    class LegacyConfigNormalizer
+      STEPS = %i{
+        convert_legacy_driver_format!
+        convert_legacy_chef_paths_format!
+        convert_legacy_require_chef_omnibus_format!
+        convert_legacy_busser_format!
+        convert_legacy_driver_http_proxy_format!
+        move_chef_data_to_provisioner!
+        convert_legacy_pre_create_command!
+      }.freeze
+
+      def initialize(data_munger)
+        @data_munger = data_munger
+      end
+
+      def normalize!
+        STEPS.each { |step| data_munger.send(step) }
+      end
+
+      private
+
+      attr_reader :data_munger
+    end
+
+    # Resolves the default/common/platform/suite layers for one plugin key.
+    class MergeResolver
+      def initialize(data_munger)
+        @data_munger = data_munger
+      end
+
+      def merged_data_for(key, suite, platform, default_key)
+        ddata = data_munger.send(:normalized_default_data, key, default_key, suite, platform)
+        cdata = data_munger.send(:normalized_common_data, key, default_key)
+        pdata = data_munger.send(:normalized_platform_data, key, default_key, platform)
+        sdata = data_munger.send(:normalized_suite_data, key, default_key, suite)
+
+        ddata.rmerge(cdata.rmerge(pdata.rmerge(sdata)))
+      end
+
+      private
+
+      attr_reader :data_munger
     end
 
     # Destructively moves key Chef configuration key/value pairs from being

@@ -3,6 +3,8 @@ driver:
   name: dokken
   privileged: true
   chef_image: chef/chef
+  env:
+    - CHEF_LICENSE_KEY=<%= ENV["CHEF_LICENSE_KEY"] %>
 
 provisioner:
   name: dokken

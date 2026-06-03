@@ -16,9 +16,11 @@ end
 
 group :integration do
   gem "chef-cli"
+  gem "cinc-auditor-bin", source: "https://rubygems.cinc.sh"
+  gem "inspec", source: "https://rubygems.cinc.sh"
   gem "kitchen-dokken"
-  gem "kitchen-vagrant"
   gem "kitchen-inspec"
+  gem "kitchen-vagrant"
   gem "kitchen-omnibus-chef", ">= 1.0"
 end
 

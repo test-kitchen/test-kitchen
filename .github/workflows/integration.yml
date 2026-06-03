@@ -117,6 +117,8 @@ jobs:
           bundler-cache: false
       - name: Install dependencies
         run: bundle install
+      - name: Install Cinc Client
+        uses: ./.github/actions/install-cinc-client
       - name: Setup Machine
         run: |
           sudo dscl . -create /Users/${{ env.machine_user }}
@@ -163,6 +165,8 @@ jobs:
           bundler-cache: false
       - name: Install dependencies
         run: bundle install
+      - name: Install Cinc Client
+        uses: ./.github/actions/install-cinc-client
       - name: Setup Machine
         run: |
           winrm.cmd quickconfig -q
@@ -197,6 +201,8 @@ jobs:
           bundler-cache: false
       - name: Install dependencies
         run: bundle install
+      - name: Install Cinc Client
+        uses: ./.github/actions/install-cinc-client
       - name: Setup Machine
         run: |
           sudo useradd -m ${{ env.machine_user }}
@@ -238,6 +244,8 @@ jobs:
           bundler-cache: false
       - name: Install dependencies
         run: bundle install
+      - name: Install Cinc Client
+        uses: ./.github/actions/install-cinc-client
       - name: 'Enable FIPS via windows registry'
         run: |
           $OldErrorActionPreference = $ErrorActionPreference
