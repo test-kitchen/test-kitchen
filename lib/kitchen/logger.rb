@@ -440,8 +440,9 @@ module Kitchen
       private
 
       def line_buffer
+        formatter = StreamLineFormatter.new(self)
         @line_buffer ||= LineBuffer.new do |line|
-          StreamLineFormatter.new(self).format(line)
+          formatter.format(line)
         end
       end
     end

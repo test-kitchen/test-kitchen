@@ -13,7 +13,7 @@ provisioner:
   chef_license: accept-no-persist
 
 verifier:
-  name: inspec
+  name: cinc_auditor
 
 platforms:
   - name: almalinux-9

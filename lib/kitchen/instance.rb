@@ -516,6 +516,7 @@ module Kitchen
       end
 
       def call(what, &block)
+        state = nil
         state = state_file.read
         elapsed = Benchmark.measure do
           synchronize_or_call(what, state, &block)
@@ -525,17 +526,17 @@ module Kitchen
         elapsed
       rescue ActionFailed => e
         log_failure(what, e)
-        state[:last_error] = e.class.name
+        state[:last_error] = e.class.name if state
         raise(InstanceFailure, failure_message(what) +
           "  Please see .kitchen/logs/#{instance.name}.log for more details",
           e.backtrace)
       rescue Exception => e # rubocop:disable Lint/RescueException
         log_failure(what, e)
-        state[:last_error] = e.class.name
+        state[:last_error] = e.class.name if state
         raise ActionFailed,
           "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
       ensure
-        state_file.write(state)
+        state_file.write(state) if state
       end
 
       private

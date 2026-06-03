@@ -29,7 +29,7 @@ runs:
 
         echo "::group::Installing Cinc Client v${{ inputs.version }}"
         curl -fsSL https://omnitruck.cinc.sh/install.sh \
-          | sudo bash -s -- -P cinc -c ${{ inputs.channel }} -v ${{ inputs.version }}
+          | sudo bash -s -- -P cinc -c "${{ inputs.channel }}" -v "${{ inputs.version }}"
         echo "::endgroup::"
 
         client_path="$(command -v chef-client || command -v cinc-client)"
@@ -50,7 +50,7 @@ runs:
       run: |
         Write-Host "::group::Installing Cinc Client v${{ inputs.version }}"
         . { iwr -useb https://omnitruck.cinc.sh/install.ps1 } | iex
-        install -project cinc -channel ${{ inputs.channel }} -version ${{ inputs.version }}
+        install -project cinc -channel "${{ inputs.channel }}" -version "${{ inputs.version }}"
         Write-Host "::endgroup::"
 
         $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
