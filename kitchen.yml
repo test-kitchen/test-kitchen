@@ -4,13 +4,13 @@ driver:
   linked_clone: false
 
 provisioner:
-  name: chef_infra
-  product_name: chef
+  name: cinc_infra
+  product_name: cinc
+  install_strategy: once
   deprecations_as_errors: true
-  chef_license: accept-no-persist
 
 verifier:
-  name: inspec
+  name: cinc_auditor
 
 platforms:
   - name: almalinux-9
