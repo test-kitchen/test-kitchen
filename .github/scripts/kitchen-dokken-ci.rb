@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'kitchen/provisioner/dokken'
+
 module KitchenDokkenCI
   def self.patch
     patch_helpers if defined?(::Dokken::Helpers)
