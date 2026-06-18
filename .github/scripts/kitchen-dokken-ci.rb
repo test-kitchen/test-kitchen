@@ -56,6 +56,8 @@ module KitchenDokkenCI
       private
 
       def dokken_data_container_upload?(state)
+        return false if ENV['GITHUB_ACTIONS'] == 'true' && !remote_docker_host?
+
         port = state.dig(:data_container, :NetworkSettings, :Ports, :"22/tcp")&.first
 
         (remote_docker_host? || running_inside_docker?) && port&.fetch(:HostPort, nil)
