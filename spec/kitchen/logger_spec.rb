@@ -173,6 +173,22 @@ describe Kitchen::Logger do
         _(stdout.string).must_equal "       yo\n"
       end
 
+      it "logs to info from a block" do
+        logger.info { "yo" }
+
+        _(stdout.string).must_equal colorize("       yo", opts[:color]) + "\n"
+      end
+
+      it "does not evaluate skipped severity blocks" do
+        opts[:level] = Kitchen::Util.to_logger_level(:warn)
+        called = false
+
+        logger.info { called = true }
+
+        _(called).must_equal false
+        _(stdout.string).must_equal ""
+      end
+
       it "logs to error" do
         logger.error("yo")
 
@@ -333,6 +349,12 @@ describe Kitchen::Logger do
         _(logdev.string).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
       end
 
+      it "logs to info from a block" do
+        logger.info { "yo" }
+
+        _(logdev.string).must_match(/^I, #{ts}  INFO -- Kitchen: yo$/)
+      end
+
       it "logs to error" do
         logger.error("yo")
 
@@ -356,6 +378,30 @@ describe Kitchen::Logger do
 
         _(logdev.string).must_match(/^A, #{ts}   ANY -- Kitchen: yo$/)
       end
+    end
+  end
+
+  describe "combined stdout and logdev logger" do
+    let(:stdout) { StringIO.new }
+    let(:logdev) { StringIO.new }
+
+    before do
+      opts[:stdout] = stdout
+      opts[:logdev] = logdev
+      opts[:level] = Kitchen::Util.to_logger_level(:debug)
+    end
+
+    it "fans out block logging while evaluating the block once" do
+      calls = 0
+
+      logger.info do
+        calls += 1
+        "yo"
+      end
+
+      _(calls).must_equal 1
+      _(stdout.string).must_equal colorize("       yo", opts[:color]) + "\n"
+      _(logdev.string).must_match(/INFO -- Kitchen: yo$/)
     end
   end
 

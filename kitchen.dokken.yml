@@ -1,16 +1,26 @@
 ---
 driver:
   name: dokken
+  chef_image: cincproject/cinc
   privileged: true
-  chef_image: chef/chef
+  chef_version: 19
 
 provisioner:
-  name: dokken
+  name: dokken_ci
+  product_name: cinc
+  chef_binary: /opt/cinc/bin/cinc-client
+  install_strategy: skip
+  cinc_omnibus_root: /opt/cinc
+  root_path: /opt/kitchen
+  sudo: false
   deprecations_as_errors: true
-  chef_license: accept-no-persist
 
 transport:
   name: dokken
+
+verifier:
+  root_path: /opt/verifier
+  sudo: false
 
 platforms:
   - name: ubuntu-24.04
@@ -24,3 +34,9 @@ platforms:
     driver:
       image: dokken/almalinux-9
       pid_one_command: /usr/lib/systemd/systemd
+
+suites:
+  - name: default
+    verifier:
+      inspec_tests:
+        - test/integration/default

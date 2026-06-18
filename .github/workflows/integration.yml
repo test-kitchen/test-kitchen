@@ -17,7 +17,7 @@ env:
 jobs:
   dokken:
     env:
-      KITCHEN_LOCAL_YAML: kitchen.dokken.yml
+      KITCHEN_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,17 +28,19 @@ jobs:
           - almalinux-9
           - ubuntu-2404
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        run: bash .github/scripts/install-cinc-workstation.sh
       - name: Setup Machine
         run: |
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Dokken
-        run: bundle exec kitchen verify ${{ matrix.os }}
+        run: bundle exec ruby -I.github/scripts .github/scripts/kitchen_dokken_ci_verify.rb ${{ matrix.os }}
   # Commenting out for now until we can stabilize Vagrant on GH Actions runners
   # vagrant:
   #   runs-on: ubuntu-latest
@@ -110,11 +112,14 @@ jobs:
         os:
           - localhost
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: bash .github/scripts/install-cinc-workstation.sh
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -150,7 +155,7 @@ jobs:
         os:
           - windows-winrm
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Enable Windows long paths
         run: |
           # Enable Windows long paths
@@ -161,6 +166,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: ./.github/scripts/install-cinc-workstation.ps1
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -190,11 +198,14 @@ jobs:
         os:
           - localhost
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: bash .github/scripts/install-cinc-workstation.sh
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -225,7 +236,7 @@ jobs:
         os:
           - windows-fips-ssh
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Enable Windows long paths
         run: |
           # Enable Windows long paths
@@ -236,6 +247,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        run: ./.github/scripts/install-cinc-workstation.ps1
       - name: Install dependencies
         run: bundle install
       - name: 'Enable FIPS via windows registry'

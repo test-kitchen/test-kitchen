@@ -9,11 +9,20 @@ driver:
 
 platforms:
   - name: localhost
+    provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: /opt/cinc-workstation
   - name: windows-winrm
+    provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: 'C:\cinc-project\cinc-workstation'
     transport:
       name: winrm
       elevated: true
   - name: windows-fips-ssh
+    provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: 'C:\cinc-project\cinc-workstation'
     transport:
       name: ssh
       username: <%= ENV['machine_user'] %>
