@@ -20,7 +20,6 @@ require_relative "../spec_helper"
 
 require "kitchen/verifier"
 require "kitchen/verifier/base"
-require "kitchen/verifier/cinc_auditor"
 
 module Kitchen
   module Verifier
@@ -53,12 +52,6 @@ describe Kitchen::Verifier do
       verifier = Kitchen::Verifier.for_plugin("coolbeans", foo: "bar")
 
       _(verifier[:foo]).must_equal "bar"
-    end
-
-    it "loads the cinc_auditor verifier alias" do
-      verifier = Kitchen::Verifier.for_plugin("cinc_auditor", {})
-
-      _(verifier).must_be_kind_of Kitchen::Verifier::CincAuditor
     end
 
     it "raises ClientError if the verifier could not be required" do
