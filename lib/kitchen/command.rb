@@ -160,16 +160,22 @@ module Kitchen
 
         threads = []
         @action_errors = []
-        concurrency.times do
-          threads << Thread.new do
-            while (instance = queue.pop)
-              run_action_in_thread(action, instance, *args)
+        @action_errors_mutex = Mutex.new
+        previous_abort_on_exception = Thread.abort_on_exception
+        begin
+          Thread.abort_on_exception = true if options[:fail_fast]
+          concurrency.times do
+            threads << Thread.new do
+              while (instance = queue.pop)
+                run_action_in_thread(action, instance, *args)
+              end
             end
           end
+          threads.map(&:join)
+          report_errors
+        ensure
+          Thread.abort_on_exception = previous_abort_on_exception
         end
-        Thread.abort_on_exception = true if options[:fail_fast]
-        threads.map(&:join)
-        report_errors
       end
 
       # private
@@ -194,13 +200,17 @@ module Kitchen
       def run_action_in_thread(action, instance, *args)
         instance.public_send(action, *args)
       rescue Kitchen::InstanceFailure => e
-        @action_errors << e
+        record_action_error(e)
       rescue Kitchen::ActionFailed => e
         new_error = Kitchen::ActionFailed.new("#{e.message} on #{instance.name}")
         new_error.set_backtrace(e.backtrace)
-        @action_errors << new_error
+        record_action_error(new_error)
       ensure
         instance.cleanup!
+      end
+
+      def record_action_error(error)
+        @action_errors_mutex.synchronize { @action_errors << error }
       end
     end
   end

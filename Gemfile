@@ -15,11 +15,13 @@ group :test do
 end
 
 group :integration do
-  gem "chef-cli"
+  gem "cinc-auditor-bin", source: "https://rubygems.cinc.sh"
+  gem "kitchen-cinc"
+  gem "kitchen-cinc-auditor",
+    git: "https://github.com/test-kitchen/kitchen-cinc-auditor.git",
+    ref: "3d0b89eaa13f12da08a8761970e39c0f564c24c6"
   gem "kitchen-dokken"
   gem "kitchen-vagrant"
-  gem "kitchen-inspec"
-  gem "kitchen-omnibus-chef", ">= 1.0"
 end
 
 group :linting do

@@ -36,8 +36,8 @@ module Kitchen
       #   @return [nil,true] when the given severity is not high enough (for
       #     this particular logger), log no message, and return true
       def logger_method(meth)
-        define_method(meth) do |*args|
-          logger.public_send(meth, *args)
+        define_method(meth) do |*args, &block|
+          logger.public_send(meth, *args, &block)
         end
       end
     end

@@ -34,8 +34,8 @@ class LoggingDummy
     attr_reader(*(METHODS.map { |m| "#{m}_msg".to_sym }))
 
     METHODS.each do |meth|
-      define_method(meth) do |*args|
-        instance_variable_set("@#{meth}_msg", args.first)
+      define_method(meth) do |*args, &block|
+        instance_variable_set("@#{meth}_msg", block ? block.call : args.first)
       end
     end
   end
@@ -50,6 +50,14 @@ describe Kitchen::Logging do
       subject.public_send(meth, "ping")
 
       _(logger.public_send("#{meth}_msg")).must_equal "ping"
+    end
+  end
+
+  LoggingDummy::Logger::METHODS.each do |meth|
+    it "##{meth} forwards blocks to the logger" do
+      subject.public_send(meth) { "pong" }
+
+      _(logger.public_send("#{meth}_msg")).must_equal "pong"
     end
   end
 end
