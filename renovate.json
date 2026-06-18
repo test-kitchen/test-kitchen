@@ -4,5 +4,31 @@
     "config:recommended",
     ":disableDependencyDashboard",
     "schedule:automergeEarlyMondays"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Netlify Hugo version",
+      "managerFilePatterns": [
+        "/^docs\\/netlify\\.toml$/"
+      ],
+      "matchStrings": [
+        "HUGO_VERSION\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "gohugoio/hugo",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Group Hugo version updates",
+      "matchDepNames": [
+        "gohugoio/hugo",
+        "hugo"
+      ],
+      "groupName": "Hugo",
+      "groupSlug": "hugo"
+    }
   ]
 }
