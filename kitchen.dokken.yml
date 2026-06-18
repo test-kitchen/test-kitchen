@@ -3,7 +3,6 @@ driver:
   name: dokken
   privileged: true
   chef_version: 19
-  data_ssh_port: 2222
 
 provisioner:
   name: dokken
