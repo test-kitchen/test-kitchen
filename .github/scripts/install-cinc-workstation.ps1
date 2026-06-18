@@ -19,19 +19,27 @@ New-Item -ItemType Directory -Force -Path $wrapperDir | Out-Null
 
 $wrapper = @'
 @echo off
-set BUNDLE_BIN=
-set BUNDLE_BIN_PATH=
-set BUNDLE_GEMFILE=
-set BUNDLE_PATH=
-set BUNDLE_APP_CONFIG=
-set BUNDLER_VERSION=
-set BUNDLE_WITHOUT=
+for /f "tokens=1 delims==" %%v in ('set BUNDLE 2^>NUL') do set %%v=
+for /f "tokens=1 delims==" %%v in ('set BUNDLER 2^>NUL') do set %%v=
 set RUBYGEMS_GEMDEPS=
 set RUBYOPT=
 set RUBYLIB=
 set GEM_HOME=
 set GEM_PATH=
-"C:\cinc-project\cinc-workstation\bin\cinc-cli.bat" %*
+if exist "C:\cinc-project\cinc-workstation\embedded\bin\cinc-cli.bat" (
+  "C:\cinc-project\cinc-workstation\embedded\bin\cinc-cli.bat" %*
+  exit /b %ERRORLEVEL%
+)
+if exist "C:\cinc-project\cinc-workstation\embedded\bin\chef-cli.bat" (
+  "C:\cinc-project\cinc-workstation\embedded\bin\chef-cli.bat" %*
+  exit /b %ERRORLEVEL%
+)
+if exist "C:\cinc-project\cinc-workstation\embedded\bin\chef.bat" (
+  "C:\cinc-project\cinc-workstation\embedded\bin\chef.bat" %*
+  exit /b %ERRORLEVEL%
+)
+echo Could not find a Cinc Workstation Policyfile CLI 1>&2
+exit /b 127
 '@
 
 Set-Content -Path (Join-Path $wrapperDir "cinc-cli.cmd") -Value $wrapper -Encoding ASCII

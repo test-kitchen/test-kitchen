@@ -23,19 +23,27 @@ mkdir -p "$wrapper_dir"
 
 cat > "${wrapper_dir}/cinc-cli" <<'WRAPPER'
 #!/usr/bin/env bash
-unset BUNDLE_BIN
-unset BUNDLE_BIN_PATH
-unset BUNDLE_GEMFILE
-unset BUNDLE_PATH
-unset BUNDLE_APP_CONFIG
-unset BUNDLER_VERSION
-unset BUNDLE_WITHOUT
-unset RUBYGEMS_GEMDEPS
-unset RUBYOPT
-unset RUBYLIB
-unset GEM_HOME
-unset GEM_PATH
-exec /opt/cinc-workstation/bin/cinc-cli "$@"
+set -euo pipefail
+
+while IFS='=' read -r name _; do
+  case "$name" in
+    BUNDLE*|BUNDLER*|GEM_HOME|GEM_PATH|RUBYLIB|RUBYOPT|RUBYGEMS_GEMDEPS)
+      unset "$name"
+      ;;
+  esac
+done < <(env)
+
+for cli in \
+  /opt/cinc-workstation/embedded/bin/cinc-cli \
+  /opt/cinc-workstation/embedded/bin/chef-cli \
+  /opt/cinc-workstation/embedded/bin/chef; do
+  if [[ -x "$cli" ]]; then
+    exec "$cli" "$@"
+  fi
+done
+
+echo "Could not find a Cinc Workstation Policyfile CLI" >&2
+exit 127
 WRAPPER
 
 chmod +x "${wrapper_dir}/cinc-cli"
