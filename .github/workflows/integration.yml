@@ -17,7 +17,7 @@ env:
 jobs:
   dokken:
     env:
-      KITCHEN_LOCAL_YAML: kitchen.dokken.yml
+      KITCHEN_YAML: kitchen.dokken.yml
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -40,7 +40,7 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Dokken
-        run: bundle exec ruby -r./.github/scripts/kitchen-dokken-ci -S kitchen verify ${{ matrix.os }}
+        run: bundle exec ruby -I.github/scripts .github/scripts/kitchen_dokken_ci_verify.rb ${{ matrix.os }}
   # Commenting out for now until we can stabilize Vagrant on GH Actions runners
   # vagrant:
   #   runs-on: ubuntu-latest
