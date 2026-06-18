@@ -11,6 +11,7 @@ $embeddedGemDir = & "C:\cinc-project\cinc-workstation\embedded\bin\ruby.exe" -e 
   --no-user-install `
   --clear-sources `
   --source https://rubygems.cinc.sh `
+  --source https://rubygems.org `
   --no-document
 
 $wrapperDir = Join-Path $env:RUNNER_TEMP "cinc-workstation-bin"

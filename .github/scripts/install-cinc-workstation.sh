@@ -11,6 +11,7 @@ sudo /opt/cinc-workstation/embedded/bin/gem install chef-cli \
   --no-user-install \
   --clear-sources \
   --source https://rubygems.cinc.sh \
+  --source https://rubygems.org \
   --no-document
 
 wrapper_dir="${RUNNER_TEMP}/cinc-workstation-bin"
