@@ -7,6 +7,7 @@ driver:
 provisioner:
   name: dokken
   product_name: cinc
+  install_strategy: skip
   deprecations_as_errors: true
 
 transport:

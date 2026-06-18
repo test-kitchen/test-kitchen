@@ -8,9 +8,13 @@ transport:
 platforms:
   - name: localhost
     provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: /opt/cinc-workstation
       command_prefix: "cd /tmp; unset BUNDLE_GEMFILE BUNDLE_PATH BUNDLE_BIN BUNDLE_BIN_bundle_BIN BUNDLE_BIN_PATH BUNDLE_APP_CONFIG BUNDLER_VERSION BUNDLE_WITHOUT RUBYGEMS_GEMDEPS RUBYOPT RUBYLIB GEM_PATH GEM_HOME;"
   - name: windows-winrm
     provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: 'C:\cinc-project\cinc-workstation'
       command_prefix: "Set-Location $env:TEMP; $env:BUNDLE_GEMFILE=$null; $env:BUNDLE_PATH=$null; $env:BUNDLE_BIN=$null; $env:BUNDLE_BIN_PATH=$null; $env:BUNDLE_APP_CONFIG=$null; $env:BUNDLER_VERSION=$null; $env:BUNDLE_WITHOUT=$null; $env:RUBYGEMS_GEMDEPS=$null; $env:RUBYOPT=$null; $env:RUBYLIB=$null; $env:GEM_PATH=$null; $env:GEM_HOME=$null;"
   - name: windows-fips-ssh
     transport:
@@ -18,4 +22,6 @@ platforms:
       username: <%= ENV['machine_user'] %>
       password: <%= ENV['machine_pass'] %>
     provisioner:
+      install_strategy: skip
+      cinc_omnibus_root: 'C:\cinc-project\cinc-workstation'
       command_prefix: "Set-Location $env:TEMP; $env:BUNDLE_GEMFILE=$null; $env:BUNDLE_PATH=$null; $env:BUNDLE_BIN=$null; $env:BUNDLE_BIN_PATH=$null; $env:BUNDLE_APP_CONFIG=$null; $env:BUNDLER_VERSION=$null; $env:BUNDLE_WITHOUT=$null; $env:RUBYGEMS_GEMDEPS=$null; $env:RUBYOPT=$null; $env:RUBYLIB=$null; $env:GEM_PATH=$null; $env:GEM_HOME=$null;"
