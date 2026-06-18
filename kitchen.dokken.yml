@@ -2,14 +2,12 @@
 driver:
   name: dokken
   privileged: true
-  chef_image: chef/chef
-  env:
-    - CHEF_LICENSE_KEY=<%= ENV["CHEF_LICENSE_KEY"] %>
+  chef_version: 19
 
 provisioner:
   name: dokken
+  product_name: cinc
   deprecations_as_errors: true
-  chef_license: accept-no-persist
 
 transport:
   name: dokken

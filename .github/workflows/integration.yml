@@ -33,6 +33,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        run: |
+          curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-workstation -v 26
+          echo "/opt/cinc-workstation/bin" >> "$GITHUB_PATH"
       - name: Setup Machine
         run: |
           bundle config set --local with 'integration'
@@ -115,6 +119,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: |
+          curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-workstation -v 26
+          echo "/opt/cinc-workstation/bin" >> "$GITHUB_PATH"
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -161,6 +170,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: |
+          . { iwr -useb https://omnitruck.cinc.sh/install.ps1 } | iex
+          install -project cinc-workstation -version 26
+          "C:\cinc-project\cinc-workstation\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -195,6 +210,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        if: ${{ matrix.kitchen_yaml == 'exec' || matrix.kitchen_yaml == 'proxy' }}
+        run: |
+          curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-workstation -v 26
+          echo "/opt/cinc-workstation/bin" >> "$GITHUB_PATH"
       - name: Install dependencies
         run: bundle install
       - name: Setup Machine
@@ -236,6 +256,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: false
+      - name: Install Cinc Workstation
+        run: |
+          . { iwr -useb https://omnitruck.cinc.sh/install.ps1 } | iex
+          install -project cinc-workstation -version 26
+          "C:\cinc-project\cinc-workstation\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
       - name: Install dependencies
         run: bundle install
       - name: 'Enable FIPS via windows registry'
