@@ -3,15 +3,23 @@ driver:
   name: dokken
   privileged: true
   chef_version: 19
+  data_ssh_port: 2222
 
 provisioner:
   name: dokken
   product_name: cinc
   install_strategy: skip
+  cinc_omnibus_root: /opt/cinc
+  root_path: /opt/kitchen
+  sudo: false
   deprecations_as_errors: true
 
 transport:
   name: dokken
+
+verifier:
+  root_path: /opt/verifier
+  sudo: false
 
 platforms:
   - name: ubuntu-24.04
