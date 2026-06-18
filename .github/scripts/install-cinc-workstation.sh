@@ -3,6 +3,10 @@ set -euo pipefail
 
 curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-workstation -v 26
 
+if [[ "$(uname -s)" == "Darwin" && ! -x /opt/homebrew/bin/gmkdir ]]; then
+  sudo ln -s /bin/mkdir /opt/homebrew/bin/gmkdir
+fi
+
 embedded_gem_dir=$(/opt/cinc-workstation/embedded/bin/ruby -e 'puts Gem.default_dir')
 sudo /opt/cinc-workstation/embedded/bin/gem install chef-cli \
   -v 6.1.30 \
