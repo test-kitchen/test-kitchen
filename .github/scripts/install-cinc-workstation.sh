@@ -2,8 +2,13 @@
 set -euo pipefail
 
 curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-workstation -v 26
+
+embedded_gem_dir=$(/opt/cinc-workstation/embedded/bin/ruby -e 'puts Gem.default_dir')
 sudo /opt/cinc-workstation/embedded/bin/gem install chef-cli \
   -v 6.1.30 \
+  --install-dir "$embedded_gem_dir" \
+  --bindir /opt/cinc-workstation/embedded/bin \
+  --no-user-install \
   --clear-sources \
   --source https://rubygems.cinc.sh \
   --no-document
@@ -30,4 +35,3 @@ WRAPPER
 
 chmod +x "${wrapper_dir}/cinc-cli"
 printf '%s\n' "$wrapper_dir" >> "$GITHUB_PATH"
-printf '%s\n' "/opt/cinc-workstation/bin" >> "$GITHUB_PATH"
