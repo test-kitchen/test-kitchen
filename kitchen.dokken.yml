@@ -11,6 +11,9 @@ provisioner:
   install_strategy: skip
   cinc_omnibus_root: /opt/cinc
   root_path: /opt/kitchen
+  docker_host_url: unix:///var/run/docker.sock
+  docker_info:
+    OperatingSystem: Docker Desktop
   sudo: false
   deprecations_as_errors: true
 
