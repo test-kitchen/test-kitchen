@@ -3,16 +3,20 @@ $ErrorActionPreference = "Stop"
 . { iwr -useb https://omnitruck.cinc.sh/install.ps1 } | iex
 install -project cinc-workstation -version 26
 
-$embeddedGemDir = & "C:\cinc-project\cinc-workstation\embedded\bin\ruby.exe" -e "puts Gem.default_dir"
-& "C:\cinc-project\cinc-workstation\embedded\bin\gem.bat" install chef-cli `
-  -v 6.1.30 `
-  --install-dir $embeddedGemDir `
-  --bindir "C:\cinc-project\cinc-workstation\embedded\bin" `
-  --no-user-install `
-  --clear-sources `
-  --source https://rubygems.cinc.sh `
-  --source https://rubygems.org `
-  --no-document
+$embeddedBinDir = "C:\cinc-project\cinc-workstation\embedded\bin"
+
+if (!(Test-Path (Join-Path $embeddedBinDir "cinc-cli.bat"))) {
+  $embeddedGemDir = & (Join-Path $embeddedBinDir "ruby.exe") -e "puts Gem.default_dir"
+  & (Join-Path $embeddedBinDir "gem.bat") install chef-cli `
+    -v 6.1.30 `
+    --install-dir $embeddedGemDir `
+    --bindir $embeddedBinDir `
+    --no-user-install `
+    --clear-sources `
+    --source https://rubygems.cinc.sh `
+    --source https://rubygems.org `
+    --no-document
+}
 
 $wrapperDir = Join-Path $env:RUNNER_TEMP "cinc-workstation-bin"
 New-Item -ItemType Directory -Force -Path $wrapperDir | Out-Null

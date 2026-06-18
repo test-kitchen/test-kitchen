@@ -7,16 +7,18 @@ if [[ "$(uname -s)" == "Darwin" && ! -x /opt/homebrew/bin/gmkdir ]]; then
   sudo ln -s /bin/mkdir /opt/homebrew/bin/gmkdir
 fi
 
-embedded_gem_dir=$(/opt/cinc-workstation/embedded/bin/ruby -e 'puts Gem.default_dir')
-sudo /opt/cinc-workstation/embedded/bin/gem install chef-cli \
-  -v 6.1.30 \
-  --install-dir "$embedded_gem_dir" \
-  --bindir /opt/cinc-workstation/embedded/bin \
-  --no-user-install \
-  --clear-sources \
-  --source https://rubygems.cinc.sh \
-  --source https://rubygems.org \
-  --no-document
+if [[ ! -x /opt/cinc-workstation/embedded/bin/cinc-cli ]]; then
+  embedded_gem_dir=$(/opt/cinc-workstation/embedded/bin/ruby -e 'puts Gem.default_dir')
+  sudo /opt/cinc-workstation/embedded/bin/gem install chef-cli \
+    -v 6.1.30 \
+    --install-dir "$embedded_gem_dir" \
+    --bindir /opt/cinc-workstation/embedded/bin \
+    --no-user-install \
+    --clear-sources \
+    --source https://rubygems.cinc.sh \
+    --source https://rubygems.org \
+    --no-document
+fi
 
 wrapper_dir="${RUNNER_TEMP}/cinc-workstation-bin"
 mkdir -p "$wrapper_dir"
