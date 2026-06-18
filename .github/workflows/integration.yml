@@ -40,7 +40,7 @@ jobs:
           bundle config set --local with 'integration'
           bundle install
       - name: Verify Dokken
-        run: bundle exec kitchen verify ${{ matrix.os }}
+        run: bundle exec ruby -r./.github/scripts/kitchen-dokken-ci -S kitchen verify ${{ matrix.os }}
   # Commenting out for now until we can stabilize Vagrant on GH Actions runners
   # vagrant:
   #   runs-on: ubuntu-latest
