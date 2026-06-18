@@ -56,8 +56,9 @@ module KitchenDokkenCI
       private
 
       def dokken_data_container_upload?(state)
-        (remote_docker_host? || running_inside_docker?) &&
-          state.dig(:data_container, :NetworkSettings, :Ports, :"22/tcp")
+        port = state.dig(:data_container, :NetworkSettings, :Ports, :"22/tcp")&.first
+
+        (remote_docker_host? || running_inside_docker?) && port&.fetch(:HostPort, nil)
       end
     end
   end
