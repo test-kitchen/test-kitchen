@@ -10,7 +10,7 @@ provisioner:
   deprecations_as_errors: true
 
 verifier:
-  name: inspec
+  name: cinc_auditor
 
 platforms:
   - name: almalinux-9
