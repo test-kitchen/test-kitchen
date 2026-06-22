@@ -11,7 +11,7 @@
 # limitations under the License.
 
 require_relative "../../kitchen"
-require "time"
+require "time" unless defined?(Time)
 
 module Kitchen
   module Driver

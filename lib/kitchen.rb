@@ -16,7 +16,7 @@
 # limitations under the License.
 
 require "pathname" unless defined?(Pathname)
-require "securerandom"
+require "securerandom" unless defined?(SecureRandom)
 require_relative "kitchen/errors"
 require_relative "kitchen/logger"
 require_relative "kitchen/logging"

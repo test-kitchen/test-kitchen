@@ -11,15 +11,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../command'
+require_relative "../command"
 
-require 'json' unless defined?(JSON)
+require "json" unless defined?(JSON)
 
 module Kitchen
   module Command
     # Command to print structured logs for one instance.
     class Logs < Kitchen::Command::Base
-      LEVELS = %w(debug info warn error fatal unknown).freeze
+      LEVELS = %w{debug info warn error fatal unknown}.freeze
 
       # Invoke the command.
       def call
@@ -64,36 +64,36 @@ module Kitchen
 
       def structured_log_paths(arg)
         paths = all_structured_log_paths
-        return paths if arg.nil? || arg == 'all'
+        return paths if arg.nil? || arg == "all"
 
         exact_path = File.join(Kitchen::DEFAULT_LOG_DIR, "#{arg}.ndjson")
         return [exact_path] if File.file?(exact_path)
 
         regexp = Regexp.new(arg)
-        paths.select { |path| File.basename(path, '.ndjson') =~ regexp }
+        paths.select { |path| File.basename(path, ".ndjson") =~ regexp }
       rescue RegexpError => e
-        die 'Invalid Ruby regular expression, ' \
-          'you may need to single quote the argument. ' \
+        die "Invalid Ruby regular expression, " \
+          "you may need to single quote the argument. " \
           "Please try again or consult https://rubular.com/ (#{e.message})"
       end
 
       def all_structured_log_paths
-        Dir[File.join(Kitchen::DEFAULT_LOG_DIR, '*.ndjson')]
-          .reject { |path| File.basename(path) == 'kitchen.ndjson' }
+        Dir[File.join(Kitchen::DEFAULT_LOG_DIR, "*.ndjson")]
+          .reject { |path| File.basename(path) == "kitchen.ndjson" }
           .sort
       end
 
       def validate_follow_target!(targets)
         return unless options[:follow] && targets.size > 1
 
-        die 'Following multiple instance logs is not supported; choose one instance'
+        die "Following multiple instance logs is not supported; choose one instance"
       end
 
       def instances
         results = parse_subcommand(args.first)
         if results.size > 1 && !options[:all_sessions]
           die "Argument `#{args.first}' returned multiple results:\n" +
-              results.map { |i| "  * #{i.name}" }.join("\n")
+            results.map { |i| "  * #{i.name}" }.join("\n")
         end
         results
       end
@@ -102,6 +102,7 @@ module Kitchen
         return if options[:all_sessions]
         return options[:session_id] if options[:session_id]
         return instance.current_session_id if instance.current_session_id
+
         if File.file?(instance.structured_log_path)
           session_id = latest_session_id(instance.structured_log_path)
           return session_id if session_id
@@ -112,7 +113,7 @@ module Kitchen
 
       def latest_session_id(path)
         File.foreach(path).filter_map do |line|
-          JSON.parse(line)['instance_session_id']
+          JSON.parse(line)["instance_session_id"]
         rescue JSON::ParserError
           nil
         end.last
@@ -123,7 +124,7 @@ module Kitchen
       end
 
       def follow_file(path, session_id)
-        File.open(path, 'r') do |file|
+        File.open(path, "r") do |file|
           file.seek(0, IO::SEEK_END)
           loop do
             line = file.gets
@@ -148,27 +149,27 @@ module Kitchen
 
       def format_event(event)
         case options[:format]
-        when 'ndjson' then JSON.generate(event)
-        when nil, 'text' then event['message'].to_s
+        when "ndjson" then JSON.generate(event)
+        when nil, "text" then event["message"].to_s
         end
       end
 
       def session_match?(event, session_id)
-        session_id.nil? || event['instance_session_id'] == session_id
+        session_id.nil? || event["instance_session_id"] == session_id
       end
 
       def level_match?(event)
         return true unless options[:level]
 
-        level_index(event['level']) >= level_index(options[:level])
+        level_index(event["level"]) >= level_index(options[:level])
       end
 
       def level_index(level)
-        LEVELS.index(level.to_s) || LEVELS.index('unknown')
+        LEVELS.index(level.to_s) || LEVELS.index("unknown")
       end
 
       def validate_format!
-        return if [nil, 'ndjson', 'text'].include?(options[:format])
+        return if [nil, "ndjson", "text"].include?(options[:format])
 
         die "Invalid logs format `#{options[:format]}'; use ndjson or text"
       end

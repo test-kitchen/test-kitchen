@@ -273,7 +273,7 @@ module Kitchen
       type: :boolean,
       desc: "Print logs from all instance sessions; defaults to all instances"
     method_option :format,
-      default: 'text',
+      default: "text",
       desc: "Output format (ndjson, text)"
     method_option :follow,
       aliases: "-f",

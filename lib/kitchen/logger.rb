@@ -17,8 +17,8 @@
 
 require "fileutils" unless defined?(FileUtils)
 require "json" unless defined?(JSON)
-require "logger"
-require "time"
+require "logger" unless defined?(Logger)
+require "time" unless defined?(Time)
 
 module Kitchen
   # Logging implementation for Kitchen. By default the console/stdout output
@@ -74,11 +74,13 @@ module Kitchen
                        end
 
       @logdev = device_factory.logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
-      @structured_logdev = device_factory.structured_logdev_logger(
-        options[:structured_logdev],
-        log_overwrite,
-        -> { metadata }
-      ) if options[:structured_logdev]
+      if options[:structured_logdev]
+        @structured_logdev = device_factory.structured_logdev_logger(
+          options[:structured_logdev],
+          log_overwrite,
+          -> { metadata }
+        )
+      end
       @logdev_path = expanded_log_path(options[:logdev])
       @structured_logdev_path = expanded_log_path(options[:structured_logdev])
 

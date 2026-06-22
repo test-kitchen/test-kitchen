@@ -450,7 +450,7 @@ describe Kitchen::Logger do
       _(events.map { |event| event["level"] })
         .must_equal %w{info warn error info info}
       _(events.map { |event| event["message"] })
-        .must_equal ["banner", "warning", "error", "info", "plain"]
+        .must_equal %w{banner warning error info plain}
       _(events.map { |event| event["event_type"] })
         .must_equal %w{banner stream stream stream stream}
     end

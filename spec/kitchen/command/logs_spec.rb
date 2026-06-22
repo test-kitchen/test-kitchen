@@ -11,45 +11,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
+require_relative "../../spec_helper"
 
-require 'json'
-require 'tmpdir'
+require "json"
+require "tmpdir"
 
-require 'kitchen'
-require 'kitchen/collection'
-require 'kitchen/command/logs'
+require "kitchen"
+require "kitchen/collection"
+require "kitchen/command/logs"
 
 describe Kitchen::Command::Logs do
-  let(:log_path) { File.join(log_dir, 'default-ubuntu-2404.ndjson') }
-  let(:other_log_path) { File.join(log_dir, 'default-almalinux-9.ndjson') }
-  let(:log_dir) { File.join(tmpdir, '.kitchen', 'logs') }
+  let(:log_path) { File.join(log_dir, "default-ubuntu-2404.ndjson") }
+  let(:other_log_path) { File.join(log_dir, "default-almalinux-9.ndjson") }
+  let(:log_dir) { File.join(tmpdir, ".kitchen", "logs") }
   let(:tmpdir) { Dir.mktmpdir }
   let(:instance) do
     stub(
-      name: 'default-ubuntu-2404',
-      to_str: '<default-ubuntu-2404>',
+      name: "default-ubuntu-2404",
+      to_str: "<default-ubuntu-2404>",
       structured_log_path: log_path,
-      current_session_id: 'session-current'
+      current_session_id: "session-current"
     )
   end
   let(:other_instance) do
     stub(
-      name: 'default-almalinux-9',
-      to_str: '<default-almalinux-9>',
+      name: "default-almalinux-9",
+      to_str: "<default-almalinux-9>",
       structured_log_path: other_log_path,
-      current_session_id: 'other-current'
+      current_session_id: "other-current"
     )
   end
   let(:config) { stub(instances: Kitchen::Collection.new([instance])) }
   let(:shell) { stub }
-  let(:args) { ['default-ubuntu-2404'] }
+  let(:args) { ["default-ubuntu-2404"] }
   let(:options) { {} }
   let(:command) do
     Kitchen::Command::Logs.new(
       args,
       options,
-      action: 'logs',
+      action: "logs",
       help: -> {},
       config:,
       shell:
@@ -84,117 +84,117 @@ describe Kitchen::Command::Logs do
     stdout.lines.map(&:chomp)
   end
 
-  it 'prints current-session text by default' do
+  it "prints current-session text by default" do
     write_log_events(
-      { instance_session_id: 'session-old', level: 'error', message: 'old' },
-      { instance_session_id: 'session-current', level: 'info', message: 'current' }
+      { instance_session_id: "session-old", level: "error", message: "old" },
+      { instance_session_id: "session-current", level: "info", message: "current" }
     )
 
     messages = captured_messages
 
-    _(messages).must_equal %w(current)
+    _(messages).must_equal %w{current}
   end
 
-  it 'prints current-session NDJSON when requested' do
-    options[:format] = 'ndjson'
+  it "prints current-session NDJSON when requested" do
+    options[:format] = "ndjson"
     write_log_events(
-      { instance_session_id: 'session-old', level: 'error', message: 'old' },
-      { instance_session_id: 'session-current', level: 'info', message: 'current' }
+      { instance_session_id: "session-old", level: "error", message: "old" },
+      { instance_session_id: "session-current", level: "info", message: "current" }
     )
 
     events = captured_events
 
     _(events.length).must_equal 1
-    _(events.fetch(0)['message']).must_equal 'current'
+    _(events.fetch(0)["message"]).must_equal "current"
   end
 
-  it 'filters by minimum log level' do
-    options[:format] = 'ndjson'
-    options[:level] = 'warn'
+  it "filters by minimum log level" do
+    options[:format] = "ndjson"
+    options[:level] = "warn"
     write_log_events(
-      { instance_session_id: 'session-current', level: 'debug', message: 'debug' },
-      { instance_session_id: 'session-current', level: 'info', message: 'info' },
-      { instance_session_id: 'session-current', level: 'warn', message: 'warn' },
-      { instance_session_id: 'session-current', level: 'error', message: 'error' }
+      { instance_session_id: "session-current", level: "debug", message: "debug" },
+      { instance_session_id: "session-current", level: "info", message: "info" },
+      { instance_session_id: "session-current", level: "warn", message: "warn" },
+      { instance_session_id: "session-current", level: "error", message: "error" }
     )
 
     events = captured_events
 
-    _(events.map { |event| event['message'] }).must_equal %w(warn error)
+    _(events.map { |event| event["message"] }).must_equal %w{warn error}
   end
 
-  it 'can print all sessions' do
-    options[:format] = 'ndjson'
+  it "can print all sessions" do
+    options[:format] = "ndjson"
     options[:all_sessions] = true
     write_log_events(
-      { instance_session_id: 'session-old', level: 'error', message: 'old' },
-      { instance_session_id: 'session-current', level: 'info', message: 'current' }
+      { instance_session_id: "session-old", level: "error", message: "old" },
+      { instance_session_id: "session-current", level: "info", message: "current" }
     )
 
     events = captured_events
 
-    _(events.map { |event| event['message'] }).must_equal %w(old current)
+    _(events.map { |event| event["message"] }).must_equal %w{old current}
   end
 
-  it 'falls back to the latest session in the log file when state is gone' do
-    options[:format] = 'ndjson'
+  it "falls back to the latest session in the log file when state is gone" do
+    options[:format] = "ndjson"
     instance.stubs(:current_session_id).returns(nil)
     write_log_events(
-      { instance_session_id: 'session-old', level: 'error', message: 'old' },
-      { instance_session_id: 'session-latest', level: 'info', message: 'latest' }
+      { instance_session_id: "session-old", level: "error", message: "old" },
+      { instance_session_id: "session-latest", level: "info", message: "latest" }
     )
 
     events = captured_events
 
-    _(events.map { |event| event['message'] }).must_equal %w(latest)
+    _(events.map { |event| event["message"] }).must_equal %w{latest}
   end
 
-  describe 'with multiple instances' do
+  describe "with multiple instances" do
     let(:args) { [] }
     let(:config) { stub(instances: Kitchen::Collection.new([instance, other_instance])) }
 
-    it 'can print all sessions for every instance when no instance is specified' do
-      options[:format] = 'ndjson'
+    it "can print all sessions for every instance when no instance is specified" do
+      options[:format] = "ndjson"
       options[:all_sessions] = true
       config.expects(:instances).never
       write_log_events(
-        { instance: 'default-ubuntu-2404', instance_session_id: 'old', level: 'info', message: 'ubuntu' }
+        { instance: "default-ubuntu-2404", instance_session_id: "old", level: "info", message: "ubuntu" }
       )
       write_other_log_events(
-        { instance: 'default-almalinux-9', instance_session_id: 'other', level: 'info', message: 'almalinux' }
+        { instance: "default-almalinux-9", instance_session_id: "other", level: "info", message: "almalinux" }
       )
 
       events = captured_events
 
-      _(events.map { |event| event['message'] }).must_equal %w(almalinux ubuntu)
+      _(events.map { |event| event["message"] }).must_equal %w{almalinux ubuntu}
     end
 
-    it 'filters all-session logs from disk by instance name' do
-      options[:format] = 'ndjson'
+    it "filters all-session logs from disk by instance name" do
+      options[:format] = "ndjson"
       options[:all_sessions] = true
       config.expects(:instances).never
-      args << 'default-ubuntu-2404'
+      args << "default-ubuntu-2404"
       write_log_events(
-        { instance: 'default-ubuntu-2404', instance_session_id: 'old', level: 'info', message: 'ubuntu' }
+        { instance: "default-ubuntu-2404", instance_session_id: "old", level: "info", message: "ubuntu" }
       )
       write_other_log_events(
-        { instance: 'default-almalinux-9', instance_session_id: 'other', level: 'info', message: 'almalinux' }
+        { instance: "default-almalinux-9", instance_session_id: "other", level: "info", message: "almalinux" }
       )
 
       events = captured_events
 
-      _(events.map { |event| event['message'] }).must_equal %w(ubuntu)
+      _(events.map { |event| event["message"] }).must_equal %w{ubuntu}
     end
 
-    it 'rejects following more than one instance log' do
+    it "rejects following more than one instance log" do
       options[:all_sessions] = true
       options[:follow] = true
       config.expects(:instances).never
       write_log_events(
-        { instance: 'default-ubuntu-2404', instance_session_id: 'old', level: 'info', message: 'ubuntu' }
+        { instance: "default-ubuntu-2404", instance_session_id: "old", level: "info", message: "ubuntu" }
       )
       write_other_log_events(
-        { instance: 'default-almalinux-9', instance_session_id: 'other', level: 'info', message: 'almalinux' }
+        { instance: "default-almalinux-9", instance_session_id: "other", level: "info", message: "almalinux" }
       )
       command.expects(:follow_file).never
 

@@ -17,8 +17,8 @@
 
 require "benchmark" unless defined?(Benchmark)
 require "fileutils" unless defined?(FileUtils)
-require "securerandom"
-require "time"
+require "securerandom" unless defined?(SecureRandom)
+require "time" unless defined?(Time)
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a
@@ -614,9 +614,7 @@ module Kitchen
     def transport_probe(state)
       return not_created_transport_probe if state[:last_action].nil?
 
-      transport.connection(state) do |conn|
-        conn.wait_until_ready
-      end
+      transport.connection(state, &:wait_until_ready)
       {
         reachable: true,
         state: "reachable",
@@ -656,7 +654,6 @@ module Kitchen
       end
 
       def call(what, &block)
-        state = nil
         state = state_file.read
         action_id = new_id
         session_id = state[:instance_session_id] || new_id
@@ -666,30 +663,28 @@ module Kitchen
           instance_session_id: session_id,
           kitchen_run_id: Kitchen.run_id
         ) do
-          begin
-            elapsed = Benchmark.measure do
-              synchronize_or_call(what, state, &block)
-            end
-            record_attempt(state, what, action_id, session_id)
-            state[:last_action] = what.to_s
-            state[:last_error] = nil
-            elapsed
-          rescue ActionFailed => e
-            log_failure(what, e)
-            record_attempt(state, what, action_id, session_id) if state
-            state[:last_error] = e.class.name if state
-            raise(InstanceFailure, failure_message(what) +
-              "  Please see .kitchen/logs/#{instance.name}.log for more details",
-              e.backtrace)
-          rescue Exception => e # rubocop:disable Lint/RescueException
-            log_failure(what, e)
-            record_attempt(state, what, action_id, session_id) if state
-            state[:last_error] = e.class.name if state
-            raise ActionFailed,
-              "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
-          ensure
-            state_file.write(state) if state
+          elapsed = Benchmark.measure do
+            synchronize_or_call(what, state, &block)
           end
+          record_attempt(state, what, action_id, session_id)
+          state[:last_action] = what.to_s
+          state[:last_error] = nil
+          elapsed
+        rescue ActionFailed => e
+          log_failure(what, e)
+          record_attempt(state, what, action_id, session_id) if state
+          state[:last_error] = e.class.name if state
+          raise(InstanceFailure, failure_message(what) +
+            "  Please see .kitchen/logs/#{instance.name}.log for more details",
+            e.backtrace)
+        rescue Exception => e # rubocop:disable Lint/RescueException
+          log_failure(what, e)
+          record_attempt(state, what, action_id, session_id) if state
+          state[:last_error] = e.class.name if state
+          raise ActionFailed,
+            "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+        ensure
+          state_file.write(state) if state
         end
       end
 
