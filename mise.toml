@@ -105,5 +105,4 @@ run = "bundle exec kitchen list"
 
 [tasks."kitchen:verify"]
 description = "Verify Test Kitchen instances"
-raw_args = true
 run = "bundle exec kitchen verify"
