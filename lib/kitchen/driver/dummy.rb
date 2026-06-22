@@ -11,6 +11,7 @@
 # limitations under the License.
 
 require_relative "../../kitchen"
+require "time"
 
 module Kitchen
   module Driver
@@ -49,6 +50,32 @@ module Kitchen
       def destroy(state)
         report(:destroy, state)
         state.delete(:my_id)
+      end
+
+      # Reports whether the dummy instance has a generated resource id.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @return [Hash] normalized status data
+      def status(state)
+        if state[:my_id]
+          {
+            live: true,
+            state: "running",
+            source: "driver",
+            resource_id: state[:my_id],
+            message: "Dummy instance exists",
+            checked_at: Time.now.utc.iso8601,
+          }
+        else
+          {
+            live: false,
+            state: "not_created",
+            source: "driver",
+            resource_id: nil,
+            message: "Dummy instance has no resource id",
+            checked_at: Time.now.utc.iso8601,
+          }
+        end
       end
 
       private

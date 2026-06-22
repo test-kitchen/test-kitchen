@@ -16,7 +16,9 @@
 # limitations under the License.
 
 require "fileutils" unless defined?(FileUtils)
+require "json" unless defined?(JSON)
 require "logger"
+require "time"
 
 module Kitchen
   # Logging implementation for Kitchen. By default the console/stdout output
@@ -30,6 +32,15 @@ module Kitchen
 
     # @return [IO] the log device
     attr_reader :logdev
+
+    # @return [IO] the structured log device
+    attr_reader :structured_logdev
+
+    # @return [String,nil] the expanded text log path, if configured
+    attr_reader :logdev_path
+
+    # @return [String,nil] the expanded structured log path, if configured
+    attr_reader :structured_logdev_path
 
     # @return [Boolean] whether logger is configured for
     #   overwriting
@@ -55,6 +66,7 @@ module Kitchen
     #   when Test Kitchen runs.
     #   (default: `$stdout.tty?`)
     def initialize(options = {})
+      @base_metadata = options[:metadata] || {}
       @log_overwrite = if options[:log_overwrite].nil?
                          default_log_overwrite
                        else
@@ -62,6 +74,13 @@ module Kitchen
                        end
 
       @logdev = device_factory.logdev_logger(options[:logdev], log_overwrite) if options[:logdev]
+      @structured_logdev = device_factory.structured_logdev_logger(
+        options[:structured_logdev],
+        log_overwrite,
+        -> { metadata }
+      ) if options[:structured_logdev]
+      @logdev_path = expanded_log_path(options[:logdev])
+      @structured_logdev_path = expanded_log_path(options[:structured_logdev])
 
       populate_loggers(options)
 
@@ -77,6 +96,7 @@ module Kitchen
     def populate_loggers(options)
       @loggers = []
       @loggers << logdev unless logdev.nil?
+      @loggers << structured_logdev unless structured_logdev.nil?
       @loggers << device_factory.stdout_logger(options[:stdout], options[:color], options[:colorize]) if
         options[:stdout]
       @loggers << device_factory.stdout_logger($stdout, options[:color], options[:colorize]) if
@@ -265,6 +285,23 @@ module Kitchen
     # @see http://is.gd/b13cVn
     delegate_to_all_loggers :close
 
+    # @return [Hash] metadata added to structured log events
+    def metadata
+      metadata_stack.inject(@base_metadata.dup) do |result, values|
+        result.merge(values)
+      end
+    end
+
+    # Temporarily adds metadata to structured log events.
+    #
+    # @param values [Hash] metadata fields to add for the block duration
+    def with_metadata(values)
+      metadata_stack.push(values.compact)
+      yield
+    ensure
+      metadata_stack.pop
+    end
+
     private
 
     # @return [Integer] the default logger level
@@ -281,6 +318,18 @@ module Kitchen
 
     def device_factory
       @device_factory ||= DeviceFactory.new
+    end
+
+    def expanded_log_path(logdev)
+      File.expand_path(logdev) if logdev.is_a?(String)
+    end
+
+    def metadata_stack
+      Thread.current[metadata_stack_key] ||= []
+    end
+
+    def metadata_stack_key
+      @metadata_stack_key ||= :"kitchen_logger_metadata_#{object_id}"
     end
 
     # Internal composite for forwarding stdlib Logger-compatible calls to all
@@ -340,6 +389,21 @@ module Kitchen
       # @api private
       def logdev_logger(filepath_or_logdev, log_overwrite)
         LogdevLogger.new(resolve_logdev(filepath_or_logdev, log_overwrite))
+      end
+
+      # Construct a new structured logdev logger.
+      #
+      # @param filepath_or_logdev [String,IO] a filepath String or IO object
+      # @param log_overwrite [Boolean] apply log overwriting
+      #   if filepath_or_logdev is a file path
+      # @param metadata_provider [Proc] callable returning structured metadata
+      # @return [StructuredLogdevLogger] a new logger
+      # @api private
+      def structured_logdev_logger(filepath_or_logdev, log_overwrite, metadata_provider)
+        StructuredLogdevLogger.new(
+          resolve_logdev(filepath_or_logdev, log_overwrite),
+          metadata_provider
+        )
       end
 
       private
@@ -406,10 +470,33 @@ module Kitchen
 
       def format(line)
         case line
-        when /^-----> / then @logger.banner(line.gsub(/^[ >-]{6} /, ""))
-        when /^>>>>>> / then @logger.error(line.gsub(/^[ >-]{6} /, ""))
-        when /^       / then @logger.info(line.gsub(/^[ >-]{6} /, ""))
-        else @logger.info(line)
+        when /^-----> / then log_line(:banner, line.gsub(/^[ >-]{6} /, ""))
+        when /^D      / then structured_line(:debug, line.gsub(/^D {6}/, ""), line)
+        when /^\$\$\$\$\$\$ / then structured_line(:warn, line.gsub(/^\${6} /, ""), line)
+        when /^>>>>>> / then log_line(:error, line.gsub(/^[ >-]{6} /, ""))
+        when /^!!!!!! / then structured_line(:fatal, line.gsub(/^!{6} /, ""), line)
+        when /^       / then log_line(:info, line.gsub(/^[ >-]{6} /, ""))
+        else log_line(:info, line)
+        end
+      end
+
+      private
+
+      def log_line(severity, message)
+        if severity == :banner
+          @logger.banner(message)
+        elsif @logger.respond_to?(:stream)
+          @logger.stream(severity, message)
+        else
+          @logger.public_send(severity, message)
+        end
+      end
+
+      def structured_line(severity, message, original)
+        if @logger.respond_to?(:stream)
+          @logger.stream(severity, message)
+        else
+          @logger.info(original)
         end
       end
     end
@@ -444,6 +531,152 @@ module Kitchen
         @line_buffer ||= LineBuffer.new do |line|
           formatter.format(line)
         end
+      end
+    end
+
+    # Internal class that emits one JSON object per log event.
+    class StructuredLogdevLogger
+      include ::Logger::Severity
+
+      SEVERITY_NAMES = {
+        DEBUG => "debug",
+        INFO => "info",
+        WARN => "warn",
+        ERROR => "error",
+        FATAL => "fatal",
+        UNKNOWN => "unknown",
+      }.freeze
+
+      attr_accessor :level
+      attr_accessor :progname
+      attr_accessor :datetime_format
+
+      def initialize(logdev, metadata_provider)
+        @logdev = logdev
+        @metadata_provider = metadata_provider
+        @level = INFO
+        @progname = "Kitchen"
+        @sequence = 0
+        @mutex = Mutex.new
+      end
+
+      def add(severity, message = nil, progname = nil)
+        severity ||= UNKNOWN
+        return true if severity < level
+
+        message = if message.nil?
+                    block_given? ? yield : progname
+                  else
+                    message
+                  end
+        write_event(severity, message, "log")
+      end
+
+      def <<(msg)
+        line_buffer << msg
+      end
+
+      def banner(msg = nil)
+        message = block_given? ? yield : msg
+        write_event(INFO, message, "banner") unless INFO < level
+      end
+
+      def stream(severity, msg)
+        severity = severity_const(severity)
+        write_event(severity, msg, "stream") unless severity < level
+      end
+
+      def debug(msg = nil, &block)
+        add(DEBUG, msg, nil, &block)
+      end
+
+      def info(msg = nil, &block)
+        add(INFO, msg, nil, &block)
+      end
+
+      def warn(msg = nil, &block)
+        add(WARN, msg, nil, &block)
+      end
+
+      def error(msg = nil, &block)
+        add(ERROR, msg, nil, &block)
+      end
+
+      def fatal(msg = nil, &block)
+        add(FATAL, msg, nil, &block)
+      end
+
+      def unknown(msg = nil, &block)
+        add(UNKNOWN, msg, nil, &block)
+      end
+
+      def debug?
+        level <= DEBUG
+      end
+
+      def info?
+        level <= INFO
+      end
+
+      def warn?
+        level <= WARN
+      end
+
+      def error?
+        level <= ERROR
+      end
+
+      def fatal?
+        level <= FATAL
+      end
+
+      def close
+        return unless @logdev.respond_to?(:close)
+
+        if @logdev.respond_to?(:closed?)
+          @logdev.close unless @logdev.closed?
+        else
+          @logdev.close
+        end
+      end
+
+      private
+
+      def line_buffer
+        formatter = StreamLineFormatter.new(self)
+        @line_buffer ||= LineBuffer.new do |line|
+          formatter.format(line)
+        end
+      end
+
+      def next_sequence
+        @sequence += 1
+      end
+
+      def severity_const(severity)
+        return severity if severity.is_a?(Integer)
+
+        ::Logger.const_get(severity.to_s.upcase)
+      end
+
+      def severity_name(severity)
+        SEVERITY_NAMES.fetch(severity, "unknown")
+      end
+
+      def write_event(severity, message, event_type)
+        @mutex.synchronize do
+          event = @metadata_provider.call.merge(
+            timestamp: Time.now.utc.iso8601(6),
+            level: severity_name(severity),
+            event_type:,
+            message: message.to_s,
+            progname:,
+            sequence: next_sequence
+          ).compact
+          @logdev.write(JSON.generate(event))
+          @logdev.write("\n")
+        end
+        true
       end
     end
 

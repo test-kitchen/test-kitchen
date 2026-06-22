@@ -110,13 +110,20 @@ module Kitchen
       aliases: "-j",
       type: :boolean,
       desc: "Print data as JSON"
+    method_option :live,
+      type: :boolean,
+      desc: "Include driver-reported live instance status"
+    method_option :probe,
+      type: :boolean,
+      desc: "Probe transport connectivity in addition to driver status"
     method_option :debug,
       aliases: "-d",
       type: :boolean,
       desc: "[Deprecated] Please use `kitchen diagnose'"
     log_options
     def list(*args)
-      update_config!
+      log_overwrite = options[:log_overwrite].nil? ? false : options[:log_overwrite]
+      update_config!(log_overwrite:)
       perform("list", "list", args)
     end
     map status: :list
@@ -257,6 +264,27 @@ module Kitchen
       perform("login", "login", args)
     end
 
+    desc "logs [INSTANCE|REGEXP|all]", "Show structured logs"
+    method_option :level,
+      desc: "Minimum log level to print (debug, info, warn, error, fatal)"
+    method_option :session_id,
+      desc: "Only print logs for the given instance session id"
+    method_option :all_sessions,
+      type: :boolean,
+      desc: "Print logs from all instance sessions; defaults to all instances"
+    method_option :format,
+      default: 'text',
+      desc: "Output format (ndjson, text)"
+    method_option :follow,
+      aliases: "-f",
+      type: :boolean,
+      desc: "Follow the structured log file"
+    log_options
+    def logs(*args)
+      update_config!(log_overwrite: false)
+      perform("logs", "logs", args)
+    end
+
     desc "package INSTANCE|REGEXP", "package an instance"
     log_options
     def package(*args)
@@ -334,12 +362,10 @@ module Kitchen
     # Update and finalize options for logging, concurrency, and other concerns.
     #
     # @api private
-    def update_config!
+    def update_config!(log_overwrite: options[:log_overwrite])
       @config.log_level = log_level if log_level
 
-      unless options[:log_overwrite].nil?
-        @config.log_overwrite = options[:log_overwrite]
-      end
+      @config.log_overwrite = log_overwrite unless log_overwrite.nil?
       @config.colorize = options[:color] unless options[:color].nil?
 
       if options[:test_base_path]
@@ -352,7 +378,7 @@ module Kitchen
       # Now that we have required configs, lets create our file logger
       Kitchen.logger = Kitchen.default_file_logger(
         log_level,
-        options[:log_overwrite]
+        log_overwrite
       )
 
       update_parallel!

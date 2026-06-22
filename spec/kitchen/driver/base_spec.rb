@@ -87,6 +87,16 @@ describe Kitchen::Driver::Base do
     end
   end
 
+  it "returns unknown status by default for compatibility with existing drivers" do
+    status = driver.status(state)
+
+    _(status[:live]).must_be_nil
+    _(status[:state]).must_equal "unknown"
+    _(status[:source]).must_equal "driver"
+    _(status[:message]).must_match(/does not support status/)
+    _(status[:checked_at]).wont_be_nil
+  end
+
   describe ".pre_create_command" do
     it "run command" do
       Kitchen::Driver::Base.any_instance.stubs(:run_command).returns(true)

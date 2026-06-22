@@ -23,6 +23,7 @@ Commands:
   kitchen init                                    # Adds some configuration to your cookbook so Kitchen can rock
   kitchen list [INSTANCE|REGEXP|all]              # Lists one or more instances
   kitchen login INSTANCE|REGEXP                   # Log in to one instance
+  kitchen logs [INSTANCE|REGEXP|all]              # Show structured logs
   kitchen package INSTANCE|REGEXP                 # package an instance
   kitchen setup [INSTANCE|REGEXP|all]             # Change instance state to setup. Prepare to run automated tests. Install busser and related gems on one or more instances
   kitchen test [INSTANCE|REGEXP|all]              # Test (destroy, create, converge, setup, verify and destroy) one or more instances

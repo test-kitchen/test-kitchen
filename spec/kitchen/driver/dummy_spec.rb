@@ -189,4 +189,25 @@ describe Kitchen::Driver::Dummy do
       _(logged_output.string).must_match(/^.+ INFO .+ \[Dummy\] Destroy on .+$/)
     end
   end
+
+  describe "#status" do
+    it "reports the dummy instance as live when state has a resource id" do
+      state[:my_id] = "coolbeans-123"
+
+      status = driver.status(state)
+
+      _(status[:live]).must_equal true
+      _(status[:state]).must_equal "running"
+      _(status[:source]).must_equal "driver"
+      _(status[:resource_id]).must_equal "coolbeans-123"
+    end
+
+    it "reports the dummy instance as not created when state has no resource id" do
+      status = driver.status(state)
+
+      _(status[:live]).must_equal false
+      _(status[:state]).must_equal "not_created"
+      _(status[:source]).must_equal "driver"
+    end
+  end
 end

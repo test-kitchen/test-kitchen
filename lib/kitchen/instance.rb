@@ -17,6 +17,8 @@
 
 require "benchmark" unless defined?(Benchmark)
 require "fileutils" unless defined?(FileUtils)
+require "securerandom"
+require "time"
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a
@@ -287,6 +289,46 @@ module Kitchen
       state_file.read[:last_error]
     end
 
+    # Returns the current instance session identifier, if one has been
+    # established.
+    #
+    # @return [String,nil] the current instance session id
+    def current_session_id
+      state_file.read[:instance_session_id]
+    end
+
+    # Returns the path to the text log file for this instance.
+    #
+    # @return [String,nil] the instance text log path
+    def log_path
+      logger.logdev_path
+    end
+
+    # Returns the path to the structured log file for this instance.
+    #
+    # @return [String,nil] the instance structured log path
+    def structured_log_path
+      logger.structured_logdev_path
+    end
+
+    # Returns the path to the state file for this instance.
+    #
+    # @return [String] the instance state file path
+    def state_path
+      state_file.path
+    end
+
+    # Returns normalized liveness status for this instance.
+    #
+    # @param probe [Boolean] whether to probe the transport as well
+    # @return [Hash] normalized status data
+    def status(probe: false)
+      state = state_file.read
+      result = driver_status(state)
+      result[:transport_probe] = transport_probe(state) if probe
+      result
+    end
+
     # Clean up any per-instance resources before exiting.
     #
     # @return [void]
@@ -406,12 +448,14 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def converge_action
-      banner "Converging #{to_str}..."
       elapsed = action(:converge) do |state|
+        banner "Converging #{to_str}..."
         provisioner.check_license
         provisioner.call(state)
       end
-      info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
+      with_current_action_metadata(:converge) do
+        info("Finished converging #{to_str} #{Util.duration(elapsed.real)}.")
+      end
       self
     end
 
@@ -421,10 +465,12 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def setup_action
-      banner "Setting up #{to_str}..."
       elapsed = action(:setup) do |state|
+        banner "Setting up #{to_str}..."
       end
-      info("Finished setting up #{to_str} #{Util.duration(elapsed.real)}.")
+      with_current_action_metadata(:setup) do
+        info("Finished setting up #{to_str} #{Util.duration(elapsed.real)}.")
+      end
       self
     end
 
@@ -434,11 +480,13 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def verify_action
-      banner "Verifying #{to_str}..."
       elapsed = action(:verify) do |state|
+        banner "Verifying #{to_str}..."
         verifier.call(state)
       end
-      info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
+      with_current_action_metadata(:verify) do
+        info("Finished verifying #{to_str} #{Util.duration(elapsed.real)}.")
+      end
       self
     end
 
@@ -460,10 +508,14 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def perform_action(verb, output_verb)
-      banner "#{output_verb} #{to_str}..."
-      elapsed = action(verb) { |state| driver.public_send(verb, state) }
-      info("Finished #{output_verb.downcase} #{to_str}" \
-        " #{Util.duration(elapsed.real)}.")
+      elapsed = action(verb) do |state|
+        banner "#{output_verb} #{to_str}..."
+        driver.public_send(verb, state)
+      end
+      with_current_action_metadata(verb) do
+        info("Finished #{output_verb.downcase} #{to_str}" \
+          " #{Util.duration(elapsed.real)}.")
+      end
       yield if block_given?
       self
     end
@@ -500,11 +552,99 @@ module Kitchen
     # @api private
     def banner(*args)
       Kitchen.logger.logdev && Kitchen.logger.logdev.banner(*args)
+      if Kitchen.logger.structured_logdev
+        Kitchen.logger.with_metadata(logger.metadata) do
+          Kitchen.logger.structured_logdev.banner(*args)
+        end
+      end
       super
     end
 
     def action_runner
       @action_runner ||= ActionRunner.new(self, state_file)
+    end
+
+    def with_current_action_metadata(what)
+      state = state_file.read
+      logger.with_metadata(
+        action: what.to_s,
+        action_id: state[:last_action_id],
+        instance_session_id: state[:instance_session_id],
+        kitchen_run_id: state[:last_kitchen_run_id] || Kitchen.run_id
+      ) do
+        yield
+      end
+    end
+
+    def driver_status(state)
+      if driver.method(:status).arity == 0
+        return unknown_driver_status(
+          "Driver status method does not accept Kitchen state"
+        )
+      end
+
+      normalize_driver_status(driver.status(state))
+    rescue Exception => e # rubocop:disable Lint/RescueException
+      unknown_driver_status(e.message, e.class.name)
+    end
+
+    def normalize_driver_status(status)
+      status = Util.symbolized_hash(status || {})
+      {
+        live: status[:live],
+        state: status[:state] || "unknown",
+        source: status[:source] || "driver",
+        resource_id: status[:resource_id],
+        message: status[:message],
+        checked_at: status[:checked_at] || Time.now.utc.iso8601,
+      }.compact
+    end
+
+    def unknown_driver_status(message, error = nil)
+      {
+        live: nil,
+        state: "unknown",
+        source: "driver",
+        error:,
+        message:,
+        checked_at: Time.now.utc.iso8601,
+      }.compact
+    end
+
+    def transport_probe(state)
+      return not_created_transport_probe if state[:last_action].nil?
+
+      transport.connection(state) do |conn|
+        conn.wait_until_ready
+      end
+      {
+        reachable: true,
+        state: "reachable",
+        source: "transport",
+        message: "Transport connection succeeded",
+        checked_at: Time.now.utc.iso8601,
+      }
+    rescue Exception => e # rubocop:disable Lint/RescueException
+      {
+        reachable: false,
+        state: "unreachable",
+        source: "transport",
+        error: e.class.name,
+        message: e.message,
+        checked_at: Time.now.utc.iso8601,
+      }
+    ensure
+      transport.cleanup! if transport
+    end
+
+    def not_created_transport_probe
+      {
+        reachable: false,
+        state: "not_created",
+        source: "transport",
+        message: "Instance has not yet been created",
+        checked_at: Time.now.utc.iso8601,
+      }
     end
 
     # Coordinates one instance action, including state persistence, plugin
@@ -518,25 +658,39 @@ module Kitchen
       def call(what, &block)
         state = nil
         state = state_file.read
-        elapsed = Benchmark.measure do
-          synchronize_or_call(what, state, &block)
+        action_id = new_id
+        session_id = state[:instance_session_id] || new_id
+        instance.logger.with_metadata(
+          action: what.to_s,
+          action_id:,
+          instance_session_id: session_id,
+          kitchen_run_id: Kitchen.run_id
+        ) do
+          begin
+            elapsed = Benchmark.measure do
+              synchronize_or_call(what, state, &block)
+            end
+            record_attempt(state, what, action_id, session_id)
+            state[:last_action] = what.to_s
+            state[:last_error] = nil
+            elapsed
+          rescue ActionFailed => e
+            log_failure(what, e)
+            record_attempt(state, what, action_id, session_id) if state
+            state[:last_error] = e.class.name if state
+            raise(InstanceFailure, failure_message(what) +
+              "  Please see .kitchen/logs/#{instance.name}.log for more details",
+              e.backtrace)
+          rescue Exception => e # rubocop:disable Lint/RescueException
+            log_failure(what, e)
+            record_attempt(state, what, action_id, session_id) if state
+            state[:last_error] = e.class.name if state
+            raise ActionFailed,
+              "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
+          ensure
+            state_file.write(state) if state
+          end
         end
-        state[:last_action] = what.to_s
-        state[:last_error] = nil
-        elapsed
-      rescue ActionFailed => e
-        log_failure(what, e)
-        state[:last_error] = e.class.name if state
-        raise(InstanceFailure, failure_message(what) +
-          "  Please see .kitchen/logs/#{instance.name}.log for more details",
-          e.backtrace)
-      rescue Exception => e # rubocop:disable Lint/RescueException
-        log_failure(what, e)
-        state[:last_error] = e.class.name if state
-        raise ActionFailed,
-          "Failed to complete ##{what} action: [#{e.message}]", e.backtrace
-      ensure
-        state_file.write(state) if state
       end
 
       private
@@ -567,14 +721,27 @@ module Kitchen
       end
 
       def log_failure(what, e)
-        return if instance.logger.logdev.nil?
+        return if instance.logger.logdev.nil? && instance.logger.structured_logdev.nil?
 
-        instance.logger.logdev.error(failure_message(what))
-        Error.formatted_trace(e).each { |line| instance.logger.logdev.error(line) }
+        [instance.logger.logdev, instance.logger.structured_logdev].compact.each do |logdev|
+          logdev.error(failure_message(what))
+          Error.formatted_trace(e).each { |line| logdev.error(line) }
+        end
       end
 
       def failure_message(what)
         "#{what.capitalize} failed on instance #{instance.to_str}."
+      end
+
+      def record_attempt(state, what, action_id, session_id)
+        state[:instance_session_id] = session_id
+        state[:last_attempted_action] = what.to_s
+        state[:last_action_id] = action_id
+        state[:last_kitchen_run_id] = Kitchen.run_id
+      end
+
+      def new_id
+        SecureRandom.uuid
       end
     end
 

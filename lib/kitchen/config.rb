@@ -270,13 +270,21 @@ module Kitchen
     def new_instance_logger(suite, platform, index)
       name = instance_name(suite, platform)
       log_location = File.join(log_root, "#{name}.log").to_s
+      structured_log_location = File.join(log_root, "#{name}.ndjson").to_s
       Logger.new(
         stdout: STDOUT,
         color: Color::COLORS[index % Color::COLORS.size].to_sym,
         logdev: log_location,
+        structured_logdev: structured_log_location,
         level: Util.to_logger_level(log_level),
         log_overwrite:,
         progname: name,
+        metadata: {
+          kitchen_run_id: Kitchen.run_id,
+          instance: name,
+          suite: suite.name,
+          platform: platform.name,
+        },
         colorize: @colorize
       )
     end

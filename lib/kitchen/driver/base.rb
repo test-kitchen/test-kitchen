@@ -16,6 +16,7 @@ require_relative "../lazy_hash"
 require_relative "../logging"
 require_relative "../plugin_base"
 require_relative "../shell_out"
+require "time"
 
 module Kitchen
   module Driver
@@ -61,6 +62,24 @@ module Kitchen
       # @returns [Boolean] Return true if a problem is found.
       def doctor(state)
         false
+      end
+
+      # Reports whether the backing instance is known to be live.
+      #
+      # Drivers that can ask their provider should override this method.
+      # Existing drivers remain compatible by inheriting an unknown status.
+      #
+      # @param state [Hash] mutable instance and driver state
+      # @return [Hash] normalized status data
+      def status(state) # rubocop:disable Lint/UnusedMethodArgument
+        {
+          live: nil,
+          state: "unknown",
+          source: "driver",
+          resource_id: nil,
+          message: "#{self.class} does not support status checks",
+          checked_at: Time.now.utc.iso8601,
+        }
       end
 
       # Sets the API version for this driver. If the driver does not set this

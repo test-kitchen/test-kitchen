@@ -6,7 +6,7 @@ driver:
   chef_version: 19
 
 provisioner:
-  name: dokken_ci
+  name: dokken
   product_name: cinc
   chef_binary: /opt/cinc/bin/cinc-client
   install_strategy: skip

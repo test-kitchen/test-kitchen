@@ -76,6 +76,13 @@ module Kitchen
       result
     end
 
+    # Returns the absolute path to the state file.
+    #
+    # @return [String] absolute path to the state file on disk
+    def path
+      file_name
+    end
+
     private
 
     # @return [String] absolute path to the yaml state file on disk
