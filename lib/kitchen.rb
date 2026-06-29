@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require "pathname" unless defined?(Pathname)
+require "securerandom" unless defined?(SecureRandom)
 require_relative "kitchen/errors"
 require_relative "kitchen/logger"
 require_relative "kitchen/logging"
@@ -59,6 +60,9 @@ module Kitchen
     # @return [Mutex] a mutex used for Dir.chdir coordination
     attr_accessor :mutex_chdir
 
+    # @return [String] identifier for the current Kitchen process invocation
+    attr_writer :run_id
+
     # Returns the root path of the Kitchen gem source code.
     #
     # @return [Pathname] root path of gem
@@ -70,7 +74,11 @@ module Kitchen
     #
     # @return [Logger] a logger
     def default_logger
-      Logger.new(stdout: $stdout, level: Util.to_logger_level(env_log))
+      Logger.new(
+        stdout: $stdout,
+        level: Util.to_logger_level(env_log),
+        metadata: { kitchen_run_id: run_id }
+      )
     end
 
     # Returns a default file logger which emits on standard output and to a
@@ -84,13 +92,24 @@ module Kitchen
       log_overwrite = log_overwrite.nil? ? env_log_overwrite : log_overwrite
       log_location = File.expand_path(File.join(DEFAULT_LOG_DIR, "kitchen.log"))
       log_location = log_location.to_s
+      structured_log_location = File.expand_path(File.join(DEFAULT_LOG_DIR, "kitchen.ndjson"))
+      structured_log_location = structured_log_location.to_s
 
       Logger.new(
         stdout: $stdout,
         logdev: log_location,
+        structured_logdev: structured_log_location,
         level: Util.to_logger_level(level),
-        log_overwrite:
+        log_overwrite:,
+        metadata: { kitchen_run_id: run_id }
       )
+    end
+
+    # Returns the current Kitchen run identifier.
+    #
+    # @return [String] identifier for the current Kitchen process invocation
+    def run_id
+      @run_id ||= SecureRandom.uuid
     end
 
     # Returns whether or not standard output is associated with a terminal

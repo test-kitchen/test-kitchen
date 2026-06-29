@@ -26,9 +26,11 @@ module Kitchen
 
     before do
       @orig_env = ENV.to_hash
+      @orig_logger = Kitchen.logger
     end
 
     after do
+      Kitchen.logger = @orig_logger
       ENV.clear
       @orig_env.each do |k, v|
         ENV[k] = v
@@ -47,6 +49,18 @@ module Kitchen
 
         assert_equal :warn, cli.config.log_level
         assert_equal false, cli.config.log_overwrite
+      end
+    end
+
+    describe "#update_config!" do
+      it "can preserve existing log files for read-only commands" do
+        logger = stub(log_overwrite: false)
+        Kitchen.expects(:default_file_logger).with(nil, false).returns(logger)
+
+        cli.send(:update_config!, log_overwrite: false)
+
+        assert_equal false, cli.config.log_overwrite
+        assert_equal logger, Kitchen.logger
       end
     end
   end

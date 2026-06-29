@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'kitchen/provisioner/dokken'
-require 'kitchen/provisioner/cinc/berkshelf'
-require 'kitchen/provisioner/cinc/common_sandbox'
-require 'kitchen/provisioner/cinc/policyfile'
+require "kitchen/provisioner/dokken"
+require "kitchen/provisioner/cinc/berkshelf"
+require "kitchen/provisioner/cinc/common_sandbox"
+require "kitchen/provisioner/cinc/policyfile"
 
 module KitchenDokkenCI
   def self.patch
