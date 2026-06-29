@@ -57,7 +57,7 @@ module Kitchen
       # @return [Array<String>]
       # @api private
       def display_instance(instance)
-        [
+        row = [
           color_pad(instance.name),
           color_pad(instance.driver.name),
           color_pad(instance.provisioner.name),
@@ -66,6 +66,8 @@ module Kitchen
           format_last_action(instance.last_action),
           format_last_error(instance.last_error),
         ]
+        row << format_live_status(instance_status(instance)) if status_requested?
+        row
       end
 
       # Format and color the given last action.
@@ -96,19 +98,39 @@ module Kitchen
         end
       end
 
+      # Format and color live status.
+      #
+      # @param status [Hash] normalized status data
+      # @return [String] formatted live status
+      # @api private
+      def format_live_status(status)
+        probe = status[:transport_probe]
+        if probe && probe[:reachable] == false
+          return colorize("#{status[:state]} (#{probe[:state]})", :red)
+        elsif probe && probe[:reachable] == true
+          return colorize("#{status[:state]} (#{probe[:state]})", :green)
+        end
+
+        case status[:live]
+        when true then colorize(status[:state], :green)
+        when false then colorize(status[:state], :red)
+        else colorize(status[:state], :white)
+        end
+      end
+
       # Constructs a list display table and output it to the screen.
       #
       # @param result [Array<Instance>] an array of instances
       # @api private
       def list_table(result)
-        table = [
-          [
-            colorize("Instance", :green), colorize("Driver", :green),
-            colorize("Provisioner", :green), colorize("Verifier", :green),
-            colorize("Transport", :green), colorize("Last Action", :green),
-            colorize("Last Error", :green)
-          ],
+        headings = [
+          colorize("Instance", :green), colorize("Driver", :green),
+          colorize("Provisioner", :green), colorize("Verifier", :green),
+          colorize("Transport", :green), colorize("Last Action", :green),
+          colorize("Last Error", :green)
         ]
+        headings << colorize("Live Status", :green) if status_requested?
+        table = [headings]
         table += Array(result).map { |i| display_instance(i) }
         print_table(table)
       end
@@ -118,7 +140,7 @@ module Kitchen
       # @param result [Hash{Symbol => String}] hash of a single instance
       # @api private
       def to_hash(result)
-        {
+        data = {
           instance: result.name,
           driver: result.driver.name,
           provisioner: result.provisioner.name,
@@ -127,6 +149,24 @@ module Kitchen
           last_action: result.last_action,
           last_error: result.last_error,
         }
+        if status_requested?
+          data.merge!(
+            log_path: result.log_path,
+            structured_log_path: result.structured_log_path,
+            state_path: result.state_path,
+            instance_session_id: result.current_session_id,
+            status: instance_status(result)
+          )
+        end
+        data
+      end
+
+      def status_requested?
+        options[:live] || options[:probe]
+      end
+
+      def instance_status(instance)
+        options[:probe] ? instance.status(probe: true) : instance.status
       end
 
       # Outputs a formatted display table.

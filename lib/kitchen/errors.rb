@@ -206,6 +206,7 @@ module Kitchen
         Kitchen.logger.debug(line)
       else
         Kitchen.logger.logdev && Kitchen.logger.logdev.public_send(level, line)
+        Kitchen.logger.structured_logdev && Kitchen.logger.structured_logdev.public_send(level, line)
       end
     end
   end

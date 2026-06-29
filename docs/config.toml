@@ -1,5 +1,5 @@
 baseURL = "/"
-languageCode = "en-us"
+locale = "en-US"
 theme = "kitchen"
 googleAnalytics = 'G-GL7W81V957'
 

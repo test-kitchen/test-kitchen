@@ -8,15 +8,15 @@ All documentation will be hosted on the official Kitchen website <https://kitche
 
 ## Running Locally
 
-### Install Hugo
+### Install tooling
 
-- On macOS run: `brew install hugo`
-- On Windows run: `choco install hugo`
-- On Ubuntu run: `apt install -y build-essential; snap install hugo --channel=extended`
+Run `mise install` from the repository root to install the pinned Hugo version.
 
 ### Run Hugo
 
-Run `hugo serve` and browse the the URL presented
+Run `mise run docs:serve` from the repository root and browse the URL presented.
+
+If you are not using mise, install Hugo 0.163.2 directly and run `hugo server` from this directory.
 
 ## Style Guide
 

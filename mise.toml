@@ -1,0 +1,108 @@
+[tools]
+hugo = "0.163.3"
+
+[tasks."docs:serve"]
+description = "Run the docs site locally with Hugo"
+dir = "docs"
+run = "hugo server"
+
+[tasks."docs:build"]
+description = "Build the docs site with Hugo"
+dir = "docs"
+run = "hugo"
+
+[tasks."rake:build"]
+description = "Build test-kitchen-4.0.0.gem into the pkg directory"
+run = "bundle exec rake build"
+
+[tasks."rake:build:checksum"]
+description = "Generate SHA512 checksum of test-kitchen-4.0.0.gem into the checksums directory"
+run = "bundle exec rake build:checksum"
+
+[tasks."rake:clean"]
+description = "Remove any temporary products"
+confirm = "Remove temporary build products?"
+run = "bundle exec rake clean"
+
+[tasks."rake:clobber"]
+description = "Remove any generated files"
+confirm = "Remove generated files?"
+run = "bundle exec rake clobber"
+
+[tasks."rake:docs:deploy"]
+description = "Deploy docs"
+confirm = "Deploy docs to S3 and invalidate CloudFront?"
+run = "bundle exec rake docs:deploy"
+
+[tasks."rake:features"]
+description = "Run Cucumber features"
+run = "bundle exec rake features"
+
+[tasks."rake:install"]
+description = "Build and install test-kitchen-4.0.0.gem into system gems"
+confirm = "Install the built gem into system gems?"
+run = "bundle exec rake install"
+
+[tasks."rake:install:local"]
+description = "Build and install test-kitchen-4.0.0.gem into system gems without network access"
+confirm = "Install the built gem into system gems without network access?"
+run = "bundle exec rake install:local"
+
+[tasks."rake:quality"]
+description = "Run all quality tasks"
+env = { RUBOCOP_CACHE_ROOT = "tmp/rubocop_cache" }
+run = "bundle exec rake quality"
+
+[tasks."rake:release"]
+description = "Create tag v4.0.0 and build and push test-kitchen-4.0.0.gem to rubygems.org"
+confirm = "Create a release tag and publish the gem?"
+run = "bundle exec rake release"
+
+[tasks."rake:stats"]
+description = "Display LOC stats"
+run = "bundle exec rake stats"
+
+[tasks."rake:style"]
+description = "Run RuboCop"
+env = { RUBOCOP_CACHE_ROOT = "tmp/rubocop_cache" }
+run = "bundle exec rake style"
+
+[tasks."rake:style:autocorrect"]
+description = "Autocorrect RuboCop offenses (only when it's safe)"
+confirm = "Autocorrect safe RuboCop offenses?"
+env = { RUBOCOP_CACHE_ROOT = "tmp/rubocop_cache" }
+run = "bundle exec rake style:autocorrect"
+
+[tasks."rake:style:autocorrect_all"]
+description = "Autocorrect RuboCop offenses (safe and unsafe)"
+confirm = "Autocorrect safe and unsafe RuboCop offenses?"
+env = { RUBOCOP_CACHE_ROOT = "tmp/rubocop_cache" }
+run = "bundle exec rake style:autocorrect_all"
+
+[tasks."rake:test"]
+description = "Run all test suites"
+run = "bundle exec rake test"
+
+[tasks."rake:unit"]
+description = "Run tests for unit"
+run = "bundle exec rake unit"
+
+[tasks.test]
+description = "Run all test suites"
+depends = ["rake:test"]
+
+[tasks.quality]
+description = "Run all quality tasks"
+depends = ["rake:quality"]
+
+[tasks.ci]
+description = "Run local CI checks"
+depends = ["rake:test", "rake:quality", "docs:build"]
+
+[tasks."kitchen:list"]
+description = "List Test Kitchen instances"
+run = "bundle exec kitchen list"
+
+[tasks."kitchen:verify"]
+description = "Verify Test Kitchen instances"
+run = "bundle exec kitchen verify"
