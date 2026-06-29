@@ -361,9 +361,16 @@ describe Kitchen::Config do
         stdout: STDOUT,
         color: :cyan,
         logdev: "/tmp/logs/tiny-unax.log",
+        structured_logdev: "/tmp/logs/tiny-unax.ndjson",
         log_overwrite: false,
         level: 0,
         progname: "tiny-unax",
+        metadata: {
+          kitchen_run_id: Kitchen.run_id,
+          instance: "tiny-unax",
+          suite: "tiny",
+          platform: "unax",
+        },
         colorize: false
       )
 
