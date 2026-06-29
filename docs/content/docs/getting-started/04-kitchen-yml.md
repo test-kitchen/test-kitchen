@@ -7,9 +7,9 @@ menu:
     weight: 40
 ---
 
-Let's take a closer look at the `kitchen.yml` file. Although Chef Workstation generates an initial version for you, it's important to review and customize this file to suit your testing needs.
+Let's take a closer look at the `kitchen.yml` file. Although `kitchen init` generates an initial version for you, it's important to review and customize this file to suit your testing needs.
 
-Suppose you want to test your Chef cookbook exclusively on Ubuntu 24.04 using the latest Chef Infra Client. In this scenario, you can update the `kitchen.yml` file to specify the desired Chef version and limit the `platforms` section to just one entry, as shown below:
+Suppose you want to test your Chef or Cinc cookbook exclusively on Ubuntu 24.04 using the latest compatible client from your selected Workstation or system Ruby environment. In this scenario, you can update the `kitchen.yml` file to specify the desired provisioner and limit the `platforms` section to just one entry, as shown below:
 
 ```yaml
 ---

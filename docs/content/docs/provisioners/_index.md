@@ -6,7 +6,7 @@ menu:
     weight: 1
 ---
 
-A Test Kitchen *provisioner* takes care of configuring the compute instance provided by the *driver*. This is most commonly a configuration management framework like Chef Infra or the Shell provisioner, both of which are included in test-kitchen by default.
+A Test Kitchen *provisioner* takes care of configuring the compute instance provided by the *driver*. The `test-kitchen` gem includes the `shell` provisioner, which is the default provisioner, and a `dummy` provisioner for tests. Chef, Cinc, and other configuration management provisioners are supplied by plugin gems installed in the Ruby environment that runs `kitchen`.
 
 There are common settings that all provisioners inherit and can override. These are typically set in the context of a specific provisioner but are provided here for reference.
 
@@ -31,8 +31,10 @@ provisioner:
     "/tmp/kitchen/validation.pem": "./downloads/validation.pem"
 ```
 
-Community provisioners:
+Common provisioner plugins:
 
+* [kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef)
+* [kitchen-cinc](https://github.com/test-kitchen/kitchen-cinc)
 * [kitchen-ansible](https://github.com/neillturner/kitchen-ansible)
 * [kitchen-dsc](https://github.com/test-kitchen/kitchen-dsc)
 * [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
