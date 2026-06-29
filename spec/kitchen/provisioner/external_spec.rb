@@ -13,33 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
+require_relative "../../spec_helper"
 
-require 'json'
-require 'logger'
-require 'rbconfig'
-require 'shellwords'
-require 'stringio'
-require 'tempfile'
+require "json"
+require "logger"
+require "rbconfig"
+require "shellwords"
+require "stringio"
+require "tempfile"
 
-require 'kitchen/provisioner'
-require 'kitchen/provisioner/external'
+require "kitchen/provisioner"
+require "kitchen/provisioner/external"
 
 describe Kitchen::Provisioner::External do
   let(:logged_output) { StringIO.new }
   let(:logger)        { Logger.new(logged_output) }
-  let(:platform)      { stub(name: 'ubuntu', os_type: 'unix', shell_type: 'bourne') }
-  let(:suite)         { stub(name: 'default') }
-  let(:driver)        { stub(name: 'exec') }
-  let(:transport_name) { 'exec' }
+  let(:platform)      { stub(name: "ubuntu", os_type: "unix", shell_type: "bourne") }
+  let(:suite)         { stub(name: "default") }
+  let(:driver)        { stub(name: "exec") }
+  let(:transport_name) { "exec" }
   let(:transport)     { stub(name: transport_name) }
-  let(:verifier)      { stub(name: 'inspec') }
+  let(:verifier)      { stub(name: "inspec") }
   let(:state)         { {} }
 
   let(:instance) do
     stub(
-      name: 'default-ubuntu',
-      to_str: 'default-ubuntu',
+      name: "default-ubuntu",
+      to_str: "default-ubuntu",
       logger: logger,
       suite: suite,
       platform: platform,
@@ -50,18 +50,18 @@ describe Kitchen::Provisioner::External do
   end
 
   let(:fixture_path) do
-    File.expand_path('../../fixtures/external_provider/fake_provider.rb', __dir__)
+    File.expand_path("../../fixtures/external_provider/fake_provider.rb", __dir__)
   end
 
-  let(:request_log) { Tempfile.new('fake-provider-requests') }
+  let(:request_log) { Tempfile.new("fake-provider-requests") }
 
   let(:config) do
     {
       command: "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} success",
-      provider: 'fake',
-      kitchen_root: '/rooty',
-      test_base_path: '/basist',
-      pass_env: ['FAKE_EXTERNAL_PROVIDER_REQUEST_LOG'],
+      provider: "fake",
+      kitchen_root: "/rooty",
+      test_base_path: "/basist",
+      pass_env: ["FAKE_EXTERNAL_PROVIDER_REQUEST_LOG"],
     }
   end
 
@@ -70,146 +70,146 @@ describe Kitchen::Provisioner::External do
   end
 
   before do
-    ENV['FAKE_EXTERNAL_PROVIDER_REQUEST_LOG'] = request_log.path
+    ENV["FAKE_EXTERNAL_PROVIDER_REQUEST_LOG"] = request_log.path
   end
 
   after do
-    ENV.delete('FAKE_EXTERNAL_PROVIDER_REQUEST_LOG')
+    ENV.delete("FAKE_EXTERNAL_PROVIDER_REQUEST_LOG")
     request_log.close!
   end
 
-  it 'provisioner api_version is 2' do
+  it "provisioner api_version is 2" do
     _(provisioner.diagnose_plugin[:api_version]).must_equal 2
   end
 
-  it 'plugin_version is set to Kitchen::VERSION' do
+  it "plugin_version is set to Kitchen::VERSION" do
     _(provisioner.diagnose_plugin[:version]).must_equal Kitchen::VERSION
   end
 
-  it 'can be loaded as the external provisioner plugin' do
+  it "can be loaded as the external provisioner plugin" do
     Kitchen::Plugin.stubs(:require).returns(true)
 
-    loaded = Kitchen::Provisioner.for_plugin('external', command: 'kitchen-provider-fake')
+    loaded = Kitchen::Provisioner.for_plugin("external", command: "kitchen-provider-fake")
 
     _(loaded).must_be_kind_of Kitchen::Provisioner::External
   end
 
-  it 'runs the provider, logs events, and persists provider state' do
+  it "runs the provider, logs events, and persists provider state" do
     provisioner.call(state)
 
-    _(logged_output.string).must_include 'installing fake provider'
-    _(logged_output.string).must_include 'halfway through fake run'
-    _(state[:providers]['fake']).must_equal('instance_id' => 'abc-123')
+    _(logged_output.string).must_include "installing fake provider"
+    _(logged_output.string).must_include "halfway through fake run"
+    _(state[:providers]["fake"]).must_equal("instance_id" => "abc-123")
   end
 
-  it 'sends validate and run request envelopes to the provider' do
+  it "sends validate and run request envelopes to the provider" do
     provisioner.call(state)
 
     requests = request_log.tap(&:rewind).read.lines.map { |line| JSON.parse(line) }
-    operations = requests.map { |request| request['operation'] }
+    operations = requests.map { |request| request["operation"] }
 
-    _(operations).must_equal [nil, 'validate', 'run']
-    _(requests.fetch(1)['protocol_version']).must_equal '1.0'
-    _(requests.fetch(1)['components']['transport']['type']).must_equal 'exec'
-    _(requests.fetch(2)['state']['provider']).must_equal({})
+    _(operations).must_equal [nil, "validate", "run"]
+    _(requests.fetch(1)["protocol_version"]).must_equal "1.0"
+    _(requests.fetch(1)["components"]["transport"]["type"]).must_equal "exec"
+    _(requests.fetch(2)["state"]["provider"]).must_equal({})
   end
 
-  it 'describes existing ssh transport without copying secrets into JSON' do
+  it "describes existing ssh transport without copying secrets into JSON" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} all_transports"
-    state[:hostname] = '192.0.2.10'
-    state[:username] = 'ubuntu'
+    state[:hostname] = "192.0.2.10"
+    state[:username] = "ubuntu"
     state[:port] = 2222
-    state[:password] = 'ssh-password'
-    transport.stubs(:name).returns('ssh')
+    state[:password] = "ssh-password"
+    transport.stubs(:name).returns("ssh")
 
     provisioner.call(state)
 
     requests = request_log.tap(&:rewind).read.lines.map { |line| JSON.parse(line) }
-    transport_request = requests.fetch(1).fetch('components').fetch('transport')
+    transport_request = requests.fetch(1).fetch("components").fetch("transport")
 
-    _(transport_request['type']).must_equal 'ssh'
-    _(transport_request['target']).must_equal(
-      'kind' => 'machine',
-      'hostname' => '192.0.2.10',
-      'platform' => 'ubuntu'
+    _(transport_request["type"]).must_equal "ssh"
+    _(transport_request["target"]).must_equal(
+      "kind" => "machine",
+      "hostname" => "192.0.2.10",
+      "platform" => "ubuntu"
     )
-    _(transport_request['config']['username']).must_equal 'ubuntu'
-    _(transport_request['config']['port']).must_equal 2222
-    _(request_log.tap(&:rewind).read).wont_include 'ssh-password'
+    _(transport_request["config"]["username"]).must_equal "ubuntu"
+    _(transport_request["config"]["port"]).must_equal 2222
+    _(request_log.tap(&:rewind).read).wont_include "ssh-password"
   end
 
-  it 'raises ActionFailed when provider validation fails' do
+  it "raises ActionFailed when provider validation fails" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} validation_error"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'suite is not valid for fake provider'
+    _(error.message).must_include "suite is not valid for fake provider"
   end
 
-  it 'raises ActionFailed for provider-reported converge failure' do
+  it "raises ActionFailed for provider-reported converge failure" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} converge_failure"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'fake converge failed'
+    _(error.message).must_include "fake converge failed"
   end
 
-  it 'raises ActionFailed for unsupported protocol versions' do
+  it "raises ActionFailed for unsupported protocol versions" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} unsupported_protocol"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'Unsupported external provider protocol version'
+    _(error.message).must_include "Unsupported external provider protocol version"
   end
 
-  it 'raises ActionFailed when run output is malformed' do
+  it "raises ActionFailed when run output is malformed" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} malformed_json"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'malformed external provider event'
+    _(error.message).must_include "malformed external provider event"
   end
 
-  it 'raises ActionFailed when run output has no final result' do
+  it "raises ActionFailed when run output has no final result" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} missing_result"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'did not emit a final result'
+    _(error.message).must_include "did not emit a final result"
   end
 
-  it 'raises ActionFailed when the provider process exits non-zero' do
+  it "raises ActionFailed when the provider process exits non-zero" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} non_zero"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(error.message).must_include 'provider process exploded'
+    _(error.message).must_include "provider process exploded"
   end
 
-  it 'redacts allowlisted environment values from logs and errors' do
+  it "redacts allowlisted environment values from logs and errors" do
     config[:command] = "#{RbConfig.ruby} #{Shellwords.escape(fixture_path)} secret_echo"
-    config[:pass_env] = ['TK_FAKE_SECRET']
-    ENV['TK_FAKE_SECRET'] = 'super-secret-value'
+    config[:pass_env] = ["TK_FAKE_SECRET"]
+    ENV["TK_FAKE_SECRET"] = "super-secret-value"
 
     error = _ { provisioner.call(state) }.must_raise Kitchen::ActionFailed
 
-    _(logged_output.string).wont_include 'super-secret-value'
-    _(error.message).wont_include 'super-secret-value'
-    _(logged_output.string).must_include '******'
-    _(error.message).must_include '******'
+    _(logged_output.string).wont_include "super-secret-value"
+    _(error.message).wont_include "super-secret-value"
+    _(logged_output.string).must_include "******"
+    _(error.message).must_include "******"
   ensure
-    ENV.delete('TK_FAKE_SECRET')
+    ENV.delete("TK_FAKE_SECRET")
   end
 
-  it 'does not include allowlisted environment values in JSON requests' do
-    config[:pass_env] = ['TK_FAKE_SECRET']
-    ENV['TK_FAKE_SECRET'] = 'super-secret-value'
+  it "does not include allowlisted environment values in JSON requests" do
+    config[:pass_env] = ["TK_FAKE_SECRET"]
+    ENV["TK_FAKE_SECRET"] = "super-secret-value"
 
     provisioner.call(state)
 
     request_log.rewind
-    _(request_log.read).wont_include 'super-secret-value'
+    _(request_log.read).wont_include "super-secret-value"
   ensure
-    ENV.delete('TK_FAKE_SECRET')
+    ENV.delete("TK_FAKE_SECRET")
   end
 end

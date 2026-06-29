@@ -13,25 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
-require 'open3'
-require 'rbconfig'
-require 'shellwords'
+require "json" unless defined?(JSON)
+require "open3"
+require "rbconfig" unless defined?(RbConfig)
+require "shellwords" unless defined?(Shellwords)
 
-require_relative 'base'
-require_relative '../version'
+require_relative "base"
+require_relative "../version"
 
 module Kitchen
   module Provisioner
     # Executes an external provisioner provider over the v1 stdio protocol.
     class External < Base
-      PROTOCOL_VERSION = '1.0'.freeze
-      RESULT_STATUSES = %w(passed failed skipped).freeze
-      LOG_LEVELS = %w(debug info warn error).freeze
-      INTERNAL_CONFIG_KEYS = %i(
+      PROTOCOL_VERSION = "1.0".freeze
+      RESULT_STATUSES = %w{passed failed skipped}.freeze
+      LOG_LEVELS = %w{debug info warn error}.freeze
+      INTERNAL_CONFIG_KEYS = %i{
         command provider pass_env kitchen_root test_base_path
-      ).freeze
-      REDACTED_KEYS = %w(password ssh_http_proxy_password).freeze
+      }.freeze
+      REDACTED_KEYS = %w{password ssh_http_proxy_password}.freeze
 
       kitchen_provisioner_api_version 2
 
@@ -52,29 +52,29 @@ module Kitchen
 
       def provider_name_from_command
         first_part = Shellwords.split(config[:command].to_s).first.to_s
-        File.basename(first_part).sub(/^kitchen-provider-/, '')
+        File.basename(first_part).sub(/^kitchen-provider-/, "")
       end
 
       private
 
       def verify_capabilities
-        response = invoke_json('capabilities', {})
-        protocol_version = response.fetch('protocol_version', nil)
+        response = invoke_json("capabilities", {})
+        protocol_version = response.fetch("protocol_version", nil)
         unless protocol_version == PROTOCOL_VERSION
           raise_protocol_error(
             "Unsupported external provider protocol version #{protocol_version.inspect}"
           )
         end
 
-        commands = Array(response['commands'])
-        missing_commands = %w(validate run) - commands
+        commands = Array(response["commands"])
+        missing_commands = %w{validate run} - commands
         unless missing_commands.empty?
           raise_protocol_error(
-            "External provider does not support required command(s): #{missing_commands.join(', ')}"
+            "External provider does not support required command(s): #{missing_commands.join(", ")}"
           )
         end
 
-        transports = Array(response['supported_transports'])
+        transports = Array(response["supported_transports"])
         transport_type = transport_component({}).fetch(:type)
         return if transports.include?(transport_type)
 
@@ -84,74 +84,74 @@ module Kitchen
       end
 
       def validate_provider(state)
-        response = invoke_json('validate', request_envelope('validate', state))
-        require_protocol_version(response, 'validation result')
+        response = invoke_json("validate", request_envelope("validate", state))
+        require_protocol_version(response, "validation result")
 
-        return if response['status'] == 'ok'
+        return if response["status"] == "ok"
 
-        messages = Array(response['errors']).map { |error| error['message'] }.compact
-        message = messages.empty? ? 'external provider validation failed' : messages.join('; ')
+        messages = Array(response["errors"]).map { |error| error["message"] }.compact
+        message = messages.empty? ? "external provider validation failed" : messages.join("; ")
         raise ActionFailed, redact(message)
       end
 
       def run_provider(state)
-        stdout, stderr, status = invoke('run', request_envelope('run', state))
+        stdout, stderr, status = invoke("run", request_envelope("run", state))
         result = nil
 
         stdout.each_line.with_index(1) do |line, index|
           next if line.strip.empty?
 
           event = parse_event(line, index)
-          require_protocol_version(event, 'event')
+          require_protocol_version(event, "event")
 
-          case event['type']
-          when 'log'
+          case event["type"]
+          when "log"
             handle_log_event(event)
-          when 'progress'
+          when "progress"
             handle_progress_event(event)
-          when 'result'
+          when "result"
             result = event
           else
-            raise_protocol_error("unknown external provider event type #{event['type'].inspect}")
+            raise_protocol_error("unknown external provider event type #{event["type"].inspect}")
           end
         end
 
         unless status.success?
           raise_protocol_error("external provider exited with #{status.exitstatus}", stderr)
         end
-        raise_protocol_error('external provider did not emit a final result') if result.nil?
+        raise_protocol_error("external provider did not emit a final result") if result.nil?
 
         handle_result_event(result)
         result
       end
 
       def handle_log_event(event)
-        level = event['level']
+        level = event["level"]
         raise_protocol_error("external provider log event has invalid level #{level.inspect}") unless LOG_LEVELS.include?(level)
 
-        logger.public_send(level, redact(event.fetch('message', '')))
+        logger.public_send(level, redact(event.fetch("message", "")))
       end
 
       def handle_progress_event(event)
-        stage = event.fetch('stage', 'provider')
-        message = event.fetch('message', '')
+        stage = event.fetch("stage", "provider")
+        message = event.fetch("message", "")
         info(redact("[#{stage}] #{message}"))
       end
 
       def handle_result_event(event)
-        status = event['status']
+        status = event["status"]
         unless RESULT_STATUSES.include?(status)
           raise_protocol_error("external provider result has invalid status #{status.inspect}")
         end
 
-        return if %w(passed skipped).include?(status)
+        return if %w{passed skipped}.include?(status)
 
-        message = event['message'] || "external provider reported #{status}"
+        message = event["message"] || "external provider reported #{status}"
         raise ActionFailed, redact(message)
       end
 
       def persist_provider_state(state, result)
-        provider_state = result.dig('state', 'provider')
+        provider_state = result.dig("state", "provider")
         return if provider_state.nil?
 
         state[:providers] ||= {}
@@ -182,7 +182,7 @@ module Kitchen
 
       def provider_command_parts
         parts = Shellwords.split(config[:command].to_s)
-        raise ActionFailed, 'external provider command cannot be blank' if parts.empty?
+        raise ActionFailed, "external provider command cannot be blank" if parts.empty?
 
         parts
       end
@@ -240,7 +240,7 @@ module Kitchen
           driver: resolved_component(instance.driver, {}),
           transport: transport_component(state),
           provisioner: {
-            name: 'external',
+            name: "external",
             provider: config[:provider],
             command: config[:command],
             config: provider_config,
@@ -267,19 +267,19 @@ module Kitchen
         }
 
         case type
-        when 'exec'
+        when "exec"
           base.merge(
-            target: { kind: 'local', platform: component_attr(instance.platform, :name) },
+            target: { kind: "local", platform: component_attr(instance.platform, :name) },
             config: {
               kitchen_root: File.expand_path(config[:kitchen_root] || Dir.pwd),
-              host_os: RbConfig::CONFIG['host_os'],
+              host_os: RbConfig::CONFIG["host_os"],
             }
           )
-        when 'ssh'
+        when "ssh"
           base.merge(
             target: machine_target(state),
             config: compact_hash(
-              username: component_config(:username, state, 'root'),
+              username: component_config(:username, state, "root"),
               port: component_config(:port, state, 22),
               connection_timeout: component_config(:connection_timeout, state),
               connection_retries: component_config(:connection_retries, state),
@@ -290,14 +290,14 @@ module Kitchen
               gateway_username: component_config(:ssh_gateway_username, state)
             )
           )
-        when 'winrm'
+        when "winrm"
           base.merge(
             target: machine_target(state),
             config: compact_hash(
-              username: component_config(:username, state, 'administrator'),
+              username: component_config(:username, state, "administrator"),
               port: component_config(:port, state, 5985),
-              scheme: component_config(:scheme, state, 'http'),
-              transport: component_config(:winrm_transport, state, 'negotiate').to_s,
+              scheme: component_config(:scheme, state, "http"),
+              transport: component_config(:winrm_transport, state, "negotiate").to_s,
               elevated: component_config(:elevated, state),
               operation_timeout: component_config(:operation_timeout, state),
               receive_timeout: component_config(:receive_timeout, state),
@@ -306,26 +306,26 @@ module Kitchen
             )
           )
         else
-          base.merge(target: { kind: 'custom' })
+          base.merge(target: { kind: "custom" })
         end
       end
 
       def transport_type(name)
         case name.to_s
-        when 'ssh', 'winrm', 'exec', 'docker_exec'
+        when "ssh", "winrm", "exec", "docker_exec"
           name.to_s
         else
-          'custom'
+          "custom"
         end
       end
 
       def executor_context
         {
-          model: 'exec',
+          model: "exec",
           command: config[:command],
-          input: 'stdin',
+          input: "stdin",
           request_file_argument: nil,
-          event_stream: 'ndjson',
+          event_stream: "ndjson",
         }
       end
 
@@ -345,8 +345,8 @@ module Kitchen
 
       def machine_target(state)
         {
-          kind: 'machine',
-          hostname: state.fetch(:hostname, state.fetch('hostname', 'unknown')),
+          kind: "machine",
+          hostname: state.fetch(:hostname, state.fetch("hostname", "unknown")),
           platform: component_attr(instance.platform, :name),
         }
       end
@@ -378,7 +378,7 @@ module Kitchen
       def component_name(component)
         return component.name if component.respond_to?(:name)
 
-        component.class.name.split('::').last.downcase
+        component.class.name.split("::").last.downcase
       end
 
       def component_attr(component, attr)
@@ -394,24 +394,24 @@ module Kitchen
       end
 
       def require_protocol_version(payload, payload_type)
-        return if payload['protocol_version'] == PROTOCOL_VERSION
+        return if payload["protocol_version"] == PROTOCOL_VERSION
 
         raise_protocol_error(
-          "external provider #{payload_type} used unsupported protocol version #{payload['protocol_version'].inspect}"
+          "external provider #{payload_type} used unsupported protocol version #{payload["protocol_version"].inspect}"
         )
       end
 
       def raise_protocol_error(message, stderr = nil)
         details = [message]
         details << stderr.to_s.strip unless stderr.to_s.strip.empty?
-        raise ActionFailed, redact(details.join(': '))
+        raise ActionFailed, redact(details.join(": "))
       end
 
       def redact(message)
         redacted = Util.mask_values(message.to_s.dup, REDACTED_KEYS)
         pass_env.each do |name|
           value = ENV[name].to_s
-          redacted.gsub!(value, '******') unless value.empty?
+          redacted.gsub!(value, "******") unless value.empty?
         end
         redacted
       end

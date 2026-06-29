@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
+require "json"
 
 MODE = ARGV.fetch(0)
 OPERATION = ARGV.fetch(1)
@@ -22,8 +22,8 @@ def read_request
   input = $stdin.read
   request = input.empty? ? {} : JSON.parse(input)
 
-  if ENV['FAKE_EXTERNAL_PROVIDER_REQUEST_LOG']
-    File.open(ENV.fetch('FAKE_EXTERNAL_PROVIDER_REQUEST_LOG'), 'a') do |file|
+  if ENV["FAKE_EXTERNAL_PROVIDER_REQUEST_LOG"]
+    File.open(ENV.fetch("FAKE_EXTERNAL_PROVIDER_REQUEST_LOG"), "a") do |file|
       file.puts(JSON.generate(request))
     end
   end
@@ -31,81 +31,81 @@ def read_request
   request
 end
 
-def capabilities(protocol_version: '1.0')
-  supported_transports = if MODE == 'all_transports'
-                           %w(ssh winrm exec docker_exec custom)
+def capabilities(protocol_version: "1.0")
+  supported_transports = if MODE == "all_transports"
+                           %w{ssh winrm exec docker_exec custom}
                          else
-                           %w(exec)
+                           %w{exec}
                          end
 
   {
     protocol_version: protocol_version,
     provider: {
-      name: 'fake',
-      type: 'provisioner',
-      version: '0.1.0',
+      name: "fake",
+      type: "provisioner",
+      version: "0.1.0",
     },
-    execution_model: 'exec',
-    channel: 'stdio',
-    commands: %w(validate run),
-    event_stream: 'ndjson',
+    execution_model: "exec",
+    channel: "stdio",
+    commands: %w{validate run},
+    event_stream: "ndjson",
     supported_transports: supported_transports,
     secret_policy: {
       json_contains_secret_values: false,
-      secret_delivery: 'environment',
-      environment_variables: 'allowlist',
+      secret_delivery: "environment",
+      environment_variables: "allowlist",
     },
   }
 end
 
 def validation(status, message = nil)
-  response = { protocol_version: '1.0', status: status }
-  response[:errors] = [{ code: 'invalid', message: message }] if message
+  response = { protocol_version: "1.0", status: status }
+  response[:errors] = [{ code: "invalid", message: message }] if message
   response
 end
 
 def event(payload)
-  $stdout.puts(JSON.generate({ protocol_version: '1.0' }.merge(payload)))
+  $stdout.puts(JSON.generate({ protocol_version: "1.0" }.merge(payload)))
 end
 
 case OPERATION
-when 'capabilities'
+when "capabilities"
   read_request
-  if MODE == 'unsupported_protocol'
-    puts JSON.generate(capabilities(protocol_version: '2.0'))
+  if MODE == "unsupported_protocol"
+    puts JSON.generate(capabilities(protocol_version: "2.0"))
   else
     puts JSON.generate(capabilities)
   end
-when 'validate'
+when "validate"
   read_request
-  if MODE == 'validation_error'
-    puts JSON.generate(validation('error', 'suite is not valid for fake provider'))
+  if MODE == "validation_error"
+    puts JSON.generate(validation("error", "suite is not valid for fake provider"))
   else
-    puts JSON.generate(validation('ok'))
+    puts JSON.generate(validation("ok"))
   end
-when 'run'
+when "run"
   read_request
 
   case MODE
-  when 'converge_failure'
-    event(type: 'result', status: 'failed', message: 'fake converge failed', exit_code: 42)
-  when 'malformed_json'
-    puts('{not-json')
-  when 'missing_result'
-    event(type: 'log', level: 'info', message: 'started without finishing')
-  when 'non_zero'
-    warn('provider process exploded')
+  when "converge_failure"
+    event(type: "result", status: "failed", message: "fake converge failed", exit_code: 42)
+  when "malformed_json"
+    puts("{not-json")
+  when "missing_result"
+    event(type: "log", level: "info", message: "started without finishing")
+  when "non_zero"
+    warn("provider process exploded")
     exit 17
-  when 'noisy_stderr'
-    warn('debug detail on stderr')
-    event(type: 'result', status: 'passed', state: { provider: { instance_id: 'abc-123' } })
-  when 'secret_echo'
-    event(type: 'log', level: 'info', message: "secret is #{ENV.fetch('TK_FAKE_SECRET', '')}")
-    event(type: 'result', status: 'failed', message: "failed with #{ENV.fetch('TK_FAKE_SECRET', '')}")
+  when "noisy_stderr"
+    warn("debug detail on stderr")
+    event(type: "result", status: "passed", state: { provider: { instance_id: "abc-123" } })
+  when "secret_echo"
+    event(type: "log", level: "info", message: "secret is #{ENV.fetch("TK_FAKE_SECRET", "")}")
+    event(type: "result", status: "failed", message: "failed with #{ENV.fetch("TK_FAKE_SECRET", "")}")
   else
-    event(type: 'log', level: 'info', message: 'installing fake provider')
-    event(type: 'progress', stage: 'converge', message: 'halfway through fake run')
-    event(type: 'result', status: 'passed', state: { provider: { instance_id: 'abc-123' } })
+    event(type: "log", level: "info", message: "installing fake provider")
+    event(type: "progress", stage: "converge", message: "halfway through fake run")
+    event(type: "result", status: "passed", state: { provider: { instance_id: "abc-123" } })
   end
 else
   warn("unknown operation: #{OPERATION}")
