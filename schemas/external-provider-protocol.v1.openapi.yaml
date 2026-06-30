@@ -1,0 +1,1375 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Test Kitchen External Provider Protocol
+  version: "1.0.0"
+  summary: Logical OpenAPI description for the Test Kitchen external provider exec protocol.
+  description: |
+    This document describes version 1.0 of the Test Kitchen external provider
+    protocol. The protocol is not an HTTP API. Test Kitchen invokes a short-lived
+    provider executable and exchanges JSON over stdin/stdout.
+
+    The `paths` in this document are logical command names so OpenAPI tooling can
+    validate the request, response, and event schemas. The real command mapping is:
+
+    - `GET /capabilities` -> `<command> capabilities`
+    - `POST /validate` -> `<command> validate`
+    - `POST /run` -> `<command> run`
+
+    `validate` and `run` receive one JSON request on stdin. `capabilities` returns
+    one JSON document on stdout. `validate` returns one JSON document on stdout.
+    `run` emits newline-delimited JSON events on stdout and must finish with one
+    `result` event.
+
+    Raw secret values MUST NOT be serialized into JSON request documents, JSON
+    responses, NDJSON events, schema validation errors, logs, or persisted provider
+    state. Kitchen may pass a constrained allowlist of environment variables to the
+    provider process. JSON may reference environment variable names.
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+x-kitchen-protocol:
+  name: external-provider
+  protocol_version: "1.0"
+  execution_model: exec
+  channel: stdio
+  event_stream: ndjson
+  rpc: false
+  secret_policy:
+    json_contains_secret_values: false
+    secret_delivery: environment
+    environment_variables: allowlist
+  conformance:
+    provider_must_implement_commands:
+      - capabilities
+      - validate
+      - run
+    provider_must_accept_request_schemas:
+      - ProviderRequest
+    provider_must_emit_event_schemas:
+      - LogEvent
+      - ProgressEvent
+      - ResultEvent
+    provider_must_emit_exactly_one_final_result_event: true
+    provider_must_not_emit_json_secret_values: true
+servers:
+  - url: stdio://external-provider/v1
+    description: Logical endpoint for OpenAPI tooling; actual transport is process stdio.
+security: []
+tags:
+  - name: Commands
+    description: Logical operations implemented by external provider subcommands.
+paths:
+  /capabilities:
+    get:
+      tags:
+        - Commands
+      operationId: getExternalProviderCapabilities
+      summary: Discover provider protocol support.
+      description: |
+        Logical form of `<command> capabilities`. The provider writes one JSON
+        capabilities document to stdout and exits zero when discovery succeeds.
+      x-kitchen-command:
+        argv_suffix:
+          - capabilities
+        stdin: none
+        stdout: application/json
+        stderr: diagnostics
+        exit_status:
+          zero: capabilities document was written to stdout
+          non_zero: provider process or protocol failure
+      responses:
+        "200":
+          description: Provider capabilities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capabilities"
+              examples:
+                cinc:
+                  value:
+                    protocol_version: "1.0"
+                    provider:
+                      name: cinc
+                      type: provisioner
+                      version: 0.1.0
+                    execution_model: exec
+                    channel: stdio
+                    commands:
+                      - validate
+                      - run
+                    event_stream: ndjson
+                    supported_transports:
+                      - ssh
+                      - winrm
+                      - exec
+                      - docker_exec
+                    secret_policy:
+                      json_contains_secret_values: false
+                      secret_delivery: environment
+                      environment_variables: allowlist
+        "400":
+          description: Malformed capabilities output or unsupported protocol response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+        default:
+          description: Capabilities could not be discovered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+  /validate:
+    post:
+      tags:
+        - Commands
+      operationId: validateExternalProviderRequest
+      summary: Validate provider configuration and runtime compatibility.
+      description: |
+        Logical form of `<command> validate`. Kitchen sends a normalized
+        per-instance request on stdin. The provider validates that it can handle
+        the provisioner configuration, platform, target, transport descriptor, and
+        environment references.
+      x-kitchen-command:
+        argv_suffix:
+          - validate
+        stdin: application/json
+        stdout: application/json
+        stderr: diagnostics
+        exit_status:
+          zero: validation response was written to stdout
+          non_zero: provider process or protocol failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidateProviderRequest"
+            examples:
+              ssh:
+                $ref: "#/components/examples/SshValidateProviderRequest"
+      responses:
+        "200":
+          description: Validation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+        "400":
+          description: Malformed request or validation output.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+        default:
+          description: Protocol or provider process failure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+  /run:
+    post:
+      tags:
+        - Commands
+      operationId: runExternalProvider
+      summary: Execute the external provider.
+      description: |
+        Logical form of `<command> run`. Kitchen sends a normalized per-instance
+        request on stdin. The provider owns execution against the target using the
+        supplied target and transport descriptors. The provider writes NDJSON
+        events to stdout and must emit exactly one final `result` event.
+
+        A normal provisioner failure is represented by a final `result` event with
+        `status: failed`. Provider protocol or process failures use non-zero exit
+        status, malformed output, or missing final result and are reported by
+        Kitchen as protocol failures.
+      x-kitchen-command:
+        argv_suffix:
+          - run
+        stdin: application/json
+        stdout: application/x-ndjson
+        stderr: diagnostics
+        final_event: result
+        exit_status:
+          zero: provider emitted a final result event; the result event status determines provisioner success or failure
+          non_zero: provider process or protocol failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunProviderRequest"
+            examples:
+              ssh:
+                $ref: "#/components/examples/SshProviderRequest"
+              winrm:
+                $ref: "#/components/examples/WinrmProviderRequest"
+              exec:
+                $ref: "#/components/examples/ExecProviderRequest"
+              dockerExec:
+                $ref: "#/components/examples/DockerExecProviderRequest"
+      responses:
+        "200":
+          description: NDJSON runtime event stream.
+          content:
+            application/x-ndjson:
+              schema:
+                $ref: "#/components/schemas/ProviderEvent"
+              examples:
+                successfulRun:
+                  value: |
+                    {"protocol_version":"1.0","type":"log","level":"info","message":"Installing Cinc Client"}
+                    {"protocol_version":"1.0","type":"progress","stage":"converge","message":"Cinc Client run started"}
+                    {"protocol_version":"1.0","type":"result","status":"passed","state":{"provider":{"client_version":"18.6.2"}}}
+        "400":
+          description: Malformed request, malformed event stream, or missing final result event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+        default:
+          description: Protocol or provider process failure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolError"
+components:
+  schemas:
+    ProtocolVersion:
+      type: string
+      const: "1.0"
+
+    ProviderIdentity:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Provider implementation name, such as `cinc`.
+        type:
+          type: string
+          enum:
+            - provisioner
+          description: V1 supports external provisioners only.
+        version:
+          type: string
+          minLength: 1
+          description: Provider implementation version.
+
+    Capabilities:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - provider
+        - execution_model
+        - channel
+        - commands
+        - event_stream
+        - supported_transports
+        - secret_policy
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        provider:
+          $ref: "#/components/schemas/ProviderIdentity"
+        execution_model:
+          type: string
+          const: exec
+          description: V1 providers are short-lived executables, not RPC services.
+        channel:
+          type: string
+          const: stdio
+        commands:
+          type: array
+          minItems: 2
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+              - validate
+              - run
+        event_stream:
+          type: string
+          const: ndjson
+        supported_transports:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/KnownTransportType"
+          description: Transport descriptor types the provider knows how to execute through.
+        secret_policy:
+          $ref: "#/components/schemas/SecretPolicy"
+
+    KnownTransportType:
+      type: string
+      enum:
+        - ssh
+        - winrm
+        - exec
+        - docker_exec
+        - custom
+
+    SecretPolicy:
+      type: object
+      additionalProperties: false
+      required:
+        - json_contains_secret_values
+        - secret_delivery
+        - environment_variables
+      properties:
+        json_contains_secret_values:
+          type: boolean
+          const: false
+        secret_delivery:
+          type: string
+          const: environment
+        environment_variables:
+          type: string
+          const: allowlist
+
+    ProviderRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - operation
+        - kitchen
+        - instance
+        - platform
+        - suite
+        - components
+        - executor
+        - environment
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        operation:
+          type: string
+          enum:
+            - validate
+            - run
+        kitchen:
+          $ref: "#/components/schemas/KitchenContext"
+        instance:
+          $ref: "#/components/schemas/InstanceContext"
+        platform:
+          $ref: "#/components/schemas/PlatformContext"
+        suite:
+          $ref: "#/components/schemas/SuiteContext"
+        components:
+          $ref: "#/components/schemas/ResolvedComponents"
+        executor:
+          $ref: "#/components/schemas/ExecutorContext"
+        environment:
+          $ref: "#/components/schemas/EnvironmentDescriptor"
+        state:
+          $ref: "#/components/schemas/ProviderStateContext"
+
+    ValidateProviderRequest:
+      allOf:
+        - $ref: "#/components/schemas/ProviderRequest"
+        - type: object
+          required:
+            - operation
+          properties:
+            operation:
+              type: string
+              const: validate
+
+    RunProviderRequest:
+      allOf:
+        - $ref: "#/components/schemas/ProviderRequest"
+        - type: object
+          required:
+            - operation
+          properties:
+            operation:
+              type: string
+              const: run
+
+    KitchenContext:
+      type: object
+      additionalProperties: false
+      required:
+        - version
+        - root_path
+      properties:
+        version:
+          type: string
+          minLength: 1
+        root_path:
+          type: string
+          minLength: 1
+          description: Absolute path to the Kitchen project root.
+        log_path:
+          type: string
+          minLength: 1
+        state_path:
+          type: string
+          minLength: 1
+
+    InstanceContext:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+        last_action:
+          type:
+            - string
+            - "null"
+        last_attempted_action:
+          type:
+            - string
+            - "null"
+
+    PlatformContext:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+        os_type:
+          type:
+            - string
+            - "null"
+          enum:
+            - unix
+            - windows
+            - null
+        shell_type:
+          type:
+            - string
+            - "null"
+          enum:
+            - bourne
+            - powershell
+            - null
+
+    SuiteContext:
+      type: object
+      additionalProperties: true
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    ResolvedComponents:
+      type: object
+      additionalProperties: false
+      required:
+        - driver
+        - transport
+        - provisioner
+      properties:
+        driver:
+          $ref: "#/components/schemas/ResolvedComponent"
+        transport:
+          $ref: "#/components/schemas/TransportComponent"
+        provisioner:
+          $ref: "#/components/schemas/ExternalProvisionerComponent"
+        verifier:
+          $ref: "#/components/schemas/ResolvedComponent"
+
+    ResolvedComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - config
+      properties:
+        name:
+          type: string
+          minLength: 1
+        config:
+          $ref: "#/components/schemas/JsonObject"
+        state:
+          $ref: "#/components/schemas/JsonObject"
+
+    ExternalProvisionerComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - provider
+        - command
+        - config
+      properties:
+        name:
+          type: string
+          const: external
+        provider:
+          type: string
+          minLength: 1
+          description: External provider implementation name.
+        command:
+          type: string
+          minLength: 1
+          description: Provider executable configured in kitchen.yml.
+        config:
+          $ref: "#/components/schemas/JsonObject"
+
+    ExecutorContext:
+      type: object
+      additionalProperties: false
+      required:
+        - model
+        - command
+        - input
+        - event_stream
+      properties:
+        model:
+          type: string
+          const: exec
+        command:
+          type: string
+          minLength: 1
+          description: External provider executable configured in kitchen.yml.
+        input:
+          type: string
+          const: stdin
+        request_file_argument:
+          type:
+            - string
+            - "null"
+          description: Optional provider-supported debug argument for reading request JSON from a file.
+        event_stream:
+          type: string
+          const: ndjson
+
+    TransportComponent:
+      oneOf:
+        - $ref: "#/components/schemas/SshTransportComponent"
+        - $ref: "#/components/schemas/WinrmTransportComponent"
+        - $ref: "#/components/schemas/ExecTransportComponent"
+        - $ref: "#/components/schemas/DockerExecTransportComponent"
+        - $ref: "#/components/schemas/CustomTransportComponent"
+      discriminator:
+        propertyName: type
+        mapping:
+          ssh: "#/components/schemas/SshTransportComponent"
+          winrm: "#/components/schemas/WinrmTransportComponent"
+          exec: "#/components/schemas/ExecTransportComponent"
+          docker_exec: "#/components/schemas/DockerExecTransportComponent"
+          custom: "#/components/schemas/CustomTransportComponent"
+
+    SshTransportComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - target
+        - config
+      properties:
+        name:
+          type: string
+          const: ssh
+        type:
+          type: string
+          const: ssh
+        target:
+          $ref: "#/components/schemas/MachineTarget"
+        config:
+          $ref: "#/components/schemas/SshTransportConfig"
+        secrets:
+          $ref: "#/components/schemas/TransportSecretEnvironmentReferences"
+
+    WinrmTransportComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - target
+        - config
+      properties:
+        name:
+          type: string
+          const: winrm
+        type:
+          type: string
+          const: winrm
+        target:
+          $ref: "#/components/schemas/MachineTarget"
+        config:
+          $ref: "#/components/schemas/WinrmTransportConfig"
+        secrets:
+          $ref: "#/components/schemas/TransportSecretEnvironmentReferences"
+
+    ExecTransportComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - target
+        - config
+      properties:
+        name:
+          type: string
+          const: exec
+        type:
+          type: string
+          const: exec
+        target:
+          $ref: "#/components/schemas/LocalTarget"
+        config:
+          $ref: "#/components/schemas/ExecTransportConfig"
+
+    DockerExecTransportComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - target
+        - config
+      properties:
+        name:
+          type: string
+          description: Resolved Kitchen transport plugin name.
+        type:
+          type: string
+          const: docker_exec
+        target:
+          $ref: "#/components/schemas/ContainerTarget"
+        config:
+          $ref: "#/components/schemas/DockerExecTransportConfig"
+
+    CustomTransportComponent:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - target
+        - config
+      properties:
+        name:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          const: custom
+        target:
+          $ref: "#/components/schemas/CustomTarget"
+        config:
+          $ref: "#/components/schemas/JsonObject"
+        secrets:
+          $ref: "#/components/schemas/TransportSecretEnvironmentReferences"
+
+    SshTransportConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - username
+        - port
+      properties:
+        username:
+          type: string
+          minLength: 1
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          default: 22
+        connection_timeout:
+          type: integer
+          minimum: 0
+        connection_retries:
+          type: integer
+          minimum: 0
+        connection_retry_sleep:
+          type: integer
+          minimum: 0
+        proxy_command:
+          type:
+            - string
+            - "null"
+        gateway:
+          type:
+            - string
+            - "null"
+        gateway_port:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+          maximum: 65535
+        gateway_username:
+          type:
+            - string
+            - "null"
+
+    WinrmTransportConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - username
+        - port
+        - scheme
+        - transport
+      properties:
+        username:
+          type: string
+          minLength: 1
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+        scheme:
+          type: string
+          enum:
+            - http
+            - https
+        transport:
+          type: string
+          minLength: 1
+          description: WinRM authentication transport, such as negotiate, ssl, plaintext, or kerberos.
+        elevated:
+          type: boolean
+          default: false
+        operation_timeout:
+          type: integer
+          minimum: 1
+        receive_timeout:
+          type: integer
+          minimum: 1
+        connection_retries:
+          type: integer
+          minimum: 0
+        connection_retry_sleep:
+          type: integer
+          minimum: 0
+
+    ExecTransportConfig:
+      type: object
+      additionalProperties: false
+      properties:
+        kitchen_root:
+          type: string
+          minLength: 1
+        host_os:
+          type:
+            - string
+            - "null"
+
+    DockerExecTransportConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - executable
+      properties:
+        executable:
+          type: string
+          enum:
+            - docker
+            - podman
+        shell:
+          type:
+            - string
+            - "null"
+        user:
+          type:
+            - string
+            - "null"
+
+    MachineTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+        - hostname
+      properties:
+        kind:
+          type: string
+          const: machine
+        hostname:
+          type: string
+          minLength: 1
+        platform:
+          type:
+            - string
+            - "null"
+
+    ContainerTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+        - container_id
+      properties:
+        kind:
+          type: string
+          const: container
+        container_id:
+          type: string
+          minLength: 1
+        image:
+          type:
+            - string
+            - "null"
+        platform:
+          type:
+            - string
+            - "null"
+
+    LocalTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+          const: local
+        platform:
+          type:
+            - string
+            - "null"
+
+    CustomTarget:
+      type: object
+      additionalProperties: true
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+          const: custom
+
+    TransportSecretEnvironmentReferences:
+      type: object
+      additionalProperties: false
+      description: |
+        Environment variable names for transport secrets. Values are environment
+        variable names, never secret values.
+      properties:
+        password:
+          $ref: "#/components/schemas/EnvVarName"
+        private_key:
+          $ref: "#/components/schemas/EnvVarName"
+        passphrase:
+          $ref: "#/components/schemas/EnvVarName"
+        sudo_password:
+          $ref: "#/components/schemas/EnvVarName"
+        proxy_password:
+          $ref: "#/components/schemas/EnvVarName"
+        client_cert:
+          $ref: "#/components/schemas/EnvVarName"
+        client_key:
+          $ref: "#/components/schemas/EnvVarName"
+      examples:
+        - password: KITCHEN_TRANSPORT_PASSWORD
+          private_key: KITCHEN_TRANSPORT_SSH_KEY
+
+    EnvironmentDescriptor:
+      type: object
+      additionalProperties: false
+      required:
+        - passed
+      properties:
+        passed:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/EnvVarName"
+          description: Environment variable names Kitchen made available to the provider process.
+        user_allowed:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/EnvVarName"
+          description: Environment variable names explicitly allowed by user configuration.
+        kitchen_reserved:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/EnvVarName"
+          description: Environment variable names injected by Kitchen for protocol operation.
+
+    EnvVarName:
+      type: string
+      pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+      minLength: 1
+
+    ProviderStateContext:
+      type: object
+      additionalProperties: false
+      properties:
+        provider:
+          $ref: "#/components/schemas/JsonObject"
+          description: Previously persisted state for this provider namespace only.
+
+    ValidationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - status
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        status:
+          type: string
+          enum:
+            - ok
+            - error
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationMessage"
+        warnings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationMessage"
+
+    ValidationMessage:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+      properties:
+        code:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          description: JSON Pointer to the relevant request field, when available.
+        message:
+          type: string
+          minLength: 1
+
+    ProviderEvent:
+      oneOf:
+        - $ref: "#/components/schemas/LogEvent"
+        - $ref: "#/components/schemas/ProgressEvent"
+        - $ref: "#/components/schemas/ResultEvent"
+      discriminator:
+        propertyName: type
+        mapping:
+          log: "#/components/schemas/LogEvent"
+          progress: "#/components/schemas/ProgressEvent"
+          result: "#/components/schemas/ResultEvent"
+
+    LogEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - type
+        - level
+        - message
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        type:
+          type: string
+          const: log
+        timestamp:
+          type: string
+          format: date-time
+        level:
+          type: string
+          enum:
+            - debug
+            - info
+            - warn
+            - error
+        message:
+          type: string
+        fields:
+          $ref: "#/components/schemas/JsonObject"
+
+    ProgressEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - type
+        - stage
+        - message
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        type:
+          type: string
+          const: progress
+        timestamp:
+          type: string
+          format: date-time
+        stage:
+          type: string
+          minLength: 1
+        message:
+          type: string
+
+    ResultEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - protocol_version
+        - type
+        - status
+      properties:
+        protocol_version:
+          $ref: "#/components/schemas/ProtocolVersion"
+        type:
+          type: string
+          const: result
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - passed
+            - failed
+            - skipped
+        message:
+          type: string
+        exit_code:
+          type: integer
+        state:
+          $ref: "#/components/schemas/ResultState"
+
+    ResultState:
+      type: object
+      additionalProperties: false
+      properties:
+        provider:
+          $ref: "#/components/schemas/JsonObject"
+          description: State to persist under this provider's namespace.
+
+    ProtocolError:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          minLength: 1
+        message:
+          type: string
+        details:
+          $ref: "#/components/schemas/JsonObject"
+
+    JsonObject:
+      type: object
+      additionalProperties: true
+
+  examples:
+    SshValidateProviderRequest:
+      summary: Validate an external provisioner against an SSH target.
+      value:
+        protocol_version: "1.0"
+        operation: validate
+        kitchen:
+          version: 3.7.0
+          root_path: /work/cookbook
+        instance:
+          name: default-ubuntu-2404
+          last_action: create
+          last_attempted_action: create
+        platform:
+          name: ubuntu-24.04
+          os_type: unix
+          shell_type: bourne
+        suite:
+          name: default
+        components:
+          driver:
+            name: vagrant
+            config: {}
+            state:
+              hostname: 127.0.0.1
+              port: 2222
+          transport:
+            name: ssh
+            type: ssh
+            target:
+              kind: machine
+              hostname: 127.0.0.1
+              platform: ubuntu-24.04
+            config:
+              username: vagrant
+              port: 2222
+            secrets:
+              private_key: KITCHEN_TRANSPORT_SSH_KEY
+          provisioner:
+            name: external
+            provider: cinc
+            command: kitchen-provider-cinc
+            config:
+              product_name: cinc
+              channel: stable
+        executor:
+          model: exec
+          command: kitchen-provider-cinc
+          input: stdin
+          request_file_argument: --request
+          event_stream: ndjson
+        environment:
+          passed:
+            - KITCHEN_TRANSPORT_SSH_KEY
+          kitchen_reserved:
+            - KITCHEN_TRANSPORT_SSH_KEY
+        state:
+          provider: {}
+
+    SshProviderRequest:
+      summary: Run an external provisioner against an SSH target.
+      value:
+        protocol_version: "1.0"
+        operation: run
+        kitchen:
+          version: 3.7.0
+          root_path: /work/cookbook
+          log_path: /work/cookbook/.kitchen/logs/default-ubuntu-2404.log
+          state_path: /work/cookbook/.kitchen/default-ubuntu-2404.yml
+        instance:
+          name: default-ubuntu-2404
+          last_action: create
+          last_attempted_action: create
+        platform:
+          name: ubuntu-24.04
+          os_type: unix
+          shell_type: bourne
+        suite:
+          name: default
+        components:
+          driver:
+            name: vagrant
+            config: {}
+            state:
+              hostname: 127.0.0.1
+              port: 2222
+          transport:
+            name: ssh
+            type: ssh
+            target:
+              kind: machine
+              hostname: 127.0.0.1
+              platform: ubuntu-24.04
+            config:
+              username: vagrant
+              port: 2222
+              connection_timeout: 15
+              connection_retries: 5
+              connection_retry_sleep: 1
+            secrets:
+              private_key: KITCHEN_TRANSPORT_SSH_KEY
+          provisioner:
+            name: external
+            provider: cinc
+            command: kitchen-provider-cinc
+            config:
+              product_name: cinc
+              channel: stable
+        executor:
+          model: exec
+          command: kitchen-provider-cinc
+          input: stdin
+          request_file_argument: --request
+          event_stream: ndjson
+        environment:
+          passed:
+            - KITCHEN_TRANSPORT_SSH_KEY
+            - CHEF_LICENSE
+          user_allowed:
+            - CHEF_LICENSE
+          kitchen_reserved:
+            - KITCHEN_TRANSPORT_SSH_KEY
+        state:
+          provider: {}
+
+    WinrmProviderRequest:
+      summary: Run an external provisioner against a WinRM target.
+      value:
+        protocol_version: "1.0"
+        operation: run
+        kitchen:
+          version: 3.7.0
+          root_path: /work/cookbook
+        instance:
+          name: default-windows-2022
+          last_action: create
+          last_attempted_action: create
+        platform:
+          name: windows-2022
+          os_type: windows
+          shell_type: powershell
+        suite:
+          name: default
+        components:
+          driver:
+            name: vagrant
+            config: {}
+            state:
+              hostname: 127.0.0.1
+              port: 55985
+          transport:
+            name: winrm
+            type: winrm
+            target:
+              kind: machine
+              hostname: 127.0.0.1
+              platform: windows-2022
+            config:
+              username: Administrator
+              port: 55985
+              scheme: http
+              transport: negotiate
+              elevated: true
+              operation_timeout: 60
+              receive_timeout: 70
+              connection_retries: 5
+              connection_retry_sleep: 1
+            secrets:
+              password: KITCHEN_TRANSPORT_PASSWORD
+          provisioner:
+            name: external
+            provider: cinc
+            command: kitchen-provider-cinc
+            config:
+              product_name: cinc
+              channel: stable
+        executor:
+          model: exec
+          command: kitchen-provider-cinc
+          input: stdin
+          request_file_argument: --request
+          event_stream: ndjson
+        environment:
+          passed:
+            - KITCHEN_TRANSPORT_PASSWORD
+          kitchen_reserved:
+            - KITCHEN_TRANSPORT_PASSWORD
+        state:
+          provider: {}
+
+    ExecProviderRequest:
+      summary: Run an external provisioner locally through the exec transport.
+      value:
+        protocol_version: "1.0"
+        operation: run
+        kitchen:
+          version: 3.7.0
+          root_path: /work/cookbook
+        instance:
+          name: default-local
+          last_action: create
+          last_attempted_action: create
+        platform:
+          name: local
+          os_type: unix
+          shell_type: bourne
+        suite:
+          name: default
+        components:
+          driver:
+            name: exec
+            config: {}
+            state: {}
+          transport:
+            name: exec
+            type: exec
+            target:
+              kind: local
+              platform: local
+            config:
+              kitchen_root: /work/cookbook
+              host_os: darwin
+          provisioner:
+            name: external
+            provider: cinc
+            command: kitchen-provider-cinc
+            config:
+              product_name: cinc
+              channel: stable
+        executor:
+          model: exec
+          command: kitchen-provider-cinc
+          input: stdin
+          request_file_argument: --request
+          event_stream: ndjson
+        environment:
+          passed:
+            - CHEF_LICENSE
+          user_allowed:
+            - CHEF_LICENSE
+          kitchen_reserved: []
+        state:
+          provider: {}
+
+    DockerExecProviderRequest:
+      summary: Run an external provisioner inside a container.
+      value:
+        protocol_version: "1.0"
+        operation: run
+        kitchen:
+          version: 3.7.0
+          root_path: /work/cookbook
+        instance:
+          name: default-ubuntu-container
+          last_action: create
+          last_attempted_action: create
+        platform:
+          name: ubuntu-24.04
+          os_type: unix
+          shell_type: bourne
+        suite:
+          name: default
+        components:
+          driver:
+            name: dokken
+            config: {}
+            state:
+              container_id: 8f4c2a1b3d5e
+          transport:
+            name: docker
+            type: docker_exec
+            target:
+              kind: container
+              container_id: 8f4c2a1b3d5e
+              image: ubuntu:24.04
+              platform: ubuntu-24.04
+            config:
+              executable: docker
+              shell: /bin/sh
+              user: root
+          provisioner:
+            name: external
+            provider: cinc
+            command: kitchen-provider-cinc
+            config:
+              product_name: cinc
+              channel: stable
+        executor:
+          model: exec
+          command: kitchen-provider-cinc
+          input: stdin
+          request_file_argument: --request
+          event_stream: ndjson
+        environment:
+          passed: []
+          kitchen_reserved: []
+        state:
+          provider: {}
