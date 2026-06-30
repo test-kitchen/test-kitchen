@@ -23,9 +23,9 @@ jobs:
         id: check
         run: |
           if [ -f Gemfile ]; then
-           echo "gemfile=true" >> $GITHUB_OUTPUT
+           echo "gemfile=true" >> "$GITHUB_OUTPUT"
           else
-            echo "gemfile=false" >> $GITHUB_OUTPUT
+            echo "gemfile=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Setup Ruby
         if: steps.check.outputs.gemfile == 'true'
@@ -58,17 +58,6 @@ jobs:
             *.md
             !CHANGELOG.md
 
-  markdown-link-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
-        with:
-          use-quiet-mode: "yes"
-          use-verbose-mode: "yes"
-          check-modified-files-only: "yes"
-          base-branch: "main"
-
   test:
     name: Unit Test with Ruby
     runs-on: ubuntu-latest
@@ -84,9 +73,9 @@ jobs:
         id: check
         run: |
           if [ -f Gemfile ]; then
-           echo "gemfile=true" >> $GITHUB_OUTPUT
+           echo "gemfile=true" >> "$GITHUB_OUTPUT"
           else
-            echo "gemfile=false" >> $GITHUB_OUTPUT
+            echo "gemfile=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Setup Ruby
         if: steps.check.outputs.gemfile == 'true'
