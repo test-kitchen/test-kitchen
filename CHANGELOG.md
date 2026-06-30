@@ -1,5 +1,20 @@
 # Test Kitchen Change Log
 
+## [4.1.0](https://github.com/test-kitchen/test-kitchen/compare/v4.0.0...v4.1.0) (2026-06-30)
+
+
+### Features
+
+* add external provider protocol ([#2075](https://github.com/test-kitchen/test-kitchen/issues/2075)) ([39c241d](https://github.com/test-kitchen/test-kitchen/commit/39c241db7afc039ede924188b85927452a26dd22))
+* add structured kitchen logs ([#2074](https://github.com/test-kitchen/test-kitchen/issues/2074)) ([97b4e70](https://github.com/test-kitchen/test-kitchen/commit/97b4e70c3c9706276f44d3eaf7ef06aa859eefa2))
+
+
+### Bug Fixes
+
+* improve error handling ([#2067](https://github.com/test-kitchen/test-kitchen/issues/2067)) ([31ba6d6](https://github.com/test-kitchen/test-kitchen/commit/31ba6d63140f9434c510eeb044e15647c6d8458e))
+* reject invalid state files ([#2066](https://github.com/test-kitchen/test-kitchen/issues/2066)) ([e2ccf51](https://github.com/test-kitchen/test-kitchen/commit/e2ccf51c8779dd52929adc76e6bd05d1d6b9ddd9))
+* rescue TransportFailed instead of SshFailed in remote lifecycle hook ([#2050](https://github.com/test-kitchen/test-kitchen/issues/2050)) ([4e2f65a](https://github.com/test-kitchen/test-kitchen/commit/4e2f65a0355b866ae3f706f9cff408e99e22eee1)), closes [#2049](https://github.com/test-kitchen/test-kitchen/issues/2049)
+
 ## [4.0.0](https://github.com/test-kitchen/test-kitchen/compare/v3.9.1...v4.0.0) (2026-01-22)
 
 
