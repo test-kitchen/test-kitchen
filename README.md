@@ -39,8 +39,10 @@ kitchen init
 A `kitchen.yml` file will be created in your project base directory. This file
 describes your testing configuration; what you want to test and on which target
 platforms. Each of these suite and platform combinations are called instances.
-By default your instances will be converged with Chef Solo and run in Vagrant
-virtual machines.
+By default `kitchen init` generates a Vagrant-backed instance with the shell
+provisioner. Chef, Cinc, and other configuration management tooling is supplied
+by the Ruby environment you run Kitchen from, such as system gems, Cinc
+Workstation, or Chef Workstation.
 
 Get a listing of your instances with:
 
@@ -48,7 +50,7 @@ Get a listing of your instances with:
 kitchen list
 ```
 
-Run Chef Infra Client on an instance, in this case `default-ubuntu-2004`, with:
+Converge an instance, in this case `default-ubuntu-2004`, with:
 
 ```shell
 kitchen converge default-ubuntu-2004

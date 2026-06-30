@@ -12,11 +12,12 @@ These are frequently asked questions or tips that don't have a better home just 
 
 #### How do I add another driver other than Vagrant?
 
-If you're using Chef Workstation, check for it `chef gem list | grep $DRIVER` you need to make sure the driver [exists](https://github.com/test-kitchen/test-kitchen/blob/main/ECOSYSTEM.md),
-if it does:
+First check whether the driver is installed in the Ruby environment that runs `kitchen`. With system Ruby, use `gem list`. With Chef Workstation, use `chef gem list`. If your selected Workstation package does not bundle the plugin, install it into that same environment.
 
 ```bash
-~$ gem install kitchen-openstack # for instance
+~$ gem list kitchen-openstack
+~$ chef gem list kitchen-openstack
+~$ gem install kitchen-openstack # or chef gem install kitchen-openstack
 ~$ vi cookbooks/demo/kitchen.yml # wherever your kitchen.yml is for your cookbook
 ```
 
@@ -34,7 +35,7 @@ Certain drivers, like `kitchen-dokken` [recommend](https://github.com/test-kitch
 
 ##### How do I update just Test Kitchen if I'm using Chef Workstation?
 
-Due to the nature of how the Chef Workstation is built, it is not possible to update a gem that is part of the package. To get the latest versions of component software, builds from the [current](https://www.chef.io/downloads/tools/workstation) channel can be consumed.
+Due to the nature of how Workstation packages are built, it is not possible to update a gem that is part of the package in place. To get newer component versions, install a newer Workstation build or run Test Kitchen from a separate Ruby environment where you control the gem versions.
 
 ##### How do I change the user to access the instance?
 

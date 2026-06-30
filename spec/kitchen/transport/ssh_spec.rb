@@ -1283,19 +1283,17 @@ describe Kitchen::Transport::Ssh::Connection do
     end
 
     describe "for a file that does not exist" do
-      it "logs a warning" do
+      it "raises SshFailed with the attempted remote path" do
         FileUtils.expects(:mkdir_p).with(@local_parent)
         scp.expects(:download!).with("/remote", @local).raises(Net::SCP::Error)
         scp.expects(:download!).with("/remote", @local, recursive: true)
           .raises(Net::SCP::Error)
 
-        connection.download("/remote", @local)
+        e = _ { connection.download("/remote", @local) }
+          .must_raise Kitchen::Transport::SshFailed
 
-        _(logged_output.string.lines.count do |l|
-          l =~ warn_line_with(
-            "SCP download failed for file or directory '/remote', perhaps it does not exist?"
-          )
-        end).must_equal 1
+        _(e.message)
+          .must_match regexify("SCP download failed for file or directory '/remote'")
       end
     end
 

@@ -1115,6 +1115,24 @@ describe Kitchen::Instance do
       end
     end
 
+    describe "when the state file cannot be loaded" do
+      let(:state_file) do
+        mock("state_file").tap do |sf|
+          sf.expects(:read).raises(Kitchen::StateFileLoadError, "invalid state")
+          sf.expects(:write).never
+        end
+      end
+
+      it "raises an ActionFailed with the state error as original" do
+        error = _ { instance.send(:action, :create) {} }
+          .must_raise Kitchen::ActionFailed
+
+        _(error.message)
+          .must_match regex_for("Failed to complete #create action: [invalid state]")
+        _(error.original).must_be_kind_of Kitchen::StateFileLoadError
+      end
+    end
+
     describe "crashes preserve last action for desired verify action" do
       before do
         verifier.stubs(:call).raises(Kitchen::ActionFailed, "death")

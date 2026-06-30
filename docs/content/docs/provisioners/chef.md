@@ -11,7 +11,7 @@ kitchen-omnibus-chef is a Test Kitchen *provisioner* for chef-client.
 
 ## Overview
 
-[kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef) plugin includes three provisioners for Chef Infra: `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra`.
+The [kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef) plugin includes three provisioners for Chef Infra: `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra`. This plugin is not bundled by the `test-kitchen` gem itself; use the version provided by your Workstation package or install it into the Ruby environment that runs `kitchen`.
 
 `chef_target` is for using Chef 19 Target Mode without remotely installing any agents and is based on `kitchen-transport-train` and the Train framework, which are not installed from Test Kitchen by default. For links to these two tools, look at the end of this page.
 

@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require_relative "../command"
+require_relative "../errors"
 
 require "benchmark" unless defined?(Benchmark)
 
@@ -30,7 +31,7 @@ module Kitchen
       # Invoke the command.
       def call
         unless %w{passing always never}.include?(options[:destroy])
-          raise ArgumentError, "Destroy mode must be passing, always, or never."
+          raise UserError, "Destroy mode must be passing, always, or never."
         end
 
         banner "Starting Test Kitchen (v#{Kitchen::VERSION})"
