@@ -155,8 +155,7 @@ module Kitchen
       converge: "Change instance state to converge. " \
                    "Use a provisioner to configure one or more instances",
       setup: "Change instance state to setup. " \
-                   "Prepare to run automated tests. " \
-                   "Install busser and related gems on one or more instances",
+                   "Prepare one or more instances for verification",
       verify: "Change instance state to verify. " \
                    "Run automated tests on one or more instances",
       destroy: "Change instance state to destroy. " \
