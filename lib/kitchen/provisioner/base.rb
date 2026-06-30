@@ -105,18 +105,21 @@ module Kitchen
           debug("Executing prepare command: #{prepare_command}")
           conn.execute(prepare_command)
           debug("Executing run command: #{run_command}")
-          conn.execute_with_retry(
-            encode_for_powershell(run_command),
-            config[:retry_on_exit_code],
-            config[:max_retries],
-            config[:wait_for_retry]
-          )
-          info("Downloading files from #{instance.to_str}")
-          config[:downloads].to_h.each do |remotes, local|
-            debug("Downloading #{Array(remotes).join(", ")} to #{local}")
-            conn.download(remotes, local)
+          begin
+            conn.execute_with_retry(
+              encode_for_powershell(run_command),
+              config[:retry_on_exit_code],
+              config[:max_retries],
+              config[:wait_for_retry]
+            )
+          ensure
+            info("Downloading files from #{instance.to_str}")
+            config[:downloads].to_h.each do |remotes, local|
+              debug("Downloading #{Array(remotes).join(", ")} to #{local}")
+              conn.download(remotes, local)
+            end
+            debug("Download complete")
           end
-          debug("Download complete")
         end
       rescue Kitchen::Transport::TransportFailed => ex
         raise ActionFailed, ex.message
