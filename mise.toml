@@ -1,5 +1,5 @@
 [tools]
-hugo = "0.163.3"
+hugo = "0.164.0"
 
 [tasks."docs:serve"]
 description = "Run the docs site locally with Hugo"
