@@ -278,6 +278,22 @@ describe Kitchen::Provisioner::Base do
       cmd
     end
 
+    it "downloads files when run fails" do
+      connection.expects(:download).with(
+        ["/tmp/kitchen/nodes", "/tmp/kitchen/data_bags"],
+        "./test/fixtures"
+      )
+
+      connection.expects(:download).with("/remote", "/local")
+
+      connection.expects(:execute_with_retry).raises
+
+      begin
+        cmd
+      rescue
+      end
+    end
+
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
       connection.stubs(:upload)
         .raises(Kitchen::Transport::TransportFailed.new("dang"))
