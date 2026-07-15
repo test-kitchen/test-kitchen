@@ -257,12 +257,40 @@ describe Kitchen::Verifier::Base do
 
       connection.expects(:download).with("/remote", "/local")
 
-      connection.expects(:execute).with("run").raises
+      connection.expects(:execute).with("run")
+        .raises(Kitchen::Transport::TransportFailed.new("verify boom"))
 
-      begin
-        cmd
-      rescue
-      end
+      err = _ { cmd }.must_raise Kitchen::ActionFailed
+      _(err.message).must_match(/verify boom/)
+    end
+
+    it "reports the run failure when downloading also fails" do
+      connection.stubs(:execute).with("run")
+        .raises(Kitchen::Transport::TransportFailed.new("verify boom"))
+      connection.stubs(:download)
+        .raises(Kitchen::Transport::TransportFailed.new("download boom"))
+
+      err = _ { cmd }.must_raise Kitchen::ActionFailed
+      _(err.message).must_match(/verify boom/)
+      _(logged_output.string).must_match(/WARN -- : Failed to download files/)
+    end
+
+    it "warns but does not fail when only the download fails" do
+      connection.stubs(:download)
+        .raises(Kitchen::Transport::TransportFailed.new("download boom"))
+
+      cmd
+
+      _(logged_output.string).must_match(/WARN -- : Failed to download files/)
+      _(logged_output.string).must_match(/download boom/)
+    end
+
+    it "raises when the transport cannot download at all" do
+      connection.stubs(:download)
+        .raises(Kitchen::ClientError.new("#download must be implemented"))
+
+      err = _ { cmd }.must_raise Kitchen::ClientError
+      _(err.message).must_match(/must be implemented/)
     end
 
     it "raises an ActionFailed on transfer when TransportFailed is raised" do
