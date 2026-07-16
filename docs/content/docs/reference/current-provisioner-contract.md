@@ -81,6 +81,15 @@ The base workflow:
 * downloads configured `downloads`
 * cleans up the local sandbox
 
+Downloads are attempted in an ensure block, so configured downloads may run even
+after the converge command fails. This is what makes it possible to retrieve logs
+that explain a failed converge.
+
+Downloads are best-effort. A file that cannot be downloaded logs a warning rather
+than failing the action, and a download failure never replaces an error already
+propagating from the converge command. A transport that does not implement
+`download` raises `Kitchen::ClientError`, which still surfaces.
+
 Each command hook may return `nil`. Current transports are expected to no-op
 for `execute(nil)`.
 

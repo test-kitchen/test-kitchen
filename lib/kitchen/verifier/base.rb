@@ -77,12 +77,24 @@ module Kitchen
           begin
             conn.execute(run_command)
           ensure
-            info("Downloading files from #{instance.to_str}")
-            config[:downloads].to_h.each do |remotes, local|
-              debug("Downloading #{Array(remotes).join(", ")} to #{local}")
-              conn.download(remotes, local)
+            # Retrieval is best-effort: a file we could not fetch must not
+            # fail an otherwise successful verify, and must never replace
+            # an error already in flight from the run command. A transport
+            # that cannot download at all is a bug, not a missing file, so
+            # it still raises when there is no verify error to protect.
+            run_error = $!
+            begin
+              info("Downloading files from #{instance.to_str}")
+              config[:downloads].to_h.each do |remotes, local|
+                debug("Downloading #{Array(remotes).join(", ")} to #{local}")
+                conn.download(remotes, local)
+              end
+              debug("Download complete")
+            rescue => ex
+              raise unless run_error || ex.is_a?(Kitchen::Transport::TransportFailed)
+
+              warn("Failed to download files from #{instance.to_str}: #{ex.message}")
             end
-            debug("Download complete")
           end
         end
       rescue Kitchen::Transport::TransportFailed => ex
