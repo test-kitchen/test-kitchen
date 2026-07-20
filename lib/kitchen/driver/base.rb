@@ -16,7 +16,7 @@ require_relative "../lazy_hash"
 require_relative "../logging"
 require_relative "../plugin_base"
 require_relative "../shell_out"
-require "time" unless defined?(Time)
+require "time"
 
 module Kitchen
   module Driver
