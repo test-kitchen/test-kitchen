@@ -426,6 +426,7 @@ describe Kitchen::Logger do
       _(event["instance"]).must_equal "default-ubuntu-2404"
       _(event["sequence"]).must_equal 1
       _(event["timestamp"]).wont_be_nil
+      _(Time.iso8601(event["timestamp"])).must_be_kind_of Time
     end
 
     it "writes banner events without relying on text log prefixes" do

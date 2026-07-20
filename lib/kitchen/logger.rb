@@ -18,7 +18,7 @@
 require "fileutils" unless defined?(FileUtils)
 require "json" unless defined?(JSON)
 require "logger" unless defined?(Logger)
-require "time" unless defined?(Time)
+require "time"
 
 module Kitchen
   # Logging implementation for Kitchen. By default the console/stdout output
