@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [4.1.1](https://github.com/test-kitchen/test-kitchen/compare/v4.1.0...v4.1.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* require time so Time#iso8601 is available for structured logs ([#2083](https://github.com/test-kitchen/test-kitchen/issues/2083)) ([6479a74](https://github.com/test-kitchen/test-kitchen/commit/6479a744e9c0d7709cc52bb566715460bf0875f5))
+
 ## [4.1.0](https://github.com/test-kitchen/test-kitchen/compare/v4.0.0...v4.1.0) (2026-07-16)
 
 
