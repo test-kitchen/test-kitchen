@@ -11,7 +11,7 @@
 # limitations under the License.
 
 require_relative "../../kitchen"
-require "time"
+require "time" unless defined?(Time.zone_offset)
 
 module Kitchen
   module Driver

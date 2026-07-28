@@ -95,6 +95,7 @@ describe Kitchen::Driver::Base do
     _(status[:source]).must_equal "driver"
     _(status[:message]).must_match(/does not support status/)
     _(status[:checked_at]).wont_be_nil
+    _(Time.iso8601(status[:checked_at])).must_be_kind_of Time
   end
 
   describe ".pre_create_command" do

@@ -18,7 +18,7 @@
 require "benchmark" unless defined?(Benchmark)
 require "fileutils" unless defined?(FileUtils)
 require "securerandom" unless defined?(SecureRandom)
-require "time"
+require "time" unless defined?(Time.zone_offset)
 
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a

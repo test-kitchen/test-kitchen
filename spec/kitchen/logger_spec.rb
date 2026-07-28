@@ -470,6 +470,26 @@ describe Kitchen::Logger do
     end
   end
 
+  describe "the time stdlib" do
+    # Timestamp formatting relies on Time#iso8601, which the "time" stdlib adds
+    # to core Time. On Ruby 3.4+ the instance method is part of core, and other
+    # specs in this suite load "time" transitively, so a missing require is only
+    # visible in a clean process on the oldest supported Ruby. See #2082.
+    it "is required by every file that formats a timestamp" do
+      script = <<-RUBY
+        require "kitchen"
+        require "kitchen/driver/dummy"
+        Time.now.utc.iso8601(6)
+        Time.iso8601("2026-01-01T00:00:00Z")
+      RUBY
+      lib = File.expand_path("../../lib", __dir__)
+      output = IO.popen([Gem.ruby, "-I#{lib}", "-e", script], err: %i{child out}, &:read)
+
+      _($?.success?).must_equal true,
+        "requiring kitchen in a clean Ruby process failed:\n#{output}"
+    end
+  end
+
   describe "combined stdout and logdev logger" do
     let(:stdout) { StringIO.new }
     let(:logdev) { StringIO.new }
