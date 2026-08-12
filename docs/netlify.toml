@@ -1,5 +1,5 @@
 [build.environment]
-  HUGO_VERSION = "0.164.0"
+  HUGO_VERSION = "0.165.0"
 
 [[headers]]
   for = "/*"
