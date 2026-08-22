@@ -91,7 +91,7 @@ module Kitchen
     # Returns a string with masked values for specified parameters.
     #
     # @param string_to_mask [String] the object whose string representation is parsed
-    # @param [Array] the list of keys whose values should be masked
+    # @param keys [Array] the list of keys whose values should be masked
     # @return [String] the string representation of passed object with masked values
     def self.mask_values(string_to_mask, keys)
       masked_string = string_to_mask
