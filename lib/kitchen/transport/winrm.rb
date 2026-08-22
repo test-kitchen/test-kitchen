@@ -502,7 +502,7 @@ module Kitchen
       # @api private
       def create_new_connection(options, &block)
         if @connection
-          string_to_mask = "[WinRM] shutting previous connection #{@connection}"
+          string_to_mask = "[WinRM] shutting down previous connection #{@connection}"
           masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
           logger.debug(masked_string)
           @connection.close

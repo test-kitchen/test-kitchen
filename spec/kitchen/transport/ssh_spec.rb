@@ -664,7 +664,7 @@ describe Kitchen::Transport::Ssh do
         make_connection(state.merge(port: 9000))
 
         _(logged_output.string.lines.count do |l|
-          l =~ debug_line_with("[SSH] shutting previous connection ")
+          l =~ debug_line_with("[SSH] shutting down previous connection ")
         end).must_equal 1
       end
     end
