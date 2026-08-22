@@ -38,3 +38,4 @@ _cache
 docs/public
 .idea/
 docs/.hugo_build.lock
+.claude/
