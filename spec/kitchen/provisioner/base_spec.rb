@@ -129,7 +129,7 @@ describe Kitchen::Provisioner::Base do
       _(provisioner[:http_proxy]).must_be_nil
     end
 
-    it ":http_proxys defaults to nil" do
+    it ":https_proxy defaults to nil" do
       _(provisioner[:https_proxy]).must_be_nil
     end
 

@@ -1,7 +1,7 @@
 Feature: Using Test Kitchen CLI help
   In order to access the self describing documentation
   As a user of Test Kitchen
-  I want to run a command help help for kitchen commands
+  I want to run a help command for kitchen commands
 
   @spawn
   Scenario: Printing help
