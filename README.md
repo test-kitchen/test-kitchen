@@ -6,14 +6,14 @@
 |             |                                                                                 |
 | ----------- | --------------------------------------------------------------------------------|
 | Website     | [https://kitchen.ci/][website]                                                  |
-| Source Code | [https://kitchen.ci/docs/getting-started/introduction/][guide]                  |
+| Source Code | [https://github.com/test-kitchen/test-kitchen][repo]                            |
 | Slack       | [#test-kitchen][slack] channel on Chef Community Slack                          |
 
 **Test Kitchen is an integration tool for developing and testing infrastructure code and software on isolated target platforms.**
 
 ## Getting Started Guide
 
-To learn how to install and setup Test Kitchen for developing infrastructure
+To learn how to install and set up Test Kitchen for developing infrastructure
 code, check out the [Getting Started Guide][guide].
 
 If you want to get going super fast, then try the Quick Start next...

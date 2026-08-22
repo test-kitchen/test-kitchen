@@ -6,7 +6,7 @@ menu:
     weight: 15
 ---
 
-Kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant before running Test Kitchen.
+Kitchen-vagrant is a Test Kitchen *driver* for HashiCorp Vagrant 1.6 and later. The Vagrant driver is the preferred driver for local cookbooks testing due to the extensive platform and hypervisor support in Vagrant.
 
 ## Supported Virtualization Hypervisors
 
@@ -52,7 +52,7 @@ To learn more about the installation, upgrade, and usage of these plugins see [V
 
 ### Setting up Hyper-V
 
-Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that you either set the provider to `hyperv` in your `kitchen.yml` config or set the environment variable `VAGRANT_DEFAULT_PROVIDER` to `hyperv`. The `VAGRANT_DEFAULT_PROVIDER` environment variable allows controlling the default provider when one is not defined in the `kitchen.yml`. This environment variable is particularly useful is you are using Hyper-V in a project where other users rely on VirtualBox.
+Microsoft Hyper-V is an exclusive hypervisor, meaning it cannot be used when another hypervisor is active on a system. Due to this restriction it is recommended that you either set the provider to `hyperv` in your `kitchen.yml` config or set the environment variable `VAGRANT_DEFAULT_PROVIDER` to `hyperv`. The `VAGRANT_DEFAULT_PROVIDER` environment variable allows controlling the default provider when one is not defined in the `kitchen.yml`. This environment variable is particularly useful if you are using Hyper-V in a project where other users rely on VirtualBox.
 
 It is also important to consider how network switches are defined and selected when using Hyper-V. Kitchen-vagrant will select the switch to use with new VMs in the following order:
 
@@ -72,7 +72,7 @@ driver:
 
 ## Default Boxes
 
-Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose-built for use with Test Kitchen are can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
+Kitchen-vagrant defaults to using Vagrant boxes published under the [Bento organization][bento_org] on [Vagrant Cloud][vagrant_cloud]. These systems are purpose-built for use with Test Kitchen and can be configured in the `kitchen.yml` config without specifying the full path to a Vagrant box.
 
 Example configuration using Bento images:
 
@@ -136,7 +136,7 @@ platforms:
       box: my_vagrant_account/redhat-10
 ```
 
-Vagrant boxes can also be fetched from non-Vagrant Cloud location by specifying the `box_url`:
+Vagrant boxes can also be fetched from a non-Vagrant Cloud location by specifying the `box_url`:
 
 ```yaml
 platforms:
@@ -264,7 +264,7 @@ The default is `nil` assuming ssh will be used.
 ### customize
 
 A **Hash** of customizations to a Vagrant virtual machine. Each key/value
-pair will be passed to your providers customization block. For example, with
+pair will be passed to your provider's customization block. For example, with
 the default `virtualbox` provider:
 
 ```yaml
@@ -502,7 +502,7 @@ is `virtualbox` unless set by `VAGRANT_DEFAULT_PROVIDER` environment variable.
 ### provision
 
 Set to true if you want to do the provision of vagrant in create.
-Useful in case of you want to customize the OS in provision phase of vagrant
+Useful in case you want to customize the OS in provision phase of vagrant
 
 ### ssh_key
 
@@ -641,7 +641,7 @@ To prevent this value from being rendered in the default Vagrantfile, you can
 set this value to `false`.
 
 The default will be computed from the name of the instance. For example, the
-instance was called "default-fuzz-9" will produce a default `vm_hostname` value
+instance called "default-fuzz-9" will produce a default `vm_hostname` value
 of `"default-fuzz-9"`. For Windows-based platforms, a default of `nil` is used
 to save on boot time and potential rebooting.
 

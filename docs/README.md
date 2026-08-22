@@ -16,7 +16,7 @@ Run `mise install` from the repository root to install the pinned Hugo version.
 
 Run `mise run docs:serve` from the repository root and browse the URL presented.
 
-If you are not using mise, install Hugo 0.163.2 directly and run `hugo server` from this directory.
+If you are not using mise, install Hugo 0.165.0 directly and run `hugo server` from this directory.
 
 ## Style Guide
 

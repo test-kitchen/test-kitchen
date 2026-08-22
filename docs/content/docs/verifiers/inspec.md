@@ -7,7 +7,7 @@ menu:
     weight: 5
 ---
 
-[InSpec](https://community.chef.io/tools/chef-inspec) framework for testing and auditing your applications and infrastructure. It can be utilized for validating Test Kitchen instances via the [kitchen-inspec plugin](https://github.com/inspec/kitchen-inspec).
+[InSpec](https://community.chef.io/tools/chef-inspec) is a framework for testing and auditing your applications and infrastructure. It can be utilized for validating Test Kitchen instances via the [kitchen-inspec plugin](https://github.com/inspec/kitchen-inspec).
 
 To enable kitchen-inspec in your `kitchen.yml`:
 

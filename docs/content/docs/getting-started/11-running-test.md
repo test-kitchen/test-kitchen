@@ -7,7 +7,7 @@ menu:
     weight: 110
 ---
 
-Now it's time to introduce to the **test** meta-action which helps you automate all the previous actions so far into one command. Checking `kitchen list`, the "Last Action" of our instance should be "Verified". With this in mind, let's run `kitchen test`:
+Now it's time to introduce the **test** meta-action which helps you automate all the previous actions so far into one command. Checking `kitchen list`, the "Last Action" of our instance should be "Verified". With this in mind, let's run `kitchen test`:
 
 ```ruby
 $ kitchen test
