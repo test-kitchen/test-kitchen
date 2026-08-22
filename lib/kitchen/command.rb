@@ -100,7 +100,7 @@ module Kitchen
         end
       end
 
-      # Return an array on instances whose name matches the regular expression.
+      # Return an array of instances whose name matches the regular expression.
       #
       # @param regexp [Regexp] a regular expression matching on instance names
       # @return [Array<Instance>] an array of instances
@@ -131,7 +131,7 @@ module Kitchen
         Kitchen.logger
       end
 
-      # Return an array on instances whose name matches the regular expression,
+      # Return an array of instances whose name matches the regular expression,
       # the full instance name, or  the `"all"` literal.
       #
       # @param arg [String] an instance name, a regular expression, the literal

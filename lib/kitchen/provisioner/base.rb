@@ -211,7 +211,7 @@ module Kitchen
       # exception if `#create_sandbox` has not yet been called.
       #
       # @return [String] the absolute path to the sandbox directory
-      # @raise [ClientError] if the sandbox directory has no yet been created
+      # @raise [ClientError] if the sandbox directory has not yet been created
       #   by calling `#create_sandbox`
       def sandbox_path
         @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \

@@ -162,7 +162,7 @@ end
 # Initialize the base logger
 Kitchen.logger = Kitchen.default_logger
 
-# Setup a collection of instance crash exceptions for error reporting
+# Set up a collection of instance crash exceptions for error reporting
 Kitchen.mutex = Mutex.new
 
 # Initialize the mutex for Dir.chdir coordination

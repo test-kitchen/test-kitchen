@@ -23,7 +23,7 @@ require_relative "base"
 module Kitchen
   module Verifier
     # Command string generator to interface with Busser. The commands that are
-    # generated are safe to pass to an SSH command or as an unix command
+    # generated are safe to pass to an SSH command or as a Unix command
     # argument (escaped in single quotes).
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>

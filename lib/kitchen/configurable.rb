@@ -35,7 +35,7 @@ module Kitchen
 
     # A lifecycle method that should be invoked when the object is about ready
     # to be used. A reference to an Instance is required as configuration
-    # dependant data may be access through an Instance. This also acts as a
+    # dependent data may be accessed through an Instance. This also acts as a
     # hook point where the object may wish to perform other last minute
     # checks, validations, or configuration expansions.
     #
@@ -73,7 +73,7 @@ module Kitchen
     # fallback rules or returns nil if path cannot be determined.
     #
     # Given an instance with suite named `"server"`, a `test_base_path` of
-    # `"/a/b"`, and a path segment of `"roles"` then following will be tried
+    # `"/a/b"`, and a path segment of `"roles"` then the following will be tried
     # in order (first match that exists wins):
     #
     # 1. /a/b/server/roles
@@ -207,7 +207,7 @@ module Kitchen
     end
 
     # Expands file paths for certain configuration values. A configuration
-    # value is marked for file expansion with a expand_path_for declaration
+    # value is marked for file expansion with an expand_path_for declaration
     # in the included class.
     #
     # @api private

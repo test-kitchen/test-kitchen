@@ -18,8 +18,8 @@
 module Kitchen
   # A wrapper on Regexp and strings to mix them in platform filters.
   #
-  # This should handle backward compatibility in most cases were
-  # platform are matched against a filters array using Array.include?
+  # This should handle backward compatibility in most cases where
+  # platforms are matched against a filter array using Array.include?
   #
   # This wrapper does not work if filters arrays are converted to Set.
   #
@@ -29,7 +29,7 @@ module Kitchen
     REGEXP_LIKE_PATTERN = %r{^/(?<pattern>.*)/(?<options>[ix]*)$}
 
     # Converts platform filters into an array of PlatformFilter handling both strings and Regexp.
-    # A string "looks-like" a regexp if it starts by / and end by / + Regexp options i or x
+    # A string "looks-like" a regexp if it starts with / and ends with / + Regexp options i or x
     #
     # @return [Array] filters with regexp-like string converted to PlatformRegexpFilter
     def self.convert(filters)
@@ -57,7 +57,7 @@ module Kitchen
       @value = value
     end
 
-    # Override of the equality operator to check whether the wrapped Regexp match the given object.
+    # Override of the equality operator to check whether the wrapped Regexp matches the given object.
     #
     # @param [Object] other object to compare to
     # @return [Boolean] whether the objects are equal or the wrapped Regexp matches the given string or symbol

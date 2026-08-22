@@ -22,7 +22,7 @@ require "time" unless defined?(Time.zone_offset)
 
 module Kitchen
   # Logging implementation for Kitchen. By default the console/stdout output
-  # will be displayed differently than the file log output. Therefor, this
+  # will be displayed differently than the file log output. Therefore, this
   # class wraps multiple loggers that conform to the stdlib `Logger` class
   # behavior.
   #
@@ -49,7 +49,7 @@ module Kitchen
     # Constructs a new logger.
     #
     # @param options [Hash] configuration for a new logger
-    # @option options [Symbol] :color color to use when when outputting
+    # @option options [Symbol] :color color to use when outputting
     #   messages
     # @option options [Integer] :level the logging severity threshold
     #   (default: `Kitchen::DEFAULT_LOG_LEVEL`)

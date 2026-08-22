@@ -343,7 +343,7 @@ module Kitchen
     # @api private
     attr_reader :state_file
 
-    # Validate the initial internal state of this object and raising an
+    # Validate the initial internal state of this object, raising an
     # exception if any preconditions are not met.
     #
     # @param options[Hash] options hash passed into the constructor
@@ -375,7 +375,7 @@ module Kitchen
     end
 
     # Perform any final configuration or preparation needed for the driver
-    # object carry out its duties.
+    # object to carry out its duties.
     #
     # @api private
     def setup_driver
@@ -384,7 +384,7 @@ module Kitchen
     end
 
     # Perform any final configuration or preparation needed for the lifecycle hooks
-    # object carry out its duties.
+    # object to carry out its duties.
     #
     # @api private
     def setup_lifecycle_hooks
@@ -392,7 +392,7 @@ module Kitchen
     end
 
     # Perform any final configuration or preparation needed for the provisioner
-    # object carry out its duties.
+    # object to carry out its duties.
     #
     # @api private
     def setup_provisioner
@@ -401,7 +401,7 @@ module Kitchen
     end
 
     # Perform any final configuration or preparation needed for the transport
-    # object carry out its duties.
+    # object to carry out its duties.
     #
     # @api private
     def setup_transport
@@ -410,7 +410,7 @@ module Kitchen
     end
 
     # Perform any final configuration or preparation needed for the verifier
-    # object carry out its duties.
+    # object to carry out its duties.
     #
     # @api private
     def setup_verifier
@@ -776,7 +776,7 @@ module Kitchen
 
       TRANSITIONS = %i{destroy create converge setup verify}.freeze
 
-      # Determines the index of a state in the state lifecycle vector. Woah.
+      # Determines the index of a state in the state lifecycle vector. Whoa.
       #
       # @param transition [Symbol,#to_sym] a state
       # @param [Integer] the index position

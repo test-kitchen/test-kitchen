@@ -19,7 +19,7 @@ require_relative "base"
 
 module Kitchen
   module Verifier
-    # Shell verifier for Kitchen. This verifier just execute shell command from local.
+    # Shell verifier for Kitchen. This verifier just executes a shell command locally.
     #
     # @author SAWANOBORI Yukihiko (<sawanoboriyu@higanworks.com>)
     class Shell < Kitchen::Verifier::Base

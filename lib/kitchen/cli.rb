@@ -32,7 +32,7 @@ module Kitchen
       #
       # @param task [String] action to take, usually corresponding to the
       #   subcommand name
-      # @param command [String] command class to create and invoke]
+      # @param command [String] command class to create and invoke
       # @param args [Array] remainder arguments from processed ARGV
       #   (default: `nil`)
       # @param additional_options [Hash] additional configuration needed to
@@ -341,7 +341,7 @@ module Kitchen
     class << self
       private
 
-      # Ensure the any failing commands exit non-zero.
+      # Ensure that any failing commands exit non-zero.
       #
       # @return [true] you die always on failure
       # @api private
@@ -374,7 +374,7 @@ module Kitchen
 
       @config.debug = options[:debug]
 
-      # Now that we have required configs, lets create our file logger
+      # Now that we have required configs, let's create our file logger
       Kitchen.logger = Kitchen.default_file_logger(
         log_level,
         log_overwrite
@@ -401,7 +401,7 @@ module Kitchen
       @log_level = level
     end
 
-    # Check to whether a provided log level is valid
+    # Check whether a provided log level is valid
     #
     # @api private
     def valid_log_level?(level)
