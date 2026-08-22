@@ -1,5 +1,5 @@
 Feature: A command line interface for Test Kitchen
-  In order to provide a quick and response development workflow
+  In order to provide a quick and responsive development workflow
   As a Test Kitchen user
   I want a command line interface that has sane defaults and built in help
 

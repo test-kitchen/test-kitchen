@@ -1,7 +1,7 @@
 Feature: Running instance actions
   In order to trigger discrete instance lifecycle actions
   As an operator
-  I want to run a action commands
+  I want to run action commands
 
   Background:
     Given a file named ".kitchen.yml" with:

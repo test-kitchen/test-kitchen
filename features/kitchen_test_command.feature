@@ -1,5 +1,5 @@
 Feature: Running a full test instance test
-  In order to "fire-and-forget" or run help setup a CI job
+  In order to "fire-and-forget" or help set up a CI job
   As an operator or CI script
   I want to run a command that will fully test one or more instances
 
