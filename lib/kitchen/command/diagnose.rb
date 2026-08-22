@@ -22,7 +22,7 @@ autoload :YAML, "yaml"
 
 module Kitchen
   module Command
-    # Command to log into to instance.
+    # Command to show the computed diagnostic configuration.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Diagnose < Kitchen::Command::Base

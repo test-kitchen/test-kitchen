@@ -21,7 +21,7 @@ require "benchmark" unless defined?(Benchmark)
 
 module Kitchen
   module Command
-    # Command to run a single action one or more instances.
+    # Command to run a single action on one or more instances.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Action < Kitchen::Command::Base

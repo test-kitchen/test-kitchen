@@ -498,7 +498,7 @@ module Kitchen
       # future reuse.
       #
       # @param options [Hash] connection options
-      # @return [Ssh::Connection] a WinRM Connection instance
+      # @return [Winrm::Connection] a WinRM Connection instance
       # @api private
       def create_new_connection(options, &block)
         if @connection
