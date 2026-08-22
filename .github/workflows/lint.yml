@@ -35,7 +35,7 @@ jobs:
           bundler-cache: true
       - uses: r7kamura/rubocop-problem-matchers-action@v1
         if: steps.check.outputs.gemfile == 'true'
-      - name: Cook Style
+      - name: Cookstyle
         if: steps.check.outputs.gemfile == 'true'
         run: bundle exec cookstyle --chefstyle
 
