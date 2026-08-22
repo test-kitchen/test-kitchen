@@ -38,5 +38,5 @@ Gem::Specification.new do |gem|
   # Chef Forked versions with additional fixes since no one is maintaining them upstream
   gem.add_dependency "chef-winrm",         ">= 2.5.0", "< 3.0"
   gem.add_dependency "chef-winrm-elevated", ">= 1.0", "< 2.0"
-  gem.add_dependency "chef-winrm-fs",      ">= 1.0", "< 2.0"
+  gem.add_dependency "chef-winrm-fs", ">= 1.0", "< 2.0"
 end
