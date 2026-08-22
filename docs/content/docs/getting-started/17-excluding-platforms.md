@@ -54,7 +54,7 @@ suites:
       - almalinux-10
 ```
 
-**Note:** in above example the `almalinux-10` platform is explicitly excluded. You could have use a regexp syntax `/<pattern>/` to exclude any platform matching the given pattern.
+**Note:** in the above example the `almalinux-10` platform is explicitly excluded. You could have used a regexp syntax `/<pattern>/` to exclude any platform matching the given pattern.
 
 Now let's run `kitchen list` to ensure the instance is gone:
 

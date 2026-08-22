@@ -40,7 +40,7 @@ driver:
 
 #### binds
 
-The `binds` configuration option allows you bind mount a local path into your Test Kitchen containers.
+The `binds` configuration option allows you to bind mount a local path into your Test Kitchen containers.
 
 ```yaml
 driver:
@@ -73,7 +73,7 @@ driver:
 
 #### chef_image
 
-The `chef_image` configuration option allows you to specify Docker image other than the official Chef Infra Client image. This can be used to specify the Cinc Docker image or internal customer builds of Chef Infra Client.
+The `chef_image` configuration option allows you to specify a Docker image other than the official Chef Infra Client image. This can be used to specify the Cinc Docker image or internal customer builds of Chef Infra Client.
 
 ```yaml
 driver:
@@ -101,7 +101,7 @@ Reference: [4.3.0 Release notes](https://docs.docker.com/desktop/release-notes/#
 
 #### chef_version
 
-The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivalent to the latest version the Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
+The `chef_version` configuration option allows you to specify which Docker image tag of the Chef Infra Client image to use. By default `latest` is used, which is equivalent to the latest version in Chef's `stable` channel. For a complete list of available tags see [chef/chef tags](https://hub.docker.com/r/chef/chef/tags) on Docker Hub.
 
 ```yaml
 driver:
@@ -269,7 +269,7 @@ driver:
 
 #### intermediate_instructions
 
-The `intermediate_instructions` configuration option allows you to define steps to run on the Test Kitchen container before you converge Chef Infra Client. This is very useful for updating package caches on operation systems like Debian/Ubuntu or other preparation tasks that you might need to run.
+The `intermediate_instructions` configuration option allows you to define steps to run on the Test Kitchen container before you converge Chef Infra Client. This is very useful for updating package caches on operating systems like Debian/Ubuntu or other preparation tasks that you might need to run.
 
 ```yaml
 platforms:
@@ -284,7 +284,7 @@ platforms:
 
 #### ipv6
 
-The `ipv6` configuration options enables IPv6 in the Docker daemon. This configuration option should be considered a global setting for all containers since dokken does not update the dokken network once it's been created. It is not recommend to use this configuration option within suites.
+The `ipv6` configuration options enables IPv6 in the Docker daemon. This configuration option should be considered a global setting for all containers since dokken does not update the dokken network once it's been created. It is not recommended to use this configuration option within suites.
 
 ```yaml
 driver:

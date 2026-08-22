@@ -14,7 +14,7 @@ menu:
 
 #### port
 
-The port used to connect to the test instance. This defaults `5985` when using `http` or `5986` when using `https`.
+The port used to connect to the test instance. This defaults to `5985` when using `http` or `5986` when using `https`.
 
 #### username
 
@@ -46,11 +46,11 @@ The identity that the task runs under. This may also be set to service accounts 
 
 #### rdp_port
 
-Port used making rdp connections for kitchen login commands. This defaults to `3389`.
+Port used for making rdp connections for kitchen login commands. This defaults to `3389`.
 
 #### winrm_transport
 
-The transport type used by winrm as [explained here](https://learn.microsoft.com/en-us/windows/win32/winrm/authentication-for-remote-connections). This defaults to `negotiate`. `ssl,` and `plaintext` are also acceptable values.
+The transport type used by winrm as [explained here](https://learn.microsoft.com/en-us/windows/win32/winrm/authentication-for-remote-connections). This defaults to `negotiate`. `ssl` and `plaintext` are also acceptable values.
 
 ### Retry Settings
 

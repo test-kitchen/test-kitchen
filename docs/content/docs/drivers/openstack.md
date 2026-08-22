@@ -123,10 +123,10 @@ Expose read/write timeout parameters passed down to HTTP connection created via 
 
 ### server_wait
 
-`server_wait` is a workaround to deal with how some VMs with `cloud-init`.
-Some clouds need this some, most OpenStack instances don't. This is a stop gap
-wait makes sure that the machine is in a good state to work with. Ideally the
-transport layer in Test-Kitchen will have a more intelligent way to deal with this.
+`server_wait` is a workaround to deal with how some VMs behave with `cloud-init`.
+Some clouds need this, most OpenStack instances don't. This is a stop-gap
+wait that makes sure the machine is in a good state to work with. Ideally the
+transport layer in Test Kitchen will have a more intelligent way to deal with this.
 There will be a dot that appears every 10 seconds as the timer counts down.
 You may want to add this for **WinRM** instances due to the multiple restarts that
 happen on creation and boot. A good default is `300` seconds to make sure it's
@@ -273,7 +273,7 @@ Timeout to wait for volume to become available.  If a large volume is provisione
 
 #### attach_timeout
 
-If using a customized version of Openstack such a VMWare Integrated OPenstack (VIO), it may mark a volume active even though it is still performing some actions which may cause test kitchen to attach the volume to early which results in errors. Specify in seconds the amount of time to delay attaching the volume after its been marked active. Default timeout is 0.
+If using a customized version of OpenStack such as VMware Integrated OpenStack (VIO), it may mark a volume active even though it is still performing some actions which may cause test kitchen to attach the volume too early which results in errors. Specify in seconds the amount of time to delay attaching the volume after it's been marked active. Default timeout is 0.
 
 #### Example
 

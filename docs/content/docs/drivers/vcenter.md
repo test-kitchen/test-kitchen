@@ -50,9 +50,9 @@ The following optional parameters should be used in the `driver` for the platfor
 - `poweron` - Power on the new virtual machine. Default: true
 - `vm_name` - Specify name of virtual machine in vSphere. Default: `<suite>-<platform>-<random-hexid>`
 - `clone_type` - Type of clone, use "full" to create complete copies of template. Values: "full", "linked", "instant". Default: "full"
-- `networks` - A list of networks to either reconfigure or attached to the newly created vm, needs a VM Network name. Default: do not change
+- `networks` - A list of networks to either reconfigure or attach to the newly created vm, needs a VM Network name. Default: do not change
 - `tags` - Array of pre-defined vCenter tag names to assign (VMware tags are not key/value pairs). Default: none
-- `vm_customization` - Dictionary customizations like annotation, memoryMB or numCPUs (see below for details). Default: none
+- `vm_customization` - Dictionary of customizations like annotation, memoryMB or numCPUs (see below for details). Default: none
 - `interface`- VM Network name to use for kitchen connections. Default: not set = first interface with usable IP
 
  The following optional parameters are relevant for active IP discovery.
@@ -231,7 +231,7 @@ Required privileges in addition to "Clone mode: full":
 
 ## Active Discovery Mode
 
-This mode is used to speed up provisioning of kitchen machines as much as possible. One of the limiting factors despite actual provisioning time
+This mode is used to speed up provisioning of kitchen machines as much as possible. One of the limiting factors besides actual provisioning time
 (which can be improved using the linked/instant clone modes) is waiting for the VM to return its IP address. While VMware tools are usually available and
 responding within 10-20 seconds, sending back IP/OS information to vCenter can take additional 30-40 seconds easily.
 
@@ -271,7 +271,7 @@ The previous configuration for managing the networks was `network_name` which co
 This configuration is now deprecated and the `networks` configuration is introduced to support the multi-network functionality.
 
 The type of operation that needs to be performed on the network device is also configurable.
-By default, the network will be added to the VM. If the user specify the `edit` operation, then the existing network in the template will be replaced by the specified network.
+By default, the network will be added to the VM. If the user specifies the `edit` operation, then the existing network in the template will be replaced by the specified network.
 Currently, only `add` and `edit` operations are implemented.
 
 Example:

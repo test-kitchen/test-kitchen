@@ -10,7 +10,7 @@ kitchen-vra is a Test Kitchen driver for vRealize Automation that runs against t
 
 ### Setting Driver Configuration
 
-The VMware vra driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you use to use globally.
+The VMware vra driver for Test Kitchen includes many configuration options that can be set globally in the driver section of your kitchen.yml config file or within each platform configuration. Global settings apply to all platforms in the `kitchen.yml`, while platform level driver configuration is applied to only those platforms and override globally set configuration options. Even if you use platform level configuration options, it's a good idea to specify the driver you want to use globally.
 
 #### Example Global Driver Option
 
@@ -52,7 +52,7 @@ driver:
   verify_ssl: true
 ```
 
-If you want username and password to be prompted, remove usename and password in your .kitchen.yml as shown below:
+If you want username and password to be prompted, remove username and password in your .kitchen.yml as shown below:
 
 ```yaml
 driver:
@@ -130,7 +130,7 @@ Defaults to `nil`.  Set to your domain suffix, for example 'mydomain.com'.  This
 
 #### extra_parameters
 
-a hash of other data to set on a catalog request, most notably custom properties. Allows updates to existing properties on the blueprint as well as the addition of new properties. Each key in the hash is the property name, and the value is a another hash containing the value data type and the value itself. It is possible to use a `~` to add nested parameters.
+a hash of other data to set on a catalog request, most notably custom properties. Allows updates to existing properties on the blueprint as well as the addition of new properties. Each key in the hash is the property name, and the value is another hash containing the value data type and the value itself. It is possible to use a `~` to add nested parameters.
 
 
 Example **kitchen.yml**:

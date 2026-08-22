@@ -43,7 +43,7 @@ driver:
 Keep in mind this assumes you have an OpenStack deployment setup and ready to use. This is only an example so to illustrate using environment variables via ERB snippets in the configuration file.
 
 Another handy use of the ERB fragments is to dynamically override the log_level of
-the provisioner. Since Test Kitchen 1.7.0 the log level for the provisioner is now independent of the Test Kitchen log level. Using the following snippet, allows the environment to override the provisioner log level without modifying the config file.:
+the provisioner. Since Test Kitchen 1.7.0 the log level for the provisioner is now independent of the Test Kitchen log level. Using the following snippet allows the environment to override the provisioner log level without modifying the config file:
 
 ```yaml
 ---
