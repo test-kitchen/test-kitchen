@@ -302,7 +302,7 @@ module Kitchen
     end
 
     desc "exec INSTANCE|REGEXP -c REMOTE_COMMAND",
-      "Execute command on one or more instance"
+      "Execute command on one or more instances"
     method_option :command,
       aliases: "-c",
       desc: "execute via ssh"

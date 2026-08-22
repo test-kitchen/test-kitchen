@@ -215,7 +215,7 @@ module Kitchen
       #   by calling `#create_sandbox`
       def sandbox_path
         @sandbox_path ||= raise ClientError, "Sandbox directory has not yet " \
-          "been created. Please run #{self.class}#create_sandox before " \
+          "been created. Please run #{self.class}#create_sandbox before " \
           "trying to access the path."
       end
 

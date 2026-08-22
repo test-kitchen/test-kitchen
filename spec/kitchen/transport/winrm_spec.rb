@@ -443,7 +443,7 @@ describe Kitchen::Transport::Winrm do
         make_connection(state.merge(port: 9000))
 
         _(logged_output.string.lines.count do |l|
-          l =~ debug_line_with("[WinRM] shutting previous connection ")
+          l =~ debug_line_with("[WinRM] shutting down previous connection ")
         end).must_equal 1
       end
     end
