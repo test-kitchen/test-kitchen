@@ -35,7 +35,7 @@ module Kitchen
     # Constructs a new suite.
     #
     # @param [Hash] options configuration for a new suite
-    # @option options [String] :name logical name of this suit (**Required**)
+    # @option options [String] :name logical name of this suite (**Required**)
     # @option options [String] :excludes Array of names of excluded platforms
     # @option options [String] :includes Array of names of only included
     #   platforms

@@ -37,7 +37,7 @@ module Kitchen
         end
       end
 
-      # @return [Logger] the lifecycle hooks's logger
+      # @return [Logger] the lifecycle hook's logger
       #   otherwise
       # @api private
       def logger

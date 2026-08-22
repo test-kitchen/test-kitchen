@@ -26,7 +26,7 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   class StateFile
-    # Constructs an new instance taking the kitchen root and instance name.
+    # Constructs a new instance taking the kitchen root and instance name.
     #
     # @param kitchen_root [String] path to the Kitchen project's root directory
     # @param name [String] name of the instance representing this state

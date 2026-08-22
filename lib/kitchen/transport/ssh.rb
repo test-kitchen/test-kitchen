@@ -299,17 +299,17 @@ module Kitchen
         # @api private
         attr_reader :ssh_http_proxy
 
-        # @return [Integer] The port to use when using an kitchen ssh proxy
+        # @return [Integer] The port to use when using a kitchen ssh proxy
         #   remote SSH host via http proxy
         # @api private
         attr_reader :ssh_http_proxy_port
 
-        # @return [String] The username to use when using an kitchen ssh proxy
+        # @return [String] The username to use when using a kitchen ssh proxy
         #   remote SSH host via http proxy
         # @api private
         attr_reader :ssh_http_proxy_user
 
-        # @return [String] The password to use when using an kitchen ssh proxy
+        # @return [String] The password to use when using a kitchen ssh proxy
         #   remote SSH host via http proxy
         # @api private
         attr_reader :ssh_http_proxy_password
@@ -570,7 +570,7 @@ module Kitchen
         current_net_ssh >= new_option_version ? :never : false
       end
 
-      # Creates a new SSH Connection instance and save it for potential future
+      # Creates a new SSH Connection instance and saves it for potential future
       # reuse.
       #
       # @param options [Hash] connection options

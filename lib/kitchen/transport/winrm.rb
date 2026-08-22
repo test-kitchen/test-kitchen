@@ -225,7 +225,7 @@ module Kitchen
         # @api private
         attr_reader :max_wait_until_ready
 
-        # @return [Integer] the TCP port number to use when connection to the
+        # @return [Integer] the TCP port number to use when connecting to the
         #   remote WinRM host
         # @api private
         attr_reader :rdp_port
@@ -494,7 +494,7 @@ module Kitchen
         end
       end
 
-      # Creates a new WinRM Connection instance and save it for potential
+      # Creates a new WinRM Connection instance and saves it for potential
       # future reuse.
       #
       # @param options [Hash] connection options

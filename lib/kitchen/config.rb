@@ -163,7 +163,7 @@ module Kitchen
     end
 
     # Determines the default absolute path to the testing files directory,
-    # based on the the value of `#kitchen_root`.
+    # based on the value of `#kitchen_root`.
     #
     # @return [String] an absolute path to the testing files directory
     # @api private
@@ -289,12 +289,12 @@ module Kitchen
       )
     end
 
-    # Builds a newly configured LifecycleHooks object, for a given a Suite and
+    # Builds a newly configured LifecycleHooks object, for a given Suite and
     # Platform.
     #
     # @param suite [Suite,#name] a Suite
     # @param platform [Platform,#name] a Platform
-    # @param state_file [Kitchen::StateFile] a SateFile
+    # @param state_file [Kitchen::StateFile] a StateFile
     # @return [LifecycleHooks] a new LifecycleHooks object
     # @api private
     def new_lifecycle_hooks(suite, platform, state_file)
@@ -337,7 +337,7 @@ module Kitchen
       Transport.for_plugin(tdata[:name], tdata)
     end
 
-    # Builds a newly configured Verifier object, for a given a Suite and
+    # Builds a newly configured Verifier object, for a given Suite and
     # Platform.
     #
     # @param suite [Suite,#name] a Suite

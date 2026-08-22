@@ -20,7 +20,7 @@ require_relative "plugin"
 
 module Kitchen
   # A provisioner is responsible for generating the commands necessary to
-  # install set up and use a configuration management tool such as Chef and
+  # install, set up, and use a configuration management tool such as Chef and
   # Puppet.
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>

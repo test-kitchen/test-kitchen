@@ -37,7 +37,7 @@ module Kitchen
       Logger.const_get(symbol.to_s.upcase)
     end
 
-    # Returns the symbol representation of a logging levels for a given
+    # Returns the symbol representation of a logging level for a given
     # standard library Logger::Severity constant.
     #
     # @param const [Integer] Logger::Severity constant value for a logging
@@ -166,7 +166,7 @@ module Kitchen
     # @return A listing of the specified path
     #
     # @note You should prefer this method to using Dir.glob directly. The reason is
-    # because Dir.glob behaves strangely on Windows. It wont accept '\'
+    # because Dir.glob behaves strangely on Windows. It won't accept '\'
     # and doesn't like fake directories (C:\Documents and Settings)
     # It also does not do any sort of error checking, so things one would
     # expect to fail just return an empty list
