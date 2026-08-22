@@ -53,7 +53,7 @@ module Kitchen
     #   messages
     # @option options [Integer] :level the logging severity threshold
     #   (default: `Kitchen::DEFAULT_LOG_LEVEL`)
-    # @option options [Boolean] whether to overwrite the log
+    # @option options [Boolean] :log_overwrite whether to overwrite the log
     #   when Test Kitchen runs. Only applies if the :logdev is a String.
     #   (default: `Kitchen::DEFAULT_LOG_OVERWRITE`)
     # @option options [String,IO] :logdev filepath String or IO object to be

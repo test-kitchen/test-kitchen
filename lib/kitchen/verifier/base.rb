@@ -106,7 +106,7 @@ module Kitchen
       # Check system and configuration for common errors.
       #
       # @param state [Hash] mutable instance state
-      # @returns [Boolean] Return true if a problem is found.
+      # @return [Boolean] Return true if a problem is found.
       def doctor(state)
         false
       end

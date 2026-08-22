@@ -85,7 +85,7 @@ module Kitchen
     # log file.
     #
     # @param [Symbol] level logging level
-    # @param [Boolean] log_overwrite logging level
+    # @param [Boolean] log_overwrite whether to overwrite the log file
     # @return [Logger] a logger
     def default_file_logger(level = nil, log_overwrite = nil)
       level ||= env_log

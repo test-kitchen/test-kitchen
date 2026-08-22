@@ -136,7 +136,7 @@ module Kitchen
 
     # Builds the filtered list of Instance objects.
     #
-    # @return [Array<Instance] an array of Instances
+    # @return [Array<Instance>] an array of Instances
     # @api private
     def build_instances
       filter_instances.map.with_index do |(suite, platform), index|

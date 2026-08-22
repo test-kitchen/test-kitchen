@@ -346,7 +346,7 @@ module Kitchen
     # Validate the initial internal state of this object and raising an
     # exception if any preconditions are not met.
     #
-    # @param options[Hash] options hash passed into the constructor
+    # @param options [Hash] options hash passed into the constructor
     # @raise [ClientError] if any validations fail
     # @api private
     def validate_options(options)
@@ -779,7 +779,7 @@ module Kitchen
       # Determines the index of a state in the state lifecycle vector. Woah.
       #
       # @param transition [Symbol,#to_sym] a state
-      # @param [Integer] the index position
+      # @return [Integer] the index position
       # @api private
       def self.index(transition)
         if transition.nil?
