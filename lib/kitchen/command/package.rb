@@ -16,7 +16,7 @@ require_relative "../command"
 
 module Kitchen
   module Command
-    # Execute command on remote instance.
+    # Command to package one or more instances.
     #
     class Package < Kitchen::Command::Base
       # Invoke the command.

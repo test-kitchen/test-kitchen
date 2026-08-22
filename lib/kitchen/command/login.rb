@@ -19,7 +19,7 @@ require_relative "../command"
 
 module Kitchen
   module Command
-    # Command to log into to instance.
+    # Command to log into an instance.
     #
     # @author Fletcher Nichol <fnichol@nichol.ca>
     class Login < Kitchen::Command::Base

@@ -60,7 +60,7 @@ module Kitchen
     # @return [LifecycleHooks] lifecycle hooks manager object
     attr_accessor :lifecycle_hooks
 
-    # @return [Provisioner::Base] provisioner object which will the setup
+    # @return [Provisioner::Base] provisioner object which will provide the setup
     #   and invocation instructions for configuration management and other
     #   automation tools
     attr_accessor :provisioner
@@ -83,9 +83,10 @@ module Kitchen
     # @option options [Platform] :platform the platform (**Required**)
     # @option options [Driver::Base] :driver the driver (**Required**)
     # @option options [Provisioner::Base] :provisioner the provisioner
+    #   (**Required**)
     # @option options [Transport::Base] :transport the transport
     #   (**Required**)
-    # @option options [Verifier] :verifier the verifier logger (**Required**)
+    # @option options [Verifier] :verifier the verifier (**Required**)
     # @option options [Logger] :logger the instance logger
     #   (default: Kitchen.logger)
     # @option options [StateFile] :state_file the state file object to use

@@ -19,7 +19,7 @@ require_relative "../../kitchen"
 
 module Kitchen
   module Provisioner
-    # Dummy provisioner for Kitchen. This driver does nothing but report what
+    # Dummy provisioner for Kitchen. This provisioner does nothing but report what
     # would happen if this provisioner did anything of consequence. As a result
     # it may be a useful provisioner to use when debugging or developing new
     # features or plugins.
