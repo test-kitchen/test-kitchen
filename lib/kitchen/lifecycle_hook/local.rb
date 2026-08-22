@@ -4,6 +4,8 @@ require_relative "../logging"
 
 module Kitchen
   class LifecycleHook
+    # A lifecycle hook that runs a command on the workstation running Test
+    # Kitchen, with the instance's details exported as environment variables.
     class Local < Base
       include ShellOut
       include Logging

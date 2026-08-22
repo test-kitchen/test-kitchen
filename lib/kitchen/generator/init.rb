@@ -19,6 +19,10 @@ require "rubygems/gem_runner"
 require "thor/group"
 
 module Kitchen
+  # Namespace for Thor generators that scaffold Test Kitchen configuration
+  # into a project.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Generator
     # A project initialization generator, to help prepare a cookbook project
     # for testing with Kitchen.

@@ -59,6 +59,12 @@ module Kitchen
       arr.flatten
     end
 
+    # Creates an array of strings representing an exception's backtrace,
+    # wrapped in header and footer lines.
+    #
+    # @param exception [::Exception] an exception
+    # @return [Array<String>] a formatted backtrace, or an empty array when the
+    #   exception has none
     def self.formatted_backtrace(exception)
       if exception.backtrace.nil?
         []

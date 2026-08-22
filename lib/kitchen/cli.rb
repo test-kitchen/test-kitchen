@@ -121,6 +121,11 @@ module Kitchen
       type: :boolean,
       desc: "[Deprecated] Please use `kitchen diagnose'"
     log_options
+    # Lists one or more instances and their last known action state.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def list(*args)
       log_overwrite = options[:log_overwrite].nil? ? false : options[:log_overwrite]
       update_config!(log_overwrite:)
@@ -144,6 +149,12 @@ module Kitchen
       desc: "Include all diagnostics"
     log_options
     test_base_path
+    # Prints the fully computed diagnostic configuration for one or more
+    # instances, after all loader and plugin data has been merged.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def diagnose(*args)
       update_config!
       perform("diagnose", "diagnose", args, loader: @loader)
@@ -250,6 +261,12 @@ module Kitchen
       desc: "Run the converge and verify with debugging enabled."
     test_base_path
     log_options
+    # Runs a full test cycle (destroy, create, converge, setup, verify,
+    # destroy) against one or more instances.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def test(*args)
       update_config!
       ensure_initialized
@@ -258,6 +275,11 @@ module Kitchen
 
     desc "login INSTANCE|REGEXP", "Log in to one instance"
     log_options
+    # Opens an interactive login session on a single instance.
+    #
+    # @param args [Array<String>] an instance name or regexp matching exactly
+    #   one instance
+    # @return [void]
     def login(*args)
       update_config!
       perform("login", "login", args)
@@ -279,6 +301,11 @@ module Kitchen
       type: :boolean,
       desc: "Follow the structured log file"
     log_options
+    # Prints the structured log events recorded for one or more instances.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def logs(*args)
       update_config!(log_overwrite: false)
       perform("logs", "logs", args)
@@ -286,6 +313,12 @@ module Kitchen
 
     desc "package INSTANCE|REGEXP", "package an instance"
     log_options
+    # Packages a single instance into a distributable artifact, as
+    # implemented by the instance's driver.
+    #
+    # @param args [Array<String>] an instance name or regexp matching exactly
+    #   one instance
+    # @return [void]
     def package(*args)
       update_config!
       perform("package", "package", args)
@@ -296,6 +329,12 @@ module Kitchen
     method_option :all,
       aliases: "-a",
       desc: "Check all instances"
+    # Checks one or more instances for common system and configuration
+    # problems.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def doctor(*args)
       update_config!
       perform("doctor", "doctor", args)
@@ -307,23 +346,39 @@ module Kitchen
       aliases: "-c",
       desc: "execute via ssh"
     log_options
+    # Executes a remote command on one or more instances over their
+    # configured transport.
+    #
+    # @param args [Array<String>] instance names or regexps to match; matches
+    #   all instances when empty
+    # @return [void]
     def exec(*args)
       update_config!
       perform("exec", "exec", args)
     end
 
     desc "version", "Print Test Kitchen's version information"
+    # Prints Test Kitchen's version information to stdout.
+    #
+    # @return [void]
     def version
       puts "Test Kitchen version #{Kitchen::VERSION}"
     end
     map %w{-v --version} => :version
 
     desc "sink", "Show the Kitchen sink!", hide: true
+    # Shows the Kitchen sink. A hidden easter egg command.
+    #
+    # @return [void]
     def sink
       perform("sink", "sink")
     end
 
     desc "console", "Test Kitchen Console!"
+    # Starts an interactive console session with the Test Kitchen
+    # configuration loaded.
+    #
+    # @return [void]
     def console
       perform("console", "console")
     end

@@ -74,6 +74,11 @@ module HashRecursiveMerge
   end
 end
 
+# Reopened to mix in {HashRecursiveMerge}, which adds the `#rmerge` and
+# `#rmerge!` deep-merge methods used throughout Test Kitchen's
+# configuration merging.
+#
+# This file is vendored third-party code; see the header for attribution.
 class Hash
   include HashRecursiveMerge
 end

@@ -17,6 +17,11 @@
 
 module Kitchen
   module Plugin
+    # Common base class for every plugin type (Driver, Provisioner, Transport,
+    # and Verifier), providing the shared plugin lifecycle and the
+    # serial-action registry.
+    #
+    # @author Fletcher Nichol <fnichol@nichol.ca>
     class Base
       class << self
         # @return [Array<Symbol>] an array of action method names that cannot

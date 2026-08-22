@@ -20,10 +20,13 @@ require_relative "errors"
 require_relative "util"
 
 module Kitchen
+  # Namespace for plugin loading and the shared plugin base class.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Plugin
     # Returns an instance of a plugin given a type, name, and config.
     #
-    # @param type [Module] a Kitchen::<Module> of one of the plugin types
+    # @param type [Module] a `Kitchen::<Module>` of one of the plugin types
     #   (Driver, Provisioner, Transport, Verifier)
     # @param plugin [String] a plugin name, which will be constantized
     # @param config [Hash] a configuration hash to initialize the plugin

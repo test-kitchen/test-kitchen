@@ -19,6 +19,10 @@ module Kitchen
   module Command
     # Command to print structured logs for one instance.
     class Logs < Kitchen::Command::Base
+      # Log severity names in ascending order, used to resolve the minimum
+      # level filter.
+      #
+      # @return [Array<String>] severity names, lowest to highest
       LEVELS = %w{debug info warn error fatal unknown}.freeze
 
       # Invoke the command.

@@ -42,6 +42,9 @@ module Kitchen
       @options = options
     end
 
+    # Returns the arguments in the form expected by `Kernel#exec`.
+    #
+    # @return [Array] the command, its arguments, and the options hash
     def exec_args
       [command, *arguments, options]
     end

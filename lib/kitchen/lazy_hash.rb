@@ -115,7 +115,7 @@ module Kitchen
 
     # If no block provided, returns an enumerator over the keys and
     # rendered values in the underlying object.  If a block is
-    # provided, calls the block once for each [key, rendered_value]
+    # provided, calls the block once for each `[key, rendered_value]`
     # pair in the underlying object.
     #
     # @return [Enumerator, Array]

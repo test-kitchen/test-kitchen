@@ -25,7 +25,7 @@ module Kitchen
 
       # @api private
       # @!macro logger_method
-      #   @method $1($2)
+      #   @method $1(message_or_progname = nil, &block)
       #   Log a message with severity of $1
       #   @param message_or_progname [#to_s] the message to log. In the block
       #     form, this is the progname to use in the log message.

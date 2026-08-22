@@ -111,61 +111,72 @@ module Kitchen
       private
 
       # @api private
-      # @!macro delegate_to_first_logger
-      #   @method $1()
       def delegate_to_first_logger(meth)
         define_method(meth) { |*args, &block| @sink_set.first(meth, *args, &block) }
       end
 
       # @api private
-      # @!macro delegate_to_all_loggers
-      #   @method $1()
       def delegate_to_all_loggers(meth)
         define_method(meth) { |*args, &block| @sink_set.all(meth, *args, &block) }
       end
     end
 
+    # @!method level
     # @return [Integer] the logging severity threshold
     # @see http://is.gd/Okuy5p
     delegate_to_first_logger :level
 
+    # @!method level=(level)
     # Sets the logging severity threshold.
     #
     # @param level [Integer] the logging severity threshold
     # @see http://is.gd/H1VBFH
     delegate_to_all_loggers :level=
 
+    # @!method progname
     # @return [String] program name to include in log messages
     # @see http://is.gd/5uHGK0
     delegate_to_first_logger :progname
 
+    # @!method progname=(progname)
     # Sets the program name to include in log messages.
     #
     # @param progname [String] the program name to include in log messages
     # @see http://is.gd/f2U5Xj
     delegate_to_all_loggers :progname=
 
+    # @!method datetime_format
     # @return [String] the date format being used
     # @see http://is.gd/btmFWJ
     delegate_to_first_logger :datetime_format
 
+    # @!method datetime_format=(format)
     # Sets the date format being used.
     #
     # @param format [String] the date format
     # @see http://is.gd/M36ml8
     delegate_to_all_loggers :datetime_format=
 
+    # @!method add(severity, message = nil, progname = nil, &block)
     # Log a message if the given severity is high enough.
     #
+    # @param severity [Integer] a stdlib Logger severity constant
+    # @param message [#to_s, nil] the message to log; when nil the block's
+    #   value is used, falling back to +progname+
+    # @param progname [#to_s, nil] used as the message when both +message+ and
+    #   a block are absent
+    # @yield evaluates to the message to log
     # @see http://is.gd/5opBW0
     delegate_to_all_loggers :add
 
+    # @!method <<(message)
     # Dump one or more messages to info.
     #
     # @param message [#to_s] the message to log
     # @see http://is.gd/BCp5KV
     delegate_to_all_loggers :<<
 
+    # @!method banner(message_or_progname = nil, &block)
     # Log a message with severity of banner (high level).
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -179,6 +190,7 @@ module Kitchen
     # @see http://is.gd/pYUCYU
     delegate_to_all_loggers :banner
 
+    # @!method debug(message_or_progname = nil, &block)
     # Log a message with severity of debug.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -192,11 +204,13 @@ module Kitchen
     # @see http://is.gd/Re97Zp
     delegate_to_all_loggers :debug
 
+    # @!method debug?
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of debug messages
     # @see http://is.gd/Iq08xB
     delegate_to_first_logger :debug?
 
+    # @!method info(message_or_progname = nil, &block)
     # Log a message with severity of info.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -210,11 +224,13 @@ module Kitchen
     # @see http://is.gd/pYUCYU
     delegate_to_all_loggers :info
 
+    # @!method info?
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of info messages
     # @see http://is.gd/lBtJkT
     delegate_to_first_logger :info?
 
+    # @!method error(message_or_progname = nil, &block)
     # Log a message with severity of error.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -228,11 +244,13 @@ module Kitchen
     # @see http://is.gd/mLwYMl
     delegate_to_all_loggers :error
 
+    # @!method error?
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of error messages
     # @see http://is.gd/QY19JL
     delegate_to_first_logger :error?
 
+    # @!method warn(message_or_progname = nil, &block)
     # Log a message with severity of warn.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -246,11 +264,13 @@ module Kitchen
     # @see http://is.gd/PX9AIS
     delegate_to_all_loggers :warn
 
+    # @!method warn?
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of warn messages
     # @see http://is.gd/Gdr4lD
     delegate_to_first_logger :warn?
 
+    # @!method fatal(message_or_progname = nil, &block)
     # Log a message with severity of fatal.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -264,11 +284,13 @@ module Kitchen
     # @see http://is.gd/5ElFPK
     delegate_to_all_loggers :fatal
 
+    # @!method fatal?
     # @return [true,false] whether or not the current severity level
     #   allows for the printing of fatal messages
     # @see http://is.gd/7PgwRl
     delegate_to_first_logger :fatal?
 
+    # @!method unknown(message_or_progname = nil, &block)
     # Log a message with severity of unknown.
     #
     # @param message_or_progname [#to_s] the message to log. In the block
@@ -282,6 +304,7 @@ module Kitchen
     # @see http://is.gd/Y4hqpf
     delegate_to_all_loggers :unknown
 
+    # @!method close
     # Close the logging devices.
     #
     # @see http://is.gd/b13cVn
@@ -341,10 +364,26 @@ module Kitchen
         @loggers = loggers
       end
 
+      # Invokes a method on the first configured sink only.
+      #
+      # @param meth [Symbol] the method to invoke
+      # @param args [Array] arguments to forward to the sink
+      # @yield an optional block forwarded to the sink
+      # @return [Object] the first sink's return value
+      # @api private
       def first(meth, *args, &block)
         @loggers.first.public_send(meth, *args, &block)
       end
 
+      # Invokes a method on every configured sink. A given block is memoized so
+      # that an expensive message block is evaluated at most once, no matter how
+      # many sinks consume it.
+      #
+      # @param meth [Symbol] the method to invoke
+      # @param args [Array] arguments to forward to each sink
+      # @yield an optional block forwarded to each sink
+      # @return [Object] the last sink's return value
+      # @api private
       def all(meth, *args, &block)
         result = nil
         block = memoized_block(block) if block
@@ -449,6 +488,13 @@ module Kitchen
         @line_handler = line_handler
       end
 
+      # Appends a chunk of stream output to the buffer, emitting each complete
+      # newline-terminated line to the line handler.
+      #
+      # @param msg [String] a chunk of stream output, which may contain zero or
+      #   more complete lines
+      # @return [void]
+      # @api private
       def <<(msg)
         @buffer += msg
         flush_lines
@@ -470,6 +516,12 @@ module Kitchen
         @logger = logger
       end
 
+      # Routes an already-prefixed stream line to the logger call matching its
+      # prefix, stripping the prefix before logging.
+      #
+      # @param line [String] a single line of prefixed stream output
+      # @return [void]
+      # @api private
       def format(line)
         case line
         when /^-----> / then log_line(:banner, line.gsub(/^[ >-]{6} /, ""))
@@ -540,6 +592,11 @@ module Kitchen
     class StructuredLogdevLogger
       include ::Logger::Severity
 
+      # Maps stdlib Logger severity constants to their lowercase string names
+      # as they appear in emitted JSON events.
+      #
+      # @return [Hash{Integer => String}] severity constant to name mapping
+      # @api private
       SEVERITY_NAMES = {
         DEBUG => "debug",
         INFO => "info",
@@ -562,6 +619,17 @@ module Kitchen
         @mutex = Mutex.new
       end
 
+      # Writes a log event if the given severity meets the current level.
+      #
+      # @param severity [Integer] a stdlib Logger severity constant
+      # @param message [#to_s, nil] the message to log; when nil the block's
+      #   value is used, falling back to +progname+
+      # @param progname [#to_s, nil] used as the message when both +message+ and
+      #   a block are absent
+      # @yield evaluates to the message to log, only when the severity is high
+      #   enough to be recorded
+      # @return [true] always, once the event has been considered
+      # @api private
       def add(severity, message = nil, progname = nil)
         severity ||= UNKNOWN
         return true if severity < level
@@ -574,40 +642,102 @@ module Kitchen
         write_event(severity, message, "log")
       end
 
+      # Appends raw stream output, emitting a structured event per complete
+      # line.
+      #
+      # @param msg [String] a chunk of stream output
+      # @return [void]
+      # @api private
       def <<(msg)
         line_buffer << msg
       end
 
+      # Writes a banner event at info severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [void]
+      # @api private
       def banner(msg = nil)
         message = block_given? ? yield : msg
         write_event(INFO, message, "banner") unless INFO < level
       end
 
+      # Writes a stream event at the given severity.
+      #
+      # @param severity [Integer, Symbol] a stdlib Logger severity constant or its
+      #   symbol name
+      # @param msg [#to_s] the message to log
+      # @return [void]
+      # @api private
       def stream(severity, msg)
         severity = severity_const(severity)
         write_event(severity, msg, "stream") unless severity < level
       end
 
+      # Writes a log event at debug severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def debug(msg = nil, &block)
         add(DEBUG, msg, nil, &block)
       end
 
+      # Writes a log event at info severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def info(msg = nil, &block)
         add(INFO, msg, nil, &block)
       end
 
+      # Writes a log event at warn severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def warn(msg = nil, &block)
         add(WARN, msg, nil, &block)
       end
 
+      # Writes a log event at error severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def error(msg = nil, &block)
         add(ERROR, msg, nil, &block)
       end
 
+      # Writes a log event at fatal severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def fatal(msg = nil, &block)
         add(FATAL, msg, nil, &block)
       end
 
+      # Writes a log event at unknown severity.
+      #
+      # @param msg [#to_s, nil] the message to log; when nil the block's value is
+      #   used
+      # @yield evaluates to the message to log
+      # @return [true]
+      # @api private
       def unknown(msg = nil, &block)
         add(UNKNOWN, msg, nil, &block)
       end
@@ -632,6 +762,10 @@ module Kitchen
         level <= FATAL
       end
 
+      # Closes the underlying log device if it is open and supports closing.
+      #
+      # @return [void]
+      # @api private
       def close
         return unless @logdev.respond_to?(:close)
 

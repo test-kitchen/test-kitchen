@@ -26,6 +26,13 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Configurable
+    # Extends the including class with {ClassMethods} so that the
+    # `default_config`, `required_config`, and related DSL is available at the
+    # class level.
+    #
+    # @param base [Class] the class including this module
+    # @return [void]
+    # @api private
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -396,7 +403,7 @@ module Kitchen
     # Helper method to export
     #
     # @param env [Array] the environment to modify
-    # @param code [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
+    # @param type [String] the type of proxy to export, one of 'http', 'https' or 'ftp'
     # @api private
     def export_proxy(env, type)
       env << shell_env_var(type.to_s, ENV[type.to_s]) if ENV[type.to_s]
@@ -586,10 +593,16 @@ module Kitchen
         end
       end
 
+      # @return [Hash] a hash of attribute keys and deprecation messages which
+      #   has been merged with any superclass deprecations
+      # @api private
       def deprecated_attributes
         @deprecated_attributes ||= {}.merge(super_deprecated_attributes)
       end
 
+      # @return [Hash] a hash of deprecated attributes from the superclass, or
+      #   an empty hash when the superclass has none
+      # @api private
       def super_deprecated_attributes
         if superclass.respond_to?(:deprecated_attributes)
           superclass.deprecated_attributes

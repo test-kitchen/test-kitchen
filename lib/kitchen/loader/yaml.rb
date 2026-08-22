@@ -21,6 +21,10 @@ require "psych" unless defined?(Psych)
 require "yaml" unless defined?(YAML)
 
 module Kitchen
+  # Namespace for configuration loaders, which turn on-disk configuration
+  # into the raw data hash Test Kitchen operates on.
+  #
+  # @author Fletcher Nichol <fnichol@nichol.ca>
   module Loader
     # YAML file loader for Test Kitchen configuration. This class is
     # responsible for parsing the main YAML file and the local YAML if it

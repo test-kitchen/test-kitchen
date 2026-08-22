@@ -22,6 +22,9 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Color
+    # Maps color names to their ANSI SGR parameter codes.
+    #
+    # @return [Hash{Symbol => Integer}] color name to ANSI code mapping
     ANSI = {
       reset: 0, black: 30, red: 31, green: 32, yellow: 33,
       blue: 34, magenta: 35, cyan: 36, white: 37,
@@ -30,6 +33,10 @@ module Kitchen
       bright_cyan: 96, bright_white: 97
     }.freeze
 
+    # The subset of {ANSI} color names cycled through when assigning a
+    # distinct color to each instance.
+    #
+    # @return [Array<String>] assignable color names
     COLORS = %w{
       cyan yellow green magenta blue bright_cyan bright_yellow
       bright_green bright_magenta bright_blue

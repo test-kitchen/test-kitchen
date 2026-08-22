@@ -58,6 +58,9 @@ module Kitchen
         transport[:winrm_transport] == :ssl ? 5986 : 5985
       end
 
+      # (see Base#finalize_config!)
+      #
+      # Coerces `:winrm_transport` to a Symbol.
       def finalize_config!(instance)
         super
 
@@ -84,7 +87,10 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
-        # (see Base::Connection#initialize)
+        # Create a new Connection instance.
+        #
+        # @param config [Hash] connection options
+        # @yield [self] yields itself for block-style invocation
         def initialize(config = {})
           super(config)
           @unelevated_session = nil
@@ -293,7 +299,7 @@ module Kitchen
           @file_transporter ||= WinRM::FS::Core::FileTransporter.new(unelevated_session)
         end
 
-        # (see Base#init_options)
+        # (see Base::Connection#init_options)
         def init_options(options)
           super
           @instance_name = @options.delete(:instance_name)
