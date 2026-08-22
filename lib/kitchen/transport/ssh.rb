@@ -77,6 +77,10 @@ module Kitchen
         transport[:compression] == false ? 0 : 6
       end
 
+      # (see Base#finalize_config!)
+      #
+      # Casts legacy `:compression` values to what net-ssh 2.10 and later
+      # expect.
       def finalize_config!(instance)
         super
 
@@ -121,7 +125,10 @@ module Kitchen
       #
       # @author Fletcher Nichol <fnichol@nichol.ca>
       class Connection < Kitchen::Transport::Base::Connection
-        # (see Base::Connection#initialize)
+        # Create a new Connection instance.
+        #
+        # @param config [Hash] connection options
+        # @yield [self] yields itself for block-style invocation
         def initialize(config = {})
           super(config)
           @session = nil

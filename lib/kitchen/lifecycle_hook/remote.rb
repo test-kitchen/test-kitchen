@@ -3,6 +3,8 @@ require_relative "../errors"
 
 module Kitchen
   class LifecycleHook
+    # A lifecycle hook that runs a command on the instance itself, over the
+    # instance's configured transport.
     class Remote < Base
       # Execute a specific remote command hook.
       #
@@ -33,7 +35,7 @@ module Kitchen
 
       private
 
-      # return [String]
+      # @return [String] the command to run on the instance
       def command
         hook.fetch(:remote)
       end

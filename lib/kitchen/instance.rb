@@ -654,6 +654,16 @@ module Kitchen
         @state_file = state_file
       end
 
+      # Runs one instance action, wrapping it in structured logging metadata
+      # and benchmarking, and serializing it when the action is registered as
+      # non-concurrent.
+      #
+      # @param what [Symbol] the action to run
+      # @yield the action body, given the current state hash
+      # @return [void]
+      # @raise [ActionFailed] if the state file could not be read or the action
+      #   did not complete
+      # @api private
       def call(what, &block)
         state = nil
         begin
@@ -775,6 +785,10 @@ module Kitchen
         end
       end
 
+      # The instance state lifecycle, ordered from least to most converged.
+      #
+      # @return [Array<Symbol>] ordered state names
+      # @api private
       TRANSITIONS = %i{destroy create converge setup verify}.freeze
 
       # Determines the index of a state in the state lifecycle vector. Whoa.

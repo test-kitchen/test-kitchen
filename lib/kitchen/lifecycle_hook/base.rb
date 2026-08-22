@@ -1,15 +1,22 @@
 require_relative "../platform_filter"
 
 module Kitchen
+  # Namespace for the lifecycle hook implementations that run user-defined
+  # commands around instance actions.
   class LifecycleHook
+    # Base class for a lifecycle hook implementation.
+    #
+    # A hook is bound to a single phase (for example `pre_create`) and decides,
+    # via `#should_run?`, whether it applies to the instance's platform before
+    # `#run` carries out the command.
     class Base
       # @return [Kitchen::LifecycleHooks]
       attr_reader :lifecycle_hooks
 
-      # return [String]
+      # @return [String] the lifecycle phase this hook is bound to
       attr_reader :phase
 
-      # return [Hash]
+      # @return [Hash] the raw hook configuration
       attr_reader :hook
 
       # @param lifecycle_hooks [Kitchen::LifecycleHooks]
@@ -21,7 +28,10 @@ module Kitchen
         @hook = hook
       end
 
-      # return [void]
+      # Carries out the hook's command. Subclasses must implement this.
+      #
+      # @return [void]
+      # @raise [NotImplementedError] unless overridden by a subclass
       def run
         raise NotImplementedError
       end

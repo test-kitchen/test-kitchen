@@ -36,12 +36,18 @@ module Kitchen
         report(:create, state)
       end
 
-      # (see Base#setup)
+      # Reports that the setup action would have taken place.
+      #
+      # @param state [Hash] the instance state hash
+      # @return [void]
       def setup(state)
         report(:setup, state)
       end
 
-      # (see Base#verify)
+      # Reports that the verify action would have taken place.
+      #
+      # @param state [Hash] the instance state hash
+      # @return [void]
       def verify(state)
         report(:verify, state)
       end

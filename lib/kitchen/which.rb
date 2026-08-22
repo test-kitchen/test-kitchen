@@ -19,6 +19,8 @@ require "chef-utils/dsl/which" unless defined?(ChefUtils::DSL::Which)
 require_relative "chef_utils_wiring" unless defined?(Kitchen::ChefUtilsWiring)
 
 module Kitchen
+  # Mixin providing a `which` helper for locating executables on the PATH,
+  # wired up to Test Kitchen's chef-utils configuration.
   module Which
     include ChefUtils::DSL::Which
     include ChefUtilsWiring

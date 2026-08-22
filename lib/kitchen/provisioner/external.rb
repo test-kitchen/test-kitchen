@@ -25,12 +25,30 @@ module Kitchen
   module Provisioner
     # Executes an external provisioner provider over the v1 stdio protocol.
     class External < Base
+      # The provider protocol version this provisioner speaks. A provider
+      # reporting any other version is rejected during capability negotiation.
+      #
+      # @return [String] a protocol version string
       PROTOCOL_VERSION = "1.0".freeze
+      # The result statuses a provider may report for an action.
+      #
+      # @return [Array<String>] valid result statuses
       RESULT_STATUSES = %w{passed failed skipped}.freeze
+      # The log levels a provider may attach to a log message.
+      #
+      # @return [Array<String>] valid log levels
       LOG_LEVELS = %w{debug info warn error}.freeze
+      # Configuration keys consumed by this provisioner itself, and so withheld
+      # from the configuration passed out to the provider.
+      #
+      # @return [Array<Symbol>] internal-only configuration keys
       INTERNAL_CONFIG_KEYS = %i{
         command provider pass_env kitchen_root test_base_path
       }.freeze
+      # Configuration keys whose values are redacted before configuration is
+      # logged or handed to a provider.
+      #
+      # @return [Array<String>] keys to redact
       REDACTED_KEYS = %w{password ssh_http_proxy_password}.freeze
 
       kitchen_provisioner_api_version 2
@@ -50,6 +68,10 @@ module Kitchen
         persist_provider_state(state, result)
       end
 
+      # Derives the provider's name from the configured command, stripping any
+      # directory portion and the conventional `kitchen-provider-` prefix.
+      #
+      # @return [String] the provider name
       def provider_name_from_command
         first_part = Shellwords.split(config[:command].to_s).first.to_s
         File.basename(first_part).sub(/^kitchen-provider-/, "")

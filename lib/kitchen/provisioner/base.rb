@@ -264,7 +264,7 @@ module Kitchen
 
       # Conditionally prefixes a command with a sudo command.
       #
-      # @param command [String] command to be prefixed
+      # @param script [String] command to be prefixed
       # @return [String] the command, conditionally prefixed with sudo
       # @api private
       def sudo(script)
@@ -285,7 +285,7 @@ module Kitchen
       # Cisco Nexus, require all commands to be run with a prefix to
       # obtain outbound network access.
       #
-      # @param command [String] command to be prefixed
+      # @param script [String] command to be prefixed
       # @return [String] the command, conditionally prefixed with the configured prefix
       # @api private
       def prefix_command(script)

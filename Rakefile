@@ -38,6 +38,16 @@ rescue LoadError
   puts "cookstyle/chefstyle is not available. (sudo) gem install cookstyle to do style checking."
 end
 
+# Generation options live in .yardopts so that `yard` and `rake yard` agree.
+begin
+  require "yard"
+  YARD::Rake::YardocTask.new(:yard) do |task|
+    task.options += ["--no-cache"]
+  end
+rescue LoadError
+  puts "yard is not available. (sudo) gem install yard to generate the docs."
+end
+
 desc "Run all quality tasks"
 task quality: %i{style stats}
 

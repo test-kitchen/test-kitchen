@@ -31,14 +31,21 @@ module Kitchen
       default_config :sleep, 1
       default_config :random_exit_code, 0
 
+      # Creates a new dummy connection, merging the instance state into the
+      # transport's configuration.
+      #
+      # @param state [Hash] the instance state hash
+      # @yield [Connection] yields the connection for block-style invocation
+      # @return [Connection] a new connection
       def connection(state, &block)
         options = config.to_hash.merge(state)
         Kitchen::Transport::Dummy::Connection.new(options, &block)
       end
 
-      # TODO: comment
+      # A connection that reports the actions it would have carried out
+      # rather than contacting any remote host.
       class Connection < Kitchen::Transport::Base::Connection
-        # (see Base#execute)
+        # (see Base::Connection#execute)
         def execute(command)
           report(:execute, command)
           if options[:random_exit_code] != 0
@@ -46,10 +53,20 @@ module Kitchen
           end
         end
 
+        # Reports that the given files would have been uploaded.
+        #
+        # @param locals [Array<String>] local paths that would be uploaded
+        # @param remote [String] the remote destination path
+        # @return [void]
         def upload(locals, remote)
           report(:upload, "#{locals.inspect} => #{remote}")
         end
 
+        # Reports that the given files would have been downloaded.
+        #
+        # @param remotes [Array<String>] remote paths that would be downloaded
+        # @param local [String] the local destination path
+        # @return [void]
         def download(remotes, local)
           report(:download, "#{remotes.inspect} => #{local}")
         end
@@ -60,7 +77,8 @@ module Kitchen
         # possibly fail randomly.
         #
         # @param action [Symbol] the action currently taking place
-        # @param state [Hash] the state hash
+        # @param msg [String] an optional message describing the action's
+        #   subject, appended to the log output
         # @api private
         def report(action, msg = "")
           what = action.capitalize

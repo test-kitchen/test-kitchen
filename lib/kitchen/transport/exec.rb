@@ -66,7 +66,7 @@ module Kitchen
           end
         end
 
-        # (see Base#init_options)
+        # (see Base::Connection#init_options)
         def init_options(options)
           super
           @instance_name = @options.delete(:instance_name)

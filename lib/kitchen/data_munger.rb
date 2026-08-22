@@ -651,6 +651,11 @@ module Kitchen
     # Runs all legacy configuration conversions while keeping DataMunger as the
     # public facade for destructive normalization.
     class LegacyConfigNormalizer
+      # The legacy conversion methods to invoke, in order, when normalizing
+      # raw configuration data.
+      #
+      # @return [Array<Symbol>] ordered DataMunger method names
+      # @api private
       STEPS = %i{
         convert_legacy_driver_format!
         convert_legacy_chef_paths_format!
@@ -665,6 +670,10 @@ module Kitchen
         @data_munger = data_munger
       end
 
+      # Destructively runs every conversion in {STEPS} against the data.
+      #
+      # @return [void]
+      # @api private
       def normalize!
         STEPS.each { |step| data_munger.send(step) }
       end
@@ -680,6 +689,16 @@ module Kitchen
         @data_munger = data_munger
       end
 
+      # Merges the default, common, platform, and suite layers for one plugin
+      # key, with later layers winning over earlier ones.
+      #
+      # @param key [Symbol] the plugin key to merge, such as `:driver`
+      # @param suite [String] a suite name
+      # @param platform [String] a platform name
+      # @param default_key [Symbol] the key used when normalizing data
+      #   sub-hashes
+      # @return [Hash] a new merged Hash
+      # @api private
       def merged_data_for(key, suite, platform, default_key)
         ddata = data_munger.send(:normalized_default_data, key, default_key, suite, platform)
         cdata = data_munger.send(:normalized_common_data, key, default_key)

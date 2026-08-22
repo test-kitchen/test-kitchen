@@ -118,7 +118,7 @@ module Kitchen
     # This method uses the Bourne shell (/bin/sh) to maximize the chance of
     # cross platform portability on Unixlike systems.
     #
-    # @param [String] the command
+    # @param cmd [String] the command
     # @return [String] a wrapped command string
     def self.wrap_command(cmd)
       cmd = "false" if cmd.nil?
@@ -221,10 +221,18 @@ module Kitchen
       end
     end
 
+    # Returns a CamelCase version of a snake_case string.
+    #
+    # @param a_string [String] a snake_case string
+    # @return [String] a CamelCase string
     def self.camel_case(a_string)
       Thor::Util.camel_case(a_string)
     end
 
+    # Returns a snake_case version of a CamelCase string.
+    #
+    # @param a_string [String] a CamelCase string
+    # @return [String] a snake_case string
     def self.snake_case(a_string)
       Thor::Util.snake_case(a_string)
     end

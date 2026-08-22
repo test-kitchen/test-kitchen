@@ -16,5 +16,8 @@
 # limitations under the License.
 
 module Kitchen
+  # The currently released version of Test Kitchen.
+  #
+  # @return [String] a semantic version string
   VERSION = "4.1.1".freeze
 end
