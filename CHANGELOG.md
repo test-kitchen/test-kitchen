@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [4.1.2](https://github.com/test-kitchen/test-kitchen/compare/v4.1.1...v4.1.2) (2026-08-22)
+
+
+### Bug Fixes
+
+* correct typos in user-facing messages ([#2086](https://github.com/test-kitchen/test-kitchen/issues/2086)) ([782b8d3](https://github.com/test-kitchen/test-kitchen/commit/782b8d39160ec5d06390fd7c82eb45b49472e700))
+
 ## [4.1.1](https://github.com/test-kitchen/test-kitchen/compare/v4.1.0...v4.1.1) (2026-07-28)
 
 
