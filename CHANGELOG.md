@@ -1,5 +1,13 @@
 # Test Kitchen Change Log
 
+## [4.1.3](https://github.com/test-kitchen/test-kitchen/compare/v4.1.2...v4.1.3) (2026-08-23)
+
+
+### Bug Fixes
+
+* make individually-required lib files load on their own ([#2100](https://github.com/test-kitchen/test-kitchen/issues/2100)) ([26ca72c](https://github.com/test-kitchen/test-kitchen/commit/26ca72c073fb91c10b0656e76497e491c76007b2))
+* Ruby 4 frozen string literal compatibility ([#2101](https://github.com/test-kitchen/test-kitchen/issues/2101)) ([9f828c2](https://github.com/test-kitchen/test-kitchen/commit/9f828c2733139c2dcce7d57725927d2f4bd1874e))
+
 ## [4.1.2](https://github.com/test-kitchen/test-kitchen/compare/v4.1.1...v4.1.2) (2026-08-22)
 
 
