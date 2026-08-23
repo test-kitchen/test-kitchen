@@ -18,6 +18,7 @@
 require_relative "../spec_helper"
 
 require "logger"
+require "open3"
 
 require "kitchen/util"
 
@@ -264,6 +265,34 @@ describe Kitchen::Util do
       dne_dir = File.join(@root, "notexist")
       _(Kitchen::Util.safe_glob(dne_dir, "**/*"))
         .must_equal Dir.glob(File.join(dne_dir, "**/*"))
+    end
+  end
+
+  # Kitchen::Util is required directly by driver, provisioner and verifier
+  # plugins, so it has to stand on its own without lib/kitchen.rb being
+  # loaded first. These run in a subprocess because the rest of the suite has
+  # already loaded the whole library into this process.
+  describe "when required on its own" do
+    def run_in_clean_process(code)
+      Open3.capture2e(
+        Gem.ruby, "-I", File.expand_path("../../lib", __dir__), "-e", code
+      ).first
+    end
+
+    it "can call .list_directory without kitchen.rb being loaded" do
+      out = run_in_clean_process(
+        'require "kitchen/util"; Kitchen::Util.list_directory("."); print "OK"'
+      )
+
+      _(out).must_equal "OK"
+    end
+
+    it "can call .safe_glob without kitchen.rb being loaded" do
+      out = run_in_clean_process(
+        'require "kitchen/util"; Kitchen::Util.safe_glob(".", "*"); print "OK"'
+      )
+
+      _(out).must_equal "OK"
     end
   end
 end

@@ -24,6 +24,17 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Util
+    class << self
+      # @return [Mutex] a mutex used to serialize the process-global Dir.chdir
+      attr_accessor :mutex_chdir
+    end
+
+    # Dir.chdir mutates process-global state, so every call has to be
+    # serialized. The mutex is owned here rather than in lib/kitchen.rb
+    # because Util is its only consumer and has to keep working when
+    # "kitchen/util" is required on its own.
+    @mutex_chdir = Mutex.new
+
     # Returns the standard library Logger level constants for a given symbol
     # representation.
     #
@@ -194,7 +205,7 @@ module Kitchen
       # the directory does not exist
       return [] unless Dir.exist?(path)
 
-      Kitchen.mutex_chdir.synchronize do
+      mutex_chdir.synchronize do
         Dir.chdir(path) do
           glob_pattern = if recurse
                            "**/*"
@@ -230,7 +241,7 @@ module Kitchen
     def self.safe_glob(path, pattern, *flags)
       return [] unless Dir.exist?(path)
 
-      Kitchen.mutex_chdir.synchronize do
+      mutex_chdir.synchronize do
         Dir.chdir(path) do
           Dir.glob(pattern, *flags).map { |f| File.join(path, f) }
         end

@@ -20,6 +20,8 @@ require "fileutils" unless defined?(FileUtils)
 require "securerandom" unless defined?(SecureRandom)
 require "time" unless defined?(Time.zone_offset)
 
+require_relative "logging"
+
 module Kitchen
   # An instance of a suite running on a platform. A created instance may be a
   # local virtual machine, cloud instance, container, or even a bare metal
