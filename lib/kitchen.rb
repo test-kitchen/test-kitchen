@@ -57,8 +57,23 @@ module Kitchen
     # @return [Mutex] a common mutex for global coordination
     attr_accessor :mutex
 
+    # Returns the mutex used for Dir.chdir coordination.
+    #
     # @return [Mutex] a mutex used for Dir.chdir coordination
-    attr_accessor :mutex_chdir
+    # @deprecated Use {Kitchen::Util.mutex_chdir}, which owns the mutex and is
+    #   available without loading all of Test Kitchen.
+    def mutex_chdir
+      Kitchen::Util.mutex_chdir
+    end
+
+    # Sets the mutex used for Dir.chdir coordination.
+    #
+    # @param mutex [Mutex] the mutex to use for Dir.chdir coordination
+    # @return [Mutex] the newly set mutex
+    # @deprecated Use {Kitchen::Util.mutex_chdir=}.
+    def mutex_chdir=(mutex)
+      Kitchen::Util.mutex_chdir = mutex
+    end
 
     # @return [String] identifier for the current Kitchen process invocation
     attr_writer :run_id
@@ -164,6 +179,3 @@ Kitchen.logger = Kitchen.default_logger
 
 # Set up a collection of instance crash exceptions for error reporting
 Kitchen.mutex = Mutex.new
-
-# Initialize the mutex for Dir.chdir coordination
-Kitchen.mutex_chdir = Mutex.new

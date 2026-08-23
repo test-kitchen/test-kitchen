@@ -17,6 +17,8 @@
 
 require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
 
+require_relative "errors" # for TransientFailure
+
 module Kitchen
   # Mixin that wraps a command shell out invocation, providing a #run_command
   # method.
