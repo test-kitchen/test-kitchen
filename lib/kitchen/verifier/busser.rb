@@ -72,7 +72,7 @@ module Kitchen
         cmd = sudo(config[:busser_bin]).dup
           .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-        prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
+        prefix_command(wrap_shell_code(Util.outdent(<<-CMD)))
           #{busser_env}
 
           #{cmd} suite cleanup
@@ -95,7 +95,7 @@ module Kitchen
         cmd = sudo(config[:busser_bin]).dup
           .tap { |str| str.insert(0, "& ") if powershell_shell? }
 
-        prefix_command(wrap_shell_code(Util.outdent!(<<-CMD)))
+        prefix_command(wrap_shell_code(Util.outdent(<<-CMD)))
           #{busser_env}
 
           #{cmd} test #{plugins.join(" ").gsub!("busser-", "")}

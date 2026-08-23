@@ -62,7 +62,7 @@ module Kitchen
         data = remote_path_join(root, "data")
 
         code = if powershell_shell?
-                 Util.outdent!(<<-POWERSHELL)
+                 Util.outdent(<<-POWERSHELL)
             if (Test-Path "#{data}") {
               Remove-Item "#{data}" -Recurse -Force
             }

@@ -247,7 +247,7 @@ module Kitchen
         #   Mac system
         # @api private
         def create_rdp_doc(opts = {})
-          content = Util.outdent!(<<-RDP)
+          content = Util.outdent(<<-RDP)
             full address:s:#{URI.parse(options[:endpoint]).host}:#{rdp_port}
             prompt for credentials:i:1
             username:s:#{options[:user]}

@@ -146,6 +146,22 @@ module Kitchen
       string.gsub!(/^ {#{string.index(/[^ ]/)}}/, "")
     end
 
+    # Returns a copy of a string with each line outdented by the indentation
+    # level of its first line.
+    #
+    # Prefer this over {.outdent!} when the input may be a string literal:
+    # Ruby 4 freezes literals, and mutating one raises a FrozenError.
+    #
+    # @param string [String] the string to outdent
+    # @return [String] a new, outdented string
+    # @example
+    #
+    #   string = "    a\n      b\n    c\n"
+    #   Util.outdent(string) # => "a\n  b\nc\n"
+    def self.outdent(string)
+      string.gsub(/^ {#{string.index(/[^ ]/)}}/, "")
+    end
+
     # Returns a set of Bourne Shell (AKA /bin/sh) compatible helper
     # functions. This function is usually called inline in a string that
     # will be executed remotely on a test instance.

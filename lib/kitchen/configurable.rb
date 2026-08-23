@@ -247,7 +247,7 @@ module Kitchen
       @deprecated_config = deprecated_attributes.delete_if { |attr, obj| !provided_config.key?(attr) || obj.nil? }
 
       unless deprecated_config.empty?
-        warning = Util.outdent!(<<-MSG)
+        warning = Util.outdent(<<-MSG)
           Deprecated configuration detected:
           #{deprecated_config.keys.join("\n")}
           Run 'kitchen doctor' for details.

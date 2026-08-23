@@ -1121,7 +1121,7 @@ describe Kitchen::Transport::Winrm::Connection do
             # the raise is not what is being tested here, rather its side-effect
           end
 
-          message = <<~'MSG'.chomp!
+          message = <<~'MSG'.chomp
             doit : The term 'doit' is not recognized as the name of a cmdlet, function,
             script file, or operable program. Check the spelling ofthe name, or if a path
             was included, verify that the path is correct and try again.
@@ -1223,7 +1223,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = File.read(rdp_doc)
         end
 
-        _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
+        _(actual).must_equal Kitchen::Util.outdent(<<-RDP)
           drivestoredirect:s:*
           full address:s:foo:rdpyeah
           prompt for credentials:i:1
@@ -1237,7 +1237,7 @@ describe Kitchen::Transport::Winrm::Connection do
           login_command
         end
 
-        expected = Kitchen::Util.outdent!(<<-OUTPUT)
+        expected = Kitchen::Util.outdent(<<-OUTPUT)
           Creating RDP document for coolbeans (/i/am/root/.kitchen/coolbeans.rdp)
           ------------
           drivestoredirect:s:*
@@ -1280,7 +1280,7 @@ describe Kitchen::Transport::Winrm::Connection do
           actual = File.read(rdp_doc)
         end
 
-        _(actual).must_equal Kitchen::Util.outdent!(<<-RDP)
+        _(actual).must_equal Kitchen::Util.outdent(<<-RDP)
           full address:s:foo:rdpyeah
           prompt for credentials:i:1
           username:s:me
@@ -1293,7 +1293,7 @@ describe Kitchen::Transport::Winrm::Connection do
           login_command
         end
 
-        expected = Kitchen::Util.outdent!(<<-OUTPUT)
+        expected = Kitchen::Util.outdent(<<-OUTPUT)
           Creating RDP document for coolbeans (/i/am/root/.kitchen/coolbeans.rdp)
           ------------
           full address:s:foo:rdpyeah
