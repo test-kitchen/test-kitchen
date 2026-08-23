@@ -20,7 +20,7 @@ require_relative "../spec_helper"
 require "kitchen/login_command"
 
 describe Kitchen::LoginCommand do
-  let(:cmd)   { "" }
+  let(:cmd)   { +"" }
   let(:argv)  { [] }
   let(:opts)  { {} }
 
