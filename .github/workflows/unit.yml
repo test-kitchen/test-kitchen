@@ -17,9 +17,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The gemspec declares required_ruby_version >= 3.1, so the whole
-        # supported range is tested rather than just the newest release.
-        ruby: ["3.1", "3.2", "3.3", "3.4"]
+        # The gemspec declares required_ruby_version >= 3.1, but minitest 6
+        # requires Ruby >= 3.2, so the test suite cannot run on 3.1 and that
+        # version is unverifiable. Either required_ruby_version should move to
+        # >= 3.2 or minitest should be pinned lower -- that is a release
+        # decision, so this matrix covers what can actually be tested.
+        ruby: ["3.2", "3.3", "3.4"]
         os: [ubuntu-latest]
         include:
           # Test Kitchen has a large WinRM and PowerShell surface, and
