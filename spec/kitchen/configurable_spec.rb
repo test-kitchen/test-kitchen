@@ -1162,6 +1162,6 @@ describe Kitchen::Configurable do
   end
 
   def outdent!(*args)
-    Kitchen::Util.outdent!(*args)
+    Kitchen::Util.outdent(*args)
   end
 end

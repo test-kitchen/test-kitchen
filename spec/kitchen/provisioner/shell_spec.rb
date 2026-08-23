@@ -219,7 +219,7 @@ describe Kitchen::Provisioner::Shell do
       it "removes the data directory" do
         config[:root_path] = '\\route'
 
-        _(cmd).must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
+        _(cmd).must_match regexify(Kitchen::Util.outdent(<<-POWERSHELL).chomp)
           if (Test-Path "\\route\\data") {
             Remove-Item "\\route\\data" -Recurse -Force
           }
@@ -229,7 +229,7 @@ describe Kitchen::Provisioner::Shell do
       it "creates the :root_path directory" do
         config[:root_path] = '\\route'
 
-        _(cmd).must_match regexify(Kitchen::Util.outdent!(<<-POWERSHELL).chomp)
+        _(cmd).must_match regexify(Kitchen::Util.outdent(<<-POWERSHELL).chomp)
           if (-Not (Test-Path "\\route")) {
             New-Item "\\route" -ItemType directory | Out-Null
           }
