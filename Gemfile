@@ -12,6 +12,7 @@ group :test do
   gem "maruku",    "~> 0.7"
   gem "minitest",  "~> 6.0", "< 6.1"
   gem "mocha",     "~> 3.0"
+  gem "simplecov", "~> 0.22", require: false
   gem "yard",      "~> 0.9"
 end
 

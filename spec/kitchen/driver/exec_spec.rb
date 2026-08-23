@@ -14,6 +14,8 @@
 
 require_relative "../../spec_helper"
 
+require "logger"
+
 require "kitchen/driver/exec"
 
 describe Kitchen::Driver::Exec do

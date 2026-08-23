@@ -17,7 +17,11 @@ jobs:
     uses: ./.github/workflows/lint.yml
     secrets: inherit
 
+  unit:
+    uses: ./.github/workflows/unit.yml
+    secrets: inherit
+
   integration:
     uses: ./.github/workflows/integration.yml
-    needs: lint
+    needs: [lint, unit]
     secrets: inherit
