@@ -2,12 +2,16 @@
 
 ## Running the tests
 
-Unit tests need only the `test` group, so you can skip the `integration` group
-and its git and third-party gem sources:
+```shell
+bundle install
+```
+
+The acceptance-only gems live in `Gemfile.integration`, not the main `Gemfile`,
+so a plain `bundle install` does not reach for a git dependency or
+`rubygems.cinc.sh`. To run the acceptance suite, point Bundler at that file:
 
 ```shell
-bundle config set --local without integration
-bundle install
+BUNDLE_GEMFILE=Gemfile.integration bundle install
 ```
 
 | Command | What it does |

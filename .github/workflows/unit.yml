@@ -9,12 +9,6 @@ concurrency:
   group: unit-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  # Unit tests need nothing from the integration group, which pulls a git
-  # dependency and a third-party gem source. Skipping it keeps this job fast
-  # and independent of rubygems.cinc.sh being reachable.
-  BUNDLE_WITHOUT: integration
-
 jobs:
   unit:
     name: Unit / Ruby ${{ matrix.ruby }} / ${{ matrix.os }}
@@ -29,11 +23,10 @@ jobs:
         os: [ubuntu-latest]
         include:
           # Test Kitchen has a large WinRM and PowerShell surface, and
-          # spec_helper carries Windows-only branches, but no CI job has
-          # exercised them in years. Non-blocking until we know the result.
+          # spec_helper carries Windows-only branches that no CI job had
+          # exercised in years. It passes, so it gates like any other job.
           - ruby: "3.4"
             os: windows-latest
-            experimental: true
           - ruby: "3.4"
             os: macos-latest
           # Forward compatibility. Ruby 4 chills string literals, so mutating
