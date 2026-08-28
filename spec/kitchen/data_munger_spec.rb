@@ -53,6 +53,54 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
       end
     end
 
+    describe "resolving platforms and suites by name" do
+      it "uses the first entry when a platform name is duplicated" do
+        result = DataMunger.new(
+          driver: "dummy",
+          platforms: [
+            { name: "dupe", driver: { flavor: "first" } },
+            { name: "dupe", driver: { flavor: "second" } },
+          ],
+          suites: [{ name: "default" }]
+        ).driver_data_for("default", "dupe")
+
+        _(result[:flavor]).must_equal "first"
+      end
+
+      it "uses the first entry when a suite name is duplicated" do
+        result = DataMunger.new(
+          driver: "dummy",
+          platforms: [{ name: "plat" }],
+          suites: [
+            { name: "dupe", driver: { flavor: "first" } },
+            { name: "dupe", driver: { flavor: "second" } },
+          ]
+        ).driver_data_for("dupe", "plat")
+
+        _(result[:flavor]).must_equal "first"
+      end
+
+      it "falls back to common data for an unknown platform name" do
+        result = DataMunger.new(
+          driver: { name: "dummy", flavor: "common" },
+          platforms: [{ name: "known" }],
+          suites: [{ name: "default" }]
+        ).driver_data_for("default", "nonexistent")
+
+        _(result[:flavor]).must_equal "common"
+      end
+
+      it "resolves an entry that carries no name under a nil lookup" do
+        result = DataMunger.new(
+          driver: "dummy",
+          platforms: [{ driver: { flavor: "nameless" } }],
+          suites: [{ name: "default" }]
+        ).driver_data_for("default", nil)
+
+        _(result[:flavor]).must_equal "nameless"
+      end
+    end
+
     describe "#suite_data" do
       it "returns an array of suite data" do
         result = DataMunger.new(
