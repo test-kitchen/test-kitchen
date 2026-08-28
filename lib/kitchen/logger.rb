@@ -496,22 +496,50 @@ module Kitchen
       # @return [void]
       # @api private
       def <<(msg)
-        @buffer += msg
+        @buffer << msg
         flush_lines
       end
 
       private
 
+      # Emits every complete line in the buffer, then drops the emitted bytes
+      # in a single pass. Scanning from a moving offset instead of deleting
+      # each line as it is found keeps a chunk of n lines linear rather than
+      # quadratic, which matters because one SSH or WinRM read can carry
+      # thousands of lines.
       def flush_lines
-        while (i = @buffer.index("\n"))
-          @line_handler.call(@buffer[0, i].chomp)
-          @buffer[0, i + 1] = ""
+        start = 0
+        while (i = @buffer.index("\n", start))
+          @line_handler.call(@buffer[start, i - start].chomp)
+          start = i + 1
         end
+        @buffer.slice!(0, start) unless start == 0
       end
     end
 
     # Rewrites already-prefixed stream lines into the matching logger call.
     class StreamLineFormatter
+      # Width of every stream prefix in {PREFIXES}. All prefixes are the same
+      # width so that a line's severity is a fixed-offset lookup.
+      #
+      # @return [Integer] the prefix width in characters
+      # @api private
+      PREFIX_WIDTH = 7
+
+      # Maps each stream prefix to the severity it denotes and whether the line
+      # must be replayed verbatim on sinks that cannot accept stream events.
+      #
+      # @return [Hash{String => Array}] prefix to [severity, structured] pairs
+      # @api private
+      PREFIXES = {
+        "-----> " => [:banner, false],
+        "D      " => [:debug,  true],
+        "$$$$$$ " => [:warn,   true],
+        ">>>>>> " => [:error,  false],
+        "!!!!!! " => [:fatal,  true],
+        "       " => [:info,   false],
+      }.freeze
+
       def initialize(logger)
         @logger = logger
       end
@@ -519,18 +547,22 @@ module Kitchen
       # Routes an already-prefixed stream line to the logger call matching its
       # prefix, stripping the prefix before logging.
       #
+      # A hash lookup on the fixed-width prefix replaces a chain of anchored
+      # regexp matches, so an unprefixed line costs one lookup rather than six
+      # failed matches.
+      #
       # @param line [String] a single line of prefixed stream output
       # @return [void]
       # @api private
       def format(line)
-        case line
-        when /^-----> / then log_line(:banner, line.gsub(/^[ >-]{6} /, ""))
-        when /^D      / then structured_line(:debug, line.gsub(/^D {6}/, ""), line)
-        when /^\$\$\$\$\$\$ / then structured_line(:warn, line.gsub(/^\${6} /, ""), line)
-        when /^>>>>>> / then log_line(:error, line.gsub(/^[ >-]{6} /, ""))
-        when /^!!!!!! / then structured_line(:fatal, line.gsub(/^!{6} /, ""), line)
-        when /^       / then log_line(:info, line.gsub(/^[ >-]{6} /, ""))
-        else log_line(:info, line)
+        severity, structured = PREFIXES[line[0, PREFIX_WIDTH]]
+
+        if severity.nil?
+          log_line(:info, line)
+        elsif structured
+          structured_line(severity, line[PREFIX_WIDTH..], line)
+        else
+          log_line(severity, line[PREFIX_WIDTH..])
         end
       end
 
