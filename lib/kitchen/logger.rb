@@ -312,8 +312,10 @@ module Kitchen
 
     # @return [Hash] metadata added to structured log events
     def metadata
-      metadata_stack.inject(@base_metadata.dup) do |result, values|
-        result.merge(values)
+      # Merge in place into the fresh dup rather than allocating a new hash per
+      # stack entry; this runs once per structured log event.
+      metadata_stack.each_with_object(@base_metadata.dup) do |values, result|
+        result.merge!(values)
       end
     end
 
@@ -808,9 +810,11 @@ module Kitchen
             message: message.to_s,
             progname:,
             sequence: next_sequence
-          ).compact
-          @logdev.write(JSON.generate(event))
-          @logdev.write("\n")
+          )
+          event.compact!
+          # One writev rather than two writes: the log device is opened with
+          # sync = true, so each call is a syscall.
+          @logdev.write(JSON.generate(event), "\n")
         end
         true
       end
