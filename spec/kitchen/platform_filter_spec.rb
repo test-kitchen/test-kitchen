@@ -48,6 +48,29 @@ describe Kitchen::PlatformFilter do
       _(Kitchen::PlatformFilter.convert(%w{/win/ix /win/xi})).must_equal [Kitchen::PlatformFilter.new(/win/ix),
                                                                        Kitchen::PlatformFilter.new(/win/ix)]
     end
+
+    it "wraps a Regexp without treating it as a string" do
+      _(Kitchen::PlatformFilter.convert(/^win/)).must_equal [Kitchen::PlatformFilter.new(/^win/)]
+    end
+
+    it "keeps the options of a wrapped Regexp" do
+      _(Kitchen::PlatformFilter.convert(/win/ix).first.value).must_equal(/win/ix)
+    end
+
+    it "wraps a mix of strings and Regexps" do
+      _(Kitchen::PlatformFilter.convert(["CentOS", /^win/])).must_equal [Kitchen::PlatformFilter.new("CentOS"),
+                                                                        Kitchen::PlatformFilter.new(/^win/)]
+    end
+
+    it "raises an ArgumentError naming a filter that is neither a string nor a Regexp" do
+      error = _ { Kitchen::PlatformFilter.convert([2019]) }.must_raise ::ArgumentError
+
+      _(error.message).must_include "2019"
+    end
+
+    it "raises an ArgumentError for a nil filter in a list" do
+      _ { Kitchen::PlatformFilter.convert([nil]) }.must_raise ::ArgumentError
+    end
   end
 
   describe ".new" do
