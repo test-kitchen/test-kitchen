@@ -134,9 +134,6 @@ describe Kitchen::ShellOut do
         .must_equal "[thed command] BEGIN (tenac)"
     end
 
-    it "truncates the debug BEGIN command if it spans multiple lines" do
-    end
-
     it "logs a debug END message" do
       subject.run_command("echo whoopa doopa")
 
