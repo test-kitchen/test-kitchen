@@ -344,13 +344,20 @@ describe Kitchen::Provisioner::Base do
   end
 
   describe "sandbox" do
-    after do
-      provisioner.cleanup_sandbox
-    rescue # rubocop:disable Lint/HandleExceptions
-    end
+    after { provisioner.cleanup_sandbox }
 
     it "raises ClientError if #sandbox_path is called before #create_sandbox" do
       _ { provisioner.sandbox_path }.must_raise Kitchen::ClientError
+    end
+
+    it "#cleanup_sandbox does nothing when the sandbox was never created" do
+      provisioner.cleanup_sandbox
+    end
+
+    it "#call surfaces the error from a failed #create_sandbox" do
+      provisioner.stubs(:create_sandbox).raises(Errno::ENOSPC, "/tmp")
+
+      _ { provisioner.call({}) }.must_raise Errno::ENOSPC
     end
 
     it "#create_sandbox creates a temporary directory" do
