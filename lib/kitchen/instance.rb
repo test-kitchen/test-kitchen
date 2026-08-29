@@ -242,9 +242,12 @@ module Kitchen
     #
     def doctor_action
       banner "The doctor is in"
-      [driver, provisioner, transport, verifier].any? do |obj|
+      # Each plugin reports its own problems as it finds them, so run all of
+      # them and reduce afterwards. #any? would stop at the first plugin with
+      # something to say and hide the rest.
+      [driver, provisioner, transport, verifier].map do |obj|
         obj.doctor(state_file.read)
-      end
+      end.any?
     end
 
     # Returns a Hash of configuration and other useful diagnostic information.
