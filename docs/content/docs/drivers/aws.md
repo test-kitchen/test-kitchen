@@ -497,6 +497,33 @@ To avoid having Test Kitchen try to deallocate shared or minimum runtime hosts, 
 
 The default is `false`.
 
+### Additional Driver Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `retry_limit` | `3` | Number of times the AWS SDK retries a failed API call. |
+| `associate_ipv6` | `nil` | Assign an IPv6 address to the instance. |
+| `spot_wait` | `60` | Seconds to wait for a spot request to be fulfilled. |
+| `licenses` | *(unset)* | Array of `{license_configuration_arn: ...}` hashes for AWS License Manager. |
+| `placement` | *(unset)* | Hash of placement options: `affinity`, `availability_zone`, `group_id`, `group_name`, `host_id`, `host_resource_group_arn`, `partition_number`, `tenancy`. |
+
+#### Connecting through Session Manager
+
+AWS Systems Manager Session Manager lets Test Kitchen reach an instance without opening SSH or RDP to the internet at all. The instance needs the SSM agent and an instance profile granting it access.
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `use_ssm_session_manager` | `false` | Connect through Session Manager instead of opening inbound ports. |
+| `ssm_session_manager_document_name` | `nil` | SSM document to use for the session. |
+
+```yaml
+driver:
+  name: ec2
+  use_ssm_session_manager: true
+```
+
+This is the most secure way to run this driver: the instance needs no inbound security group rules whatsoever.
+
 ### Example **kitchen.yml**
 
 ```yaml

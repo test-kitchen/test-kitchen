@@ -545,6 +545,37 @@ Allow connecting to any ip/hostname to support sibling containers -->
 
 The `timeout` configuration option specifies the timeout in seconds for communicating with the Docker daemon.
 
+### Additional Driver Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `product_name` | `chef` | `chef` or `cinc`. Selects which client distribution is installed. |
+| `product_version` | the driver's `chef_version` | Version of the client the provisioner reports running. Follows `chef_version` unless overridden. |
+| `user_ns_mode` | *(none)* | Docker `UsernsMode` for the container. `privileged` is only honored when this is `host`. |
+| `docker_config_creds` | `true` | Read registry credentials from `~/.docker/config.json`. |
+| `data_ssh_port` | *(none)* | Fixed host port for the data container's SSH service. |
+| `docker_info` | queried from the daemon | Cached `docker info` output, used to detect the daemon's operating system. Resolved automatically; set it only to override that detection. |
+
+{{% warning %}}
+`privileged: true` is only honored when `user_ns_mode` is `host`. On a daemon using user namespace remapping, a privileged container without it silently does not get the privileges you asked for.
+{{% /warning %}}
+
+#### Using Cinc
+
+```yaml
+driver:
+  name: dokken
+  product_name: cinc
+  chef_version: latest
+```
+
+### Additional Transport Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `login_command` | `docker` | Executable used by [`kitchen login`](/docs/commands/login). |
+| `docker_info` | queried from the daemon | Cached `docker info` output for `docker_host_url`. The driver and transport resolve this independently. |
+
 ### Dokken Linux Containers
 
 Specially created containers for kitchen-dokken, build off official Linux distro images, but include all of the packages and services necessary to test Chef Infra cookbooks. These containers are produced for leading Linux distributions such as AlmaLinux, Amazon Linux, Fedora, OpenSUSE, and Ubuntu. For a complete list of available dokken specific container images see [u/dokken](https://hub.docker.com/u/dokken) on Docker Hub.

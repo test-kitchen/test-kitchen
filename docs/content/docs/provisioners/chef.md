@@ -9,11 +9,44 @@ menu:
 
 kitchen-omnibus-chef is a Test Kitchen *provisioner* for chef-client.
 
+{{% warning %}}
+**Omnitruck downloads are being shut down** for specific Chef Infra Client versions and will stop working entirely in the future. This gem is also **not compatible with Chef Infra Client 19+**, which uses a new Habitat-based installation method.
+
+Recommended migration paths:
+
+- **Chef customers** — switch to [kitchen-chef-enterprise](https://github.com/chef/kitchen-chef-enterprise), bundled in Chef Workstation 26.x and newer, for licensed download support.
+- **Community users** — switch to [kitchen-cinc](/docs/provisioners/cinc) and use the Cinc provisioners such as `cinc_infra`.
+
+See the [Chef blog](https://www.chef.io/blog/decoding-the-change-progress-chef-is-moving-to-licensed-downloads) for the schedule of affected versions.
+{{% /warning %}}
+
 ## Overview
 
-The [kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef) plugin includes three provisioners for Chef Infra: `chef_solo`, `chef_infra` and `chef_target`, that support similar options. `chef_zero` was renamed `chef_infra`. This plugin is not bundled by the `test-kitchen` gem itself; use the version provided by your Workstation package or install it into the Ruby environment that runs `kitchen`.
+The [kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef) plugin downloads and installs omnibus packages of Chef Infra Client on your test instances, so you can test cookbooks against different Chef versions without pre-installing Chef on your images.
 
-`chef_target` is for using Chef 19 Target Mode without remotely installing any agents and is based on `kitchen-transport-train` and the Train framework, which are not installed from Test Kitchen by default. For links to these two tools, look at the end of this page.
+It provides five provisioners, all sharing a common option set:
+
+| Name | Description |
+| ---- | ---- |
+| `chef_infra` | Modern Chef Infra Client provisioner. **Recommended.** |
+| `chef_zero` | Deprecated alias for `chef_infra`, kept for backward compatibility. |
+| `chef_solo` | Chef Solo provisioner. Does not support parallel converge. |
+| `chef_apply` | Runs individual recipes through `chef-apply`. |
+| `chef_target` | Chef Target Mode. Requires Chef Infra Client 19.0.0+ and a Train-based transport. |
+
+This plugin is not bundled by the `test-kitchen` gem itself; use the version provided by your Workstation package or install it into the Ruby environment that runs `kitchen`.
+
+`chef_target` runs Chef 19 Target Mode without remotely installing any agents, and is based on `kitchen-transport-train` and the Train framework, which are not installed by Test Kitchen by default. See [Additional Components for chef_target](#additional-components-for-chef_target).
+
+### Which gem provides chef_* names?
+
+Several gems register the same `chef_*` provisioner names. They resolve in this priority order:
+
+```text
+kitchen-chef-enterprise > kitchen-cinc > kitchen-omnibus-chef
+```
+
+When a higher-priority gem is installed, kitchen-omnibus-chef yields to it. If you have kitchen-cinc installed alongside this gem, `chef_infra` in your `kitchen.yml` will run Cinc Client. Use [`kitchen diagnose --plugins`](/docs/commands/diagnose) to see which implementation actually loaded.
 
 ## Configuration Options
 
@@ -112,6 +145,48 @@ provisioner:
   ftp_proxy: ftp://proxy.example.com:8080
   no_proxy: localhost,127.0.0.1,.example.com
 ```
+
+### Converge Behavior
+
+```yaml
+provisioner:
+  # Run list and attributes
+  run_list: []           # Run list applied to the instance, usually set per suite
+  attributes: {}         # Node attributes merged into the run
+  json_attributes: true  # Write attributes to a JSON file and pass it to the client
+  named_run_list: nil    # Named run list to use from a Policyfile
+
+  # Chef Zero networking (chef_infra / chef_zero / chef_target)
+  chef_zero_host: nil    # Host the in-memory Chef Zero server binds to
+  chef_zero_port: 8889   # Port the in-memory Chef Zero server binds to
+
+  # Execution
+  sudo: true             # Run the client under sudo
+  slow_resource_report: nil  # Emit the slow resource report at the end of the run
+  legacy_mode: false     # Pass --legacy-mode to chef-solo (chef_solo only)
+  config_path: nil       # Use an existing config file instead of a generated one
+```
+
+### On-instance Binary Paths
+
+These default to values derived from `chef_omnibus_root` and rarely need setting.
+
+| Option | Applies to |
+| ---- | ---- |
+| `chef_client_path` | `chef_infra`, `chef_zero`, `chef_target` |
+| `chef_solo_path` | `chef_solo` |
+| `chef_apply_path` | `chef_apply` |
+| `apply_path` | `chef_apply` — the recipe that gets applied |
+| `ruby_bindir` | all |
+
+### Target Mode File Transfer
+
+`chef_target` runs the converge from your workstation, so it can move files around the run.
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `uploads` | `{}` | Files copied to the instance before the converge. Keys are local paths, values remote destinations. |
+| `downloads` | `{}` | Files copied back after the converge. Keys are remote paths, values local destinations. |
 
 ## Complete Example
 
