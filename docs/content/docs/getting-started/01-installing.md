@@ -23,7 +23,9 @@ Unfortunately Hyper-V doesn't like other hypervisors running at the same time an
 
 ##### Test Kitchen and Workstation tooling
 
-Install Test Kitchen from RubyGems, your system packages, [Cinc Workstation](https://cinc.sh/start/workstation/), or [Chef Workstation](https://www.chef.io/downloads). Test Kitchen itself does not bundle Chef or Cinc tooling. When you use a Workstation package, the available drivers, provisioners, verifiers, and Chef-compatible commands are the ones bundled by that package.
+Install Test Kitchen from RubyGems, your system packages, or [Cinc Workstation](https://cinc.sh/start/workstation/). This guide uses Cinc Workstation, the community distribution, which bundles Test Kitchen along with the drivers, provisioners, and verifiers you need to follow along.
+
+Test Kitchen itself does not bundle Cinc or Chef tooling. When you use a Workstation package, the available drivers, provisioners, verifiers, and commands are the ones bundled by that package. [Chef Workstation](https://www.chef.io/downloads) works the same way — substitute `chef` for `cinc` in the commands below, and `chef_infra` for `cinc_infra` in the examples.
 
 For a RubyGems install:
 
@@ -36,7 +38,7 @@ Test Kitchen version 4.0.0
 For a Workstation install, use the Workstation command to see what it bundles:
 
 ```bash
-$ chef --version
+$ cinc --version
 ```
 
 ##### VirtualBox
@@ -57,9 +59,9 @@ $ vagrant --version
 Vagrant 2.4.7
 ```
 
-With Test Kitchen, VirtualBox, and Vagrant installed, you're ready to create a local virtual machine. By default, `kitchen init` generates a `kitchen-vagrant` driver configuration and a shell provisioner. This guide uses Vagrant with VirtualBox for virtualization, and a Chef-compatible Workstation environment for the Chef Infra examples.
+With Test Kitchen, VirtualBox, and Vagrant installed, you're ready to create a local virtual machine. By default, `kitchen init` generates a `kitchen-vagrant` driver configuration and a shell provisioner. This guide uses Vagrant with VirtualBox for virtualization, and Cinc Workstation for the cookbook examples.
 
-Test Kitchen is highly modular, allowing you to mix and match drivers (such as Vagrant, VMware, Azure, EC2, or Docker), provisioners (such as shell, Chef/Cinc, Ansible, Puppet, Salt, or DSC), and verifiers (including InSpec, Serverspec, or BATS). Install those plugins into the same Ruby environment that runs `kitchen`.
+Test Kitchen is highly modular, allowing you to mix and match drivers (such as Vagrant, VMware, Azure, EC2, or Docker), provisioners (such as shell, Cinc/Chef, Ansible, Puppet, Salt, or DSC), and verifiers (including InSpec, Serverspec, or BATS). Install those plugins into the same Ruby environment that runs `kitchen`.
 
 <div class="sidebar--footer">
 <a class="button primary-cta" href="/docs/getting-started/getting-help">Next - Getting Help</a>
