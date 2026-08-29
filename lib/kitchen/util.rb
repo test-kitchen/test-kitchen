@@ -99,17 +99,35 @@ module Kitchen
       end
     end
 
+    # The text substituted for a masked value.
+    MASK = "******".freeze
+
+    # A double-quoted string value, allowing for backslash escapes so that a
+    # quote inside the value does not end the match early.
+    QUOTED_VALUE = /"(?:\\.|[^"\\])*"/.source
+
     # Returns a string with masked values for specified parameters.
+    #
+    # Hashes are commonly interpolated into these strings via Hash#inspect,
+    # whose rendering has changed over time, so every spelling a key/value
+    # pair has had is matched:
+    #
+    #   :key=>"value"     symbol key, Ruby <= 3.3
+    #   "key"=>"value"    string key, Ruby <= 3.3
+    #   key: "value"      symbol key, Ruby >= 3.4
+    #   "key" => "value"  string key, Ruby >= 3.4
     #
     # @param string_to_mask [String] the object whose string representation is parsed
     # @param keys [Array] the list of keys whose values should be masked
-    # @return [String] the string representation of passed object with masked values
+    # @return [String] a new string with the values of the given keys masked
     def self.mask_values(string_to_mask, keys)
-      masked_string = string_to_mask
-      keys.each do |key|
-        masked_string.gsub!(/:#{key}=>"([^"]*)"/, %{:#{key}=>"******"})
+      keys.reduce(string_to_mask.to_s) do |masked, key|
+        key = ::Regexp.escape(key.to_s)
+        masked.gsub(
+          /(?<assignment>(?::#{key}|"#{key}")\s*=>\s*|(?<!\w)#{key}:\s*)#{QUOTED_VALUE}/,
+          %{\\k<assignment>"#{MASK}"}
+        )
       end
-      masked_string
     end
 
     # Returns a formatted string representing a duration in seconds.

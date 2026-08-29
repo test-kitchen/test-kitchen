@@ -86,6 +86,65 @@ describe Kitchen::Util do
     end
   end
 
+  describe ".mask_values" do
+    it "masks a symbol-keyed value in a modern Hash#inspect string" do
+      hash = { password: "s3cr3t", user: "root" }
+
+      _(Kitchen::Util.mask_values("[SSH] <#{hash.inspect}>", %w{password}))
+        .wont_include "s3cr3t"
+    end
+
+    it "masks a string-keyed value in a modern Hash#inspect string" do
+      hash = { "password" => "s3cr3t" }
+
+      _(Kitchen::Util.mask_values("[SSH] <#{hash.inspect}>", %w{password}))
+        .wont_include "s3cr3t"
+    end
+
+    it "masks a value in a legacy hash rocket string" do
+      _(Kitchen::Util.mask_values(%{<{:password=>"s3cr3t"}>}, %w{password}))
+        .wont_include "s3cr3t"
+    end
+
+    it "masks every requested key" do
+      hash = { password: "s3cr3t", ssh_http_proxy_password: "pr0xy" }
+      masked = Kitchen::Util.mask_values(
+        "[SSH] <#{hash.inspect}>", %w{password ssh_http_proxy_password}
+      )
+
+      _(masked).wont_include "s3cr3t"
+      _(masked).wont_include "pr0xy"
+    end
+
+    it "leaves keys that were not requested alone" do
+      hash = { password: "s3cr3t", user: "root" }
+
+      _(Kitchen::Util.mask_values("[SSH] <#{hash.inspect}>", %w{password}))
+        .must_include "root"
+    end
+
+    it "does not mask a key that merely ends with a requested key" do
+      hash = { not_a_password: "keepme" }
+
+      _(Kitchen::Util.mask_values("<#{hash.inspect}>", %w{password}))
+        .must_include "keepme"
+    end
+
+    it "does not modify the string it was given" do
+      hash = { password: "s3cr3t" }
+      original = "[SSH] <#{hash.inspect}>"
+
+      Kitchen::Util.mask_values(original, %w{password})
+
+      _(original).must_include "s3cr3t"
+    end
+
+    it "masks a frozen string" do
+      _(Kitchen::Util.mask_values(%{<{password: "s3cr3t"}>}.freeze, %w{password}))
+        .wont_include "s3cr3t"
+    end
+  end
+
   describe ".duration" do
     it "turns nil into a zero" do
       _(Kitchen::Util.duration(nil))
