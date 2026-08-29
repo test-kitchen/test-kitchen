@@ -195,18 +195,20 @@ module Kitchen
       end
 
       # Determines how many instances may be acted on at once, clamped to the
-      # number of instances available.
+      # number of instances available and to at least one worker. Without the
+      # lower bound a zero or negative --concurrency would start no worker
+      # threads at all, so every instance would be skipped and the run would
+      # still report success.
       #
       # @param instances [Array<Instance>] the instances to be acted on
       # @return [Integer] the number of worker threads to start
       # @api private
       def concurrency_setting(instances)
-        concurrency = 1
-        if options[:concurrency]
-          concurrency = options[:concurrency] || instances.size
-          concurrency = instances.size if concurrency > instances.size
-        end
-        concurrency
+        return 1 unless options[:concurrency]
+
+        concurrency = options[:concurrency]
+        concurrency = instances.size if concurrency > instances.size
+        [concurrency, 1].max
       end
 
       # Performs an action on a single instance, recording any instance or

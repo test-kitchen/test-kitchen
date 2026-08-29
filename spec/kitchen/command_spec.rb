@@ -37,10 +37,16 @@ class RunActionInstance
     @name = name
     @failure = failure
     @cleaned = false
+    @created = false
   end
 
   def create(*)
+    @created = true
     raise @failure if @failure
+  end
+
+  def created?
+    @created
   end
 
   def cleaned?
@@ -76,6 +82,30 @@ describe Kitchen::Command::RunAction do
       .must_raise Kitchen::ActionFailed
 
     _(instance.cleaned?).must_equal true
+  end
+
+  it "runs the action when concurrency is zero" do
+    instance = RunActionInstance.new("one")
+
+    RunActionDummy.new(concurrency: 0).run_action(:create, [instance])
+
+    _(instance.created?).must_equal true
+  end
+
+  it "runs the action when concurrency is negative" do
+    instance = RunActionInstance.new("one")
+
+    RunActionDummy.new(concurrency: -4).run_action(:create, [instance])
+
+    _(instance.created?).must_equal true
+  end
+
+  it "runs every instance when concurrency exceeds the instance count" do
+    instances = [RunActionInstance.new("one"), RunActionInstance.new("two")]
+
+    RunActionDummy.new(concurrency: 9).run_action(:create, instances)
+
+    _(instances.map(&:created?)).must_equal [true, true]
   end
 
   it "restores Thread.abort_on_exception after fail fast runs" do
