@@ -134,11 +134,11 @@ module Kitchen
       # @return [Hash] hash of connection options
       # @api private
       def connection_options(data)
-        opts = {
+        {
           instance_name: instance.name,
-          kitchen_root: Dir.pwd,
+          kitchen_root: data[:kitchen_root] || Dir.pwd,
+          logger:,
         }
-        opts
       end
     end
   end
