@@ -161,7 +161,7 @@ describe Kitchen::Verifier::Shell do
 
   describe "#run_command" do
     it "execute locally and returns nil" do
-      verifier.run_command
+      _(verifier.run_command).must_be_nil
     end
 
     it "returns string when remote_exec" do
