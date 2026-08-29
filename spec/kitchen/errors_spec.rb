@@ -58,9 +58,10 @@ describe Kitchen::Error do
     end
 
     it "returns an array containing a nested exception, if given" do
-      raise IOError, "no disk, yo"
-    rescue
-      e = Kitchen::StandardError.new("shoot")
+      # Neither exception is raised, so neither carries a backtrace and the
+      # formatted output is only the two exception blocks. The nested
+      # exception's backtrace has its own test below.
+      e = Kitchen::StandardError.new("shoot", IOError.new("no disk, yo"))
 
       _(Kitchen::Error.formatted_trace(e))
         .must_equal([
@@ -73,6 +74,25 @@ describe Kitchen::Error do
           "Message: no disk, yo",
           "----------------------",
         ])
+    end
+
+    it "shows the nested exception's own backtrace, not the wrapper's" do
+      inner = begin
+        raise IOError, "no disk, yo"
+      rescue => ex
+        ex
+      end
+      outer = begin
+        raise Kitchen::StandardError.new("shoot", inner)
+      rescue => ex
+        ex
+      end
+
+      trace = Kitchen::Error.formatted_trace(outer)
+      nested = trace[trace.index("---Nested Exception---")..]
+
+      _(nested).must_include inner.backtrace.first
+      _(nested).wont_include outer.backtrace.first
     end
 
     it "returns an array when an error has more than one error in original" do
