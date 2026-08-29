@@ -665,6 +665,26 @@ end
 
 For more details on this setting please read the [config.vm.hostname](https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings) section of the Vagrant documentation.
 
+### boot_timeout
+
+Seconds Vagrant waits for the machine to boot. Defaults to Vagrant's own
+default. Raise it for boxes that are slow to come up.
+
+### vagrant_binary
+
+Path to the Vagrant executable. Default: `vagrant`
+
+### use_sudo
+
+Run guest commands through sudo. Unset by default.
+
+### dry_run
+
+Print the Vagrant commands instead of running them. Default: `false`
+
+Useful for seeing exactly what the driver would do, and for reporting bugs
+against this driver.
+
 ## Example **kitchen.yml**
 
 ```yaml

@@ -8,10 +8,17 @@ menu:
 
 A Test Kitchen *verifier* tests the configuration applied by the *provisioner*. The `test-kitchen` gem includes the legacy `busser` verifier and the built-in `shell` verifier. InSpec, Cinc Auditor, ServerSpec, Pester, and BATS support is supplied by plugin gems installed in the Ruby environment that runs `kitchen`.
 
-Common verifier plugins:
+### Verifiers documented here
 
-* [kitchen-inspec](https://github.com/inspec/kitchen-inspec)
-* [kitchen-cinc-auditor](https://github.com/test-kitchen/kitchen-cinc-auditor)
-* [busser-bats](https://github.com/test-kitchen/busser-bats/)
-* [busser-serverspec](https://github.com/test-kitchen/busser-serverspec/)
-* [kitchen-pester](https://github.com/test-kitchen/kitchen-pester/)
+| Verifier | Test framework |
+| ---- | ---- |
+| [InSpec](/docs/verifiers/inspec) | Chef InSpec |
+| [Cinc Auditor](/docs/verifiers/cinc-auditor) | Cinc Auditor, the community distribution of InSpec |
+| [Pester](/docs/verifiers/pester) | Pester, for PowerShell |
+| [ServerSpec](/docs/verifiers/serverspec) | ServerSpec, via Busser |
+
+### Other verifier plugins
+
+- [busser-bats](https://github.com/test-kitchen/busser-bats/) — BATS, via Busser
+- [busser-rspec](https://github.com/test-kitchen/busser-rspec/) — RSpec, via Busser
+- [busser-minitest](https://github.com/test-kitchen/busser-minitest/) — Minitest, via Busser

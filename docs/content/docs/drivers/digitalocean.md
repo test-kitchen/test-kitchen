@@ -231,6 +231,24 @@ Note that your `vpc_uuid` must be the numeric ids of your vpc. To get the numeri
 curl -X GET https://api.digitalocean.com/v2/vpcs -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
 ```
 
+### Additional Driver Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `user_data` | *(none)* | Cloud-init user data, run on first boot. |
+| `api_url` | `$DIGITALOCEAN_API_URL`, else `https://api.digitalocean.com` | API endpoint. Useful for testing against a proxy. |
+| `server_wait_interval` | `8` | Seconds between API polls while waiting on a Droplet. |
+| `server_wait_timeout` | `600` | Seconds to wait before giving up on a Droplet. |
+
+```yaml
+driver:
+  name: digitalocean
+  user_data: |
+    #cloud-config
+    package_update: true
+  server_wait_timeout: 900
+```
+
 ### Example **kitchen.yml**
 
 ```yaml

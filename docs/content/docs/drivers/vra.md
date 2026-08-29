@@ -168,3 +168,17 @@ suites:
     run_list:
       - recipe[my_cookbook::default]
 ```
+
+### Additional Driver Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `deployment_name` | the platform name | Name given to the vRA deployment. Ignored when `unique_name` is enabled. |
+| `unique_name` | `false` | Name the deployment `deployment_<request id>` instead of using `deployment_name`, so concurrent runs do not collide. |
+| `request_refresh_rate` | `2` | Seconds between polls while waiting for the request. |
+| `cache_credentials` | `false` | Cache credentials to disk after a successful run so later runs do not prompt. |
+| `tenant` | `nil` | **Deprecated.** Not used for authentication in vRA 8.x — use `domain` instead. |
+
+{{% tip %}}
+Set `unique_name: true` when running several instances concurrently. Without it, deployments sharing a `deployment_name` collide in vRA.
+{{% /tip %}}
