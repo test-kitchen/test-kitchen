@@ -47,7 +47,7 @@ VirtualBox is a popular open-source hypervisor that enables you to run multiple 
 
 ```bash
 $ VBoxManage --version
-7.1.8r168469
+7.2.16r174877
 ```
 
 ##### Vagrant
@@ -56,7 +56,7 @@ Vagrant acts as a wrapper for hypervisors like VirtualBox, simplifying the proce
 
 ```bash
 $ vagrant --version
-Vagrant 2.4.7
+Vagrant 2.4.9
 ```
 
 With Test Kitchen, VirtualBox, and Vagrant installed, you're ready to create a local virtual machine. By default, `kitchen init` generates a `kitchen-vagrant` driver configuration and a shell provisioner. This guide uses Vagrant with VirtualBox for virtualization, and Cinc Workstation for the cookbook examples.
