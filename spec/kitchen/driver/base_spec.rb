@@ -78,12 +78,11 @@ describe Kitchen::Driver::Base do
     _(logged_output.string).must_match(/yo\n/)
   end
 
-  %i{create setup verify destroy}.each do |action|
-    it "has a #{action} method that takes state" do
-      # TODO: revert back
-      # state = Hash.new
-      # driver.public_send(action, state).must_be_nil
-      driver.respond_to?(action)
+  # Base has no #setup or #verify: since 2.0 those actions belong to the
+  # transport and the verifier, which Instance::ActionRunner dispatches to.
+  %i{create destroy package}.each do |action|
+    it "has a #{action} method that takes state and returns nil" do
+      _(driver.public_send(action, {})).must_be_nil
     end
   end
 

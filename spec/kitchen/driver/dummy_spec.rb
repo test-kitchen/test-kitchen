@@ -80,16 +80,13 @@ describe Kitchen::Driver::Dummy do
       _ { driver.create(state) }.must_raise Kitchen::ActionFailed
     end
 
-    it "will only raise ActionFailed if :random_failure is set" do
+    it "completes normally if :random_failure is set but the roll misses" do
       config[:random_failure] = true
+      driver.stubs(:randomly_fail?).returns(false)
 
-      begin
-        driver.create(state)
-      rescue Kitchen::ActionFailed
-        # If exception is anything other than Kitchen::ActionFailed, this spec
-        # will fail
-        true
-      end
+      driver.create(state)
+
+      _(state[:my_id]).must_match(/^coolbeans-/)
     end
 
     it "logs a create event to INFO" do
@@ -167,7 +164,7 @@ describe Kitchen::Driver::Dummy do
       config[:sleep] = 12.5
       driver.expects(:sleep).with(12.5).returns(true)
 
-      driver.verify(state)
+      driver.destroy(state)
     end
 
     it "raises ActionFailed if :fail_destroy is set" do
