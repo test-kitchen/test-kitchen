@@ -26,5 +26,5 @@ group :integration do
 end
 
 group :linting do
-  gem "cookstyle", "~> 8.2"
+  gem "cookstyle", "~> 9.0"
 end
