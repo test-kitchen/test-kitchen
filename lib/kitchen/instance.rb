@@ -771,12 +771,12 @@ module Kitchen
       # reported transitioned state into the desired transitioned state.
       #
       # @param last [String,Symbol,nil] the last known transitioned state of
-      #   the Instance, defaulting to `nil` (for unknown or no history)
+      #   the Instance, or `nil` for unknown or no history
       # @param desired [String,Symbol] the desired transitioned state for the
       #   Instance
       # @return [Array<Symbol>] an Array of transition actions to perform
       # @api private
-      def self.actions(last = nil, desired)
+      def self.actions(last, desired)
         last_index = index(last)
         desired_index = index(desired)
 

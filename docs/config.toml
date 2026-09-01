@@ -61,6 +61,11 @@ name = "Getting Started"
 weight = 5
 
 [[menu.docs]]
+identifier = "commands"
+name = "Commands"
+weight = 7
+
+[[menu.docs]]
 identifier = "drivers"
 name = "Drivers"
 weight = 10

@@ -71,7 +71,8 @@ describe Kitchen::Driver::Proxy do
 
     it "does not require reset_command" do
       config.delete(:reset_command)
-      driver # Just make sure it doesn't raise
+
+      _(driver[:reset_command]).must_be_nil
     end
   end
 

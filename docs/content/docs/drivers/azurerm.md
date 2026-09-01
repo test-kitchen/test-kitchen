@@ -311,6 +311,23 @@ identities.
 * *boolean* : When enabled it will store the provisioner credentials in the state (default). Otherwise you will need to specify credentials under the transport. Disabling this is only useful in extremely unusual circumstances, e.g. you want to use credentials setup by cloud init or some other means other than the azure provisioning process.
   * Default Value: `true`
 
+### Additional Driver Options
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `vm_prefix` | `tk-` | Prefix for the generated VM name. |
+| `nsg_id` | `""` | Resource ID of an existing network security group to attach to the network interface. When unset, one is created for you. |
+| `open_ports` | `[]` | Extra inbound TCP ports to open, on top of the transport's own port. |
+
+```yaml
+driver:
+  name: azurerm
+  vm_prefix: ci-
+  open_ports:
+    - 8080
+    - 443
+```
+
 ### Example **kitchen.yml**
 
 ```yaml

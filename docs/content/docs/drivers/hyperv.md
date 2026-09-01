@@ -111,6 +111,12 @@ driver:
   * Hyper-V will automatically assign a valid dynamic address if your input doesn't give a valid MAC Address.
   * example: `static_mac_address: '00155d123456'`
 
+### Debugging
+
+| Option | Default | Description |
+| ---- | ---- | ---- |
+| `dry_run` | `false` | Echo the generated PowerShell instead of running it. Useful when debugging the driver or reporting a bug. |
+
 ## Image Configuration
 
  The following changes need to be made to a Windows image that is going to be used for testing.  This is not an exhaustive list and, your mileage may vary.

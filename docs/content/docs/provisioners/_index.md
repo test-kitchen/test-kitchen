@@ -33,11 +33,20 @@ provisioner:
     "/tmp/kitchen/validation.pem": "./downloads/validation.pem"
 ```
 
-Common provisioner plugins:
+### Provisioners documented here
 
-* [kitchen-omnibus-chef](https://github.com/test-kitchen/kitchen-omnibus-chef)
-* [kitchen-cinc](https://github.com/test-kitchen/kitchen-cinc)
-* [kitchen-ansible](https://github.com/neillturner/kitchen-ansible)
-* [kitchen-dsc](https://github.com/test-kitchen/kitchen-dsc)
-* [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
-* [kitchen-salt](https://github.com/saltstack/kitchen-salt)
+| Provisioner | Configures with |
+| ---- | ---- |
+| [Chef Infra](/docs/provisioners/chef) | Chef Infra Client, via kitchen-omnibus-chef |
+| [Cinc Client](/docs/provisioners/cinc) | Cinc Client, the community distribution of Chef Infra |
+| [Habitat](/docs/provisioners/habitat) | Habitat packages and a supervisor |
+| [PowerShell DSC](/docs/provisioners/dsc) | PowerShell Desired State Configuration |
+| [Shell](/docs/provisioners/shell) | A shell script. Built into the `test-kitchen` gem. |
+
+### Other provisioner plugins
+
+Maintained outside the Test Kitchen organization:
+
+- [kitchen-ansible](https://github.com/neillturner/kitchen-ansible)
+- [kitchen-puppet](https://github.com/neillturner/kitchen-puppet)
+- [kitchen-salt](https://github.com/saltstack/kitchen-salt)

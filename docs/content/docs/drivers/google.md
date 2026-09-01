@@ -264,6 +264,28 @@ Default:
 "test-kitchen-user"     => <env_user>,
 ```
 
+### `auto_restart`
+
+Automatically restart the instance if it is terminated by GCE. Forced off for
+preemptible instances. Default: `false`
+
+### `guest_accelerators`
+
+Array of accelerator (GPU) hashes, each with `type` and `count` keys.
+Default: `[]`
+
+```yaml
+driver:
+  guest_accelerators:
+    - type: nvidia-tesla-t4
+      count: 1
+```
+
+### `winpass_timeout`
+
+Seconds to wait for the Windows guest agent to reset the password.
+Default: `120`
+
 ### Disk configuration
 
 NOTE: In order to support multiple disks in this driver, the disk configuration has been reworked. However, old .kitchen-files will keep working and simply be adapted automatically.
