@@ -71,24 +71,24 @@ describe Kitchen::Transport::Exec do
 
         make_connection
       end
+    end
 
-      describe "called without a block" do
-        def make_connection(s = state) # rubocop:disable Lint/NestedMethodDefinition
-          transport.connection(s)
-        end
-
-        common_connection_specs
+    describe "called without a block" do
+      def make_connection(s = state)
+        transport.connection(s)
       end
 
-      describe "called with a block" do
-        def make_connection(s = state) # rubocop:disable Lint/NestedMethodDefinition
-          transport.connection(s) do |conn|
-            conn
-          end
-        end
+      common_connection_specs
+    end
 
-        common_connection_specs
+    describe "called with a block" do
+      def make_connection(s = state)
+        transport.connection(s) do |conn|
+          conn
+        end
       end
+
+      common_connection_specs
     end
   end
 end
