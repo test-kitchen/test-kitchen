@@ -518,6 +518,31 @@ describe Kitchen::Logger do
         .must_equal %w{banner stream stream stream stream}
     end
 
+    it "layers nested metadata scopes with the innermost winning" do
+      logger.with_metadata(action: "create", depth: "outer") do
+        logger.with_metadata(depth: "inner") do
+          logger.info("nested")
+        end
+        logger.info("outer only")
+      end
+
+      nested, outer = structured_events(structured_logdev)
+      _(nested["action"]).must_equal "create"
+      _(nested["depth"]).must_equal "inner"
+      _(outer["depth"]).must_equal "outer"
+    end
+
+    it "does not let a metadata scope mutate the base metadata" do
+      logger.with_metadata(instance: "overridden") do
+        logger.info("inside")
+      end
+      logger.info("after")
+
+      inside, after = structured_events(structured_logdev)
+      _(inside["instance"]).must_equal "overridden"
+      _(after["instance"]).must_equal "default-ubuntu-2404"
+    end
+
     it "applies temporary metadata to structured events" do
       logger.with_metadata(instance_session_id: "session-123", action: "create") do
         logger.info("inside action")
