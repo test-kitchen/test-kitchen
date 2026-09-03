@@ -52,7 +52,7 @@ module Kitchen
                else
                  [
                    formatted_exception(exception.original, "Nested Exception"),
-                   formatted_backtrace(exception),
+                   formatted_backtrace(exception.original),
                  ].flatten
                end
       end
