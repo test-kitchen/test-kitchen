@@ -15,6 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Must be configured before anything under lib/ is loaded, so it is opt-in via
+# COVERAGE=1 to keep the default local run fast.
+if ENV["COVERAGE"]
+  require "simplecov"
+
+  SimpleCov.command_name "unit"
+
+  SimpleCov.start do
+    add_filter %r{^/spec/}
+    add_filter %r{^/features/}
+    add_filter %r{^/lib/vendor/} # vendored third-party code
+
+    enable_coverage :branch
+
+    # A ratchet, not a target. Raise these as coverage improves; never lower
+    # them to make a build pass.
+    minimum_coverage line: 92, branch: 77
+  end
+end
+
 gem "minitest"
 
 require "fakefs/safe"
@@ -52,8 +72,24 @@ def with_fake_fs
   FakeFS.activate!
   FileUtils.mkdir_p("/tmp")
   yield
+ensure
   FakeFS.deactivate!
   FakeFS::FileSystem.clear
+end
+
+# Runs a block with ENV temporarily replaced, then restores the original
+# environment. Specs that assign to ENV directly leak into every example that
+# runs after them, which makes failures depend on test order.
+#
+#   with_env("HTTP_PROXY" => "http://proxy") { ... }
+#
+# A nil value unsets the variable for the duration of the block.
+def with_env(vars)
+  original = ENV.to_hash
+  vars.each { |key, value| value.nil? ? ENV.delete(key) : ENV[key] = value }
+  yield
+ensure
+  ENV.replace(original)
 end
 
 def running_tests_on_windows?

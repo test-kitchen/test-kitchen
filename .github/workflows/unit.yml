@@ -1,0 +1,91 @@
+---
+"on":
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit / Ruby ${{ matrix.ruby }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # The gemspec declares required_ruby_version >= 3.1, but minitest 6
+        # requires Ruby >= 3.2, so the test suite cannot run on 3.1 and that
+        # version is unverifiable. Either required_ruby_version should move to
+        # >= 3.2 or minitest should be pinned lower -- that is a release
+        # decision, so this matrix covers what can actually be tested.
+        ruby: ["3.2", "3.3", "3.4"]
+        os: [ubuntu-latest]
+        include:
+          # Test Kitchen has a large WinRM and PowerShell surface, and
+          # spec_helper carries Windows-only branches that no CI job had
+          # exercised in years. It passes, so it gates like any other job.
+          - ruby: "3.4"
+            os: windows-latest
+          - ruby: "3.4"
+            os: macos-latest
+          # Forward compatibility. Ruby 4 chills string literals, so mutating
+          # one warns today and raises later.
+          - ruby: "4.0"
+            os: ubuntu-latest
+            experimental: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Unit tests
+        run: bundle exec rake unit
+
+  isolation:
+    name: Spec file isolation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      # Runs every spec file in its own process. The normal suite loads all of
+      # lib into one process, which hides missing requires in the library
+      # itself -- a plugin doing `require "kitchen/shell_out"` hits them, we
+      # never do.
+      - name: Each spec file must pass on its own
+        run: bundle exec rake unit:isolated
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    env:
+      COVERAGE: "1"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      # Fails if coverage drops below the minimum in spec/spec_helper.rb.
+      - name: Unit tests with coverage
+        run: bundle exec rake unit
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7

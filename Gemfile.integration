@@ -1,0 +1,20 @@
+# -*- encoding: utf-8 -*-
+# Gems needed only by the acceptance suite in .github/workflows/integration.yml.
+#
+# These live outside the main Gemfile because Bundler resolves every group in a
+# Gemfile even when a group is excluded from installation with BUNDLE_WITHOUT.
+# kitchen-cinc-auditor requires a newer Ruby than the gemspec's minimum, so
+# leaving it in the main Gemfile made `bundle install` fail on Ruby 3.1 to 3.3
+# and prevented the unit suite from being tested across the range the gemspec
+# claims to support.
+eval_gemfile File.join(File.dirname(__FILE__), "Gemfile")
+
+group :integration do
+  gem "cinc-auditor-bin", source: "https://rubygems.cinc.sh"
+  gem "kitchen-cinc"
+  gem "kitchen-cinc-auditor",
+    git: "https://github.com/test-kitchen/kitchen-cinc-auditor.git",
+    ref: "3d0b89eaa13f12da08a8761970e39c0f564c24c6"
+  gem "kitchen-dokken"
+  gem "kitchen-vagrant"
+end

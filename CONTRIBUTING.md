@@ -1,4 +1,47 @@
-# Release Process
+# Contributing
+
+## Running the tests
+
+```shell
+bundle install
+```
+
+The acceptance-only gems live in `Gemfile.integration`, not the main `Gemfile`,
+so a plain `bundle install` does not reach for a git dependency or
+`rubygems.cinc.sh`. To run the acceptance suite, point Bundler at that file:
+
+```shell
+BUNDLE_GEMFILE=Gemfile.integration bundle install
+```
+
+| Command | What it does |
+| --- | --- |
+| `bundle exec rake unit` | The unit suite, all spec files in one process |
+| `bundle exec rake unit:isolated` | Every spec file in its own process |
+| `bundle exec rake unit:coverage` | The unit suite with a coverage report in `coverage/` |
+| `bundle exec rake style` | Cookstyle |
+| `bundle exec rake verify` | The three checks that gate a merge: `unit`, `unit:isolated`, `style` |
+| `bundle exec rake features` | The Cucumber acceptance suite, which is slower and needs more setup |
+
+### Why `unit:isolated` exists
+
+`rake unit` loads every spec file into a single process, so a spec can use a
+constant that a *different* spec happened to require first. That hides missing
+requires in the library itself: plugins routinely do `require "kitchen/shell_out"`
+rather than requiring all of `kitchen`, and they hit errors we never see.
+
+`rake unit:isolated` runs each spec file on its own and fails if any of them
+cannot stand alone. If it fails, the fix is almost always a missing `require`
+in `lib/`, not in the spec.
+
+### Coverage
+
+`rake unit:coverage` writes an HTML report to `coverage/` and fails if coverage
+falls below the minimum set in `spec/spec_helper.rb`. That minimum is a
+ratchet: raise it as coverage improves, and don't lower it to make a build
+pass.
+
+## Release Process
 
 This release process applies to all Test Kitchen projects, but each project may have additional requirements.
 

@@ -13,6 +13,8 @@ env:
   machine_user: test_user
   machine_pass: Pass@word1
   SPEC_OPTS: --format progress
+  # The acceptance-only gems live here rather than in the main Gemfile.
+  BUNDLE_GEMFILE: Gemfile.integration
 
 jobs:
   dokken:
