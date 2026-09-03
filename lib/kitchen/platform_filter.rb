@@ -32,9 +32,10 @@ module Kitchen
     # A string "looks-like" a regexp if it starts with / and ends with / + Regexp options i or x
     #
     # @return [Array] filters with regexp-like string converted to PlatformRegexpFilter
+    # @raise [ArgumentError] if a filter is neither a String nor a Regexp
     def self.convert(filters)
       ::Kernel.Array(filters).map do |filter|
-        if (match = filter.match(REGEXP_LIKE_PATTERN))
+        if filter.is_a?(::String) && (match = filter.match(REGEXP_LIKE_PATTERN))
           options = match["options"].include?("i") ? ::Regexp::IGNORECASE : 0
           options |= ::Regexp::EXTENDED if match["options"].include?("x")
           filter = ::Regexp.new(match["pattern"], options)
@@ -51,7 +52,8 @@ module Kitchen
     # @param [Regexp,String] value of the filter
     def initialize(value)
       unless value.is_a?(::Regexp) || value.is_a?(::String)
-        raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp"
+        raise ::ArgumentError, "PlatformFilter#new requires value to be a String or a Regexp, " \
+          "got #{value.inspect} (#{value.class})"
       end
 
       @value = value
