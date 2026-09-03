@@ -35,6 +35,13 @@ module Kitchen
     # "kitchen/util" is required on its own.
     @mutex_chdir = Mutex.new
 
+    # Directory entries omitted from listings even when dot files are enabled.
+    #
+    # @return [Array<String>] current and parent directory entries
+    # @api private
+    DOT_DIRECTORY_ENTRIES = [".".freeze, "..".freeze].freeze
+    private_constant :DOT_DIRECTORY_ENTRIES
+
     # Returns the standard library Logger level constants for a given symbol
     # representation.
     #
@@ -235,9 +242,9 @@ module Kitchen
                   else
                     []
                   end
-          Dir.glob(glob_pattern, *flags)
-            .reject { |f| [".", ".."].include?(f) }
-            .map { |f| File.join(path, f) }
+          Dir.glob(glob_pattern, *flags).filter_map do |entry|
+            File.join(path, entry) unless DOT_DIRECTORY_ENTRIES.include?(entry)
+          end
         end
       end
     end
