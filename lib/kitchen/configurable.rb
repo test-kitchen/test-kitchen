@@ -26,6 +26,24 @@ module Kitchen
   #
   # @author Fletcher Nichol <fnichol@nichol.ca>
   module Configurable
+    # @return [String] the canonical Bourne shell type
+    # @api private
+    BOURNE_SHELL_TYPE = "bourne".freeze
+
+    # @return [String] the canonical PowerShell shell type
+    # @api private
+    POWERSHELL_SHELL_TYPE = "powershell".freeze
+
+    # @return [String] the canonical Unix OS type
+    # @api private
+    UNIX_OS_TYPE = "unix".freeze
+
+    # @return [String] the canonical Windows OS type
+    # @api private
+    WINDOWS_OS_TYPE = "windows".freeze
+
+    private_constant :BOURNE_SHELL_TYPE, :POWERSHELL_SHELL_TYPE, :UNIX_OS_TYPE, :WINDOWS_OS_TYPE
+
     # Extends the including class with {ClassMethods} so that the
     # `default_config`, `required_config`, and related DSL is available at the
     # class level.
@@ -73,7 +91,7 @@ module Kitchen
     #   unset, for backwards compatibility)
     def bourne_shell?
       shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
-      ["bourne", nil].include?(shell_type)
+      BOURNE_SHELL_TYPE == shell_type || shell_type.nil?
     end
 
     # Find an appropriate path to a file or directory, based on graceful
@@ -150,7 +168,7 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:shell_type` is `"powershell"`
     def powershell_shell?
       shell_type = instance.platform.respond_to?(:shell_type) ? instance.platform.shell_type : nil
-      ["powershell"].include?(shell_type)
+      POWERSHELL_SHELL_TYPE == shell_type
     end
 
     # Builds a file path based on the `:os_type` (`"windows"` or `"unix"`).
@@ -165,7 +183,7 @@ module Kitchen
     #   unset, for backwards compatibility)
     def unix_os?
       os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
-      ["unix", nil].include?(os_type)
+      UNIX_OS_TYPE == os_type || os_type.nil?
     end
 
     # Performs whatever tests that may be required to ensure that this plugin
@@ -182,7 +200,7 @@ module Kitchen
     # @return [TrueClass,FalseClass] true if `:os_type` is `"windows"`
     def windows_os?
       os_type = instance.platform.respond_to?(:os_type) ? instance.platform.os_type : nil
-      ["windows"].include?(os_type)
+      WINDOWS_OS_TYPE == os_type
     end
 
     private
