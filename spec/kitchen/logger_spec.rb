@@ -337,6 +337,68 @@ describe Kitchen::Logger do
           colorize("       !!!!!! fatal", opts[:color]) + "\n"
         )
       end
+
+      it "recognizes a prefix that is split across chunk boundaries" do
+        logger << "---"
+        logger << "--> banner\n"
+
+        _(stdout.string).must_equal(
+          colorize("-----> banner", opts[:color]) + "\n"
+        )
+      end
+
+      it "handles a bare prefix carrying no message" do
+        logger << [
+          "-----> ",
+          "       ",
+          ">>>>>> ",
+        ].join("\n").concat("\n")
+
+        _(stdout.string).must_equal(
+          colorize("-----> ", opts[:color]) + "\n" +
+          colorize("       ", opts[:color]) + "\n" +
+          colorize(">>>>>> ", opts[:color]) + "\n"
+        )
+      end
+
+      it "treats a too-short near-miss prefix as unprefixed output" do
+        logger << [
+          ">>>>> five",
+          "----->six",
+          "   ",
+        ].join("\n").concat("\n")
+
+        _(stdout.string).must_equal(
+          colorize("       >>>>> five", opts[:color]) + "\n" +
+          colorize("       ----->six", opts[:color]) + "\n" +
+          colorize("          ", opts[:color]) + "\n"
+        )
+      end
+
+      it "ignores an empty chunk" do
+        logger << ""
+
+        _(stdout.string).must_equal ""
+      end
+
+      it "emits every line of a chunk carrying many lines" do
+        logger << Array.new(500) { |i| "       line #{i}" }.join("\n").concat("\n")
+
+        _(stdout.string.lines.size).must_equal 500
+        _(stdout.string.lines.first).must_equal(
+          colorize("       line 0", opts[:color]) + "\n"
+        )
+        _(stdout.string.lines.last).must_equal(
+          colorize("       line 499", opts[:color]) + "\n"
+        )
+      end
+
+      it "keeps an unterminated tail buffered across many chunks" do
+        250.times { |i| logger << "       line #{i}\n" }
+        logger << "       trailing with no newline"
+
+        _(stdout.string.lines.size).must_equal 250
+      end
     end
   end
 
