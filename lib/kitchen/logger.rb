@@ -620,9 +620,11 @@ module Kitchen
       private
 
       def line_buffer
-        formatter = StreamLineFormatter.new(self)
-        @line_buffer ||= LineBuffer.new do |line|
-          formatter.format(line)
+        @line_buffer ||= begin
+          formatter = StreamLineFormatter.new(self)
+          LineBuffer.new do |line|
+            formatter.format(line)
+          end
         end
       end
     end
@@ -818,9 +820,11 @@ module Kitchen
       private
 
       def line_buffer
-        formatter = StreamLineFormatter.new(self)
-        @line_buffer ||= LineBuffer.new do |line|
-          formatter.format(line)
+        @line_buffer ||= begin
+          formatter = StreamLineFormatter.new(self)
+          LineBuffer.new do |line|
+            formatter.format(line)
+          end
         end
       end
 
