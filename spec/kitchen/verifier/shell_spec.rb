@@ -78,6 +78,19 @@ describe Kitchen::Verifier::Shell do
     end
   end
 
+  # Returns the options the verifier actually hands to Mixlib::ShellOut, which
+  # is what decides the environment the command runs with.
+  def shellout_opts_for(state)
+    captured = nil
+    Mixlib::ShellOut.stubs(:new).with do |_command, opts|
+      captured = opts
+      true
+    end.returns(stub("live_stream=": nil, run_command: nil, error!: nil))
+
+    verifier.call(state)
+    captured
+  end
+
   describe "#call" do
     describe "#shell_out" do
       it "calls sleep if :sleep value is greater than 0" do
@@ -91,20 +104,41 @@ describe Kitchen::Verifier::Shell do
         state[:hostname] = "testhost"
         state[:server_id] = "i-xxxxxx"
         state[:port] = 22
-        verifier.call(state)
-        _(config[:shellout_opts][:environment]["KITCHEN_HOSTNAME"]).must_equal "testhost"
-        _(config[:shellout_opts][:environment]["KITCHEN_SERVER_ID"]).must_equal "i-xxxxxx"
-        _(config[:shellout_opts][:environment]["KITCHEN_PORT"]).must_equal "22"
-        _(config[:shellout_opts][:environment]["KITCHEN_INSTANCE"]).must_equal "coolbeans-fries"
-        _(config[:shellout_opts][:environment]["KITCHEN_PLATFORM"]).must_equal "coolbeans"
-        _(config[:shellout_opts][:environment]["KITCHEN_SUITE"]).must_equal "fries"
-        _(config[:shellout_opts][:environment]["KITCHEN_USERNAME"]).must_be_nil
+
+        env = shellout_opts_for(state)[:environment]
+
+        _(env["KITCHEN_HOSTNAME"]).must_equal "testhost"
+        _(env["KITCHEN_SERVER_ID"]).must_equal "i-xxxxxx"
+        _(env["KITCHEN_PORT"]).must_equal "22"
+        _(env["KITCHEN_INSTANCE"]).must_equal "coolbeans-fries"
+        _(env["KITCHEN_PLATFORM"]).must_equal "coolbeans"
+        _(env["KITCHEN_SUITE"]).must_equal "fries"
+        _(env["KITCHEN_USERNAME"]).must_be_nil
       end
 
       it "transport username is set to environment" do
         transport.stubs(:[]).with(:username).returns("demigod")
-        verifier.call(state)
-        _(config[:shellout_opts][:environment]["KITCHEN_USERNAME"]).must_equal "demigod"
+
+        _(shellout_opts_for(state)[:environment]["KITCHEN_USERNAME"]).must_equal "demigod"
+      end
+
+      it "keeps environment variables the user configured" do
+        config[:shellout_opts] = { environment: { "MY_VAR" => "keepme" } }
+
+        _(shellout_opts_for(state)[:environment]["MY_VAR"]).must_equal "keepme"
+      end
+
+      it "keeps other shellout options the user configured" do
+        config[:shellout_opts] = { timeout: 30 }
+
+        _(shellout_opts_for(state)[:timeout]).must_equal 30
+      end
+
+      it "does not modify the configured shellout options" do
+        config[:shellout_opts] = { environment: { "MY_VAR" => "keepme" } }
+        shellout_opts_for(state)
+
+        _(config[:shellout_opts]).must_equal(environment: { "MY_VAR" => "keepme" })
       end
 
       it "raises ActionFailed if set false to :command" do

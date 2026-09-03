@@ -39,13 +39,12 @@ module Kitchen
       def call(state)
         info("[#{name}] Verify on instance #{instance.name} with state=#{state}")
         sleep_if_set
-        merge_state_to_env(state)
         if config[:remote_exec]
           instance.transport.connection(state) do |conn|
             conn.execute(config[:command])
           end
         else
-          shellout
+          shellout(state)
         end
         debug("[#{name}] Verify completed.")
       end
@@ -72,8 +71,8 @@ module Kitchen
         end
       end
 
-      def shellout
-        cmd = Mixlib::ShellOut.new(config[:command], config[:shellout_opts])
+      def shellout(state = {})
+        cmd = Mixlib::ShellOut.new(config[:command], shellout_opts(state))
         cmd.live_stream = config[:live_stream]
         cmd.run_command
         begin
@@ -83,16 +82,38 @@ module Kitchen
         end
       end
 
-      def merge_state_to_env(state)
-        env_state = { environment: {} }
-        env_state[:environment]["KITCHEN_INSTANCE"] = instance.name
-        env_state[:environment]["KITCHEN_PLATFORM"] = instance.platform.name
-        env_state[:environment]["KITCHEN_SUITE"] = instance.suite.name
-        env_state[:environment]["KITCHEN_USERNAME"] = instance.transport[:username] if instance.respond_to?(:transport)
+      # Returns the options to run the command with: whatever the user
+      # configured, with the KITCHEN_* variables merged into their environment
+      # rather than replacing it.
+      #
+      # This builds a new Hash instead of writing back to config. Nested config
+      # hashes are shared between every instance, so mutating :shellout_opts
+      # would leak one instance's environment into the others.
+      #
+      # @param state [Hash] mutable instance state
+      # @return [Hash] options for Mixlib::ShellOut
+      # @api private
+      def shellout_opts(state)
+        opts = config[:shellout_opts].to_h
+        opts.merge(
+          environment: opts.fetch(:environment, {}).to_h.merge(kitchen_environment(state))
+        )
+      end
+
+      # @param state [Hash] mutable instance state
+      # @return [Hash] the KITCHEN_* environment variables for this instance
+      # @api private
+      def kitchen_environment(state)
+        env = {
+          "KITCHEN_INSTANCE" => instance.name,
+          "KITCHEN_PLATFORM" => instance.platform.name,
+          "KITCHEN_SUITE" => instance.suite.name,
+        }
+        env["KITCHEN_USERNAME"] = instance.transport[:username] if instance.respond_to?(:transport)
         state.each_pair do |key, value|
-          env_state[:environment]["KITCHEN_" + key.to_s.upcase] = value.to_s
+          env["KITCHEN_" + key.to_s.upcase] = value.to_s
         end
-        config[:shellout_opts].merge!(env_state)
+        env
       end
     end
   end
