@@ -230,7 +230,11 @@ module Kitchen
       # will persist after the process terminates. In other words, cleanup is
       # explicit. This method is safe to call multiple times.
       def cleanup_sandbox
-        return if sandbox_path.nil?
+        # Check the ivar, not #sandbox_path, which raises rather than
+        # returning nil when the sandbox was never created. This runs from
+        # an ensure block, so raising here would mask the error that kept
+        # #create_sandbox from finishing.
+        return if @sandbox_path.nil?
 
         debug("Cleaning up local sandbox in #{sandbox_path}")
         @install_script_path = nil
