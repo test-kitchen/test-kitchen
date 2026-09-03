@@ -1037,9 +1037,7 @@ module Kitchen
     #   Hash if not found
     # @api private
     def platform_data_for(name)
-      data.fetch(:platforms, {}).find(-> { {} }) do |platform|
-        platform.fetch(:name, nil) == name
-      end
+      platform_index[name] || {}
     end
 
     # Destructively sets a base kitchen config key/value pair at the root of
@@ -1068,8 +1066,41 @@ module Kitchen
     #   Hash if not found
     # @api private
     def suite_data_for(name)
-      data.fetch(:suites, {}).find(-> { {} }) do |suite|
-        suite.fetch(:name, nil) == name
+      suite_index[name] || {}
+    end
+
+    # Name-keyed index of the platform data, built once on first use.
+    #
+    # Every plugin lookup for every instance resolves a platform and a suite by
+    # name, so the linear scans this replaces made building a project's
+    # instances quadratic in its size.
+    #
+    # @return [Hash{String => Hash}] platform name to platform data
+    # @api private
+    def platform_index
+      @platform_index ||= index_by_name(data.fetch(:platforms, []))
+    end
+
+    # Name-keyed index of the suite data, built once on first use.
+    #
+    # @return [Hash{String => Hash}] suite name to suite data
+    # @api private
+    def suite_index
+      @suite_index ||= index_by_name(data.fetch(:suites, []))
+    end
+
+    # Indexes a collection of named data hashes by their :name value.
+    #
+    # An earlier entry wins over a later duplicate, matching the first match
+    # that a linear search would have returned.
+    #
+    # @param collection [Enumerable<Hash>] platform or suite data
+    # @return [Hash{String => Hash}] name to entry
+    # @api private
+    def index_by_name(collection)
+      collection.each_with_object({}) do |entry, index|
+        key = entry.fetch(:name, nil)
+        index[key] = entry unless index.key?(key)
       end
     end
   end
