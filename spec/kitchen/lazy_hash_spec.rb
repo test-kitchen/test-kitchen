@@ -73,6 +73,59 @@ describe Kitchen::LazyHash do
     end
   end
 
+  describe "#[]=" do
+    it "stores a regular value" do
+      subject = Kitchen::LazyHash.new(hash_obj, context)
+      subject[:new_key] = "fresh"
+
+      _(subject[:new_key]).must_equal "fresh"
+    end
+
+    it "stores the value unrendered so callables stay lazy" do
+      subject = Kitchen::LazyHash.new(hash_obj, context)
+      subject[:late] = ->(c) { c.color }
+
+      _(subject[:late]).must_equal "blue"
+    end
+
+    it "writes through to the underlying hash" do
+      subject = Kitchen::LazyHash.new(hash_obj, context)
+      subject[:barn] = "open"
+
+      _(hash_obj[:barn]).must_equal "open"
+    end
+  end
+
+  describe "#key?" do
+    it "is true for a key that is set" do
+      _(Kitchen::LazyHash.new(hash_obj, context).key?(:barn)).must_equal true
+    end
+
+    it "is false for a key that is not set" do
+      _(Kitchen::LazyHash.new(hash_obj, context).key?(:nope)).must_equal false
+    end
+
+    it "does not invoke a callable value" do
+      called = false
+      subject = Kitchen::LazyHash.new({ trap: ->(_c) { called = true } }, context)
+
+      _(subject.key?(:trap)).must_equal true
+      _(called).must_equal false
+    end
+  end
+
+  describe "#keys" do
+    it "returns the underlying keys without rendering values" do
+      called = false
+      subject = Kitchen::LazyHash.new(
+        { barn: "locked", trap: ->(_c) { called = true } }, context
+      )
+
+      _(subject.keys).must_equal %i{barn trap}
+      _(called).must_equal false
+    end
+  end
+
   describe "#to_hash" do
     it "invokes any callable values and returns a Hash object" do
       converted = Kitchen::LazyHash.new(hash_obj, context).to_hash
