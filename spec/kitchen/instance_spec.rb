@@ -364,6 +364,36 @@ describe Kitchen::Instance do
     _ { instance.login }.must_raise Kitchen::UserError
   end
 
+  describe "#doctor_action" do
+    it "runs the doctor on every plugin" do
+      driver.expects(:doctor).returns(false)
+      provisioner.expects(:doctor).returns(false)
+      transport.expects(:doctor).returns(false)
+      verifier.expects(:doctor).returns(false)
+
+      instance.doctor_action
+    end
+
+    it "runs the remaining plugins after one reports a problem" do
+      driver.stubs(:doctor).returns(true)
+      provisioner.expects(:doctor).returns(false)
+      transport.expects(:doctor).returns(false)
+      verifier.expects(:doctor).returns(false)
+
+      instance.doctor_action
+    end
+
+    it "returns false when no plugin reports a problem" do
+      _(instance.doctor_action).must_equal false
+    end
+
+    it "returns true when a plugin reports a problem" do
+      verifier.stubs(:doctor).returns(true)
+
+      _(instance.doctor_action).must_equal true
+    end
+  end
+
   describe "#status" do
     it "returns the driver status" do
       state_file.write(my_id: "instance-123")

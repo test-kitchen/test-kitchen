@@ -28,10 +28,12 @@ module Kitchen
         end
         # By default only doctor the first instance to avoid output spam.
         results = [results.first] unless options[:all]
-        failed = results.any? do |instance|
+        # Doctor every instance before deciding the outcome. #any? would
+        # stop at the first instance reporting a problem and skip the rest.
+        failed = results.map do |instance|
           debug "Doctor on #{instance.name}."
           instance.doctor_action
-        end
+        end.any?
         exit(1) if failed
       end
     end
