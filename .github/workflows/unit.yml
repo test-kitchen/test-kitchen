@@ -57,7 +57,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
+          ruby-version: "3.4.10"
           bundler-cache: true
       # Runs every spec file in its own process. The normal suite loads all of
       # lib into one process, which hides missing requires in the library
@@ -77,7 +77,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
+          ruby-version: "3.4.10"
           bundler-cache: true
       # Fails if coverage drops below the minimum in spec/spec_helper.rb.
       - name: Unit tests with coverage
