@@ -136,6 +136,38 @@ describe Kitchen::Logger do
       _(stdout.string).must_equal "       hello\n"
     end
 
+    it "emits no escape sequences when the color does not resolve" do
+      opts[:color] = :not_a_real_color
+      logger.info("hello")
+
+      _(stdout.string).must_equal "       hello\n"
+    end
+
+    it "emits no escape sequences when the color is nil" do
+      opts[:color] = nil
+      logger.info("hello")
+
+      _(stdout.string).must_equal "       hello\n"
+    end
+
+    it "wraps each line in the color and a reset" do
+      opts[:color] = :cyan
+      logger.info("hello")
+
+      _(stdout.string).must_equal "\e[36m       hello\e[0m\n"
+    end
+
+    it "passes binary stream bytes through unaltered" do
+      opts[:color] = :cyan
+      logger << "caf\xC3\xA9 \xFF\n".dup.force_encoding(Encoding::ASCII_8BIT)
+
+      # \e[36m + seven-space info prefix + the original bytes + \e[0m + newline
+      _(stdout.string.bytes).must_equal(
+        [27, 91, 51, 54, 109] + ([32] * 7) +
+        [99, 97, 102, 195, 169, 32, 255] + [27, 91, 48, 109, 10]
+      )
+    end
+
     describe "for severity" do
       before { opts[:level] = Kitchen::Util.to_logger_level(:debug) }
 

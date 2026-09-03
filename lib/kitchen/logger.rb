@@ -451,15 +451,20 @@ module Kitchen
 
       private
 
+      # Builds the formatter used for console output.
+      #
+      # The colour is fixed for the life of the logger, so both escape
+      # sequences are resolved once here rather than on every line. An
+      # uncolourised logger, and one whose colour did not resolve, share the
+      # same uncoloured formatter.
       def stdout_formatter(color, colorize)
-        if colorize
-          proc do |_severity, _datetime, _progname, msg|
-            Color.colorize(msg.dup.to_s, color).concat("\n")
-          end
+        escape = colorize ? Color.escape(color) : ""
+
+        if escape.empty?
+          proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
         else
-          proc do |_severity, _datetime, _progname, msg|
-            msg.dup.concat("\n")
-          end
+          reset = Color.escape(:reset)
+          proc { |_severity, _datetime, _progname, msg| "#{escape}#{msg}#{reset}\n" }
         end
       end
 
