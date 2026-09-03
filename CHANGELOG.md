@@ -1,5 +1,29 @@
 # Test Kitchen Change Log
 
+## [4.1.4](https://github.com/test-kitchen/test-kitchen/compare/v4.1.3...v4.1.4) (2026-09-03)
+
+
+### Bug Fixes
+
+* accept Regexp platform filters without raising ([#2120](https://github.com/test-kitchen/test-kitchen/issues/2120)) ([7ef19e3](https://github.com/test-kitchen/test-kitchen/commit/7ef19e37e62db6926b917895b02b227ffec81c7e))
+* do not skip every instance when --concurrency is zero ([#2119](https://github.com/test-kitchen/test-kitchen/issues/2119)) ([28e0e60](https://github.com/test-kitchen/test-kitchen/commit/28e0e60bb18f7e6de7f488d1fbeb820306a07566))
+* keep user environment in the shell verifier ([#2124](https://github.com/test-kitchen/test-kitchen/issues/2124)) ([a8c8b97](https://github.com/test-kitchen/test-kitchen/commit/a8c8b97dc68eca0ca0ece795da05ecaacc893450))
+* log exec transport output to the instance log ([#2123](https://github.com/test-kitchen/test-kitchen/issues/2123)) ([d8fe532](https://github.com/test-kitchen/test-kitchen/commit/d8fe532ee437b799340830e560fdff5a16d00721))
+* mask secrets in Ruby 3.4+ Hash#inspect output ([#2117](https://github.com/test-kitchen/test-kitchen/issues/2117)) ([a15b93e](https://github.com/test-kitchen/test-kitchen/commit/a15b93efbb3793a5b40343a9e66d8b9bc0b3d636))
+* report every problem `kitchen doctor` finds ([#2118](https://github.com/test-kitchen/test-kitchen/issues/2118)) ([32b447a](https://github.com/test-kitchen/test-kitchen/commit/32b447a1bedeba7ee062796e2ea2879f655541b0))
+* show the nested exception's own backtrace ([#2121](https://github.com/test-kitchen/test-kitchen/issues/2121)) ([9f2e66f](https://github.com/test-kitchen/test-kitchen/commit/9f2e66f473e45cf3a12f2ed1fc7cc6614b034528))
+* stop cleanup_sandbox from masking the real failure ([#2122](https://github.com/test-kitchen/test-kitchen/issues/2122)) ([317437f](https://github.com/test-kitchen/test-kitchen/commit/317437fc568a1604e76aa0f1484fd4430eb3e0d5))
+
+
+### Performance Improvements
+
+* cut a syscall and two allocations per structured log event ([#2108](https://github.com/test-kitchen/test-kitchen/issues/2108)) ([f7c404f](https://github.com/test-kitchen/test-kitchen/commit/f7c404fd8e2a775b031129bd19ea4f27462e7b65))
+* define the LazyHash methods that Configurable actually calls ([#2107](https://github.com/test-kitchen/test-kitchen/issues/2107)) ([abcf474](https://github.com/test-kitchen/test-kitchen/commit/abcf47428900ca1f197fdab5196f95e54988668f))
+* drop the unused rubygems/gem_runner require ([#2111](https://github.com/test-kitchen/test-kitchen/issues/2111)) ([62a9a72](https://github.com/test-kitchen/test-kitchen/commit/62a9a720275c7f3664959cdfe9abd50600276f0e))
+* index platform and suite data by name instead of scanning ([#2110](https://github.com/test-kitchen/test-kitchen/issues/2110)) ([ef23d9a](https://github.com/test-kitchen/test-kitchen/commit/ef23d9ac4b291a1a59e99fbe84fb021530e99985))
+* make streamed log line handling linear ([#2106](https://github.com/test-kitchen/test-kitchen/issues/2106)) ([e9489bf](https://github.com/test-kitchen/test-kitchen/commit/e9489bf5e24a3ebe9c0c6cf795ad47c5b3335f09))
+* resolve the console color escapes once per logger, not per line ([#2109](https://github.com/test-kitchen/test-kitchen/issues/2109)) ([2412ae5](https://github.com/test-kitchen/test-kitchen/commit/2412ae5f2fad3d3cf1613dc70297db84bb50f572))
+
 ## [4.1.3](https://github.com/test-kitchen/test-kitchen/compare/v4.1.2...v4.1.3) (2026-08-23)
 
 
