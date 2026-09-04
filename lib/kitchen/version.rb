@@ -19,5 +19,5 @@ module Kitchen
   # The currently released version of Test Kitchen.
   #
   # @return [String] a semantic version string
-  VERSION = "4.1.3".freeze
+  VERSION = "4.1.4".freeze
 end
