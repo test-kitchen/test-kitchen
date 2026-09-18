@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [4.1.5](https://github.com/test-kitchen/test-kitchen/compare/v4.1.4...v4.1.5) (2026-09-18)
+
+
+### Performance Improvements
+
+* reuse streamed log formatters ([#2129](https://github.com/test-kitchen/test-kitchen/issues/2129)) ([d36d921](https://github.com/test-kitchen/test-kitchen/commit/d36d92123dd20f8ddb502dee069185da8c5eb186))
+
 ## [4.1.4](https://github.com/test-kitchen/test-kitchen/compare/v4.1.3...v4.1.4) (2026-09-03)
 
 
