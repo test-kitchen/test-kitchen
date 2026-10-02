@@ -121,13 +121,14 @@ module Kitchen
         end
       end
 
-      [
-        File.join(base, instance.suite.name, path),
-        File.join(base, path),
-        File.join(Dir.pwd, path),
-      ].find do |candidate|
-        type == :directory ? File.directory?(candidate) : File.file?(candidate)
-      end
+      candidate = File.join(base, instance.suite.name, path)
+      return candidate if path_exists?(candidate, type)
+
+      candidate = File.join(base, path)
+      return candidate if path_exists?(candidate, type)
+
+      candidate = File.join(Dir.pwd, path)
+      candidate if path_exists?(candidate, type)
     end
 
     # Returns an array of configuration keys.
@@ -204,6 +205,16 @@ module Kitchen
     end
 
     private
+
+    # Returns whether a path exists as the requested filesystem type.
+    #
+    # @param path [String] filesystem path to inspect
+    # @param type [Symbol] either `:file` or `:directory`
+    # @return [Boolean] whether the path exists as the requested type
+    # @api private
+    def path_exists?(path, type)
+      type == :directory ? File.directory?(path) : File.file?(path)
+    end
 
     # @return [LazyHash] a configuration hash
     # @api private
