@@ -139,9 +139,15 @@ module Kitchen
     # @return [Array<Instance>] an array of Instances
     # @api private
     def build_instances
-      filter_instances.map.with_index do |(suite, platform), index|
-        new_instance(suite, platform, index)
+      instances = []
+      suites.each do |suite|
+        platforms.each do |platform|
+          next unless platform_selected?(suite, platform)
+
+          instances << new_instance(suite, platform, instances.length)
+        end
       end
+      instances
     end
 
     # Returns an object which can generate configuration hashes for all the
@@ -171,23 +177,19 @@ module Kitchen
       File.join(kitchen_root, Kitchen::DEFAULT_TEST_DIR)
     end
 
-    # Generates a filtered Array of tuples (Suite/Platform pairs) which is the
-    # cartesian product of suites and platforms. A Suite has two optional
-    # arrays (`#includes` and `#excludes`) which can be used to drop or
-    # select certain Platforms with which to join.
+    # Returns whether a platform passes a suite's include or exclude filters.
     #
-    # @return [Array<Array<Suite, Platform>>] an Array of Suite/Platform
-    #   tuples
+    # @param suite [Suite] a suite with optional platform filters
+    # @param platform [Platform] the platform to check
+    # @return [Boolean] whether an instance should be built for the pair
     # @api private
-    def filter_instances
-      suites.product(platforms).select do |suite, platform|
-        if !suite.includes.empty?
-          suite.includes.include?(platform.name)
-        elsif !suite.excludes.empty?
-          !suite.excludes.include?(platform.name)
-        else
-          true
-        end
+    def platform_selected?(suite, platform)
+      if !suite.includes.empty?
+        suite.includes.include?(platform.name)
+      elsif !suite.excludes.empty?
+        !suite.excludes.include?(platform.name)
+      else
+        true
       end
     end
 
