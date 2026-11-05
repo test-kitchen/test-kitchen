@@ -5,7 +5,7 @@ gemspec
 group :test do
   gem "rake"
   gem "rb-readline"
-  gem "aruba",     ">= 0.11", "< 3.0"
+  gem "aruba",     ">= 0.11", "< 3.1"
   gem "countloc",  "~> 0.4"
   gem "cucumber",  ">= 9.2", "< 12"
   gem "fakefs",    "~> 3.0"
