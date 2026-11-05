@@ -1,5 +1,17 @@
 # Test Kitchen Change Log
 
+## [4.1.6](https://github.com/test-kitchen/test-kitchen/compare/v4.1.5...v4.1.6) (2026-11-05)
+
+
+### Performance Improvements
+
+* avoid transient platform type arrays ([#2130](https://github.com/test-kitchen/test-kitchen/issues/2130)) ([6ceac6b](https://github.com/test-kitchen/test-kitchen/commit/6ceac6bf78e9c4c076c226341540905b09f362e7))
+* build instances in one pass ([#2132](https://github.com/test-kitchen/test-kitchen/issues/2132)) ([1994d4e](https://github.com/test-kitchen/test-kitchen/commit/1994d4e34f4a3d4f05c9412041c9b0ab3cd55a6f))
+* build path candidates on demand ([#2131](https://github.com/test-kitchen/test-kitchen/issues/2131)) ([03f7f81](https://github.com/test-kitchen/test-kitchen/commit/03f7f81d98fddd32788fac7ba56588ad689c8e90))
+* filter directory entries in one pass ([#2133](https://github.com/test-kitchen/test-kitchen/issues/2133)) ([be402ea](https://github.com/test-kitchen/test-kitchen/commit/be402eaeb5f25e098121698eecb3130efec8dd1c))
+* reduce configuration array copies ([#2136](https://github.com/test-kitchen/test-kitchen/issues/2136)) ([c272c5e](https://github.com/test-kitchen/test-kitchen/commit/c272c5e5b4345ffb7138705e8de24022bc25c2cd))
+* remove recursive merge scratch hash ([#2135](https://github.com/test-kitchen/test-kitchen/issues/2135)) ([b3721ed](https://github.com/test-kitchen/test-kitchen/commit/b3721ed43871ea149d998477cf557ab259677d9c))
+
 ## [4.1.5](https://github.com/test-kitchen/test-kitchen/compare/v4.1.4...v4.1.5) (2026-09-18)
 
 
