@@ -148,9 +148,16 @@ module Kitchen
 
     def combine_arrays!(root, key, *namespaces)
       if root.key?(key)
-        root[key] = namespaces
-          .map { |namespace| root.fetch(key).fetch(namespace, []) }.flatten
-          .compact
+        values = namespaces.map { |namespace| root.fetch(key).fetch(namespace, []) }
+        root[key] = if values.all?(Array)
+                      combined = values.each_with_object([]) do |value, result|
+                        result.concat(value.any?(Array) ? value.flatten : value)
+                      end
+                      combined.compact!
+                      combined
+                    else
+                      values.flatten.compact
+                    end
       end
     end
 
