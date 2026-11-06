@@ -10,7 +10,7 @@ group :test do
   gem "cucumber",  ">= 9.2", "< 12"
   gem "fakefs",    "~> 3.0"
   gem "maruku",    "~> 0.7"
-  gem "minitest",  "~> 6.0", "< 6.1"
+  gem "minitest",  "~> 6.0", "< 6.2"
   gem "mocha",     "~> 3.0"
   gem "simplecov", "~> 1.0", require: false
   gem "yard",      "~> 0.9"
