@@ -19,6 +19,7 @@
 require "thor" # rubocop:disable Chef/Ruby/UnlessDefinedRequire
 
 require_relative "../kitchen"
+require_relative "box/cli"
 require_relative "generator/init"
 
 module Kitchen
@@ -132,6 +133,9 @@ module Kitchen
       perform("list", "list", args)
     end
     map status: :list
+
+    desc "box SUBCOMMAND", "Inspect a local box manifest"
+    subcommand "box", Kitchen::Box::CLI
 
     desc "diagnose [INSTANCE|REGEXP|all]", "Show computed diagnostic configuration"
     method_option :loader,
