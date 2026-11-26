@@ -14,8 +14,8 @@ describe HashRecursiveMerge do
     }
 
     _(original.rmerge(override)).must_equal(
-      top: "override",
-      nested: { kept: true, replaced: "override", added: true }
+      { top: "override",
+      nested: { kept: true, replaced: "override", added: true } }
     )
   end
 
@@ -23,7 +23,7 @@ describe HashRecursiveMerge do
     original = { value: "original" }
     override = { value: { nested: true } }
 
-    _(original.rmerge(override)).must_equal(value: { nested: true })
+    _(original.rmerge(override)).must_equal({ value: { nested: true } })
   end
 
   it "does not mutate either source hash" do
@@ -32,7 +32,7 @@ describe HashRecursiveMerge do
 
     original.rmerge(override)
 
-    _(original).must_equal(nested: { original: true })
-    _(override).must_equal(nested: { override: true })
+    _(original).must_equal({ nested: { original: true } })
+    _(override).must_equal({ nested: { override: true } })
   end
 end

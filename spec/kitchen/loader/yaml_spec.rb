@@ -142,7 +142,7 @@ describe Kitchen::Loader::YAML do
         "foo" => "bar"
       )
 
-      _(loader.read).must_equal(foo: "bar")
+      _(loader.read).must_equal({ foo: "bar" })
     end
 
     it "deep merges in kitchen.local.yml configuration with kitchen.yml" do
@@ -157,9 +157,9 @@ describe Kitchen::Loader::YAML do
       )
 
       _(loader.read).must_equal(
-        a: "b",
+        { a: "b",
         c: "d",
-        common: { xx: 1, yy: 2 }
+        common: { xx: 1, yy: 2 } }
       )
     end
 
@@ -179,10 +179,10 @@ describe Kitchen::Loader::YAML do
       )
 
       _(loader.read).must_equal(
-        a: "b",
+        { a: "b",
         c: "d",
         e: "f",
-        common: { xx: 1, yy: 2, zz: 3 }
+        common: { xx: 1, yy: 2, zz: 3 } }
       )
     end
 
@@ -192,7 +192,7 @@ describe Kitchen::Loader::YAML do
       )
       stub_yaml!("common" => { "thekey" => "yep" })
 
-      _(loader.read).must_equal(common: { thekey: "yep" })
+      _(loader.read).must_equal({ common: { thekey: "yep" } })
     end
 
     it "merges kitchen.local.yml over configuration in kitchen.yml" do
@@ -202,7 +202,7 @@ describe Kitchen::Loader::YAML do
         ".kitchen.local.yml"
       )
 
-      _(loader.read).must_equal(common: { thekey: "yep" })
+      _(loader.read).must_equal({ common: { thekey: "yep" } })
     end
 
     it "merges kitchen.local.yml over both kitchen.yml and global config" do
@@ -215,7 +215,7 @@ describe Kitchen::Loader::YAML do
         "common" => { "thekey" => "kinda" }
       )
 
-      _(loader.read).must_equal(common: { thekey: "yep" })
+      _(loader.read).must_equal({ common: { thekey: "yep" } })
     end
 
     NORMALIZED_KEYS = {
@@ -234,7 +234,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
+            { key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" } }
           )
         end
 
@@ -246,7 +246,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
+            { key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" } }
           )
         end
 
@@ -258,7 +258,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { dakey: "ya" }
+            { key.to_sym => { dakey: "ya" } }
           )
         end
 
@@ -270,7 +270,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey" }
+            { key.to_sym => { default_key.to_sym => "namey" } }
           )
         end
 
@@ -281,7 +281,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
+            { key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" } }
           )
         end
 
@@ -292,7 +292,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
+            { key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" } }
           )
         end
 
@@ -303,7 +303,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { dakey: "ya" }
+            { key.to_sym => { dakey: "ya" } }
           )
         end
 
@@ -314,7 +314,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { dakey: "ya" }
+            { key.to_sym => { dakey: "ya" } }
           )
         end
 
@@ -329,7 +329,7 @@ describe Kitchen::Loader::YAML do
           )
 
           _(loader.read).must_equal(
-            key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" }
+            { key.to_sym => { default_key.to_sym => "namey", :dakey => "ya" } }
           )
         end
       end
@@ -339,7 +339,7 @@ describe Kitchen::Loader::YAML do
       stub_yaml!("a" => "b")
       stub_yaml!({}, ".kitchen.local.yml")
 
-      _(loader.read).must_equal(a: "b")
+      _(loader.read).must_equal({ a: "b" })
     end
 
     it "handles a kitchen.yml with no yaml elements" do
@@ -349,7 +349,7 @@ describe Kitchen::Loader::YAML do
         ".kitchen.local.yml"
       )
 
-      _(loader.read).must_equal(a: "b")
+      _(loader.read).must_equal({ a: "b" })
     end
 
     it "handles a kitchen.yml with yaml elements that parse as nil" do
@@ -359,7 +359,7 @@ describe Kitchen::Loader::YAML do
         ".kitchen.local.yml"
       )
 
-      _(loader.read).must_equal(a: "b")
+      _(loader.read).must_equal({ a: "b" })
     end
 
     it "raises an UserError if the config_file does not exist" do
@@ -437,7 +437,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      _(loader.read).must_equal(name: "ahhchoo")
+      _(loader.read).must_equal({ name: "ahhchoo" })
     end
 
     it "accepts kitchen.yml with alias" do
@@ -451,7 +451,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      _(loader.read[:yyy]).must_equal(foo: "bar")
+      _(loader.read[:yyy]).must_equal({ foo: "bar" })
     end
 
     it "raises a UserError if there is an ERB processing error" do
@@ -483,9 +483,9 @@ describe Kitchen::Loader::YAML do
       stub_yaml!("spinach" => "salad")
 
       _(loader.read).must_equal(
-        spinach: "salad",
+        { spinach: "salad",
         noodle: "soup",
-        mushroom: "soup"
+        mushroom: "soup" }
       )
     end
 
@@ -501,7 +501,7 @@ describe Kitchen::Loader::YAML do
         YAML
       end
 
-      _(loader.read).must_equal(name: '<%= "AHH".downcase %>')
+      _(loader.read).must_equal({ name: '<%= "AHH".downcase %>' })
     end
 
     it "skips evaluating kitchen.local.yml through erb if disabled" do
@@ -518,7 +518,7 @@ describe Kitchen::Loader::YAML do
       end
       stub_yaml!({})
 
-      _(loader.read).must_equal(name: '<%= "AHH".downcase %>')
+      _(loader.read).must_equal({ name: '<%= "AHH".downcase %>' })
     end
 
     it "skips kitchen.local.yml if disabled" do
@@ -531,7 +531,7 @@ describe Kitchen::Loader::YAML do
         ".kitchen.local.yml"
       )
 
-      _(loader.read).must_equal(a: "b")
+      _(loader.read).must_equal({ a: "b" })
     end
 
     it "skips the global config if disabled" do
@@ -543,7 +543,7 @@ describe Kitchen::Loader::YAML do
         "superawesomesauceadditions" => "enabled, yo"
       )
 
-      _(loader.read).must_equal(a: "b")
+      _(loader.read).must_equal({ a: "b" })
     end
   end
 
@@ -621,8 +621,8 @@ describe Kitchen::Loader::YAML do
 
       it "global config contains raw data" do
         _(loader.diagnose[:global_config][:raw_data]).must_equal(
-          "from_global" => "global",
-          "common" => { "g" => "goody" }
+          { "from_global" => "global",
+          "common" => { "g" => "goody" } }
         )
       end
 
@@ -633,8 +633,8 @@ describe Kitchen::Loader::YAML do
 
       it "project config contains raw data" do
         _(loader.diagnose[:project_config][:raw_data]).must_equal(
-          "from_project" => "project",
-          "common" => { "p" => "pretty" }
+          { "from_project" => "project",
+          "common" => { "p" => "pretty" } }
         )
       end
 
@@ -645,8 +645,8 @@ describe Kitchen::Loader::YAML do
 
       it "local config contains raw data" do
         _(loader.diagnose[:local_config][:raw_data]).must_equal(
-          "from_local" => "local",
-          "common" => { "l" => "looky" }
+          { "from_local" => "local",
+          "common" => { "l" => "looky" } }
         )
       end
 
@@ -657,14 +657,14 @@ describe Kitchen::Loader::YAML do
 
       it "combined config contains raw data" do
         _(loader.diagnose[:combined_config][:raw_data]).must_equal(
-          "from_global" => "global",
+          { "from_global" => "global",
           "from_project" => "project",
           "from_local" => "local",
           "common" => {
             "g" => "goody",
             "p" => "pretty",
             "l" => "looky",
-          }
+          } }
         )
       end
 

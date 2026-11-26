@@ -172,7 +172,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
-              default_key => "thenoseknows"
+              { default_key => "thenoseknows" }
             )
           end
 
@@ -185,7 +185,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
-              default_key => "suite++platform"
+              { default_key => "suite++platform" }
             )
           end
 
@@ -198,7 +198,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
-              default_key => "starship"
+              { default_key => "starship" }
             )
           end
 
@@ -214,8 +214,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "platform")
 
             _(result).must_equal(
-              default_key => "starship",
-              :speed => 42
+              { default_key => "starship",
+              :speed => 42 }
             )
           end
 
@@ -262,7 +262,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "plat")
 
             _(result).must_equal(
-              default_key => "flip"
+              { default_key => "flip" }
             )
           end
 
@@ -283,8 +283,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "suite", "plat")
 
             _(result).must_equal(
-              default_key => "flip",
-              :flop => "yep"
+              { default_key => "flip",
+              :flop => "yep" }
             )
           end
 
@@ -331,7 +331,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "platform")
 
             _(result).must_equal(
-              default_key => "waz"
+              { default_key => "waz" }
             )
           end
 
@@ -352,8 +352,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "platform")
 
             _(result).must_equal(
-              default_key => "waz",
-              :up => "nope"
+              { default_key => "waz",
+              :up => "nope" }
             )
           end
         end
@@ -393,7 +393,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
-              default_key => "suitey",
+              { default_key => "suitey",
               :color => "purple",
               :fruit => ["banana"],
               :vehicle => "car",
@@ -401,7 +401,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 common: "junk",
                 platform: "stuff",
                 suite: "things",
-              }
+              } }
             )
           end
 
@@ -429,13 +429,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
-              default_key => "platformy",
+              { default_key => "platformy",
               :color => "purple",
               :fruit => ["banana"],
               :deep => {
                 common: "junk",
                 platform: "stuff",
-              }
+              } }
             )
           end
 
@@ -463,14 +463,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
-              default_key => "suitey",
+              { default_key => "suitey",
               :color => "purple",
               :fruit => %w{apple pear},
               :vehicle => "car",
               :deep => {
                 common: "junk",
                 suite: "things",
-              }
+              } }
             )
           end
 
@@ -502,13 +502,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             ).public_send("#{key}_data_for", "sweet", "plat")
 
             _(result).must_equal(
-              default_key => "suitey",
+              { default_key => "suitey",
               :fruit => ["banana"],
               :vehicle => "car",
               :deep => {
                 platform: "stuff",
                 suite: "things",
-              }
+              } }
             )
           end
         end
@@ -532,8 +532,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+            { name: "chefy",
+            attributes: { one: "two" } }
           )
         end
 
@@ -552,8 +552,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -572,8 +572,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+            { name: "chefy",
+            named_run_list: "other_run_list" }
           )
         end
         it "maintains run_list in provisioner" do
@@ -593,8 +593,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -613,8 +613,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+            { name: "chefy",
+            attributes: { one: "two" } }
           )
         end
 
@@ -633,8 +633,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -653,8 +653,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+            { name: "chefy",
+            named_run_list: "other_run_list" }
           )
         end
 
@@ -672,7 +672,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             {}
           ).provisioner_data_for("sweet", "plat")
 
-          _(result).must_equal(name: "chefy")
+          _(result).must_equal({ name: "chefy" })
         end
 
         it "drops nil attributes" do
@@ -690,7 +690,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy"
+            { name: "chefy" }
           )
         end
       end
@@ -711,8 +711,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+            { name: "chefy",
+            attributes: { one: "two" } }
           )
         end
 
@@ -731,8 +731,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -751,8 +751,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+            { name: "chefy",
+            named_run_list: "other_run_list" }
           )
         end
         it "maintains run_list in provisioner" do
@@ -772,8 +772,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -792,8 +792,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            attributes: { one: "two" }
+            { name: "chefy",
+            attributes: { one: "two" } }
           )
         end
 
@@ -812,8 +812,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two}
+            { name: "chefy",
+            run_list: %w{one two} }
           )
         end
 
@@ -832,8 +832,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            named_run_list: "other_run_list"
+            { name: "chefy",
+            named_run_list: "other_run_list" }
           )
         end
         it "drops nil run_list" do
@@ -850,7 +850,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             {}
           ).provisioner_data_for("sweet", "plat")
 
-          _(result).must_equal(name: "chefy")
+          _(result).must_equal({ name: "chefy" })
         end
 
         it "drops nil attributes" do
@@ -867,7 +867,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             {}
           ).provisioner_data_for("sweet", "plat")
 
-          _(result).must_equal(name: "chefy")
+          _(result).must_equal({ name: "chefy" })
         end
       end
 
@@ -899,14 +899,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             attributes: {
               color: "pink",
               deep: {
                 suite: "wow",
                 platform: "much",
               },
-            }
+            } }
           )
         end
 
@@ -931,8 +931,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+            { name: "chefy",
+            run_list: %w{one two three four} }
           )
         end
 
@@ -959,8 +959,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+            { name: "chefy",
+            run_list: %w{one two three four} }
           )
         end
 
@@ -987,8 +987,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+            { name: "chefy",
+            run_list: %w{one two three four} }
           )
         end
 
@@ -1015,8 +1015,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            run_list: []
+            { name: "chefy",
+            run_list: [] }
           )
         end
 
@@ -1056,8 +1056,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           munger.provisioner_data_for("s2", "p1")
 
           _(munger.provisioner_data_for("s2", "p2")).must_equal(
-            name: "chefy",
-            run_list: %w{one two three four}
+            { name: "chefy",
+            run_list: %w{one two three four} }
           )
         end
       end
@@ -1082,8 +1082,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1105,8 +1105,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1128,8 +1128,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1151,7 +1151,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                name: "chefy"
+                { name: "chefy" }
               )
             end
           end
@@ -1172,8 +1172,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1195,8 +1195,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1218,8 +1218,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1241,7 +1241,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                name: "chefy"
+                { name: "chefy" }
               )
             end
           end
@@ -1262,8 +1262,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1285,8 +1285,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1308,8 +1308,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1331,7 +1331,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                version: "chefy"
+                { version: "chefy" }
               )
             end
           end
@@ -1352,8 +1352,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1375,8 +1375,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1398,8 +1398,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1421,7 +1421,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                name: "pipes"
+                { name: "pipes" }
               )
             end
           end
@@ -1446,8 +1446,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1469,8 +1469,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1492,8 +1492,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).driver_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1514,7 +1514,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
                 {}
               ).driver_data_for("sweet", "plat")
 
-              _(result).must_equal(name: "chefy")
+              _(result).must_equal({ name: "chefy" })
             end
           end
 
@@ -1537,8 +1537,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1560,7 +1560,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).provisioner_data_for("sweet", "plat")
 
               _(result).must_equal(
-                name: "chefy"
+                { name: "chefy" }
               )
             end
           end
@@ -1581,8 +1581,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1604,8 +1604,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1627,8 +1627,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "chefy",
-                key => "datvalue"
+                { :name => "chefy",
+                key => "datvalue" }
               )
             end
 
@@ -1650,7 +1650,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).verifier_data_for("sweet", "plat")
 
               _(result).must_equal(
-                version: "chefy"
+                { version: "chefy" }
               )
             end
           end
@@ -1671,8 +1671,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1694,8 +1694,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1717,8 +1717,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                :name => "pipes",
-                key => "datvalue"
+                { :name => "pipes",
+                key => "datvalue" }
               )
             end
 
@@ -1740,7 +1740,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               ).transport_data_for("sweet", "plat")
 
               _(result).must_equal(
-                name: "pipes"
+                { name: "pipes" }
               )
             end
           end
@@ -1759,7 +1759,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "starship"
+            { name: "starship" }
           )
         end
 
@@ -1773,7 +1773,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "zappa"
+            { name: "zappa" }
           )
         end
 
@@ -1789,8 +1789,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "starship",
-            speed: 42
+            { name: "starship",
+            speed: 42 }
           )
         end
 
@@ -1806,8 +1806,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "zappa",
-            eh: "yep"
+            { name: "zappa",
+            eh: "yep" }
           )
         end
 
@@ -1828,9 +1828,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "zappa",
+            { name: "zappa",
             eh: "yep",
-            color: "black"
+            color: "black" }
           )
         end
 
@@ -1848,7 +1848,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "flip"
+            { name: "flip" }
           )
         end
 
@@ -1869,8 +1869,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "flip",
-            flop: "yep"
+            { name: "flip",
+            flop: "yep" }
           )
         end
 
@@ -1888,7 +1888,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "waz"
+            { name: "waz" }
           )
         end
 
@@ -1909,8 +1909,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "waz",
-            up: "nope"
+            { name: "waz",
+            up: "nope" }
           )
         end
       end
@@ -1950,7 +1950,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "suitey",
+            { name: "suitey",
             color: "purple",
             fruit: ["banana"],
             vehicle: "car",
@@ -1958,7 +1958,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               common: "junk",
               platform: "stuff",
               suite: "things",
-            }
+            } }
           )
         end
 
@@ -1986,13 +1986,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "platformy",
+            { name: "platformy",
             color: "purple",
             fruit: ["banana"],
             deep: {
               common: "junk",
               platform: "stuff",
-            }
+            } }
           )
         end
 
@@ -2020,14 +2020,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "suitey",
+            { name: "suitey",
             color: "purple",
             fruit: %w{apple pear},
             vehicle: "car",
             deep: {
               common: "junk",
               suite: "things",
-            }
+            } }
           )
         end
 
@@ -2059,13 +2059,13 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "suitey",
+            { name: "suitey",
             fruit: ["banana"],
             vehicle: "car",
             deep: {
               platform: "stuff",
               suite: "things",
-            }
+            } }
           )
         end
       end
@@ -2093,8 +2093,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            :name => "chefy",
-            key => "mypath"
+            { :name => "chefy",
+            key => "mypath" }
           )
         end
 
@@ -2113,8 +2113,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "plat")
 
           _(result).must_equal(
-            :name => "chefy",
-            key => "mypath"
+            { :name => "chefy",
+            key => "mypath" }
           )
         end
       end
@@ -2135,8 +2135,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
 
@@ -2156,8 +2156,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
 
@@ -2179,8 +2179,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
 
@@ -2205,8 +2205,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
 
@@ -2228,8 +2228,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
 
@@ -2254,8 +2254,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "chefy",
-            require_chef_omnibus: "it's probably fine"
+            { name: "chefy",
+            require_chef_omnibus: "it's probably fine" }
           )
         end
       end
@@ -2277,9 +2277,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "starship",
+            { name: "starship",
             http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+            https_proxy: "https://proxy" }
           )
         end
 
@@ -2297,9 +2297,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+            https_proxy: "https://proxy" }
           )
         end
 
@@ -2317,9 +2317,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "http://proxy",
-            https_proxy: "https://proxy"
+            https_proxy: "https://proxy" }
           )
         end
 
@@ -2341,9 +2341,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2365,9 +2365,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2390,9 +2390,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "starship",
+            { name: "starship",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2415,9 +2415,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2440,9 +2440,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2469,9 +2469,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2498,9 +2498,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2523,9 +2523,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).driver_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "starship",
+            { name: "starship",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2548,9 +2548,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2573,9 +2573,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2602,9 +2602,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).provisioner_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "chefy",
+            { name: "chefy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
 
@@ -2631,9 +2631,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "bussy",
+            { name: "bussy",
             http_proxy: "it's probably fine",
-            https_proxy: "la quinta"
+            https_proxy: "la quinta" }
           )
         end
       end
@@ -2650,8 +2650,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "busser",
-            version: "starship"
+            { name: "busser",
+            version: "starship" }
           )
         end
 
@@ -2667,9 +2667,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "starship",
-            a: "b"
+            a: "b" }
           )
         end
 
@@ -2683,8 +2683,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "stellar",
-            version: "starship"
+            { name: "stellar",
+            version: "starship" }
           )
         end
 
@@ -2700,8 +2700,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "stellar",
-            a: "b"
+            { name: "stellar",
+            a: "b" }
           )
         end
 
@@ -2722,10 +2722,10 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "platform")
 
           _(result).must_equal(
-            name: "stellar",
+            { name: "stellar",
             a: "b",
             c: "d",
-            both: "modern"
+            both: "modern" }
           )
         end
 
@@ -2743,8 +2743,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "busser",
-            version: "flip"
+            { name: "busser",
+            version: "flip" }
           )
         end
 
@@ -2765,9 +2765,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("suite", "plat")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "flip",
-            flop: "yep"
+            flop: "yep" }
           )
         end
 
@@ -2785,8 +2785,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "busser",
-            version: "waz"
+            { name: "busser",
+            version: "waz" }
           )
         end
 
@@ -2807,9 +2807,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "platform")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "waz",
-            up: "nope"
+            up: "nope" }
           )
         end
       end
@@ -2849,7 +2849,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "suitey",
             color: "purple",
             fruit: ["banana"],
@@ -2858,7 +2858,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
               common: "junk",
               platform: "stuff",
               suite: "things",
-            }
+            } }
           )
         end
 
@@ -2886,14 +2886,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "platformy",
             color: "purple",
             fruit: ["banana"],
             deep: {
               common: "junk",
               platform: "stuff",
-            }
+            } }
           )
         end
 
@@ -2921,7 +2921,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "suitey",
             color: "purple",
             fruit: %w{apple pear},
@@ -2929,7 +2929,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
             deep: {
               common: "junk",
               suite: "things",
-            }
+            } }
           )
         end
 
@@ -2961,14 +2961,14 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
           ).verifier_data_for("sweet", "plat")
 
           _(result).must_equal(
-            name: "busser",
+            { name: "busser",
             version: "suitey",
             fruit: ["banana"],
             vehicle: "car",
             deep: {
               platform: "stuff",
               suite: "things",
-            }
+            } }
           )
         end
       end
@@ -2988,7 +2988,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         ).lifecycle_hooks_data_for("sweet", "plat")
 
         _(result).must_equal(
-          pre_create: ["echo foo"]
+          { pre_create: ["echo foo"] }
         )
       end
 
@@ -3007,9 +3007,9 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         ).lifecycle_hooks_data_for("sweet", "plat")
 
         _(result).must_equal(
-          pre_create: ["echo foo"],
+          { pre_create: ["echo foo"],
           post_converge: ["echo bar", { local: "echo baz" }],
-          pre_verify: [{ remote: "echo other" }]
+          pre_verify: [{ remote: "echo other" }] }
         )
       end
 
@@ -3037,8 +3037,8 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         ).lifecycle_hooks_data_for("sweet", "plat")
 
         _(result).must_equal(
-          pre_create: ["echo foo", "echo bar", "echo baz"],
-          post_create: ["echo post"]
+          { pre_create: ["echo foo", "echo bar", "echo baz"],
+          post_create: ["echo post"] }
         )
       end
 
@@ -3058,7 +3058,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         ).lifecycle_hooks_data_for("sweet", "plat")
 
         _(result).must_equal(
-          pre_create: ["echo foo", { local: "echo bar" }]
+          { pre_create: ["echo foo", { local: "echo bar" }] }
         )
       end
 
@@ -3085,7 +3085,7 @@ module Kitchen # rubocop:disable Metrics/ModuleLength
         ).lifecycle_hooks_data_for("sweet", "plat")
 
         _(result).must_equal(
-          pre_create: ["echo foo", { local: "echo bar" }, { local: "echo baz" }]
+          { pre_create: ["echo foo", { local: "echo bar" }, { local: "echo baz" }] }
         )
       end
     end

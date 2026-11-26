@@ -99,7 +99,7 @@ describe Kitchen::Provisioner::External do
 
     _(logged_output.string).must_include "installing fake provider"
     _(logged_output.string).must_include "halfway through fake run"
-    _(state[:providers]["fake"]).must_equal("instance_id" => "abc-123")
+    _(state[:providers]["fake"]).must_equal({ "instance_id" => "abc-123" })
   end
 
   it "sends validate and run request envelopes to the provider" do
@@ -129,9 +129,9 @@ describe Kitchen::Provisioner::External do
 
     _(transport_request["type"]).must_equal "ssh"
     _(transport_request["target"]).must_equal(
-      "kind" => "machine",
+      { "kind" => "machine",
       "hostname" => "192.0.2.10",
-      "platform" => "ubuntu"
+      "platform" => "ubuntu" }
     )
     _(transport_request["config"]["username"]).must_equal "ubuntu"
     _(transport_request["config"]["port"]).must_equal 2222

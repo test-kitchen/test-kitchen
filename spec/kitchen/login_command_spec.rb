@@ -49,7 +49,7 @@ describe Kitchen::LoginCommand do
   it "#options returns the options hash from the constructor" do
     opts[:cake] = "yummy"
 
-    _(login_command.options).must_equal(cake: "yummy")
+    _(login_command.options).must_equal({ cake: "yummy" })
   end
 
   it "#exec_args returns an array of arguments for Kernel.exec" do

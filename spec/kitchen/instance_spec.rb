@@ -435,7 +435,7 @@ describe Kitchen::Instance do
     it "sets :platform key to platform's diagnose info" do
       platform.stubs(:diagnose).returns(a: "b")
 
-      _(instance.diagnose[:platform]).must_equal(a: "b")
+      _(instance.diagnose[:platform]).must_equal({ a: "b" })
     end
 
     it "sets :platform key to :unknown if obj can't respond to #diagnose" do
@@ -449,7 +449,7 @@ describe Kitchen::Instance do
     it "sets :state_file key to state_file's diagnose info" do
       state_file.stubs(:diagnose).returns(a: "b")
 
-      _(instance.diagnose[:state_file]).must_equal(a: "b")
+      _(instance.diagnose[:state_file]).must_equal({ a: "b" })
     end
 
     it "sets :state_file key to :unknown if obj can't respond to #diagnose" do
@@ -463,7 +463,7 @@ describe Kitchen::Instance do
     it "sets :provisioner key to provisioner's diagnose info" do
       provisioner.stubs(:diagnose).returns(a: "b")
 
-      _(instance.diagnose[:provisioner]).must_equal(a: "b")
+      _(instance.diagnose[:provisioner]).must_equal({ a: "b" })
     end
 
     it "sets :provisioner key to :unknown if obj can't respond to #diagnose" do
@@ -477,7 +477,7 @@ describe Kitchen::Instance do
     it "sets :verifier key to verifier's diagnose info" do
       verifier.stubs(:diagnose).returns(a: "b")
 
-      _(instance.diagnose[:verifier]).must_equal(a: "b")
+      _(instance.diagnose[:verifier]).must_equal({ a: "b" })
     end
 
     it "sets :verifier key to :unknown if obj can't respond to #diagnose" do
@@ -491,7 +491,7 @@ describe Kitchen::Instance do
     it "sets :transport key to transport's diagnose info" do
       transport.stubs(:diagnose).returns(a: "b")
 
-      _(instance.diagnose[:transport]).must_equal(a: "b")
+      _(instance.diagnose[:transport]).must_equal({ a: "b" })
     end
 
     it "sets :transport key to :unknown if obj can't respond to #diagnose" do
@@ -512,8 +512,8 @@ describe Kitchen::Instance do
       driver.class.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose_plugins[:driver]).must_equal(
-        name: "Dummy",
-        a: "b"
+        { name: "Dummy",
+        a: "b" }
       )
     end
 
@@ -529,8 +529,8 @@ describe Kitchen::Instance do
       provisioner.class.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose_plugins[:provisioner]).must_equal(
-        name: "Dummy",
-        a: "b"
+        { name: "Dummy",
+        a: "b" }
       )
     end
 
@@ -546,8 +546,8 @@ describe Kitchen::Instance do
       verifier.class.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose_plugins[:verifier]).must_equal(
-        name: "Dummy",
-        a: "b"
+        { name: "Dummy",
+        a: "b" }
       )
     end
 
@@ -563,8 +563,8 @@ describe Kitchen::Instance do
       transport.class.stubs(:diagnose).returns(a: "b")
 
       _(instance.diagnose_plugins[:transport]).must_equal(
-        name: "Dummy",
-        a: "b"
+        { name: "Dummy",
+        a: "b" }
       )
     end
 
