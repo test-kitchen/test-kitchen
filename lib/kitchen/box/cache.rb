@@ -7,6 +7,7 @@ require "json" unless defined?(JSON)
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require "securerandom" unless defined?(SecureRandom)
 require "kitchen/errors"
+require_relative "catalog"
 
 module Kitchen
   module Box
@@ -23,20 +24,27 @@ module Kitchen
         @root = File.expand_path(path || ENV[ENV_KEY] || "~/.cache/test-kitchen/boxes")
       end
 
+      def validate_destination(catalog, entry)
+        validate_location(entry_path(entry.fetch("sha256")), catalog.directory)
+      rescue SystemCallError, IOError => e
+        raise UserError, "Cannot inspect box cache destination in #{root}: #{e.message}"
+      end
+
       def fetch(catalog, entry, token)
         digest = entry.fetch("sha256")
         validate_token(token)
         directory = entry_path(digest)
-        validate_location(catalog.directory)
+        validate_location(directory, catalog.directory)
         FileUtils.mkdir_p(root, mode: 0o700)
         create_directory(directory)
 
         with_lock(directory) do
           leases = File.join(directory, "leases")
           create_directory(leases)
-          File.write(File.join(leases, token), "", mode: "a", perm: 0o600)
+          create_lease(File.join(leases, token))
           archive = File.join(directory, "archive.box")
           populate(directory, catalog, entry) unless verified?(archive, entry)
+          remember_identity(directory, entry)
           archive
         end
       rescue SystemCallError, IOError => e
@@ -46,13 +54,14 @@ module Kitchen
       def release(digest, token)
         validate_token(token)
         directory = entry_path(digest)
-        return unless File.directory?(directory) && !File.symlink?(directory)
+        raise UserError, "Invalid box cache directory: #{root}" if File.symlink?(root)
+        return unless existing_directory?(directory)
 
-        with_lock(directory) do
-          leases = File.join(directory, "leases")
-          return unless File.directory?(leases) && !File.symlink?(leases)
+        leases = File.join(directory, "leases")
+        return unless existing_directory?(leases)
 
-          FileUtils.rm_f(File.join(leases, token))
+        with_lock(directory, create: false) do
+          remove_lease(File.join(leases, token))
         end
       rescue SystemCallError, IOError => e
         raise UserError, "Cannot release cached box in #{root}: #{e.message}"
@@ -66,9 +75,8 @@ module Kitchen
         Dir.children(root).sort.each do |digest|
           next unless DIGEST.match?(digest)
 
-          candidate, reason = inspect_entry(digest)
+          candidate, reason = inspect_entry(digest, filters)
           next unless candidate
-          next unless filters.all? { |key, value| candidate[key] == value }
 
           if reason
             protected << candidate.merge(reason: reason)
@@ -83,13 +91,29 @@ module Kitchen
 
       private
 
-      def validate_location(source_directory)
-        existing = root
-        existing = File.dirname(existing) until File.exist?(existing)
-        actual_root = File.join(File.realpath(existing), root.delete_prefix(existing).sub(%r{\A/}, ""))
-        source_prefix = source_directory.delete_suffix("/") + "/"
-        if File.symlink?(root) || actual_root.delete_suffix("/") == source_directory || actual_root.start_with?(source_prefix)
+      def validate_location(directory, source_directory)
+        actual_root = physical_path(root)
+        destination = physical_path(directory)
+        if File.symlink?(root) || within_directory?(actual_root, source_directory) ||
+            within_directory?(destination, source_directory) || within_directory?(source_directory, destination)
           raise UserError, "Keep the local box cache outside the manifest directory"
+        end
+      end
+
+      def physical_path(path)
+        parent = path
+        parent = File.dirname(parent) until File.exist?(parent)
+        File.join(File.realpath(parent), path.delete_prefix(parent).sub(%r{\A/}, ""))
+      end
+
+      def within_directory?(path, directory)
+        loop do
+          return true if File.identical?(path, directory)
+
+          parent = File.dirname(path)
+          return false if parent == path
+
+          path = parent
         end
       end
 
@@ -106,14 +130,36 @@ module Kitchen
       def create_directory(path)
         Dir.mkdir(path, 0o700)
       rescue Errno::EEXIST
-        raise UserError, "Invalid box cache directory: #{path}" unless File.directory?(path) && !File.symlink?(path)
+        existing_directory?(path)
       end
 
-      def with_lock(directory)
+      def existing_directory?(path)
+        stat = File.lstat(path)
+        raise UserError, "Invalid box cache directory: #{path}" unless stat.directory?
+
+        true
+      rescue Errno::ENOENT
+        false
+      end
+
+      def create_lease(path)
+        File.open(path, File::WRONLY | File::CREAT | File::EXCL, 0o600) {}
+      rescue Errno::EEXIST
+        raise UserError, "Invalid box cache lease: #{path}" unless regular_file?(path)
+      end
+
+      def remove_lease(path)
+        File.unlink(path)
+      rescue Errno::ENOENT
+        nil
+      end
+
+      def with_lock(directory, create: true)
         lock = File.join(directory, "lock")
         raise UserError, "Invalid box cache lock: #{lock}" if File.symlink?(lock)
 
-        File.open(lock, File::RDWR | File::CREAT, 0o600) do |file|
+        flags = create ? File::RDWR | File::CREAT : File::RDWR
+        File.open(lock, flags, 0o600) do |file|
           file.flock(File::LOCK_EX)
           yield
         end
@@ -135,14 +181,39 @@ module Kitchen
           File.copy_stream(source, archive)
           raise UserError, "SHA-256 or size mismatch while caching #{source}" unless verified?(archive, entry)
 
-          metadata = File.join(staging, "metadata.json")
-          File.write(metadata, JSON.generate(entry))
-          File.rename(metadata, File.join(directory, "metadata.json"))
           File.rename(archive, File.join(directory, "archive.box"))
         end
       end
 
-      def inspect_entry(digest)
+      def remember_identity(directory, entry)
+        digest = entry.fetch("sha256")
+        metadata = File.join(directory, "metadata.json")
+        identities = cached_identities(metadata, digest)
+        identity = entry.slice(*Catalog::IDENTITY)
+        return if identities.include?(identity)
+
+        Dir.mktmpdir("metadata-", directory) do |staging|
+          update = File.join(staging, "metadata.json")
+          File.write(update, JSON.generate(sha256: digest, identities: identities + [identity]))
+          File.rename(update, metadata)
+        end
+      end
+
+      def cached_identities(path, digest)
+        return [] unless regular_file?(path)
+
+        metadata = JSON.parse(File.read(path))
+        return [] unless metadata.is_a?(Hash) && metadata["sha256"] == digest
+
+        identities = metadata.fetch("identities") { [metadata.slice(*Catalog::IDENTITY)] }
+        return [] unless identities.is_a?(Array)
+
+        identities.select { |identity| identity.is_a?(Hash) && Catalog::IDENTITY.all? { |key| identity[key].is_a?(String) } }
+      rescue JSON::ParserError
+        []
+      end
+
+      def inspect_entry(digest, filters)
         directory = entry_path(digest)
         archive = File.join(directory, "archive.box")
         metadata = File.join(directory, "metadata.json")
@@ -152,8 +223,8 @@ module Kitchen
 
         File.open(lock, "rb") do |file|
           locked = file.flock(File::LOCK_SH | File::LOCK_NB)
-          entry = JSON.parse(File.read(metadata))
-          next unless entry.is_a?(Hash) && entry["sha256"] == digest
+          entry = cached_identities(metadata, digest).find { |identity| filters.all? { |key, value| identity[key.to_s] == value } }
+          next unless entry
 
           stat = File.stat(archive)
           row = { sha256: digest, name: entry["name"], version: entry["version"],
@@ -170,7 +241,7 @@ module Kitchen
                    end
           [row, reason]
         end
-      rescue Errno::ENOENT, JSON::ParserError
+      rescue Errno::ENOENT
         nil
       end
     end

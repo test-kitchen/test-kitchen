@@ -28,6 +28,7 @@ module Kitchen
         end
 
         unless reference
+          cache.validate_destination(source, entry)
           reference = { root: cache.root, digest: entry.fetch("sha256"), token: SecureRandom.uuid }
           state[:box_cache_lease] = reference
           yield

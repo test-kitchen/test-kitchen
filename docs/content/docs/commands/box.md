@@ -30,8 +30,9 @@ kitchen box prune --dry-run
 kitchen box prune --dry-run --cache /path/to/local/cache --json
 ```
 
-The dry-run reports unused archives and their total archive size. It leaves
-the cache and source archives untouched. Drivers hold a cache lease from
+Prune requires `--dry-run`. The preview reports unused archives and their
+total archive size. It leaves the cache and source archives untouched.
+Drivers hold a cache lease from
 before import until successful destroy, so the report excludes active
 instances and failed creates that still need cleanup. Run `kitchen destroy`
 before discarding the instance state so the driver can release its lease.

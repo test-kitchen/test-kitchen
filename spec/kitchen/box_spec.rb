@@ -232,6 +232,66 @@ describe Kitchen::Box::Cache do
     _(File.read(path)).must_equal "box"
   end
 
+  it "protects and filters each manifest identity for a shared archive and counts its bytes once" do
+    token = SecureRandom.uuid
+    path = @cache.fetch(@catalog, @entry, token)
+    File.write(File.join(File.dirname(path), "metadata.json"), JSON.generate(@entry))
+    other = @entry.merge("name" => "renamed/ubuntu-24.04", "provider" => "parallels")
+    _(@cache.fetch(@catalog, other, token)).must_equal path
+
+    plan = @cache.prune_plan(name: other.fetch("name"), provider: "parallels")
+    _(plan.fetch(:protected).first.fetch(:path)).must_equal path
+    _(@cache.prune_plan(name: other.fetch("name"), provider: "virtualbox").fetch(:protected)).must_be_empty
+    @cache.release(@entry.fetch("sha256"), token)
+    _(@cache.prune_plan.fetch(:reclaimable_bytes)).must_equal 3
+    _(@cache.prune_plan(provider: "virtualbox").fetch(:reclaimable_bytes)).must_equal 3
+    _(@cache.prune_plan(provider: "parallels").fetch(:reclaimable_bytes)).must_equal 3
+  end
+
+  it "rejects a cache destination containing the source manifest directory" do
+    destination = File.join(@cache.root, @entry.fetch("sha256"))
+    [destination, File.join(destination, "nas")].each do |source|
+      FileUtils.mkdir_p(source)
+      manifest = File.join(source, "metadata.json")
+      records = JSON.generate([@entry])
+      File.write(manifest, records)
+      File.write(File.join(source, "ubuntu.box"), "box")
+      catalog = Kitchen::Box::Catalog.new(manifest)
+
+      error = assert_raises(Kitchen::UserError) { @cache.fetch(catalog, @entry, SecureRandom.uuid) }
+      _(error.message).must_match(/outside the manifest directory/)
+      _(File.read(manifest)).must_equal records
+      refute File.exist?(File.join(destination, "lock"))
+    end
+  end
+
+  it "rejects a lease symlink and a replaced cache-root symlink" do
+    token = SecureRandom.uuid
+    digest = @entry.fetch("sha256")
+    path = @cache.fetch(@catalog, @entry, token)
+    lease = File.join(File.dirname(path), "leases", token)
+    outside = File.join(@directory, "outside")
+    File.unlink(lease)
+    File.symlink(outside, lease)
+    error = assert_raises(Kitchen::UserError) { @cache.fetch(@catalog, @entry, token) }
+    _(error.message).must_match(/Invalid box cache lease/)
+    refute File.exist?(outside)
+
+    File.rename(@cache.root, outside)
+    File.symlink(outside, @cache.root)
+    error = assert_raises(Kitchen::UserError) { @cache.release(digest, token) }
+    _(error.message).must_match(/Invalid box cache directory/)
+    assert File.symlink?(lease)
+  end
+
+  it "never creates a lock during release" do
+    directory = File.join(@cache.root, @entry.fetch("sha256"))
+    FileUtils.mkdir_p(File.join(directory, "leases"))
+    error = assert_raises(Kitchen::UserError) { @cache.release(@entry.fetch("sha256"), SecureRandom.uuid) }
+    _(error.message).must_match(/Cannot release cached box/)
+    refute File.exist?(File.join(directory, "lock"))
+  end
+
   it "rejects corrupt copies and keeps writes outside the manifest directory" do
     source_cache = Kitchen::Box::Cache.new(File.join(@source, "cache"))
     assert_raises(Kitchen::UserError) { source_cache.fetch(@catalog, @entry, SecureRandom.uuid) }
@@ -281,6 +341,30 @@ describe Kitchen::Box::Source do
     end
   end
 
+  it "can destroy after a rejected cache placement without touching the source" do
+    Dir.mktmpdir do |directory|
+      box = { name: "bento/ubuntu-24.04", version: "202510.26.0" }
+      digest = Digest::SHA256.hexdigest("box")
+      source = File.join(directory, digest)
+      FileUtils.mkdir_p(source)
+      manifest = File.join(source, "manifest.json")
+      entry = box.transform_keys(&:to_s).merge(
+        "provider" => "parallels", "architecture" => Kitchen::Box::Catalog.host_architecture,
+        "file" => "ubuntu.box", "bytes" => 3, "sha256" => digest
+      )
+      File.write(manifest, JSON.generate([entry]))
+      File.write(File.join(source, "ubuntu.box"), "box")
+      driver = driver_class.new({ box: box, kitchen_root: directory, box_manifest: manifest, box_cache: directory })
+      state = {}
+
+      error = assert_raises(Kitchen::ActionFailed) { driver.box_source("parallels", state) { flunk "Unexpected checkpoint" } }
+      _(error.message).must_match(/outside the manifest directory/)
+      driver.release_box_source(state)
+      _(state).must_be_empty
+      _(Dir.children(source).sort).must_equal %w{manifest.json ubuntu.box}
+    end
+  end
+
   it "checkpoints a catalog lease before copying and reuses it until destroy" do
     Dir.mktmpdir do |directory|
       cache = Kitchen::Box::Cache.new(File.join(directory, "cache"))
@@ -311,6 +395,12 @@ describe Kitchen::Box::Source do
 
       driver.config[:box_cache] = File.join(directory, "another-cache")
       _(assert_raises(Kitchen::ActionFailed) { driver.box_source("parallels", state) }.message).must_match(/Run kitchen destroy/)
+      token = state.fetch(:box_cache_lease).fetch(:token)
+      lease = File.join(File.dirname(path), "leases", token)
+      File.expects(:unlink).with(lease).raises(Errno::EACCES)
+      _(assert_raises(Kitchen::ActionFailed) { driver.release_box_source(state) }.message).must_match(/Cannot release cached box/)
+      _(state.fetch(:box_cache_lease).fetch(:token)).must_equal token
+      File.unstub(:unlink)
       driver.release_box_source(state)
       _(state).must_be_empty
       _(cache.prune_plan.fetch(:reclaimable_bytes)).must_equal 3
