@@ -1,5 +1,12 @@
 # Test Kitchen Change Log
 
+## [4.2.1](https://github.com/test-kitchen/test-kitchen/compare/v4.2.0...v4.2.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **deps:** allow Net::SSH 8.2 ([#2148](https://github.com/test-kitchen/test-kitchen/issues/2148)) ([8d8042e](https://github.com/test-kitchen/test-kitchen/commit/8d8042e4e5e38bbc5e2e69ecacb3137fc40b02f2))
+
 ## [4.2.0](https://github.com/test-kitchen/test-kitchen/compare/v4.1.5...v4.2.0) (2026-11-26)
 
 
