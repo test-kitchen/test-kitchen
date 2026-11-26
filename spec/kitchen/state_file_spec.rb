@@ -54,8 +54,8 @@ describe Kitchen::StateFile do
       stub_state_file!
 
       _(state_file.read).must_equal(
-        cloud_id: 42,
-        flavor: "extra_crispy"
+        { cloud_id: 42,
+        flavor: "extra_crispy" }
       )
     end
 

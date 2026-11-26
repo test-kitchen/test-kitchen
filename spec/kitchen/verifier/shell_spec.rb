@@ -138,7 +138,7 @@ describe Kitchen::Verifier::Shell do
         config[:shellout_opts] = { environment: { "MY_VAR" => "keepme" } }
         shellout_opts_for(state)
 
-        _(config[:shellout_opts]).must_equal(environment: { "MY_VAR" => "keepme" })
+        _(config[:shellout_opts]).must_equal({ environment: { "MY_VAR" => "keepme" } })
       end
 
       it "raises ActionFailed if set false to :command" do

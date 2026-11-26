@@ -80,8 +80,8 @@ describe Kitchen::Platform do
     opts[:shell_type] = "wundershell"
 
     _(klass.new(opts).diagnose).must_equal(
-      os_type: "unikitty",
-      shell_type: "wundershell"
+      { os_type: "unikitty",
+      shell_type: "wundershell" }
     )
   end
 end

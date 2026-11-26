@@ -64,7 +64,7 @@ describe Kitchen::Util do
     it "converts string keys into symbols" do
       _(Kitchen::Util
         .symbolized_hash("one" => [{ "two" => :three, :four => "five" }]))
-        .must_equal(one: [{ two: :three, four: "five" }])
+        .must_equal({ one: [{ two: :three, four: "five" }] })
     end
   end
 
@@ -82,7 +82,7 @@ describe Kitchen::Util do
     it "converts symbol keys into strings" do
       _(Kitchen::Util
         .stringified_hash(one: [{ :two => :three, "four" => "five" }]))
-        .must_equal("one" => [{ "two" => :three, "four" => "five" }])
+        .must_equal({ "one" => [{ "two" => :three, "four" => "five" }] })
     end
   end
 

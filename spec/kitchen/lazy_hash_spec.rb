@@ -140,7 +140,7 @@ describe Kitchen::LazyHash do
   describe "select" do
     it "calls Procs when appropriate" do
       _(Kitchen::LazyHash.new(hash_obj, context).select { |_, _| true })
-        .must_equal shed_color: "blue", barn: "locked", genre: "heavy metal"
+        .must_equal ({ shed_color: "blue", barn: "locked", genre: "heavy metal" })
     end
   end
 

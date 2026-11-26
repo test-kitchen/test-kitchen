@@ -382,7 +382,7 @@ describe Kitchen::Configurable do
 
     it "returns a hash of config" do
       config[:alpha] = "beta"
-      _(subject.diagnose).must_equal(alpha: "beta")
+      _(subject.diagnose).must_equal({ alpha: "beta" })
     end
 
     it "returns a hash with sorted keys" do
@@ -396,16 +396,16 @@ describe Kitchen::Configurable do
   describe "#diagnose_plugin" do
     it "returns a plugin hash for a plugin without version" do
       _(subject.diagnose_plugin).must_equal(
-        name: "Tiny", class: "Kitchen::Thing::Tiny",
-        version: nil, api_version: nil
+        { name: "Tiny", class: "Kitchen::Thing::Tiny",
+        version: nil, api_version: nil }
       )
     end
 
     it "returns a plugin hash for a plugin with version" do
       subject = Kitchen::Thing::Versioned.new(config).finalize_config!(instance)
       _(subject.diagnose_plugin).must_equal(
-        name: "Versioned", class: "Kitchen::Thing::Versioned",
-        version: "1.8.17", api_version: nil
+        { name: "Versioned", class: "Kitchen::Thing::Versioned",
+        version: "1.8.17", api_version: nil }
       )
     end
   end
