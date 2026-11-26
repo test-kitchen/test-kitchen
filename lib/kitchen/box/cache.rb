@@ -143,6 +143,8 @@ module Kitchen
       end
 
       def create_lease(path)
+        raise UserError, "Invalid box cache lease: #{path}" if File.symlink?(path)
+
         File.open(path, File::WRONLY | File::CREAT | File::EXCL, 0o600) {}
       rescue Errno::EEXIST
         raise UserError, "Invalid box cache lease: #{path}" unless regular_file?(path)
