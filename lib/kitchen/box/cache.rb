@@ -177,11 +177,12 @@ module Kitchen
       end
 
       def populate(directory, catalog, entry)
-        source = catalog.verify(entry)
         Dir.mktmpdir("download-", directory) do |staging|
           archive = File.join(staging, "archive.box")
-          File.copy_stream(source, archive)
-          raise UserError, "SHA-256 or size mismatch while caching #{source}" unless verified?(archive, entry)
+          catalog.copy_archive(entry, archive)
+          unless verified?(archive, entry)
+            raise UserError, "SHA-256 or size mismatch while caching #{entry.values_at(*Catalog::IDENTITY).join(" ")}"
+          end
 
           File.rename(archive, File.join(directory, "archive.box"))
         end

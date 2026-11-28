@@ -105,6 +105,29 @@ describe Kitchen::Box::Catalog do
     _(error.message).must_match(/No boxes match/)
   end
 
+  it "lists remote entries without their query and skips downloading them in default doctor" do
+    url = "https://example.invalid/archive.box"
+    catalog(@entry.reject { |key| key == "file" }.merge("url" => "#{url}?token=private"))
+    args = ["--manifest", @manifest, "--json"]
+
+    output, = capture_io { Kitchen::Box::CLI.start(["list", *args]) }
+    _(JSON.parse(output).first.fetch("url")).must_equal url
+
+    output, = capture_io { Kitchen::Box::CLI.start(["doctor", *args]) }
+    _(JSON.parse(output).first).must_equal(
+      { "url" => url, "status" => "SKIP (use --checksum)", "checksum_verified" => false }
+    )
+  end
+
+  it "rejects ambiguous and unsupported remote archive sources" do
+    secure_url = "https://example.invalid/archive.box"
+    assert_raises(Kitchen::UserError) { catalog(@entry.merge("url" => secure_url)) }
+    remote = @entry.reject { |key| key == "file" }
+    %w{file:///tmp/archive.box http://example.invalid/archive.box https://user:secret@example.invalid/archive.box}.each do |url|
+      assert_raises(Kitchen::UserError) { catalog(remote.merge("url" => url)) }
+    end
+  end
+
   it "reports failed checks as JSON and exits unsuccessfully outside a Kitchen project" do
     catalog(@entry, @entry.merge("architecture" => "amd64", "file" => "missing.box"))
     kitchen = File.expand_path("../../bin/kitchen", __dir__)
