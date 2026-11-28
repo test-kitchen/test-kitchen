@@ -120,9 +120,16 @@ describe Kitchen::Box::Catalog do
     )
   end
 
-  it "rejects ambiguous and unsupported remote archive sources" do
-    secure_url = "https://example.invalid/archive.box"
-    assert_raises(Kitchen::UserError) { catalog(@entry.merge("url" => secure_url)) }
+  it "continues to load local entries with a URL metadata field" do
+    catalog(@entry.merge("url" => "https://example.invalid/archive.box"))
+    source = Kitchen::Box::Catalog.new(@manifest)
+    entry = source.entries.first
+
+    _(entry).must_equal @entry
+    _(source.verify(entry, checksum: true)).must_equal File.realpath(File.join(File.dirname(@manifest), @entry.fetch("file")))
+  end
+
+  it "rejects unsupported remote archive sources" do
     remote = @entry.reject { |key| key == "file" }
     %w{file:///tmp/archive.box http://example.invalid/archive.box https://user:secret@example.invalid/archive.box}.each do |url|
       assert_raises(Kitchen::UserError) { catalog(remote.merge("url" => url)) }

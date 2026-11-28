@@ -107,15 +107,16 @@ module Kitchen
         end
 
         entry = record.slice(*FIELDS)
+        entry.delete("url") if entry.key?("file")
         entry["sha256"] = entry["sha256"].downcase
         entry.transform_values(&:freeze).freeze
       end
 
       def valid_archive?(record)
-        if record.key?("url")
-          !record.key?("file") && RemoteArchive.valid_url?(record["url"])
-        else
+        if record.key?("file")
           record["file"].is_a?(String) && record["file"].match?(%r{\A[^/\\:\x00]+\.box\z})
+        else
+          RemoteArchive.valid_url?(record["url"])
         end
       end
     end

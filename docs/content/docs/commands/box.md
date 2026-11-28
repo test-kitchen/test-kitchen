@@ -14,11 +14,14 @@ kitchen box doctor --manifest /path/to/manifest.json --provider parallels --arch
 
 Set `KITCHEN_BOX_MANIFEST` to use a default manifest. The manifest is a JSON
 array with `name`, `version`, `provider`, `architecture`, `bytes` and
-`sha256` for each archive. Each entry also sets exactly one source:
+`sha256` for each archive. Set one source per entry:
 
 - `file` is a `.box` filename in the manifest directory.
 - `url` points to a downloadable archive over HTTPS. HTTP is allowed only
   for loopback hosts. Redirects from HTTPS must stay on HTTPS.
+
+When a local entry has a `file` field, Kitchen ignores any accompanying `url`
+metadata for compatibility with existing catalogs.
 
 `bytes` pins the exact archive size and `sha256` pins its SHA-256 digest.
 Doctor checks readability and size for local archives and skips remote
