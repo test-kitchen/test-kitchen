@@ -5,12 +5,13 @@ require "digest" unless defined?(Digest)
 require "json" unless defined?(JSON)
 require "rbconfig" unless defined?(RbConfig)
 require "kitchen/errors"
+require_relative "remote_archive"
 
 module Kitchen
   module Box
     class Catalog
       IDENTITY = %w{name version provider architecture}.freeze
-      FIELDS = (IDENTITY + %w{file bytes sha256}).freeze
+      FIELDS = (IDENTITY + %w{file bytes sha256 url}).freeze
       ENV_KEY = "KITCHEN_BOX_MANIFEST".freeze
 
       attr_reader :directory
@@ -61,6 +62,8 @@ module Kitchen
       end
 
       def verify(entry, checksum: false)
+        raise UserError, "A remote box must be downloaded before it can be used as a local archive" if entry.key?("url")
+
         path = File.realpath(File.join(directory, entry.fetch("file")))
         unless path.start_with?("#{directory.delete_suffix(File::SEPARATOR)}#{File::SEPARATOR}") && File.file?(path) && File.readable?(path)
           raise UserError, "Box must be a regular file inside the manifest directory: #{entry.fetch("file")}"
@@ -75,19 +78,46 @@ module Kitchen
         raise UserError, "Cannot read box #{entry.fetch("file")}: #{e.message}"
       end
 
+      def copy_archive(entry, destination)
+        if entry.key?("url")
+          RemoteArchive.new(entry.fetch("url")).download(destination, bytes: entry.fetch("bytes"))
+        else
+          File.copy_stream(verify(entry), destination)
+        end
+      end
+
+      def archive_matches?(entry, path)
+        File.file?(path) && !File.symlink?(path) && File.size(path) == entry.fetch("bytes") &&
+          Digest::SHA256.file(path).hexdigest == entry.fetch("sha256")
+      end
+
+      def stage_verified_archive(entry, destination, mismatch:)
+        copy_archive(entry, destination)
+        raise UserError, mismatch unless archive_matches?(entry, destination)
+      end
+
       private
 
       def parse_entry(record, index)
-        unless record.is_a?(Hash) && (IDENTITY + %w{file sha256}).all? { |key| record[key].is_a?(String) && !record[key].empty? } &&
+        unless record.is_a?(Hash) && (IDENTITY + %w{sha256}).all? { |key| record[key].is_a?(String) && !record[key].empty? } &&
             record["bytes"].is_a?(Integer) && record["bytes"] > 0 &&
             /\A[0-9a-f]{64}\z/i.match?(record["sha256"]) &&
-            record["file"].match?(%r{\A[^/\\:\x00]+\.box\z})
+            valid_archive?(record)
           raise UserError, "Invalid box manifest entry #{index} in #{@manifest}"
         end
 
         entry = record.slice(*FIELDS)
+        entry.delete("url") if entry.key?("file")
         entry["sha256"] = entry["sha256"].downcase
         entry.transform_values(&:freeze).freeze
+      end
+
+      def valid_archive?(record)
+        if record.key?("file")
+          record["file"].is_a?(String) && record["file"].match?(%r{\A[^/\\:\x00]+\.box\z})
+        else
+          RemoteArchive.valid_url?(record["url"])
+        end
       end
     end
   end

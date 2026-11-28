@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require "thor" unless defined?(Thor)
+require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "catalog"
 require_relative "cache"
 
@@ -21,17 +22,19 @@ module Kitchen
 
       desc "list", "List boxes from the manifest"
       def list
-        entries = selected_entries(catalog)
+        entries = selected_entries(catalog).map do |entry|
+          entry.key?("url") ? entry.merge("url" => display_url(entry)) : entry
+        end
         if options[:json]
           puts JSON.pretty_generate(entries)
         else
-          rows = entries.map { |entry| entry.values_at(*Catalog::FIELDS.first(6)) }
-          print_table([%w{Name Version Provider Architecture File Bytes}, *rows])
+          rows = entries.map { |entry| entry.values_at(*Catalog::IDENTITY) + [entry["file"] || entry["url"], entry["bytes"]] }
+          print_table([%w{Name Version Provider Architecture Source Bytes}, *rows])
         end
       end
 
-      desc "doctor", "Check that selected archives are readable and match the manifest"
-      option :checksum, type: :boolean, desc: "Read each selected archive to verify its SHA-256"
+      desc "doctor", "Check local archives and optionally verify remote archives"
+      option :checksum, type: :boolean, desc: "Verify SHA-256, downloading selected remote archives"
       def doctor
         source = catalog
         entries = selected_entries(source)
@@ -41,7 +44,10 @@ module Kitchen
         if options[:json]
           puts JSON.pretty_generate(results)
         else
-          results.each { |entry| puts "#{entry[:error] ? "FAIL" : "OK"}  #{entry[:file]}#{entry[:error] && "  #{entry[:error]}"}" }
+          results.each do |entry|
+            status = entry[:error] ? "FAIL" : entry[:status] || "OK"
+            puts "#{status}  #{entry[:file] || entry[:url]}#{entry[:error] && "  #{entry[:error]}"}"
+          end
         end
         exit 1 if results.any? { |entry| entry[:error] }
       end
@@ -84,10 +90,25 @@ module Kitchen
       end
 
       def check_entry(source, entry)
+        location = entry.key?("url") ? { url: display_url(entry) } : { file: entry.fetch("file") }
+        if entry.key?("url")
+          return location.merge(status: "SKIP (use --checksum)", checksum_verified: false) unless options[:checksum]
+
+          Dir.mktmpdir("kitchen-box-doctor-") do |directory|
+            archive = File.join(directory, "archive.box")
+            source.stage_verified_archive(entry, archive, mismatch: "SHA-256 or size mismatch for remote box")
+          end
+          return location.merge(checksum_verified: true)
+        end
+
         path = source.verify(entry, checksum: options[:checksum])
-        { file: entry.fetch("file"), path: path, checksum_verified: !!options[:checksum] }
+        location.merge(path: path, checksum_verified: !!options[:checksum])
       rescue UserError => e
-        { file: entry.fetch("file"), error: e.message }
+        location.merge(error: e.message)
+      end
+
+      def display_url(entry)
+        URI.parse(entry.fetch("url")).tap { |uri| uri.query = nil }.to_s
       end
     end
   end

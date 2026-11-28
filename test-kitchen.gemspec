@@ -29,6 +29,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "irb",                "~> 1.15"
   gem.add_dependency "mixlib-install",     ">= 3.6", "< 5.0" # allow Cinc's mixlib-install 4.x fork
   gem.add_dependency "mixlib-shellout",    ">= 1.2", "< 4.0"
+  gem.add_dependency "net-http",           ">= 0.2", "< 1.0"
   gem.add_dependency "net-scp",            ">= 1.1", "< 5.0" # pinning until we can confirm 4+ works
   gem.add_dependency "net-ssh",            ">= 2.9", "< 8.2.1" # pinning until we can confirm 8+ works
   gem.add_dependency "net-ssh-gateway",    ">= 1.2", "< 3.0" # pinning until we can confirm 3+ works

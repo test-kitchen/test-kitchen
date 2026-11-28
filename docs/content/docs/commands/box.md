@@ -13,15 +13,27 @@ kitchen box doctor --manifest /path/to/manifest.json --provider parallels --arch
 ```
 
 Set `KITCHEN_BOX_MANIFEST` to use a default manifest. The manifest is a JSON
-array with `name`, `version`, `provider`, `architecture`, `file`, `bytes` and
-`sha256` for each archive. `file` is a filename in the manifest directory.
-Doctor checks readability and size by default. `--checksum` also reads and
-verifies the SHA-256 of each selected archive.
+array with `name`, `version`, `provider`, `architecture`, `bytes` and
+`sha256` for each archive. Set one source per entry:
+
+- `file` is a `.box` filename in the manifest directory.
+- `url` points to a downloadable archive over HTTPS. HTTP is allowed only
+  for loopback hosts. Redirects from HTTPS must stay on HTTPS.
+
+When a local entry has a `file` field, Kitchen ignores any accompanying `url`
+metadata for compatibility with existing catalogs.
+
+`bytes` pins the exact archive size and `sha256` pins its SHA-256 digest.
+Doctor checks readability and size for local archives and skips remote
+archives by default. With `--checksum`, doctor also checks local digests and
+downloads selected remote archives to temporary storage to verify both pins.
+Doctor leaves the driver cache untouched.
 
 Drivers using the shared box library can resolve an exact box version from
-the manifest and copy it to the local cache. The cache is keyed by SHA-256,
-and the archive must match the manifest before the driver can import it. A
-repeat import reuses the local copy. Cache location defaults to
+the manifest and copy or download it to the local cache. The cache is keyed
+by SHA-256, and the archive must match both pins before the driver can import
+it. A repeat import reuses a verified cached copy without downloading again.
+Cache location defaults to
 `~/.cache/test-kitchen/boxes`. Set `KITCHEN_BOX_CACHE` or the supporting
 driver's `box_cache` setting to override it.
 
