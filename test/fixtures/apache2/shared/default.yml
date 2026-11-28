@@ -1,0 +1,15 @@
+---
+- name: Provision Apache
+  hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Install Apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+    - name: Enable and start Apache
+      ansible.builtin.service:
+        name: apache2
+        enabled: true
+        state: started

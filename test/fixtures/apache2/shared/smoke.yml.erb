@@ -1,0 +1,48 @@
+verifier:
+  name: shell
+  remote_exec: true
+  command: |
+    set -eu
+    systemctl is-enabled --quiet apache2
+    systemctl is-active --quiet apache2
+    status=$(curl --fail --silent --show-error --output /dev/null --write-out '%{http_code}' http://127.0.0.1/)
+    test "$status" = 200
+    echo "Apache is enabled and serving HTTP $status"
+
+suites:
+  - name: cinc
+    provisioner:
+      name: cinc_infra
+      product_name: cinc
+      install_strategy: once
+      multiple_converge: 2
+      enforce_idempotency: true
+  - name: puppet
+    lifecycle:
+      pre_converge:
+        - remote: >-
+            <%= bootstrap_prefix %>apt-get update -qq &&
+            <%= bootstrap_prefix %>env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq puppet-agent
+    provisioner:
+      name: puppet_apply
+      manifests_path: manifests
+      manifest: site.pp
+      modules_path: modules
+      require_puppet_collections: false
+      require_puppet_repo: false
+      require_chef_for_busser: false
+      resolve_with_librarian_puppet: false
+  - name: ansible
+    lifecycle:
+      pre_converge:
+        - remote: >-
+            <%= bootstrap_prefix %>apt-get update -qq &&
+            <%= bootstrap_prefix %>env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ansible-core
+    provisioner:
+      name: ansible_playbook
+      hosts: localhost
+      playbook: default.yml
+      require_ansible_repo: false
+      require_chef_for_busser: false
+      show_command_output: true
+      idempotency_test: true
