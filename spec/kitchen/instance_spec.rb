@@ -125,6 +125,15 @@ describe Kitchen::Instance do
     @platform ||= Kitchen::Platform.new(name: name)
   end
 
+  it "runs lifecycle transitions for a driver without the optional wrapper" do
+    driver.singleton_class.undef_method(:with_instance_lifecycle)
+
+    _(instance.create).must_equal instance
+    _(state_file.read.fetch(:last_action)).must_equal "create"
+    _(instance.destroy).must_equal instance
+    _(state_file.read).must_be_empty
+  end
+
   it "wraps transition selection, state persistence and destroy cleanup" do
     events = []
     driver.define_singleton_method(:with_instance_lifecycle) do |&transition|
