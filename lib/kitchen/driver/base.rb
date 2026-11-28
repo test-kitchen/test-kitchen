@@ -36,6 +36,19 @@ module Kitchen
         init_config(config)
       end
 
+      # Wraps an instance lifecycle transition, including prerequisite actions.
+      # Kitchen calls this before reading the action state and keeps the block
+      # open through hooks, state writes and successful destroy's state removal.
+      # Overrides should yield exactly once and return the block result.
+      # Drivers may override it to coordinate access to the instance.
+      #
+      # @yield The complete transition
+      # @return The result of the yielded transition
+      # @api public
+      def with_instance_lifecycle
+        yield
+      end
+
       # Creates an instance.
       #
       # @param state [Hash] mutable instance and driver state
