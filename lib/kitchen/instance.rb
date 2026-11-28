@@ -430,13 +430,16 @@ module Kitchen
     # @return [self] this instance, used to chain actions
     # @api private
     def transition_to(desired)
-      result = nil
-      FSM.actions(last_action, desired).each do |transition|
-        @lifecycle_hooks.run_with_hooks(transition, state_file) do
-          result = send("#{transition}_action")
+      lifecycle = proc do
+        result = nil
+        FSM.actions(last_action, desired).each do |transition|
+          @lifecycle_hooks.run_with_hooks(transition, state_file) do
+            result = send("#{transition}_action")
+          end
         end
+        result
       end
-      result
+      driver.respond_to?(:with_instance_lifecycle) ? driver.with_instance_lifecycle(&lifecycle) : lifecycle.call
     end
 
     # Perform the create action.

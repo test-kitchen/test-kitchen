@@ -125,6 +125,59 @@ describe Kitchen::Instance do
     @platform ||= Kitchen::Platform.new(name: name)
   end
 
+  it "runs lifecycle transitions for a driver without the optional wrapper" do
+    driver.singleton_class.undef_method(:with_instance_lifecycle)
+
+    _(instance.create).must_equal instance
+    _(state_file.read.fetch(:last_action)).must_equal "create"
+    _(instance.destroy).must_equal instance
+    _(state_file.read).must_be_empty
+  end
+
+  it "wraps transition selection, state persistence and destroy cleanup" do
+    events = []
+    driver.define_singleton_method(:with_instance_lifecycle) do |&transition|
+      events << :enter
+      transition.call
+    ensure
+      events << :leave
+    end
+    %i{read write destroy}.each do |operation|
+      state_file.define_singleton_method(operation) do |*args|
+        unless events.first == :enter && !events.include?(:leave)
+          raise "#{operation} ran outside the lifecycle wrapper"
+        end
+
+        events << operation
+        super(*args)
+      end
+    end
+
+    instance.lifecycle_hooks.define_singleton_method(:run_with_hooks) do |phase, file, &action|
+      raise "Hooks ran outside the lifecycle wrapper" unless events.first == :enter && !events.include?(:leave)
+
+      events << phase
+      super(phase, file, &action)
+    end
+
+    _(instance.create).must_equal instance
+    _(events[1]).must_equal :read
+    _(events).must_include :create
+    _(events).must_include :write
+    _(events.last).must_equal :leave
+    events.clear
+
+    _(instance.destroy).must_equal instance
+    _(events).must_include :destroy
+    _(events.last).must_equal :leave
+
+    events.clear
+    driver.define_singleton_method(:create) { |_| raise Kitchen::ActionFailed, "driver failed" }
+    _ { instance.create }.must_raise Kitchen::InstanceFailure
+    _(events).must_include :write
+    _(events.last).must_equal :leave
+  end
+
   describe ".name_for" do
     it "combines the suite and platform names with a dash" do
       _(Kitchen::Instance.name_for(suite("suite"), platform("platform")))

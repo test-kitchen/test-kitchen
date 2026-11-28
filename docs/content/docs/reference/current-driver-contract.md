@@ -73,6 +73,22 @@ Although some older code and examples mention driver `setup` and driver
 The instance `setup` action is empty, and verification is handled by the
 verifier.
 
+## Lifecycle wrapper
+
+Kitchen calls the public `with_instance_lifecycle` method once per lifecycle
+transition request. The base driver yields and returns the block result.
+An override should yield exactly once and return that result. The block starts
+before Kitchen reads state to select actions. It includes prerequisite actions,
+their lifecycle hooks, state writes on success or failure, and state file
+removal on successful destroy. Standalone commands such as `package` and
+`doctor` are outside this wrapper.
+
+Drivers can hold an instance lock for the duration of the block. Release the
+lock when the block exits, including when it raises. If the driver uses a
+non-reentrant lock, guard against recursive transitions in the same execution
+context. Lifecycle hooks must avoid calling or waiting for another transition
+on the same instance while its lock is held.
+
 ## State
 
 Every driver action receives a mutable `state` hash:
