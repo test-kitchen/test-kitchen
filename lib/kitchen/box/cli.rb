@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require "thor" unless defined?(Thor)
+require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "catalog"
 require_relative "cache"
 
@@ -32,8 +33,8 @@ module Kitchen
         end
       end
 
-      desc "doctor", "Check that selected archives are readable and match the manifest"
-      option :checksum, type: :boolean, desc: "Read each selected archive to verify its SHA-256"
+      desc "doctor", "Check local archives and optionally verify remote archives"
+      option :checksum, type: :boolean, desc: "Verify SHA-256, downloading selected remote archives"
       def doctor
         source = catalog
         entries = selected_entries(source)
@@ -89,23 +90,20 @@ module Kitchen
       end
 
       def check_entry(source, entry)
+        location = entry.key?("url") ? { url: display_url(entry) } : { file: entry.fetch("file") }
         if entry.key?("url")
-          return { url: display_url(entry), status: "SKIP (use --checksum)", checksum_verified: false } unless options[:checksum]
+          return location.merge(status: "SKIP (use --checksum)", checksum_verified: false) unless options[:checksum]
 
           Dir.mktmpdir("kitchen-box-doctor-") do |directory|
             archive = File.join(directory, "archive.box")
-            source.copy_archive(entry, archive)
-            if Digest::SHA256.file(archive).hexdigest != entry.fetch("sha256")
-              raise UserError, "SHA-256 mismatch for remote box"
-            end
+            source.stage_verified_archive(entry, archive, mismatch: "SHA-256 or size mismatch for remote box")
           end
-          return { url: display_url(entry), checksum_verified: true }
+          return location.merge(checksum_verified: true)
         end
 
         path = source.verify(entry, checksum: options[:checksum])
-        { file: entry.fetch("file"), path: path, checksum_verified: !!options[:checksum] }
+        location.merge(path: path, checksum_verified: !!options[:checksum])
       rescue UserError => e
-        location = entry.key?("url") ? { url: display_url(entry) } : { file: entry.fetch("file") }
         location.merge(error: e.message)
       end
 

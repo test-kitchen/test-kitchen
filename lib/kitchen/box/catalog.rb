@@ -86,6 +86,16 @@ module Kitchen
         end
       end
 
+      def archive_matches?(entry, path)
+        File.file?(path) && !File.symlink?(path) && File.size(path) == entry.fetch("bytes") &&
+          Digest::SHA256.file(path).hexdigest == entry.fetch("sha256")
+      end
+
+      def stage_verified_archive(entry, destination, mismatch:)
+        copy_archive(entry, destination)
+        raise UserError, mismatch unless archive_matches?(entry, destination)
+      end
+
       private
 
       def parse_entry(record, index)

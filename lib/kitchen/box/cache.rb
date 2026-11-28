@@ -43,7 +43,7 @@ module Kitchen
           create_directory(leases)
           create_lease(File.join(leases, token))
           archive = File.join(directory, "archive.box")
-          populate(directory, catalog, entry) unless verified?(archive, entry)
+          populate(directory, catalog, entry) unless catalog.archive_matches?(entry, archive)
           remember_identity(directory, entry)
           archive
         end
@@ -171,18 +171,11 @@ module Kitchen
         File.file?(path) && !File.symlink?(path)
       end
 
-      def verified?(path, entry)
-        regular_file?(path) && File.size(path) == entry.fetch("bytes") &&
-          Digest::SHA256.file(path).hexdigest == entry.fetch("sha256")
-      end
-
       def populate(directory, catalog, entry)
         Dir.mktmpdir("download-", directory) do |staging|
           archive = File.join(staging, "archive.box")
-          catalog.copy_archive(entry, archive)
-          unless verified?(archive, entry)
-            raise UserError, "SHA-256 or size mismatch while caching #{entry.values_at(*Catalog::IDENTITY).join(" ")}"
-          end
+          catalog.stage_verified_archive(entry, archive,
+            mismatch: "SHA-256 or size mismatch while caching #{entry.values_at(*Catalog::IDENTITY).join(" ")}")
 
           File.rename(archive, File.join(directory, "archive.box"))
         end

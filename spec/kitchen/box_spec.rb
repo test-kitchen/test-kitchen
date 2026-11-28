@@ -3,6 +3,7 @@
 
 require_relative "../spec_helper"
 require "open3"
+require "socket"
 require "tmpdir"
 require "kitchen/box/cli"
 require "kitchen/box/source"
@@ -138,6 +139,109 @@ describe Kitchen::Box::Catalog do
     _(stderr).must_be_empty
     _(JSON.parse(output).map { |row| row["checksum_verified"] }).must_equal [true, nil]
     _(JSON.parse(output).last.fetch("error")).must_match(/missing\.box/)
+  end
+end
+
+describe "remote box archives" do
+  before do
+    @directory = Dir.mktmpdir
+    source = File.join(@directory, "source")
+    Dir.mkdir(source)
+    @manifest = File.join(source, "manifest.json")
+    @cache = Kitchen::Box::Cache.new(File.join(@directory, "cache"))
+    @digest = Digest::SHA256.hexdigest("box")
+  end
+
+  after do
+    FileUtils.remove_entry(@directory)
+  end
+
+  def serve(*responses)
+    TCPServer.open("127.0.0.1", 0) do |server|
+      worker = Thread.new do
+        responses.map do |response|
+          client = server.accept
+          begin
+            request = client.gets
+            loop do
+              header = client.gets
+              break if header.nil? || header == "\r\n"
+            end
+            client.write("HTTP/1.1 #{response}")
+            request.split[1]
+          ensure
+            client.close
+          end
+        end
+      end
+      yield "http://127.0.0.1:#{server.addr[1]}/archive.box"
+      assert worker.join(5), "Expected all loopback requests to reach the server"
+      worker.value
+    ensure
+      worker&.kill
+      worker&.join
+    end
+  end
+
+  def remote_catalog(url)
+    File.write(@manifest, JSON.generate([{
+      name: "bento/ubuntu-24.04", version: "202510.26.0", provider: "virtualbox",
+      architecture: "arm64", bytes: 3, sha256: @digest, url: url,
+    }]))
+    source = Kitchen::Box::Catalog.new(@manifest)
+    [source, source.entries.first]
+  end
+
+  def doctor(status)
+    args = ["doctor", "--manifest", @manifest, "--checksum", "--json"]
+    output, = capture_io do
+      if status == 0
+        Kitchen::Box::CLI.start(args)
+      else
+        _(assert_raises(SystemExit) { Kitchen::Box::CLI.start(args) }.status).must_equal status
+      end
+    end
+    JSON.parse(output).first
+  end
+
+  it "verifies a redirected archive in doctor and leaves the cache untouched" do
+    requests = serve("302 Found\r\nLocation: /download.box\r\nContent-Length: 0\r\n\r\n",
+      "200 OK\r\nContent-Length: 3\r\n\r\nbox") do |url|
+      remote_catalog("#{url}?token=private")
+      _(doctor(0)).must_equal({ "url" => url, "checksum_verified" => true })
+      refute File.exist?(@cache.root)
+    end
+    _(requests).must_equal ["/archive.box?token=private", "/download.box"]
+  end
+
+  it "acquires a pinned archive and reuses it after the endpoint stops serving" do
+    source = entry = path = nil
+    serve("200 OK\r\nContent-Length: 3\r\n\r\nbox") do |url|
+      source, entry = remote_catalog(url)
+      path = @cache.fetch(source, entry, SecureRandom.uuid)
+      _(File.binread(path)).must_equal "box"
+    end
+    _(@cache.fetch(source, entry, SecureRandom.uuid)).must_equal path
+  end
+
+  {
+    "corrupt archive" => ["200 OK\r\nContent-Length: 3\r\n\r\nbad", /SHA-256 or size mismatch/],
+    "truncated archive" => ["200 OK\r\nContent-Length: 3\r\n\r\nbo", /Size mismatch|Cannot download remote box \(EOFError\)/],
+    "oversized archive" => ["200 OK\r\nContent-Length: 4\r\n\r\nbox!", /Size mismatch/],
+    "HTTP error" => ["404 Not Found\r\nContent-Length: 0\r\n\r\n", /HTTP 404/],
+    "unsupported redirect" => ["302 Found\r\nLocation: file:///archive.box\r\nContent-Length: 0\r\n\r\n", /Unsupported remote box URL/],
+  }.each do |description, (response, message)|
+    it "rejects a remote #{description} in doctor and cache" do
+      serve(response, response) do |url|
+        source, entry = remote_catalog("#{url}?token=private")
+        result = doctor(1)
+        _(result.fetch("url")).must_equal url
+        _(result.fetch("error")).must_match message
+        error = assert_raises(Kitchen::UserError) { @cache.fetch(source, entry, SecureRandom.uuid) }
+        _(error.message).must_match message
+      end
+      _(Dir.children(File.join(@cache.root, @digest)).sort).must_equal %w{leases lock}
+    end
   end
 end
 
